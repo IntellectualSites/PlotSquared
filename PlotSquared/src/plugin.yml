@@ -1,0 +1,21 @@
+name: PlotSquared
+main: com.intellectualcrafters.plot.PlotMain
+version: 1.0
+load: STARTUP
+description: > 
+             Easy, yet powerful Plot World generation and management.
+authors: [Citymonstret, brandonrelph]
+softdepend: [WorldEdit, BarAPI, PlotMe, CameraAPI]
+database: false
+commands: 
+  plots:
+    description: PlotMain PlotSquared command.
+    aliases: [p,plotme,plot]
+    permission: plots.use
+permissions:
+  plots.use:
+    default: op
+  plots.admin:
+    default: op
+  plots.worldedit.bypass:
+    defautl: false
