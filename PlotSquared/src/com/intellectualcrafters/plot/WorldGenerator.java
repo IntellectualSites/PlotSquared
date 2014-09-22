@@ -113,8 +113,6 @@ public class WorldGenerator extends ChunkGenerator {
         plotsize = plotworld.PLOT_WIDTH;
         pathsize = plotworld.ROAD_WIDTH;
         bottom = (short) Material.BEDROCK.getId();
-        filling = new Short[plotworld.MAIN_BLOCK.length];
-        plotfloors = new Short[plotworld.TOP_BLOCK.length];
         
         floor1 = getBlock(plotworld.ROAD_BLOCK);
 //        floor2 = getBlock(plotworld.ROAD_STRIPES);
@@ -122,8 +120,8 @@ public class WorldGenerator extends ChunkGenerator {
         size = pathsize + plotsize;
         wall = getBlock(plotworld.WALL_BLOCK);
         
-        Short[] plotfloors = new Short[plotworld.TOP_BLOCK.length];
-        Short[] plotfloors_data = new Short[plotworld.TOP_BLOCK.length];
+        plotfloors = new Short[plotworld.TOP_BLOCK.length];
+        filling = new Short[plotworld.TOP_BLOCK.length];
         
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
             plotfloors[i] = getBlock(plotworld.TOP_BLOCK[i]); 

@@ -50,8 +50,9 @@ public class PlotHelper {
 
     @SuppressWarnings("deprecation")
     public static void setSign(Player plr, Plot p) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(p.world));
-        Location pl = new Location(plr.getWorld(), getPlotBottomLoc(plr.getWorld(), p.id).getBlockX() , plotworld.ROAD_HEIGHT + 1, getPlotBottomLoc(plr.getWorld(), p.id).getBlockZ());
+        World world = Bukkit.getWorld(p.world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        Location pl = new Location(world, getPlotBottomLoc(world, p.id).getBlockX() , plotworld.ROAD_HEIGHT + 1, getPlotBottomLoc(world, p.id).getBlockZ());
         Block bs = pl.add(0,0,-1).getBlock();
         bs.setType(Material.AIR);
         bs.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
@@ -61,6 +62,7 @@ public class PlotHelper {
         sign.setLine(1, C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
         sign.setLine(2, C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
         sign.setLine(3, C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
+        System.out.print(10);
         sign.update(true);
     }
 
@@ -440,7 +442,7 @@ public class PlotHelper {
 
     public static void clear(final Player requester, final Plot plot) {
         PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
@@ -465,14 +467,21 @@ public class PlotHelper {
             filling[i] = result[0];
             filling_data[i] = result[1];
         }
+        
+        
         try {
             setBlockClass = new SetBlockFast();
             regenerateCuboid(pos1, pos2,requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data});
+            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""+((System.nanoTime()-start)/1000000.0)));
+            SetBlockFast.update(requester);
+            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE_PACKETS.s().replaceAll("%time%", ""+((System.nanoTime()-start)/1000000.0)));
+            return;
         }
         catch (NoClassDefFoundError e) {
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&cFast plot clearing is currently not enabled.");
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&c - Please get PlotSquared for "+Bukkit.getVersion()+" for improved performance");
         }
+        
         if (pos2.getBlockX()-pos1.getBlockX()<16) {
             regenerateCuboid(pos1, pos2,requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data});
             return;
@@ -534,9 +543,6 @@ public class PlotHelper {
             regenerateCuboid(new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX, height, plotMaxZ),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //8
         }
         PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""+((System.currentTimeMillis()-start)/1000.0)));
-        if (setBlockClass!=null) {
-            SetBlockFast.update(requester);
-        }
     }
     public static void regenerateCuboid(Location pos1, Location pos2,Player player, PlotWorld plotworld, Object[] plotfloors, Object[] filling) {
         World world = pos1.getWorld();

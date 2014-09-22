@@ -83,6 +83,8 @@ public enum C {
      */
     NOT_IN_PLOT("&cYou're not in a plot"),
     NOT_IN_PLOT_WORLD("&cYou're not in a plot world"),
+    NOT_VALID_WORLD("&cThat is not a valid world (case sensitive)"),
+    NOT_VALID_PLOT_WORLD("&cThat is not a valid plot world (case sensitive)"),
     NO_PLOTS("&cYou don't have any plots"),
     /*
         Block List
@@ -147,7 +149,8 @@ public enum C {
         Clearing
      */
 	CLEARING_PLOT("&cClearing plot."),
-	CLEARING_DONE("&aDone! Took %time% seconds"),
+	CLEARING_DONE("&6Done, took &a%time%&6 ms!"),
+	CLEARING_DONE_PACKETS("&6(&a%time% &6ms for packets)"),
     /*
         Claiming
      */

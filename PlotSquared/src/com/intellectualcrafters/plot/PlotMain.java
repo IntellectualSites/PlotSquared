@@ -52,8 +52,7 @@ import java.util.UUID;
 import static org.bukkit.Material.*;
 
 /**
- * @awesome @author Empire92
- * @author Citymonstret
+ * @awesome @author Citymonstret, Empire92
  *         PlotMain class.
  */
 public class PlotMain extends JavaPlugin {
@@ -175,8 +174,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * get all plot worlds
      */
-    public static World[] getPlotWorlds() {
-        return (worlds.keySet().toArray(new World[0]));
+    public static String[] getPlotWorlds() {
+        return (worlds.keySet().toArray(new String[0]));
     }
     public static String[] getPlotWorldsString() {
         return plots.keySet().toArray(new String[0]);
@@ -209,6 +208,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Replace the plot object with an updated version
      *
+     * @param id   plot Id
      * @param plot plot object
      */
     public static void updatePlot(Plot plot) {
@@ -327,7 +327,6 @@ public class PlotMain extends JavaPlugin {
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
         }
-
         if (Settings.DB.USE_MYSQL) {
             try {
                 mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT,
@@ -600,8 +599,8 @@ public class PlotMain extends JavaPlugin {
                     long error = 0l;
                     @Override
                     public void run() {
-                        for (World w: getPlotWorlds()) {
-                            World world = w;
+                        for (String w: getPlotWorlds()) {
+                            World world = Bukkit.getWorld(w);
                              try {
                                 if(world.getLoadedChunks().length < 1) {
                                     return;

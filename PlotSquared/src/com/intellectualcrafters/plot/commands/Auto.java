@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -29,13 +30,29 @@ public class Auto extends SubCommand {
     public boolean execute(Player plr, String ... args) {
         World world;
         if (PlotMain.getPlotWorlds().length==1)
-            world = PlotMain.getPlotWorlds()[0];
+            world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
         else {
             if (PlotMain.isPlotWorld(plr.getWorld()))
                 world = plr.getWorld();
             else {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return true;
+                if (args.length==1) {
+                    world = Bukkit.getWorld(args[0]);
+                    if (world!=null) {
+                        if (!PlotMain.isPlotWorld(world)) {
+                            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+                            return true;
+                        }
+                            
+                    }
+                    else {
+                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
+                        return true;
+                    }
+                }
+                else {
+                    PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+                    return true;
+                }
             }
                 
         }

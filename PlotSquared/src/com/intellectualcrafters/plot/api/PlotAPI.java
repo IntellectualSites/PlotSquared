@@ -151,7 +151,7 @@ public class PlotAPI {
      * Get all plot worlds
      * @return World[] - array of plot worlds
      */
-    public World[] getPlotWorlds() {
+    public String[] getPlotWorlds() {
         return PlotMain.getPlotWorlds();
     }
     /**
@@ -160,11 +160,7 @@ public class PlotAPI {
      * @return boolean (if plot world or not)
      */
     public boolean isPlotWorld(World world) {
-        for (World w:PlotMain.getPlotWorlds()) {
-            if (w.equals(world))
-                return true;
-        }
-        return false;
+        return PlotMain.isPlotWorld(world);
     }
     /**
      * Get the settings for a world (settings bundled in PlotWorld class)

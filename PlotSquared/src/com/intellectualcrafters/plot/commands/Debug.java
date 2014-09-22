@@ -76,8 +76,8 @@ public class Debug extends SubCommand{
          */
         {
             StringBuilder worlds = new StringBuilder("");
-            for (World world: PlotMain.getPlotWorlds())
-                worlds.append(world.getName()+" ");
+            for (String world: PlotMain.getPlotWorlds())
+                worlds.append(world+" ");
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
             information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));
