@@ -55,6 +55,12 @@ public class Claim extends SubCommand{
             if(teleport) {
                 PlotMain.teleportPlayer(player, player.getLocation(), plot);
             }
+            PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+            if(world.SCHEMATIC_ON_CLAIM) {
+                SchematicHandler handler = new SchematicHandler();
+                SchematicHandler.Schematic schematic = handler.getSchematic(world.SCHEMATIC_FILE);
+                handler.paste(player.getLocation(), schematic, plot);
+            }
         }
         return event.isCancelled();
     }

@@ -1,8 +1,8 @@
 package com.intellectualcrafters.plot;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
+
+import java.util.ArrayList;
 
 public class PlotWorld {
     /**
@@ -159,5 +159,9 @@ public class PlotWorld {
      * Blocks available in /p set
      */
     public static ArrayList<Material> BLOCKS = new ArrayList<Material>();
+
+
+    public boolean SCHEMATIC_ON_CLAIM = false;
+    public String SCHEMATIC_FILE = "null";
     
 }

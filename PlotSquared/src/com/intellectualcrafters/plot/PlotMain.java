@@ -574,10 +574,6 @@ public class PlotMain extends JavaPlugin {
             Settings.DB.DATABASE = storage.getString("mysql_database");
         }
         {
-            Settings.Update.AUTO_UPDATE = config.getBoolean("auto_update");
-            
-            
-            
             //Web
             Web.ENABLED = config.getBoolean("web.enabled");
             Web.PORT    = config.getInt("web.port");
@@ -645,7 +641,7 @@ public class PlotMain extends JavaPlugin {
             }
             else {
                 ChunkGenerator gen = world.getGenerator();
-                if (gen==null || gen.toString().equals("PlotSquared")) {
+                if (gen==null || !gen.toString().equals("PlotSquared")) {
                     Logger.add(LogLevel.WARNING, "World '"+node+"' in settings.yml is not using PlotSquared generator");
                 }
             }
