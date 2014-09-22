@@ -23,7 +23,6 @@ import com.intellectualsites.web.PlotWeb;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 import me.confuser.barapi.BarAPI;
-import net.gravitydevelopment.updater.Updater;
 
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -210,7 +209,6 @@ public class PlotMain extends JavaPlugin {
     /**
      * Replace the plot object with an updated version
      *
-     * @param id   plot Id
      * @param plot plot object
      */
     public static void updatePlot(Plot plot) {
@@ -329,23 +327,7 @@ public class PlotMain extends JavaPlugin {
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
         }
-        if (Settings.Update.AUTO_UPDATE) {
-            Updater updater = new Updater(this, 83369, this.getFile(), Updater.UpdateType.DEFAULT, true);
-            switch (updater.getResult()) {
-                case SUCCESS:
-                    sendConsoleSenderMessage(C.PREFIX.s() + "&cUpdate " + updater.getLatestName() + " installed successfully. Restart the server to load it.");
-                    break;
-                case FAIL_DOWNLOAD:
-                    sendConsoleSenderMessage(C.PREFIX.s() + "&cUpdate could not be installed.");
-                    break;
-                case UPDATE_AVAILABLE:
-                    sendConsoleSenderMessage(C.PREFIX.s() + ChatColor.GREEN + "There is an available update.");
-                    break;
-                default:
-                    sendConsoleSenderMessage(C.PREFIX.s() + ChatColor.GREEN + "You're using the latest update.");
-                    break;
-            }
-        }
+
         if (Settings.DB.USE_MYSQL) {
             try {
                 mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT,
