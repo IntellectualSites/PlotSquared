@@ -77,9 +77,11 @@
       <file leaf-file-name="PlotMain.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.389738" vertical-offset="0" max-vertical-offset="11747">
-              <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
-              <folding />
+            <state vertical-scroll-proportion="2.3176856" vertical-offset="9148" max-vertical-offset="11611">
+              <caret line="694" column="10" selection-start-line="694" selection-start-column="10" selection-end-line="694" selection-end-column="10" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -417,7 +419,7 @@
       <updated>1411382235722</updated>
       <workItem from="1411382238709" duration="182000" />
       <workItem from="1411382421959" duration="656000" />
-      <workItem from="1411383098267" duration="2417000" />
+      <workItem from="1411383098267" duration="2536000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -439,11 +441,15 @@
       <created>1411385985343</created>
       <updated>1411385985343</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Removed web stuff (caused crash)">
+      <created>1411386181908</created>
+      <updated>1411386181908</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3255000" />
+    <option name="totallyTimeSpent" value="3374000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1932" height="1062" extended-state="6" />
@@ -495,7 +501,8 @@
     <MESSAGE value="Use this xD" />
     <MESSAGE value="Included source..." />
     <MESSAGE value="Yey!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Yey!" />
+    <MESSAGE value="Removed web stuff (caused crash)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed web stuff (caused crash)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -597,9 +604,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.389738" vertical-offset="0" max-vertical-offset="11747">
-          <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
-          <folding />
+        <state vertical-scroll-proportion="2.3176856" vertical-offset="9148" max-vertical-offset="11611">
+          <caret line="694" column="10" selection-start-line="694" selection-start-column="10" selection-end-line="694" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
