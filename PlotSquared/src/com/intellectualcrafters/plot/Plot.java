@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -170,7 +171,7 @@ public class Plot implements Cloneable{
      *
      */
     public World getWorld() {
-        return Bukkit.getWorld(this.world)
+        return Bukkit.getWorld(this.world);
     }
 
     /**
