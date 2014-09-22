@@ -396,14 +396,9 @@ public class PlotMain extends JavaPlugin {
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(),
                 100L, 1L);
+
         if(Web.ENABLED) {
-            try {
-                PlotWeb web = new PlotWeb("PlotWeb", Web.PORT);
-                web.start();
-                sendConsoleSenderMessage("Web Server running on port " + Web.PORT);
-            } catch(Exception e) {
-                sendConsoleSenderMessage("Failed to start web server.");
-            }
+            sendConsoleSenderMessage("This is not yet implemented...");
         }
     }
 
