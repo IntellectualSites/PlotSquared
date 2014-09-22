@@ -10,20 +10,18 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
-
-import com.intellectualcrafters.plot.commands.Camera;
-import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
+import com.intellectualcrafters.plot.commands.Camera;
 import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualsites.web.PlotWeb;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
 import me.confuser.barapi.BarAPI;
-
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -39,15 +37,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import static org.bukkit.Material.*;
 
@@ -700,13 +691,14 @@ public class PlotMain extends JavaPlugin {
                 Logger.add(LogLevel.DANGER, "Could not close mysql connection");
             }
         }
+        /*
         if(PlotWeb.PLOTWEB != null) {
             try {
                 PlotWeb.PLOTWEB.stop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
     public static void addPlotWorld(String world,PlotWorld plotworld) {
         PlotMain.worlds.put(world,plotworld);
