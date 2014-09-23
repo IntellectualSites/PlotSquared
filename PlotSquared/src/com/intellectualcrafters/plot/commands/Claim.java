@@ -11,6 +11,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,8 +41,13 @@ public class Claim extends SubCommand{
             PlayerFunctions.sendMessage(plr, C.PLOT_IS_CLAIMED);
             return false;
         }
-        claimPlot(plr, plot, false);
-		return true;
+        boolean result = claimPlot(plr, plot, false);
+        if (!result) {
+            PlayerFunctions.sendMessage(plr, C.PLOT_NOT_CLAIMED);
+            return false;
+        }
+        return true;
+        
 	}
 
 
@@ -61,6 +67,7 @@ public class Claim extends SubCommand{
                 SchematicHandler.Schematic schematic = handler.getSchematic(world.SCHEMATIC_FILE);
                 handler.paste(player.getLocation(), schematic, plot);
             }
+            plot.settings.setFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS);
         }
         return event.isCancelled();
     }

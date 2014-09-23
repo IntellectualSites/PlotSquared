@@ -7,7 +7,7 @@ public class Flag {
     private String key;
     private String value;
     public Flag(String key, String value) {
-        if (!StringUtils.isAlphanumeric(key) || !StringUtils.isAlphanumeric(ChatColor.stripColor(value)))
+        if (!StringUtils.isAlphanumeric(key) || !StringUtils.isAlphanumeric(ChatColor.stripColor(value).replace(" ", "")))
             throw new IllegalArgumentException("Flag must be alphanumerical");
         if (key.length()>16)
             throw new IllegalArgumentException("Key must be <= 16 characters");

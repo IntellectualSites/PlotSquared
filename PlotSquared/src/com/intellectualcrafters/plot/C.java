@@ -156,6 +156,7 @@ public enum C {
     /*
         Claiming
      */
+	PLOT_NOT_CLAIMED("&cCannot claim plot"),
     PLOT_IS_CLAIMED("&cThis plot is already claimed"),
     CLAIMED("&6You successfully claimed the plot"),
     /*
