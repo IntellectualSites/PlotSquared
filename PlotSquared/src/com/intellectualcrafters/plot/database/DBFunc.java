@@ -24,10 +24,13 @@ import org.bukkit.block.Biome;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.intellectualcrafters.plot.PlotMain.connection;
@@ -99,6 +102,8 @@ public class DBFunc {
             "`timestamp` timestamp not null DEFAULT CURRENT_TIMESTAMP," +
             "PRIMARY KEY (`id`)" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
+        
+        
         stmt.addBatch(
             "CREATE TABLE IF NOT EXISTS `plot_helpers` (" +
             "`plot_plot_id` int(11) NOT NULL," +
@@ -131,6 +136,36 @@ public class DBFunc {
         );
         stmt.executeBatch();
         stmt.clearBatch();
+        stmt.close();
+        
+        /**
+         * Adding missing columns (for older versions)
+         *  + get current columns (continue if they do not match the current number of columns)
+         *  + get data from plot_id column
+         *  - create column (plot_id_x,plot_id_z,world)
+         *  - populate plot_id_x, plot_id_z with data from plot_id
+         *  - populate world column with PlotMain.config.getString("plot_world") - which will be set from previous release;
+         */  
+        
+        /**
+         *  `plot`
+         */
+        int target_len = 6;
+        ArrayList<String> ids = new ArrayList<String>();
+        stmt = connection.createStatement();
+        String table = "plot";
+        ResultSet rs = stmt.executeQuery("SELECT * FROM `"+table+"`");
+        ResultSetMetaData md = rs.getMetaData();
+        int len = md.getColumnCount();
+        if (len<target_len) {
+            HashSet<String> cols = new HashSet<String>();
+            for (int i = 1; i <= len; i++) {
+                cols.add(md.getColumnName(i));
+            }
+            while (rs.next()) {
+                ids.add(rs.getString("plot_id"));
+            }
+        }
         stmt.close();
     }
 
