@@ -5,6 +5,27 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 
 public class PlotWorld {
+    
+    /*
+     * This is the PlotWorld class (obviously)
+     *  - All existing PlotWorld instances should be kept in PlotMain (worlds variable)
+     *  - The accessors and mutators are: 
+     *  PlotMain.isPlotWorld(world)
+     *  PlotMain.getPlotWorlds() or PlotMain.getPlotWorldsString() <- use this if you don't need to get world objects
+     *  PlotMain.getWorldSettings(World) - get the PlotWorld class for a world
+     *  
+     *  Also added is getWorldPlots(World) as the plots are now sorted per world
+     *  
+     *  To get the world of a plot, you can use plot.world - (string)   or plot.getWorld() (world object)
+     *  
+     *  All PlotWorld settings are per world in the settings.yml (these settings are automatically added when a world is loaded, either at startup or if a new world is created):
+     *   - You can find this in the WorldGenerator class (yeah, it's possibly not the best place, but it makes sure worlds are added to the settings.yml)
+     *  
+     *  All new DEFAULT CONSTANTS should be static and be given a value
+     *  All new variables should not be static and should not be given any values here, but rather in the WorldGenerator class
+     *  
+     */
+    
     /**
      * Road Height
      */
@@ -160,8 +181,21 @@ public class PlotWorld {
      */
     public static ArrayList<Material> BLOCKS = new ArrayList<Material>();
 
-
-    public boolean SCHEMATIC_ON_CLAIM = false;
-    public String SCHEMATIC_FILE = "null";
+    /**
+     * schematic on claim
+     */
+    public boolean SCHEMATIC_ON_CLAIM;
+    /**
+     * Default schematic on claim: false
+     */
+    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    /**
+     * schematic file
+     */
+    public String SCHEMATIC_FILE;
+    /**
+     * Default schematic file: 'null'
+     */
+    public static String SCHEMATIC_FILE_DEFAULT = "null";
     
 }

@@ -85,6 +85,9 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds."+world+".wall_filling", WALL_FILLING_DEFAULT);
         options.put("worlds."+world+".wall_height", WALL_HEIGHT_DEFAULT);
         
+        options.put("worlds."+world+".schematic_on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
+        options.put("worlds."+world+".schematic_file", SCHEMATIC_FILE_DEFAULT);
+        
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -108,6 +111,9 @@ public class WorldGenerator extends ChunkGenerator {
         plotworld.WALL_FILLING = config.getString("worlds."+world+".wall_filling");
         plotworld.WALL_HEIGHT = config.getInt("worlds."+world+".wall_height");
         plotworld.PLOT_CHAT = config.getBoolean("worlds."+world+".plot_chat");
+        
+        plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds."+world+".schematic_on_claim");
+        plotworld.SCHEMATIC_FILE = config.getString("worlds."+world+".schematic_file");
         PlotMain.addPlotWorld(world, plotworld);
         
         plotsize = plotworld.PLOT_WIDTH;
