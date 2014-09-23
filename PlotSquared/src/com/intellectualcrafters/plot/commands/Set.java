@@ -96,7 +96,7 @@ public class Set extends SubCommand{
                 return false;
             }
             if (args.length==2) {
-                if (!plot.settings.hasFlag(new Flag(args[1], ""))) {
+                if (plot.settings.getFlag(args[1].toLowerCase())==null) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
@@ -109,8 +109,11 @@ public class Set extends SubCommand{
                     return false;
                 }
                 java.util.Set<Flag> newflags = plot.settings.getFlags();
-                newflags.remove(flag);
+                Flag oldFlag = plot.settings.getFlag(args[1].toLowerCase());
+                if (oldFlag!=null)
+                    newflags.remove(oldFlag);
                 plot.settings.setFlags(newflags.toArray(new Flag[0]));
+                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[0]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 return true;
             }
@@ -125,6 +128,7 @@ public class Set extends SubCommand{
                     return false;
                 }
                 plot.settings.addFlag(flag);
+                DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags().toArray(new Flag[0]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 return true;
             }

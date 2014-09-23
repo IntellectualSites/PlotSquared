@@ -144,6 +144,10 @@ public class PlotMain extends JavaPlugin {
         return registeredFlags.add(flag);
     }
     
+    public static boolean unRegisterFlag(Flag flag) {
+        return registeredFlags.remove(flag);
+    }
+    
     /**
      * Get all plots
      *

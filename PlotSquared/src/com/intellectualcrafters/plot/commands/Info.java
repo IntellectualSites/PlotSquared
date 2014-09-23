@@ -78,7 +78,7 @@ public class Info extends SubCommand{
 		info = info.replaceAll("%weather%", plot.settings.getRain() ? "rain" : "default");
 		info = info.replaceAll("%helpers%", getPlayerList(plot.helpers));
 		info = info.replaceAll("%denied%", getPlayerList(plot.denied));
-		info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(),"").length() > 0 ? StringUtils.join(plot.settings.getFlags(),"") : "none");
+		info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(),"").length() > 0 ? StringUtils.join(plot.settings.getFlags(),",") : "none");
 		PlayerFunctions.sendMessage(player, info);
 		return true;
 	}

@@ -150,23 +150,23 @@ public class DBFunc {
         /**
          *  `plot`
          */
-        int target_len = 6;
-        ArrayList<String> ids = new ArrayList<String>();
-        stmt = connection.createStatement();
-        String table = "plot";
-        ResultSet rs = stmt.executeQuery("SELECT * FROM `"+table+"`");
-        ResultSetMetaData md = rs.getMetaData();
-        int len = md.getColumnCount();
-        if (len<target_len) {
-            HashSet<String> cols = new HashSet<String>();
-            for (int i = 1; i <= len; i++) {
-                cols.add(md.getColumnName(i));
-            }
-            while (rs.next()) {
-                ids.add(rs.getString("plot_id"));
-            }
-        }
-        stmt.close();
+//        int target_len = 6;
+//        ArrayList<String> ids = new ArrayList<String>();
+//        stmt = connection.createStatement();
+//        String table = "plot";
+//        ResultSet rs = stmt.executeQuery("SELECT * FROM `"+table+"`");
+//        ResultSetMetaData md = rs.getMetaData();
+//        int len = md.getColumnCount();
+//        if (len<target_len) {
+//            HashSet<String> cols = new HashSet<String>();
+//            for (int i = 1; i <= len; i++) {
+//                cols.add(md.getColumnName(i));
+//            }
+//            while (rs.next()) {
+//                ids.add(rs.getString("plot_id"));
+//            }
+//        }
+//        stmt.close();
     }
 
     /**

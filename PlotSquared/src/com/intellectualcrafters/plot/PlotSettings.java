@@ -133,6 +133,9 @@ public class PlotSettings {
      * @param flag
      */
     public void addFlag(Flag flag) {
+        Flag hasFlag = getFlag(flag.getKey());
+        if (hasFlag!=null)
+            flags.remove(hasFlag);
         this.flags.add(flag);
     }
     /**
@@ -156,18 +159,10 @@ public class PlotSettings {
      */
     public Flag getFlag(String flag) {
         for (Flag myflag:flags) {
-            if (myflag.getKey()==flag)
+            if (myflag.getKey().equals(flag))
                 return myflag;
         }
         return null;
-    }
-    /**
-     * 
-     * @param flag
-     * @return
-     */
-    public boolean hasFlag(Flag flag) {
-        return this.flags.contains(flag);
     }
     
     public PlotHomePosition getPosition() { return this.position; }

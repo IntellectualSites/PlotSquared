@@ -35,7 +35,7 @@ public class Flag {
         if (getClass() != obj.getClass())
             return false;
         Flag other = (Flag) obj;
-        return (this.key==other.key);
+        return (this.key==other.key && this.value == other.value);
     }
     @Override
     public int hashCode() {
