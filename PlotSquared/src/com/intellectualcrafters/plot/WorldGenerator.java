@@ -1,21 +1,15 @@
 package com.intellectualcrafters.plot;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.command.defaults.SaveCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static com.intellectualcrafters.plot.PlotWorld.*;
@@ -77,15 +71,15 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds."+world+".plot_biome", PLOT_BIOME_DEFAULT);
         options.put("worlds."+world+".plot_filling", Arrays.asList(MAIN_BLOCK_DEFAULT));
         options.put("worlds."+world+".top_floor", Arrays.asList(TOP_BLOCK_DEFAULT));
-        options.put("worlds."+world+".wall_block", WALL_BLOCK_DEFAULT);
-        options.put("worlds."+world+".road_width", ROAD_WIDTH_DEFAULT);
-        options.put("worlds."+world+".road_height", ROAD_HEIGHT_DEFAULT);
-        options.put("worlds."+world+".road_block", ROAD_BLOCK_DEFAULT);
+        options.put("worlds."+world+".wall.block", WALL_BLOCK_DEFAULT);
+        options.put("worlds."+world+".road.width", ROAD_WIDTH_DEFAULT);
+        options.put("worlds."+world+".road.height", ROAD_HEIGHT_DEFAULT);
+        options.put("worlds."+world+".road.block", ROAD_BLOCK_DEFAULT);
 //        options.put("worlds."+world+".road_stripes", ROAD_STRIPES_DEFAULT);
-        options.put("worlds."+world+".wall_filling", WALL_FILLING_DEFAULT);
-        options.put("worlds."+world+".wall_height", WALL_HEIGHT_DEFAULT);
-        options.put("worlds."+world+".schematic_on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
-        options.put("worlds."+world+".schematic_file", SCHEMATIC_FILE_DEFAULT);
+        options.put("worlds."+world+".wall.filling", WALL_FILLING_DEFAULT);
+        options.put("worlds."+world+".wall.height", WALL_HEIGHT_DEFAULT);
+        options.put("worlds."+world+".schematic.on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
+        options.put("worlds."+world+".schematic.file", SCHEMATIC_FILE_DEFAULT);
         options.put("worlds."+world+".default_flags", DEFAULT_FLAGS_DEFAULT);
         
         for (Entry<String, Object> node : options.entrySet()) {
@@ -103,16 +97,16 @@ public class WorldGenerator extends ChunkGenerator {
         plotworld.PLOT_BIOME = config.getString("worlds."+world+".plot_biome");
         plotworld.MAIN_BLOCK = config.getStringList("worlds."+world+".plot_filling").toArray(new String[0]);
         plotworld.TOP_BLOCK = config.getStringList("worlds."+world+".top_floor").toArray(new String[0]);
-        plotworld.WALL_BLOCK = config.getString("worlds."+world+".wall_block");
-        plotworld.ROAD_WIDTH = config.getInt("worlds."+world+".road_width");
-        plotworld.ROAD_HEIGHT = config.getInt("worlds."+world+".road_height");
-        plotworld.ROAD_BLOCK = config.getString("worlds."+world+".road_block");
+        plotworld.WALL_BLOCK = config.getString("worlds."+world+".wall.block");
+        plotworld.ROAD_WIDTH = config.getInt("worlds."+world+".road.width");
+        plotworld.ROAD_HEIGHT = config.getInt("worlds."+world+".road.height");
+        plotworld.ROAD_BLOCK = config.getString("worlds."+world+".road.block");
 //        plotworld.ROAD_STRIPES = config.getInt("worlds."+world+".road_stripes");
-        plotworld.WALL_FILLING = config.getString("worlds."+world+".wall_filling");
-        plotworld.WALL_HEIGHT = config.getInt("worlds."+world+".wall_height");
+        plotworld.WALL_FILLING = config.getString("worlds."+world+".wall.filling");
+        plotworld.WALL_HEIGHT = config.getInt("worlds."+world+".wall.height");
         plotworld.PLOT_CHAT = config.getBoolean("worlds."+world+".plot_chat");
-        plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds."+world+".schematic_on_claim");
-        plotworld.SCHEMATIC_FILE = config.getString("worlds."+world+".schematic_file");
+        plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds."+world+".schematic.on_claim");
+        plotworld.SCHEMATIC_FILE = config.getString("worlds."+world+".schematic.file");
         
         String[] default_flags_string = config.getStringList("worlds."+world+".default_flags").toArray(new String[0]);
         Flag[] default_flags = new Flag[default_flags_string.length];
