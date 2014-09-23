@@ -676,13 +676,15 @@ public class PlotMain extends JavaPlugin {
                     @Override
                     public void run() {
                         for (String w: getPlotWorlds()) {
-                            World world = Bukkit.getWorld(w);
+                            World world = Bukkit.getServer().getWorld(w);
                              try {
                                 if(world.getLoadedChunks().length < 1) {
                                     continue;
                                 }
                                 for (Chunk chunk : world.getLoadedChunks()) {
-                                    for (Entity entity : chunk.getEntities()){
+                                    Entity[] entities = chunk.getEntities();
+                                    for (int i = entities.length-1; i>=0;i--){
+                                        Entity entity = entities[i];
                                         if (entity.getType() == EntityType.PLAYER)
                                             continue;
                                         location = entity.getLocation();
@@ -716,6 +718,10 @@ public class PlotMain extends JavaPlugin {
                 config.set(node.getKey(), node.getValue());
             }
         }
+        Web.ENABLED = config.getBoolean("web.enabled");
+        Web.PORT = config.getInt("web.port");
+        Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
+        
         for (String node:config.getConfigurationSection("worlds").getKeys(false)) {
             World world = Bukkit.getWorld(node);
             if (world==null) {

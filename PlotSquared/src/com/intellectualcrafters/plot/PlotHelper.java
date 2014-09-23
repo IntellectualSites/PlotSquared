@@ -447,7 +447,7 @@ public class PlotHelper {
         PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
         World world = requester.getWorld();
-        Location pos1 = getPlotBottomLoc(world, plot.id);
+        Location pos1 = getPlotBottomLoc(world, plot.id).add(1,0,1);
         Location pos2 = getPlotTopLoc(world, plot.id);
         SetBlockFast setBlockClass = null;
         
