@@ -328,7 +328,7 @@ public class DBFunc {
                     stmt.close();
                 } catch(SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Could not set weather for plot " + plot.id);
+                    Logger.add(LogLevel.WARNING, "Could not set flag for plot " + plot.id);
                 }
             }
         });

@@ -197,5 +197,12 @@ public class PlotWorld {
      * Default schematic file: 'null'
      */
     public static String SCHEMATIC_FILE_DEFAULT = "null";
-    
+    /**
+     * default flags
+     */
+    public Flag[] DEFAULT_FLAGS;
+    /**
+     * Default default flags
+     */
+    public static String[] DEFAULT_FLAGS_DEFAULT = new String[] {};
 }

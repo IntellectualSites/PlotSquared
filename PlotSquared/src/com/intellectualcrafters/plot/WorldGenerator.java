@@ -84,9 +84,9 @@ public class WorldGenerator extends ChunkGenerator {
 //        options.put("worlds."+world+".road_stripes", ROAD_STRIPES_DEFAULT);
         options.put("worlds."+world+".wall_filling", WALL_FILLING_DEFAULT);
         options.put("worlds."+world+".wall_height", WALL_HEIGHT_DEFAULT);
-        
         options.put("worlds."+world+".schematic_on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("worlds."+world+".schematic_file", SCHEMATIC_FILE_DEFAULT);
+        options.put("worlds."+world+".default_flags", DEFAULT_FLAGS_DEFAULT);
         
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -111,9 +111,20 @@ public class WorldGenerator extends ChunkGenerator {
         plotworld.WALL_FILLING = config.getString("worlds."+world+".wall_filling");
         plotworld.WALL_HEIGHT = config.getInt("worlds."+world+".wall_height");
         plotworld.PLOT_CHAT = config.getBoolean("worlds."+world+".plot_chat");
-        
         plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds."+world+".schematic_on_claim");
         plotworld.SCHEMATIC_FILE = config.getString("worlds."+world+".schematic_file");
+        
+        String[] default_flags_string = config.getStringList("worlds."+world+".default_flags").toArray(new String[0]);
+        Flag[] default_flags = new Flag[default_flags_string.length];
+        for (int i = 0; i < default_flags.length; i++) {
+            String current = default_flags_string[i];
+            if (current.contains(","))
+                default_flags[i] = new Flag(current.split(",")[0], current.split(",")[1]);
+            else
+                default_flags[i] = new Flag(current, "");
+        }
+        plotworld.DEFAULT_FLAGS = default_flags;
+        
         PlotMain.addPlotWorld(world, plotworld);
         
         plotsize = plotworld.PLOT_WIDTH;
