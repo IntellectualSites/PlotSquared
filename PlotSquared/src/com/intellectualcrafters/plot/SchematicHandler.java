@@ -1,8 +1,11 @@
 package com.intellectualcrafters.plot;
 
 import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.CuboidClipboard;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import org.bukkit.Location;
-import org.bukkit.World;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,23 +19,21 @@ import java.util.zip.GZIPInputStream;
 public class SchematicHandler {
 
     @SuppressWarnings("deprecation")
-    public boolean paste(Location location, Schematic schematic) {
+    public boolean paste(Location location, Schematic schematic, Plot plot){
         if(schematic == null) {
             PlotMain.sendConsoleSenderMessage("Schematic == null :|");
             return false;
         }
-
-        Dimension dimension = schematic.getSchematicDimension();
-        DataCollection[] collection = schematic.getBlockCollection();
-        World world = location.getWorld();
-
-        for(int x = 0; x < dimension.getX(); x++) {
-            for(int y = 0; y < dimension.getY(); y++) {
-                for(int z = 0; z < dimension.getZ(); z++) {
-                    DataCollection current = collection[getCurrent(x, y, z, dimension)];
-                    (new Location(world, location.getBlockX() + x, location.getBlockY() + y, location.getBlockZ() + z).getBlock()).setTypeIdAndData(current.getBlock(), current.getData(), true);
-                }
-            }
+        try {
+            EditSession session = new EditSession(new BukkitWorld(location.getWorld()), 999999999);
+            CuboidClipboard clipboard = CuboidClipboard.loadSchematic(schematic.getFile());
+            Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
+            Location l2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
+            PlotWorld plotWorld = PlotMain.getWorldSettings(plot.getWorld());
+            Vector v1 = new Vector(l1.getBlockX() + 1, plotWorld.PLOT_HEIGHT + 2, l1.getBlockZ() + 1);
+            clipboard.paste(session, v1, true);
+        } catch(Exception e) {
+            return false;
         }
         return true;
     }
@@ -90,7 +91,7 @@ public class SchematicHandler {
                 collection[x] = new DataCollection(blocks[x], d[x]);
             }
 
-            schematic = new Schematic(collection, dimension);
+            schematic = new Schematic(collection, dimension, file);
         } catch(Exception e) {
             e.printStackTrace();
             return null;
@@ -103,13 +104,19 @@ public class SchematicHandler {
         return (x * dimension.getX()) + (y * dimension.getY()) + (z * dimension.getZ());
     }
 
-    public class Schematic {
+    public static class Schematic {
         private DataCollection[] blockCollection;
         private Dimension schematicDimension;
+        private File file;
 
-        public Schematic(DataCollection[] blockCollection, Dimension schematicDimension) {
+        public Schematic(DataCollection[] blockCollection, Dimension schematicDimension, File file) {
             this.blockCollection = blockCollection;
             this.schematicDimension = schematicDimension;
+            this.file = file;
+        }
+
+        public File getFile() {
+            return this.file;
         }
 
         public Dimension getSchematicDimension() {

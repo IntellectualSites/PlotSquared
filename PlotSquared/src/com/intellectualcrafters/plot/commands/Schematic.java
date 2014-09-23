@@ -1,10 +1,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.SchematicHandler;
-import com.intellectualcrafters.plot.Settings;
-
 import org.bukkit.entity.Player;
 
 public class Schematic extends SubCommand {
@@ -21,14 +20,34 @@ public class Schematic extends SubCommand {
             return true;
         }
         String arg = args[0];
+        String file;
+        SchematicHandler.Schematic schematic;
         switch(arg) {
+            case "paste":
+                if(args.length < 2) {
+                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+                    break;
+                }
+                if(!PlayerFunctions.isInPlot(plr)) {
+                    sendMessage(plr, C.NOT_IN_PLOT);
+                    break;
+                }
+                file = args[1];
+                schematic = new SchematicHandler().getSchematic(file);
+                boolean s = new SchematicHandler().paste(plr.getLocation(), schematic, PlayerFunctions.getCurrentPlot(plr));
+                if(s) {
+                    sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
+                } else {
+                    sendMessage(plr, C.SCHEMATIC_PASTE_FAILED);
+                }
+                break;
             case "test":
                 if(args.length < 2) {
                     sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
                     break;
                 }
-                String file = args[1];
-                SchematicHandler.Schematic schematic = new SchematicHandler().getSchematic(file);
+                file = args[1];
+                schematic = new SchematicHandler().getSchematic(file);
                 if(schematic == null) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
                     break;

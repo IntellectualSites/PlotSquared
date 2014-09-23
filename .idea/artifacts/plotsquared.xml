@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="plotsquared">
-    <output-path>$PROJECT_DIR$/out/artifacts/plotsquared</output-path>
-    <root id="archive" name="plotsquared.jar">
-      <element id="module-output" name="PlotSquared" />
-    </root>
-  </artifact>
-</component>

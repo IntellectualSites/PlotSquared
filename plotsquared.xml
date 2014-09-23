@@ -135,24 +135,24 @@
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.plotsquared" value="${basedir}/out/artifacts/plotsquared"/>
+    <property name="artifact.output.plotsquared__" value="${basedir}/out/plotsquared"/>
     <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.plotsquared.jar" value="${artifacts.temp.dir}/plotsquared.jar"/>
+    <property name="temp.jar.path.plotsquared__.jar" value="${artifacts.temp.dir}/plotsquared__.jar"/>
   </target>
   
-  <target name="artifact.plotsquared" depends="init.artifacts, compile.module.plotsquared" description="Build &#39;plotsquared&#39; artifact">
-    <property name="artifact.temp.output.plotsquared" value="${artifacts.temp.dir}/plotsquared"/>
-    <mkdir dir="${artifact.temp.output.plotsquared}"/>
-    <jar destfile="${temp.jar.path.plotsquared.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+  <target name="artifact.plotsquared__" depends="init.artifacts, compile.module.plotsquared" description="Build &#39;plotsquared__&#39; artifact">
+    <property name="artifact.temp.output.plotsquared__" value="${artifacts.temp.dir}/plotsquared__"/>
+    <mkdir dir="${artifact.temp.output.plotsquared__}"/>
+    <jar destfile="${temp.jar.path.plotsquared__.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset dir="${plotsquared.output.dir}"/>
     </jar>
-    <copy file="${temp.jar.path.plotsquared.jar}" tofile="${artifact.temp.output.plotsquared}/plotsquared.jar"/>
+    <copy file="${temp.jar.path.plotsquared__.jar}" tofile="${artifact.temp.output.plotsquared__}/plotsquared__.jar"/>
   </target>
   
-  <target name="build.all.artifacts" depends="artifact.plotsquared" description="Build all artifacts">
-    <mkdir dir="${artifact.output.plotsquared}"/>
-    <copy todir="${artifact.output.plotsquared}">
-      <fileset dir="${artifact.temp.output.plotsquared}"/>
+  <target name="build.all.artifacts" depends="artifact.plotsquared__" description="Build all artifacts">
+    <mkdir dir="${artifact.output.plotsquared__}"/>
+    <copy todir="${artifact.output.plotsquared__}">
+      <fileset dir="${artifact.temp.output.plotsquared__}"/>
     </copy>
     
     <!-- Delete temporary files -->

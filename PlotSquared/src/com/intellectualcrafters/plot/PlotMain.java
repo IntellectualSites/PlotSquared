@@ -326,6 +326,27 @@ public class PlotMain extends JavaPlugin {
         }
     }
 
+
+    private void setupLogger() {
+        File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
+        if (!log.exists()) {
+            try {
+                if (!new File(getMain().getDataFolder() + File.separator + "logs").mkdirs()) {
+                    sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create logs folder. Do it manually.");
+                }
+                if (log.createNewFile()) {
+                    FileWriter writer = new FileWriter(log);
+                    writer.write("Created at: " + new Date().toString() + "\n\n\n");
+                    writer.close();
+                }
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        }
+        Logger.setup(log);
+        Logger.add(LogLevel.GENERAL, "Logger enabled");
+    }
     /**
      * On Load.
      * TODO: Load updates async
@@ -333,26 +354,8 @@ public class PlotMain extends JavaPlugin {
     @Override
     @SuppressWarnings("deprecation")
     public void onEnable() {
-        {
-            File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
-            if (!log.exists()) {
-                try {
-                    if (!new File(getMain().getDataFolder() + File.separator + "logs").mkdirs()) {
-                        sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create logs folder. Do it manually.");
-                    }
-                    if (log.createNewFile()) {
-                        FileWriter writer = new FileWriter(log);
-                        writer.write("Created at: " + new Date().toString() + "\n\n\n");
-                        writer.close();
-                    }
-                } catch (IOException e) {
+        setupLogger();
 
-                    e.printStackTrace();
-                }
-            }
-            Logger.setup(log);
-            Logger.add(LogLevel.GENERAL, "Logger enabled");
-        }
         configs();
 
         // TODO make this configurable
@@ -466,8 +469,13 @@ public class PlotMain extends JavaPlugin {
                 100L, 1L);
 
         if(Web.ENABLED) {
-            sendConsoleSenderMessage("This is not yet implemented...");
+            sendConsoleSenderMessage(C.PREFIX.s() + "This is not yet implemented...");
         }
+    }
+
+
+    private void options(boolean verbose) {
+
     }
 
     /**
@@ -510,7 +518,11 @@ public class PlotMain extends JavaPlugin {
      * @param string message
      */
     public static void sendConsoleSenderMessage(String string) {
-        getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
+        if(getMain().getServer().getConsoleSender() == null) {
+            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
+        } else {
+            getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
+        }
     }
 
     public static boolean teleportPlayer(Player player, Location from, Plot plot) {
@@ -640,10 +652,6 @@ public class PlotMain extends JavaPlugin {
             Settings.DB.DATABASE = storage.getString("mysql_database");
         }
         {
-            Settings.Update.AUTO_UPDATE = config.getBoolean("auto_update");
-            
-            
-            
             //Web
             Web.ENABLED = config.getBoolean("web.enabled");
             Web.PORT    = config.getInt("web.port");
@@ -667,7 +675,7 @@ public class PlotMain extends JavaPlugin {
                             World world = Bukkit.getWorld(w);
                              try {
                                 if(world.getLoadedChunks().length < 1) {
-                                    return;
+                                    continue;
                                 }
                                 for (Chunk chunk : world.getLoadedChunks()) {
                                     for (Entity entity : chunk.getEntities()){
@@ -711,7 +719,7 @@ public class PlotMain extends JavaPlugin {
             }
             else {
                 ChunkGenerator gen = world.getGenerator();
-                if (gen==null || gen.toString().equals("PlotSquared")) {
+                if (gen==null || !gen.toString().equals("PlotSquared")) {
                     Logger.add(LogLevel.WARNING, "World '"+node+"' in settings.yml is not using PlotSquared generator");
                 }
             }

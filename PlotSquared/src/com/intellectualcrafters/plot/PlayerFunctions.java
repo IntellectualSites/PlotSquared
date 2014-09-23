@@ -129,8 +129,6 @@ public class PlayerFunctions {
     			return plots.get(id);
     		}
 		}
-		else {
-		}
 		return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
 
 	}
