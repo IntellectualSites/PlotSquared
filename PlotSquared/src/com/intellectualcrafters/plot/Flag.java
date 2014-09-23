@@ -24,6 +24,9 @@ public class Flag {
     }
     @Override
     public String toString() {
+        if (this.value.equals("")) {
+            return this.key;
+        }
         return this.key+":"+this.value;
     }
     @Override

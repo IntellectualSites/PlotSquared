@@ -293,8 +293,13 @@ public class DBFunc {
                     flags_string = ((String) settings.get("flags")).split(",");
                 Flag[] flags = new Flag[flags_string.length];
                 for (int i = 0; i<flags.length; i++) {
-                    String[] split = flags_string[i].split(":");
-                    flags[i] = new Flag(split[0], split[1]);
+                    if (flags_string[i].contains(":")) {
+                        String[] split = flags_string[i].split(":");
+                        flags[i] = new Flag(split[0], split[1]);
+                    }
+                    else {
+                        flags[i] = new Flag(flags_string[i], "");
+                    }
                 }
                 
                 ArrayList<UUID> helpers = plotHelpers(id);

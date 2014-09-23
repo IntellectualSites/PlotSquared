@@ -84,7 +84,7 @@ public class Set extends SubCommand{
         
         if(args[0].equalsIgnoreCase("flag")) {
             if(args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY);
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(PlotMain.getFlags(),"&c, &6")));
                 return false;
             }
             if (!PlotMain.isRegisteredFlag(args[1])) {

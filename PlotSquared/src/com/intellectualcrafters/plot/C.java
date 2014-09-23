@@ -192,7 +192,7 @@ public enum C {
     /*
      * Flag
      */
-    NEED_KEY("&cYou need to specify a flag"),
+    NEED_KEY("&cPossible values: &6%values%"),
     NOT_VALID_FLAG("&cThat is not a valid flag"),
     NOT_VALID_VALUE("&cFlag values must be alphanumerical"),
     FLAG_NOT_IN_PLOT("&cThe plot does not have that flag"),

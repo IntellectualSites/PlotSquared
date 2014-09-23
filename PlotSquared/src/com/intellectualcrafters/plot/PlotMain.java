@@ -170,8 +170,10 @@ public class PlotMain extends JavaPlugin {
         ArrayList<Plot> myplots = new ArrayList<Plot>();
         for (HashMap<PlotId, Plot> world:plots.values()) {
             for (Plot plot:world.values()) {
-                if (plot.getOwner().equals(uuid)) {
-                    myplots.add(plot);
+                if (plot.hasOwner()) {
+                    if (plot.getOwner().equals(uuid)) {
+                        myplots.add(plot);
+                    }
                 }
             }
         }
@@ -187,8 +189,10 @@ public class PlotMain extends JavaPlugin {
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
         for (Plot plot:getPlots(world).values()) {
-            if (plot.getOwner().equals(uuid)) {
-                myplots.add(plot);
+            if (plot.hasOwner()) {
+                if (plot.getOwner().equals(uuid)) {
+                    myplots.add(plot);
+                }
             }
         }
         return new HashSet<Plot>(myplots);

@@ -62,7 +62,6 @@ public class PlotHelper {
         sign.setLine(1, C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
         sign.setLine(2, C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
         sign.setLine(3, C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
-        System.out.print(10);
         sign.update(true);
     }
 

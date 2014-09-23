@@ -42,7 +42,7 @@ public class Claim extends SubCommand{
             return false;
         }
         boolean result = claimPlot(plr, plot, false);
-        if (!result) {
+        if (result) {
             PlayerFunctions.sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
