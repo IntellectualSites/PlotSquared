@@ -253,7 +253,7 @@ public class PlotMain extends JavaPlugin {
     public static boolean removePlot(String world, PlotId id) {
         PlotDeleteEvent event = new PlotDeleteEvent(world,id);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if(!event.isCancelled()) {
+        if(event.isCancelled()) {
             event.setCancelled(true);
             return false;
         }
@@ -294,7 +294,7 @@ public class PlotMain extends JavaPlugin {
                                 if (PlayerFunctions.hasExpired(plot)) {
                                     PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
                                     Bukkit.getServer().getPluginManager().callEvent(event);
-                                    if(!event.isCancelled()) {
+                                    if(event.isCancelled()) {
                                         event.setCancelled(true);
                                     }
                                     else {
@@ -313,7 +313,7 @@ public class PlotMain extends JavaPlugin {
                         if (PlayerFunctions.hasExpired(plot)) {
                             PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
                             Bukkit.getServer().getPluginManager().callEvent(event);
-                            if(!event.isCancelled()) {
+                            if(event.isCancelled()) {
                                 event.setCancelled(true);
                             }
                             else {

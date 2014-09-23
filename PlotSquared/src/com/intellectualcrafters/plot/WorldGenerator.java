@@ -320,78 +320,79 @@ public class WorldGenerator extends ChunkGenerator {
         }
         
         // WALLS (16/16 cuboids)
-        
-        if (plotMinZ+1<=16) {
-            double start,end;
-            if (plotMinX+2<=16)
-                start = 16-plotMinX-1;
-            else
-                start = 16;
-            if (roadStartX-1<=16)
-                end = 16-roadStartX+1;
-            else
-                end = 0;
-            if (!(plotMinX+2<=16||roadStartX-1<=16)) {
-                start = 0;
+        if (pathsize>0) {
+            if (plotMinZ+1<=16) {
+                double start,end;
+                if (plotMinX+2<=16)
+                    start = 16-plotMinX-1;
+                else
+                    start = 16;
+                if (roadStartX-1<=16)
+                    end = 16-roadStartX+1;
+                else
+                    end = 0;
+                if (!(plotMinX+2<=16||roadStartX-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion(0, end, 1, wallheight+1, 16-plotMinZ-1, 16-plotMinZ, wallfilling);
+                setCuboidRegion(0, end, wallheight+1, wallheight+2, 16-plotMinZ-1, 16-plotMinZ, wall);
+                setCuboidRegion(start, 16, 1, wallheight+1, 16-plotMinZ-1, 16-plotMinZ, wallfilling);
+                setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-plotMinZ-1, 16-plotMinZ, wall);
             }
-            setCuboidRegion(0, end, 1, wallheight+1, 16-plotMinZ-1, 16-plotMinZ, wallfilling);
-            setCuboidRegion(0, end, wallheight+1, wallheight+2, 16-plotMinZ-1, 16-plotMinZ, wall);
-            setCuboidRegion(start, 16, 1, wallheight+1, 16-plotMinZ-1, 16-plotMinZ, wallfilling);
-            setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-plotMinZ-1, 16-plotMinZ, wall);
-        }
-        if (plotMinX+1<=16) {
-            double start,end;
-            if (plotMinZ+2<=16)
-                start = 16-plotMinZ-1;
-            else
-                start = 16;
-            if (roadStartZ-1<=16)
-                end = 16-roadStartZ+1;
-            else
-                end = 0;
-            if (!(plotMinZ+2<=16||roadStartZ-1<=16)) {
-                start = 0;
+            if (plotMinX+1<=16) {
+                double start,end;
+                if (plotMinZ+2<=16)
+                    start = 16-plotMinZ-1;
+                else
+                    start = 16;
+                if (roadStartZ-1<=16)
+                    end = 16-roadStartZ+1;
+                else
+                    end = 0;
+                if (!(plotMinZ+2<=16||roadStartZ-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion( 16-plotMinX-1, 16-plotMinX, 1, wallheight+1,0, end, wallfilling);
+                setCuboidRegion( 16-plotMinX-1, 16-plotMinX,wallheight+1, wallheight+2, 0, end, wall);
+                setCuboidRegion(16-plotMinX-1, 16-plotMinX, 1, wallheight+1, start, 16, wallfilling);
+                setCuboidRegion( 16-plotMinX-1, 16-plotMinX, wallheight+1, wallheight+2,start, 16, wall);
             }
-            setCuboidRegion( 16-plotMinX-1, 16-plotMinX, 1, wallheight+1,0, end, wallfilling);
-            setCuboidRegion( 16-plotMinX-1, 16-plotMinX,wallheight+1, wallheight+2, 0, end, wall);
-            setCuboidRegion(16-plotMinX-1, 16-plotMinX, 1, wallheight+1, start, 16, wallfilling);
-            setCuboidRegion( 16-plotMinX-1, 16-plotMinX, wallheight+1, wallheight+2,start, 16, wall);
-        }
-        if (roadStartZ<=16&&roadStartZ>0) {
-            double start,end;
-            if (plotMinX+1<=16)
-                start = 16-plotMinX;
-            else
-                start = 16;
-            if (roadStartX<=16)
-                end = 16-roadStartX;
-            else
-                end = 0;
-            if (!(plotMinX+1<=16||roadStartX<=16)) {
-                start = 0;
+            if (roadStartZ<=16&&roadStartZ>0) {
+                double start,end;
+                if (plotMinX+1<=16)
+                    start = 16-plotMinX;
+                else
+                    start = 16;
+                if (roadStartX<=16)
+                    end = 16-roadStartX;
+                else
+                    end = 0;
+                if (!(plotMinX+1<=16||roadStartX<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion(0, end, 1, wallheight+1, 16-roadStartZ, 16-roadStartZ+1, wallfilling);
+                setCuboidRegion(0, end, wallheight+1, wallheight+2, 16-roadStartZ, 16-roadStartZ+1, wall);
+                setCuboidRegion(start, 16, 1, wallheight+1, 16-roadStartZ, 16-roadStartZ+1, wallfilling);
+                setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-roadStartZ, 16-roadStartZ+1, wall);
             }
-            setCuboidRegion(0, end, 1, wallheight+1, 16-roadStartZ, 16-roadStartZ+1, wallfilling);
-            setCuboidRegion(0, end, wallheight+1, wallheight+2, 16-roadStartZ, 16-roadStartZ+1, wall);
-            setCuboidRegion(start, 16, 1, wallheight+1, 16-roadStartZ, 16-roadStartZ+1, wallfilling);
-            setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-roadStartZ, 16-roadStartZ+1, wall);
-        }
-        if (roadStartX<=16&&roadStartX>0) {
-            double start,end;
-            if (plotMinZ+1<=16)
-                start = 16-plotMinZ;
-            else
-                start = 16;
-            if (roadStartZ+1<=16)
-                end = 16-roadStartZ+1;
-            else
-                end = 0;
-            if (!(plotMinZ+1<=16||roadStartZ+1<=16)) {
-                start = 0;
+            if (roadStartX<=16&&roadStartX>0) {
+                double start,end;
+                if (plotMinZ+1<=16)
+                    start = 16-plotMinZ;
+                else
+                    start = 16;
+                if (roadStartZ+1<=16)
+                    end = 16-roadStartZ+1;
+                else
+                    end = 0;
+                if (!(plotMinZ+1<=16||roadStartZ+1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion( 16-roadStartX, 16-roadStartX+1, 1, wallheight+1,0, end, wallfilling);
+                setCuboidRegion( 16-roadStartX, 16-roadStartX+1,wallheight+1, roadheight+2,0, end,  wall);
+                setCuboidRegion( 16-roadStartX, 16-roadStartX+1, 1, wallheight+1, start, 16,wallfilling);
+                setCuboidRegion( 16-roadStartX, 16-roadStartX+1,wallheight+1, wallheight+2, start, 16, wall);
             }
-            setCuboidRegion( 16-roadStartX, 16-roadStartX+1, 1, wallheight+1,0, end, wallfilling);
-            setCuboidRegion( 16-roadStartX, 16-roadStartX+1,wallheight+1, roadheight+2,0, end,  wall);
-            setCuboidRegion( 16-roadStartX, 16-roadStartX+1, 1, wallheight+1, start, 16,wallfilling);
-            setCuboidRegion( 16-roadStartX, 16-roadStartX+1,wallheight+1, wallheight+2, start, 16, wall);
         }
         return result;
     }

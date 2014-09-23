@@ -103,7 +103,7 @@ public class Set extends SubCommand{
                 Flag flag = plot.settings.getFlag(args[1].toLowerCase());
                 PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag,plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
-                if(!event.isCancelled()) {
+                if(event.isCancelled()) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
                     event.setCancelled(true);
                     return false;
@@ -119,7 +119,7 @@ public class Set extends SubCommand{
                 Flag flag = new Flag(args[1], value);
                 PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
-                if(!event.isCancelled()) {
+                if(event.isCancelled()) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
                     event.setCancelled(true);
                     return false;
