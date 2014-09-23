@@ -96,7 +96,9 @@ public class PlotAPI {
 	}
     /**
      * Get a plot based on the ID
-     * @param id
+     * @param world
+     * @param x
+     * @param z
      * @return plot, null if ID is wrong
      */
     public Plot getPlot(World world, int x, int z) {
@@ -152,7 +154,7 @@ public class PlotAPI {
     }
     /**
      * Get all plots for the world
-     * @param World to get plots of
+     * @param world to get plots of
      * @return Plot[] - array of plot objects in world
      */
     public Plot[] getPlots(World world) {
