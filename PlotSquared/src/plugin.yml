@@ -17,5 +17,5 @@ permissions:
     default: op
   plots.admin:
     default: op
-    plots.worldedit.bypass:
+  plots.worldedit.bypass:
     default: false

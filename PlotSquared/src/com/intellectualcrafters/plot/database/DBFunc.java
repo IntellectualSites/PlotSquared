@@ -8,29 +8,18 @@
  */
 
 package com.intellectualcrafters.plot.database;
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.Logger;
+import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.Logger.LogLevel;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.intellectualcrafters.plot.PlotMain.connection;
@@ -102,20 +91,21 @@ public class DBFunc {
             "`timestamp` timestamp not null DEFAULT CURRENT_TIMESTAMP," +
             "PRIMARY KEY (`id`)" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
-        
-        
+
         stmt.addBatch(
             "CREATE TABLE IF NOT EXISTS `plot_helpers` (" +
             "`plot_plot_id` int(11) NOT NULL," +
             "`user_uuid` varchar(40) NOT NULL" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );
+
         stmt.addBatch(
                 "CREATE TABLE IF NOT EXISTS `plot_denied` (" +
                 "`plot_plot_id` int(11) NOT NULL," +
                 "`user_uuid` varchar(40) NOT NULL" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );
+
         stmt.addBatch(
             "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
             "  `plot_plot_id` INT(11) NOT NULL," +
@@ -131,9 +121,11 @@ public class DBFunc {
             "  UNIQUE KEY `unique_alias` (`alias`)" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );
+
         stmt.addBatch(
             "ALTER TABLE `plot_settings` ADD CONSTRAINT `plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `plot` (`id`) ON DELETE CASCADE"
         );
+
         stmt.executeBatch();
         stmt.clearBatch();
         stmt.close();
@@ -227,12 +219,33 @@ public class DBFunc {
         });
     }
 
+    public static int getId(String world, PlotId id2) {
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement("SELECT `id` FROM `plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
+            stmt.setInt(1, id2.x);
+            stmt.setInt(2, id2.y);
+            stmt.setString(3, world);
+            ResultSet r = stmt.executeQuery();
+            int id = Integer.MAX_VALUE;
+            while (r.next()) {
+                id = r.getInt("id");
+            }
+            stmt.close();
+            return id;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Integer.MAX_VALUE;
+    }
+
+
     /**
      * Get a plot id
      * @param plot_id
      * @return
      */
-    public static int getId(String world, PlotId id2) {
+    /*public static int getId(String world, PlotId id2) {
         Statement stmt = null;
         try {
             stmt = connection.createStatement();
@@ -247,7 +260,7 @@ public class DBFunc {
             e.printStackTrace();
         }
         return Integer.MAX_VALUE;
-    }
+    }*/
 
     /**
      *
@@ -435,10 +448,11 @@ public class DBFunc {
      */
     public static HashMap<String, Object> getSettings(int id) {
         HashMap<String, Object> h = new HashMap<String, Object>();
-        Statement stmt = null;
+        PreparedStatement stmt = null;
         try {
-            stmt = connection.createStatement();
-            ResultSet r = stmt.executeQuery("SELECT * FROM `plot_settings` WHERE `plot_plot_id` = " + id);
+            stmt = connection.prepareStatement("SELECT * FROM `plot_settings` WHERE `plot_plot_id` = ?");
+            stmt.setInt(1, id);
+            ResultSet r = stmt.executeQuery();
             String var;
             Object val;
             while(r.next()) {

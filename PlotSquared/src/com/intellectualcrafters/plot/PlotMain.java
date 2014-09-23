@@ -267,7 +267,6 @@ public class PlotMain extends JavaPlugin {
     /**
      * Replace the plot object with an updated version
      *
-     * @param id   plot Id
      * @param plot plot object
      */
     public static void updatePlot(Plot plot) {
@@ -673,8 +672,16 @@ public class PlotMain extends JavaPlugin {
                     Location location;
                     long ticked = 0l;
                     long error = 0l;
+                    {
+                        sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
+                    }
                     @Override
                     public void run() {
+                        if(ticked > 36000l) {
+                            ticked = 0l;
+                            sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Error-count: " + error);
+                            error = 0l;
+                        }
                         for (String w: getPlotWorlds()) {
                             World world = Bukkit.getWorld(w);
                              try {
