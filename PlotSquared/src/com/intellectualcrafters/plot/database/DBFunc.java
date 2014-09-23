@@ -8,6 +8,7 @@
  */
 
 package com.intellectualcrafters.plot.database;
+
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import org.bukkit.OfflinePlayer;
@@ -22,14 +23,13 @@ import java.util.UUID;
 import static com.intellectualcrafters.plot.PlotMain.connection;
 
 /**
- * 
  * @author Citymonstret
- *
  */
 public class DBFunc {
 
     /**
      * Set Plot owner
+     *
      * @param plot
      * @param uuid
      */
@@ -44,7 +44,7 @@ public class DBFunc {
                     statement.setInt(3, plot.id.y);
                     statement.executeUpdate();
                     statement.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.DANGER, "Could not set owner for plot " + plot.id);
                 }
@@ -54,6 +54,7 @@ public class DBFunc {
 
     /**
      * Create a plot
+     *
      * @param plot
      */
     public static void createPlot(Plot plot) {
@@ -74,59 +75,86 @@ public class DBFunc {
 
     /**
      * Create tables
+     *
      * @throws SQLException
      */
-    public static void createTables() throws SQLException{
+    public static void createTables(String database) throws SQLException {
+        boolean mysql = database.equals("mysql");
+
         Statement stmt = connection.createStatement();
-        stmt.addBatch(
-            "CREATE TABLE IF NOT EXISTS `plot` (" +
-            "`id` int(11) NOT NULL AUTO_INCREMENT," +
-            "`plot_id_x` int(11) NOT NULL," +
-            "`plot_id_z` int(11) NOT NULL," +
-            "`owner` varchar(45) NOT NULL," +
-            "`world` varchar(45) NOT NULL," +
-            "`timestamp` timestamp not null DEFAULT CURRENT_TIMESTAMP," +
-            "PRIMARY KEY (`id`)" +
-            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
 
-        stmt.addBatch(
-            "CREATE TABLE IF NOT EXISTS `plot_helpers` (" +
-            "`plot_plot_id` int(11) NOT NULL," +
-            "`user_uuid` varchar(40) NOT NULL" +
-            ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
-        );
+        if (mysql) {
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot` (" +
+                            "`id` INT(11) NOT NULL AUTO_INCREMENT," +
+                            "`plot_id_x` INT(11) NOT NULL," +
+                            "`plot_id_z` INT(11) NOT NULL," +
+                            "`owner` VARCHAR(45) NOT NULL," +
+                            "`world` VARCHAR(45) NOT NULL," +
+                            "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                            "PRIMARY KEY (`id`)" +
+                            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_denied` (" +
+                            "`plot_plot_id` INT(11) NOT NULL," +
+                            "`user_uuid` VARCHAR(40) NOT NULL" +
+                            ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
+            );
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
+                            "  `plot_plot_id` INT(11) NOT NULL," +
+                            "  `biome` VARCHAR(45) DEFAULT 'FOREST'," +
+                            "  `rain` INT(1) DEFAULT 0," +
+                            "  `custom_time` TINYINT(1) DEFAULT '0'," +
+                            "  `time` INT(11) DEFAULT '8000'," +
+                            "  `deny_entry` TINYINT(1) DEFAULT '0'," +
+                            "  `alias` VARCHAR(50) DEFAULT NULL," +
+                            "  `flags` VARCHAR(512) DEFAULT NULL," +
+                            "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," +
+                            "  PRIMARY KEY (`plot_plot_id`)," +
+                            "  UNIQUE KEY `unique_alias` (`alias`)" +
+                            ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
+            );
+            stmt.addBatch(
+                    "ALTER TABLE `plot_settings` ADD CONSTRAINT `plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `plot` (`id`) ON DELETE CASCADE"
+            );
 
-        stmt.addBatch(
-                "CREATE TABLE IF NOT EXISTS `plot_denied` (" +
-                "`plot_plot_id` int(11) NOT NULL," +
-                "`user_uuid` varchar(40) NOT NULL" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
-        );
-
-        stmt.addBatch(
-            "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
-            "  `plot_plot_id` INT(11) NOT NULL," +
-            "  `biome` VARCHAR(45) DEFAULT 'FOREST'," +
-            "  `rain` INT(1) DEFAULT 0," +
-            "  `custom_time` TINYINT(1) DEFAULT '0'," +
-            "  `time` INT(11) DEFAULT '8000'," +
-            "  `deny_entry` TINYINT(1) DEFAULT '0'," +
-            "  `alias` VARCHAR(50) DEFAULT NULL," +
-            "  `flags` VARCHAR(512) DEFAULT NULL," +
-            "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," +
-            "  PRIMARY KEY (`plot_plot_id`)," +
-            "  UNIQUE KEY `unique_alias` (`alias`)" +
-            ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
-        );
-
-        stmt.addBatch(
-            "ALTER TABLE `plot_settings` ADD CONSTRAINT `plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `plot` (`id`) ON DELETE CASCADE"
-        );
+        } else {
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot` (" +
+                            "`id` INTEGER(11) PRIMARY KEY," +
+                            "`plot_id_x` INT(11) NOT NULL," +
+                            "`plot_id_z` INT(11) NOT NULL," +
+                            "`owner` VARCHAR(45) NOT NULL," +
+                            "`world` VARCHAR(45) NOT NULL," +
+                            "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+                    );
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_denied` (" +
+                            "`plot_plot_id` INT(11) NOT NULL," +
+                            "`user_uuid` VARCHAR(40) NOT NULL" +
+                    ")"
+            );
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
+                            "  `plot_plot_id` INT(11) NOT NULL," +
+                            "  `biome` VARCHAR(45) DEFAULT 'FOREST'," +
+                            "  `rain` INT(1) DEFAULT 0," +
+                            "  `custom_time` TINYINT(1) DEFAULT '0'," +
+                            "  `time` INT(11) DEFAULT '8000'," +
+                            "  `deny_entry` TINYINT(1) DEFAULT '0'," +
+                            "  `alias` VARCHAR(50) DEFAULT NULL," +
+                            "  `flags` VARCHAR(512) DEFAULT NULL," +
+                            "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," +
+                            "  PRIMARY KEY (`plot_plot_id`)" +
+                            ")"
+            );
+        }
 
         stmt.executeBatch();
         stmt.clearBatch();
         stmt.close();
-        
+
         /**
          * Adding missing columns (for older versions)
          *  + get current columns (continue if they do not match the current number of columns)
@@ -134,8 +162,8 @@ public class DBFunc {
          *  - create column (plot_id_x,plot_id_z,world)
          *  - populate plot_id_x, plot_id_z with data from plot_id
          *  - populate world column with PlotMain.config.getString("plot_world") - which will be set from previous release;
-         */  
-        
+         */
+
         /**
          *  `plot`
          */
@@ -160,16 +188,17 @@ public class DBFunc {
 
     /**
      * Delete a plot
+     *
      * @param plot
      */
     public static void delete(final String world, final Plot plot) {
-        boolean result = PlotMain.removePlot(world,plot.id);
+        boolean result = PlotMain.removePlot(world, plot.id);
         if (result) {
             runTask(new Runnable() {
                 @Override
                 public void run() {
                     PreparedStatement stmt = null;
-                    int id = getId(world,plot.id);
+                    int id = getId(world, plot.id);
                     try {
                         stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = ?");
                         stmt.setInt(1, id);
@@ -194,6 +223,7 @@ public class DBFunc {
 
     /**
      * Create plot settings
+     *
      * @param id
      * @param plot
      */
@@ -208,7 +238,7 @@ public class DBFunc {
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
@@ -260,15 +290,14 @@ public class DBFunc {
     }*/
 
     /**
-     *
      * @return
      */
-	public static HashMap<String, HashMap<PlotId, Plot>> getPlots() {
+    public static HashMap<String, HashMap<PlotId, Plot>> getPlots() {
         try {
             DatabaseMetaData data = connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, "plot", "plot_id");
             boolean execute = rs.next();
-            if(execute) {
+            if (execute) {
                 Statement statement = connection.createStatement();
                 statement.addBatch(
                         "ALTER IGNORE TABLE `plot` ADD `plot_id_x` int(11) DEFAULT 0"
@@ -278,16 +307,16 @@ public class DBFunc {
                 );
                 statement.addBatch(
                         "UPDATE `plot` SET\n" +
-                        "    `plot_id_x` = IF(" +
-                        "        LOCATE(';', `plot_id`) > 0," +
-                        "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," +
-                        "        `plot_id`" +
-                        "    )," +
-                        "    `plot_id_z` = IF(" +
-                        "        LOCATE(';', `plot_id`) > 0," +
-                        "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," +
-                        "        NULL" +
-                        "    )"
+                                "    `plot_id_x` = IF(" +
+                                "        LOCATE(';', `plot_id`) > 0," +
+                                "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," +
+                                "        `plot_id`" +
+                                "    )," +
+                                "    `plot_id_z` = IF(" +
+                                "        LOCATE(';', `plot_id`) > 0," +
+                                "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," +
+                                "        NULL" +
+                                "    )"
                 );
                 statement.addBatch(
                         "ALTER TABLE `plot` DROP `plot_id`"
@@ -298,11 +327,11 @@ public class DBFunc {
                 statement.executeBatch();
                 statement.close();
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-	    HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<String, HashMap<PlotId, Plot>>();
-	    HashMap<String, World> worldMap = new HashMap<String, World>();
+        HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<String, HashMap<PlotId, Plot>>();
+        HashMap<String, World> worldMap = new HashMap<String, World>();
         Statement stmt = null;
         try {
             stmt = connection.createStatement();
@@ -312,30 +341,29 @@ public class DBFunc {
             Plot p;
             World w;
             while (r.next()) {
-                plot_id = new PlotId(r.getInt("plot_id_x"),r.getInt("plot_id_z"));
+                plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
                 id = r.getInt("id");
                 String worldname = r.getString("world");
                 // Quicker to get cache the UUID to the World than to convert each time.
                 HashMap<String, Object> settings = getSettings(id);
                 UUID owner = UUID.fromString(r.getString("owner"));
                 Biome plotBiome = Biome.valueOf((String) settings.get("biome"));
-                if(plotBiome == null) plotBiome = Biome.FOREST;
+                if (plotBiome == null) plotBiome = Biome.FOREST;
                 String[] flags_string;
                 if (settings.get("flags") == null)
-                    flags_string = new String[] {};
+                    flags_string = new String[]{};
                 else
                     flags_string = ((String) settings.get("flags")).split(",");
                 Flag[] flags = new Flag[flags_string.length];
-                for (int i = 0; i<flags.length; i++) {
+                for (int i = 0; i < flags.length; i++) {
                     if (flags_string[i].contains(":")) {
                         String[] split = flags_string[i].split(":");
-                        flags[i] = new Flag(split[0], split[1]);
-                    }
-                    else {
-                        flags[i] = new Flag(flags_string[i], "");
+                        flags[i] = new Flag(FlagManager.getFlag(split[0], true), split[1]);
+                    } else {
+                        flags[i] = new Flag(FlagManager.getFlag(flags_string[i], true), "");
                     }
                 }
-                
+
                 ArrayList<UUID> helpers = plotHelpers(id);
                 ArrayList<UUID> denied = plotDenied(id);
                 //boolean changeTime = ((Short) settings.get("custom_time") == 0) ? false : true;
@@ -346,17 +374,16 @@ public class DBFunc {
                 //boolean rain = Integer.parseInt(settings.get("rain").toString()) == 1 ? true : false;
                 boolean rain = false;
                 String alias = (String) settings.get("alias");
-                if(alias == null || alias.equalsIgnoreCase("NEW")) alias = "";
+                if (alias == null || alias.equalsIgnoreCase("NEW")) alias = "";
                 PlotHomePosition position = null;
-                for(PlotHomePosition plotHomePosition : PlotHomePosition.values())
-                    if(plotHomePosition.isMatching((String)settings.get("position"))) position = plotHomePosition;
-                if(position == null) position = PlotHomePosition.DEFAULT;
-                
+                for (PlotHomePosition plotHomePosition : PlotHomePosition.values())
+                    if (plotHomePosition.isMatching((String) settings.get("position"))) position = plotHomePosition;
+                if (position == null) position = PlotHomePosition.DEFAULT;
+
                 p = new Plot(plot_id, owner, plotBiome, helpers, denied, /*changeTime*/ false, time, rain, alias, position, flags, worldname);
                 if (plots.containsKey(worldname)) {
                     plots.get(worldname).put((plot_id), p);
-                }
-                else {
+                } else {
                     HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
                     map.put((plot_id), p);
                     plots.put(worldname, map);
@@ -371,11 +398,10 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param rain
      */
-	public static void setWeather(final String world, final Plot plot, final boolean rain) {
+    public static void setWeather(final String world, final Plot plot, final boolean rain) {
         plot.settings.setRain(rain);
         runTask(new Runnable() {
             @Override
@@ -387,21 +413,22 @@ public class DBFunc {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
                     stmt.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Could not set weather for plot " + plot.id);
                 }
             }
         });
     }
-	public static void setFlags(final String world, final Plot plot, final Flag[] flags) {
+
+    public static void setFlags(final String world, final Plot plot, final Flag[] flags) {
         plot.settings.setFlags(flags);
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
-        for (Flag flag:flags) {
-            if (i!=0)
+        for (Flag flag : flags) {
+            if (i != 0)
                 flag_string.append(",");
-            flag_string.append(flag.getKey()+":"+flag.getValue());
+            flag_string.append(flag.getKey() + ":" + flag.getValue());
             i++;
         }
         runTask(new Runnable() {
@@ -413,7 +440,7 @@ public class DBFunc {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
                     stmt.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Could not set flag for plot " + plot.id);
                 }
@@ -422,7 +449,6 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param alias
      */
@@ -438,7 +464,7 @@ public class DBFunc {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set alias for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -448,7 +474,6 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param r
      */
     private static void runTask(Runnable r) {
@@ -456,11 +481,10 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param position
      */
-    public static void setPosition(final String world,final Plot plot, final String position) {
+    public static void setPosition(final String world, final Plot plot, final String position) {
         plot.settings.setPosition(PlotHomePosition.valueOf(position));
         runTask(new Runnable() {
             @Override
@@ -472,7 +496,7 @@ public class DBFunc {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set position for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -481,7 +505,6 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param id
      * @return
      */
@@ -494,19 +517,19 @@ public class DBFunc {
             ResultSet r = stmt.executeQuery();
             String var;
             Object val;
-            while(r.next()) {
+            while (r.next()) {
                 var = "biome";
                 val = r.getObject(var);
-                h.put(var,val);
+                h.put(var, val);
                 var = "rain";
                 val = r.getObject(var);
-                h.put(var,val);
+                h.put(var, val);
                 var = "custom_time";
                 val = r.getObject(var);
                 h.put(var, val);
                 var = "time";
                 val = r.getObject(var);
-                h.put(var,val);
+                h.put(var, val);
                 var = "deny_entry";
                 val = r.getObject(var);
                 h.put(var, (short) 0);
@@ -520,9 +543,10 @@ public class DBFunc {
                 val = r.getObject(var);
                 h.put(var, val);
             }
-            stmt.close();;
-        } catch(SQLException e) {
-          Logger.add(LogLevel.WARNING, "Failed to load settings for plot: " + id);
+            stmt.close();
+            ;
+        } catch (SQLException e) {
+            Logger.add(LogLevel.WARNING, "Failed to load settings for plot: " + id);
             e.printStackTrace();
         }
         return h;
@@ -534,7 +558,6 @@ public class DBFunc {
     public static UUID everyone = UUID.fromString("1-1-3-3-7");
 
     /**
-     *
      * @param id
      * @return
      */
@@ -546,12 +569,12 @@ public class DBFunc {
             stmt.setInt(1, id);
             ResultSet r = stmt.executeQuery();
             UUID u;
-            while(r.next()) {
+            while (r.next()) {
                 u = UUID.fromString(r.getString("user_uuid"));
                 l.add(u);
             }
             stmt.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.add(LogLevel.DANGER, "Failed to load denied for plot: " + id);
             e.printStackTrace();
         }
@@ -559,35 +582,33 @@ public class DBFunc {
     }
 
     /**
-     *
-      * @param id
+     * @param id
      * @return
      */
-	private static ArrayList<UUID> plotHelpers(int id) {
-		ArrayList<UUID> l = new ArrayList<UUID>();
-		Statement stmt = null;
-		try {
-			stmt = connection.createStatement();
-			ResultSet r = stmt.executeQuery("SELECT `user_uuid` FROM `plot_helpers` WHERE `plot_plot_id` = " + id);
-			UUID u;
-			while(r.next()) {
-				u = UUID.fromString(r.getString("user_uuid"));
-				l.add(u);
-			}
-			stmt.close();
-		} catch (SQLException e) {
-			Logger.add(LogLevel.WARNING, "Failed to load helpers for plot: " + id);
-			e.printStackTrace();
-		}
-		return l;
-	}
+    private static ArrayList<UUID> plotHelpers(int id) {
+        ArrayList<UUID> l = new ArrayList<UUID>();
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            ResultSet r = stmt.executeQuery("SELECT `user_uuid` FROM `plot_helpers` WHERE `plot_plot_id` = " + id);
+            UUID u;
+            while (r.next()) {
+                u = UUID.fromString(r.getString("user_uuid"));
+                l.add(u);
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            Logger.add(LogLevel.WARNING, "Failed to load helpers for plot: " + id);
+            e.printStackTrace();
+        }
+        return l;
+    }
 
     /**
-     *
      * @param plot
      * @param player
      */
-    public static void removeHelper(final String world,final Plot plot, final OfflinePlayer player) {
+    public static void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
         runTask(new Runnable() {
             @Override
             public void run() {
@@ -597,7 +618,7 @@ public class DBFunc {
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
                     statement.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
                 }
@@ -606,11 +627,10 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param player
      */
-    public static void setHelper(final String world,final Plot plot, final OfflinePlayer player) {
+    public static void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
         runTask(new Runnable() {
             @Override
             public void run() {
@@ -620,7 +640,7 @@ public class DBFunc {
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
                     statement.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set helper for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -629,7 +649,6 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param player
      */
@@ -643,7 +662,7 @@ public class DBFunc {
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
                     statement.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove denied for plot " + plot.id);
                 }
@@ -652,7 +671,6 @@ public class DBFunc {
     }
 
     /**
-     *
      * @param plot
      * @param player
      */
@@ -666,7 +684,7 @@ public class DBFunc {
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
                     statement.close();
-                } catch(SQLException e) {
+                } catch (SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set denied for plot " + plot.id);
                     e.printStackTrace();
                 }

@@ -15,6 +15,7 @@ import java.util.Random;
  */
 public class XPopulator extends BlockPopulator {
     private SetBlockFast setBlockClass = null;
+
     public XPopulator() {
         try {
             setBlockClass = new SetBlockFast();

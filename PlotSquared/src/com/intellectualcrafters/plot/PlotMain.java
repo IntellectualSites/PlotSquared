@@ -10,7 +10,6 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -18,14 +17,13 @@ import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
 import me.confuser.barapi.BarAPI;
-
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -354,16 +352,38 @@ public class PlotMain extends JavaPlugin {
         Logger.setup(log);
         Logger.add(LogLevel.GENERAL, "Logger enabled");
     }
+
+    private static double getJavaVersion() {
+        return Double.parseDouble(System.getProperty("java.specification.version"));
+    }
+
     /**
      * On Load.
-     * TODO: Load updates async
      */
     @Override
     @SuppressWarnings("deprecation")
     public void onEnable() {
         setupLogger();
 
+        //Check for outdated java version.
+        if(getJavaVersion() < 1.7) {
+            sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         configs();
+
+        if(Settings.METRICS) {
+            try {
+                Metrics metrics = new Metrics(this);
+                metrics.start();
+                sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
+            } catch(Exception e) {
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
+            }
+        }
 
         // TODO make this configurable
         PlotWorld.BLOCKS = new ArrayList<>(Arrays.asList(new Material[]{
@@ -416,7 +436,7 @@ public class PlotMain extends JavaPlugin {
                     DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, "plot", null);
                     if(!res.next())
-                        DBFunc.createTables();
+                        DBFunc.createTables("mysql");
                 }
             } catch (ClassNotFoundException | SQLException e) {
                 Logger.add(LogLevel.DANGER, "MySQL connection failed.");
@@ -430,6 +450,24 @@ public class PlotMain extends JavaPlugin {
             
         } else if (Settings.DB.USE_MONGO) {
             sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
+        } else if (Settings.DB.USE_SQLITE) {
+            try {
+                connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
+                {
+                    DatabaseMetaData meta = connection.getMetaData();
+                    ResultSet res = meta.getTables(null, null, "plot", null);
+                    if(!res.next())
+                        DBFunc.createTables("sqlite");
+                }
+            } catch (ClassNotFoundException | SQLException e) {
+                Logger.add(LogLevel.DANGER, "SQLite connection failed");
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
+                sendConsoleSenderMessage("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
+                e.printStackTrace();
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+            plots = DBFunc.getPlots();
         } else {
             Logger.add(LogLevel.DANGER, "No storage type is set.");
             sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
@@ -651,17 +689,20 @@ public class PlotMain extends JavaPlugin {
             e.printStackTrace();
         }
         {
-            Settings.DB.USE_MYSQL = true;
-            Settings.DB.USER = storage.getString("mysql_user");
-            Settings.DB.PASSWORD = storage.getString("mysql_password");
-            Settings.DB.HOST_NAME = storage.getString("mysql_host");
-            Settings.DB.PORT = storage.getString("mysql_port");
-            Settings.DB.DATABASE = storage.getString("mysql_database");
+            Settings.DB.USE_MYSQL = storage.getBoolean("mysql.use");
+            Settings.DB.USER = storage.getString("mysql.user");
+            Settings.DB.PASSWORD = storage.getString("mysql.password");
+            Settings.DB.HOST_NAME = storage.getString("mysql.host");
+            Settings.DB.PORT = storage.getString("mysql.port");
+            Settings.DB.DATABASE = storage.getString("mysql.database");
+            Settings.DB.USE_SQLITE = storage.getBoolean("sqlite.use");
+            Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
         }
         {
+            Settings.METRICS = config.getBoolean("metrics");
             //Web
-            Web.ENABLED = config.getBoolean("web.enabled");
-            Web.PORT    = config.getInt("web.port");
+            //Web.ENABLED = config.getBoolean("web.enabled");
+            //Web.PORT    = config.getInt("web.port");
         }
     }
 
@@ -720,10 +761,11 @@ public class PlotMain extends JavaPlugin {
     private static void setupConfig() {
         config.set("version", config_ver);
         Map<String, Object> options = new HashMap<String, Object>();
-        options.put("auto_update", false);
+        //options.put("auto_update", false);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("web.enabled", Web.ENABLED);
         options.put("web.port", Web.PORT);
+        options.put("metrics", true);
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -753,11 +795,14 @@ public class PlotMain extends JavaPlugin {
     private static void setupStorage() {
         storage.set("version", storage_ver);
         Map<String, Object> options = new HashMap<String, Object>();
-        options.put("mysql_host", "localhost");
-        options.put("mysql_port", "3306");
-        options.put("mysql_user", "root");
-        options.put("mysql_password", "password");
-        options.put("mysql_database", "plot_db");
+        options.put("mysql.use", true);
+        options.put("sqlite.use", false);
+        options.put("sqllite.db", "storage");
+        options.put("mysql.host", "localhost");
+        options.put("mysql.port", "3306");
+        options.put("mysql.user", "root");
+        options.put("mysql.password", "password");
+        options.put("mysql.database", "plot_db");
         for (Entry<String, Object> node : options.entrySet()) {
             if (!storage.contains(node.getKey())) {
                 storage.set(node.getKey(), node.getValue());

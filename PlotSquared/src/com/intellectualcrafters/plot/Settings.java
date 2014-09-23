@@ -9,11 +9,6 @@
 
 package com.intellectualcrafters.plot;
 
-import org.bukkit.Material;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Updater and DB settings
  * @author Citymonstret
@@ -21,6 +16,7 @@ import java.util.List;
  * @author Empire92
  */
 public class Settings {
+    public static boolean METRICS = true;
     /**
      * plot specific resource pack
      */
@@ -42,6 +38,7 @@ public class Settings {
 	public static class Update {
 		/**
 		 * Update plugin?
+         * @deprecated
 		 */
 		public static boolean AUTO_UPDATE = false;
 	}
@@ -58,11 +55,13 @@ public class Settings {
     	 */
     	public static class DB {
             public static boolean USE_MONGO = false; /* TODO: Implement Mongo */;
-    		    public static boolean USE_MYSQL = true;  /* NOTE: Fixed connector */
+            public static boolean USE_SQLITE = false;
+    		public static boolean USE_MYSQL = true; /* NOTE: Fixed connector */
+            public static String SQLITE_DB = "storage";
     		public static String HOST_NAME = "localhost";
     		public static String PORT = "3306";
-        		public static String DATABASE = "plot_db";
-        		public static String USER = "root";
-        		public static String PASSWORD = "password";
+        	public static String DATABASE = "plot_db";
+        	public static String USER = "root";
+        	public static String PASSWORD = "password";
     	}
 }
