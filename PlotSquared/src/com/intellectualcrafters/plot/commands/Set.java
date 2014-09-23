@@ -11,6 +11,11 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
+import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,10 +39,10 @@ public class Set extends SubCommand{
 	}
 	
 	public static String[] values = new String[] {
-		"biome", "wall", "wall_filling", "floor", "alias", "home", "rain"
+		"biome", "wall", "wall_filling", "floor", "alias", "home", "rain", "flag"
 	};
 	public static String[] aliases = new String[] {
-		"b", "w", "wf", "f", "a", "h", "r"
+		"b", "w", "wf", "f", "a", "h", "r", "fl"
 	};
 	
 	@SuppressWarnings("deprecation")
@@ -76,7 +81,58 @@ public class Set extends SubCommand{
                 return false;
             }
         }
-
+        
+        if(args[0].equalsIgnoreCase("flag")) {
+            if(args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY);
+                return false;
+            }
+            if (!PlotMain.isRegisteredFlag(args[1])) {
+                PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
+                return false;
+            }
+            if (!plr.hasPermission("plots.set.flag" + args[1].toLowerCase())) {
+                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+                return false;
+            }
+            if (args.length==2) {
+                if (!plot.settings.hasFlag(new Flag(args[1], ""))) {
+                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
+                    return false;
+                }
+                Flag flag = plot.settings.getFlag(args[1].toLowerCase());
+                PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag,plot);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if(!event.isCancelled()) {
+                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
+                    event.setCancelled(true);
+                    return false;
+                }
+                java.util.Set<Flag> newflags = plot.settings.getFlags();
+                newflags.remove(flag);
+                plot.settings.setFlags(newflags.toArray(new Flag[0]));
+                PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
+                return true;
+            }
+            try {
+                String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length)," ");
+                Flag flag = new Flag(args[1], value);
+                PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if(!event.isCancelled()) {
+                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
+                    event.setCancelled(true);
+                    return false;
+                }
+                plot.settings.addFlag(flag);
+                PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
+                return true;
+            }
+            catch (Exception e) {
+                PlayerFunctions.sendMessage(plr, "&c"+e.getMessage());
+                return false;
+            }
+        }
         if(args[0].equalsIgnoreCase("rain")) {
             if(args.length < 2) {
                 PlayerFunctions.sendMessage(plr, C.NEED_ON_OFF);

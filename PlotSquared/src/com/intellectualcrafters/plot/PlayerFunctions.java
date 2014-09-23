@@ -41,7 +41,7 @@ public class PlayerFunctions {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(plot.owner);
 		long lp = player.getLastPlayed();
 		long cu = System.currentTimeMillis();
-		return (lp - cu) > 30l; 
+		return (lp - cu) > 30l;
 	}
 
     /**

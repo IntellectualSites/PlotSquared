@@ -137,7 +137,7 @@ public enum C {
         Info
      */
     PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-	PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Denied:&6%denied%&c"),
+	PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Denied:&6%denied%&c, plot flags: &6%flags%"),
     PLOT_USER_LIST(" &6%user%&c,"),
     /*
         Generating
@@ -186,6 +186,17 @@ public enum C {
      */
     NEED_ON_OFF("&cYou need to specify a value. Possible values: &6on&c, &6off"),
     SETTING_UPDATED("&cYou successfully updated the setting"),
+    /*
+     * Flag
+     */
+    NEED_KEY("&cYou need to specify a flag"),
+    NOT_VALID_FLAG("&cThat is not a valid flag"),
+    NOT_VALID_VALUE("&cFlag values must be alphanumerical"),
+    FLAG_NOT_IN_PLOT("&cThe plot does not have that flag"),
+    FLAG_NOT_REMOVED("&cThe flag could not be removed"),
+    FLAG_NOT_ADDED("&cThe flag could not be added"),
+    FLAG_REMOVED("&6Successfully removed flag"),
+    FLAG_ADDED("&6Successfully added flag"),
     /*
         Helper
      */

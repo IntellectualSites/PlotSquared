@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -18,10 +19,13 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import me.confuser.barapi.BarAPI;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -66,6 +70,10 @@ public class PlotMain extends JavaPlugin {
     public static File translationsFile;
     public static YamlConfiguration translations;
     public static int translations_ver = 1;
+    /**
+     * list of usable flags
+     */
+    public static Set<Flag> registeredFlags = new HashSet<Flag>();
     /**
      * MySQL Object
      */
@@ -120,6 +128,22 @@ public class PlotMain extends JavaPlugin {
      */
     private static HashMap<String, PlotWorld> worlds = new HashMap<String, PlotWorld>();
 
+    public static Set<Flag> getFlags() {
+        return registeredFlags;
+    }
+    
+    public static boolean isRegisteredFlag(String arg) {
+        for (Flag flag:registeredFlags) {
+            if (flag.getKey().equalsIgnoreCase(arg))
+                return true;
+        }
+        return false;
+    }
+    
+    public static boolean registerFlag(Flag flag) {
+        return registeredFlags.add(flag);
+    }
+    
     /**
      * Get all plots
      *
@@ -132,7 +156,11 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashSet<Plot>(myplots);
     }
-    
+    /**
+     * 
+     * @param player
+     * @return
+     */
     public static Set<Plot> getPlots(Player player) {
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
@@ -145,6 +173,12 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashSet<Plot>(myplots);
     }
+    /**
+     * 
+     * @param world
+     * @param player
+     * @return
+     */
     public static Set<Plot> getPlots(World world, Player player) {
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
@@ -155,7 +189,11 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashSet<Plot>(myplots);
     }
-    
+    /**
+     * 
+     * @param world
+     * @return
+     */
     public static HashMap<PlotId, Plot> getPlots(World world) {
         if (plots.containsKey(world.getName())) {
             return plots.get(world.getName());
@@ -168,17 +206,36 @@ public class PlotMain extends JavaPlugin {
     public static String[] getPlotWorlds() {
         return (worlds.keySet().toArray(new String[0]));
     }
+    /**
+     * 
+     * @return
+     */
     public static String[] getPlotWorldsString() {
         return plots.keySet().toArray(new String[0]);
     }
+    /**
+     * 
+     * @param world
+     * @return
+     */
     public static boolean isPlotWorld(World world) {
         return (worlds.containsKey(world.getName()));
     }
+    /**
+     * 
+     * @param world
+     * @return
+     */
     public static PlotWorld getWorldSettings(World world) {
         if (worlds.containsKey(world.getName()))
             return worlds.get(world.getName());
         return null;
     }
+    /**
+     * 
+     * @param world
+     * @return
+     */
     public static PlotWorld getWorldSettings(String world) {
         if (worlds.containsKey(world))
             return worlds.get(world);
@@ -193,8 +250,15 @@ public class PlotMain extends JavaPlugin {
        return (Plot[])(plots.get(world.getName()).values().toArray(new Plot[0]));
    }
 
-    public static void removePlot(String world, PlotId id) {
+    public static boolean removePlot(String world, PlotId id) {
+        PlotDeleteEvent event = new PlotDeleteEvent(world,id);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if(!event.isCancelled()) {
+            event.setCancelled(true);
+            return false;
+        }
         plots.get(world).remove(id);
+        return true;
     }
     /**
      * Replace the plot object with an updated version
@@ -228,7 +292,14 @@ public class PlotMain extends JavaPlugin {
                                     continue;
                                 }
                                 if (PlayerFunctions.hasExpired(plot)) {
-                                    DBFunc.delete(world, plot);
+                                    PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
+                                    Bukkit.getServer().getPluginManager().callEvent(event);
+                                    if(!event.isCancelled()) {
+                                        event.setCancelled(true);
+                                    }
+                                    else {
+                                        DBFunc.delete(world, plot);
+                                    }
                                 }
                             }
                         }
@@ -240,7 +311,14 @@ public class PlotMain extends JavaPlugin {
                 if (PlotMain.plots.containsKey(world)) {
                     for (Plot plot : PlotMain.plots.get(world).values()) {
                         if (PlayerFunctions.hasExpired(plot)) {
-                            DBFunc.delete(world, plot);
+                            PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
+                            Bukkit.getServer().getPluginManager().callEvent(event);
+                            if(!event.isCancelled()) {
+                                event.setCancelled(true);
+                            }
+                            else {
+                                DBFunc.delete(world, plot);
+                            }
                         }
                     }
                 }

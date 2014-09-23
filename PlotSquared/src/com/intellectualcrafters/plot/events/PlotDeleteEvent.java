@@ -10,29 +10,37 @@
 package com.intellectualcrafters.plot.events;
 
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotId;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
  * Created by Citymonstret on 2014-08-09.
  */
-public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable{
+public class PlotDeleteEvent extends Event implements Cancellable{
     private static HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
-    private Plot plot;
+    private PlotId id;
+    private String world;
 
-    public PlayerClaimPlotEvent(Player player, Plot plot) {
-        super(player);
-        this.plot = plot;
+    public PlotDeleteEvent(String world, PlotId id) {
+        this.id = id;
+        this.world = world;
     }
     
-    public Plot getPlot() {
-        return this.plot;
+    public PlotId getPlotId() {
+        return this.id;
     }
     
+    public String getWorld() {
+        return this.world;
+    }
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

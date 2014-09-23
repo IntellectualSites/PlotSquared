@@ -8,6 +8,7 @@
  */
 
 package com.intellectualcrafters.plot.database;
+import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.Logger;
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Plot;
@@ -15,6 +16,7 @@ import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -118,6 +120,7 @@ public class DBFunc {
             "  `time` INT(11) DEFAULT '8000'," +
             "  `deny_entry` TINYINT(1) DEFAULT '0'," +
             "  `alias` VARCHAR(50) DEFAULT NULL," +
+            "  `flags` VARCHAR(512) DEFAULT NULL," +
             "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," +
             "  PRIMARY KEY (`plot_plot_id`)," +
             "  UNIQUE KEY `unique_alias` (`alias`)" +
@@ -136,31 +139,33 @@ public class DBFunc {
      * @param plot
      */
     public static void delete(final String world, final Plot plot) {
-        PlotMain.removePlot(world,plot.id);
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                PreparedStatement stmt = null;
-                int id = getId(world,plot.id);
-                try {
-                    stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = ?");
-                    stmt.setInt(1, id);
-                    stmt.executeUpdate();
-                    stmt.close();
-                    stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = ?");
-                    stmt.setInt(1, id);
-                    stmt.executeUpdate();
-                    stmt.close();
-                    stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `id` = ?");
-                    stmt.setInt(1, id);
-                    stmt.executeUpdate();
-                    stmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
+        boolean result = PlotMain.removePlot(world,plot.id);
+        if (result) {
+            runTask(new Runnable() {
+                @Override
+                public void run() {
+                    PreparedStatement stmt = null;
+                    int id = getId(world,plot.id);
+                    try {
+                        stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = ?");
+                        stmt.setInt(1, id);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = ?");
+                        stmt.setInt(1, id);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `id` = ?");
+                        stmt.setInt(1, id);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -233,6 +238,17 @@ public class DBFunc {
                 UUID owner = UUID.fromString(r.getString("owner"));
                 Biome plotBiome = Biome.valueOf((String) settings.get("biome"));
                 if(plotBiome == null) plotBiome = Biome.FOREST;
+                String[] flags_string;
+                if (settings.get("flags") == null)
+                    flags_string = new String[] {};
+                else
+                    flags_string = ((String) settings.get("flags")).split(",");
+                Flag[] flags = new Flag[flags_string.length];
+                for (int i = 0; i<flags.length; i++) {
+                    String[] split = flags_string[i].split(":");
+                    flags[i] = new Flag(split[0], split[1]);
+                }
+                
                 ArrayList<UUID> helpers = plotHelpers(id);
                 ArrayList<UUID> denied = plotDenied(id);
                 //boolean changeTime = ((Short) settings.get("custom_time") == 0) ? false : true;
@@ -249,7 +265,7 @@ public class DBFunc {
                     if(plotHomePosition.isMatching((String)settings.get("position"))) position = plotHomePosition;
                 if(position == null) position = PlotHomePosition.DEFAULT;
                 
-                p = new Plot(plot_id, owner, plotBiome, helpers, denied, /*changeTime*/ false, time, rain, alias, position, worldname);
+                p = new Plot(plot_id, owner, plotBiome, helpers, denied, /*changeTime*/ false, time, rain, alias, position, flags, worldname);
                 if (plots.containsKey(worldname)) {
                     plots.get(worldname).put((plot_id), p);
                 }
@@ -272,7 +288,7 @@ public class DBFunc {
      * @param plot
      * @param rain
      */
-    public static void setWeather(final String world, final Plot plot, final boolean rain) {
+	public static void setWeather(final String world, final Plot plot, final boolean rain) {
         plot.settings.setRain(rain);
         runTask(new Runnable() {
             @Override
@@ -281,6 +297,32 @@ public class DBFunc {
                     int weather = rain ? 1 : 0;
                     PreparedStatement stmt = connection.prepareStatement("UPDATE `plot_settings` SET `rain` = ? WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, weather);
+                    stmt.setInt(2, getId(world, plot.id));
+                    stmt.execute();
+                    stmt.close();
+                } catch(SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "Could not set weather for plot " + plot.id);
+                }
+            }
+        });
+    }
+	public static void setFlags(final String world, final Plot plot, final Flag[] flags) {
+        plot.settings.setFlags(flags);
+        final StringBuilder flag_string = new StringBuilder();
+        int i = 0;
+        for (Flag flag:flags) {
+            if (i!=0)
+                flag_string.append(",");
+            flag_string.append(flag.getKey()+":"+flag.getValue());
+            i++;
+        }
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement stmt = connection.prepareStatement("UPDATE `plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                    stmt.setString(1, flag_string.toString());
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
                     stmt.close();
@@ -384,6 +426,9 @@ public class DBFunc {
                 val = r.getObject(var);
                 h.put(var, val);
                 var = "position";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "flags";
                 val = r.getObject(var);
                 h.put(var, val);
             }

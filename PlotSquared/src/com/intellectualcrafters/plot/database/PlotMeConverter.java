@@ -87,6 +87,7 @@ public class PlotMeConverter {
                                 false,
                                 "",
                                 PlotHomePosition.DEFAULT,
+                                null,
                                 world.getName()
                         );
                         DBFunc.createPlot(pl);

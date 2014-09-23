@@ -82,7 +82,20 @@ public class PlotAPI {
 	public void sendConsoleMessage(C c) {
 		sendConsoleMessage(c.s());
 	}
-
+	/**
+	 * Register a flag for use in plots
+	 * @param flag
+	 */
+	public void registerFlag(Flag flag) {
+	    PlotMain.registerFlag(flag);
+	}
+	/**
+	 * get all the currently registered flags
+	 * @return array of Flag[]
+	 */
+	public Flag[] getRegisteredFlags() {
+	    return PlotMain.getFlags().toArray(new Flag[0]);
+	}
     /**
      * Get a plot based on the ID
      * @param id

@@ -17,6 +17,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -86,6 +87,7 @@ public class Plot implements Cloneable{
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
 		this.delete = false;
+		this.settings.setFlags(new Flag[0]);
 		this.world = world;
 	}
 	
@@ -99,7 +101,7 @@ public class Plot implements Cloneable{
 	 * @param changeTime
 	 * @param time
 	 */
-	public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, String world) {
+	public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world) {
 		this.id = id;
 		this.settings = new PlotSettings(this);
 		this.settings.setBiome(plotBiome);
@@ -113,6 +115,10 @@ public class Plot implements Cloneable{
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
 		this.delete = false;
+		if (flags!=null)
+		    this.settings.setFlags(flags);
+		else
+		    this.settings.setFlags(new Flag[0]);
 		this.world = world;
 	}
 

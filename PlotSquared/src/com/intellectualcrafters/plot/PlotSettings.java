@@ -9,6 +9,11 @@
 
 package com.intellectualcrafters.plot;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Biome;
 
 /**
@@ -32,6 +37,10 @@ public class PlotSettings {
      * plot rain
      */
     private boolean rain;
+    /**
+     * 
+     */
+    private Set<Flag> flags;
 	/**
 	 * plot time
 	 */
@@ -112,12 +121,55 @@ public class PlotSettings {
 	}
 
     /**
-     *
+     * 
+     * @param alias
      */
     public  void setAlias(String alias) {
         this.alias = alias;
     }
-
+    
+    /**
+     * 
+     * @param flag
+     */
+    public void addFlag(Flag flag) {
+        this.flags.add(flag);
+    }
+    /**
+     * 
+     * @param flags
+     */
+    public void setFlags(Flag[] flags) {
+        this.flags = new HashSet<Flag>(Arrays.asList(flags));
+    }
+    /**
+     * 
+     * @return
+     */
+    public Set<Flag> getFlags() {
+        return this.flags;
+    }
+    /**
+     * 
+     * @param flag
+     * @return
+     */
+    public Flag getFlag(String flag) {
+        for (Flag myflag:flags) {
+            if (myflag.getKey()==flag)
+                return myflag;
+        }
+        return null;
+    }
+    /**
+     * 
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(Flag flag) {
+        return this.flags.contains(flag);
+    }
+    
     public PlotHomePosition getPosition() { return this.position; }
     public void setPosition(PlotHomePosition position) { this.position = position; }
     public String getAlias() { return this.alias; }

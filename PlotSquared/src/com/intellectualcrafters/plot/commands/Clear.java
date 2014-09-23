@@ -30,9 +30,14 @@ public class Clear extends SubCommand {
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        DBFunc.delete(plr.getWorld().getName(), plot);
-        PlotMain.removePlot(plr.getWorld().getName(), plot.id);
-        plot.clear(plr);
+        boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id);
+        if (result) {
+            DBFunc.delete(plr.getWorld().getName(), plot);
+            plot.clear(plr);
+        }
+        else {
+            PlayerFunctions.sendMessage(plr, "Plot clearing has been denied.");
+        }
         return true;
     }
 }
