@@ -23,14 +23,14 @@ import static com.intellectualcrafters.plot.PlotWorld.*;
  */
 public class WorldGenerator extends ChunkGenerator {
     short[][] result;
-    double plotsize;
-    double pathsize;
+    int plotsize;
+    int pathsize;
     short bottom;
     short wall;
     short wallfilling;
     short floor1;
     short floor2;
-    double size;
+    int size;
     Biome biome;
     int roadheight;
     int wallheight;
@@ -164,9 +164,9 @@ public class WorldGenerator extends ChunkGenerator {
         return new Location(world, 0, PlotMain.getWorldSettings(world).ROAD_HEIGHT + 2, 0);
     }
     
-    public void setCuboidRegion(double x1,double x2, int y1, int y2, double z1, double z2, short id) {
-        for (double x = x1; x < x2; x++) {
-            for (double z = z1; z < z2; z++) {
+    public void setCuboidRegion(int x1,int x2, int y1, int y2, int z1, int z2, short id) {
+        for (int x = x1; x < x2; x++) {
+            for (int z = z1; z < z2; z++) {
                 for (int y = y1; y < y2; y++) {
                     setBlock(result, (int) x, y, (int) z, id);
                 }
@@ -188,12 +188,12 @@ public class WorldGenerator extends ChunkGenerator {
             cx+=((-cx)*(size));
         if (cz<0)
             cz+=((-cz)*(size));
-        double absX = (cx*16+16-pathWidthLower-1+8*size);
-        double absZ = (cz*16+16-pathWidthLower-1+8*size);
-        double plotMinX = (((absX)%size));
-        double plotMinZ = (((absZ)%size));
-        double roadStartX = (plotMinX + pathsize);
-        double roadStartZ = (plotMinZ + pathsize);
+        int absX = (int) (cx*16+16-pathWidthLower-1+8*size);
+        int absZ = (int) (cz*16+16-pathWidthLower-1+8*size);
+        int plotMinX = (((absX)%size));
+        int plotMinZ = (((absZ)%size));
+        int roadStartX = (plotMinX + pathsize);
+        int roadStartZ = (plotMinZ + pathsize);
         if (roadStartX>=size)
             roadStartX-=size;
         if (roadStartZ>=size)
@@ -223,11 +223,11 @@ public class WorldGenerator extends ChunkGenerator {
             setCuboidRegion(Math.max(start,0), Math.min(16,end), 1, roadheight+1, 0, 16, floor1);
         }
         
-        // FUCK'N ROAD STRIPES
+        // ROAD STRIPES
         if (pathsize>4) {
-            if ((plotMinZ+2)%size<=16) {
-                double value = (plotMinZ+2)%size;
-                double start,end;
+            if ((plotMinZ+2)<=16) {
+                int value = (plotMinZ+2);
+                int start,end;
                 if (plotMinX+2<=16)
                     start = 16-plotMinX-1;
                 else
@@ -243,8 +243,8 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(start, 16, wallheight, wallheight+1, 16-value, 16-value+1, floor2); //
             }
             if ((plotMinX+2)%size<=16) {
-                double value = (plotMinX+2)%size;
-                double start,end;
+                int value = (plotMinX+2)%size;
+                int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
                 else
@@ -259,11 +259,11 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion( 16-value, 16-value+1,wallheight, wallheight+1, 0, end, floor2); //
                 setCuboidRegion( 16-value, 16-value+1, wallheight, wallheight+1,start, 16, floor2); //
             }
-            if (roadStartZ<=16&&roadStartZ>0) {
-                double val = roadStartZ;
-                if (val==0)
-                    val+=16-pathsize+2;
-                double start,end;
+            if (roadStartZ<=16&&roadStartZ>1) {
+                int val = roadStartZ;
+//                if (val==0)
+//                    val+=16-pathsize+2;
+                int start,end;
                 if (plotMinX+2<=16)
                     start = 16-plotMinX-1;
                 else
@@ -275,14 +275,14 @@ public class WorldGenerator extends ChunkGenerator {
                 if (!(plotMinX+2<=16||roadStartX-1<=16)) {
                     start = 0;
                 }
-                setCuboidRegion(0, end, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2); //
-                setCuboidRegion(start, 16, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2); //
+                setCuboidRegion(0, end, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2);
+                setCuboidRegion(start, 16, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2);
             }
             if (roadStartX<=16&&roadStartX>0) {
-                double val = roadStartX;
+                int val = roadStartX;
                 if (val==0)
                     val+=16-pathsize+2;
-                double start,end;
+                int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
                 else
@@ -403,7 +403,7 @@ public class WorldGenerator extends ChunkGenerator {
         // WALLS (16/16 cuboids)
         if (pathsize>0) {
             if (plotMinZ+1<=16) {
-                double start,end;
+                int start,end;
                 if (plotMinX+2<=16)
                     start = 16-plotMinX-1;
                 else
@@ -421,7 +421,7 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-plotMinZ-1, 16-plotMinZ, wall);
             }
             if (plotMinX+1<=16) {
-                double start,end;
+                int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
                 else
@@ -439,7 +439,7 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion( 16-plotMinX-1, 16-plotMinX, wallheight+1, wallheight+2,start, 16, wall);
             }
             if (roadStartZ<=16&&roadStartZ>0) {
-                double start,end;
+                int start,end;
                 if (plotMinX+1<=16)
                     start = 16-plotMinX;
                 else
@@ -457,7 +457,7 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(start, 16, wallheight+1, wallheight+2, 16-roadStartZ, 16-roadStartZ+1, wall);
             }
             if (roadStartX<=16&&roadStartX>0) {
-                double start,end;
+                int start,end;
                 if (plotMinZ+1<=16)
                     start = 16-plotMinZ;
                 else

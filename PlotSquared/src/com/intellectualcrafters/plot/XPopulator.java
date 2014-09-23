@@ -54,7 +54,7 @@ public class XPopulator extends BlockPopulator {
 	    int pathsize = plotworld.ROAD_WIDTH;
 	    int wallheight = plotworld.WALL_HEIGHT;
 	    int roadheight = plotworld.ROAD_HEIGHT;
-	    int plotheight = plotworld.PLOT_HEIGHT;
+//	    int plotheight = plotworld.PLOT_HEIGHT;
 	    int size = pathsize + plotsize;
 	    byte w_v, f1_v, wf_v, f2_v;
 	    
@@ -78,7 +78,7 @@ public class XPopulator extends BlockPopulator {
 	    
 	    // Floor 2
         short[] result_f2 = getBlock(plotworld.ROAD_STRIPES);
-        f2_id = result_f1[0];
+        f2_id = result_f2[0];
         f2_v = (byte) result_f1[1];
 	    //
 
