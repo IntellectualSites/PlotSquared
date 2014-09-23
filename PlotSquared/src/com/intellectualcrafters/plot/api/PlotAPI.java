@@ -34,8 +34,6 @@ public class PlotAPI {
 	private JavaPlugin plugin;
 	//To access plotMain stuffz.
 	private PlotMain plotMain;
-	//To access the plotworld.
-	private World plotWorld;
 	//Reference
 	public static final String ADMIN_PERMISSION = "plots.admin";
 	
@@ -205,7 +203,7 @@ public class PlotAPI {
      * @return plot bottom location
      */
     public Location getHomeLocation(Plot p) {
-        return PlotHelper.getPlotHome(getPlotWorld(), p.id);
+        return PlotHelper.getPlotHome(p.getWorld(), p.id);
     }
 
     /**
@@ -243,14 +241,6 @@ public class PlotAPI {
 	 */
 	public void registerCommand(SubCommand c) {
 		MainCommand.subCommands.add(c);
-	}
-	
-	/**
-	 * Get the plotworld object
-	 * @return PlotWorld
-	 */
-	public World getPlotWorld() {
-		return this.plotWorld;
 	}
 	
 	/**
