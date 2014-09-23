@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="IntelliGuard" name="Obfuscation">
-      <configuration>
-        <option name="yGuardJar" value="C:\Users\Citymonstret\Desktop\lib\yguard.jar" />
-        <option name="mainclass" value="com.intellectualcrafters.plot.PlotMain" />
-        <option name="errorChecking" value="false" />
-        <option name="jarConfig">
-          <JarConfig>
-            <option name="jarEntries">
-              <list>
-                <option value="C:\Users\Citymonstret\Desktop\workspace\bukkit\plot_news\out\production\PlotSquared" />
-              </list>
-            </option>
-          </JarConfig>
-        </option>
-      </configuration>
-    </facet>
-  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">

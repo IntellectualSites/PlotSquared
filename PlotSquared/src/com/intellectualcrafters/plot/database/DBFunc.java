@@ -14,10 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -267,6 +264,43 @@ public class DBFunc {
      * @return
      */
 	public static HashMap<String, HashMap<PlotId, Plot>> getPlots() {
+        try {
+            DatabaseMetaData data = connection.getMetaData();
+            ResultSet rs = data.getColumns(null, null, "plot", "plot_id");
+            boolean execute = rs.next();
+            if(execute) {
+                Statement statement = connection.createStatement();
+                statement.addBatch(
+                        "ALTER IGNORE TABLE `plot` ADD `plot_id_x` int(11) DEFAULT 0"
+                );
+                statement.addBatch(
+                        "ALTER IGNORE TABLE `plot` ADD `plot_id_z` int(11) DEFAULT 0"
+                );
+                statement.addBatch(
+                        "UPDATE `plot` SET\n" +
+                        "    `plot_id_x` = IF(" +
+                        "        LOCATE(';', `plot_id`) > 0," +
+                        "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," +
+                        "        `plot_id`" +
+                        "    )," +
+                        "    `plot_id_z` = IF(" +
+                        "        LOCATE(';', `plot_id`) > 0," +
+                        "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," +
+                        "        NULL" +
+                        "    )"
+                );
+                statement.addBatch(
+                        "ALTER TABLE `plot` DROP `plot_id`"
+                );
+                statement.addBatch(
+                        "ALTER IGNORE TABLE `plot_settings` ADD `flags` VARCHAR(512) DEFAULT NULL"
+                );
+                statement.executeBatch();
+                statement.close();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 	    HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<String, HashMap<PlotId, Plot>>();
 	    HashMap<String, World> worldMap = new HashMap<String, World>();
         Statement stmt = null;
