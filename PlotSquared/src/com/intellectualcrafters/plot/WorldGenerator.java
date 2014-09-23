@@ -81,7 +81,7 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds."+world+".road_width", ROAD_WIDTH_DEFAULT);
         options.put("worlds."+world+".road_height", ROAD_HEIGHT_DEFAULT);
         options.put("worlds."+world+".road_block", ROAD_BLOCK_DEFAULT);
-//        options.put("worlds."+world+".road_stripes", ROAD_STRIPES_DEFAULT);
+        options.put("worlds."+world+".road_stripes", ROAD_STRIPES_DEFAULT);
         options.put("worlds."+world+".wall_filling", WALL_FILLING_DEFAULT);
         options.put("worlds."+world+".wall_height", WALL_HEIGHT_DEFAULT);
         options.put("worlds."+world+".schematic_on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
@@ -107,7 +107,7 @@ public class WorldGenerator extends ChunkGenerator {
         plotworld.ROAD_WIDTH = config.getInt("worlds."+world+".road_width");
         plotworld.ROAD_HEIGHT = config.getInt("worlds."+world+".road_height");
         plotworld.ROAD_BLOCK = config.getString("worlds."+world+".road_block");
-//        plotworld.ROAD_STRIPES = config.getInt("worlds."+world+".road_stripes");
+        plotworld.ROAD_STRIPES = config.getString("worlds."+world+".road_stripes");
         plotworld.WALL_FILLING = config.getString("worlds."+world+".wall_filling");
         plotworld.WALL_HEIGHT = config.getInt("worlds."+world+".wall_height");
         plotworld.PLOT_CHAT = config.getBoolean("worlds."+world+".plot_chat");
@@ -132,7 +132,7 @@ public class WorldGenerator extends ChunkGenerator {
         bottom = (short) Material.BEDROCK.getId();
         
         floor1 = getBlock(plotworld.ROAD_BLOCK);
-//        floor2 = getBlock(plotworld.ROAD_STRIPES);
+        floor2 = getBlock(plotworld.ROAD_STRIPES);
         wallfilling = getBlock(plotworld.WALL_FILLING);
         size = pathsize + plotsize;
         wall = getBlock(plotworld.WALL_BLOCK);
@@ -227,6 +227,82 @@ public class WorldGenerator extends ChunkGenerator {
             if (start>=0 && start<=16 && end <0)
                 end = 16;
             setCuboidRegion(Math.max(start,0), Math.min(16,end), 1, roadheight+1, 0, 16, floor1);
+        }
+        
+        // FUCK'N ROAD STRIPES
+        if (pathsize>4) {
+            if ((plotMinZ+2)%size<=16) {
+                double value = (plotMinZ+2)%size;
+                double start,end;
+                if (plotMinX+2<=16)
+                    start = 16-plotMinX-1;
+                else
+                    start = 16;
+                if (roadStartX-1<=16)
+                    end = 16-roadStartX+1;
+                else
+                    end = 0;
+                if (!(plotMinX+2<=16||roadStartX-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion(0, end, wallheight, wallheight+1, 16-value, 16-value+1, floor2); //
+                setCuboidRegion(start, 16, wallheight, wallheight+1, 16-value, 16-value+1, floor2); //
+            }
+            if ((plotMinX+2)%size<=16) {
+                double value = (plotMinX+2)%size;
+                double start,end;
+                if (plotMinZ+2<=16)
+                    start = 16-plotMinZ-1;
+                else
+                    start = 16;
+                if (roadStartZ-1<=16)
+                    end = 16-roadStartZ+1;
+                else
+                    end = 0;
+                if (!(plotMinZ+2<=16||roadStartZ-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion( 16-value, 16-value+1,wallheight, wallheight+1, 0, end, floor2); //
+                setCuboidRegion( 16-value, 16-value+1, wallheight, wallheight+1,start, 16, floor2); //
+            }
+            if (roadStartZ<=16&&roadStartZ>0) {
+                double val = roadStartZ;
+                if (val==0)
+                    val+=16-pathsize+2;
+                double start,end;
+                if (plotMinX+2<=16)
+                    start = 16-plotMinX-1;
+                else
+                    start = 16;
+                if (roadStartX-1<=16)
+                    end = 16-roadStartX+1;
+                else
+                    end = 0;
+                if (!(plotMinX+2<=16||roadStartX-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion(0, end, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2); //
+                setCuboidRegion(start, 16, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2); //
+            }
+            if (roadStartX<=16&&roadStartX>0) {
+                double val = roadStartX;
+                if (val==0)
+                    val+=16-pathsize+2;
+                double start,end;
+                if (plotMinZ+2<=16)
+                    start = 16-plotMinZ-1;
+                else
+                    start = 16;
+                if (roadStartZ-1<=16)
+                    end = 16-roadStartZ+1;
+                else
+                    end = 0;
+                if (!(plotMinZ+2<=16||roadStartZ-1<=16)) {
+                    start = 0;
+                }
+                setCuboidRegion(16-val+1, 16-val+2, wallheight, wallheight+1, 0, end, floor2); //
+                setCuboidRegion(16-val+1, 16-val+2, wallheight, wallheight+1, start, 16, floor2); //
+            }
         }
         
 //      Plot filling (28/28 cuboids) (10x2 + 4x2)

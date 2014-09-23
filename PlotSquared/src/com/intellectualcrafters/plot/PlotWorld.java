@@ -114,14 +114,14 @@ public class PlotWorld {
      */
     public static String WALL_FILLING_DEFAULT = "1:0";
     
-//    /**
-//     * Road stripes
-//     */
-//    public int ROAD_STRIPES;
-//    /**
-//     * Default road stripes: 35
-//     */
-//    public static int ROAD_STRIPES_DEFAULT = 35;
+    /**
+     * Road stripes
+     */
+    public String ROAD_STRIPES;
+    /**
+     * Default road stripes: 35
+     */
+    public static String ROAD_STRIPES_DEFAULT = "98:0";
 //    
 //    /**
 //     * Road stripes data value (byte)
