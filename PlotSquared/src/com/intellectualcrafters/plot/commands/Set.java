@@ -119,7 +119,7 @@ public class Set extends SubCommand{
             }
             try {
                 String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length)," ");
-                Flag flag = new Flag(args[1], value);
+                Flag flag = new Flag(new AbstractFlag(args[1]), value);
                 PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if(event.isCancelled()) {
