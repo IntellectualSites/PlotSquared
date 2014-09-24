@@ -117,9 +117,9 @@ public class WorldGenerator extends ChunkGenerator {
         for (int i = 0; i < default_flags.length; i++) {
             String current = default_flags_string[i];
             if (current.contains(","))
-                default_flags[i] = new Flag(current.split(",")[0], current.split(",")[1]);
+                default_flags[i] = new Flag(FlagManager.getFlag(current.split(",")[0], true), current.split(",")[1]);
             else
-                default_flags[i] = new Flag(current, "");
+                default_flags[i] = new Flag(FlagManager.getFlag(current, true), "");
         }
         plotworld.DEFAULT_FLAGS = default_flags;
         
