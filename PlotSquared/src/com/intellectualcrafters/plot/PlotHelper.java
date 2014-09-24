@@ -515,7 +515,10 @@ public class PlotHelper {
                         for (int y = 0; y < 1; y++) {
                             for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
                                 for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    SetBlockFast.set(world, x, y, z, 7, (byte) 0);
+                                    Block block = world.getBlockAt(x, y, z);
+                                    if (!((block.getTypeId() == 7))) {
+                                        SetBlockFast.set(world, x, y, z, 7, (byte) 7);
+                                    }
                                 }
                             }
                         }
@@ -525,7 +528,10 @@ public class PlotHelper {
                                     int i = random(filling.length);
                                     short id = filling[i];
                                     byte d = (byte) filling_data[i];
-                                    SetBlockFast.set(world, x, y, z, id, d);
+                                    Block block = world.getBlockAt(x, y, z);
+                                    if (!((block.getTypeId() == id && block.getData() == d))) {
+                                        SetBlockFast.set(world, x, y, z, id, d);
+                                    }
                                 }
                             }
                         }
@@ -535,14 +541,20 @@ public class PlotHelper {
                                     int i = random(plotfloors.length);
                                     short id = plotfloors[i];
                                     byte d = (byte) plotfloors_data[i];
-                                    SetBlockFast.set(world, x, y, z, id, d);
+                                    Block block = world.getBlockAt(x, y, z);
+                                    if (!((block.getTypeId() == id && block.getData() == d))) {
+                                        SetBlockFast.set(world, x, y, z, id, d);
+                                    }
                                 }
                             }
                         }
                         for (int y = plotworld.PLOT_HEIGHT + 1; y < (world.getMaxHeight() + 1); y++) {
                             for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
                                 for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    SetBlockFast.set(world, x, y, z, 0, (byte) 0);
+                                    Block block = world.getBlockAt(x, y, z);
+                                    if (!((block.getTypeId() == 0))) {
+                                        block.setTypeId(0, false);
+                                    }
                                 }
                             }
                         }
@@ -554,6 +566,7 @@ public class PlotHelper {
                     }
                 }
             }));
+            return;
         }
         if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
