@@ -118,6 +118,8 @@ public class PlotWorld {
      * Road stripes
      */
     public String ROAD_STRIPES;
+    public boolean ROAD_STRIPES_ENABLED;
+    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
     /**
      * Default road stripes: 35
      */

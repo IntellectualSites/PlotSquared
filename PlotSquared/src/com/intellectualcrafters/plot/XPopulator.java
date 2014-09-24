@@ -104,7 +104,7 @@ public class XPopulator extends BlockPopulator {
         // Floor 2
         short[] result_f2 = getBlock(plotworld.ROAD_STRIPES);
         f2_id = result_f2[0];
-        f2_v = (byte) result_f1[1];
+        f2_v = (byte) result_f2[1];
         //
         
         p_id = new short[plotworld.MAIN_BLOCK.length];
@@ -167,7 +167,7 @@ public class XPopulator extends BlockPopulator {
         }
         
         // STRIPES
-        if (pathsize>4) {
+        if (pathsize>4&&plotworld.ROAD_STRIPES_ENABLED) {
             if ((plotMinZ+2)<=16) {
                 int value = (plotMinZ+2);
                 int start,end;
@@ -185,8 +185,8 @@ public class XPopulator extends BlockPopulator {
                 setCuboidRegion(0, end, roadheight, roadheight+1, 16-value, 16-value+1, f2_id, f2_v, w); //
                 setCuboidRegion(start, 16, roadheight, roadheight+1, 16-value, 16-value+1, f2_id, f2_v, w); //
             }
-            if ((plotMinX+2)%size<=16) {
-                int value = (plotMinX+2)%size;
+            if ((plotMinX+2)<=16) {
+                int value = (plotMinX+2);
                 int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
@@ -219,10 +219,8 @@ public class XPopulator extends BlockPopulator {
                 setCuboidRegion(0, end, roadheight, roadheight+1, 16-val+1, 16-val+2, f2_id, f2_v, w);
                 setCuboidRegion(start, 16, roadheight, roadheight+1, 16-val+1, 16-val+2, f2_id, f2_v, w);
             }
-            if (roadStartX<=16&&roadStartX>0) {
+            if (roadStartX<=16&&roadStartX>1) {
                 int val = roadStartX;
-                if (val==0)
-                    val+=16-pathsize+2;
                 int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
@@ -283,8 +281,8 @@ public class XPopulator extends BlockPopulator {
                     start = 16-plotMinX;
                 else
                     start = 16;
-                if (roadStartX<=16)
-                    end = 16-roadStartX;
+                if (roadStartX+1<=16)
+                    end = 16-roadStartX+1;
                 else
                     end = 0;
                 if (!(plotMinX+1<=16||roadStartX<=16)) {

@@ -40,6 +40,7 @@ public class WorldGenerator extends ChunkGenerator {
         long r = ((nextLong()>>>32)*n)>>32;
         return (int) r;
     }
+    PlotWorld plotworld;
     short[][] result;
     int plotsize;
     int pathsize;
@@ -67,7 +68,7 @@ public class WorldGenerator extends ChunkGenerator {
     
     public WorldGenerator(String world) {
         YamlConfiguration config = PlotMain.config;
-        PlotWorld plotworld = new PlotWorld();
+        plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
         
         options.put("worlds."+world+".plot_height", PLOT_HEIGHT_DEFAULT);
@@ -80,6 +81,7 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds."+world+".road.height", ROAD_HEIGHT_DEFAULT);
         options.put("worlds."+world+".road.block", ROAD_BLOCK_DEFAULT);
         options.put("worlds."+world+".road.stripes", ROAD_STRIPES_DEFAULT);
+        options.put("worlds."+world+".road.enable_stripes", ROAD_STRIPES_ENABLED_DEFAULT);
         options.put("worlds."+world+".wall.filling", WALL_FILLING_DEFAULT);
         options.put("worlds."+world+".wall.height", WALL_HEIGHT_DEFAULT);
         options.put("worlds."+world+".schematic.on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
@@ -104,6 +106,7 @@ public class WorldGenerator extends ChunkGenerator {
         plotworld.WALL_BLOCK = config.getString("worlds."+world+".wall.block");
         plotworld.ROAD_WIDTH = config.getInt("worlds."+world+".road.width");
         plotworld.ROAD_HEIGHT = config.getInt("worlds."+world+".road.height");
+        plotworld.ROAD_STRIPES_ENABLED = config.getBoolean("worlds."+world+".road.enable_stripes");
         plotworld.ROAD_BLOCK = config.getString("worlds."+world+".road.block");
         plotworld.ROAD_STRIPES = config.getString("worlds."+world+".road.stripes");
         plotworld.WALL_FILLING = config.getString("worlds."+world+".wall.filling");
@@ -250,7 +253,7 @@ public class WorldGenerator extends ChunkGenerator {
         }
         
         // ROAD STRIPES
-        if (pathsize>4) {
+        if (pathsize>4&&plotworld.ROAD_STRIPES_ENABLED) {
             if ((plotMinZ+2)<=16) {
                 int value = (plotMinZ+2);
                 int start,end;
@@ -268,8 +271,8 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(0, end, wallheight, wallheight+1, 16-value, 16-value+1, floor2); //
                 setCuboidRegion(start, 16, wallheight, wallheight+1, 16-value, 16-value+1, floor2); //
             }
-            if ((plotMinX+2)%size<=16) {
-                int value = (plotMinX+2)%size;
+            if ((plotMinX+2)<=16) {
+                int value = (plotMinX+2);
                 int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
@@ -302,10 +305,8 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(0, end, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2);
                 setCuboidRegion(start, 16, wallheight, wallheight+1, 16-val+1, 16-val+2, floor2);
             }
-            if (roadStartX<=16&&roadStartX>0) {
+            if (roadStartX<=16&&roadStartX>1) {
                 int val = roadStartX;
-                if (val==0)
-                    val+=16-pathsize+2;
                 int start,end;
                 if (plotMinZ+2<=16)
                     start = 16-plotMinZ-1;
@@ -468,8 +469,8 @@ public class WorldGenerator extends ChunkGenerator {
                     start = 16-plotMinX;
                 else
                     start = 16;
-                if (roadStartX<=16)
-                    end = 16-roadStartX;
+                if (roadStartX+1<=16)
+                    end = 16-roadStartX+1;
                 else
                     end = 0;
                 if (!(plotMinX+1<=16||roadStartX<=16)) {
