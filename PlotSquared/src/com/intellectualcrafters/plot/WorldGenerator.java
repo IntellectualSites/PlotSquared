@@ -22,7 +22,7 @@ import static com.intellectualcrafters.plot.PlotWorld.*;
  *
  */
 public class WorldGenerator extends ChunkGenerator {
-    private long state = 100;
+    private long state;
     public final long nextLong() {
         long a=state;
         state = xorShift64(a);
@@ -35,11 +35,11 @@ public class WorldGenerator extends ChunkGenerator {
         a ^= (a << 4);
         return a;
     }
-
     public final int random(int n) {
         long r = ((nextLong()>>>32)*n)>>32;
         return (int) r;
     }
+    
     PlotWorld plotworld;
     short[][] result;
     int plotsize;

@@ -9,6 +9,7 @@
 
 package com.intellectualcrafters.plot;
 
+import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.database.DBFunc;
 
 import org.bukkit.*;
@@ -17,8 +18,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
+import static com.intellectualcrafters.plot.PlotMain.connection;
 import static com.intellectualcrafters.plot.Settings.*;
 
 /**
@@ -31,14 +35,22 @@ public class PlotHelper {
     private static double calculateNeededTime(double blocks, double blocks_per_second) {
         return (blocks / blocks_per_second);
     }
+    static long state;
+    public static final long nextLong() {
+        long a=state;
+        state = xorShift64(a);
+        return a;
+    }
 
-    public static Short[] getRandom(Random random, Object[] filling) {
-        int len= ((Short[]) filling[0]).length; 
-        if (len==1) {
-            return new Short[] {((Short[]) filling[0])[0],((Short[]) filling[1])[0]};
-        }
-        int index = random.nextInt(len);
-        return new Short[] {((Short[]) filling[0])[index],((Short[]) filling[1])[index]};
+    public static final long xorShift64(long a) {
+        a ^= (a << 21);
+        a ^= (a >>> 35);
+        a ^= (a << 4);
+        return a;
+    }
+    public static final int random(int n) {
+        long r = ((nextLong()>>>32)*n)>>32;
+        return (int) r;
     }
 
     public static void removeSign(Player plr, Plot p) {
@@ -440,21 +452,21 @@ public class PlotHelper {
     }
 
     public static void clear(final Player requester, final Plot plot) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
-        long start = System.nanoTime();
+        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
+        final long start = System.nanoTime();
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
-        World world = requester.getWorld();
-        Location pos1 = getPlotBottomLoc(world, plot.id).add(1,0,1);
-        Location pos2 = getPlotTopLoc(world, plot.id);
+        final World world = requester.getWorld();
+        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1,0,1);
+        final Location pos2 = getPlotTopLoc(world, plot.id);
         SetBlockFast setBlockClass = null;
         
-        Short[] plotfloors = new Short[plotworld.TOP_BLOCK.length];
-        Short[] plotfloors_data = new Short[plotworld.TOP_BLOCK.length];
+        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
+        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
         
-        Short[] filling = new Short[plotworld.MAIN_BLOCK.length];
-        Short[] filling_data = new Short[plotworld.MAIN_BLOCK.length];
+        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
+        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
         
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
             Short[] result = getBlock(plotworld.TOP_BLOCK[i]);
@@ -469,126 +481,42 @@ public class PlotHelper {
         
         
         try {
-            setBlockClass = new SetBlockFast();
-            regenerateCuboid(pos1, pos2,requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data});
-            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""+((System.nanoTime()-start)/1000000.0)));
-            SetBlockFast.update(requester);
-            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE_PACKETS.s().replaceAll("%time%", ""+((System.nanoTime()-start)/1000000.0)));
+            final int prime = 31;
+            int h = 1;
+            h = prime * h + pos1.getBlockX();
+            h = prime * h + pos1.getBlockZ();
+            state = h;
+            PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), (new Runnable() {
+                @Override
+                public void run() {
+                    for (int y = 0; y<plotworld.PLOT_HEIGHT; y++) {
+                        for (int x = pos1.getBlockX(); x<=pos2.getBlockX(); x++) {
+                            for(int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
+                                int i = random(filling.length);
+                                short id = filling[i];
+                                byte d = (byte) filling_data[i];
+                                SetBlockFast.set(world, x, y, z, id, d);
+                            }
+                        }
+                    }
+                    for (int y = plotworld.PLOT_HEIGHT; y<plotworld.PLOT_HEIGHT+1; y++) {
+                        for (int x = pos1.getBlockX(); x<=pos2.getBlockX(); x++) {
+                            for(int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
+                                int i = random(plotfloors.length);
+                                short id = plotfloors[i];
+                                byte d = (byte) plotfloors_data[i];
+                                SetBlockFast.set(world, x, y, z, id, d);
+                            }
+                        }
+                    }
+                    PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""+((System.nanoTime()-start)/1000000.0)));
+                    SetBlockFast.update(requester);
+                }
+            }));
             return;
         }
         catch (NoClassDefFoundError e) {
-            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&cFast plot clearing is currently not enabled.");
-            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&c - Please get PlotSquared for "+Bukkit.getVersion()+" for improved performance");
-        }
-        
-        if (pos2.getBlockX()-pos1.getBlockX()<16) {
-            regenerateCuboid(pos1, pos2,requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data});
-            return;
-        }
-        int startX = (pos1.getBlockX()/16)*16;
-        int startZ = (pos1.getBlockZ()/16)*16;
-        int chunkX = 16+pos2.getBlockX();
-        int chunkZ = 16+pos2.getBlockZ();
-        int plotMinX = getPlotBottomLoc(world,plot.id).getBlockX()+1;
-        int plotMinZ = getPlotBottomLoc(world,plot.id).getBlockZ()+1;
-        int plotMaxX = getPlotTopLoc(world,plot.id).getBlockX();
-        int plotMaxZ = getPlotTopLoc(world,plot.id).getBlockZ();
-        Location min = null;
-        Location max = null;
-        for (int i = startX; i<chunkX;i+=16) {
-            for (int j = startZ; j<chunkZ;j+=16) {
-                Plot plot1 = getCurrentPlot(new Location(world, i, 0, j));
-                if (plot1!=null && plot1.getId()!=plot.getId() && plot1.hasOwner()) {
-                    break;
-                }
-                Plot plot2 = getCurrentPlot(new Location(world, i+15, 0, j));
-                if (plot2!=null && plot2.getId()!=plot.getId() && plot2.hasOwner()) {
-                    break;
-                }
-                Plot plot3 = getCurrentPlot(new Location(world, i+15, 0, j+15));
-                if (plot3!=null && plot3.getId()!=plot.getId() && plot3.hasOwner()) {
-                    break;
-                }
-                Plot plot4 = getCurrentPlot(new Location(world, i, 0, j+15));
-                if (plot4!=null && plot4.getId()!=plot.getId() && plot4.hasOwner()) {
-                    break;
-                }
-                Plot plot5 = getCurrentPlot(new Location(world, i+15, 0, j+15));
-                if (plot5!=null && plot5.getId()!=plot.getId() && plot5.hasOwner()) {
-                    break;
-                }
-                if (min==null) {
-                    min = new Location(world, Math.max(i-1, plotMinX), 0, Math.max(j-1, plotMinZ));
-                    max = new Location(world, Math.min(i+16, plotMaxX), 0, Math.min(j+16, plotMaxZ));
-                }
-                else if (max.getBlockZ() < j + 15 || max.getBlockX() < i + 15) {
-                    max = new Location(world, Math.min(i+16, plotMaxX), 0, Math.min(j+16, plotMaxZ));
-                }
-                world.regenerateChunk(i/16, j/16);
-            }
-        }
-        if (min==null) {
-            regenerateCuboid(pos1, pos2,requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data});
-        }
-        else {
-            int height = world.getMaxHeight();
-            regenerateCuboid(new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX(), height, min.getBlockZ()),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //1
-            regenerateCuboid(new Location(world, min.getBlockX(), 0, plotMinZ), new Location(world, max.getBlockX(), height, min.getBlockZ()),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //2
-            regenerateCuboid(new Location(world, max.getBlockX(), 0, plotMinZ), new Location(world, plotMaxX, height, min.getBlockZ()),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //3
-            regenerateCuboid(new Location(world, plotMinX, 0, min.getBlockZ()), new Location(world, min.getBlockX(), height, max.getBlockZ()),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //4
-            regenerateCuboid(new Location(world, plotMinX, 0, max.getBlockZ()), new Location(world, min.getBlockX(), height, plotMaxZ),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //5
-            regenerateCuboid(new Location(world, min.getBlockX(), 0, max.getBlockZ()), new Location(world, max.getBlockX(), height, plotMaxZ),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //6
-            regenerateCuboid(new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX, height, max.getBlockZ()),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //7
-            regenerateCuboid(new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX, height, plotMaxZ),requester,plotworld, new Object[] {plotfloors,plotfloors_data}, new Object[] {filling, filling_data}); //8
-        }
-        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""+((System.currentTimeMillis()-start)/1000.0)));
-    }
-    public static void regenerateCuboid(Location pos1, Location pos2,Player player, PlotWorld plotworld, Object[] plotfloors, Object[] filling) {
-        World world = pos1.getWorld();
-        int zMin = pos1.getBlockZ();
-        int zMax = pos2.getBlockZ();
-        int xMin = pos1.getBlockX();
-        int xMax = pos2.getBlockX();
-        int height = pos2.getBlockY();
-        Random random = new Random();
-        
-        for (int y = 0; y<=height; y++) {
-            for (int x = xMin; x<=xMax; x++) {
-                for(int z = zMin; z <= zMax; z++) {
-                    short d = 0;
-                    short id = 0;
-                    boolean change = true;
-                    Block block = world.getBlockAt(x,y,z);
-                    int type = block.getTypeId();
-                    if(y == 0) {
-                        if(type != 7)
-                            id = (short) Material.BEDROCK.getId();
-                        else
-                            change = false;
-                    } else if(y == plotworld.PLOT_HEIGHT) {
-                        Short[] result = getRandom(random, plotfloors);
-                        id = result[0];
-                        d = result[1];
-                    } else if(y < plotworld.PLOT_HEIGHT) {
-                        Short[] result = getRandom(random, filling);
-                        id = result[0];
-                        d = result[1];
-                    } else if(y > plotworld.PLOT_HEIGHT && y < world.getMaxHeight()) {
-                        if(type != 0)
-                            id = 0;
-                        else
-                            change = false;
-                    }
-                    else {
-                        change = false;
-                    }
-                    if(change) {
-                        if (type!=id) {
-                            block.setTypeIdAndData(id, (byte) d, true);
-                        }
-                    }
-                }
-            }
+            PlayerFunctions.sendMessage(requester, C.PREFIX.s() + "&cFast plot clearing is currently not enabled.");
         }
     }
 
