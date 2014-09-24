@@ -68,7 +68,7 @@ public class Auto extends SubCommand {
            if(PlotHelper.getPlot(world, id).owner == null) {
                 Plot plot = PlotHelper.getPlot(world, id);
                 boolean result = Claim.claimPlot(plr, plot, true);
-                br = result;
+                br = !result;
            }
            if(z < q && (z - x) < q) {
                z++;

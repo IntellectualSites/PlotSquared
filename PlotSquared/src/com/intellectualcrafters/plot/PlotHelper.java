@@ -460,7 +460,6 @@ public class PlotHelper {
         final World world = requester.getWorld();
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1,0,1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
-        SetBlockFast setBlockClass = null;
         
         final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
         final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
