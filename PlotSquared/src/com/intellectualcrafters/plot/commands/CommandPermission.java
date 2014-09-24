@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Created by Citymonstret on 2014-08-03.
+ * 
  * @author Citymonstret
  */
 public class CommandPermission {
@@ -30,7 +31,7 @@ public class CommandPermission {
     }
 
     /**
-     *
+     * 
      * @param player
      * @return
      */

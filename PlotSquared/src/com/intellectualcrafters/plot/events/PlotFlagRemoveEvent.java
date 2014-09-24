@@ -9,18 +9,17 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.Plot;
-
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.Plot;
+
 /**
  * Created by Citymonstret on 2014-08-09.
  */
-public class PlotFlagRemoveEvent extends Event implements Cancellable{
+public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
@@ -31,11 +30,11 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable{
         this.plot = plot;
         this.flag = flag;
     }
-    
+
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     public Flag getFlag() {
         return this.flag;
     }
@@ -44,6 +43,7 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable{
         return handlers;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

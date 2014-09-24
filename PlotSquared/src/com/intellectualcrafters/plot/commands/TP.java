@@ -9,60 +9,66 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+
 /**
  * 
  * @author Citymonstret
- *
+ * 
  */
 public class TP extends SubCommand {
-	
-	public TP() {
-		super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT);
-	}
-	
-	@Override
-	public boolean execute(Player plr, String ... args) {
-		if(args.length < 1) {
-			PlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
-			return false;
-		}
-		String id = args[0];
-		PlotId plotid;
-		World world = plr.getWorld();
-		if (args.length==2) {
-		    if (Bukkit.getWorld(args[1])!=null)
-		        world = Bukkit.getWorld(args[1]);
-		}
-		if (!PlotMain.isPlotWorld(world)) {
-		    PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-		    return false;
-		}
+
+    public TP() {
+        super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT);
+    }
+
+    @Override
+    public boolean execute(Player plr, String... args) {
+        if (args.length < 1) {
+            PlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
+            return false;
+        }
+        String id = args[0];
+        PlotId plotid;
+        World world = plr.getWorld();
+        if (args.length == 2) {
+            if (Bukkit.getWorld(args[1]) != null) {
+                world = Bukkit.getWorld(args[1]);
+            }
+        }
+        if (!PlotMain.isPlotWorld(world)) {
+            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            return false;
+        }
         Plot temp;
-        if((temp = isAlias(id)) != null) {
+        if ((temp = isAlias(id)) != null) {
             PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
             return true;
         }
-	    try {
-	        plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-	        PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
-	        return true;
-	    }
-	    catch (Exception e) {
-	        PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-	    }
-		return false;
-	}
+        try {
+            plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
+            PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
+            return true;
+        } catch (Exception e) {
+            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+        }
+        return false;
+    }
 
     private Plot isAlias(String a) {
-        for(Plot p : PlotMain.getPlots()) {
-            if(p.settings.getAlias().length() > 0 && p.settings.getAlias().equalsIgnoreCase(a))
+        for (Plot p : PlotMain.getPlots()) {
+            if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
+            }
         }
         return null;
     }

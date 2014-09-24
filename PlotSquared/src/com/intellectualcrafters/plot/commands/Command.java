@@ -11,6 +11,7 @@ package com.intellectualcrafters.plot.commands;
 
 /**
  * Created by Citymonstret on 2014-08-03.
+ * 
  * @author Citymonstret
  */
 public enum Command {
@@ -68,7 +69,7 @@ public enum Command {
     private CommandPermission permission;
 
     /**
-     *
+     * 
      * @param command
      */
     Command(String command) {
@@ -78,7 +79,7 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @param command
      * @param permission
      */
@@ -89,7 +90,7 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @param command
      * @param alias
      */
@@ -100,7 +101,7 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @param Command
      * @param alias
      * @param permission
@@ -112,7 +113,7 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @return
      */
     public String getCommand() {
@@ -120,7 +121,7 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @return
      */
     public String getAlias() {
@@ -128,10 +129,10 @@ public enum Command {
     }
 
     /**
-     *
+     * 
      * @return
      */
-    public CommandPermission getPermission(){
+    public CommandPermission getPermission() {
         return this.permission;
     }
 }

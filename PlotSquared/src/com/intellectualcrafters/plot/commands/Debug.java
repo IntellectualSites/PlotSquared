@@ -9,40 +9,44 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-/**
- * @author Citymonstret
- * \\SuperCharged Compiler made by Citymonstret\\
- * ||#Compiler:ALPHA-1.0#########################
- * ||#ST:Java(1.7.*)\impl(bukkit)->api(s[])######
- * ||#Section:\Debug\############################
- * ||##Debug->Debug.properties|Debug.txt#########
- * ||############################################
- * ||#Signed By:Citymonstret@IC##################
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
- */
-public class Debug extends SubCommand{
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.Lag;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.RUtils;
 
-    //private extends SubCommand^Implements {Command, Information} from >>\\S.txt6\\
-	public Debug() {
-		super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.INFO);
+/**
+ * @author Citymonstret \\SuperCharged Compiler made by Citymonstret\\
+ *         ||#Compiler:ALPHA-1.0#########################
+ *         ||#ST:Java(1.7.*)\impl(bukkit)->api(s[])######
+ *         ||#Section:\Debug\############################
+ *         ||##Debug->Debug.properties|Debug.txt#########
+ *         ||############################################ ||#Signed
+ *         By:Citymonstret@IC##################
+ *         \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ */
+public class Debug extends SubCommand {
+
+    // private extends SubCommand^Implements {Command, Information} from
+    // >>\\S.txt6\\
+    public Debug() {
+        super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.INFO);
         {
             /**
              * This.
              */
         }
-	}
-	
-	@Override
-	public boolean execute(Player plr, String ... args) {
-	    PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-		if(args.length > 0 && args[0].equalsIgnoreCase("msg")) {
+    }
+
+    @Override
+    public boolean execute(Player plr, String... args) {
+        PlotMain.getWorldSettings(plr.getWorld());
+        if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
-            for(C c : C.values()) {
+            for (C c : C.values()) {
                 msg.append(c.s() + "\n");
             }
             PlayerFunctions.sendMessage(plr, msg.toString());
@@ -60,24 +64,19 @@ public class Debug extends SubCommand{
             section = C.DEBUG_SECTION.s();
         }
         /**
-         * {||direct:: load: debug::I>Captions::trsl}
-         * \\
-         * if(missing) set(default) -> this->(){}
-         * \\
-         * echo line->line(Compiler.cpp -> lineCompiler);
-         * when finished: now = this();
-         * now(getter)->setter(this())->{
-         *      "string" = getter(this);
-         *      setter(string) = getter(this->setter);
-         * }
-         * when ^ finished compile;
-         * if(^compile failed -> |this->failed.|tests->failed.|
-         * ||run test {this->test}|on fail(action(){return FAILED})|
+         * {||direct:: load: debug::I>Captions::trsl} \\ if(missing)
+         * set(default) -> this->(){} \\ echo line->line(Compiler.cpp ->
+         * lineCompiler); when finished: now = this();
+         * now(getter)->setter(this())->{ "string" = getter(this);
+         * setter(string) = getter(this->setter); } when ^ finished compile;
+         * if(^compile failed -> |this->failed.|tests->failed.| ||run test
+         * {this->test}|on fail(action(){return FAILED})|
          */
         {
             StringBuilder worlds = new StringBuilder("");
-            for (String world: PlotMain.getPlotWorlds())
-                worlds.append(world+" ");
+            for (String world : PlotMain.getPlotWorlds()) {
+                worlds.append(world + " ");
+            }
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
             information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));
@@ -98,20 +97,21 @@ public class Debug extends SubCommand{
             information.append(getLine(line, "View all captions", "/plot debug msg"));
         }
         /**
-         * {function:: SEND_MESSAGE |local player -> plr|local string -> information.toString())}
+         * {function:: SEND_MESSAGE |local player -> plr|local string ->
+         * information.toString())}
          */
         {
             PlayerFunctions.sendMessage(plr, information.toString());
         }
         return true;
-	}
+    }
 
     private String getSection(String line, String val) {
         return line.replaceAll("%val%", val) + "\n";
     }
 
-	private String getLine(String line, String var, Object val) {
-		return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
-	}
-	
+    private String getLine(String line, String var, Object val) {
+        return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
+    }
+
 }

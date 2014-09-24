@@ -9,12 +9,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Settings;
+import java.util.ArrayList;
+
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.Settings;
 
 public class plugin extends SubCommand {
 
@@ -23,7 +24,7 @@ public class plugin extends SubCommand {
     }
 
     @Override
-    public boolean execute(Player plr, String ... args) {
+    public boolean execute(Player plr, String... args) {
         ArrayList<String> strings = new ArrayList<String>() {
             {
                 add(String.format("&c>> &6PlotSquared (Version: %s)", PlotMain.getMain().getDescription().getVersion()));
@@ -31,10 +32,10 @@ public class plugin extends SubCommand {
                 add(String.format("&c>> &6Download at %s", Settings.URL));
             }
         };
-        for(String s : strings)
+        for (String s : strings) {
             PlayerFunctions.sendMessage(plr, s);
+        }
         return true;
     }
-
 
 }

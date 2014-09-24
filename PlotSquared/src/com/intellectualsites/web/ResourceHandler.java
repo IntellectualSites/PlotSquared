@@ -10,43 +10,36 @@ import java.io.InputStreamReader;
  */
 public class ResourceHandler {
 
-    private String          filePath;
-    private File            file;
-    private FileType        fileType;
-    private File            folder;
-    private BufferedReader  reader;
+    private File file;
+    private BufferedReader reader;
 
     public ResourceHandler(String filePath, FileType fileType, File folder) throws Exception {
-        this.filePath = filePath;
-        this.fileType = fileType;
-        this.folder   = folder;
-        if(fileType == FileType.CSS) {
-            file = new File(folder.toPath().toString() + File.separator + "web" + File.separator + "css" + File.separator + filePath + "." + fileType.toString());
+        if (fileType == FileType.CSS) {
+            this.file = new File(folder.toPath().toString() + File.separator + "web" + File.separator + "css" + File.separator + filePath + "." + fileType.toString());
         } else {
-            file = new File(folder.toPath().toString() + File.separator + "web" + File.separator + filePath + "." + fileType.toString());
+            this.file = new File(folder.toPath().toString() + File.separator + "web" + File.separator + filePath + "." + fileType.toString());
         }
     }
 
     public String getHTML() throws Exception {
         StringBuilder html = new StringBuilder();
-        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        this.reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.file)));
         String line = "";
-        while((line = reader.readLine()) != null) {
+        while ((line = this.reader.readLine()) != null) {
             html.append(line);
         }
         return html.toString();
     }
 
     public void done() throws Exception {
-        reader.close();
+        this.reader.close();
     }
 
     public static enum FileType {
-        CSS("css"),
-        HTML("html"),
-        JS("js");
+        CSS("css"), HTML("html"), JS("js");
 
         private String ext;
+
         FileType(String ext) {
             this.ext = ext;
         }

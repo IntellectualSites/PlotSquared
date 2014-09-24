@@ -1,14 +1,19 @@
 package com.intellectualcrafters.plot.database;
 
-import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * Connects to and uses a SQLite database
+ * 
  * @author Citymonstret
  * @author tips48
  */
@@ -16,71 +21,67 @@ public class SQLite extends Database {
 
     private Connection connection;
     private final String dbLocation;
+
     /**
      * Creates a new SQLite instance
-     *
+     * 
      * @param plugin
-     * Plugin instance
+     *            Plugin instance
      * @param dbLocation
-     * Location of the Database (Must end in .db)
+     *            Location of the Database (Must end in .db)
      */
     public SQLite(Plugin plugin, String dbLocation) {
         super(plugin);
         this.dbLocation = dbLocation;
     }
+
     @Override
-    public Connection openConnection() throws SQLException,
-            ClassNotFoundException {
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
-            return connection;
+            return this.connection;
         }
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdirs();
+        if (!this.plugin.getDataFolder().exists()) {
+            this.plugin.getDataFolder().mkdirs();
         }
-        File file = new File(plugin.getDataFolder(), dbLocation);
+        File file = new File(this.plugin.getDataFolder(), this.dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().log(Level.SEVERE,
-                        "Unable to create database!");
+                this.plugin.getLogger().log(Level.SEVERE, "Unable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");
-        connection = DriverManager
-                .getConnection("jdbc:sqlite:"
-                        + plugin.getDataFolder().toPath().toString() + "/"
-                        + dbLocation);
-        return connection;
+        this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.plugin.getDataFolder().toPath().toString() + "/" + this.dbLocation);
+        return this.connection;
     }
 
     @Override
     public boolean checkConnection() throws SQLException {
-        return connection != null && !connection.isClosed();
+        return (this.connection != null) && !this.connection.isClosed();
     }
 
     @Override
     public Connection getConnection() {
-        return connection;
+        return this.connection;
     }
 
     @Override
     public boolean closeConnection() throws SQLException {
-        if (connection == null) {
+        if (this.connection == null) {
             return false;
         }
-        connection.close();
+        this.connection.close();
         return true;
     }
 
     @Override
-    public ResultSet querySQL(String query) throws SQLException,
-            ClassNotFoundException {
+    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
 
-        Statement statement = connection.createStatement();
+        Statement statement = this.connection.createStatement();
 
         ResultSet result = statement.executeQuery(query);
 
@@ -88,13 +89,12 @@ public class SQLite extends Database {
     }
 
     @Override
-    public int updateSQL(String query) throws SQLException,
-            ClassNotFoundException {
+    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
 
-        Statement statement = connection.createStatement();
+        Statement statement = this.connection.createStatement();
 
         int result = statement.executeUpdate(query);
 

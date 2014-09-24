@@ -14,101 +14,76 @@ import org.bukkit.entity.Player;
 
 /**
  * Random utilities
+ * 
  * @author Citymonstret
- *
+ * 
  */
 public class RUtils {
 
-	public static long getTotalRam() {
-		return (Runtime.getRuntime().maxMemory() / 1024) / 1024;
-	}
-	
-	public static long getFreeRam() {
-		return (Runtime.getRuntime().freeMemory() / 1024) / 1024;
-	}
-	
-	public static long getRamPercentage() {
-		return (getFreeRam() / getTotalRam()) * 100;
-	}
-	
-	public static String formatTime(double sec) {
-		double h = sec / 3600;
+    public static long getTotalRam() {
+        return (Runtime.getRuntime().maxMemory() / 1024) / 1024;
+    }
+
+    public static long getFreeRam() {
+        return (Runtime.getRuntime().freeMemory() / 1024) / 1024;
+    }
+
+    public static long getRamPercentage() {
+        return (getFreeRam() / getTotalRam()) * 100;
+    }
+
+    public static String formatTime(double sec) {
+        double h = sec / 3600;
         double m = (sec % 3600) / 60;
-        double s = sec %  60;
-		String string = C.TIME_FORMAT.s();
-		
-		@SuppressWarnings("unused")
-		//String s_d = (int) d + " " + (d != 1 ? "days" : "day");
-		String s_h = (int) h + " " + ((int) h != 1 ? "hours" : "hour");
-		String s_m = (int) m + " " + ((int) m != 1 ? "minutes" : "minute");
-		String s_s = (int) s + " " + ((int) s != 1 ? "seconds" : "second");
-		return string.replaceAll("%sec%", s_s).replaceAll("%min%", s_m).replaceAll("%hours%", s_h);
-	}
-	
-	enum Direction {
-		SOUTH(0),
-		EAST(1),
-		NORTH(2),
-		WEST(3)
-		;
-		private int i;
-		Direction(int i) {
-			this.i = i;
-		}
-		public int getInt() {
-			return this.i;
-		}
-	}
+        double s = sec % 60;
+        String string = C.TIME_FORMAT.s();
+
+        @SuppressWarnings("unused")
+        // String s_d = (int) d + " " + (d != 1 ? "days" : "day");
+        String s_h = (int) h + " " + ((int) h != 1 ? "hours" : "hour");
+        String s_m = (int) m + " " + ((int) m != 1 ? "minutes" : "minute");
+        String s_s = (int) s + " " + ((int) s != 1 ? "seconds" : "second");
+        return string.replaceAll("%sec%", s_s).replaceAll("%min%", s_m).replaceAll("%hours%", s_h);
+    }
+
+    enum Direction {
+        SOUTH(0), EAST(1), NORTH(2), WEST(3);
+        private int i;
+
+        Direction(int i) {
+            this.i = i;
+        }
+
+        public int getInt() {
+            return this.i;
+        }
+    }
 
     public void forceTexture(Player p) {
         p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
     }
 
-	public Direction getDirection(Location l) {
-		double d = (l.getYaw() * 4.0F / 360.0F) + 0.5D;
-		int i = (int) d;
-		int x = d < i ? i - 1 : i;
+    public Direction getDirection(Location l) {
+        double d = ((l.getYaw() * 4.0F) / 360.0F) + 0.5D;
+        int i = (int) d;
+        int x = d < i ? i - 1 : i;
 
-        float yaw;
-
-
-
-		switch(x) {
-            case 0:
-			return Direction.SOUTH;
-		case 1:
-			return Direction.EAST;
-		case 2:
-			return Direction.NORTH;
-		case 3:
-			return Direction.WEST;
-		default:
-			return null;
-		}
-	}
+        switch (x) {
+        case 0:
+            return Direction.SOUTH;
+        case 1:
+            return Direction.EAST;
+        case 2:
+            return Direction.NORTH;
+        case 3:
+            return Direction.WEST;
+        default:
+            return null;
+        }
+    }
 
     public boolean compareDirections(Location l1, Location l2) {
         return getDirection(l1) == getDirection(l2);
     }
 
-    private boolean AND(boolean b1, boolean b2) {
-        return b1 && b2;
-    }
-
-    private boolean OR(boolean b1, boolean b2) {
-        return b1 || b2;
-    }
-
-    private boolean XOR(boolean b1, boolean b2) {
-        return b1 ^ b2;
-    }
-
-    private boolean NAND(boolean b1, boolean b2) {
-        return !b1 && !b2;
-    }
-
-    private boolean NOR(boolean b1, boolean b2) {
-        return !b1 || !b2;
-    }
-	
 }

@@ -9,19 +9,16 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotId;
-
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+
+import com.intellectualcrafters.plot.PlotId;
 
 /**
  * Created by Citymonstret on 2014-08-09.
  */
-public class PlotDeleteEvent extends Event implements Cancellable{
+public class PlotDeleteEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
@@ -32,11 +29,11 @@ public class PlotDeleteEvent extends Event implements Cancellable{
         this.id = id;
         this.world = world;
     }
-    
+
     public PlotId getPlotId() {
         return this.id;
     }
-    
+
     public String getWorld() {
         return this.world;
     }
@@ -45,6 +42,7 @@ public class PlotDeleteEvent extends Event implements Cancellable{
         return handlers;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

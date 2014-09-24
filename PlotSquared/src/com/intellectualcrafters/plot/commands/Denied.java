@@ -9,22 +9,23 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotDeniedEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-08-03.
  */
 @SuppressWarnings("deprecated")
-public class Denied extends SubCommand{
+public class Denied extends SubCommand {
 
     public Denied() {
         super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS);
@@ -33,63 +34,71 @@ public class Denied extends SubCommand{
     @SuppressWarnings("deprecated")
     private boolean hasBeenOnServer(String name) {
         Player plr;
-        if((plr = Bukkit.getPlayer(name)) == null) {
+        if ((plr = Bukkit.getPlayer(name)) == null) {
             OfflinePlayer oplr = Bukkit.getOfflinePlayer(name);
-            if(oplr == null) return false;
-            else return oplr.hasPlayedBefore();
+            if (oplr == null) {
+                return false;
+            } else {
+                return oplr.hasPlayedBefore();
+            }
         } else {
-            if(plr.isOnline()) return true;
-            else return plr.hasPlayedBefore();
+            if (plr.isOnline()) {
+                return true;
+            } else {
+                return plr.hasPlayedBefore();
+            }
         }
     }
 
-    public boolean execute(Player plr, String ... args) {
-        if(args.length < 2) {
+    @Override
+    public boolean execute(Player plr, String... args) {
+        if (args.length < 2) {
             PlayerFunctions.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
             return true;
         }
-        if(!PlayerFunctions.isInPlot(plr)) {
+        if (!PlayerFunctions.isInPlot(plr)) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if(plot.owner == null || !plot.hasRights(plr)) {
+        if ((plot.owner == null) || !plot.hasRights(plr)) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
             return true;
         }
-        if(args[0].equalsIgnoreCase("add")) {
-            if(args[1].equalsIgnoreCase("*")) {
+        if (args[0].equalsIgnoreCase("add")) {
+            if (args[1].equalsIgnoreCase("*")) {
                 UUID uuid = DBFunc.everyone;
                 plot.addDenied(uuid);
                 DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
                 PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
                 return true;
             }
-            if(!hasBeenOnServer(args[1])) {
+            if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
             UUID uuid = null;
-            if(Bukkit.getPlayer(args[1]) != null && Bukkit.getPlayer(args[1]).isOnline())
+            if ((Bukkit.getPlayer(args[1]) != null) && Bukkit.getPlayer(args[1]).isOnline()) {
                 uuid = Bukkit.getPlayer(args[1]).getUniqueId();
-            else
+            } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+            }
             plot.addDenied(uuid);
             DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
-            if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline()) {
+            if ((Bukkit.getPlayer(uuid) != null) && Bukkit.getPlayer(uuid).isOnline()) {
                 Plot pl = PlayerFunctions.getCurrentPlot(Bukkit.getPlayer((uuid)));
-                if(pl.id == plot.id) {
+                if (pl.id == plot.id) {
                     PlayerFunctions.sendMessage(Bukkit.getPlayer(uuid), C.YOU_BE_DENIED);
                     Bukkit.getPlayer(uuid).teleport(Bukkit.getPlayer(uuid).getWorld().getSpawnLocation());
                 }
             }
-        } else if(args[0].equalsIgnoreCase("remove")) {
-            if(args[1].equalsIgnoreCase("*")) {
+        } else if (args[0].equalsIgnoreCase("remove")) {
+            if (args[1].equalsIgnoreCase("*")) {
                 UUID uuid = DBFunc.everyone;
-                if(!plot.denied.contains(uuid)) {
+                if (!plot.denied.contains(uuid)) {
                     PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
@@ -98,16 +107,17 @@ public class Denied extends SubCommand{
                 PlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);
                 return true;
             }
-            if(!hasBeenOnServer(args[1])) {
+            if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
             UUID uuid = null;
-            if(Bukkit.getPlayer(args[1]).isOnline())
+            if (Bukkit.getPlayer(args[1]).isOnline()) {
                 uuid = Bukkit.getPlayer(args[1]).getUniqueId();
-            else
+            } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-            if(!plot.denied.contains(uuid)) {
+            }
+            if (!plot.denied.contains(uuid)) {
                 PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                 return true;
             }

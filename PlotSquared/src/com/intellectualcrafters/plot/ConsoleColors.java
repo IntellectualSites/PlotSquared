@@ -21,68 +21,46 @@ public class ConsoleColors {
     public static final String ANSI_ITALIC = "\033[3m]";
 
     public static String fromString(String input) {
-        input = input
-        .replaceAll("&0", fromChatColor(ChatColor.BLACK))
-        .replaceAll("&1", fromChatColor(ChatColor.DARK_BLUE))
-        .replaceAll("&2", fromChatColor(ChatColor.DARK_GREEN))
-        .replaceAll("&3", fromChatColor(ChatColor.DARK_AQUA))
-        .replaceAll("&4", fromChatColor(ChatColor.DARK_RED))
-        .replaceAll("&5", fromChatColor(ChatColor.DARK_PURPLE))
-        .replaceAll("&6", fromChatColor(ChatColor.GOLD))
-        .replaceAll("&7", fromChatColor(ChatColor.GRAY))
-        .replaceAll("&8", fromChatColor(ChatColor.DARK_GRAY))
-        .replaceAll("&9", fromChatColor(ChatColor.BLUE))
-        .replaceAll("&a", fromChatColor(ChatColor.GREEN))
-        .replaceAll("&b", fromChatColor(ChatColor.AQUA))
-        .replaceAll("&c", fromChatColor(ChatColor.RED))
-        .replaceAll("&d", fromChatColor(ChatColor.LIGHT_PURPLE))
-        .replaceAll("&e", fromChatColor(ChatColor.YELLOW))
-        .replaceAll("&f", fromChatColor(ChatColor.WHITE))
-        .replaceAll("&k", fromChatColor(ChatColor.MAGIC))
-        .replaceAll("&l", fromChatColor(ChatColor.BOLD))
-        .replaceAll("&m", fromChatColor(ChatColor.STRIKETHROUGH))
-        .replaceAll("&n", fromChatColor(ChatColor.UNDERLINE))
-        .replaceAll("&o", fromChatColor(ChatColor.ITALIC))
-        .replaceAll("&r", fromChatColor(ChatColor.RESET))
-         ;
+        input = input.replaceAll("&0", fromChatColor(ChatColor.BLACK)).replaceAll("&1", fromChatColor(ChatColor.DARK_BLUE)).replaceAll("&2", fromChatColor(ChatColor.DARK_GREEN)).replaceAll("&3", fromChatColor(ChatColor.DARK_AQUA)).replaceAll("&4", fromChatColor(ChatColor.DARK_RED)).replaceAll("&5", fromChatColor(ChatColor.DARK_PURPLE)).replaceAll("&6", fromChatColor(ChatColor.GOLD)).replaceAll("&7", fromChatColor(ChatColor.GRAY)).replaceAll("&8", fromChatColor(ChatColor.DARK_GRAY)).replaceAll("&9", fromChatColor(ChatColor.BLUE)).replaceAll("&a", fromChatColor(ChatColor.GREEN)).replaceAll("&b", fromChatColor(ChatColor.AQUA)).replaceAll("&c", fromChatColor(ChatColor.RED)).replaceAll("&d", fromChatColor(ChatColor.LIGHT_PURPLE)).replaceAll("&e", fromChatColor(ChatColor.YELLOW)).replaceAll("&f", fromChatColor(ChatColor.WHITE)).replaceAll("&k", fromChatColor(ChatColor.MAGIC)).replaceAll("&l", fromChatColor(ChatColor.BOLD)).replaceAll("&m", fromChatColor(ChatColor.STRIKETHROUGH))
+                .replaceAll("&n", fromChatColor(ChatColor.UNDERLINE)).replaceAll("&o", fromChatColor(ChatColor.ITALIC)).replaceAll("&r", fromChatColor(ChatColor.RESET));
         return input + ANSI_RESET;
     }
 
     public static String fromChatColor(ChatColor color) {
-        switch(color) {
-            case RESET:
-                return ANSI_RESET;
-            case GRAY:
-            case DARK_GRAY:
-                return ANSI_WHITE;
-            case BLACK:
-                return ANSI_BLACK;
-            case DARK_RED:
-            case RED:
-                return ANSI_RED;
-            case GOLD:
-            case YELLOW:
-                return ANSI_YELLOW;
-            case DARK_GREEN:
-            case GREEN:
-                return ANSI_GREEN;
-            case AQUA:
-            case DARK_AQUA:
-                return ANSI_CYAN;
-            case LIGHT_PURPLE:
-            case DARK_PURPLE:
-                return ANSI_PURPLE;
-            case BLUE:
-            case DARK_BLUE:
-                return ANSI_BLUE;
-            case UNDERLINE:
-                return ANSI_UNDERLINE;
-            case ITALIC:
-                return ANSI_ITALIC;
-            case BOLD:
-                return ANSI_BOLD;
-            default:
-                return "";
+        switch (color) {
+        case RESET:
+            return ANSI_RESET;
+        case GRAY:
+        case DARK_GRAY:
+            return ANSI_WHITE;
+        case BLACK:
+            return ANSI_BLACK;
+        case DARK_RED:
+        case RED:
+            return ANSI_RED;
+        case GOLD:
+        case YELLOW:
+            return ANSI_YELLOW;
+        case DARK_GREEN:
+        case GREEN:
+            return ANSI_GREEN;
+        case AQUA:
+        case DARK_AQUA:
+            return ANSI_CYAN;
+        case LIGHT_PURPLE:
+        case DARK_PURPLE:
+            return ANSI_PURPLE;
+        case BLUE:
+        case DARK_BLUE:
+            return ANSI_BLUE;
+        case UNDERLINE:
+            return ANSI_UNDERLINE;
+        case ITALIC:
+            return ANSI_ITALIC;
+        case BOLD:
+            return ANSI_BOLD;
+        default:
+            return "";
         }
     }
 }

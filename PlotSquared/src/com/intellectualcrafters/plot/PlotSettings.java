@@ -13,26 +13,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Biome;
 
 /**
  * plot settings
+ * 
  * @author Citymonstret
- *
+ * 
  */
 public class PlotSettings {
 
     private String alias;
-	/**
-	 * plot object
-	 */
-	@SuppressWarnings("unused")
-	private Plot plot;
-	/**
-	 * plot biome
-	 */
-	private Biome biome;
+    /**
+     * plot biome
+     */
+    private Biome biome;
     /**
      * plot rain
      */
@@ -41,103 +36,107 @@ public class PlotSettings {
      * 
      */
     private Set<Flag> flags;
-	/**
-	 * plot time
-	 */
-	private Long time;
-	/**
-	 * Change time?
-	 */
-	private boolean changeTime;
-	private PlotHomePosition position;
-	/**
-	 * Constructor
-	 * @param plot
-	 */
-	public PlotSettings(Plot plot) {
-		this.plot = plot;
+    /**
+     * plot time
+     */
+    private Long time;
+    /**
+     * Change time?
+     */
+    private boolean changeTime;
+    private PlotHomePosition position;
+
+    /**
+     * Constructor
+     * 
+     * @param plot
+     */
+    public PlotSettings(Plot plot) {
         this.alias = "";
-	}
-	
-	/**
-	 * 
-	 * @param b
-	 */
-	public void setBiome(Biome b) {
-		this.biome = b;
-	}
-	
-	/**
-	 * 
-	 * @param b
-	 */
-	public void setTimeChange(boolean b) {
-		this.changeTime = b;
-	}
-	
-	/**
-	 * 
-	 * @param l
-	 */
-	public void setTime(long l) {
-		this.time = l;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 * @deprecated
-	 */
-	public Biome getBiome() {
-		return this.biome;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean getRain() {
-		return this.rain;
-	}
+    }
+
+    /**
+     * 
+     * @param b
+     */
+    public void setBiome(Biome b) {
+        this.biome = b;
+    }
+
+    /**
+     * 
+     * @param b
+     */
+    public void setTimeChange(boolean b) {
+        this.changeTime = b;
+    }
+
+    /**
+     * 
+     * @param l
+     */
+    public void setTime(long l) {
+        this.time = l;
+    }
+
+    /**
+     * 
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public Biome getBiome() {
+        return this.biome;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public boolean getRain() {
+        return this.rain;
+    }
 
     public void setRain(boolean b) {
         this.rain = b;
     }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public long getTime() {
-		return this.time;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean getChangeTime() {
-		return this.changeTime;
-	}
+    /**
+     * 
+     * @return
+     */
+    public long getTime() {
+        return this.time;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public boolean getChangeTime() {
+        return this.changeTime;
+    }
 
     /**
      * 
      * @param alias
      */
-    public  void setAlias(String alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
     }
-    
+
     /**
      * 
      * @param flag
      */
     public void addFlag(Flag flag) {
         Flag hasFlag = getFlag(flag.getKey());
-        if (hasFlag!=null)
-            flags.remove(hasFlag);
+        if (hasFlag != null) {
+            this.flags.remove(hasFlag);
+        }
         this.flags.add(flag);
     }
+
     /**
      * 
      * @param flags
@@ -145,6 +144,7 @@ public class PlotSettings {
     public void setFlags(Flag[] flags) {
         this.flags = new HashSet<Flag>(Arrays.asList(flags));
     }
+
     /**
      * 
      * @return
@@ -152,23 +152,38 @@ public class PlotSettings {
     public Set<Flag> getFlags() {
         return this.flags;
     }
+
     /**
      * 
      * @param flag
      * @return
      */
     public Flag getFlag(String flag) {
-        for (Flag myflag:flags) {
-            if (myflag.getKey().equals(flag))
+        for (Flag myflag : this.flags) {
+            if (myflag.getKey().equals(flag)) {
                 return myflag;
+            }
         }
         return null;
     }
-    
-    public PlotHomePosition getPosition() { return this.position; }
-    public void setPosition(PlotHomePosition position) { this.position = position; }
-    public String getAlias() { return this.alias; }
-    public String getJoinMessage() { return ""; }
 
-    public String getLeaveMessage() { return ""; }
+    public PlotHomePosition getPosition() {
+        return this.position;
+    }
+
+    public void setPosition(PlotHomePosition position) {
+        this.position = position;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+
+    public String getJoinMessage() {
+        return "";
+    }
+
+    public String getLeaveMessage() {
+        return "";
+    }
 }

@@ -9,77 +9,85 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 @SuppressWarnings("deprecation")
-public class Helpers extends SubCommand{
+public class Helpers extends SubCommand {
 
     public Helpers() {
         super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS);
     }
 
-
     private boolean hasBeenOnServer(String name) {
         Player plr;
-        if((plr = Bukkit.getPlayer(name)) == null) {
+        if ((plr = Bukkit.getPlayer(name)) == null) {
             OfflinePlayer oplr = Bukkit.getOfflinePlayer(name);
-            if(oplr == null) return false;
-            else return oplr.hasPlayedBefore();
+            if (oplr == null) {
+                return false;
+            } else {
+                return oplr.hasPlayedBefore();
+            }
         } else {
-            if(plr.isOnline()) return true;
-            else return plr.hasPlayedBefore();
+            if (plr.isOnline()) {
+                return true;
+            } else {
+                return plr.hasPlayedBefore();
+            }
         }
     }
 
-    public boolean execute(Player plr, String ... args) {
-        if(args.length < 2) {
+    @Override
+    public boolean execute(Player plr, String... args) {
+        if (args.length < 2) {
             PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
-        if(!PlayerFunctions.isInPlot(plr)) {
+        if (!PlayerFunctions.isInPlot(plr)) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if(plot.owner == null || !plot.hasRights(plr)) {
+        if ((plot.owner == null) || !plot.hasRights(plr)) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
             return true;
         }
-        if(args[0].equalsIgnoreCase("add")) {
-            if(args[1].equalsIgnoreCase("*")) {
+        if (args[0].equalsIgnoreCase("add")) {
+            if (args[1].equalsIgnoreCase("*")) {
                 UUID uuid = DBFunc.everyone;
                 plot.addHelper(uuid);
                 DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
                 PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
                 return true;
             }
-            if(!hasBeenOnServer(args[1])) {
+            if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
             UUID uuid = null;
-            if(Bukkit.getPlayer(args[1]) != null && Bukkit.getPlayer(args[1]).isOnline())
+            if ((Bukkit.getPlayer(args[1]) != null) && Bukkit.getPlayer(args[1]).isOnline()) {
                 uuid = Bukkit.getPlayer(args[1]).getUniqueId();
-            else
+            } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+            }
             plot.addHelper(uuid);
             DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
-        } else if(args[0].equalsIgnoreCase("remove")) {
-            if(args[1].equalsIgnoreCase("*")) {
+        } else if (args[0].equalsIgnoreCase("remove")) {
+            if (args[1].equalsIgnoreCase("*")) {
                 UUID uuid = DBFunc.everyone;
-                if(!plot.helpers.contains(uuid)) {
+                if (!plot.helpers.contains(uuid)) {
                     PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
@@ -88,16 +96,17 @@ public class Helpers extends SubCommand{
                 PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
-            if(!hasBeenOnServer(args[1])) {
+            if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
             UUID uuid = null;
-            if(Bukkit.getPlayer(args[1]).isOnline())
+            if (Bukkit.getPlayer(args[1]).isOnline()) {
                 uuid = Bukkit.getPlayer(args[1]).getUniqueId();
-            else
+            } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-            if(!plot.helpers.contains(uuid)) {
+            }
+            if (!plot.helpers.contains(uuid)) {
                 PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                 return true;
             }

@@ -1,31 +1,29 @@
 package com.intellectualcrafters.plot;
 
-import org.bukkit.Material;
-
 import java.util.ArrayList;
 
+import org.bukkit.Material;
+
 public class PlotWorld {
-    
+
     /*
-     * This is the PlotWorld class (obviously)
-     *  - All existing PlotWorld instances should be kept in PlotMain (worlds variable)
-     *  - The accessors and mutators are: 
-     *  PlotMain.isPlotWorld(world)
-     *  PlotMain.getPlotWorlds() or PlotMain.getPlotWorldsString() <- use this if you don't need to get world objects
-     *  PlotMain.getWorldSettings(World) - get the PlotWorld class for a world
-     *  
-     *  Also added is getWorldPlots(World) as the plots are now sorted per world
-     *  
-     *  To get the world of a plot, you can use plot.world - (string)   or plot.getWorld() (world object)
-     *  
-     *  All PlotWorld settings are per world in the settings.yml (these settings are automatically added when a world is loaded, either at startup or if a new world is created):
-     *   - You can find this in the WorldGenerator class (yeah, it's possibly not the best place, but it makes sure worlds are added to the settings.yml)
-     *  
-     *  All new DEFAULT CONSTANTS should be static and be given a value
-     *  All new variables should not be static and should not be given any values here, but rather in the WorldGenerator class
-     *  
+     * This is the PlotWorld class (obviously) - All existing PlotWorld
+     * instances should be kept in PlotMain (worlds variable) - The accessors
+     * and mutators are: PlotMain.isPlotWorld(world) PlotMain.getPlotWorlds() or
+     * PlotMain.getPlotWorldsString() <- use this if you don't need to get world
+     * objects PlotMain.getWorldSettings(World) - get the PlotWorld class for a
+     * world Also added is getWorldPlots(World) as the plots are now sorted per
+     * world To get the world of a plot, you can use plot.world - (string) or
+     * plot.getWorld() (world object) All PlotWorld settings are per world in
+     * the settings.yml (these settings are automatically added when a world is
+     * loaded, either at startup or if a new world is created): - You can find
+     * this in the WorldGenerator class (yeah, it's possibly not the best place,
+     * but it makes sure worlds are added to the settings.yml) All new DEFAULT
+     * CONSTANTS should be static and be given a value All new variables should
+     * not be static and should not be given any values here, but rather in the
+     * WorldGenerator class
      */
-    
+
     /**
      * Road Height
      */
@@ -34,16 +32,16 @@ public class PlotWorld {
      * Default Road Height: 64
      */
     public static int ROAD_HEIGHT_DEFAULT = 64;
-    
+
     /**
      * plot height
      */
     public int PLOT_HEIGHT;
     /**
      * Default plot height: 64
-     */    
+     */
     public static int PLOT_HEIGHT_DEFAULT = 64;
-    
+
     /**
      * Wall height
      */
@@ -52,7 +50,7 @@ public class PlotWorld {
      * Default Wall Height: 64
      */
     public static int WALL_HEIGHT_DEFAULT = 64;
-    
+
     /**
      * plot width
      */
@@ -61,7 +59,7 @@ public class PlotWorld {
      * Default plot width: 32
      */
     public static int PLOT_WIDTH_DEFAULT = 32;
-    
+
     /**
      * Road width
      */
@@ -70,7 +68,7 @@ public class PlotWorld {
      * Default road width: 7
      */
     public static int ROAD_WIDTH_DEFAULT = 7;
-       
+
     /**
      * Plot biome
      */
@@ -86,7 +84,7 @@ public class PlotWorld {
     /**
      * Default main block: 1
      */
-    public static String[] MAIN_BLOCK_DEFAULT = new String[] {"1:0"};
+    public static String[] MAIN_BLOCK_DEFAULT = new String[] { "1:0" };
     /**
      * Top blocks
      */
@@ -94,8 +92,8 @@ public class PlotWorld {
     /**
      * Default top blocks: {"2"}
      */
-    public static String[] TOP_BLOCK_DEFAULT = new String[] {"2:0"};
-    
+    public static String[] TOP_BLOCK_DEFAULT = new String[] { "2:0" };
+
     /**
      * Wall block
      */
@@ -104,7 +102,7 @@ public class PlotWorld {
      * Default wall block: 44
      */
     public static String WALL_BLOCK_DEFAULT = "44:0";
-    
+
     /**
      * Wall filling
      */
@@ -113,7 +111,7 @@ public class PlotWorld {
      * Default wall filling: 1
      */
     public static String WALL_FILLING_DEFAULT = "1:0";
-    
+
     /**
      * Road stripes
      */
@@ -124,33 +122,33 @@ public class PlotWorld {
      * Default road stripes: 35
      */
     public static String ROAD_STRIPES_DEFAULT = "98:0";
-//    
-//    /**
-//     * Road stripes data value (byte)
-//     */
-//    public int ROAD_STRIPES_DATA;
-//    /**
-//     * Default road stripes data value: (byte) 0
-//     */
-//    public static int ROAD_STRIPES_DATA_DEFAULT = 0;
-//    
-//    /**
-//     * Wall block data value (byte)
-//     */
-//    public int WALL_BLOCK_DATA;
-//    /**
-//     * Default wall block data value: (byte) 0
-//     */
-//    public static int WALL_BLOCK_DATA_DEFAULT = 0;
-//    
-//    /**
-//     * Wall filling data value (byte)
-//     */
-//    public int WALL_FILLING_DATA;
-//    /**
-//     * Default wall filling data value: (byte) 0
-//     */
-//    public static int WALL_FILLING_DATA_DEFAULT = 0;
+    //
+    // /**
+    // * Road stripes data value (byte)
+    // */
+    // public int ROAD_STRIPES_DATA;
+    // /**
+    // * Default road stripes data value: (byte) 0
+    // */
+    // public static int ROAD_STRIPES_DATA_DEFAULT = 0;
+    //
+    // /**
+    // * Wall block data value (byte)
+    // */
+    // public int WALL_BLOCK_DATA;
+    // /**
+    // * Default wall block data value: (byte) 0
+    // */
+    // public static int WALL_BLOCK_DATA_DEFAULT = 0;
+    //
+    // /**
+    // * Wall filling data value (byte)
+    // */
+    // public int WALL_FILLING_DATA;
+    // /**
+    // * Default wall filling data value: (byte) 0
+    // */
+    // public static int WALL_FILLING_DATA_DEFAULT = 0;
     /**
      * Road block
      */
@@ -159,16 +157,16 @@ public class PlotWorld {
      * Default road block: 155
      */
     public static String ROAD_BLOCK_DEFAULT = "155:0";
-//    
-//    /**
-//     * Road block data value (byte)
-//     */
-//    public int ROAD_BLOCK_DATA;
-//    /**
-//     * Default road block data value: (byte) 0
-//     */
-//    public static int ROAD_BLOCK_DATA_DEFAULT = 0;
-    
+    //
+    // /**
+    // * Road block data value (byte)
+    // */
+    // public int ROAD_BLOCK_DATA;
+    // /**
+    // * Default road block data value: (byte) 0
+    // */
+    // public static int ROAD_BLOCK_DATA_DEFAULT = 0;
+
     /**
      * plot chat?
      */

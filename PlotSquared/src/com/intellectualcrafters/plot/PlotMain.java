@@ -9,6 +9,124 @@
 
 package com.intellectualcrafters.plot;
 
+import static org.bukkit.Material.ACACIA_STAIRS;
+import static org.bukkit.Material.BEACON;
+import static org.bukkit.Material.BEDROCK;
+import static org.bukkit.Material.BIRCH_WOOD_STAIRS;
+import static org.bukkit.Material.BOOKSHELF;
+import static org.bukkit.Material.BREWING_STAND;
+import static org.bukkit.Material.BRICK;
+import static org.bukkit.Material.BRICK_STAIRS;
+import static org.bukkit.Material.BURNING_FURNACE;
+import static org.bukkit.Material.CAKE_BLOCK;
+import static org.bukkit.Material.CAULDRON;
+import static org.bukkit.Material.CLAY;
+import static org.bukkit.Material.CLAY_BRICK;
+import static org.bukkit.Material.COAL_BLOCK;
+import static org.bukkit.Material.COAL_ORE;
+import static org.bukkit.Material.COBBLESTONE;
+import static org.bukkit.Material.COBBLESTONE_STAIRS;
+import static org.bukkit.Material.COBBLE_WALL;
+import static org.bukkit.Material.COMMAND;
+import static org.bukkit.Material.DARK_OAK_STAIRS;
+import static org.bukkit.Material.DAYLIGHT_DETECTOR;
+import static org.bukkit.Material.DIAMOND_BLOCK;
+import static org.bukkit.Material.DIAMOND_ORE;
+import static org.bukkit.Material.DIRT;
+import static org.bukkit.Material.DISPENSER;
+import static org.bukkit.Material.DROPPER;
+import static org.bukkit.Material.EMERALD_BLOCK;
+import static org.bukkit.Material.EMERALD_ORE;
+import static org.bukkit.Material.ENCHANTMENT_TABLE;
+import static org.bukkit.Material.ENDER_PORTAL_FRAME;
+import static org.bukkit.Material.ENDER_STONE;
+import static org.bukkit.Material.FURNACE;
+import static org.bukkit.Material.GLASS;
+import static org.bukkit.Material.GLOWSTONE;
+import static org.bukkit.Material.GOLD_BLOCK;
+import static org.bukkit.Material.GOLD_ORE;
+import static org.bukkit.Material.GRASS;
+import static org.bukkit.Material.GRAVEL;
+import static org.bukkit.Material.HARD_CLAY;
+import static org.bukkit.Material.HAY_BLOCK;
+import static org.bukkit.Material.HUGE_MUSHROOM_1;
+import static org.bukkit.Material.HUGE_MUSHROOM_2;
+import static org.bukkit.Material.IRON_BLOCK;
+import static org.bukkit.Material.IRON_ORE;
+import static org.bukkit.Material.JACK_O_LANTERN;
+import static org.bukkit.Material.JUKEBOX;
+import static org.bukkit.Material.JUNGLE_WOOD_STAIRS;
+import static org.bukkit.Material.LAPIS_BLOCK;
+import static org.bukkit.Material.LAPIS_ORE;
+import static org.bukkit.Material.LEAVES;
+import static org.bukkit.Material.LEAVES_2;
+import static org.bukkit.Material.LOG;
+import static org.bukkit.Material.LOG_2;
+import static org.bukkit.Material.MELON_BLOCK;
+import static org.bukkit.Material.MOB_SPAWNER;
+import static org.bukkit.Material.MOSSY_COBBLESTONE;
+import static org.bukkit.Material.MYCEL;
+import static org.bukkit.Material.NETHERRACK;
+import static org.bukkit.Material.NETHER_BRICK;
+import static org.bukkit.Material.NETHER_BRICK_STAIRS;
+import static org.bukkit.Material.NOTE_BLOCK;
+import static org.bukkit.Material.OBSIDIAN;
+import static org.bukkit.Material.PACKED_ICE;
+import static org.bukkit.Material.PUMPKIN;
+import static org.bukkit.Material.QUARTZ_BLOCK;
+import static org.bukkit.Material.QUARTZ_ORE;
+import static org.bukkit.Material.QUARTZ_STAIRS;
+import static org.bukkit.Material.REDSTONE_BLOCK;
+import static org.bukkit.Material.SAND;
+import static org.bukkit.Material.SANDSTONE;
+import static org.bukkit.Material.SANDSTONE_STAIRS;
+import static org.bukkit.Material.SMOOTH_BRICK;
+import static org.bukkit.Material.SMOOTH_STAIRS;
+import static org.bukkit.Material.SNOW_BLOCK;
+import static org.bukkit.Material.SOUL_SAND;
+import static org.bukkit.Material.SPONGE;
+import static org.bukkit.Material.SPRUCE_WOOD_STAIRS;
+import static org.bukkit.Material.STONE;
+import static org.bukkit.Material.WOOD;
+import static org.bukkit.Material.WOOD_STAIRS;
+import static org.bukkit.Material.WOOL;
+import static org.bukkit.Material.WORKBENCH;
+import static org.bukkit.Material.getMaterial;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+
+import me.confuser.barapi.BarAPI;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import ca.mera.CameraAPI;
 
 import com.intellectualcrafters.plot.Logger.LogLevel;
@@ -25,34 +143,8 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-import me.confuser.barapi.BarAPI;
-
-import org.bukkit.*;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static org.bukkit.Material.*;
-
 /**
- * @awesome @author Citymonstret, Empire92
- *         PlotMain class.
+ * @awesome @author Citymonstret, Empire92 PlotMain class.
  */
 public class PlotMain extends JavaPlugin {
 
@@ -109,18 +201,17 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * TODO: Implement better system
-     *
-    */
+     * 
+     */
     @SuppressWarnings("deprecation")
     public static void checkForExpiredPlots() {
         final JavaPlugin plugin = PlotMain.getMain();
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        checkExpired(plugin, true);
-                    }
-                }, 0l, 12 * 60 * 60 * 20l);
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                checkExpired(plugin, true);
+            }
+        }, 0l, 12 * 60 * 60 * 20l);
     }
 
     /**
@@ -135,35 +226,37 @@ public class PlotMain extends JavaPlugin {
     public static Set<Flag> getFlags() {
         return registeredFlags;
     }
-    
+
     public static boolean isRegisteredFlag(String arg) {
-        for (Flag flag:registeredFlags) {
-            if (flag.getKey().equalsIgnoreCase(arg))
+        for (Flag flag : registeredFlags) {
+            if (flag.getKey().equalsIgnoreCase(arg)) {
                 return true;
+            }
         }
         return false;
     }
-    
+
     public static boolean registerFlag(Flag flag) {
         return registeredFlags.add(flag);
     }
-    
+
     public static boolean unRegisterFlag(Flag flag) {
         return registeredFlags.remove(flag);
     }
-    
+
     /**
      * Get all plots
-     *
+     * 
      * @return HashMap containing the plot ID and the plot object.
      */
     public static Set<Plot> getPlots() {
         ArrayList<Plot> myplots = new ArrayList<Plot>();
-        for (HashMap<PlotId, Plot> world:plots.values()) {
+        for (HashMap<PlotId, Plot> world : plots.values()) {
             myplots.addAll(world.values());
         }
         return new HashSet<Plot>(myplots);
     }
+
     /**
      * 
      * @param player
@@ -172,8 +265,8 @@ public class PlotMain extends JavaPlugin {
     public static Set<Plot> getPlots(Player player) {
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
-        for (HashMap<PlotId, Plot> world:plots.values()) {
-            for (Plot plot:world.values()) {
+        for (HashMap<PlotId, Plot> world : plots.values()) {
+            for (Plot plot : world.values()) {
                 if (plot.hasOwner()) {
                     if (plot.getOwner().equals(uuid)) {
                         myplots.add(plot);
@@ -183,6 +276,7 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashSet<Plot>(myplots);
     }
+
     /**
      * 
      * @param world
@@ -192,7 +286,7 @@ public class PlotMain extends JavaPlugin {
     public static Set<Plot> getPlots(World world, Player player) {
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
-        for (Plot plot:getPlots(world).values()) {
+        for (Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
                 if (plot.getOwner().equals(uuid)) {
                     myplots.add(plot);
@@ -201,6 +295,7 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashSet<Plot>(myplots);
     }
+
     /**
      * 
      * @param world
@@ -212,12 +307,14 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashMap<PlotId, Plot>();
     }
+
     /**
      * get all plot worlds
      */
     public static String[] getPlotWorlds() {
         return (worlds.keySet().toArray(new String[0]));
     }
+
     /**
      * 
      * @return
@@ -225,6 +322,7 @@ public class PlotMain extends JavaPlugin {
     public static String[] getPlotWorldsString() {
         return plots.keySet().toArray(new String[0]);
     }
+
     /**
      * 
      * @param world
@@ -233,82 +331,91 @@ public class PlotMain extends JavaPlugin {
     public static boolean isPlotWorld(World world) {
         return (worlds.containsKey(world.getName()));
     }
+
     /**
      * 
      * @param world
      * @return
      */
     public static PlotWorld getWorldSettings(World world) {
-        if (worlds.containsKey(world.getName()))
+        if (worlds.containsKey(world.getName())) {
             return worlds.get(world.getName());
+        }
         return null;
     }
+
     /**
      * 
      * @param world
      * @return
      */
     public static PlotWorld getWorldSettings(String world) {
-        if (worlds.containsKey(world))
+        if (worlds.containsKey(world)) {
             return worlds.get(world);
+        }
         return null;
     }
+
     /**
-    *
-    * @param world
-    * @return set containing the plots for a world
-    */
-   public static Plot[] getWorldPlots(World world) {
-       return (Plot[])(plots.get(world.getName()).values().toArray(new Plot[0]));
-   }
+     * 
+     * @param world
+     * @return set containing the plots for a world
+     */
+    public static Plot[] getWorldPlots(World world) {
+        return (plots.get(world.getName()).values().toArray(new Plot[0]));
+    }
 
     public static boolean removePlot(String world, PlotId id) {
-        PlotDeleteEvent event = new PlotDeleteEvent(world,id);
+        PlotDeleteEvent event = new PlotDeleteEvent(world, id);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             event.setCancelled(true);
             return false;
         }
         plots.get(world).remove(id);
         return true;
     }
+
     /**
      * Replace the plot object with an updated version
-     *
-     * @param plot plot object
+     * 
+     * @param plot
+     *            plot object
      */
     public static void updatePlot(Plot plot) {
         String world = plot.world;
-        if (!plots.containsKey(world))
-            plots.put(world,new HashMap<PlotId, Plot>());
+        if (!plots.containsKey(world)) {
+            plots.put(world, new HashMap<PlotId, Plot>());
+        }
         plot.hasChanged = true;
         plots.get(world).put(plot.id, plot);
     }
 
     /**
      * TODO: Implement better system
-     *
-     * @param plugin Plugin
-     * @param async  Call async?
+     * 
+     * @param plugin
+     *            Plugin
+     * @param async
+     *            Call async?
      */
     private static void checkExpired(JavaPlugin plugin, boolean async) {
         if (async) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    for (String world:getPlotWorldsString()) {
+                    for (String world : getPlotWorldsString()) {
                         if (plots.containsKey(world)) {
                             for (Plot plot : plots.get(world).values()) {
                                 if (plot.owner == null) {
                                     continue;
                                 }
                                 if (PlayerFunctions.hasExpired(plot)) {
-                                    PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
+                                    PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                                     Bukkit.getServer().getPluginManager().callEvent(event);
-                                    if(event.isCancelled()) {
+                                    if (event.isCancelled()) {
                                         event.setCancelled(true);
-                                    }
-                                    else {
+                                    } else {
                                         DBFunc.delete(world, plot);
                                     }
                                 }
@@ -318,16 +425,15 @@ public class PlotMain extends JavaPlugin {
                 }
             });
         } else {
-            for (String world:getPlotWorldsString()) {
+            for (String world : getPlotWorldsString()) {
                 if (PlotMain.plots.containsKey(world)) {
                     for (Plot plot : PlotMain.plots.get(world).values()) {
                         if (PlayerFunctions.hasExpired(plot)) {
-                            PlotDeleteEvent event = new PlotDeleteEvent(world,plot.id);
+                            PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                             Bukkit.getServer().getPluginManager().callEvent(event);
-                            if(event.isCancelled()) {
+                            if (event.isCancelled()) {
                                 event.setCancelled(true);
-                            }
-                            else {
+                            } else {
                                 DBFunc.delete(world, plot);
                             }
                         }
@@ -336,7 +442,6 @@ public class PlotMain extends JavaPlugin {
             }
         }
     }
-
 
     private void setupLogger() {
         File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
@@ -371,8 +476,8 @@ public class PlotMain extends JavaPlugin {
     public void onEnable() {
         setupLogger();
 
-        //Check for outdated java version.
-        if(getJavaVersion() < 1.7) {
+        // Check for outdated java version.
+        if (getJavaVersion() < 1.7) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
             sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -381,68 +486,36 @@ public class PlotMain extends JavaPlugin {
 
         configs();
 
-        if(Settings.METRICS) {
+        if (Settings.METRICS) {
             try {
                 Metrics metrics = new Metrics(this);
                 metrics.start();
                 sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
-            } catch(Exception e) {
+            } catch (Exception e) {
                 sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
             }
         }
 
         // TODO make this configurable
-        PlotWorld.BLOCKS = new ArrayList<>(Arrays.asList(new Material[]{
-                ACACIA_STAIRS, BEACON, BEDROCK,
-                BIRCH_WOOD_STAIRS, BOOKSHELF,
-                BREWING_STAND, BRICK, BRICK_STAIRS,
-                BURNING_FURNACE, CAKE_BLOCK,
-                CAULDRON, CLAY_BRICK, CLAY,
-                COAL_BLOCK, COAL_ORE, COBBLE_WALL,
-                COBBLESTONE, COBBLESTONE_STAIRS,
-                COMMAND, DARK_OAK_STAIRS,
-                DAYLIGHT_DETECTOR, DIAMOND_ORE,
-                DIAMOND_BLOCK, DIRT, DISPENSER,
-                DROPPER, EMERALD_BLOCK, EMERALD_ORE,
-                ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME,
-                ENDER_STONE, FURNACE, GLOWSTONE,
-                GOLD_ORE, GOLD_BLOCK, GRASS,
-                GRAVEL, GLASS, HARD_CLAY,
-                HAY_BLOCK, HUGE_MUSHROOM_1,
-                HUGE_MUSHROOM_2, IRON_BLOCK,
-                IRON_ORE, JACK_O_LANTERN, JUKEBOX,
-                JUNGLE_WOOD_STAIRS, LAPIS_BLOCK,
-                LAPIS_ORE, LEAVES, LEAVES_2,
-                LOG, LOG_2, MELON_BLOCK,
-                MOB_SPAWNER, MOSSY_COBBLESTONE,
-                MYCEL, NETHER_BRICK,
-                NETHER_BRICK_STAIRS, NETHERRACK,
-                NOTE_BLOCK, OBSIDIAN, PACKED_ICE,
-                PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE,
-                QUARTZ_STAIRS, REDSTONE_BLOCK,
-                SANDSTONE, SAND, SANDSTONE_STAIRS,
-                SMOOTH_BRICK, SMOOTH_STAIRS,
-                SNOW_BLOCK, SOUL_SAND, SPONGE,
-                SPRUCE_WOOD_STAIRS, STONE, WOOD,
-                WOOD_STAIRS, WORKBENCH, WOOL,
-                getMaterial(44), getMaterial(126)}));
-        if (Settings.KILL_ROAD_MOBS)
+        PlotWorld.BLOCKS = new ArrayList<>(Arrays.asList(new Material[] { ACACIA_STAIRS, BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK, NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE, QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND, SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK,
+                SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD, WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44), getMaterial(126) }));
+        if (Settings.KILL_ROAD_MOBS) {
             killAllEntities();
+        }
 
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
         }
         if (Settings.DB.USE_MYSQL) {
             try {
-                mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT,
-                        Settings.DB.DATABASE, Settings.DB.USER,
-                        Settings.DB.PASSWORD);
+                mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = mySQL.openConnection();
                 {
                     DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, "plot", null);
-                    if(!res.next())
+                    if (!res.next()) {
                         DBFunc.createTables("mysql");
+                    }
                 }
             } catch (ClassNotFoundException | SQLException e) {
                 Logger.add(LogLevel.DANGER, "MySQL connection failed.");
@@ -453,7 +526,7 @@ public class PlotMain extends JavaPlugin {
                 return;
             }
             plots = DBFunc.getPlots();
-            
+
         } else if (Settings.DB.USE_MONGO) {
             sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
@@ -462,8 +535,9 @@ public class PlotMain extends JavaPlugin {
                 {
                     DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, "plot", null);
-                    if(!res.next())
+                    if (!res.next()) {
                         DBFunc.createTables("sqlite");
+                    }
                 }
             } catch (ClassNotFoundException | SQLException e) {
                 Logger.add(LogLevel.DANGER, "SQLite connection failed");
@@ -480,25 +554,24 @@ public class PlotMain extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        if (getServer().getPluginManager().getPlugin("PlotMe") != null ) {
+        if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
             try {
                 new PlotMeConverter(this).runAsync();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         getCommand("plots").setExecutor(new MainCommand());
-        getCommand("plots").setAliases(
-                new ArrayList<String>() {
-                    {
-                        add("p");
-                        add("plotme");
-                        add("plot");
-                    }
-                });
+        getCommand("plots").setAliases(new ArrayList<String>() {
+            {
+                add("p");
+                add("plotme");
+                add("plot");
+            }
+        });
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
-        if (getServer().getPluginManager().getPlugin("CameraAPI") != null ){
+        if (getServer().getPluginManager().getPlugin("CameraAPI") != null) {
             cameraAPI = CameraAPI.getInstance();
             Camera camera = new Camera();
             MainCommand.subCommands.add(camera);
@@ -508,30 +581,22 @@ public class PlotMain extends JavaPlugin {
             barAPI = (BarAPI) getServer().getPluginManager().getPlugin("BarAPI");
         }
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            worldEdit = (WorldEditPlugin) getServer().getPluginManager()
-                    .getPlugin("WorldEdit");
-            getServer().getPluginManager().registerEvents(
-                    new WorldEditListener(), this);
+            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
         }
         checkExpired(PlotMain.getMain(), true);
         checkForExpiredPlots();
 
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(),
-                100L, 1L);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
 
-        if(Web.ENABLED) {
+        if (Web.ENABLED) {
             sendConsoleSenderMessage(C.PREFIX.s() + "This is not yet implemented...");
         }
     }
 
-
-    private void options(boolean verbose) {
-
-    }
-
     /**
      * Get MySQL Connection
-     *
+     * 
      * @return connection MySQL Connection.
      */
     @SuppressWarnings("unused")
@@ -541,35 +606,32 @@ public class PlotMain extends JavaPlugin {
 
     /** .. */
 
-    //Old Stuff
-    /*private static boolean checkForUpdate() throws IOException {
-		URL call = new URL(Settings.Update.VERSION_URL);
-		InputStream stream = call.openStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		String latest = reader.readLine();
-		reader.close();
-		return !getPlotMain().getDescription().getVersion().equalsIgnoreCase(latest);
-	}
-
-	private static String getNextUpdateString() throws IOException {
-		URL call = new URL(Settings.Update.VERSION_URL);
-		InputStream stream = call.openStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		return reader.readLine();
-	}
-	
-	private static void update() throws IOException {
-		sendConsoleSenderMessage(C.PREFIX.s() + "&c&lThere is an update! New Update: &6&l" + getNextUpdateString() + "&c&l, Current Update: &6&l" + getPlotMain().getDescription().getVersion());
-	}
-	*/
+    // Old Stuff
+    /*
+     * private static boolean checkForUpdate() throws IOException { URL call =
+     * new URL(Settings.Update.VERSION_URL); InputStream stream =
+     * call.openStream(); BufferedReader reader = new BufferedReader(new
+     * InputStreamReader(stream)); String latest = reader.readLine();
+     * reader.close(); return
+     * !getPlotMain().getDescription().getVersion().equalsIgnoreCase(latest); }
+     * private static String getNextUpdateString() throws IOException { URL call
+     * = new URL(Settings.Update.VERSION_URL); InputStream stream =
+     * call.openStream(); BufferedReader reader = new BufferedReader(new
+     * InputStreamReader(stream)); return reader.readLine(); } private static
+     * void update() throws IOException { sendConsoleSenderMessage(C.PREFIX.s()
+     * + "&c&lThere is an update! New Update: &6&l" + getNextUpdateString() +
+     * "&c&l, Current Update: &6&l" +
+     * getPlotMain().getDescription().getVersion()); }
+     */
 
     /**
      * Send a message to the console.
-     *
-     * @param string message
+     * 
+     * @param string
+     *            message
      */
     public static void sendConsoleSenderMessage(String string) {
-        if(getMain().getServer().getConsoleSender() == null) {
+        if (getMain().getServer().getConsoleSender() == null) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
         } else {
             getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
@@ -579,10 +641,9 @@ public class PlotMain extends JavaPlugin {
     public static boolean teleportPlayer(Player player, Location from, Plot plot) {
         PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if(!event.isCancelled()) {
+        if (!event.isCancelled()) {
             Location location = PlotHelper.getPlotHome(Bukkit.getWorld(plot.world), plot);
-            if(location.getBlockX() >= 29999999 || location.getBlockX() <= -29999999 ||
-                    location.getBlockZ() >= 299999999 ||location.getBlockZ() <= -29999999) {
+            if ((location.getBlockX() >= 29999999) || (location.getBlockX() <= -29999999) || (location.getBlockZ() >= 299999999) || (location.getBlockZ() <= -29999999)) {
                 event.setCancelled(true);
                 return false;
             }
@@ -594,8 +655,9 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Send a message to the console
-     *
-     * @param c message
+     * 
+     * @param c
+     *            message
      */
     @SuppressWarnings("unused")
     public static void sendConsoleSenderMessage(C c) {
@@ -604,17 +666,17 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Broadcast publicly
-     *
-     * @param c message
+     * 
+     * @param c
+     *            message
      */
     public static void Broadcast(C c) {
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-                C.PREFIX.s() + c.s()));
+        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s()));
     }
 
     /**
      * Returns the main class.
-     *
+     * 
      * @return (this class)
      */
     public static PlotMain getMain() {
@@ -623,22 +685,23 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Broadcast a message to all admins
-     *
-     * @param c message
+     * 
+     * @param c
+     *            message
      */
     public static void BroadcastWithPerms(C c) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("plots.admin"))
+            if (player.hasPermission("plots.admin")) {
                 PlayerFunctions.sendMessage(player, c);
+            }
         }
-        System.out.println(ChatColor.stripColor(ChatColor
-                .translateAlternateColorCodes('&', C.PREFIX.s() + c.s())));
+        System.out.println(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s())));
     }
-
 
     public static void reloadTranslations() throws IOException {
         translations = YamlConfiguration.loadConfiguration(translationsFile);
     }
+
     /**
      * Load configuration files
      */
@@ -649,43 +712,39 @@ public class PlotMain extends JavaPlugin {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
-            configFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator +"settings.yml");
+            configFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "settings.yml");
             if (!configFile.exists()) {
                 configFile.createNewFile();
             }
             config = YamlConfiguration.loadConfiguration(configFile);
             setupConfig();
-        }
-        catch (Exception err_trans) {
+        } catch (Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save settings.yml");
             System.out.println("Failed to save settings.yml");
         }
         try {
-            storageFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator +"storage.yml");
+            storageFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "storage.yml");
             if (!storageFile.exists()) {
                 storageFile.createNewFile();
             }
             storage = YamlConfiguration.loadConfiguration(storageFile);
             setupStorage();
-        }
-        catch (Exception err_trans) {
+        } catch (Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save storage.yml");
             System.out.println("Failed to save storage.yml");
         }
         try {
-            translationsFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator +"translations.yml");
+            translationsFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "translations.yml");
             if (!translationsFile.exists()) {
                 translationsFile.createNewFile();
             }
             translations = YamlConfiguration.loadConfiguration(translationsFile);
             setupTranslations();
-        }
-        catch (Exception err_trans) {
+        } catch (Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save translations.yml");
             System.out.println("Failed to save translations.yml");
         }
-        
-        
+
         try {
             config.save(configFile);
             storage.save(storageFile);
@@ -706,9 +765,9 @@ public class PlotMain extends JavaPlugin {
         }
         {
             Settings.METRICS = config.getBoolean("metrics");
-            //Web
-            //Web.ENABLED = config.getBoolean("web.enabled");
-            //Web.PORT    = config.getInt("web.port");
+            // Web
+            // Web.ENABLED = config.getBoolean("web.enabled");
+            // Web.PORT = config.getInt("web.port");
         }
     }
 
@@ -717,106 +776,104 @@ public class PlotMain extends JavaPlugin {
      */
     @SuppressWarnings("deprecation")
     public static void killAllEntities() {
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getMain(),
-                new Runnable() {
-                    World world;
-                    Location location;
-                    long ticked = 0l;
-                    long error = 0l;
-                    {
-                        sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
-                    }
-                    @Override
-                    public void run() {
-                        if(ticked > 36000l) {
-                            ticked = 0l;
-                            sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + error);
-                            error = 0l;
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getMain(), new Runnable() {
+            Location location;
+            long ticked = 0l;
+            long error = 0l;
+            {
+                sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
+            }
+
+            @Override
+            public void run() {
+                if (this.ticked > 36000l) {
+                    this.ticked = 0l;
+                    sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + this.error);
+                    this.error = 0l;
+                }
+                for (String w : getPlotWorlds()) {
+                    getWorldSettings(w);
+                    World world = Bukkit.getServer().getWorld(w);
+                    try {
+                        if (world.getLoadedChunks().length < 1) {
+                            continue;
                         }
-                        for (String w: getPlotWorlds()) {
-                            PlotWorld plotworld = getWorldSettings(w);
-                            World world = Bukkit.getServer().getWorld(w);
-                             try {
-                                if(world.getLoadedChunks().length < 1) {
+                        for (Chunk chunk : world.getLoadedChunks()) {
+                            Entity[] entities = chunk.getEntities();
+                            for (int i = entities.length - 1; i >= 0; i--) {
+                                Entity entity = entities[i];
+                                if (entity.getType() == EntityType.PLAYER) {
                                     continue;
                                 }
-                                for (Chunk chunk : world.getLoadedChunks()) {
-                                    Entity[] entities = chunk.getEntities();
-                                    for (int i = entities.length-1; i>=0;i--){
-                                        Entity entity = entities[i];
-                                        if (entity.getType() == EntityType.PLAYER)
-                                            continue;
-                                        location = entity.getLocation();
-                                        if (!PlayerEvents.isInPlot(location)) {
-                                            boolean tamed = false;
-                                            if (Settings.MOB_PATHFINDING) {
-                                                if (entity instanceof Tameable) {
-                                                    Tameable tameable = (Tameable) entity;
-                                                    if (tameable.isTamed()) {
-                                                        tamed = true;
-                                                    }
-                                                }
-                                                else if (entity instanceof LivingEntity) {
-                                                    LivingEntity livingEntity = ((LivingEntity) entity);
-                                                    if (livingEntity.getCustomName()!=null) {
-                                                        tamed = true;
-                                                    }
-                                                }
-                                                if (tamed) {
-                                                    boolean found = false;
-                                                    int radius = 1;
-                                                    int dir = 0;
-                                                    int x = location.getBlockX();
-                                                    int y = location.getBlockY();
-                                                    int z = location.getBlockZ();
-                                                    while (!found || radius > PlotWorld.ROAD_WIDTH_DEFAULT) {
-                                                        Location pos;
-                                                        switch (dir) {
-                                                            case 0:
-                                                                pos = new Location(world, x+radius, y, z);
-                                                                dir++;
-                                                                break;
-                                                            case 1:
-                                                                pos = new Location(world, x, y, z+radius);
-                                                                dir++;
-                                                                break;
-                                                            case 2:
-                                                                pos = new Location(world, x-radius, y, z);
-                                                                dir++;
-                                                                break;
-                                                            case 3:
-                                                                pos = new Location(world, x, y, z-radius);
-                                                                dir = 0;
-                                                                radius++;
-                                                                break;
-                                                            default:
-                                                                pos = location;
-                                                                break;
-                                                            
-                                                        }
-                                                        if (PlayerEvents.isInPlot(pos)) {
-                                                            entity.teleport(pos.add(0.5,0,0.5));
-                                                            found = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
+                                this.location = entity.getLocation();
+                                if (!PlayerEvents.isInPlot(this.location)) {
+                                    boolean tamed = false;
+                                    if (Settings.MOB_PATHFINDING) {
+                                        if (entity instanceof Tameable) {
+                                            Tameable tameable = (Tameable) entity;
+                                            if (tameable.isTamed()) {
+                                                tamed = true;
                                             }
-                                            if (!tamed) {
-                                                entity.remove();
+                                        } else if (entity instanceof LivingEntity) {
+                                            LivingEntity livingEntity = ((LivingEntity) entity);
+                                            if (livingEntity.getCustomName() != null) {
+                                                tamed = true;
+                                            }
+                                        }
+                                        if (tamed) {
+                                            boolean found = false;
+                                            int radius = 1;
+                                            int dir = 0;
+                                            int x = this.location.getBlockX();
+                                            int y = this.location.getBlockY();
+                                            int z = this.location.getBlockZ();
+                                            while (!found || (radius > PlotWorld.ROAD_WIDTH_DEFAULT)) {
+                                                Location pos;
+                                                switch (dir) {
+                                                case 0:
+                                                    pos = new Location(world, x + radius, y, z);
+                                                    dir++;
+                                                    break;
+                                                case 1:
+                                                    pos = new Location(world, x, y, z + radius);
+                                                    dir++;
+                                                    break;
+                                                case 2:
+                                                    pos = new Location(world, x - radius, y, z);
+                                                    dir++;
+                                                    break;
+                                                case 3:
+                                                    pos = new Location(world, x, y, z - radius);
+                                                    dir = 0;
+                                                    radius++;
+                                                    break;
+                                                default:
+                                                    pos = this.location;
+                                                    break;
+
+                                                }
+                                                if (PlayerEvents.isInPlot(pos)) {
+                                                    entity.teleport(pos.add(0.5, 0, 0.5));
+                                                    found = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
+                                    if (!tamed) {
+                                        entity.remove();
+                                    }
                                 }
-                            } catch (Exception e) {
-                                ++error;
-                            }
-                            finally {
-                                 ++ticked;
                             }
                         }
+                    } catch (Exception e) {
+                        ++this.error;
+                    } finally {
+                        ++this.ticked;
                     }
-                }, 0l, 2l);
+                }
+            }
+        }, 0l, 2l);
     }
 
     /**
@@ -825,7 +882,7 @@ public class PlotMain extends JavaPlugin {
     private static void setupConfig() {
         config.set("version", config_ver);
         Map<String, Object> options = new HashMap<String, Object>();
-        //options.put("auto_update", false);
+        // options.put("auto_update", false);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("web.enabled", Web.ENABLED);
@@ -841,16 +898,15 @@ public class PlotMain extends JavaPlugin {
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         Settings.METRICS = config.getBoolean("metrics");
-        
-        for (String node:config.getConfigurationSection("worlds").getKeys(false)) {
+
+        for (String node : config.getConfigurationSection("worlds").getKeys(false)) {
             World world = Bukkit.getWorld(node);
-            if (world==null) {
-                Logger.add(LogLevel.WARNING, "World '"+node+"' in settings.yml does not exist (case sensitive)");
-            }
-            else {
+            if (world == null) {
+                Logger.add(LogLevel.WARNING, "World '" + node + "' in settings.yml does not exist (case sensitive)");
+            } else {
                 ChunkGenerator gen = world.getGenerator();
-                if (gen==null || !gen.toString().equals("PlotSquared")) {
-                    Logger.add(LogLevel.WARNING, "World '"+node+"' in settings.yml is not using PlotSquared generator");
+                if ((gen == null) || !gen.toString().equals("PlotSquared")) {
+                    Logger.add(LogLevel.WARNING, "World '" + node + "' in settings.yml is not using PlotSquared generator");
                 }
             }
         }
@@ -886,7 +942,7 @@ public class PlotMain extends JavaPlugin {
             if (!translations.contains(c.toString())) {
                 translations.set(c.toString(), c.s());
             }
-           
+
         }
     }
 
@@ -904,24 +960,21 @@ public class PlotMain extends JavaPlugin {
         try {
             connection.close();
             mySQL.closeConnection();
-        }
-        catch (NullPointerException | SQLException e) {
-            if (connection!=null) {
+        } catch (NullPointerException | SQLException e) {
+            if (connection != null) {
                 Logger.add(LogLevel.DANGER, "Could not close mysql connection");
             }
         }
         /*
-        if(PlotWeb.PLOTWEB != null) {
-            try {
-                PlotWeb.PLOTWEB.stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
+         * if(PlotWeb.PLOTWEB != null) { try { PlotWeb.PLOTWEB.stop(); } catch
+         * (Exception e) { e.printStackTrace(); } }
+         */
     }
-    public static void addPlotWorld(String world,PlotWorld plotworld) {
-        PlotMain.worlds.put(world,plotworld);
-        if(!plots.containsKey(world))
+
+    public static void addPlotWorld(String world, PlotWorld plotworld) {
+        PlotMain.worlds.put(world, plotworld);
+        if (!plots.containsKey(world)) {
             plots.put(world, new HashMap<PlotId, Plot>());
+        }
     }
 }

@@ -9,35 +9,34 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotMain;
-
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
 
 /**
  * @Deprecated
  */
-public class Reload extends SubCommand{
+public class Reload extends SubCommand {
 
-	public Reload() {
-		super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO);
-	}
-	
-	@Override
-	public boolean execute(Player plr, String ... args) {
+    public Reload() {
+        super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO);
+    }
+
+    @Override
+    public boolean execute(Player plr, String... args) {
         try {
             PlotMain.reloadTranslations();
             PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
-        } catch(Exception e) {
-            if (plr!=null)
+        } catch (Exception e) {
+            if (plr != null) {
                 PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
-            else
+            } else {
                 PlotMain.sendConsoleSenderMessage(C.RELOAD_FAILED);
+            }
         }
-		return true;
-	}
+        return true;
+    }
 
 }

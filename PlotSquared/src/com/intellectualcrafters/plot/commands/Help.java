@@ -18,5 +18,9 @@ public class Help extends SubCommand {
     public Help() {
         super("help", "", "Get this help menu", "help", "he", SubCommand.CommandCategory.INFO);
     }
-    public boolean execute(Player plr, String ... args) { return false; }
+
+    @Override
+    public boolean execute(Player plr, String... args) {
+        return false;
+    }
 }

@@ -9,15 +9,15 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Plot;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
+import com.intellectualcrafters.plot.Plot;
 
-public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable{
+public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private Location from;
@@ -31,6 +31,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         this.plot = plot;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }
@@ -47,10 +48,12 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         return handlers;
     }
 
+    @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
 
+    @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }

@@ -9,42 +9,46 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-public class Visit extends SubCommand{
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotMain;
+
+public class Visit extends SubCommand {
     public Visit() {
         super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT);
     }
 
     public List<Plot> getPlots(UUID uuid) {
         List<Plot> plots = new ArrayList<Plot>();
-        for(Plot p : PlotMain.getPlots())
-            if(p.owner.equals(uuid))
+        for (Plot p : PlotMain.getPlots()) {
+            if (p.owner.equals(uuid)) {
                 plots.add(p);
+            }
+        }
         return plots;
     }
 
-
     @Override
-    public boolean execute(Player plr, String ... args) {
-        if(args.length < 1) {
+    public boolean execute(Player plr, String... args) {
+        if (args.length < 1) {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
             return true;
         }
         String username = args[0];
         List<Plot> plots = getPlots(Bukkit.getOfflinePlayer(username).getUniqueId());
-        if(plots.isEmpty()) {
+        if (plots.isEmpty()) {
             PlayerFunctions.sendMessage(plr, C.FOUND_NO_PLOTS);
             return true;
         }
-        if(args.length < 2){
+        if (args.length < 2) {
             Plot plot = plots.get(0);
             PlotMain.teleportPlayer(plr, plr.getLocation(), plot);
             return true;
@@ -52,11 +56,11 @@ public class Visit extends SubCommand{
         int i;
         try {
             i = Integer.parseInt(args[1]);
-        } catch(Exception e) {
+        } catch (Exception e) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
             return true;
         }
-        if(i < 0 || i > plots.size()) {
+        if ((i < 0) || (i > plots.size())) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
             return true;
         }

@@ -9,11 +9,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.PlotMain;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
-import org.bukkit.entity.Player;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -23,9 +24,10 @@ public class Clear extends SubCommand {
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS);
     }
+
     @Override
-    public boolean execute(Player plr, String ... args) {
-        if(!PlayerFunctions.isInPlot(plr)) {
+    public boolean execute(Player plr, String... args) {
+        if (!PlayerFunctions.isInPlot(plr)) {
             PlayerFunctions.sendMessage(plr, "You're not in a plot.");
             return true;
         }
@@ -34,8 +36,7 @@ public class Clear extends SubCommand {
         if (result) {
             DBFunc.delete(plr.getWorld().getName(), plot);
             plot.clear(plr);
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, "Plot clearing has been denied.");
         }
         return true;

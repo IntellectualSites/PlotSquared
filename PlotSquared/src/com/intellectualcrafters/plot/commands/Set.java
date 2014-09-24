@@ -9,11 +9,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
-import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -23,68 +21,73 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.intellectualcrafters.plot.AbstractFlag;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotHomePosition;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
+import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 
 /**
  * 
  * @author Citymonstret
- *
+ * 
  */
-public class Set extends SubCommand{
+public class Set extends SubCommand {
 
-	public Set() {
-		super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS);
-	}
-	
-	public static String[] values = new String[] {
-		"biome", "wall", "wall_filling", "floor", "alias", "home", "rain", "flag"
-	};
-	public static String[] aliases = new String[] {
-		"b", "w", "wf", "f", "a", "h", "r", "fl"
-	};
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean execute(Player plr, String ... args) {
-		if(!PlayerFunctions.isInPlot(plr)) {
-			PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-			return false;
-		}
-		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+    public Set() {
+        super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS);
+    }
 
-		if(!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
-			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-			return false;
-		}
-		if(args.length < 1) {
-			StringBuilder builder = new StringBuilder();
-			builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-			builder.append(getArgumentList(values));
-			PlayerFunctions.sendMessage(plr, builder.toString());
-			return true;
-		}
-		
-		for(int i = 0; i < aliases.length; i++) {
-			if(aliases[i].equalsIgnoreCase(args[0])) {
-				args[0] = values[i];
-				break;
-			}
-		}
+    public static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "rain", "flag" };
+    public static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "r", "fl" };
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean execute(Player plr, String... args) {
+        if (!PlayerFunctions.isInPlot(plr)) {
+            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            return false;
+        }
+        Plot plot = PlayerFunctions.getCurrentPlot(plr);
+
+        if (!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
+            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
+        if (args.length < 1) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
+            builder.append(getArgumentList(values));
+            PlayerFunctions.sendMessage(plr, builder.toString());
+            return true;
+        }
+
+        for (int i = 0; i < aliases.length; i++) {
+            if (aliases[i].equalsIgnoreCase(args[0])) {
+                args[0] = values[i];
+                break;
+            }
+        }
 
         /* TODO: Implement option */
         boolean advanced_permissions = false;
-        if(advanced_permissions) {
-            if(!plr.hasPermission("plots.set." + args[0].toLowerCase())) {
+        if (advanced_permissions) {
+            if (!plr.hasPermission("plots.set." + args[0].toLowerCase())) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 return false;
             }
         }
-        
-        if(args[0].equalsIgnoreCase("flag")) {
-            if(args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(PlotMain.getFlags(),"&c, &6")));
+
+        if (args[0].equalsIgnoreCase("flag")) {
+            if (args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(PlotMain.getFlags(), "&c, &6")));
                 return false;
             }
             if (!PlotMain.isRegisteredFlag(args[1])) {
@@ -95,34 +98,35 @@ public class Set extends SubCommand{
                 PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 return false;
             }
-            if (args.length==2) {
-                if (plot.settings.getFlag(args[1].toLowerCase())==null) {
+            if (args.length == 2) {
+                if (plot.settings.getFlag(args[1].toLowerCase()) == null) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
                 Flag flag = plot.settings.getFlag(args[1].toLowerCase());
-                PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag,plot);
+                PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
-                if(event.isCancelled()) {
+                if (event.isCancelled()) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
                     event.setCancelled(true);
                     return false;
                 }
                 java.util.Set<Flag> newflags = plot.settings.getFlags();
                 Flag oldFlag = plot.settings.getFlag(args[1].toLowerCase());
-                if (oldFlag!=null)
+                if (oldFlag != null) {
                     newflags.remove(oldFlag);
+                }
                 plot.settings.setFlags(newflags.toArray(new Flag[0]));
                 DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[0]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 return true;
             }
             try {
-                String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length)," ");
+                String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 Flag flag = new Flag(new AbstractFlag(args[1]), value);
-                PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
+                PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
-                if(event.isCancelled()) {
+                if (event.isCancelled()) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
                     event.setCancelled(true);
                     return false;
@@ -131,44 +135,48 @@ public class Set extends SubCommand{
                 DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags().toArray(new Flag[0]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 return true;
-            }
-            catch (Exception e) {
-                PlayerFunctions.sendMessage(plr, "&c"+e.getMessage());
+            } catch (Exception e) {
+                PlayerFunctions.sendMessage(plr, "&c" + e.getMessage());
                 return false;
             }
         }
-        if(args[0].equalsIgnoreCase("rain")) {
-            if(args.length < 2) {
+        if (args[0].equalsIgnoreCase("rain")) {
+            if (args.length < 2) {
                 PlayerFunctions.sendMessage(plr, C.NEED_ON_OFF);
                 return false;
             }
             String word = args[1];
-            if(!word.equalsIgnoreCase("on") && !word.equalsIgnoreCase("off")) {
+            if (!word.equalsIgnoreCase("on") && !word.equalsIgnoreCase("off")) {
                 PlayerFunctions.sendMessage(plr, C.NEED_ON_OFF);
                 return true;
             }
             boolean b = word.equalsIgnoreCase("on");
             DBFunc.setWeather(plr.getWorld().getName(), plot, b);
             PlayerFunctions.sendMessage(plr, C.SETTING_UPDATED);
-            for(Player p : Bukkit.getOnlinePlayers()) {
-                if(PlayerFunctions.getCurrentPlot(plr).id == plot.id) {
-                    if(b) p.setPlayerWeather(WeatherType.DOWNFALL);
-                    else p.resetPlayerWeather();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (PlayerFunctions.getCurrentPlot(plr).id == plot.id) {
+                    if (b) {
+                        p.setPlayerWeather(WeatherType.DOWNFALL);
+                    } else {
+                        p.resetPlayerWeather();
+                    }
                 }
             }
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("home")) {
-            if(args.length < 2) {
+        if (args[0].equalsIgnoreCase("home")) {
+            if (args.length < 2) {
                 PlayerFunctions.sendMessage(plr, C.MISSING_POSITION);
                 return false;
             }
             PlotHomePosition position = null;
-            for(PlotHomePosition p : PlotHomePosition.values()) {
-                if(p.isMatching(args[1])) position = p;
+            for (PlotHomePosition p : PlotHomePosition.values()) {
+                if (p.isMatching(args[1])) {
+                    position = p;
+                }
             }
-            if(position == null) {
+            if (position == null) {
                 PlayerFunctions.sendMessage(plr, C.INVALID_POSITION);
                 return false;
             }
@@ -177,14 +185,14 @@ public class Set extends SubCommand{
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("alias")) {
-            if(args.length < 2) {
+        if (args[0].equalsIgnoreCase("alias")) {
+            if (args.length < 2) {
                 PlayerFunctions.sendMessage(plr, C.MISSING_ALIAS);
                 return false;
             }
             String alias = args[1];
-            for(Plot p : PlotMain.getPlots()) {
-                if(p.settings.getAlias().equalsIgnoreCase(alias)) {
+            for (Plot p : PlotMain.getPlots()) {
+                if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
@@ -193,162 +201,162 @@ public class Set extends SubCommand{
             PlayerFunctions.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
             return true;
         }
-		if(args[0].equalsIgnoreCase("biome")) {
-			if(args.length < 2) {
-				PlayerFunctions.sendMessage(plr, C.NEED_BIOME);
-				return true;
-			}
-			Biome biome = null;
-			for(Biome b : Biome.values()) {
-				if(b.toString().equalsIgnoreCase(args[1])) {
-					biome = b;
-					break;
-				}
-			}
-			if(biome == null) {
-				PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
-				return true;
-			}
-			PlotHelper.setBiome(plr.getWorld(), plot, biome);
-			PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
-			return true;
-		}
-		if(args[0].equalsIgnoreCase("wall")) {
-		    PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-		    if (plotworld==null) {
-		        PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-		        return true;
-		    }
-			if(args.length < 2) {
-				PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
-				return true;
-			}
-			Material material = null;
-			for(Material m : plotworld.BLOCKS) {
-				if(m.toString().equalsIgnoreCase(args[1])) {
-					material = m;
-					break;
-				}
-			}
-			if(material == null) {
-				PlayerFunctions.sendMessage(plr, getBlockList(plotworld.BLOCKS));
-				return true;
-			}
-			byte data = 0;
-			
-			if(args.length > 2) {
-				try {
-					data = (byte) Integer.parseInt(args[2]);
-				} catch(Exception e) {
-					PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-					return true;
-				}
-			}
-			PlayerFunctions.sendMessage(plr, C.GENERATING_WALL);
-			PlotHelper.adjustWall(plr.getWorld(), plot, (short)material.getId(), data);
-			return true;
-		}
-		if(args[0].equalsIgnoreCase("floor")) {
-			if(args.length < 2) {
-				PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
-				return true;
-			}
-			PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-            if (plotworld==null) {
+        if (args[0].equalsIgnoreCase("biome")) {
+            if (args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_BIOME);
+                return true;
+            }
+            Biome biome = null;
+            for (Biome b : Biome.values()) {
+                if (b.toString().equalsIgnoreCase(args[1])) {
+                    biome = b;
+                    break;
+                }
+            }
+            if (biome == null) {
+                PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
+                return true;
+            }
+            PlotHelper.setBiome(plr.getWorld(), plot, biome);
+            PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("wall")) {
+            PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
+            if (plotworld == null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return true;
             }
-			//
-			@SuppressWarnings("unchecked")
-			ArrayList<Material> materials = (ArrayList<Material>) plotworld.BLOCKS.clone();
-			materials.add(Material.AIR);
-			//
-			String[] strings = args[1].split(",");
-			//
-			Material[] material = new Material[strings.length];
-			byte[] data = new byte[strings.length];
-			//
-			int index = 0;
-			//
-			byte b = (byte) 0;
-			Material m = null; 
-			//
-			for(String s : strings) {
-				s = s.replaceAll(",", "");
-				String[] ss = s.split(";");
-				ss[0] = ss[0].replaceAll(";", "");
-				for(Material ma : materials) {
-					if(ma.toString().equalsIgnoreCase(ss[0])) {
-						m = ma;
-					}
-				}
-				if(m == null) {
-					PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
-					return true;
-				}
-				if(ss.length == 1) {
-					data[index] = (byte) 0;
-					material[index] = m;
-				} else {
-					try {
-						b = (byte) Integer.parseInt(ss[1]);
-					} catch(Exception e) {
-						PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-						return true;
-					}
-					data[index] = b;
-					material[index] = m;
-				}
-				index++;
-			}
-			PlotHelper.setFloor(plr, plot, material, data);
-			return true;
-		}
-		if(args[0].equalsIgnoreCase("wall_filling")) {
-			if(args.length < 2) {
-				PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
-				return true;
-			}
-			PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-            if (plotworld==null) {
+            if (args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                return true;
+            }
+            Material material = null;
+            for (Material m : PlotWorld.BLOCKS) {
+                if (m.toString().equalsIgnoreCase(args[1])) {
+                    material = m;
+                    break;
+                }
+            }
+            if (material == null) {
+                PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
+                return true;
+            }
+            byte data = 0;
+
+            if (args.length > 2) {
+                try {
+                    data = (byte) Integer.parseInt(args[2]);
+                } catch (Exception e) {
+                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
+                    return true;
+                }
+            }
+            PlayerFunctions.sendMessage(plr, C.GENERATING_WALL);
+            PlotHelper.adjustWall(plr.getWorld(), plot, (short) material.getId(), data);
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("floor")) {
+            if (args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                return true;
+            }
+            PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
+            if (plotworld == null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return true;
             }
-			Material material = null;
-			for(Material m : plotworld.BLOCKS) {
-				if(m.toString().equalsIgnoreCase(args[1])) {
-					material = m;
-					break;
-				}
-			}
-			if(material == null) {
-				PlayerFunctions.sendMessage(plr, getBlockList(plotworld.BLOCKS));
-				return true;
-			}
-			byte data = 0;
-			
-			if(args.length > 2) {
-				try {
-					data = (byte) Integer.parseInt(args[2]);
-				} catch(Exception e) {
-					PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-					return true;
-				}
-			}
-			PlotHelper.adjustWallFilling(plr, plr.getWorld(), plot, (short)material.getId(), data);
-			return true;
-		}
-		PlayerFunctions.sendMessage(plr, "Not a valid option. Use {TODO: Insert list.}");
-		return true;
-	}
-	
-	private String getMaterial(Material m) {
-		return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", m.toString().toLowerCase()));
-	}
-	
-	private String getBiome(Biome b) {
-		return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", b.toString().toLowerCase()));
-	}
+            //
+            @SuppressWarnings("unchecked")
+            ArrayList<Material> materials = (ArrayList<Material>) PlotWorld.BLOCKS.clone();
+            materials.add(Material.AIR);
+            //
+            String[] strings = args[1].split(",");
+            //
+            Material[] material = new Material[strings.length];
+            byte[] data = new byte[strings.length];
+            //
+            int index = 0;
+            //
+            byte b = (byte) 0;
+            Material m = null;
+            //
+            for (String s : strings) {
+                s = s.replaceAll(",", "");
+                String[] ss = s.split(";");
+                ss[0] = ss[0].replaceAll(";", "");
+                for (Material ma : materials) {
+                    if (ma.toString().equalsIgnoreCase(ss[0])) {
+                        m = ma;
+                    }
+                }
+                if (m == null) {
+                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
+                    return true;
+                }
+                if (ss.length == 1) {
+                    data[index] = (byte) 0;
+                    material[index] = m;
+                } else {
+                    try {
+                        b = (byte) Integer.parseInt(ss[1]);
+                    } catch (Exception e) {
+                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
+                        return true;
+                    }
+                    data[index] = b;
+                    material[index] = m;
+                }
+                index++;
+            }
+            PlotHelper.setFloor(plr, plot, material, data);
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("wall_filling")) {
+            if (args.length < 2) {
+                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                return true;
+            }
+            PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
+            if (plotworld == null) {
+                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+                return true;
+            }
+            Material material = null;
+            for (Material m : PlotWorld.BLOCKS) {
+                if (m.toString().equalsIgnoreCase(args[1])) {
+                    material = m;
+                    break;
+                }
+            }
+            if (material == null) {
+                PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
+                return true;
+            }
+            byte data = 0;
+
+            if (args.length > 2) {
+                try {
+                    data = (byte) Integer.parseInt(args[2]);
+                } catch (Exception e) {
+                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
+                    return true;
+                }
+            }
+            PlotHelper.adjustWallFilling(plr, plr.getWorld(), plot, (short) material.getId(), data);
+            return true;
+        }
+        PlayerFunctions.sendMessage(plr, "Not a valid option. Use {TODO: Insert list.}");
+        return true;
+    }
+
+    private String getMaterial(Material m) {
+        return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", m.toString().toLowerCase()));
+    }
+
+    private String getBiome(Biome b) {
+        return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", b.toString().toLowerCase()));
+    }
 
     private String getString(String s) {
         return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
@@ -356,29 +364,28 @@ public class Set extends SubCommand{
 
     private String getArgumentList(String[] strings) {
         StringBuilder builder = new StringBuilder();
-        for(String s : strings) {
+        for (String s : strings) {
             builder.append(getString(s));
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
     }
 
-	private String getBiomeList(List<Biome> biomes) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
-		for(Biome b : biomes) {
-			builder.append(getBiome(b));
-		}
-		return builder.toString().substring(1,builder.toString().length() - 1);
-	}
-	
-	private String getBlockList(List<Material> blocks) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
-		for(Material b : blocks) {
-			builder.append(getMaterial(b));
-		}
-		return builder.toString().substring(1,builder.toString().length() - 1);
-	}
+    private String getBiomeList(List<Biome> biomes) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
+        for (Biome b : biomes) {
+            builder.append(getBiome(b));
+        }
+        return builder.toString().substring(1, builder.toString().length() - 1);
+    }
 
+    private String getBlockList(List<Material> blocks) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
+        for (Material b : blocks) {
+            builder.append(getMaterial(b));
+        }
+        return builder.toString().substring(1, builder.toString().length() - 1);
+    }
 
 }

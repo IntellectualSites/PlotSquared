@@ -1,17 +1,14 @@
 package com.intellectualsites.web;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import org.simpleframework.http.Path;
-import org.simpleframework.http.Query;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
-import org.simpleframework.http.core.Container;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.plugin.java.JavaPlugin;
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
+import org.simpleframework.http.core.Container;
 
 /**
  * Created by Citymonstret on 2014-09-20.
@@ -19,55 +16,46 @@ import java.util.List;
 public class IndexHandler implements Container {
 
     private JavaPlugin plugin;
-    private String     title;
+    private String title;
 
     public IndexHandler(JavaPlugin plugin, String title) {
         this.plugin = plugin;
-        this.title  = title;
+        this.title = title;
     }
 
+    @Override
     public void handle(Request request, Response response) {
         try {
             PrintStream body;
-            long        time;
-            Query       query;
-            Path        path;
-            int         page;
-            String      coverage;
+            long time;
+            String coverage;
 
-            body    = response.getPrintStream();
-            time    = System.currentTimeMillis();
-            query   = request.getQuery();
-            path    = request.getPath();
+            body = response.getPrintStream();
+            time = System.currentTimeMillis();
+            request.getQuery();
+            request.getPath();
 
-            if((page = request.getInteger("page")) < 0) {
-                page = 0;
+            if ((request.getInteger("page")) < 0) {
             }
-            if((coverage = request.getTarget()) == null || coverage.equals("/")) {
+            if (((coverage = request.getTarget()) == null) || coverage.equals("/")) {
                 coverage = "index";
             }
 
             coverage = coverage.toLowerCase();
 
-            List<String> list = new ArrayList<>(
-                    Arrays.asList(new String[] {
-                            "install",
-                            "index",
-                            "stylesheet"
-                    })
-            );
+            List<String> list = new ArrayList<>(Arrays.asList(new String[] { "install", "index", "stylesheet" }));
 
-            if(!list.contains(coverage)) {
+            if (!list.contains(coverage)) {
                 coverage = "index";
             }
 
-            if(coverage.equals("stylesheet")) {
+            if (coverage.equals("stylesheet")) {
                 response.setValue("Content-Type", "text/css");
                 response.setValue("Server", "PlotWeb/1.0 (Simple 5.0)");
                 response.setDate("Date", time);
                 response.setDate("Last-Modified", time);
 
-                ResourceHandler stylesheet = new ResourceHandler("stylesheet", ResourceHandler.FileType.CSS, plugin.getDataFolder());
+                ResourceHandler stylesheet = new ResourceHandler("stylesheet", ResourceHandler.FileType.CSS, this.plugin.getDataFolder());
 
                 String stylesheetHTML = stylesheet.getHTML();
 
@@ -80,11 +68,11 @@ public class IndexHandler implements Container {
                 response.setDate("Date", time);
                 response.setDate("Last-Modified", time);
 
-                ResourceHandler header = new ResourceHandler("header", ResourceHandler.FileType.HTML, plugin.getDataFolder());
-                ResourceHandler footer = new ResourceHandler("footer", ResourceHandler.FileType.HTML, plugin.getDataFolder());
-                ResourceHandler cPage = new ResourceHandler(coverage, ResourceHandler.FileType.HTML, plugin.getDataFolder());
+                ResourceHandler header = new ResourceHandler("header", ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
+                ResourceHandler footer = new ResourceHandler("footer", ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
+                ResourceHandler cPage = new ResourceHandler(coverage, ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
 
-                String headerHTML = header.getHTML().replace("@title", title);
+                String headerHTML = header.getHTML().replace("@title", this.title);
                 String footerHTML = footer.getHTML();
                 String cPageHTML = cPage.getHTML();
 
@@ -97,7 +85,7 @@ public class IndexHandler implements Container {
                 body.print(footerHTML);
             }
             body.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
