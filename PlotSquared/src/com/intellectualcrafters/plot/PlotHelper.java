@@ -553,7 +553,7 @@ public class PlotHelper {
                                 for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
                                     Block block = world.getBlockAt(x, y, z);
                                     if (!((block.getTypeId() == 0))) {
-                                        block.setTypeId(0, false);
+                                        SetBlockFast.set(world, x, y, z, 0, (byte) 0);
                                     }
                                 }
                             }
