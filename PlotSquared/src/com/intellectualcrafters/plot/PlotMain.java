@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -23,14 +24,19 @@ import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import me.confuser.barapi.BarAPI;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -724,10 +730,11 @@ public class PlotMain extends JavaPlugin {
                     public void run() {
                         if(ticked > 36000l) {
                             ticked = 0l;
-                            sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Error-count: " + error);
+                            sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + error);
                             error = 0l;
                         }
                         for (String w: getPlotWorlds()) {
+                            PlotWorld plotworld = getWorldSettings(w);
                             World world = Bukkit.getServer().getWorld(w);
                              try {
                                 if(world.getLoadedChunks().length < 1) {
@@ -740,8 +747,65 @@ public class PlotMain extends JavaPlugin {
                                         if (entity.getType() == EntityType.PLAYER)
                                             continue;
                                         location = entity.getLocation();
-                                        if (!PlayerEvents.isInPlot(location))
-                                            entity.remove();
+                                        if (!PlayerEvents.isInPlot(location)) {
+                                            boolean tamed = false;
+                                            if (Settings.MOB_PATHFINDING) {
+                                                if (entity instanceof Tameable) {
+                                                    Tameable tameable = (Tameable) entity;
+                                                    if (tameable.isTamed()) {
+                                                        tamed = true;
+                                                    }
+                                                }
+                                                else if (entity instanceof LivingEntity) {
+                                                    LivingEntity livingEntity = ((LivingEntity) entity);
+                                                    if (livingEntity.getCustomName()!=null) {
+                                                        tamed = true;
+                                                    }
+                                                }
+                                                if (tamed) {
+                                                    boolean found = false;
+                                                    int radius = 1;
+                                                    int dir = 0;
+                                                    int x = location.getBlockX();
+                                                    int y = location.getBlockY();
+                                                    int z = location.getBlockZ();
+                                                    while (!found || radius > PlotWorld.ROAD_WIDTH_DEFAULT) {
+                                                        Location pos;
+                                                        switch (dir) {
+                                                            case 0:
+                                                                pos = new Location(world, x+radius, y, z);
+                                                                dir++;
+                                                                break;
+                                                            case 1:
+                                                                pos = new Location(world, x, y, z+radius);
+                                                                dir++;
+                                                                break;
+                                                            case 2:
+                                                                pos = new Location(world, x-radius, y, z);
+                                                                dir++;
+                                                                break;
+                                                            case 3:
+                                                                pos = new Location(world, x, y, z-radius);
+                                                                dir = 0;
+                                                                radius++;
+                                                                break;
+                                                            default:
+                                                                pos = location;
+                                                                break;
+                                                            
+                                                        }
+                                                        if (PlayerEvents.isInPlot(pos)) {
+                                                            entity.teleport(pos.add(0.5,0,0.5));
+                                                            found = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if (!tamed) {
+                                                entity.remove();
+                                            }
+                                        }
                                     }
                                 }
                             } catch (Exception e) {
@@ -763,6 +827,7 @@ public class PlotMain extends JavaPlugin {
         Map<String, Object> options = new HashMap<String, Object>();
         //options.put("auto_update", false);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
+        options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("web.enabled", Web.ENABLED);
         options.put("web.port", Web.PORT);
         options.put("metrics", true);
@@ -774,6 +839,8 @@ public class PlotMain extends JavaPlugin {
         Web.ENABLED = config.getBoolean("web.enabled");
         Web.PORT = config.getInt("web.port");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
+        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
+        Settings.METRICS = config.getBoolean("metrics");
         
         for (String node:config.getConfigurationSection("worlds").getKeys(false)) {
             World world = Bukkit.getWorld(node);

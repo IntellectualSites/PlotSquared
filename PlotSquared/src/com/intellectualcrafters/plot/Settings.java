@@ -29,6 +29,14 @@ public class Settings {
      * Default kill road mobs: true
      */
     public static boolean KILL_ROAD_MOBS_DEFAULT = true;
+    /**
+     * mob pathfinding?
+     */
+    public static boolean MOB_PATHFINDING;
+    /**
+     * Default mob pathfinding: true
+     */
+    public static boolean MOB_PATHFINDING_DEFAULT = true;
 	/**
 	 * Update settings
 	 * @author Citymonstret
