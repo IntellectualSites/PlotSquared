@@ -46,6 +46,11 @@ public class Settings {
      */
     public static String URL = "http://dev.bukkit.org/bukkit-plugins/plotsquared/";
 
+    public static boolean DEBUG = true;
+
+    public static boolean AUTO_CLEAR = false;
+    public static int AUTO_CLEAR_DAYS = 365;
+
     public static class Update {
         /**
          * Update plugin?

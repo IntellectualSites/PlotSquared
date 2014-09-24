@@ -5,15 +5,21 @@
   </component>
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="plotsquared__" />
+      <artifact name="PlotSquared" />
     </artifacts-to-build>
   </component>
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java" line="37" mnemonic="2" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java" />
+    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="WorldGuard Support.&#10;&#10;Fixed NullPointerException in C&#10;&#10;Added Settings&#10;&#10;Fixed tons of warning :P&#10;&#10;Added auto clear">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/WorldGuard.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/WorldGuardListener.java" />
+      <change type="DELETED" beforePath="C:\Users\Citymonstret\Desktop\workspace\bukkit\plot_news\.idea\artifacts\plotsquared__.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/PlotSquared.iml" afterPath="$PROJECT_DIR$/PlotSquared/PlotSquared.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Visit.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Visit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/plotsquared.xml" afterPath="$PROJECT_DIR$/plotsquared.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -37,138 +43,43 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="WorldGenerator.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java">
+      <file leaf-file-name="PlotMain.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1364" max-vertical-offset="8364">
-              <caret line="117" column="78" selection-start-line="117" selection-start-column="78" selection-end-line="117" selection-end-column="78" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Title.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Title.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="7089">
-              <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Settings.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="1105">
-              <caret line="18" column="41" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SetBlockFast.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SetBlockFast.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
-              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotAPI.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33224756" vertical-offset="1819" max-vertical-offset="4097">
-              <caret line="156" column="19" selection-start-line="156" selection-start-column="19" selection-end-line="156" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchematicHandler.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SchematicHandler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1853" max-vertical-offset="2567">
-              <caret line="125" column="32" selection-start-line="125" selection-start-column="32" selection-end-line="125" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RUtils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/RUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1496">
-              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DBFunc.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11339">
-              <caret line="362" column="86" selection-start-line="362" selection-start-column="86" selection-end-line="362" selection-end-column="86" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="968" max-vertical-offset="15334">
+              <caret line="94" column="33" selection-start-line="94" selection-start-column="33" selection-end-line="94" selection-end-column="33" />
               <folding>
-                <element signature="e#0#27100#0" expanded="true" />
                 <element signature="imports" expanded="true" />
-                <element signature="e#13075#13106#0" expanded="true" />
-                <element signature="e#13163#13178#0" expanded="true" />
-                <element signature="e#16136#16150#0" expanded="true" />
-                <element signature="e#20582#20598#0" expanded="true" />
-                <element signature="e#22244#22250#0" expanded="true" />
-                <element signature="e#23008#23014#0" expanded="true" />
-                <marker date="1411491678199" expanded="true" signature="1109:1180" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="1874:1955" placeholder="INSERT INTO ..." />
-                <marker date="1411491678199" expanded="true" signature="2677:3257" placeholder="CREATE TABLE..plot..." />
-                <marker date="1411491678199" expanded="true" signature="3309:3550" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1411491678199" expanded="true" signature="3615:4490" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1411491678199" expanded="true" signature="4555:4677" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1411491678199" expanded="true" signature="4775:5210" placeholder="CREATE TABLE..plot..." />
-                <marker date="1411491678199" expanded="true" signature="5283:5481" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1411491678199" expanded="true" signature="5546:6315" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1411491678199" expanded="true" signature="8118:8170" placeholder="DELETE FROM ..." />
-                <marker date="1411491678199" expanded="true" signature="8362:8413" placeholder="DELETE FROM ..." />
-                <marker date="1411491678199" expanded="true" signature="8605:8638" placeholder="DELETE FROM ..." />
-                <marker date="1411491678199" expanded="true" signature="9398:9484" placeholder="INSERT INTO ..." />
-                <marker date="1411491678199" expanded="true" signature="9897:10001" placeholder="SELECT `id` ..plot..." />
-                <marker date="1411491678199" expanded="true" signature="11895:12553" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="12635:12653" placeholder="ALTER TABLE `plot`..." />
-                <marker date="1411491678199" expanded="true" signature="13321:13388" placeholder="SELECT `id`,..plot..." />
-                <marker date="1411491678199" expanded="true" signature="16891:16953" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="17953:18016" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="18836:18900" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="19937:20004" placeholder="UPDATE `plot..." />
-                <marker date="1411491678199" expanded="true" signature="20703:20757" placeholder="SELECT * FRO..plot_settings..." />
-                <marker date="1411491678199" expanded="true" signature="22355:22417" placeholder="SELECT `user..plot_denied..." />
-                <marker date="1411491678199" expanded="true" signature="23157:23219" placeholder="SELECT `user..plot_helpers..." />
-                <marker date="1411491678199" expanded="true" signature="23942:24013" placeholder="DELETE FROM ..." />
-                <marker date="1411491678199" expanded="true" signature="24820:24888" placeholder="INSERT INTO ..." />
-                <marker date="1411491678199" expanded="true" signature="25695:25765" placeholder="DELETE FROM ..." />
-                <marker date="1411491678199" expanded="true" signature="26572:26639" placeholder="INSERT INTO ..." />
+                <element signature="e#3783#3802#0" expanded="true" />
+                <element signature="e#4532#4538#0" expanded="true" />
+                <element signature="e#4910#4916#0" expanded="true" />
+                <element signature="e#5516#5522#0" expanded="true" />
+                <element signature="e#32176#32192#0" expanded="true" />
+                <element signature="e#34169#34185#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReflectionUtils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ReflectionUtils.java">
+      <file leaf-file-name="WorldGuardListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/WorldGuardListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7531">
-              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="471" max-vertical-offset="1156">
+              <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1016#1017#0" expanded="true" />
+                <element signature="e#1098#1099#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PWE.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PWE.java">
+      <file leaf-file-name="plotsquared.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/plotsquared.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1037">
-              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.33217993" vertical-offset="3202" max-vertical-offset="4386">
+              <caret line="194" column="12" selection-start-line="194" selection-start-column="12" selection-end-line="194" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -192,7 +103,6 @@
         <option value="$PROJECT_DIR$/src/com/intellectualcrafters/plot/database/PlotMeConverter.java" />
         <option value="$PROJECT_DIR$/src/com/intellectualcrafters/plot/PlotMain.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Schematic.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SchematicHandler.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java" />
@@ -202,23 +112,27 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/plugin.yml" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/XPopulator.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/SQLite.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Metrics.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Flag.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Visit.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/WorldGuardListener.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-6" />
     <option name="y" value="-6" />
-    <option name="width" value="1932" />
-    <option name="height" value="1062" />
+    <option name="width" value="1378" />
+    <option name="height" value="750" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -251,7 +165,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -259,6 +172,120 @@
               <option name="myItemId" value="plot_news" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opencsv" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WorldGuard.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opencsv" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plot_news" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Resource Bundle 'plotsquared_Mon_Sep'" />
+              <option name="myItemType" value="com.intellij.lang.properties.projectView.ResourceBundleNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -321,141 +348,12 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot_news" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PlotSquared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="listeners" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot_news" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PlotSquared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="events" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot_news" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PlotSquared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="database" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot_news" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PlotSquared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="commands" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot_news" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PlotSquared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -467,10 +365,10 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/BarAPI.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/WorldGuard.jar!/" />
     <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
@@ -512,10 +410,79 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/.gitignore</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/.classpath</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Flag.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/LSetCube.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Lag.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Logger.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Metrics.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PWE.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlayerFunctions.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHomePosition.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotId.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotSettings.java</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotWorld.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/RUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ReflectionUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SchematicHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SetBlockFast.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Title.java</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/XPopulator.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Auto.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Camera.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Claim.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Clear.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Command.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/CommandPermission.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Debug.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Denied.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Help.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Helpers.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Home.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Info.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Inventory.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/MainCommand.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Reload.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Schematic.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/SetOwner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/SubCommand.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/TP.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Visit.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/list.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/plugin.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/Database.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/MySQL.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/PlotMeConverter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/SQLite.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerClaimPlotEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerTeleportToPlotEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotDeleteEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotFlagAddEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotFlagRemoveEvent.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/WorldEditListener.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/uuid/NameFetcher.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/uuid/UUIDFetcher.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualsites/web/IndexHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualsites/web/PlotWeb.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualsites/web/ResourceHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualsites/web/Test.java</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Created" />
@@ -523,8 +490,6 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="CREATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/.classpath</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/.project</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Deleted" />
@@ -759,7 +724,8 @@
       <workItem from="1411412344326" duration="2559000" />
       <workItem from="1411428266938" duration="702000" />
       <workItem from="1411458289707" duration="5043000" />
-      <workItem from="1411478912746" duration="8911000" />
+      <workItem from="1411478912746" duration="10183000" />
+      <workItem from="1411576345133" duration="6453000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -825,15 +791,19 @@
       <created>1411491737240</created>
       <updated>1411491737240</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Improved flag system.">
+      <created>1411497477072</created>
+      <updated>1411497477072</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31476000" />
+    <option name="totallyTimeSpent" value="39201000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="-6" width="1932" height="1062" extended-state="6" />
-    <editor active="true" />
+    <frame x="-6" y="-6" width="1378" height="750" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -846,13 +816,13 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291536" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291536" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3291536" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4883721" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21522693" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291536" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="IntelliGuard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -891,7 +861,8 @@
     <MESSAGE value="I like pretty configs." />
     <MESSAGE value="Attempt to fix db, might not always work. We got to add a warning to spigot." />
     <MESSAGE value="Improved flag system." />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved flag system." />
+    <MESSAGE value="WorldGuard Support.&#10;&#10;Fixed NullPointerException in C&#10;&#10;Added Settings&#10;&#10;Fixed tons of warning :P&#10;&#10;Added auto clear" />
+    <option name="LAST_COMMIT_MESSAGE" value="WorldGuard Support.&#10;&#10;Fixed NullPointerException in C&#10;&#10;Added Settings&#10;&#10;Fixed tons of warning :P&#10;&#10;Added auto clear" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -903,35 +874,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.idea/encodings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="187">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotId.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="629">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2941" max-vertical-offset="4182">
-          <caret line="173" column="29" selection-start-line="173" selection-start-column="29" selection-end-line="173" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="7089" max-vertical-offset="11798">
-          <caret line="442" column="0" selection-start-line="442" selection-start-column="0" selection-end-line="448" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="1598">
@@ -990,13 +932,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.05654102" vertical-offset="0" max-vertical-offset="902">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
         </state>
-      </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/encodings.xml">
@@ -1010,28 +952,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="929">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4675">
-          <caret line="26" column="63" selection-start-line="26" selection-start-column="63" selection-end-line="26" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plotsquared.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2856">
-          <caret line="24" column="30" selection-start-line="24" selection-start-column="30" selection-end-line="24" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="1598">
-          <caret line="42" column="40" selection-start-line="42" selection-start-column="40" selection-end-line="42" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1099,7 +1019,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
           <caret line="5" column="28" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1109,8 +1028,6 @@
           <caret line="15" column="22" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="false" />
-            <element signature="e#528#529#0" expanded="false" />
-            <element signature="e#552#553#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1119,13 +1036,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="907" max-vertical-offset="1836">
           <caret line="110" column="5" selection-start-line="65" selection-start-column="0" selection-end-line="110" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1594#1595#0" expanded="false" />
-            <element signature="e#1652#1653#0" expanded="false" />
-            <element signature="e#1701#1702#0" expanded="false" />
-            <element signature="e#1725#1726#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1133,20 +1043,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="635" max-vertical-offset="1768">
           <caret line="101" column="5" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
-          <folding>
-            <element signature="e#1642#1643#0" expanded="false" />
-            <element signature="e#1709#1710#0" expanded="false" />
-            <element signature="e#1764#1765#0" expanded="false" />
-            <element signature="e#1797#1798#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1785" max-vertical-offset="14110">
-          <caret line="32" column="41" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1162,7 +1058,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
           <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1170,9 +1065,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1275" max-vertical-offset="3808">
           <caret line="91" column="5" selection-start-line="91" selection-start-column="5" selection-end-line="91" selection-end-column="5" />
-          <folding>
-            <element signature="e#655#683#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1180,32 +1073,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11509">
           <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#19779#19780#0" expanded="true" />
-            <element signature="e#19834#19835#0" expanded="true" />
-            <element signature="e#20285#20294#0" expanded="true" />
-            <element signature="e#20340#20341#0" expanded="true" />
-            <element signature="e#20380#20381#0" expanded="true" />
-            <element signature="e#20519#20520#0" expanded="true" />
-            <element signature="e#20554#20555#0" expanded="true" />
-            <element signature="e#20778#20779#0" expanded="true" />
-            <element signature="e#20823#20824#0" expanded="true" />
-            <element signature="e#21024#21025#0" expanded="true" />
-            <element signature="e#21072#21073#0" expanded="true" />
-            <element signature="e#21311#21312#0" expanded="true" />
-            <element signature="e#21379#21380#0" expanded="true" />
-            <element signature="e#21430#21431#0" expanded="true" />
-            <element signature="e#21476#21477#0" expanded="true" />
-            <element signature="e#22236#22237#0" expanded="true" />
-            <element signature="e#22275#22276#0" expanded="true" />
-            <element signature="e#22501#22502#0" expanded="true" />
-            <element signature="e#22541#22542#0" expanded="true" />
-            <element signature="e#23209#23210#0" expanded="true" />
-            <element signature="e#23244#23245#0" expanded="true" />
-            <element signature="e#23421#23422#0" expanded="true" />
-            <element signature="e#23478#23479#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1213,7 +1080,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
           <caret line="18" column="61" selection-start-line="18" selection-start-column="61" selection-end-line="18" selection-end-column="61" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1221,12 +1087,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#186#187#0" expanded="true" />
-            <element signature="e#216#217#0" expanded="true" />
-            <element signature="e#246#247#0" expanded="true" />
-            <element signature="e#277#278#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1234,11 +1094,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="867">
           <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#416#417#0" expanded="true" />
-            <element signature="e#444#445#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1262,15 +1117,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="567" max-vertical-offset="4964">
           <caret line="81" column="29" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1364" max-vertical-offset="8364">
-          <caret line="117" column="78" selection-start-line="117" selection-start-column="78" selection-end-line="117" selection-end-column="78" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1282,34 +1128,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
-          <caret line="18" column="41" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SetBlockFast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="833">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SchematicHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1700" max-vertical-offset="2601">
-          <caret line="125" column="32" selection-start-line="125" selection-start-column="32" selection-end-line="125" selection-end-column="32" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2176" max-vertical-offset="3077">
+          <caret line="128" column="32" selection-start-line="128" selection-start-column="32" selection-end-line="128" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/RUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1496">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="1615">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1324,61 +1162,154 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PWE.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1037">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1190">
+          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3111" max-vertical-offset="5559">
+          <caret line="183" column="7" selection-start-line="183" selection-start-column="7" selection-end-line="183" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6205">
+          <caret line="52" column="30" selection-start-line="52" selection-start-column="30" selection-end-line="52" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="222" max-vertical-offset="1445">
+          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Visit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="116" max-vertical-offset="1037">
+          <caret line="37" column="30" selection-start-line="37" selection-start-column="30" selection-end-line="37" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3193" max-vertical-offset="8925">
+          <caret line="226" column="36" selection-start-line="226" selection-start-column="36" selection-end-line="226" selection-end-column="36" />
+          <folding>
+            <element signature="e#527#559#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2881" max-vertical-offset="3825">
+          <caret line="204" column="22" selection-start-line="204" selection-start-column="22" selection-end-line="204" selection-end-column="22" />
+          <folding>
+            <element signature="e#8441#8442#0" expanded="true" />
+            <element signature="e#8470#8471#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="575" max-vertical-offset="1224">
+          <caret line="56" column="34" selection-start-line="56" selection-start-column="34" selection-end-line="56" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11339">
-          <caret line="362" column="86" selection-start-line="362" selection-start-column="86" selection-end-line="362" selection-end-column="86" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1000" max-vertical-offset="9894">
+          <caret line="113" column="0" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
           <folding>
-            <element signature="e#0#27100#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-            <element signature="e#13075#13106#0" expanded="true" />
-            <element signature="e#13163#13178#0" expanded="true" />
-            <element signature="e#16136#16150#0" expanded="true" />
-            <element signature="e#20582#20598#0" expanded="true" />
-            <element signature="e#22244#22250#0" expanded="true" />
-            <element signature="e#23008#23014#0" expanded="true" />
-            <marker date="1411491678199" expanded="true" signature="1109:1180" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="1874:1955" placeholder="INSERT INTO ..." />
-            <marker date="1411491678199" expanded="true" signature="2677:3257" placeholder="CREATE TABLE..plot..." />
-            <marker date="1411491678199" expanded="true" signature="3309:3550" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1411491678199" expanded="true" signature="3615:4490" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1411491678199" expanded="true" signature="4555:4677" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1411491678199" expanded="true" signature="4775:5210" placeholder="CREATE TABLE..plot..." />
-            <marker date="1411491678199" expanded="true" signature="5283:5481" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1411491678199" expanded="true" signature="5546:6315" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1411491678199" expanded="true" signature="8118:8170" placeholder="DELETE FROM ..." />
-            <marker date="1411491678199" expanded="true" signature="8362:8413" placeholder="DELETE FROM ..." />
-            <marker date="1411491678199" expanded="true" signature="8605:8638" placeholder="DELETE FROM ..." />
-            <marker date="1411491678199" expanded="true" signature="9398:9484" placeholder="INSERT INTO ..." />
-            <marker date="1411491678199" expanded="true" signature="9897:10001" placeholder="SELECT `id` ..plot..." />
-            <marker date="1411491678199" expanded="true" signature="11895:12553" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="12635:12653" placeholder="ALTER TABLE `plot`..." />
-            <marker date="1411491678199" expanded="true" signature="13321:13388" placeholder="SELECT `id`,..plot..." />
-            <marker date="1411491678199" expanded="true" signature="16891:16953" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="17953:18016" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="18836:18900" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="19937:20004" placeholder="UPDATE `plot..." />
-            <marker date="1411491678199" expanded="true" signature="20703:20757" placeholder="SELECT * FRO..plot_settings..." />
-            <marker date="1411491678199" expanded="true" signature="22355:22417" placeholder="SELECT `user..plot_denied..." />
-            <marker date="1411491678199" expanded="true" signature="23157:23219" placeholder="SELECT `user..plot_helpers..." />
-            <marker date="1411491678199" expanded="true" signature="23942:24013" placeholder="DELETE FROM ..." />
-            <marker date="1411491678199" expanded="true" signature="24820:24888" placeholder="INSERT INTO ..." />
-            <marker date="1411491678199" expanded="true" signature="25695:25765" placeholder="DELETE FROM ..." />
-            <marker date="1411491678199" expanded="true" signature="26572:26639" placeholder="INSERT INTO ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_denied..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_helpers..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_settings..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="ALTER TABLE `plot_settings`..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_denied..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_helpers..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..plot_settings..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="DELETE FROM ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="DELETE FROM ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="DELETE FROM ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="SELECT `id` ..plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="ALTER TABLE `plot`..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="SELECT `id`,..plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="UPDATE `plot..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="SELECT * FRO..plot_settings..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="SELECT `user..plot_denied..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="SELECT `user..plot_helpers..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="DELETE FROM ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="DELETE FROM ..." />
+            <marker date="1411576432571" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java">
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/SetOwner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33224756" vertical-offset="1819" max-vertical-offset="4097">
-          <caret line="156" column="19" selection-start-line="156" selection-start-column="19" selection-end-line="156" selection-end-column="19" />
+        <state vertical-scroll-proportion="0.014900662" vertical-offset="229" max-vertical-offset="833">
+          <caret line="24" column="42" selection-start-line="24" selection-start-column="41" selection-end-line="24" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#1752#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="968" max-vertical-offset="15334">
+          <caret line="94" column="33" selection-start-line="94" selection-start-column="33" selection-end-line="94" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3783#3802#0" expanded="true" />
+            <element signature="e#4532#4538#0" expanded="true" />
+            <element signature="e#4910#4916#0" expanded="true" />
+            <element signature="e#5516#5522#0" expanded="true" />
+            <element signature="e#32176#32192#0" expanded="true" />
+            <element signature="e#34169#34185#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/WorldGuardListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="471" max-vertical-offset="1156">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1016#1017#0" expanded="true" />
+            <element signature="e#1098#1099#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plotsquared.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33217993" vertical-offset="3202" max-vertical-offset="4386">
+          <caret line="194" column="12" selection-start-line="194" selection-start-column="12" selection-end-line="194" selection-end-column="12" />
           <folding />
         </state>
       </provider>
@@ -1389,7 +1320,7 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
-          <last-edited>plotsquared__</last-edited>
+          <last-edited>PlotSquared</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1461,7 +1392,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>lib</last-edited>
+          <last-edited>WorldGuard</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

@@ -185,7 +185,11 @@ public enum C {
      */
     C(String d) {
         this.d = d;
-        this.s = PlotMain.translations.getString(this.toString());
+        if(PlotMain.translations == null) {
+            this.s = d;
+        } else {
+            this.s = PlotMain.translations.getString(this.toString());
+        }
         if (this.s == null) {
             this.s = "";
         }

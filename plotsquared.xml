@@ -123,7 +123,97 @@
   
   <!-- Modules -->
   
-  <import file="${basedir}/PlotSquared/module_plotsquared.xml"/>
+  
+  <!-- Module PlotSquared -->
+  
+  <dirname property="module.plotsquared.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.plotsquared" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.plotsquared" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.plotsquared" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.plotsquared" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="plotsquared.output.dir" value="${module.plotsquared.basedir}/out/production/PlotSquared"/>
+  <property name="plotsquared.testoutput.dir" value="${module.plotsquared.basedir}/out/test/PlotSquared"/>
+  
+  <path id="plotsquared.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="plotsquared.module.production.classpath">
+    <path refid="${module.jdk.classpath.plotsquared}"/>
+    <path refid="library.bukkit-1.7.9-r0.2.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.simple-xml.classpath"/>
+  </path>
+  
+  <path id="plotsquared.runtime.production.module.classpath">
+    <pathelement location="${plotsquared.output.dir}"/>
+    <path refid="library.bukkit-1.7.9-r0.2.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.simple-xml.classpath"/>
+  </path>
+  
+  <path id="plotsquared.module.classpath">
+    <path refid="${module.jdk.classpath.plotsquared}"/>
+    <pathelement location="${plotsquared.output.dir}"/>
+    <path refid="library.bukkit-1.7.9-r0.2.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.simple-xml.classpath"/>
+  </path>
+  
+  <path id="plotsquared.runtime.module.classpath">
+    <pathelement location="${plotsquared.testoutput.dir}"/>
+    <pathelement location="${plotsquared.output.dir}"/>
+    <path refid="library.bukkit-1.7.9-r0.2.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.simple-xml.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.plotsquared">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.plotsquared">
+    <patternset refid="excluded.from.module.plotsquared"/>
+  </patternset>
+  
+  <path id="plotsquared.module.sourcepath">
+    <dirset dir="${module.plotsquared.basedir}/PlotSquared">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.plotsquared" depends="compile.module.plotsquared.production,compile.module.plotsquared.tests" description="Compile module PlotSquared"/>
+  
+  <target name="compile.module.plotsquared.production" depends="register.custom.compilers" description="Compile module PlotSquared; production classes">
+    <mkdir dir="${plotsquared.output.dir}"/>
+    <javac2 destdir="${plotsquared.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plotsquared}/javac">
+      <compilerarg line="${compiler.args.plotsquared}"/>
+      <bootclasspath refid="plotsquared.module.bootclasspath"/>
+      <classpath refid="plotsquared.module.production.classpath"/>
+      <src refid="plotsquared.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.plotsquared"/>
+    </javac2>
+    
+    <copy todir="${plotsquared.output.dir}">
+      <fileset dir="${module.plotsquared.basedir}/PlotSquared/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.plotsquared.tests" depends="register.custom.compilers,compile.module.plotsquared.production" description="compile module PlotSquared; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.plotsquared" description="cleanup module">
+    <delete dir="${plotsquared.output.dir}"/>
+    <delete dir="${plotsquared.testoutput.dir}"/>
+  </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->

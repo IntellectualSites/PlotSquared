@@ -1,30 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import static com.intellectualcrafters.plot.PlotWorld.DEFAULT_FLAGS_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.MAIN_BLOCK_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.PLOT_BIOME_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.PLOT_HEIGHT_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.PLOT_WIDTH_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.ROAD_BLOCK_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.ROAD_HEIGHT_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.ROAD_STRIPES_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.ROAD_STRIPES_ENABLED_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.ROAD_WIDTH_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.SCHEMATIC_FILE_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.TOP_BLOCK_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.WALL_BLOCK_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.WALL_FILLING_DEFAULT;
-import static com.intellectualcrafters.plot.PlotWorld.WALL_HEIGHT_DEFAULT;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -33,6 +8,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.intellectualcrafters.plot.PlotWorld.*;
+
 /**
  * TODO finish recoding this class
  * 
@@ -40,6 +21,7 @@ import org.bukkit.generator.ChunkGenerator;
  * @author Citymonstret
  * 
  */
+@SuppressWarnings("deprecation")
 public class WorldGenerator extends ChunkGenerator {
     private long state;
 

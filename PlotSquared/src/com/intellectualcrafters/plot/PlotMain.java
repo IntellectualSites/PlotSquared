@@ -9,126 +9,7 @@
 
 package com.intellectualcrafters.plot;
 
-import static org.bukkit.Material.ACACIA_STAIRS;
-import static org.bukkit.Material.BEACON;
-import static org.bukkit.Material.BEDROCK;
-import static org.bukkit.Material.BIRCH_WOOD_STAIRS;
-import static org.bukkit.Material.BOOKSHELF;
-import static org.bukkit.Material.BREWING_STAND;
-import static org.bukkit.Material.BRICK;
-import static org.bukkit.Material.BRICK_STAIRS;
-import static org.bukkit.Material.BURNING_FURNACE;
-import static org.bukkit.Material.CAKE_BLOCK;
-import static org.bukkit.Material.CAULDRON;
-import static org.bukkit.Material.CLAY;
-import static org.bukkit.Material.CLAY_BRICK;
-import static org.bukkit.Material.COAL_BLOCK;
-import static org.bukkit.Material.COAL_ORE;
-import static org.bukkit.Material.COBBLESTONE;
-import static org.bukkit.Material.COBBLESTONE_STAIRS;
-import static org.bukkit.Material.COBBLE_WALL;
-import static org.bukkit.Material.COMMAND;
-import static org.bukkit.Material.DARK_OAK_STAIRS;
-import static org.bukkit.Material.DAYLIGHT_DETECTOR;
-import static org.bukkit.Material.DIAMOND_BLOCK;
-import static org.bukkit.Material.DIAMOND_ORE;
-import static org.bukkit.Material.DIRT;
-import static org.bukkit.Material.DISPENSER;
-import static org.bukkit.Material.DROPPER;
-import static org.bukkit.Material.EMERALD_BLOCK;
-import static org.bukkit.Material.EMERALD_ORE;
-import static org.bukkit.Material.ENCHANTMENT_TABLE;
-import static org.bukkit.Material.ENDER_PORTAL_FRAME;
-import static org.bukkit.Material.ENDER_STONE;
-import static org.bukkit.Material.FURNACE;
-import static org.bukkit.Material.GLASS;
-import static org.bukkit.Material.GLOWSTONE;
-import static org.bukkit.Material.GOLD_BLOCK;
-import static org.bukkit.Material.GOLD_ORE;
-import static org.bukkit.Material.GRASS;
-import static org.bukkit.Material.GRAVEL;
-import static org.bukkit.Material.HARD_CLAY;
-import static org.bukkit.Material.HAY_BLOCK;
-import static org.bukkit.Material.HUGE_MUSHROOM_1;
-import static org.bukkit.Material.HUGE_MUSHROOM_2;
-import static org.bukkit.Material.IRON_BLOCK;
-import static org.bukkit.Material.IRON_ORE;
-import static org.bukkit.Material.JACK_O_LANTERN;
-import static org.bukkit.Material.JUKEBOX;
-import static org.bukkit.Material.JUNGLE_WOOD_STAIRS;
-import static org.bukkit.Material.LAPIS_BLOCK;
-import static org.bukkit.Material.LAPIS_ORE;
-import static org.bukkit.Material.LEAVES;
-import static org.bukkit.Material.LEAVES_2;
-import static org.bukkit.Material.LOG;
-import static org.bukkit.Material.LOG_2;
-import static org.bukkit.Material.MELON_BLOCK;
-import static org.bukkit.Material.MOB_SPAWNER;
-import static org.bukkit.Material.MOSSY_COBBLESTONE;
-import static org.bukkit.Material.MYCEL;
-import static org.bukkit.Material.NETHERRACK;
-import static org.bukkit.Material.NETHER_BRICK;
-import static org.bukkit.Material.NETHER_BRICK_STAIRS;
-import static org.bukkit.Material.NOTE_BLOCK;
-import static org.bukkit.Material.OBSIDIAN;
-import static org.bukkit.Material.PACKED_ICE;
-import static org.bukkit.Material.PUMPKIN;
-import static org.bukkit.Material.QUARTZ_BLOCK;
-import static org.bukkit.Material.QUARTZ_ORE;
-import static org.bukkit.Material.QUARTZ_STAIRS;
-import static org.bukkit.Material.REDSTONE_BLOCK;
-import static org.bukkit.Material.SAND;
-import static org.bukkit.Material.SANDSTONE;
-import static org.bukkit.Material.SANDSTONE_STAIRS;
-import static org.bukkit.Material.SMOOTH_BRICK;
-import static org.bukkit.Material.SMOOTH_STAIRS;
-import static org.bukkit.Material.SNOW_BLOCK;
-import static org.bukkit.Material.SOUL_SAND;
-import static org.bukkit.Material.SPONGE;
-import static org.bukkit.Material.SPRUCE_WOOD_STAIRS;
-import static org.bukkit.Material.STONE;
-import static org.bukkit.Material.WOOD;
-import static org.bukkit.Material.WOOD_STAIRS;
-import static org.bukkit.Material.WOOL;
-import static org.bukkit.Material.WORKBENCH;
-import static org.bukkit.Material.getMaterial;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import me.confuser.barapi.BarAPI;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -141,7 +22,27 @@ import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import me.confuser.barapi.BarAPI;
+import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.*;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.bukkit.Material.*;
 
 /**
  * @awesome @author Citymonstret, Empire92 PlotMain class.
@@ -190,6 +91,9 @@ public class PlotMain extends JavaPlugin {
      * CameraAPI object
      */
     public static CameraAPI cameraAPI;
+
+    public static WorldGuardPlugin worldGuard;
+
 
     /**
      * !!WorldGeneration!!
@@ -410,7 +314,10 @@ public class PlotMain extends JavaPlugin {
                                 if (plot.owner == null) {
                                     continue;
                                 }
-                                if (PlayerFunctions.hasExpired(plot)) {
+                                long lastPlayed = getLastPlayed(plot.owner);
+                                if(lastPlayed == 0) continue;
+                                int days = (int) (lastPlayed / (1000*60*60*24));
+                                if (days >= Settings.AUTO_CLEAR_DAYS) {
                                     PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                                     Bukkit.getServer().getPluginManager().callEvent(event);
                                     if (event.isCancelled()) {
@@ -561,6 +468,7 @@ public class PlotMain extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+
         getCommand("plots").setExecutor(new MainCommand());
         getCommand("plots").setAliases(new ArrayList<String>() {
             {
@@ -569,6 +477,7 @@ public class PlotMain extends JavaPlugin {
                 add("plot");
             }
         });
+
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
         if (getServer().getPluginManager().getPlugin("CameraAPI") != null) {
@@ -584,13 +493,19 @@ public class PlotMain extends JavaPlugin {
             worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
         }
-        checkExpired(PlotMain.getMain(), true);
-        checkForExpiredPlots();
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+            getServer().getPluginManager().registerEvents(new WorldGuardListener(this), this);
+        }
+        if(Settings.AUTO_CLEAR) {
+            checkExpired(PlotMain.getMain(), true);
+            checkForExpiredPlots();
+        }
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
 
         if (Web.ENABLED) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "This is not yet implemented...");
+            sendConsoleSenderMessage(C.PREFIX.s() + "Web Is not implemented yet. Please bear with us.");
         }
     }
 
@@ -702,6 +617,14 @@ public class PlotMain extends JavaPlugin {
         translations = YamlConfiguration.loadConfiguration(translationsFile);
     }
 
+    public static long getLastPlayed(UUID uuid) {
+        if(uuid == null) return 0;
+        OfflinePlayer player;
+        if((player = Bukkit.getOfflinePlayer(uuid)) == null || !player.hasPlayedBefore()) {
+            return 0;
+        }
+        return player.getLastPlayed();
+    }
     /**
      * Load configuration files
      */
@@ -768,6 +691,24 @@ public class PlotMain extends JavaPlugin {
             // Web
             // Web.ENABLED = config.getBoolean("web.enabled");
             // Web.PORT = config.getInt("web.port");
+
+            Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+            Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        }
+        if(Settings.DEBUG) {
+            Map<String, String> settings = new HashMap<>();
+            settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
+            settings.put("Use Metrics",  "" + Settings.METRICS);
+            settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
+            settings.put("Web Enabled", "" + Web.ENABLED);
+            settings.put("Web Port", "" + Web.PORT);
+            settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
+            settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
+            settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
+            settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
+            for(Entry<String, String> setting : settings.entrySet()) {
+                sendConsoleSenderMessage(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+            }
         }
     }
 
@@ -888,10 +829,18 @@ public class PlotMain extends JavaPlugin {
         options.put("web.enabled", Web.ENABLED);
         options.put("web.port", Web.PORT);
         options.put("metrics", true);
+        options.put("debug", true);
+        options.put("clear.auto.enabled", false);
+        options.put("clear.auto.days", 365);
+
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
             }
+        }
+        Settings.DEBUG = config.getBoolean("debug");
+        if(Settings.DEBUG) {
+            sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Web.ENABLED = config.getBoolean("web.enabled");
         Web.PORT = config.getInt("web.port");

@@ -10,6 +10,7 @@
     <orderEntry type="library" name="bukkit-1.7.9-R0.2" level="project" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="simple-xml" level="project" />
+    <orderEntry type="library" name="WorldGuard" level="project" />
   </component>
 </module>
 
