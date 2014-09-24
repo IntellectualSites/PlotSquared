@@ -797,7 +797,7 @@ public class PlotMain extends JavaPlugin {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("mysql.use", true);
         options.put("sqlite.use", false);
-        options.put("sqllite.db", "storage");
+        options.put("sqlite.db", "storage");
         options.put("mysql.host", "localhost");
         options.put("mysql.port", "3306");
         options.put("mysql.user", "root");
