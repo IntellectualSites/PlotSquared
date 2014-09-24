@@ -9,24 +9,14 @@
 
 package com.intellectualcrafters.plot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import com.intellectualcrafters.plot.database.DBFunc;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.*;
 
 /**
  * plot functions
@@ -562,6 +552,12 @@ public class PlotHelper {
                         SetBlockFast.update(requester);
                         return;
                     } catch (Exception e) {
+                        if(Settings.DEBUG) {
+                            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Debug Mode Enabled -> Throwing epic stacktrace.");
+                            e.printStackTrace();
+                        } else {
+                            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Something went wrong with plot clearing... Enable debug to get stacktraces.");
+                        }
                         PlayerFunctions.sendMessage(requester, C.PREFIX.s() + "&cPlot clear failed... Trying again...");
                     }
                 }

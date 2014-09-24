@@ -277,10 +277,7 @@ public class DBFunc {
                 // each time.
                 HashMap<String, Object> settings = getSettings(id);
                 UUID owner = UUID.fromString(r.getString("owner"));
-                Biome plotBiome = Biome.valueOf((String) settings.get("biome"));
-                if (plotBiome == null) {
-                    plotBiome = Biome.FOREST;
-                }
+                Biome plotBiome = Biome.FOREST;
                 String[] flags_string;
                 if (settings.get("flags") == null) {
                     flags_string = new String[] {};
@@ -315,6 +312,10 @@ public class DBFunc {
                 }
                 PlotHomePosition position = null;
                 for (PlotHomePosition plotHomePosition : PlotHomePosition.values()) {
+                    if (settings.get("position") == null) {
+                        position = PlotHomePosition.DEFAULT;
+                        break;
+                    }
                     if (plotHomePosition.isMatching((String) settings.get("position"))) {
                         position = plotHomePosition;
                     }
