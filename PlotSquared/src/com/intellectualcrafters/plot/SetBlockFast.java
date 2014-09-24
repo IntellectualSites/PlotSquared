@@ -22,12 +22,12 @@ public class SetBlockFast {
 
     public static boolean set(org.bukkit.World world, int x, int y, int z, int blockId, byte data) {
         Object w = methodGetHandle.of(world).call();
-        
         Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f,block , data);
         return true;
     }
+    
     public static void update(Player player) {
         for (int cx = -8; cx < 8; cx++) {
             for (int cz = -8; cz < 8; cz++) {

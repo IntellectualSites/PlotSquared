@@ -86,7 +86,7 @@ public class PlotWorld {
     /**
      * Default main block: 1
      */
-    public static String[] MAIN_BLOCK_DEFAULT = new String[] {"1"};
+    public static String[] MAIN_BLOCK_DEFAULT = new String[] {"1:0"};
     /**
      * Top blocks
      */
@@ -94,7 +94,7 @@ public class PlotWorld {
     /**
      * Default top blocks: {"2"}
      */
-    public static String[] TOP_BLOCK_DEFAULT = new String[] {"2"};
+    public static String[] TOP_BLOCK_DEFAULT = new String[] {"2:0"};
     
     /**
      * Wall block

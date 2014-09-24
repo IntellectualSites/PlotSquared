@@ -22,6 +22,24 @@ import static com.intellectualcrafters.plot.PlotWorld.*;
  *
  */
 public class WorldGenerator extends ChunkGenerator {
+    private long state = 100;
+    public final long nextLong() {
+        long a=state;
+        state = xorShift64(a);
+        return a;
+    }
+
+    public final long xorShift64(long a) {
+        a ^= (a << 21);
+        a ^= (a >>> 35);
+        a ^= (a << 4);
+        return a;
+    }
+
+    public final int random(int n) {
+        long r = ((nextLong()>>>32)*n)>>32;
+        return (int) r;
+    }
     short[][] result;
     int plotsize;
     int pathsize;
@@ -36,22 +54,8 @@ public class WorldGenerator extends ChunkGenerator {
     int wallheight;
     int plotheight;
     
-    Short[] plotfloors;
-    Short[] filling;
-    
-    public short getFilling(Random random) {
-        if (filling.length==1) {
-            return filling[0];
-        }
-        return filling[random.nextInt(filling.length)];
-    }
-    
-    public short getPlotFloor(Random random) {
-        if (plotfloors.length==1) {
-            return plotfloors[0];
-        }
-        return plotfloors[random.nextInt(plotfloors.length)];
-    }
+    short[] plotfloors;
+    short[] filling;
     
     public Short getBlock(String block) {
         if (block.contains(":")) {
@@ -131,8 +135,8 @@ public class WorldGenerator extends ChunkGenerator {
         size = pathsize + plotsize;
         wall = getBlock(plotworld.WALL_BLOCK);
         
-        plotfloors = new Short[plotworld.TOP_BLOCK.length];
-        filling = new Short[plotworld.TOP_BLOCK.length];
+        plotfloors = new short[plotworld.TOP_BLOCK.length];
+        filling = new short[plotworld.MAIN_BLOCK.length];
         
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
             plotfloors[i] = getBlock(plotworld.TOP_BLOCK[i]); 
@@ -156,7 +160,7 @@ public class WorldGenerator extends ChunkGenerator {
     
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        return Arrays.asList((BlockPopulator) new XPopulator());
+        return Arrays.asList((BlockPopulator) new XPopulator(PlotMain.getWorldSettings(world)));
     }
     
     @Override
@@ -168,12 +172,31 @@ public class WorldGenerator extends ChunkGenerator {
         for (int x = x1; x < x2; x++) {
             for (int z = z1; z < z2; z++) {
                 for (int y = y1; y < y2; y++) {
-                    setBlock(result, (int) x, y, (int) z, id);
+                    setBlock(result, x, y, z, id);
                 }
             }
         }
     }
 
+    
+    
+    
+    private void setCuboidRegion(int x1, int x2, int y1, int y2, int z1, int z2, short[] id) {
+        if (id.length==1) {
+            setCuboidRegion(x1,x2,y1,y2,z1,z2,id[0]);
+        }
+        else {
+            for (int x = x1; x < x2; x++) {
+                for (int z = z1; z < z2; z++) {
+                    for (int y = y1; y < y2; y++) {
+                        int i = random(id.length);
+                        setBlock(result, x, y, z, id[i]);
+                    }
+                }
+            }
+        }
+        
+    }
     @SuppressWarnings("deprecation")
     @Override
     public short[][] generateExtBlockSections(World world, Random random,
@@ -184,10 +207,13 @@ public class WorldGenerator extends ChunkGenerator {
         
         double pathWidthLower;
         pathWidthLower = Math.floor(pathsize/2);
-        if (cx<0)
-            cx+=((-cx)*(size));
-        if (cz<0)
-            cz+=((-cz)*(size));
+        final int prime = 31;
+        int h = 1;
+        h = prime * h + cx;
+        h = prime * h + cz;
+        state = h;
+        cx=cx%size+8*size;
+        cz=cz%size+8*size;
         int absX = (int) (cx*16+16-pathWidthLower-1+8*size);
         int absZ = (int) (cz*16+16-pathWidthLower-1+8*size);
         int plotMinX = (((absX)%size));
@@ -261,8 +287,6 @@ public class WorldGenerator extends ChunkGenerator {
             }
             if (roadStartZ<=16&&roadStartZ>1) {
                 int val = roadStartZ;
-//                if (val==0)
-//                    val+=16-pathsize+2;
                 int start,end;
                 if (plotMinX+2<=16)
                     start = 16-plotMinX-1;
@@ -303,37 +327,37 @@ public class WorldGenerator extends ChunkGenerator {
         if (plotsize>16) {
             if (roadStartX<=16) {
                 if (roadStartZ<=16) {
-                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 0, 16-roadStartZ, getFilling(random));
-                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 0, 16-roadStartZ, getPlotFloor(random));
+                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 0, 16-roadStartZ, filling);
+                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 0, 16-roadStartZ, plotfloors);
                 }
                 if (plotMinZ<=16) {
-                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 16-plotMinZ, 16, getFilling(random));
-                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 16-plotMinZ, 16, getPlotFloor(random));
+                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 16-plotMinZ, 16, filling);
+                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 16-plotMinZ, 16, plotfloors);
                 }
             }
             else {
                 if (roadStartZ<=16) {
                     if (plotMinX>16) {
-                        setCuboidRegion(0, 16, 1, plotheight, 0, 16-roadStartZ, getFilling(random));
-                        setCuboidRegion(0, 16, plotheight, plotheight+1, 0, 16-roadStartZ, getPlotFloor(random));
+                        setCuboidRegion(0, 16, 1, plotheight, 0, 16-roadStartZ, filling);
+                        setCuboidRegion(0, 16, plotheight, plotheight+1, 0, 16-roadStartZ, plotfloors);
                     }
                 }
             }
             if (plotMinX<=16) {
                 if (plotMinZ<=16) {
-                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 16-plotMinZ, 16, getFilling(random));
-                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 16-plotMinZ, 16, getPlotFloor(random));
+                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 16-plotMinZ, 16, filling);
+                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 16-plotMinZ, 16, plotfloors);
                 }
                 else {
                     int z = (int) (16-roadStartZ);
                     if (z<0)
                         z=16;
-                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, z, getFilling(random));
-                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, z, getPlotFloor(random));
+                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, z, filling);
+                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, z, plotfloors);
                 }
                 if (roadStartZ<=16) {
-                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, 16-roadStartZ, getFilling(random));
-                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, 16-roadStartZ, getPlotFloor(random));
+                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, 16-roadStartZ, filling);
+                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, 16-roadStartZ, plotfloors);
                 }
                 else {
                     if (roadStartX<=16) {
@@ -341,8 +365,8 @@ public class WorldGenerator extends ChunkGenerator {
                             int x = (int) (16-roadStartX);
                             if (x<0)
                                 x=16;
-                            setCuboidRegion(0, x, 1, plotheight, 0, 16, getFilling(random));
-                            setCuboidRegion(0, x, plotheight,plotheight+1, 0, 16, getPlotFloor(random));
+                            setCuboidRegion(0, x, 1, plotheight, 0, 16, filling);
+                            setCuboidRegion(0, x, plotheight,plotheight+1, 0, 16, plotfloors);
                         }
                     }
                 }
@@ -353,8 +377,8 @@ public class WorldGenerator extends ChunkGenerator {
                         int x = (int) (16-roadStartX);
                         if (x<0)
                             x=16;
-                        setCuboidRegion(0, x, 1, plotheight, 16-plotMinZ, 16, getFilling(random));
-                         setCuboidRegion(0, x, plotheight, plotheight+1, 16-plotMinZ, 16, getPlotFloor(random));
+                        setCuboidRegion(0, x, 1, plotheight, 16-plotMinZ, 16, filling);
+                         setCuboidRegion(0, x, plotheight, plotheight+1, 16-plotMinZ, 16, plotfloors);
                     }
                 }
                 else {
@@ -366,12 +390,12 @@ public class WorldGenerator extends ChunkGenerator {
                         if (z<0)
                             z=16;
                         if (roadStartX>16) {
-                            setCuboidRegion(0, x, 1, plotheight, 0, z, getFilling(random));
-                            setCuboidRegion(0, x, plotheight, plotheight+1, 0, z, getPlotFloor(random));
+                            setCuboidRegion(0, x, 1, plotheight, 0, z, filling);
+                            setCuboidRegion(0, x, plotheight, plotheight+1, 0, z, plotfloors);
                         }
                         else {
-                            setCuboidRegion(0, x, 1, plotheight, 0, z, getFilling(random));
-                            setCuboidRegion(0, x, plotheight, plotheight+1, 0, z, getPlotFloor(random));
+                            setCuboidRegion(0, x, 1, plotheight, 0, z, filling);
+                            setCuboidRegion(0, x, plotheight, plotheight+1, 0, z, plotfloors);
                         }
                     }
                 }
@@ -380,22 +404,22 @@ public class WorldGenerator extends ChunkGenerator {
         else {
             if (roadStartX<=16) {
                 if (roadStartZ<=16) {
-                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 0, 16-roadStartZ, getFilling(random));
-                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 0, 16-roadStartZ, getPlotFloor(random));
+                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 0, 16-roadStartZ, filling);
+                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 0, 16-roadStartZ, plotfloors);
                 }
                 if (plotMinZ<=16) {
-                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 16-plotMinZ, 16, getFilling(random));
-                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 16-plotMinZ, 16, getPlotFloor(random));
+                    setCuboidRegion(0, 16-roadStartX, 1, plotheight, 16-plotMinZ, 16, filling);
+                    setCuboidRegion(0, 16-roadStartX, plotheight, plotheight+1, 16-plotMinZ, 16, plotfloors);
                 }
             }
             if (plotMinX<=16) {
                 if (plotMinZ<=16) {
-                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 16-plotMinZ, 16, getFilling(random));
-                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 16-plotMinZ, 16, getPlotFloor(random));
+                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 16-plotMinZ, 16, filling);
+                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 16-plotMinZ, 16, plotfloors);
                 }
                 if (roadStartZ<=16) {
-                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, 16-roadStartZ, getFilling(random));
-                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, 16-roadStartZ, getPlotFloor(random));
+                    setCuboidRegion(16-plotMinX, 16, 1, plotheight, 0, 16-roadStartZ, filling);
+                    setCuboidRegion(16-plotMinX, 16, plotheight, plotheight+1, 0, 16-roadStartZ, plotfloors);
                 }
             }
         }
@@ -477,10 +501,6 @@ public class WorldGenerator extends ChunkGenerator {
         }
         return result;
     }
-    
-
-    
-    
     
     @SuppressWarnings({ "deprecation", "unused" })
     private void setBlock(short[][] result, int x, int y, int z,
