@@ -101,6 +101,12 @@ public class DBFunc {
                             ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
             );
             stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_helpers` (" +
+                    "`plot_plot_id` INT(11) NOT NULL," +
+                    "`user_uuid` VARCHAR(40) NOT NULL" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8"
+                );
+            stmt.addBatch(
                     "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
                             "  `plot_plot_id` INT(11) NOT NULL," +
                             "  `biome` VARCHAR(45) DEFAULT 'FOREST'," +
@@ -135,6 +141,12 @@ public class DBFunc {
                             "`user_uuid` VARCHAR(40) NOT NULL" +
                     ")"
             );
+            stmt.addBatch(
+                    "CREATE TABLE IF NOT EXISTS `plot_helpers` (" +
+                            "`plot_plot_id` INT(11) NOT NULL," +
+                            "`user_uuid` VARCHAR(40) NOT NULL" +
+                    ")"
+                );
             stmt.addBatch(
                     "CREATE TABLE IF NOT EXISTS `plot_settings` (" +
                             "  `plot_plot_id` INT(11) NOT NULL," +
