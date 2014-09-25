@@ -11,6 +11,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotMain;
@@ -32,6 +33,10 @@ public class Clear extends SubCommand {
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        if ((plot==null || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
+            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            return true;
+        }
         boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {
             plot.clear(plr);

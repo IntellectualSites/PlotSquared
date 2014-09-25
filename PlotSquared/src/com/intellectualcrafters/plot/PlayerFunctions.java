@@ -138,7 +138,7 @@ public class PlayerFunctions {
 //            System.out.print("SOUTH");
             return null;
         }
-        PlotId id = new PlotId(dx,dz);
+        PlotId id = new PlotId(dx+1,dz+1);
         Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
         if (plot==null) {
             return id;

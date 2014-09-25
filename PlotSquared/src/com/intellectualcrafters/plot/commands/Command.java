@@ -30,7 +30,7 @@ public enum Command {
     /**
      *
      */
-    CLEAR("clear", "delete", new CommandPermission("plots.admin")),
+    CLEAR("clear", "delete", new CommandPermission("plots.clear")),
     /**
      *
      */

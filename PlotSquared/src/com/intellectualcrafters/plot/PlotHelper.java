@@ -477,7 +477,7 @@ public class PlotHelper {
         final World world = requester.getWorld();
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
-
+        
         final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
         final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
 
@@ -783,7 +783,7 @@ public class PlotHelper {
 
     public static Location getPlotTopLoc(World world, PlotId id) {
         Plot plot = PlotMain.getPlots(world).get(id);
-        if (id!=null) {
+        if (plot!=null) {
             id = PlayerFunctions.getTopPlot(world, plot).id;
         }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
@@ -798,7 +798,7 @@ public class PlotHelper {
 
     public static Location getPlotBottomLoc(World world, PlotId id) {
         Plot plot = PlotMain.getPlots(world).get(id);
-        if (id!=null) {
+        if (plot!=null) {
             id = PlayerFunctions.getBottomPlot(world, plot).id;
         }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);

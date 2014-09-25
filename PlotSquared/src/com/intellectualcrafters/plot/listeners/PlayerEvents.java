@@ -246,7 +246,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getBlock().getLocation()).equals("road")) {
+        if (PlayerFunctions.getPlot(event.getBlock().getLocation())==null) {
             event.setCancelled(true);
         }
     }
@@ -266,7 +266,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation()).equals("road")) {
+        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation())==null) {
             event.setCancelled(true);
         }
     }
@@ -483,7 +483,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getClickedBlock().getLocation()).equals("road")) {
+        if (PlayerFunctions.getPlot(event.getClickedBlock().getLocation())==null) {
             event.setCancelled(true);
         }
     }
