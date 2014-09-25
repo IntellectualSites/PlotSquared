@@ -65,6 +65,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
@@ -493,7 +494,7 @@ public class PlayerEvents implements Listener {
         if (!isPlotWorld(world)) {
             return;
         }
-        if ((isInPlot(event.getLocation()) && (event.getSpawnReason() != SpawnReason.SPAWNER_EGG)) || !isInPlot(event.getLocation())) {
+        if ((event.getSpawnReason() != SpawnReason.SPAWNER_EGG) || !isInPlot(event.getLocation())) {
             event.setCancelled(true);
         }
     }

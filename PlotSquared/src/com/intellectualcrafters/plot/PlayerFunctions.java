@@ -55,7 +55,36 @@ public class PlayerFunctions {
         long cu = System.currentTimeMillis();
         return (lp - cu) > 30l;
     }
-
+    
+    public static Set<PlotId> getPlotSelectionIds(World world, PlotId pos1, PlotId pos2) {
+        Set<PlotId> myplots = new HashSet<PlotId>();
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; x <= pos2.y; x++) {
+                myplots.add(new PlotId(x,y));
+            }
+        }
+        
+        return myplots;
+    }
+    
+    public static Plot getBottomPlot(World world, Plot plot) {
+        if (plot.settings.getMerged(2)) {
+            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y-1)));
+        }
+        if (plot.settings.getMerged(3)) {
+            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x-1, plot.id.y)));
+        }
+        return plot;
+    }
+    public static Plot getTopPlot(World world, Plot plot) {
+        if (plot.settings.getMerged(0)) {
+            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y-1)));
+        }
+        if (plot.settings.getMerged(1)) {
+            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x-1, plot.id.y)));
+        }
+        return plot;
+    }
     /**
      * 
      * @param loc
@@ -65,7 +94,8 @@ public class PlayerFunctions {
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
 
-        PlotWorld plotworld = PlotMain.getWorldSettings(loc.getWorld());
+        String world = loc.getWorld().getName();
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
         int size = plotworld.PLOT_WIDTH + plotworld.ROAD_WIDTH;
         int pathWidthLower;
         if ((plotworld.ROAD_WIDTH % 2) == 0) {
@@ -93,75 +123,27 @@ public class PlayerFunctions {
         int end = pathWidthLower+plotworld.PLOT_WIDTH;
         
         if (rx<=pathWidthLower) {
-//        west > return null for now
+//            System.out.print("WEST");
             return null;
         }
         if (rx>end) {
-//        east > return null for now
+//            System.out.print("EAST");
             return null;
         }
         if (rz<=pathWidthLower) {
-//        north > return null for now
+//            System.out.print("NORTH");
             return null;
         }
         if (rz>pathWidthLower+plotworld.PLOT_WIDTH) {
-//        south > return null for now
+//            System.out.print("SOUTH");
             return null;
         }
-        return new PlotId(dx,dz);
-        
-//
-//        double n3;
-//
-//        int mod2 = 0;
-//        int mod1 = 1;
-//
-//        int x = (int) Math.ceil((double) valx / size);
-//        int z = (int) Math.ceil((double) valz / size);
-//
-//        if ((pathsize % 2) == 1) {
-//            n3 = Math.ceil(((double) pathsize) / 2);
-//            mod2 = -1;
-//        } else {
-//            n3 = Math.floor(((double) pathsize) / 2);
-//        }
-//
-//        /*
-//         * If Road 1 + Road 2 are true, then it is in the middle between 4 plots and more checks might be required.
-//         */
-//        boolean road1 = false, road2 = false;
-//        
-//        for (double i = n3; i >= 0; i--) {
-//            if (((((valx - i) + mod1) % size) == 0) || (((valx + i + mod2) % size) == 0)) {
-//                
-//                /*
-//                 * Road 1
-//                 */
-//                
-//                road1 = true;
-//                x = (int) Math.ceil((valx - n3) / size);
-//            }
-//            if (((((valz - i) + mod1) % size) == 0) || (((valz + i + mod2) % size) == 0)) {
-//                /*
-//                 * Road 2
-//                 */
-//                
-//                road2 = true;
-//                z = (int) Math.ceil((valz - n3) / size);
-//            }
-//        }
-//        if (road1 && road2) {
-//            return null;
-//        }
-//        else if (road1) {
-//            return null;
-//        }
-//        else if (road2) {
-//            return null;
-//        }
-//        else {
-//            return new PlotId(x, z);
-//        }
+        PlotId id = new PlotId(dx,dz);
+        Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+        if (plot==null) {
+            return id;
+        }
+        return getBottomPlot(loc.getWorld(), plot).id;
     }
 
     /**

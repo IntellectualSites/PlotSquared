@@ -577,7 +577,7 @@ public class PlotHelper {
         }
         if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);
+            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);
             setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT, pos2.getBlockZ()), filling, filling_data);
             setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ()), plotfloors, plotfloors_data);
             PlayerFunctions.sendMessage(requester, "&c(depreciated) &r" + C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
@@ -626,7 +626,7 @@ public class PlotHelper {
         }
         if (min == null) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);
+            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);
             setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT, pos2.getBlockZ()), filling, filling_data);
             setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ()), plotfloors, plotfloors_data);
         } else {
@@ -782,6 +782,10 @@ public class PlotHelper {
     }
 
     public static Location getPlotTopLoc(World world, PlotId id) {
+        Plot plot = PlotMain.getPlots(world).get(id);
+        if (id!=null) {
+            id = PlayerFunctions.getTopPlot(world, plot).id;
+        }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         int px = id.x;
         int pz = id.y;
@@ -793,6 +797,10 @@ public class PlotHelper {
     }
 
     public static Location getPlotBottomLoc(World world, PlotId id) {
+        Plot plot = PlotMain.getPlots(world).get(id);
+        if (id!=null) {
+            id = PlayerFunctions.getBottomPlot(world, plot).id;
+        }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         int px = id.x;
         int pz = id.y;

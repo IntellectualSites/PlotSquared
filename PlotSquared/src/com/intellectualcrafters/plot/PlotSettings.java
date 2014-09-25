@@ -27,7 +27,7 @@ public class PlotSettings {
     /**
      * merged plots
      */
-    private boolean[] merged = new boolean[] {false,false,false,false}; // 1111
+    private boolean[] merged = new boolean[] {false,false,false,false};
     /**
      * plot alias
      */
@@ -74,6 +74,10 @@ public class PlotSettings {
      */
     public boolean getMerged(int direction) {
         return merged[direction];
+    }
+    
+    public boolean isMerged() {
+        return (merged[0] || merged[1] || merged[2] || merged[3]);
     }
     
     public boolean[] getMerged() {

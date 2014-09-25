@@ -188,7 +188,6 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashMap<PlotId, Plot>();
     }
-
     /**
      * get all plot worlds
      */
@@ -713,7 +712,7 @@ public class PlotMain extends JavaPlugin {
                     this.error = 0l;
                 }
                 for (String w : getPlotWorlds()) {
-                    getWorldSettings(w);
+                    PlotWorld plotworld = getWorldSettings(w);
                     World world = Bukkit.getServer().getWorld(w);
                     try {
                         if (world.getLoadedChunks().length < 1) {
@@ -723,69 +722,67 @@ public class PlotMain extends JavaPlugin {
                             Entity[] entities = chunk.getEntities();
                             for (int i = entities.length - 1; i >= 0; i--) {
                                 Entity entity = entities[i];
-                                if (entity.getType() == EntityType.PLAYER) {
-                                    continue;
-                                }
-                                this.location = entity.getLocation();
-                                if (!PlayerEvents.isInPlot(this.location)) {
-                                    boolean tamed = false;
-                                    if (Settings.MOB_PATHFINDING) {
-                                        
-                                        // TODO make this more efficient
-                                        
-                                        if (entity instanceof Tameable) {
-                                            Tameable tameable = (Tameable) entity;
-                                            if (tameable.isTamed()) {
-                                                tamed = true;
-                                            }
-                                        } else if (entity instanceof LivingEntity) {
-                                            LivingEntity livingEntity = ((LivingEntity) entity);
-                                            if (livingEntity.getCustomName() != null) {
-                                                tamed = true;
-                                            }
-                                        }
-                                        if (tamed) {
-                                            boolean found = false;
-                                            int radius = 1;
-                                            int dir = 0;
-                                            int x = this.location.getBlockX();
-                                            int y = this.location.getBlockY();
-                                            int z = this.location.getBlockZ();
-                                            while (!found || (radius > PlotWorld.ROAD_WIDTH_DEFAULT)) {
-                                                Location pos;
-                                                switch (dir) {
-                                                case 0:
-                                                    pos = new Location(world, x + radius, y, z);
-                                                    dir++;
-                                                    break;
-                                                case 1:
-                                                    pos = new Location(world, x, y, z + radius);
-                                                    dir++;
-                                                    break;
-                                                case 2:
-                                                    pos = new Location(world, x - radius, y, z);
-                                                    dir++;
-                                                    break;
-                                                case 3:
-                                                    pos = new Location(world, x, y, z - radius);
-                                                    dir = 0;
-                                                    radius++;
-                                                    break;
-                                                default:
-                                                    pos = this.location;
-                                                    break;
-
+                                if (!(entity instanceof Player)) {
+                                    this.location = entity.getLocation();
+                                    if (!PlayerEvents.isInPlot(this.location)) {
+                                        boolean tamed = false;
+                                        if (Settings.MOB_PATHFINDING) {
+                                            if (entity instanceof Tameable) {
+                                                Tameable tameable = (Tameable) entity;
+                                                if (tameable.isTamed()) {
+                                                    tamed = true;
                                                 }
-                                                if (PlayerEvents.isInPlot(pos)) {
-                                                    entity.teleport(pos.add(0.5, 0, 0.5));
-                                                    found = true;
-                                                    break;
+                                            } else if (entity instanceof LivingEntity) {
+                                                LivingEntity livingEntity = ((LivingEntity) entity);
+                                                if (livingEntity.getCustomName() != null) {
+                                                    tamed = true;
                                                 }
                                             }
+                                            if (tamed) {
+                                                boolean found = false;
+                                                int radius = 1;
+                                                int dir = 0;
+                                                int x = this.location.getBlockX();
+                                                int y = this.location.getBlockY();
+                                                int z = this.location.getBlockZ();
+                                                while (!found || (radius > plotworld.ROAD_WIDTH)) {
+                                                    Location pos;
+                                                    switch (dir) {
+                                                    case 0:
+                                                        pos = new Location(world, x + radius, y, z);
+                                                        dir++;
+                                                        break;
+                                                    case 1:
+                                                        pos = new Location(world, x, y, z + radius);
+                                                        dir++;
+                                                        break;
+                                                    case 2:
+                                                        pos = new Location(world, x - radius, y, z);
+                                                        dir++;
+                                                        break;
+                                                    case 3:
+                                                        pos = new Location(world, x, y, z - radius);
+                                                        dir = 0;
+                                                        radius++;
+                                                        break;
+                                                    default:
+                                                        pos = this.location;
+                                                        break;
+    
+                                                    }
+                                                    if (PlayerEvents.isInPlot(pos)) {
+                                                        entity.teleport(pos.add(0.5, 0, 0.5));
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+                                                // Welp! how did this entity get here?
+                                                entity.teleport(location.subtract(location.getDirection().normalize().multiply(2)));
+                                            }
                                         }
-                                    }
-                                    if (!tamed) {
-                                        entity.remove();
+                                        if (!tamed) {
+                                            entity.remove();
+                                        }
                                     }
                                 }
                             }
@@ -911,4 +908,5 @@ public class PlotMain extends JavaPlugin {
             plots.put(world, new HashMap<PlotId, Plot>());
         }
     }
+
 }
