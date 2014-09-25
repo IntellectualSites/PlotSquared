@@ -730,6 +730,9 @@ public class PlotMain extends JavaPlugin {
                                 if (!PlayerEvents.isInPlot(this.location)) {
                                     boolean tamed = false;
                                     if (Settings.MOB_PATHFINDING) {
+                                        
+                                        // TODO make this more efficient
+                                        
                                         if (entity instanceof Tameable) {
                                             Tameable tameable = (Tameable) entity;
                                             if (tameable.isTamed()) {

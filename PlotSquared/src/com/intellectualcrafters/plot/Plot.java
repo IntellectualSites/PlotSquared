@@ -102,8 +102,9 @@ public class Plot implements Cloneable {
      * @param denied
      * @param changeTime
      * @param time
+     * @param merged 
      */
-    public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world) {
+    public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world, boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.settings.setBiome(plotBiome);
@@ -116,6 +117,7 @@ public class Plot implements Cloneable {
         this.settings.setTimeChange(changeTime);
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
+        this.settings.setMerged(merged);
         this.delete = false;
         if (flags != null) {
             this.settings.setFlags(flags);

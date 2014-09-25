@@ -463,6 +463,12 @@ public class PlotHelper {
      * @param plot
      */
     public static void clear(final Player requester, final Plot plot) {
+        
+        /*
+         * TODO unlink any adjacent plots
+         */
+        
+        
         final long start = System.nanoTime();
         final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);

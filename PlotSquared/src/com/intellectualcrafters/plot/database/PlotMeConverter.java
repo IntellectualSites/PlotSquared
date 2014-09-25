@@ -77,7 +77,7 @@ public class PlotMeConverter {
                         }
                         stream.println(eR3040bl230);
                         PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
-                        com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName());
+                        com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {false, false, false, false} );
                         DBFunc.createPlot(pl);
                         DBFunc.createPlotSettings(DBFunc.getId(world.getName(), pl.id), pl);
                     }

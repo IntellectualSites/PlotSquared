@@ -62,44 +62,106 @@ public class PlayerFunctions {
      * @return
      */
     public static PlotId getPlot(Location loc) {
-        int valx = loc.getBlockX();
-        int valz = loc.getBlockZ();
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
 
         PlotWorld plotworld = PlotMain.getWorldSettings(loc.getWorld());
         int size = plotworld.PLOT_WIDTH + plotworld.ROAD_WIDTH;
-        int pathsize = plotworld.ROAD_WIDTH;
+        int pathWidthLower;
+        if ((plotworld.ROAD_WIDTH % 2) == 0) {
+            pathWidthLower = (int) (Math.floor(plotworld.ROAD_WIDTH / 2)-1);
+        }
+        else {
+            pathWidthLower = (int) Math.floor(plotworld.ROAD_WIDTH / 2);
+        }
+        
+        int dx = x/size;
+        int dz = z/size;
 
-        boolean road = false;
-        double n3;
-
-        int mod2 = 0;
-        int mod1 = 1;
-
-        int x = (int) Math.ceil((double) valx / size);
-        int z = (int) Math.ceil((double) valz / size);
-
-        if ((pathsize % 2) == 1) {
-            n3 = Math.ceil(((double) pathsize) / 2);
-            mod2 = -1;
-        } else {
-            n3 = Math.floor(((double) pathsize) / 2);
+        if (x<0) {
+            dx--;
+            x+=((-dx) * size);
+        }
+        if (z<0) {
+            dz--;
+            z+=((-dz) * size);
         }
 
-        for (double i = n3; i >= 0; i--) {
-            if (((((valx - i) + mod1) % size) == 0) || (((valx + i + mod2) % size) == 0)) {
-                road = true;
-                x = (int) Math.ceil((valx - n3) / size);
-            }
-            if (((((valz - i) + mod1) % size) == 0) || (((valz + i + mod2) % size) == 0)) {
-                road = true;
-                z = (int) Math.ceil((valz - n3) / size);
-            }
-        }
-        if (road) {
+        int rx = (x)%size;
+        int rz = (z)%size;
+        
+        int end = pathWidthLower+plotworld.PLOT_WIDTH;
+        
+        if (rx<=pathWidthLower) {
+//        west > return null for now
             return null;
-        } else {
-            return new PlotId(x, z);
         }
+        if (rx>end) {
+//        east > return null for now
+            return null;
+        }
+        if (rz<=pathWidthLower) {
+//        north > return null for now
+            return null;
+        }
+        if (rz>pathWidthLower+plotworld.PLOT_WIDTH) {
+//        south > return null for now
+            return null;
+        }
+        return new PlotId(dx,dz);
+        
+//
+//        double n3;
+//
+//        int mod2 = 0;
+//        int mod1 = 1;
+//
+//        int x = (int) Math.ceil((double) valx / size);
+//        int z = (int) Math.ceil((double) valz / size);
+//
+//        if ((pathsize % 2) == 1) {
+//            n3 = Math.ceil(((double) pathsize) / 2);
+//            mod2 = -1;
+//        } else {
+//            n3 = Math.floor(((double) pathsize) / 2);
+//        }
+//
+//        /*
+//         * If Road 1 + Road 2 are true, then it is in the middle between 4 plots and more checks might be required.
+//         */
+//        boolean road1 = false, road2 = false;
+//        
+//        for (double i = n3; i >= 0; i--) {
+//            if (((((valx - i) + mod1) % size) == 0) || (((valx + i + mod2) % size) == 0)) {
+//                
+//                /*
+//                 * Road 1
+//                 */
+//                
+//                road1 = true;
+//                x = (int) Math.ceil((valx - n3) / size);
+//            }
+//            if (((((valz - i) + mod1) % size) == 0) || (((valz + i + mod2) % size) == 0)) {
+//                /*
+//                 * Road 2
+//                 */
+//                
+//                road2 = true;
+//                z = (int) Math.ceil((valz - n3) / size);
+//            }
+//        }
+//        if (road1 && road2) {
+//            return null;
+//        }
+//        else if (road1) {
+//            return null;
+//        }
+//        else if (road2) {
+//            return null;
+//        }
+//        else {
+//            return new PlotId(x, z);
+//        }
     }
 
     /**

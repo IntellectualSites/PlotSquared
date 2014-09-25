@@ -207,9 +207,13 @@ public class WorldGenerator extends ChunkGenerator {
         int maxY = world.getMaxHeight();
 
         this.result = new short[maxY / 16][];
-
         double pathWidthLower;
-        pathWidthLower = Math.floor(this.pathsize / 2);
+        if ((pathsize % 2) == 0) {
+            pathWidthLower = Math.floor(this.pathsize / 2)-1;
+        }
+        else {
+            pathWidthLower = Math.floor(this.pathsize / 2);
+        }
         final int prime = 31;
         int h = 1;
         h = (prime * h) + cx;

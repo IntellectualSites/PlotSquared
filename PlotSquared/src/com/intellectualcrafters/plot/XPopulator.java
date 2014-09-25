@@ -125,7 +125,12 @@ public class XPopulator extends BlockPopulator {
             this.f_id[i] = result[0];
             this.f_v[i] = result[1];
         }
-        this.pathWidthLower = Math.floor(this.pathsize / 2);
+        if ((pathsize % 2) == 0) {
+            pathWidthLower = Math.floor(this.pathsize / 2)-1;
+        }
+        else {
+            this.pathWidthLower = Math.floor(this.pathsize / 2);
+        }
     }
 
     @Override
