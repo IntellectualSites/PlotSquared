@@ -23,6 +23,11 @@ public class PlotId {
         PlotId other = (PlotId) obj;
         return ((this.x == other.x) && (this.y == other.y));
     }
+    
+    @Override
+    public String toString() {
+        return this.x+";"+this.y;
+    }
 
     @Override
     public int hashCode() {

@@ -195,15 +195,12 @@ public class PlayerFunctions {
         if (p.hasPermission("plots.admin")) {
             return Integer.MAX_VALUE;
         }
-        int y = 0;
-        for (int x = 1; x <= 100; x++) {
-            if (p.hasPermission("plots.plot." + x)) {
-                y = x;
-            } else {
-                break;
+        for (int x = 0; x <= 100; x++) {
+            if (p.hasPermission("plots.plot." + (100-x))) {
+                return 100-x;
             }
         }
-        return y;
+        return 0;
     }
 
     /**
