@@ -105,6 +105,12 @@ public abstract class SubCommand {
         this.execute(null, args);
     }
 
+    /**
+     * Send a message
+     * @param plr
+     * @param c
+     * @param args
+     */
     public void sendMessage(Player plr, C c, String... args) {
         PlayerFunctions.sendMessage(plr, c, args);
     }

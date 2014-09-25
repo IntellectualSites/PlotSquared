@@ -7,6 +7,17 @@ public class Flag {
     private AbstractFlag key;
     private String value;
 
+    /**
+     * Flag object used to store basic information for a Plot.
+     * Flags are a key/value pair.
+     * For a flag to be usable by a player, you need to register it with PlotSquared.
+     * 
+     * @param key
+     *      AbstractFlag
+     * @param value
+     *      Value must be alphanumerical (can have spaces) and be <= 48 characters
+     * @throws IllegalArgumentException if you provide inadequate inputs
+     */
     public Flag(AbstractFlag key, String value) {
         if (!StringUtils.isAlphanumericSpace(ChatColor.stripColor(value))) {
             throw new IllegalArgumentException("Flag must be alphanumerical");
@@ -18,14 +29,26 @@ public class Flag {
         this.value = value;
     }
 
+    /**
+     * Get the AbstractFlag used in creating the flag
+     * @return AbstractFlag
+     */
     public AbstractFlag getAbstractFlag() {
         return this.key;
     }
 
+    /**
+     * Get the key for the AbstractFlag
+     * @return String
+     */
     public String getKey() {
         return this.key.getKey();
     }
 
+    /**
+     * Get the value
+     * @return String
+     */
     public String getValue() {
         return this.value;
     }

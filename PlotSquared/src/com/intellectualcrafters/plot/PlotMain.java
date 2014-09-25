@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -25,7 +26,9 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
@@ -67,10 +70,6 @@ public class PlotMain extends JavaPlugin {
     public static File translationsFile;
     public static YamlConfiguration translations;
     public static int translations_ver = 1;
-    /**
-     * list of usable flags
-     */
-    public static Set<Flag> registeredFlags = new HashSet<Flag>();
     /**
      * MySQL Object
      */
@@ -126,28 +125,6 @@ public class PlotMain extends JavaPlugin {
      * All loaded plot worlds
      */
     private static HashMap<String, PlotWorld> worlds = new HashMap<String, PlotWorld>();
-
-    public static Set<Flag> getFlags() {
-        return registeredFlags;
-    }
-
-    public static boolean isRegisteredFlag(String arg) {
-        for (Flag flag : registeredFlags) {
-            if (flag.getKey().equalsIgnoreCase(arg)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean registerFlag(Flag flag) {
-        return registeredFlags.add(flag);
-    }
-
-    public static boolean unRegisterFlag(Flag flag) {
-        return registeredFlags.remove(flag);
-    }
-
     /**
      * Get all plots
      * 
@@ -495,6 +472,7 @@ public class PlotMain extends JavaPlugin {
             worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
         }
+        if (Settings.WORLDGUARD)
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
             getServer().getPluginManager().registerEvents(new WorldGuardListener(this), this);
@@ -825,7 +803,8 @@ public class PlotMain extends JavaPlugin {
     private static void setupConfig() {
         config.set("version", config_ver);
         Map<String, Object> options = new HashMap<String, Object>();
-        // options.put("auto_update", false);
+        options.put("auto_update", false);
+        options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("web.enabled", Web.ENABLED);
@@ -847,6 +826,7 @@ public class PlotMain extends JavaPlugin {
         Web.ENABLED = config.getBoolean("web.enabled");
         Web.PORT = config.getInt("web.port");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
+        Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         Settings.METRICS = config.getBoolean("metrics");
 

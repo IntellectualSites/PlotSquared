@@ -5,6 +5,12 @@ import static com.intellectualcrafters.plot.ReflectionUtils.getRefClass;
 import com.intellectualcrafters.plot.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.ReflectionUtils.RefMethod;
 
+/**
+ * 
+ * SetBlockFast class<br>
+ * Used to do fast world editing
+ *
+ */
 public class SetBlockFast {
 
     private static final RefClass classBlock = getRefClass("{nms}.Block");

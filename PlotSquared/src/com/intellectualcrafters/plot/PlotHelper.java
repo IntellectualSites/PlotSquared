@@ -456,7 +456,12 @@ public class PlotHelper {
         }
         return new Short[] { Short.parseShort(block), 0 };
     }
-
+    
+    /**
+     * Clear a plot
+     * @param requester
+     * @param plot
+     */
     public static void clear(final Player requester, final Plot plot) {
         final long start = System.nanoTime();
         final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));

@@ -18,8 +18,10 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.AbstractFlag;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.FlagManager;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
@@ -96,8 +98,8 @@ public class PlotAPI {
      * 
      * @param flag
      */
-    public void registerFlag(Flag flag) {
-        PlotMain.registerFlag(flag);
+    public void addFlag(AbstractFlag flag) {
+        FlagManager.addFlag(flag);
     }
 
     /**
@@ -105,8 +107,8 @@ public class PlotAPI {
      * 
      * @return array of Flag[]
      */
-    public Flag[] getRegisteredFlags() {
-        return PlotMain.getFlags().toArray(new Flag[0]);
+    public AbstractFlag[] getFlags() {
+        return FlagManager.getFlags().toArray(new AbstractFlag[0]);
     }
 
     /**
