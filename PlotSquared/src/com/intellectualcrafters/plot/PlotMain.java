@@ -269,12 +269,14 @@ public class PlotMain extends JavaPlugin {
         return (plots.get(world.getName()).values().toArray(new Plot[0]));
     }
 
-    public static boolean removePlot(String world, PlotId id) {
-        PlotDeleteEvent event = new PlotDeleteEvent(world, id);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            event.setCancelled(true);
-            return false;
+    public static boolean removePlot(String world, PlotId id, boolean callEvent) {
+        if (callEvent) {
+            PlotDeleteEvent event = new PlotDeleteEvent(world, id);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                event.setCancelled(true);
+                return false;
+            }
         }
         plots.get(world).remove(id);
         return true;

@@ -458,8 +458,8 @@ public class PlotHelper {
     }
 
     public static void clear(final Player requester, final Plot plot) {
-        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         final long start = System.nanoTime();
+        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);

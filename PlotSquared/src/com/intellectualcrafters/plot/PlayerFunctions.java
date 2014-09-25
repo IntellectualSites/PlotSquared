@@ -136,7 +136,6 @@ public class PlayerFunctions {
             return null;
         }
         HashMap<PlotId, Plot> plots = PlotMain.getPlots(world);
-
         if (plots != null) {
             if (plots.containsKey(id)) {
                 return plots.get(id);
