@@ -149,33 +149,31 @@ public class DBFunc {
      * @param plot
      */
     public static void delete(final String world, final Plot plot) {
-        boolean result = PlotMain.removePlot(world, plot.id);
-        if (result) {
-            runTask(new Runnable() {
-                @Override
-                public void run() {
-                    PreparedStatement stmt = null;
-                    int id = getId(world, plot.id);
-                    try {
-                        stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = ?");
-                        stmt.setInt(1, id);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = ?");
-                        stmt.setInt(1, id);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `id` = ?");
-                        stmt.setInt(1, id);
-                        stmt.executeUpdate();
-                        stmt.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
-                    }
+        boolean result = PlotMain.removePlot(world, plot.id, false);
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                int id = getId(world, plot.id);
+                try {
+                    stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**

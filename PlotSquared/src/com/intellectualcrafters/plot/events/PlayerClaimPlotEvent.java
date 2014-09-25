@@ -25,11 +25,20 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
 
     private Plot plot;
 
+    /**
+     * PlayerClaimPlotEvent: Called when a plot is claimed
+     * @param player
+     * @param plot
+     */
     public PlayerClaimPlotEvent(Player player, Plot plot) {
         super(player);
         this.plot = plot;
     }
-
+    
+    /**
+     * Get the plot involved
+     * @return Plot
+     */
     public Plot getPlot() {
         return this.plot;
     }

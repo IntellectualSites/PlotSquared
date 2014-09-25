@@ -41,7 +41,7 @@ public class WorldGuardListener implements Listener {
         BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
         BlockVector vector2 = new BlockVector(location2.getBlockX(), plot.getWorld().getMaxHeight(), location2.getBlockZ());
 
-        ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + ";" + plot.getId().y, vector1, vector2);
+        ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
 
         DefaultDomain owner = new DefaultDomain();
         owner.addPlayer(PlotMain.worldGuard.wrapPlayer(player));
@@ -57,6 +57,6 @@ public class WorldGuardListener implements Listener {
         World world = Bukkit.getWorld(event.getWorld());
 
         RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-        manager.removeRegion(plot.x + ";" + plot.y);
+        manager.removeRegion(plot.x + "-" + plot.y);
     }
 }

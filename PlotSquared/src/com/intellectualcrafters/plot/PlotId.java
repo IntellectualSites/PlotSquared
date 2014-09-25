@@ -1,9 +1,22 @@
 package com.intellectualcrafters.plot;
 
 public class PlotId {
+    /**
+     * x value
+     */
     public int x;
+    /**
+     * y value
+     */
     public int y;
 
+    /**
+     * PlotId class (PlotId x,y values do not correspond to Block locations)
+     * @param x
+     *      The plot x coordinate
+     * @param y
+     *      The plot y coordinate
+     */
     public PlotId(int x, int y) {
         this.x = x;
         this.y = y;
@@ -22,6 +35,11 @@ public class PlotId {
         }
         PlotId other = (PlotId) obj;
         return ((this.x == other.x) && (this.y == other.y));
+    }
+    
+    @Override
+    public String toString() {
+        return this.x+";"+this.y;
     }
 
     @Override

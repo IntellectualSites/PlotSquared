@@ -17,6 +17,13 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    /**
+     * WorldGuard region on claimed plots
+     */
+    public static boolean WORLDGUARD = false;
+    /**
+     * metrics
+     */
     public static boolean METRICS = true;
     /**
      * plot specific resource pack

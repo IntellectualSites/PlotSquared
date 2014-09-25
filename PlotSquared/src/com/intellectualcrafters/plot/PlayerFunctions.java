@@ -136,7 +136,6 @@ public class PlayerFunctions {
             return null;
         }
         HashMap<PlotId, Plot> plots = PlotMain.getPlots(world);
-
         if (plots != null) {
             if (plots.containsKey(id)) {
                 return plots.get(id);
@@ -196,15 +195,12 @@ public class PlayerFunctions {
         if (p.hasPermission("plots.admin")) {
             return Integer.MAX_VALUE;
         }
-        int y = 0;
-        for (int x = 1; x <= 100; x++) {
-            if (p.hasPermission("plots.plot." + x)) {
-                y = x;
-            } else {
-                break;
+        for (int x = 0; x <= 100; x++) {
+            if (p.hasPermission("plots.plot." + (100-x))) {
+                return 100-x;
             }
         }
-        return y;
+        return 0;
     }
 
     /**

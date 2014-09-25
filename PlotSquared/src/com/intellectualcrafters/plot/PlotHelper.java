@@ -456,10 +456,15 @@ public class PlotHelper {
         }
         return new Short[] { Short.parseShort(block), 0 };
     }
-
+    
+    /**
+     * Clear a plot
+     * @param requester
+     * @param plot
+     */
     public static void clear(final Player requester, final Plot plot) {
-        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         final long start = System.nanoTime();
+        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);

@@ -17,7 +17,7 @@ import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.Plot;
 
 /**
- * Created by Citymonstret on 2014-08-09.
+ * Called when a flag is removed from a plot
  */
 public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -26,19 +26,30 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private Plot plot;
     private Flag flag;
 
+    /**
+     * PlotFlagRemoveEvent: Called when a flag is removed from a plot
+     * @param flag
+     * @param plot
+     */
     public PlotFlagRemoveEvent(Flag flag, Plot plot) {
         this.plot = plot;
         this.flag = flag;
     }
-
+    /**
+     * Get the plot involved
+     * @return Plot
+     */
     public Plot getPlot() {
         return this.plot;
     }
-
+    /**
+     * Get the flag involved
+     * @return Flag
+     */
     public Flag getFlag() {
         return this.flag;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }

@@ -16,7 +16,7 @@ import org.bukkit.event.HandlerList;
 import com.intellectualcrafters.plot.PlotId;
 
 /**
- * Created by Citymonstret on 2014-08-09.
+ * Called when a plot is deleted
  */
 public class PlotDeleteEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -24,16 +24,28 @@ public class PlotDeleteEvent extends Event implements Cancellable {
 
     private PlotId id;
     private String world;
-
+    /**
+     * PlotDeleteEvent: Called when a plot is deleted
+     * @param world
+     * @param id
+     */
     public PlotDeleteEvent(String world, PlotId id) {
         this.id = id;
         this.world = world;
     }
 
+    /**
+     * Get the PlotId
+     * @return PlotId
+     */
     public PlotId getPlotId() {
         return this.id;
     }
 
+    /**
+     * Get the world name
+     * @return String
+     */
     public String getWorld() {
         return this.world;
     }

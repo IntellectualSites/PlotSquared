@@ -9,6 +9,11 @@ public class AbstractFlag {
 
     private final String key;
 
+    /**
+     * AbstractFlag is a parameter used in creating a new Flag
+     * @param key
+     *      The key must be alphabetical characters and <= 16 characters in length
+     */
     public AbstractFlag(String key) {
         if (!StringUtils.isAlpha(key)) {
             throw new IllegalArgumentException("Flag must be alphabetic characters");
@@ -18,8 +23,16 @@ public class AbstractFlag {
         }
         this.key = key.toLowerCase();
     }
-
+    /**
+     * AbstractFlag key
+     * @return String
+     */
     public String getKey() {
+        return this.key;
+    }
+    
+    @Override
+    public String toString() {
         return this.key;
     }
 

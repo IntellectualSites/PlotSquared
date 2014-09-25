@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.AbstractFlag;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.FlagManager;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
@@ -87,10 +88,10 @@ public class Set extends SubCommand {
 
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(PlotMain.getFlags(), "&c, &6")));
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(FlagManager.getFlags(), "&c, &6")));
                 return false;
             }
-            if (!PlotMain.isRegisteredFlag(args[1])) {
+            if (FlagManager.getFlag(args[1])==null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
