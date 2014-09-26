@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.commands.SubCommand;
 @SuppressWarnings({ "unused", "javadoc" })
 public class PlotAPI {
 
-    // To access plotMain stuffz.
+    // To access plotMain stuff.
     private PlotMain plotMain;
     // Reference
     public static final String ADMIN_PERMISSION = "plots.admin";

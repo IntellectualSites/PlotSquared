@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.sk89q.worldedit.blocks.ClothColor.ID;
 
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -38,9 +39,33 @@ public class PlotHelper {
     private static double calculateNeededTime(double blocks, double blocks_per_second) {
         return (blocks / blocks_per_second);
     }
+    
+    /**
+     * direction 0 = north, 1 = south, etc:
+     * @param plot
+     * @param direction
+     * @return
+     */
+    public static PlotId getPlotIdRelative(PlotId id, int direction) {
+        switch (direction) {
+            case 0:
+                return new PlotId(id.x,id.y-1);
+            case 1:
+                return new PlotId(id.x+1,id.y);
+            case 2:
+                return new PlotId(id.x,id.y+1);
+            case 3:
+                return new PlotId(id.x-1,id.y);
+        }
+        return id;
+    }
+        
+        
+        
 
     /**
      * Merges 2 plots
+     * Removes the road inbetween
      * <br> - Assumes the first plot parameter is lower
      * <br> - Assumes neither are a Mega-plot
      * <br> - Assumes plots are directly next to each other
@@ -51,15 +76,60 @@ public class PlotHelper {
      * @param greaterPlot
      */
     public static void mergePlot(World world, Plot lesserPlot, Plot greaterPlot) {
-        if (lesserPlot.id.x == greaterPlot.id.x) {
-            lesserPlot.settings.setMerged(2, true);
-            greaterPlot.settings.setMerged(0, true);
+        Location pos1 = getPlotTopLoc(world, lesserPlot.id);
+        Location pos2 = getPlotTopLoc(world, lesserPlot.id);
+        int startx = Math.min(pos1.getBlockX(),pos2.getBlockX());
+        int endx = Math.max(pos1.getBlockX(),pos2.getBlockX());
+        int startz = Math.min(pos1.getBlockZ(),pos2.getBlockZ());
+        int endz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
+        
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        
+        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
+        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
+
+        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
+        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
+
+        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
+            Short[] result = getBlock(plotworld.TOP_BLOCK[i]);
+            plotfloors[i] = result[0];
+            plotfloors_data[i] = result[1];
         }
-        else {
-            lesserPlot.settings.setMerged(1, true);
-            greaterPlot.settings.setMerged(3, true);
+        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
+            Short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
+            filling[i] = result[0];
+            filling_data[i] = result[1];
         }
         
+        if (lesserPlot.id.x == greaterPlot.id.x) {
+//            if (lesserPlot.id.y < greaterPlot.id.y) {
+            lesserPlot.settings.setMerged(2, true);
+            greaterPlot.settings.setMerged(0, true);
+            startz++;
+            endz--;
+//            }
+//            else {
+//                lesserPlot.settings.setMerged(0, true);
+//                greaterPlot.settings.setMerged(2, true);
+//            }
+        }
+        else {
+//            if (lesserPlot.id.x < greaterPlot.id.x) {
+            lesserPlot.settings.setMerged(1, true);
+            greaterPlot.settings.setMerged(3, true);
+            startx++;
+            endx--;
+//            }
+//            else {
+//                lesserPlot.settings.setMerged(3, true);
+//                greaterPlot.settings.setMerged(1, true);
+//            }
+        }
+        setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
+        setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
+        setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
+        setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
     }
     
     public static final long nextLong() {

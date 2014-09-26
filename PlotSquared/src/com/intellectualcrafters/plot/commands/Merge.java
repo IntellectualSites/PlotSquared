@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
 import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
@@ -114,6 +115,11 @@ public class Merge extends SubCommand {
             }
             DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
         }
+        
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        int pathsize = plotworld.ROAD_WIDTH;
+        int plotheight = 64;
+        
         
         //TODO replace road sections
         
