@@ -643,52 +643,53 @@ public class PlotHelper {
                 world.regenerateChunk(i / 16, j / 16);
             }
         }
-        if (min == null) {
+        
+//        if (min == null) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);
             setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT, pos2.getBlockZ()), filling, filling_data);
             setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ()), plotfloors, plotfloors_data);
-        } else {
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX(), 1, min.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getBlockX(), world.getMaxHeight(), min.getBlockZ()), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, plotMinZ), new Location(world, max.getBlockX(), 1, min.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getBlockX(), world.getMaxHeight(), min.getBlockZ()), (short) 0);
-            setCuboid(world, new Location(world, min.getBlockX(), 1, plotMinZ), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
-            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, plotMinZ), new Location(world, plotMaxX, 1, min.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX, world.getMaxHeight(), min.getBlockZ()), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, plotMinZ), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getBlockZ()), new Location(world, min.getBlockX(), 1, max.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, min.getBlockX(), world.getMaxHeight(), max.getBlockZ()), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, min.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getBlockZ()), new Location(world, min.getBlockX(), 1, plotMaxZ), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, min.getBlockX(), world.getMaxHeight(), plotMaxZ), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, max.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, max.getBlockZ()), new Location(world, max.getBlockX(), 1, plotMaxZ), (short) 7);
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, max.getBlockX(), world.getMaxHeight(), plotMaxZ), (short) 0);
-            setCuboid(world, new Location(world, min.getBlockX(), 1, max.getBlockZ()), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
-            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX, 1, max.getBlockZ()), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX, world.getMaxHeight(), plotMaxZ), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, min.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, max.getBlockZ()), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), plotfloors, plotfloors_data);
-            
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX, 1, plotMaxZ), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX, world.getMaxHeight(), plotMaxZ), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
-        }
+//        } else {
+//            setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX(), 1, min.getBlockZ()), (short) 7);
+//            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getBlockX(), world.getMaxHeight(), min.getBlockZ()), (short) 0);
+//            setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
+//            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, plotMinZ), new Location(world, max.getBlockX(), 1, min.getBlockZ()), (short) 7);
+//            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getBlockX(), world.getMaxHeight(), min.getBlockZ()), (short) 0);
+//            setCuboid(world, new Location(world, min.getBlockX(), 1, plotMinZ), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
+//            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, plotMinZ), new Location(world, plotMaxX, 1, min.getBlockZ()), (short) 7);
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX, world.getMaxHeight(), min.getBlockZ()), (short) 0);
+//            setCuboid(world, new Location(world, max.getBlockX(), 1, plotMinZ), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, min.getBlockZ()), filling, filling_data);
+//            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getBlockZ()), new Location(world, min.getBlockX(), 1, max.getBlockZ()), (short) 7);
+//            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, min.getBlockX(), world.getMaxHeight(), max.getBlockZ()), (short) 0);
+//            setCuboid(world, new Location(world, plotMinX, 1, min.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), filling, filling_data);
+//            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getBlockZ()), new Location(world, min.getBlockX(), 1, plotMaxZ), (short) 7);
+//            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, min.getBlockX(), world.getMaxHeight(), plotMaxZ), (short) 0);
+//            setCuboid(world, new Location(world, plotMinX, 1, max.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
+//            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, max.getBlockZ()), new Location(world, max.getBlockX(), 1, plotMaxZ), (short) 7);
+//            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, max.getBlockX(), world.getMaxHeight(), plotMaxZ), (short) 0);
+//            setCuboid(world, new Location(world, min.getBlockX(), 1, max.getBlockZ()), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
+//            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX, 1, max.getBlockZ()), (short) 7);
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX, world.getMaxHeight(), plotMaxZ), (short) 0);
+//            setCuboid(world, new Location(world, max.getBlockX(), 1, min.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, max.getBlockZ()), filling, filling_data);
+//            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), plotfloors, plotfloors_data);
+//            
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX, 1, plotMaxZ), (short) 7);
+//            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX, world.getMaxHeight(), plotMaxZ), (short) 0);
+//            setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
+//            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
+//        }
         PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
         if (canSetFast) {
             SetBlockFast.update(requester);
