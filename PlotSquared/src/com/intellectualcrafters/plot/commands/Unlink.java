@@ -54,6 +54,7 @@ public class Unlink extends SubCommand {
             myplot.settings.setMerged(new boolean[] {false, false, false, false} );
             DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
         }
+        PlayerFunctions.sendMessage(plr, "&cPLOT UNLINKING IS NOT FINISHED (as you can see by the lack of roads appearing)");
         return true;
     }
 }

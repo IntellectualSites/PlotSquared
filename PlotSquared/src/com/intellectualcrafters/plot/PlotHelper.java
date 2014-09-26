@@ -76,12 +76,24 @@ public class PlotHelper {
      * @param greaterPlot
      */
     public static void mergePlot(World world, Plot lesserPlot, Plot greaterPlot) {
-        Location pos1 = getPlotTopLoc(world, lesserPlot.id);
-        Location pos2 = getPlotTopLoc(world, lesserPlot.id);
-        int startx = Math.min(pos1.getBlockX(),pos2.getBlockX());
-        int endx = Math.max(pos1.getBlockX(),pos2.getBlockX());
-        int startz = Math.min(pos1.getBlockZ(),pos2.getBlockZ());
-        int endz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
+        Location pos1 = getPlotBottomLocAbs(world, lesserPlot.id).add(1,0,1);
+        Location pos2 = getPlotTopLocAbs(world, lesserPlot.id);
+        
+        Location pos3 = getPlotBottomLocAbs(world, greaterPlot.id).add(1,0,1);
+        Location pos4 = getPlotTopLocAbs(world, greaterPlot.id);
+        
+        int sx = Math.max(pos1.getBlockX(),pos2.getBlockX());
+        int ex = Math.min(pos3.getBlockX(),pos4.getBlockX());
+        int sz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
+        int ez = Math.min(pos3.getBlockZ(),pos4.getBlockZ());
+        
+        int startx = Math.min(sx,ex);
+        int startz = Math.min(sz,ez);
+        int endx = Math.max(sx,ex)+1;
+        int endz = Math.max(sz,ez)+1;
+        
+        System.out.print("X "+startx+" | "+endx);
+        System.out.print("Z "+startz+" | "+endz);
         
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         
@@ -92,40 +104,30 @@ public class PlotHelper {
         final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
 
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            Short[] result = getBlock(plotworld.TOP_BLOCK[i]);
+            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
             plotfloors[i] = result[0];
             plotfloors_data[i] = result[1];
         }
         for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            Short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
+            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
             filling[i] = result[0];
             filling_data[i] = result[1];
         }
         
         if (lesserPlot.id.x == greaterPlot.id.x) {
-//            if (lesserPlot.id.y < greaterPlot.id.y) {
             lesserPlot.settings.setMerged(2, true);
             greaterPlot.settings.setMerged(0, true);
-            startz++;
-            endz--;
-//            }
-//            else {
-//                lesserPlot.settings.setMerged(0, true);
-//                greaterPlot.settings.setMerged(2, true);
-//            }
+            startx--;
+            endx++;
         }
         else {
-//            if (lesserPlot.id.x < greaterPlot.id.x) {
             lesserPlot.settings.setMerged(1, true);
             greaterPlot.settings.setMerged(3, true);
-            startx++;
-            endx--;
-//            }
-//            else {
-//                lesserPlot.settings.setMerged(3, true);
-//                greaterPlot.settings.setMerged(1, true);
-//            }
+            startz--;
+            endz++;
         }
+        
+        
         setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
         setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
         setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
@@ -543,12 +545,12 @@ public class PlotHelper {
         return (square(plotworld.PLOT_WIDTH)) * (world.getMaxHeight());
     }
 
-    public static Short[] getBlock(String block) {
+    public static short[] getBlock(String block) {
         if (block.contains(":")) {
             String[] split = block.split(":");
-            return new Short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
+            return new short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
         }
-        return new Short[] { Short.parseShort(block), 0 };
+        return new short[] { Short.parseShort(block), 0 };
     }
     
     /**
@@ -573,12 +575,12 @@ public class PlotHelper {
         final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
 
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            Short[] result = getBlock(plotworld.TOP_BLOCK[i]);
+            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
             plotfloors[i] = result[0];
             plotfloors_data[i] = result[1];
         }
         for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            Short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
+            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
             filling[i] = result[0];
             filling_data[i] = result[1];
         }
@@ -845,6 +847,28 @@ public class PlotHelper {
         }
     }
 
+    public static Location getPlotTopLocAbs(World world, PlotId id) {
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        int px = id.x;
+        int pz = id.y;
+
+        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
+        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
+
+        return new Location(world, x, 255, z);
+    }
+    
+    public static Location getPlotBottomLocAbs(World world, PlotId id) {
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        int px = id.x;
+        int pz = id.y;
+
+        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
+        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
+
+        return new Location(world, x, 1, z);
+    }
+    
     public static Location getPlotTopLoc(World world, PlotId id) {
         Plot plot = PlotMain.getPlots(world).get(id);
         if (plot!=null) {

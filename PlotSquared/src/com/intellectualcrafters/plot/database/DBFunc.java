@@ -301,9 +301,9 @@ public class DBFunc {
                 }
                 int merged_int = settings.get("merged") == null ? 0 : (int) settings.get("merged");
                 
-                boolean[] merged = new boolean[7];
-                for (int i = 6; i >= 0; i--) {
-                    merged[i] = (merged_int & (1 << i)) != 0;
+                boolean[] merged = new boolean[4];
+                for (int i = 0; i < 4; i++) {
+                    merged[3-i] = (merged_int & (1 << i)) != 0;
                 }
                 p = new Plot(plot_id, owner, plotBiome, helpers, denied, /* changeTime */false, time, rain, alias, position, flags, worldname, merged);
                 if (plots.containsKey(worldname)) {
@@ -352,8 +352,8 @@ public class DBFunc {
             @Override
             public void run() {
                 try {
-                    int n = 0, l = merged.length;
-                    for (int i = 0; i < l; ++i) {
+                    int n = 0;
+                    for (int i = 0; i < 4; ++i) {
                         n = (n << 1) + (merged[i] ? 1 : 0);
                     }
                     PreparedStatement stmt = connection.prepareStatement("UPDATE `plot_settings` SET `merged` = ? WHERE `plot_plot_id` = ?");

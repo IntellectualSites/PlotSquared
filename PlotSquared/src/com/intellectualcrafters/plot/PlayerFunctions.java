@@ -194,7 +194,6 @@ public class PlayerFunctions {
             // This is the road separating an Eastern and Western plot
             PlotId id = getPlotAbs(loc.add(plotworld.ROAD_WIDTH, 0, 0));
             Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            System.out.print("IDS "+id);
             if (plot==null) {
                 return null;
             }

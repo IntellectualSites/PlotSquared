@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -23,6 +24,7 @@ import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.SetBlockFast;
 import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
@@ -96,33 +98,112 @@ public class Merge extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
+            if (!PlayerFunctions.getBottomPlot(world, myplot).equals(PlayerFunctions.getTopPlot(world, myplot))) {
+                PlayerFunctions.sendMessage(plr, C.NO_MERGE_TO_MEGA);
+                return false;
+            }
         }
         PlayerFunctions.sendMessage(plr, "PLOTS HAVE BEEN MERGED");
         return mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
     }
     public static boolean mergePlot(World world, Player player, ArrayList<PlotId> currentMegaPlots, ArrayList<PlotId> toMerge, int dir1, int dir2) {
-        for (PlotId plotid:currentMegaPlots) {
-            Plot plot = PlotMain.getPlots(world).get(plotid); 
-            plot.settings.setMerged(dir1, true);
-            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-        }
+        
+        Location pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0)).add(1,0,1);
+        Location pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(currentMegaPlots.size()-1));
+        
         for (int i = 0;i < toMerge.size(); i++) {
             PlotId plotid = toMerge.get(i);
-            Plot plot = PlotMain.getPlots(world).get(plotid); 
-            plot.settings.setMerged(dir2, true);
+            Plot plot = PlotMain.getPlots(world).get(plotid);
             if (i<toMerge.size()-1) {
                 PlotHelper.mergePlot(world, plot, PlotMain.getPlots(world).get(toMerge.get(i+1)));
             }
+        }
+        System.out.print("OLD: "+currentMegaPlots.size());
+        System.out.print("NEW: "+toMerge.size());
+        
+        Location pos3 = PlotHelper.getPlotBottomLoc(world, toMerge.get(0)).add(1,0,1);
+        Location pos4 = PlotHelper.getPlotTopLoc(world, toMerge.get(toMerge.size()-1));
+        
+        for (PlotId plotid:currentMegaPlots) {
+            Plot plot = PlotMain.getPlots(world).get(plotid);
+            plot.settings.setMerged(dir1, true);
             DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
         }
         
+        for (int i = 0;i < toMerge.size(); i++) {
+            PlotId plotid = toMerge.get(i);
+            Plot plot = PlotMain.getPlots(world).get(plotid);
+            plot.settings.setMerged(dir2, true);
+            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+        }
+        
+        try {
+            SetBlockFast.update(player);
+        }
+        catch (Exception e) {
+            
+        }
+        
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int pathsize = plotworld.ROAD_WIDTH;
-        int plotheight = 64;
+        
+        int sx,sz,ex,ez;
+        
+        if (dir1 == 0 || dir1 == 3) {
+            sx = Math.min(pos1.getBlockX(),pos2.getBlockX());
+            ex = Math.max(pos3.getBlockX(),pos4.getBlockX());
+            sz = Math.min(pos1.getBlockZ(),pos2.getBlockZ());
+            ez = Math.max(pos3.getBlockZ(),pos4.getBlockZ());
+        }
+        else {
+            sx = Math.max(pos1.getBlockX(),pos2.getBlockX());
+            ex = Math.min(pos3.getBlockX(),pos4.getBlockX());
+            sz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
+            ez = Math.min(pos3.getBlockZ(),pos4.getBlockZ());
+        }
         
         
-        //TODO replace road sections
         
+        int startx = Math.min(sx,ex);
+        int startz = Math.min(sz,ez);
+        int endx = Math.max(sx,ex)+1;
+        int endz = Math.max(sz,ez)+1;
+        
+        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
+        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
+
+        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
+        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
+
+        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
+            short[] result = PlotHelper.getBlock(plotworld.TOP_BLOCK[i]);
+            plotfloors[i] = result[0];
+            plotfloors_data[i] = result[1];
+        }
+        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
+            short[] result = PlotHelper.getBlock(plotworld.MAIN_BLOCK[i]);
+            filling[i] = result[0];
+            filling_data[i] = result[1];
+        }
+        
+        PlotHelper.setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
+        PlotHelper.setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
+        PlotHelper.setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
+        PlotHelper.setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
+        
+        pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0));
+        pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(0)).add(1,0,1);
+        
+        short[] result_w = PlotHelper.getBlock(plotworld.WALL_BLOCK);
+        short w_id = result_w[0];
+        byte w_v = (byte) result_w[1];
+        
+        for (int x = pos1.getBlockX(); x<=pos2.getBlockX(); x++) {
+            for (int z = pos1.getBlockZ(); z<=pos2.getBlockZ(); z++) {
+                if (z == pos1.getBlockZ() || z==pos2.getBlockZ() || x==pos1.getBlockX() || x==pos2.getBlockX()) {
+                    world.getBlockAt(x, plotworld.WALL_HEIGHT+1, z).setTypeIdAndData(w_id, w_v, false);
+                }
+            }
+        }
         return true;
     }
 }
