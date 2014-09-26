@@ -229,7 +229,7 @@ public class DBFunc {
             rs = data.getColumns(null, null, "plot_settings", "merged");
             if (!rs.next()) {
                 Statement statement = connection.createStatement();
-                statement.addBatch("ALTER IGNORE TABLE `plot_settings` ADD `merged` int(11) DEFAULT NULL");
+                statement.addBatch("ALTER TABLE `plot_settings` ADD `merged` int(11) DEFAULT NULL");
                 statement.executeBatch();
                 statement.close();
             }
@@ -267,9 +267,6 @@ public class DBFunc {
                         flags[i] = new Flag(FlagManager.getFlag(flags_string[i], true), "");
                     }
                 }
-
-                
-                
                 ArrayList<UUID> helpers = plotHelpers(id);
                 ArrayList<UUID> denied = plotDenied(id);
                 // boolean changeTime = ((Short) settings.get("custom_time") ==
@@ -281,7 +278,12 @@ public class DBFunc {
                 // boolean rain =
                 // Integer.parseInt(settings.get("rain").toString()) == 1 ? true
                 // : false;
-                boolean rain = (int) settings.get("rain") == 1 ? true : false;
+                boolean rain;
+                try {
+                    rain = (int) settings.get("rain") == 1 ? true : false;
+                } catch(Exception e) {
+                    rain = false;
+                }
                 String alias = (String) settings.get("alias");
                 if ((alias == null) || alias.equalsIgnoreCase("NEW")) {
                     alias = "";

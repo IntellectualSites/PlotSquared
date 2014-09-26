@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot;
 
-import java.util.Random;
-
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
+
+import java.util.Random;
 
 /**
  * TODO recode this class Fuck you PlotMe!

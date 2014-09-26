@@ -32,7 +32,7 @@ public class FlagManager {
      * Get an AbstractFlag by a string
      * Returns null if flag does not exist
      * @param string
-     * @return AbstractFkag
+     * @return AbstractFlag
      */
     public static AbstractFlag getFlag(String string) {
         for (AbstractFlag flag : flags) {
@@ -54,6 +54,7 @@ public class FlagManager {
     public static AbstractFlag getFlag(String string, boolean create) {
         if ((getFlag(string) == null) && create) {
             AbstractFlag flag = new AbstractFlag(string);
+            addFlag(flag);
             return flag;
         }
         return getFlag(string);

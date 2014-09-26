@@ -19,6 +19,16 @@ import org.bukkit.ChatColor;
  */
 public enum C {
     /*
+     * Setup Stuff
+     */
+    SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
+    SETUP_STEP("&cStep &6%s&c: %s"),
+    SETUP_INVALID_ARG("&c%s is not a valid argument for step %s"),
+    SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
+    SETUP_FINISHED("&cFinished setup for world &c%s"),
+    SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
+    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup {world}&c)"),
+    /*
      * Schematic Stuff
      */
     SCHEMATIC_MISSING_ARG("&cYou need to specify an argument. Possible values: &6test {name}"), SCHEMATIC_INVALID("&cThat is not a valid schematic. Reason: &c%s"), SCHEMATIC_VALID("&cThat's a valid schematic"), SCHEMATIC_PASTE_FAILED("&cFailed to paste schematic"), SCHEMATIC_PASTE_SUCCESS("&cSchematic pasted successfully"),
@@ -53,7 +63,7 @@ public enum C {
     /*
      * Permission
      */
-    NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"), 
+    NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
     NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."), UNLINK_IMPOSSIBLE("&cYou can only unlink a mega-plot"),
     NO_MERGE_TO_MEGA("&cMega plots cannot be merged into. Please merge from the desired mega plot."),
     /*
@@ -181,7 +191,7 @@ public enum C {
 
     /**
      * Constructor
-     * 
+     *
      * @param d
      *            default
      */
@@ -199,7 +209,7 @@ public enum C {
 
     /**
      * Get the default string
-     * 
+     *
      * @return default
      */
     @SuppressWarnings("unused")
@@ -209,7 +219,7 @@ public enum C {
 
     /**
      * Get translated if exists
-     * 
+     *
      * @return translated if exists else default
      */
     public String s() {
@@ -220,7 +230,7 @@ public enum C {
     }
 
     /**
-     * 
+     *
      * @return translated and color decoded
      */
     public String translated() {
