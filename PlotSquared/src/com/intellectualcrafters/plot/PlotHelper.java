@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -25,7 +26,7 @@ import java.util.*;
  * 
  */
 public class PlotHelper {
-
+    static boolean canSetFast;
     static long state;
 
     /**
@@ -38,6 +39,29 @@ public class PlotHelper {
         return (blocks / blocks_per_second);
     }
 
+    /**
+     * Merges 2 plots
+     * <br> - Assumes the first plot parameter is lower
+     * <br> - Assumes neither are a Mega-plot
+     * <br> - Assumes plots are directly next to each other
+     * <br> - Does not save to DB
+     * <br><b>This is the only public merge method as the other ones were deemed unsafe if used incorrectly</b>
+     * @param world
+     * @param lesserPlot
+     * @param greaterPlot
+     */
+    public static void mergePlot(World world, Plot lesserPlot, Plot greaterPlot) {
+        if (lesserPlot.id.x == greaterPlot.id.x) {
+            lesserPlot.settings.setMerged(2, true);
+            greaterPlot.settings.setMerged(0, true);
+        }
+        else {
+            lesserPlot.settings.setMerged(1, true);
+            greaterPlot.settings.setMerged(3, true);
+        }
+        
+    }
+    
     public static final long nextLong() {
         long a = state;
         state = xorShift64(a);
@@ -464,15 +488,9 @@ public class PlotHelper {
      */
     public static void clear(final Player requester, final Plot plot) {
         
-        /*
-         * TODO unlink any adjacent plots
-         */
-        
-        
         final long start = System.nanoTime();
         final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
-        PlotHelper.removeSign(requester, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
         final World world = requester.getWorld();
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
@@ -501,79 +519,11 @@ public class PlotHelper {
         h = (prime * h) + pos1.getBlockZ();
         state = h;
 
-        boolean canSetFast;
         try {
             new SetBlockFast();
             canSetFast = true;
         } catch (Exception e) {
             canSetFast = false;
-        }
-        if (canSetFast) {
-            PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), (new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for (int y = 0; y < 1; y++) {
-                            for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
-                                for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    Block block = world.getBlockAt(x, y, z);
-                                    if (!((block.getTypeId() == 7))) {
-                                        SetBlockFast.set(world, x, y, z, 7, (byte) 7);
-                                    }
-                                }
-                            }
-                        }
-                        for (int y = 1; y < plotworld.PLOT_HEIGHT; y++) {
-                            for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
-                                for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    int i = random(filling.length);
-                                    short id = filling[i];
-                                    byte d = (byte) filling_data[i];
-                                    Block block = world.getBlockAt(x, y, z);
-                                    if (!((block.getTypeId() == id && block.getData() == d))) {
-                                        SetBlockFast.set(world, x, y, z, id, d);
-                                    }
-                                }
-                            }
-                        }
-                        for (int y = plotworld.PLOT_HEIGHT; y < (plotworld.PLOT_HEIGHT + 1); y++) {
-                            for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
-                                for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    int i = random(plotfloors.length);
-                                    short id = plotfloors[i];
-                                    byte d = (byte) plotfloors_data[i];
-                                    Block block = world.getBlockAt(x, y, z);
-                                    if (!((block.getTypeId() == id && block.getData() == d))) {
-                                        SetBlockFast.set(world, x, y, z, id, d);
-                                    }
-                                }
-                            }
-                        }
-                        for (int y = plotworld.PLOT_HEIGHT + 1; y < (world.getMaxHeight() + 1); y++) {
-                            for (int x = pos1.getBlockX(); x <= pos2.getBlockX(); x++) {
-                                for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
-                                    Block block = world.getBlockAt(x, y, z);
-                                    if (!((block.getTypeId() == 0))) {
-                                        SetBlockFast.set(world, x, y, z, 0, (byte) 0);
-                                    }
-                                }
-                            }
-                        }
-                        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
-                        SetBlockFast.update(requester);
-                        return;
-                    } catch (Exception e) {
-                        if(Settings.DEBUG) {
-                            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Debug Mode Enabled -> Throwing epic stacktrace.");
-                            e.printStackTrace();
-                        } else {
-                            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Something went wrong with plot clearing... Enable debug to get stacktraces.");
-                        }
-                        PlayerFunctions.sendMessage(requester, C.PREFIX.s() + "&cPlot clear failed... Trying again...");
-                    }
-                }
-            }));
-            return;
         }
         if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
@@ -663,35 +613,79 @@ public class PlotHelper {
             setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT, plotMaxZ), filling, filling_data);
             setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX, plotworld.PLOT_HEIGHT + 1, plotMaxZ), plotfloors, plotfloors_data);
         }
-        PlayerFunctions.sendMessage(requester, "&c(depreciated) &r" + C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
+        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
+        if (canSetFast) {
+            SetBlockFast.update(requester);
+        }
         return;
     }
 
     public static void setCuboid(World world, Location pos1, Location pos2, short[] id_l, short[] d_l) {
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
-            for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
-                for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
-                    int i = random(id_l.length);
-                    short id = id_l[i];
-                    byte d = (byte) d_l[i];
-                    Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == id) && (block.getData() == d))) {
-                        block.setTypeIdAndData(id, d, false);
+        if (!canSetFast) {
+            for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                    for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                        int i = random(id_l.length);
+                        short id = id_l[i];
+                        byte d = (byte) d_l[i];
+                        Block block = world.getBlockAt(x, y, z);
+                        if (!((block.getTypeId() == id) && (block.getData() == d))) {
+                            block.setTypeIdAndData(id, d, false);
+                        }
                     }
                 }
+            }
+        }
+        else {
+            try {
+                for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                    for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                        for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                            int i = random(id_l.length);
+                            short id = id_l[i];
+                            byte d = (byte) d_l[i];
+                            Block block = world.getBlockAt(x, y, z);
+                            if (!((block.getTypeId() == id) && (block.getData() == d))) {
+                                SetBlockFast.set(world, x, y, z, id, d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                
             }
         }
     }
 
     public static void setSimpleCuboid(World world, Location pos1, Location pos2, short id) {
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
-            for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
-                for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
-                    Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == id))) {
-                        block.setTypeId(id, false);
+        if (!canSetFast) {
+            for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                    for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                        Block block = world.getBlockAt(x, y, z);
+                        if (!((block.getTypeId() == id))) {
+                            block.setTypeId(id, false);
+                        }
                     }
                 }
+            }
+        }
+        else {
+            try {
+                for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                    for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                        for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                            Block block = world.getBlockAt(x, y, z);
+                            if (!((block.getTypeId() == id))) {
+                                SetBlockFast.set(world, x, y, z, id, (byte) 0);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                
             }
         }
     }

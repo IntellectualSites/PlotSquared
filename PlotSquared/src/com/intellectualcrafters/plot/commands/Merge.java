@@ -9,11 +9,20 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
  * 
@@ -22,8 +31,11 @@ import com.intellectualcrafters.plot.Plot;
  */
 public class Merge extends SubCommand {
 
+    public static String[] values = new String[] { "north", "east", "south", "west" };
+    public static String[] aliases = new String[] { "n", "e", "s", "w"};
+    
     public Merge() {
-        super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING);
+        super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS);
     }
 
     @Override
@@ -33,7 +45,7 @@ public class Merge extends SubCommand {
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!plot.hasOwner()) {
+        if (plot==null || !plot.hasOwner()) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -41,24 +53,70 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        // get the plots involved
-        
-//        C.NO_PERM_MERGE;
-        
-        // for each plot check if you are the owner
-        
-        // execute the merge
-        
-        // add methods to get plots relative to your current plot
-        //      getNorthernPlot | getEasternPlot | getSouthernPlot | getWesternPlot
-//        return mergePlot(plr, plot, false);
-        
-        // merge the plots
-        
-        return true;
+        if (args.length<1) {
+            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+            return false;
+        }
+        int direction = -1;
+        for (int i = 0; i<values.length; i++) {
+            if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
+                direction = i;
+                break;
+            }
+        }
+        int direction2 = direction > 1 ? direction-2 : direction+2;
+        if (direction==-1) {
+            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+            return false;
+        }
+        World world = plr.getWorld();
+        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
+        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+        ArrayList<PlotId> plots;
+        switch (direction) {
+            case 0: // north = -y
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y-1), new PlotId(top.x,bot.y-1));
+                break;
+            case 1: // east = +x
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(top.x+1,bot.y), new PlotId(top.x+1,top.y));
+                break;
+            case 2: // south = +y
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,top.y+1), new PlotId(top.x,top.y+1));
+                break;
+            case 3: // west = -x
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x-1,bot.y), new PlotId(bot.x-1,top.y));
+                break;
+            default:
+                return false;
+        }
+        for (PlotId myid:plots) {
+            Plot myplot = PlotMain.getPlots(world).get(myid);
+            if (myplot==null || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
+                PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
+                return false;
+            }
+        }
+        PlayerFunctions.sendMessage(plr, "PLOTS HAVE BEEN MERGED");
+        return mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
     }
-
-    public static boolean mergePlot(Player player, Plot plot, java.util.Set<Plot> plots) {
+    public static boolean mergePlot(World world, Player player, ArrayList<PlotId> currentMegaPlots, ArrayList<PlotId> toMerge, int dir1, int dir2) {
+        for (PlotId plotid:currentMegaPlots) {
+            Plot plot = PlotMain.getPlots(world).get(plotid); 
+            plot.settings.setMerged(dir1, true);
+            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+        }
+        for (int i = 0;i < toMerge.size(); i++) {
+            PlotId plotid = toMerge.get(i);
+            Plot plot = PlotMain.getPlots(world).get(plotid); 
+            plot.settings.setMerged(dir2, true);
+            if (i<toMerge.size()-1) {
+                PlotHelper.mergePlot(world, plot, PlotMain.getPlots(world).get(toMerge.get(i+1)));
+            }
+            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+        }
+        
+        //TODO replace road sections
+        
         return true;
     }
 }

@@ -32,9 +32,13 @@ public enum Command {
     */
     MERGE("merge", "m"),
     /**
-     *
+    *
+    */
+    CLEAR("clear", "clear", new CommandPermission("plots.clear")),
+    /**
+     * 
      */
-    CLEAR("clear", "delete", new CommandPermission("plots.clear")),
+    DELETE("delete", "d", new CommandPermission("plots.clear.delete")),
     /**
      *
      */

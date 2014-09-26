@@ -87,6 +87,10 @@ public class PlotSettings {
     public void setMerged(boolean[] merged) {
         this.merged = merged;
     }
+    
+    public void setMerged(int direction, boolean merged) {
+        this.merged[direction] = merged;
+    }
     /**
      * 
      * @param b

@@ -21,10 +21,10 @@ import com.intellectualcrafters.plot.database.DBFunc;
 /**
  * Created by Citymonstret on 2014-08-01.
  */
-public class Clear extends SubCommand {
+public class Delete extends SubCommand {
 
-    public Clear() {
-        super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS);
+    public Delete() {
+        super(Command.DELETE, "Delete a plot", "delete", CommandCategory.ACTIONS);
     }
 
     @Override
@@ -42,8 +42,14 @@ public class Clear extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
-        PlotHelper.removeSign(plr, plot);
-        plot.clear(plr);
+        boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
+        if (result) {
+            PlotHelper.removeSign(plr, plot);
+            plot.clear(plr);
+            DBFunc.delete(plr.getWorld().getName(), plot);
+        } else {
+            PlayerFunctions.sendMessage(plr, "Plot clearing has been denied.");
+        }
         return true;
     }
 }

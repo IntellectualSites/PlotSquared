@@ -53,7 +53,7 @@ public enum C {
     /*
      * Permission
      */
-    NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"), NO_PERM_MERGE("&cYou must be the owner of all plots taking place in the merge."),
+    NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"), NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."),
     /*
      * Commands
      */
@@ -65,7 +65,7 @@ public enum C {
     /*
      * Block List
      */
-    NOT_VALID_BLOCK_LIST_HEADER("&cThat's not a valid block. Valid blocks are:\\n"), BLOCK_LIST_ITEM(" &6%mat%&c,"),
+    NOT_VALID_BLOCK_LIST_HEADER("&cThat's not a valid block. Valid blocks are:\\n"), BLOCK_LIST_ITEM(" &6%mat%&c,"), BLOCK_LIST_SEPARATER("&6,&c "),
     /*
      * Biome
      */
