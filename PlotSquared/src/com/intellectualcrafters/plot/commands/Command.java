@@ -28,6 +28,10 @@ public enum Command {
      */
     CLAIM("claim", "c"),
     /**
+    *
+    */
+    MERGE("merge", "m"),
+    /**
      *
      */
     CLEAR("clear", "delete", new CommandPermission("plots.clear")),

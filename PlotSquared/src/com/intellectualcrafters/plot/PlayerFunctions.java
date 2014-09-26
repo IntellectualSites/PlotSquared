@@ -58,8 +58,25 @@ public class PlayerFunctions {
     
     public static Set<PlotId> getPlotSelectionIds(World world, PlotId pos1, PlotId pos2) {
         Set<PlotId> myplots = new HashSet<PlotId>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; x <= pos2.y; x++) {
+        int sx, ex, sy, ey;
+        if (pos1.x > pos2.x) {
+            sx = pos2.x;
+            ex = pos1.x;
+        }
+        else {
+            sx = pos1.x;
+            ex = pos2.x;
+        }
+        if (pos1.y > pos2.y) {
+            sy = pos2.y;
+            ey = pos1.y;
+        }
+        else {
+            sy = pos1.y;
+            ey = pos2.y;
+        }
+        for (int x = sx; x <= ex; x++) {
+            for (int y = sy; x <= ey; x++) {
                 myplots.add(new PlotId(x,y));
             }
         }
@@ -122,20 +139,43 @@ public class PlayerFunctions {
         
         int end = pathWidthLower+plotworld.PLOT_WIDTH;
         
-        if (rx<=pathWidthLower) {
-//            System.out.print("WEST");
+        boolean northSouth = rz<=pathWidthLower || rz>pathWidthLower+plotworld.PLOT_WIDTH;
+        boolean eastWest = rx<=pathWidthLower || rx>end;
+        
+        if (northSouth && eastWest) {
+            // This means you are in the intersection
+            PlotId id = getPlot(loc.add(plotworld.ROAD_WIDTH, 0, plotworld.ROAD_WIDTH));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot==null) {
+                return null;
+            }
+            if (plot.settings.getMerged(0) && plot.settings.getMerged(3)) {
+                return getBottomPlot(loc.getWorld(), plot).id;
+            }
             return null;
         }
-        if (rx>end) {
-//            System.out.print("EAST");
+        if (northSouth) {
+            // You are on a road running West to East (yeah, I named the var poorly)
+            PlotId id = getPlot(loc.add(0, 0, plotworld.ROAD_WIDTH));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot==null) {
+                return null;
+            }
+            if (plot.settings.getMerged(0)) {
+                return getBottomPlot(loc.getWorld(), plot).id;
+            }
             return null;
         }
-        if (rz<=pathWidthLower) {
-//            System.out.print("NORTH");
-            return null;
-        }
-        if (rz>pathWidthLower+plotworld.PLOT_WIDTH) {
-//            System.out.print("SOUTH");
+        if (eastWest) {
+            // This is the road separating an Eastern and Western plot
+            PlotId id = getPlot(loc.add(plotworld.ROAD_WIDTH, 0, 0));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot==null) {
+                return null;
+            }
+            if (plot.settings.getMerged(3)) {
+                return getBottomPlot(loc.getWorld(), plot).id;
+            }
             return null;
         }
         PlotId id = new PlotId(dx+1,dz+1);

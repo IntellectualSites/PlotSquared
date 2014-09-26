@@ -223,7 +223,13 @@ public class DBFunc {
                 statement.addBatch("UPDATE `plot` SET\n" + "    `plot_id_x` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," + "        `plot_id`" + "    )," + "    `plot_id_z` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," + "        NULL" + "    )");
                 statement.addBatch("ALTER TABLE `plot` DROP `plot_id`");
                 statement.addBatch("ALTER IGNORE TABLE `plot_settings` ADD `flags` VARCHAR(512) DEFAULT NULL");
-                statement.addBatch("ALTER IGNORE TABLE `plot_settings` ADD `merged` int(11) DEFAULT 0");
+                statement.executeBatch();
+                statement.close();
+            }
+            rs = data.getColumns(null, null, "plot_settings", "merged");
+            if (!rs.next()) {
+                Statement statement = connection.createStatement();
+                statement.addBatch("ALTER IGNORE TABLE `plot_settings` ADD `merged` int(11) DEFAULT NULL");
                 statement.executeBatch();
                 statement.close();
             }
