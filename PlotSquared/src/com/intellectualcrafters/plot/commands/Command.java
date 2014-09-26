@@ -34,6 +34,10 @@ public enum Command {
     /**
     *
     */
+    UNLINK("unlink", "u"),
+    /**
+    *
+    */
     CLEAR("clear", "clear", new CommandPermission("plots.clear")),
     /**
      * 
