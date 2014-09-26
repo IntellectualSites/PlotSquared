@@ -27,7 +27,7 @@ import java.util.*;
  * 
  */
 public class PlotHelper {
-    static boolean canSetFast;
+    static boolean canSetFast = false;
     static long state;
 
     /**
@@ -693,6 +693,8 @@ public class PlotHelper {
     }
 
     public static void setCuboid(World world, Location pos1, Location pos2, short[] id_l, short[] d_l) {
+        System.out.print("S "+pos1.getBlockX()+" | "+pos1.getBlockY()+" | "+pos1.getBlockZ());
+        System.out.print("E "+pos2.getBlockX()+" | "+pos2.getBlockY()+" | "+pos2.getBlockZ());
         if (!canSetFast) {
             for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                 for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -725,7 +727,6 @@ public class PlotHelper {
                 }
             }
             catch (Exception e) {
-                
             }
         }
     }

@@ -23,6 +23,11 @@ import org.bukkit.event.Listener;
  */
 public class WorldGuardListener implements Listener {
 
+    /*
+     * TODO recreate WG region when a plot is merged
+     *  - It should use the region of the main plot, and delete the other ones.
+     */
+    
     private PlotMain plugin;
 
     public WorldGuardListener(PlotMain plugin) {

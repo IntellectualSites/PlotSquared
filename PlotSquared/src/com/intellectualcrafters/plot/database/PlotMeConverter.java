@@ -38,6 +38,9 @@ public class PlotMeConverter {
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots!=null) {
+                        
+                        // TODO generate configuration based on PlotMe config
+                        
                         PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {
                             PlayerList denied = null;
@@ -77,6 +80,9 @@ public class PlotMeConverter {
                             stream.println(eR3040bl230);
                             PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
                             com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {false, false, false, false} );
+                            
+                            // TODO createPlot doesn't add helpers / denied users
+                            
                             DBFunc.createPlot(pl);
                             DBFunc.createPlotSettings(DBFunc.getId(world.getName(), pl.id), pl);
                         }
@@ -84,6 +90,10 @@ public class PlotMeConverter {
                 }
                 stream.close();
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
+                
+                // TODO disable PlotMe -> Unload all plot worlds, change the generator, restart the server automatically
+                // Possibly use multiverse / multiworld if it's to difficult modifying a world's generator while the server is running
+                
                 Bukkit.getPluginManager().disablePlugin(PlotMeConverter.this.plugin);
             }
         });

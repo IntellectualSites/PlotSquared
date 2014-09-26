@@ -24,6 +24,7 @@ import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotSettings;
 import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.SetBlockFast;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
@@ -120,20 +121,31 @@ public class Unlink extends SubCommand {
                 PlotId id = new PlotId(x,y);
                 
                 if (lx) {
+                    System.out.print("LX "+id);
                     setRoadX(world, id);
                     
-                    if (ly&&lx) {
+                    if (ly) {
+                        System.out.print("LXY "+id);
                         setRoadXY(world, id);
                     }
                     
                 }
                 
                 if (ly) {
+                    System.out.print("LY "+id);
                     setRoadY(world, id);
                 }
                 
             }
         }
+        
+        try {
+            SetBlockFast.update(plr);
+        }
+        catch (Exception e) {
+            
+        }
+        
         PlayerFunctions.sendMessage(plr, "&cPLOT UNLINKING IS NOT FINISHED (as you can see by the lack of roads appearing)");
         return true;
     }
@@ -148,16 +160,18 @@ public class Unlink extends SubCommand {
         
         int sx = pos2.getBlockX()+1;
         int ex = sx + pathsize - 1;
-        int sz = pos1.getBlockZ();
-        int ez = pos2.getBlockZ()+1;
+        int sz = pos1.getBlockZ()-1;
+        int ez = pos2.getBlockZ()+2;
         
-        PlotHelper.setCuboid(w, new Location(w,sx,1,sz), new Location(w,sx+1,wallheight,sz+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,sx,wallheight+1,sz), new Location(w,sx+1,wallheight+2,sz+1), new short[] {w_id}, new short[] {w_v});
+        PlotHelper.setSimpleCuboid(w, new Location(w,sx,Math.min(wallheight, roadheight)+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
         
-        PlotHelper.setCuboid(w, new Location(w,ex,1,ez), new Location(w,ex+1,wallheight,ez+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,ex,wallheight+1,ez), new Location(w,ex+1,wallheight+2,ez+1), new short[] {w_id}, new short[] {w_v});
+        PlotHelper.setCuboid(w, new Location(w,sx,1,sz+1), new Location(w,sx+1,wallheight+1,ez), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setCuboid(w, new Location(w,sx,wallheight+1,sz+1), new Location(w,sx+1,wallheight+2,ez), new short[] {w_id}, new short[] {w_v});
         
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight,ex), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setCuboid(w, new Location(w,ex,1,sz+1), new Location(w,ex+1,wallheight+1,ez), new short[] {w_id}, new short[] {w_v});
+        PlotHelper.setCuboid(w, new Location(w,ex,wallheight+1,sz+1), new Location(w,ex+1,wallheight+2,ez), new short[] {wf_id}, new short[] {wf_v});
+        
+        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
     }
     /**
      * Setting the road with the greatest Y value
@@ -170,16 +184,18 @@ public class Unlink extends SubCommand {
         
         int sz = pos2.getBlockX()+1;
         int ez = sz + pathsize - 1;
-        int sx = pos1.getBlockZ();
-        int ex = pos2.getBlockZ()+1;
+        int sx = pos1.getBlockZ()-1;
+        int ex = pos2.getBlockZ()+2;
         
-        PlotHelper.setCuboid(w, new Location(w,sx,1,sz), new Location(w,sx+1,wallheight,sz+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,sx,wallheight+1,sz), new Location(w,sx+1,wallheight+2,sz+1), new short[] {w_id}, new short[] {w_v});
+        PlotHelper.setSimpleCuboid(w, new Location(w,sx,Math.min(wallheight, roadheight)+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
         
-        PlotHelper.setCuboid(w, new Location(w,ex,1,ez), new Location(w,ex+1,wallheight,ez+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,ex,wallheight+1,ez), new Location(w,ex+1,wallheight+2,ez+1), new short[] {w_id}, new short[] {w_v});
+        PlotHelper.setCuboid(w, new Location(w,sx,1,sz+1), new Location(w,sx+1,wallheight+1,ez), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setCuboid(w, new Location(w,sx,wallheight+1,sz+1), new Location(w,sx+1,wallheight+2,ez), new short[] {w_id}, new short[] {w_v});
         
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight,ex), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setCuboid(w, new Location(w,ex,1,sz+1), new Location(w,ex+1,wallheight+1,ez), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setCuboid(w, new Location(w,ex,wallheight+1,sz+1), new Location(w,ex+1,wallheight+2,ez), new short[] {w_id}, new short[] {w_v});
+        
+        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
     }
     /**
      * Setting the intersection with the greatest X and Y value
@@ -194,6 +210,8 @@ public class Unlink extends SubCommand {
         int sz = pos2.getBlockZ()+2;
         int ez = sz + pathsize - 1;
         
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight,ex), new short[] {wf_id}, new short[] {wf_v});
+        PlotHelper.setSimpleCuboid(w, new Location(w,sx,roadheight+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
+        
+        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
     }
 }

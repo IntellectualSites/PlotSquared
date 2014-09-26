@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
 import com.intellectualcrafters.plot.SetBlockFast;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotMergeEvent;
 
 /**
  * 
@@ -103,7 +105,16 @@ public class Merge extends SubCommand {
                 return false;
             }
         }
-        PlayerFunctions.sendMessage(plr, "PLOTS HAVE BEEN MERGED");
+        
+        PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
+        
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            event.setCancelled(true);
+            PlayerFunctions.sendMessage(plr, "&cMerge has been cancelled");
+            return false;
+        }
+        PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
         return mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
     }
     public static boolean mergePlot(World world, Player player, ArrayList<PlotId> currentMegaPlots, ArrayList<PlotId> toMerge, int dir1, int dir2) {

@@ -25,38 +25,31 @@ import com.intellectualcrafters.plot.PlotId;
 /**
  * Created by Citymonstret on 2014-08-09.
  */
-public class PlotMergeEvent extends Event implements Cancellable {
+public class PlotUnlinkEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
     private ArrayList<PlotId> plots;
-    private Plot plot;
     private World world;
 
     /**
-     * PlotMergeEvent: Called when plots are merged
-     * @param player
-     * @param plot
+     * Called when a mega-plot is unlinked.
+     * @param world
+     * @param plots
      */
-    public PlotMergeEvent(World world, Plot plot, ArrayList<PlotId> plots) {
+    public PlotUnlinkEvent(World world, ArrayList<PlotId> plots) {
         this.plots = plots;
+        this.world = world;
     }
     
     /**
-     * Get the plots being added;
-     * @return Plot
+     * Get the plots involved
+     * @return PlotId
      */
     public ArrayList<PlotId> getPlots() {
         return this.plots;
     }
-    /**
-     * Get the main plot
-     * @return Plot
-     */
-    public Plot getPlot() {
-        return this.plot;
-    }
-    
+
     public World getWorld() {
         return this.world;
     }
