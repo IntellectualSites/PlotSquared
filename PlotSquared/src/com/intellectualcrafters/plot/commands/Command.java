@@ -15,6 +15,18 @@ package com.intellectualcrafters.plot.commands;
  * @author Citymonstret
  */
 public enum Command {
+    
+    // TODO new commands
+    // (allow a plot to be transferred from one plot to another of the same size)
+    //  - /plot copy   
+    //  - /plot paste
+    // (economy)
+    //  - /plot buy
+    //  - /plot sell <value>
+    // (Rating system) (ratings can be stored as the average, and number of ratings)
+    //  - /plot rate <number out of 10>
+    //  - /plot list <some parameter to list the most popular, and highest rated plots>
+    
     /**
      *
      */

@@ -557,6 +557,8 @@ public class PlotHelper {
      */
     public static void clear(final Player requester, final Plot plot) {
         
+        // TODO teleport any players underground to the surface
+        
         final long start = System.nanoTime();
         final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);

@@ -275,6 +275,15 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * TODO: Implement better system
+     * The whole point of this system is to recycle old plots
+     * So why not just allow users to claim old plots, and try to hide the fact that the are owned.
+     * e.g.
+     *   - On /plot auto - allow claiming of old plot, clear it so the user doesn't know
+     *   - On /plot info, - show that the plot is expired and allowed to be claimed
+     * 
+     * Other possibilities:
+     *   - Run the task when there are very little, or no players online (great for small servers)
+     *   - Run the task at startup (also only useful for small servers)
      * 
      * @param plugin
      *            Plugin

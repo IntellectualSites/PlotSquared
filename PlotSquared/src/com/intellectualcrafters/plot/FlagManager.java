@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.Set;
 
 public class FlagManager {
+    
+    // TODO add some flags
+    //  - Plot clear interval
+    //  - Mob cap
+    //  - customized plot composition
+    //  - greeting / leaving message
+    //  OR in the flag command, allow users to set worldguard flags.
 
     private static ArrayList<AbstractFlag> flags;
 
