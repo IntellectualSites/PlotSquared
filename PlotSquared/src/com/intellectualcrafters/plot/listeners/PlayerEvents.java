@@ -131,18 +131,14 @@ public class PlayerEvents implements Listener {
     }
 
     private void textures(Player p) {
-        
-        // TODO this thing still bugs you about non existing texture packs
-        // What can I do about it? - fix it.
-        
-//        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
-//            p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
-//        }
+        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
+            p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
+        }
     }
 
     @EventHandler
     public void onChangeWorld(PlayerChangedWorldEvent event) {
-        if (isPlotWorld(event.getFrom())) {
+        if (isPlotWorld(event.getFrom()) && Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) {
             event.getPlayer().setResourcePack("");
         } else {
             textures(event.getPlayer());

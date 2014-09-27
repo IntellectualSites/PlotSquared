@@ -15,8 +15,7 @@ import java.util.Map.Entry;
 import static com.intellectualcrafters.plot.PlotWorld.*;
 
 /**
- * TODO finish recoding this class
- * 
+ *  
  * @auther Empire92
  * @author Citymonstret
  * 
