@@ -277,13 +277,18 @@ public class PlotMain extends JavaPlugin {
      * TODO: Implement better system
      * The whole point of this system is to recycle old plots
      * So why not just allow users to claim old plots, and try to hide the fact that the are owned.
-     * e.g.
+     * Reduce amount of expired plots:
      *   - On /plot auto - allow claiming of old plot, clear it so the user doesn't know
      *   - On /plot info, - show that the plot is expired and allowed to be claimed
      * 
-     * Other possibilities:
+     * Have the task run less often:
      *   - Run the task when there are very little, or no players online (great for small servers)
      *   - Run the task at startup (also only useful for small servers)
+     *   
+     * Also, in terms of faster code:
+     *  - Have an array of plots, sorted by expiry time.
+     *  - Add new plots to the end.
+     *  - The task then only needs to go through the first few plots
      * 
      * @param plugin
      *            Plugin
