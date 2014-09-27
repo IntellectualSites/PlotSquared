@@ -42,8 +42,6 @@ public class PlotMeConverter {
                         // TODO generate configuration based on PlotMe config
                         // TODO
                         //   - Plugin doesn't display a message if database is not setup at all
-                        //   - I get null pointer exceptions when I try to use the plugin after the conversion process
-                        //   - Could be my fault when I added multiworld, or mega plots or something...
                         
                         PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {

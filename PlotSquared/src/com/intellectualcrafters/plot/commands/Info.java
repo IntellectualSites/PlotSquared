@@ -71,6 +71,9 @@ public class Info extends SubCommand {
         if (plot.owner != null) {
             owner = Bukkit.getOfflinePlayer(plot.owner).getName();
         }
+        if (owner==null) {
+            owner = plot.owner.toString();
+        }
 
         String info = C.PLOT_INFO.s();
         info = info.replaceAll("%alias%", plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none");

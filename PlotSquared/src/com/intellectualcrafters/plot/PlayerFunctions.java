@@ -137,6 +137,9 @@ public class PlayerFunctions {
 
         String world = loc.getWorld().getName();
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        if (plotworld==null) {
+            return null;
+        }
         int size = plotworld.PLOT_WIDTH + plotworld.ROAD_WIDTH;
         int pathWidthLower;
         if ((plotworld.ROAD_WIDTH % 2) == 0) {
