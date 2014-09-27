@@ -73,11 +73,11 @@ public class WorldGenerator extends ChunkGenerator {
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
 
-        options.put("worlds." + world + ".plot_height", PLOT_HEIGHT_DEFAULT);
-        options.put("worlds." + world + ".plot_size", PLOT_WIDTH_DEFAULT);
-        options.put("worlds." + world + ".plot_biome", PLOT_BIOME_DEFAULT);
-        options.put("worlds." + world + ".plot_filling", Arrays.asList(MAIN_BLOCK_DEFAULT));
-        options.put("worlds." + world + ".top_floor", Arrays.asList(TOP_BLOCK_DEFAULT));
+        options.put("worlds." + world + ".plot.height", PLOT_HEIGHT_DEFAULT);
+        options.put("worlds." + world + ".plot.size", PLOT_WIDTH_DEFAULT);
+        options.put("worlds." + world + ".plot.biome", PLOT_BIOME_DEFAULT);
+        options.put("worlds." + world + ".plot.filling", Arrays.asList(MAIN_BLOCK_DEFAULT));
+        options.put("worlds." + world + ".plot.floor", Arrays.asList(TOP_BLOCK_DEFAULT));
         options.put("worlds." + world + ".wall.block", WALL_BLOCK_DEFAULT);
         options.put("worlds." + world + ".road.width", ROAD_WIDTH_DEFAULT);
         options.put("worlds." + world + ".road.height", ROAD_HEIGHT_DEFAULT);
@@ -88,7 +88,7 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds." + world + ".wall.height", WALL_HEIGHT_DEFAULT);
         options.put("worlds." + world + ".schematic.on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("worlds." + world + ".schematic.file", SCHEMATIC_FILE_DEFAULT);
-        options.put("worlds." + world + ".default_flags", DEFAULT_FLAGS_DEFAULT);
+        options.put("worlds." + world + ".flags.default", DEFAULT_FLAGS_DEFAULT);
 
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -100,11 +100,11 @@ public class WorldGenerator extends ChunkGenerator {
         } catch (IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
-        this.plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot_height");
-        this.plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot_size");
-        this.plotworld.PLOT_BIOME = config.getString("worlds." + world + ".plot_biome");
-        this.plotworld.MAIN_BLOCK = config.getStringList("worlds." + world + ".plot_filling").toArray(new String[0]);
-        this.plotworld.TOP_BLOCK = config.getStringList("worlds." + world + ".top_floor").toArray(new String[0]);
+        this.plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot.height");
+        this.plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot.size");
+        this.plotworld.PLOT_BIOME = config.getString("worlds." + world + ".plot.biome");
+        this.plotworld.MAIN_BLOCK = config.getStringList("worlds." + world + ".plot.filling").toArray(new String[0]);
+        this.plotworld.TOP_BLOCK = config.getStringList("worlds." + world + ".plot.floor").toArray(new String[0]);
         this.plotworld.WALL_BLOCK = config.getString("worlds." + world + ".wall.block");
         this.plotworld.ROAD_WIDTH = config.getInt("worlds." + world + ".road.width");
         this.plotworld.ROAD_HEIGHT = config.getInt("worlds." + world + ".road.height");
@@ -117,7 +117,7 @@ public class WorldGenerator extends ChunkGenerator {
         this.plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds." + world + ".schematic.on_claim");
         this.plotworld.SCHEMATIC_FILE = config.getString("worlds." + world + ".schematic.file");
 
-        String[] default_flags_string = config.getStringList("worlds." + world + ".default_flags").toArray(new String[0]);
+        String[] default_flags_string = config.getStringList("worlds." + world + ".flags.default").toArray(new String[0]);
         Flag[] default_flags = new Flag[default_flags_string.length];
         for (int i = 0; i < default_flags.length; i++) {
             String current = default_flags_string[i];

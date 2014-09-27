@@ -27,6 +27,8 @@ public class Auto extends SubCommand {
         super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING);
     }
 
+    // TODO auto claim a mega plot!!!!!!!!!!!!
+    
     @Override
     public boolean execute(Player plr, String... args) {
         World world;
