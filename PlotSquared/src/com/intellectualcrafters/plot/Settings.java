@@ -17,6 +17,7 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    public static int MAX_PLOTS = 20;
     /**
      * WorldGuard region on claimed plots
      */

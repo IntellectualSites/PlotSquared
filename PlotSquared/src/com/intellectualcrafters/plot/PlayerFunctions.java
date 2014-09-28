@@ -303,15 +303,7 @@ public class PlayerFunctions {
      */
     @SuppressWarnings("SuspiciousNameCombination")
     public static int getAllowedPlots(Player p) {
-        if (p.hasPermission("plots.admin")) {
-            return Integer.MAX_VALUE;
-        }
-        for (int x = 0; x <= 100; x++) {
-            if (p.hasPermission("plots.plot." + (100-x))) {
-                return 100-x;
-            }
-        }
-        return 0;
+        return PlotMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     /**
