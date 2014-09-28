@@ -5,10 +5,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,15 +42,24 @@ public class Setup extends SubCommand implements Listener {
         private Object default_value;
         private String description;
         private Object value = 0;
-
-        public SetupStep(String constant, Object default_value, String description) {
+        private String type;
+        public SetupStep(String constant, Object default_value, String description, String type) {
             this.constant = constant;
             this.default_value = default_value;
             this.description = description;
+            this.type = type;
+        }
+
+        public String getType() {
+            return this.type;
         }
 
         public boolean setValue(Object o) {
+            return true;
+        }
 
+        public boolean validValue(String string) {
+            return true;
         }
 
         public Object getValue() {
@@ -73,23 +79,38 @@ public class Setup extends SubCommand implements Listener {
         }
     }
 
-    private static class SetupObject {
-        private String world;
-        private int current = 0;
+    private class SetupObject {
+        String world;
+        int current = 0;
+        PlotWorld p;
 
-        private SetupStep[] step = new SetupStep[] {
-            new SetupStep("road_height", 64, "Height of road")
+        SetupStep[] step = new SetupStep[] {
+            new SetupStep("road_height", 64, "Height of road", "integer") {
+                @Override
+                public boolean validValue(String string) {
+                    try {
+                        int t = Integer.parseInt(string);
+                    } catch(Exception e) {
+                        return false;
+                    }
+                    return true;
+                }
+            }
         };
 
         public SetupObject(String world) {
             this.world = world;
-            PlotWorld p = new PlotWorld();
+
+            this.p = new PlotWorld();
         }
 
         public SetupStep getNextStep() {
             return this.step[current++];
         }
 
+        public int getCurrent() {
+            return this.current;
+        }
 
         public int getMax() {
             return this.step.length;
@@ -102,28 +123,40 @@ public class Setup extends SubCommand implements Listener {
 
     @Override
     public boolean execute(Player plr, String... args) {
-        if(args.length < 1) {
-            sendMessage(plr, C.SETUP_MISSING_WORLD);
+        if(setupMap.containsKey(plr.getName())) {
+            SetupObject object = setupMap.get(plr.getName());
+            if(object.getCurrent() == object.getMax()) {
+                sendMessage(plr, C.SETUP_FINISHED, object.world);
+                setupMap.remove(plr.getName());
+                return true;
+            }
+            SetupStep step = object.step[object.current];
+            if(args.length < 1) {
+                sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType(), step.getDefaultValue() + "");
+                return true;
+            } else {
+                boolean valid = step.validValue(args[0]);
+                if(valid) {
+                    sendMessage(plr, C.SETUP_VALID_ARG);
+                    object.current++;
+                } else {
+                    sendMessage(plr, C.SETUP_INVALID_ARG);
+                }
+            }
+        } else {
+            if (args.length < 1) {
+                sendMessage(plr, C.SETUP_MISSING_WORLD);
+                return true;
+            }
+            String world = args[0];
+            if (PlotMain.isPlotWorld(Bukkit.getWorld(world))) {
+                sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
+                return true;
+            }
+            setupMap.put(plr.getName(), new SetupObject(world));
+            sendMessage(plr, C.SETUP_INIT);
             return true;
         }
-        String world = args[0];
-        if(PlotMain.isPlotWorld(Bukkit.getWorld(world))) {
-            sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
-            return true;
-        }
-        setupMap.put(plr.getName(), new SetupObject(world));
-        sendMessage(plr, C.SETUP_INIT);
-        return true;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        if(!setupMap.containsKey(player.getName())) {
-            return;
-        }
-        event.setCancelled(true);
-        SetupObject object = setupMap.get(player.getName());
-
-    }
 }

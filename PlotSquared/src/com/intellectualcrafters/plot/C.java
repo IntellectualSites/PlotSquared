@@ -22,7 +22,7 @@ public enum C {
      * Setup Stuff
      */
     SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
-    SETUP_STEP("&cStep &6%s&c: %s"),
+    SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"),
     SETUP_INVALID_ARG("&c%s is not a valid argument for step %s"),
     SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
     SETUP_FINISHED("&cFinished setup for world &c%s"),
@@ -63,6 +63,7 @@ public enum C {
     /*
      * Permission
      */
+    NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"),
     NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
     NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."), UNLINK_IMPOSSIBLE("&cYou can only unlink a mega-plot"),
     NO_MERGE_TO_MEGA("&cMega plots cannot be merged into. Please merge from the desired mega plot."),

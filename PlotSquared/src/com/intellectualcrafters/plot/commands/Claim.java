@@ -34,6 +34,10 @@ public class Claim extends SubCommand {
 
     @Override
     public boolean execute(Player plr, String... args) {
+        String schematic = "";
+        if(args.length >= 1) {
+            schematic = args[0];
+        }
         if (!PlayerFunctions.isInPlot(plr)) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
@@ -47,7 +51,17 @@ public class Claim extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_IS_CLAIMED);
             return false;
         }
-        boolean result = claimPlot(plr, plot, false);
+        if(!schematic.equals("")) {
+            if(!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                return true;
+            }
+            if(new SchematicHandler().getSchematic(schematic) == null) {
+                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+                return true;
+            }
+        }
+        boolean result = claimPlot(plr, plot, false, schematic);
         if (result) {
             PlayerFunctions.sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
@@ -57,7 +71,10 @@ public class Claim extends SubCommand {
     }
 
     public static boolean claimPlot(Player player, Plot plot, boolean teleport) {
-        plot.clear(player);
+        return claimPlot(player, plot, teleport, "");
+    }
+
+    public static boolean claimPlot(Player player, Plot plot, boolean teleport, String schematic) {
         PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
@@ -70,8 +87,16 @@ public class Claim extends SubCommand {
             PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
             if (world.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler handler = new SchematicHandler();
-                SchematicHandler.Schematic schematic = handler.getSchematic(world.SCHEMATIC_FILE);
-                handler.paste(player.getLocation(), schematic, plot);
+                SchematicHandler.Schematic sch;
+                if(schematic.equals("")) {
+                    sch = handler.getSchematic(world.SCHEMATIC_FILE);
+                } else {
+                    sch = handler.getSchematic(schematic);
+                    if(sch == null) {
+                        sch = handler.getSchematic(world.SCHEMATIC_FILE);
+                    }
+                }
+                handler.paste(player.getLocation(), sch, plot);
             }
             plot.settings.setFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS);
         }
