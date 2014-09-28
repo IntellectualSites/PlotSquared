@@ -33,6 +33,8 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -93,7 +95,6 @@ public class PlotMain extends JavaPlugin {
 
     public static WorldGuardPlugin worldGuard;
 
-
     /**
      * !!WorldGeneration!!
      */
@@ -116,7 +117,57 @@ public class PlotMain extends JavaPlugin {
             }
         }, 0l, 12 * 60 * 60 * 20l);
     }
+    
+    /**
+     * Check a range of permissions e.g. 'plots.plot.<0-100>'<br>
+     * Returns highest integer in range.
+     * @param player
+     * @param stub
+     * @param range
+     * @return
+     */
+    public static int hasPermissionRange(Player player, String stub, int range) {
+        if (player.isOp()) {
+            return range;
+        }
+        if (player.hasPermission(stub+".*")) {
+            return range;
+        }
+        for (int i = range; i>0; i--) {
+            if (player.hasPermission(stub+"."+i)) {
+                return i;
+            }
+        }
+        return 0;
+    }
 
+    /**
+     * Check a player for a permission<br>
+     *  - Op has all permissions <br>
+     *  - checks for '*' nodes
+     * @param player
+     * @param perm
+     * @return
+     */
+    public static boolean hasPermission(Player player, String perm) {
+        if (player.isOp()) {
+            return true;
+        }
+        if (player.hasPermission(perm)) {
+            return true;
+        }
+        String[] nodes = perm.split("\\.");
+        StringBuilder n = new StringBuilder();
+        for(int i = 0; i < nodes.length-1; i++) {
+            n.append(nodes[i]+".");
+            if (player.hasPermission(n+"*")) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     /**
      * All loaded plots
      */
@@ -812,7 +863,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * SETUP: settings.properties
+     * SETUP: settings.yml
      */
     private static void setupConfig() {
         config.set("version", config_ver);
@@ -827,6 +878,7 @@ public class PlotMain extends JavaPlugin {
         options.put("debug", true);
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
+        options.put("max_plots", Settings.MAX_PLOTS);
 
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -843,6 +895,9 @@ public class PlotMain extends JavaPlugin {
         Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         Settings.METRICS = config.getBoolean("metrics");
+        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+        Settings.MAX_PLOTS = config.getInt("max_plots");
 
         for (String node : config.getConfigurationSection("worlds").getKeys(false)) {
             World world = Bukkit.getWorld(node);

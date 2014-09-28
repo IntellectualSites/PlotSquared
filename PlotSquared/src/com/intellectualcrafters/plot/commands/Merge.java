@@ -43,6 +43,17 @@ public class Merge extends SubCommand {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS);
     }
 
+    public static String direction(float yaw) {
+        yaw = yaw / 90;
+        yaw = (float)Math.round(yaw);
+     
+        if (yaw == -4 || yaw == 0 || yaw == 4) {return "SOUTH";}
+        if (yaw == -1 || yaw == 3) {return "EAST";}
+        if (yaw == -2 || yaw == 2) {return "NORTH";}
+        if (yaw == -3 || yaw == 1) {return "WEST";}
+        return "";
+    }
+    
     @Override
     public boolean execute(Player plr, String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -72,6 +83,7 @@ public class Merge extends SubCommand {
         int direction2 = direction > 1 ? direction-2 : direction+2;
         if (direction==-1) {
             PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         World world = plr.getWorld();
@@ -115,106 +127,7 @@ public class Merge extends SubCommand {
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
-        return mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
+        return PlotHelper.mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
     }
-    public static boolean mergePlot(World world, Player player, ArrayList<PlotId> currentMegaPlots, ArrayList<PlotId> toMerge, int dir1, int dir2) {
-        
-        Location pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0)).add(1,0,1);
-        Location pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(currentMegaPlots.size()-1));
-        
-        for (int i = 0;i < toMerge.size(); i++) {
-            PlotId plotid = toMerge.get(i);
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            if (i<toMerge.size()-1) {
-                PlotHelper.mergePlot(world, plot, PlotMain.getPlots(world).get(toMerge.get(i+1)));
-            }
-        }
-        System.out.print("OLD: "+currentMegaPlots.size());
-        System.out.print("NEW: "+toMerge.size());
-        
-        Location pos3 = PlotHelper.getPlotBottomLoc(world, toMerge.get(0)).add(1,0,1);
-        Location pos4 = PlotHelper.getPlotTopLoc(world, toMerge.get(toMerge.size()-1));
-        
-        for (PlotId plotid:currentMegaPlots) {
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            plot.settings.setMerged(dir1, true);
-            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-        }
-        
-        for (int i = 0;i < toMerge.size(); i++) {
-            PlotId plotid = toMerge.get(i);
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            plot.settings.setMerged(dir2, true);
-            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-        }
-        
-        try {
-            SetBlockFast.update(player);
-        }
-        catch (Exception e) {
-            
-        }
-        
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        
-        int sx,sz,ex,ez;
-        
-        if (dir1 == 0 || dir1 == 3) {
-            sx = Math.min(pos1.getBlockX(),pos2.getBlockX());
-            ex = Math.max(pos3.getBlockX(),pos4.getBlockX());
-            sz = Math.min(pos1.getBlockZ(),pos2.getBlockZ());
-            ez = Math.max(pos3.getBlockZ(),pos4.getBlockZ());
-        }
-        else {
-            sx = Math.max(pos1.getBlockX(),pos2.getBlockX());
-            ex = Math.min(pos3.getBlockX(),pos4.getBlockX());
-            sz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
-            ez = Math.min(pos3.getBlockZ(),pos4.getBlockZ());
-        }
-        
-        
-        
-        int startx = Math.min(sx,ex);
-        int startz = Math.min(sz,ez);
-        int endx = Math.max(sx,ex)+1;
-        int endz = Math.max(sz,ez)+1;
-        
-        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
-        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
-
-        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
-        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
-
-        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            short[] result = PlotHelper.getBlock(plotworld.TOP_BLOCK[i]);
-            plotfloors[i] = result[0];
-            plotfloors_data[i] = result[1];
-        }
-        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            short[] result = PlotHelper.getBlock(plotworld.MAIN_BLOCK[i]);
-            filling[i] = result[0];
-            filling_data[i] = result[1];
-        }
-        
-        PlotHelper.setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
-        PlotHelper.setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
-        PlotHelper.setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
-        PlotHelper.setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
-        
-        pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0));
-        pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(0)).add(1,0,1);
-        
-        short[] result_w = PlotHelper.getBlock(plotworld.WALL_BLOCK);
-        short w_id = result_w[0];
-        byte w_v = (byte) result_w[1];
-        
-        for (int x = pos1.getBlockX(); x<=pos2.getBlockX(); x++) {
-            for (int z = pos1.getBlockZ(); z<=pos2.getBlockZ(); z++) {
-                if (z == pos1.getBlockZ() || z==pos2.getBlockZ() || x==pos1.getBlockX() || x==pos2.getBlockX()) {
-                    world.getBlockAt(x, plotworld.WALL_HEIGHT+1, z).setTypeIdAndData(w_id, w_v, false);
-                }
-            }
-        }
-        return true;
-    }
+    
 }
