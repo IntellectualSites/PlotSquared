@@ -89,7 +89,8 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds." + world + ".schematic.on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("worlds." + world + ".schematic.file", SCHEMATIC_FILE_DEFAULT);
         options.put("worlds." + world + ".flags.default", DEFAULT_FLAGS_DEFAULT);
-
+        options.put("worlds." + world + ".schematic.schematics", plotworld.SCHEMATICS);
+        options.put("worlds." + world + ".schematic.specify_on_claim", plotworld.SCHEMATIC_CLAIM_SPECIFY);
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -116,6 +117,8 @@ public class WorldGenerator extends ChunkGenerator {
         this.plotworld.PLOT_CHAT = config.getBoolean("worlds." + world + ".plot_chat");
         this.plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds." + world + ".schematic.on_claim");
         this.plotworld.SCHEMATIC_FILE = config.getString("worlds." + world + ".schematic.file");
+        this.plotworld.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("worlds." + world + ".schematic.specify_on_claim");
+        this.plotworld.SCHEMATICS = config.getStringList("worlds." + world + ".schematic.schematics");
 
         String[] default_flags_string = config.getStringList("worlds." + world + ".flags.default").toArray(new String[0]);
         Flag[] default_flags = new Flag[default_flags_string.length];

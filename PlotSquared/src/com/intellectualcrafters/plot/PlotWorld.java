@@ -1,8 +1,9 @@
 package com.intellectualcrafters.plot;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the PlotWorld class (obviously)
@@ -190,6 +191,9 @@ public class PlotWorld {
      * Default schematic on claim: false
      */
     public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
+    public List<String> SCHEMATICS = new ArrayList<>();
+
     /**
      * schematic file
      */

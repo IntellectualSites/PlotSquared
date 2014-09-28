@@ -52,13 +52,16 @@ public class Claim extends SubCommand {
             return false;
         }
         if(!schematic.equals("")) {
-            if(!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
-                PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
-                return true;
-            }
-            if(new SchematicHandler().getSchematic(schematic) == null) {
-                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
-                return true;
+            PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+            if(world.SCHEMATIC_CLAIM_SPECIFY) {
+                if(!world.SCHEMATICS.contains(schematic.toLowerCase())) {
+                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+                    return true;
+                }
+                if(!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                    PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                    return true;
+                }
             }
         }
         boolean result = claimPlot(plr, plot, false, schematic);
