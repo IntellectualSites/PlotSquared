@@ -25,10 +25,8 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent e) {
         if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
-            System.out.print("PERM");
             return; 
         }
-        System.out.print("NO PERM");
         Location f = e.getFrom();
         Location t = e.getTo();
         boolean cm = false;
@@ -108,7 +106,6 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
-            PWE.removeMask(e.getPlayer());
             return;
         }
         Player p = e.getPlayer();
@@ -129,7 +126,6 @@ public class WorldEditListener implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
-            PWE.removeMask(p);
             return;
         }
         if (!p.hasPermission("plots.admin") && isPlotWorld(p.getLocation())) {

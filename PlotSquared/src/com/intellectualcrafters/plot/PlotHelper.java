@@ -9,6 +9,7 @@
 
 package com.intellectualcrafters.plot;
 
+import com.google.common.collect.SetMultimap;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.sk89q.worldedit.blocks.ClothColor.ID;
 
@@ -27,8 +28,8 @@ import java.util.*;
  * 
  */
 public class PlotHelper {
-    static boolean canSetFast = false;
-    static long state;
+    public static boolean canSetFast = false;
+    static long state = 1;
 
     /**
      * 
@@ -36,6 +37,15 @@ public class PlotHelper {
      * @param blocks_per_second
      * @return
      */
+    public PlotHelper() {
+        try {
+            new SetBlockFast();
+            canSetFast = true;
+        } catch (Exception e) {
+            canSetFast = false;
+        }
+    }
+    
     private static double calculateNeededTime(double blocks, double blocks_per_second) {
         return (blocks / blocks_per_second);
     }
@@ -60,83 +70,26 @@ public class PlotHelper {
         return id;
     }
     
-      
     /**
-     * TODO auto plot merging
-     * Merges a set of plots with another set.<br>
+     * Completely merges a set of plots<br>
+     * <b>(There are no checks to make sure you supply the correct arguments)</b><br>
      *  - Misuse of this method can result in unusable plots<br>
-     *  - currentMegaPlots must be a single plot, or a set of already merged plots<br>
-     *  - toMerge must be a list of unmerged plots<br>
-     *  - the resultant mega plot must be rectangular<br>
-     *  - the plot arrays must be sorted in ascending order<br>
+     *  - the set of plots must belong to one owner and be rectangular<br>
+     *  - the plot array must be sorted in ascending order<br>
      *  - Road will be removed where required<br>
+     *  - changes will be saved to DB<br>
      * @param world
-     * @param player
-     * @param currentMegaPlots
-     * @param toMerge
-     * @param dir1
-     * @param dir2
-     * @return
+     * @param plotIds
+     * @return boolean (success)
      */
-    public static boolean mergePlot(World world, Player player, ArrayList<PlotId> currentMegaPlots, ArrayList<PlotId> toMerge, int dir1, int dir2) {
-        
-        Location pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0)).add(1,0,1);
-        Location pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(currentMegaPlots.size()-1));
-        
-        for (int i = 0;i < toMerge.size(); i++) {
-            PlotId plotid = toMerge.get(i);
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            if (i<toMerge.size()-1) {
-                PlotHelper.mergePlot(world, plot, PlotMain.getPlots(world).get(toMerge.get(i+1)));
-            }
-        }
-
-        Location pos3 = PlotHelper.getPlotBottomLoc(world, toMerge.get(0)).add(1,0,1);
-        Location pos4 = PlotHelper.getPlotTopLoc(world, toMerge.get(toMerge.size()-1));
-        
-        for (PlotId plotid:currentMegaPlots) {
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            plot.settings.setMerged(dir1, true);
-            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-        }
-        
-        for (int i = 0;i < toMerge.size(); i++) {
-            PlotId plotid = toMerge.get(i);
-            Plot plot = PlotMain.getPlots(world).get(plotid);
-            plot.settings.setMerged(dir2, true);
-            DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-        }
-        
-        try {
-            SetBlockFast.update(player);
-        }
-        catch (Exception e) {
-            
-        }
-        
+    public static boolean mergePlots(World world, ArrayList<PlotId> plotIds)   {
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        
-        int sx,sz,ex,ez;
-        
-        if (dir1 == 0 || dir1 == 3) {
-            sx = Math.min(pos1.getBlockX(),pos2.getBlockX());
-            ex = Math.max(pos3.getBlockX(),pos4.getBlockX());
-            sz = Math.min(pos1.getBlockZ(),pos2.getBlockZ());
-            ez = Math.max(pos3.getBlockZ(),pos4.getBlockZ());
+        int pathsize = plotworld.ROAD_WIDTH;
+        int plotheight = plotworld.PLOT_HEIGHT;
+
+        if (plotIds.size()<2) {
+            return false;
         }
-        else {
-            sx = Math.max(pos1.getBlockX(),pos2.getBlockX());
-            ex = Math.min(pos3.getBlockX(),pos4.getBlockX());
-            sz = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
-            ez = Math.min(pos3.getBlockZ(),pos4.getBlockZ());
-        }
-        
-        
-        
-        int startx = Math.min(sx,ex);
-        int startz = Math.min(sz,ez);
-        int endx = Math.max(sx,ex)+1;
-        int endz = Math.max(sz,ez)+1;
         
         final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
         final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
@@ -145,38 +98,80 @@ public class PlotHelper {
         final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
 
         for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            short[] result = PlotHelper.getBlock(plotworld.TOP_BLOCK[i]);
+            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
             plotfloors[i] = result[0];
             plotfloors_data[i] = result[1];
         }
         for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            short[] result = PlotHelper.getBlock(plotworld.MAIN_BLOCK[i]);
+            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
             filling[i] = result[0];
             filling_data[i] = result[1];
         }
         
-        PlotHelper.setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
-        PlotHelper.setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
-        PlotHelper.setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
-        PlotHelper.setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
+        PlotId pos1 = plotIds.get(0);
+        PlotId pos2 = plotIds.get(plotIds.size()-1);
         
-        pos1 = PlotHelper.getPlotBottomLoc(world, currentMegaPlots.get(0));
-        pos2 = PlotHelper.getPlotTopLoc(world, currentMegaPlots.get(0)).add(1,0,1);
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                
+                boolean lx = x < pos2.x;
+                boolean ly = y < pos2.y;
+                
+                PlotId id = new PlotId(x,y);
+                Plot plot = PlotMain.getPlots(world).get(id);
+                
+                if (lx) {
+                    if (ly) {
+                        if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
+                            Location loc = getPlotTopLocAbs(world, id);
+                            
+                            int sx = loc.getBlockX()+1;
+                            int ex = sx + pathsize - 1;
+                            int sz = loc.getBlockZ()+1;
+                            int ez = sz + pathsize - 1;
+                            
+                            PlotHelper.setSimpleCuboid(world, new Location(world,sx,plotheight+1,sz), new Location(world,ex+1,257+1,ez+1), (short) 0);
+                            
+                            PlotHelper.setCuboid(world, new Location(world,sx+1,1,sz+1), new Location(world,ex,plotheight,ez), filling,filling_data);
+                            PlotHelper.setCuboid(world, new Location(world,sx+1,plotheight,sz+1), new Location(world,ex,plotheight+1,ez), plotfloors,plotfloors_data);
+                        }
+                    }
+                    if (!plot.settings.getMerged(1)) {
+                        Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x+1,y));
+                        mergePlot(world, plot, plot2);
+                        plot.settings.setMerged(1, true);
+                        plot2.settings.setMerged(3, true);
+                    }
+                }
+                if (ly) {
+                    if (!plot.settings.getMerged(2)) {
+                        Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x,y+1));
+                        mergePlot(world, plot, plot2);
+                        plot.settings.setMerged(2, true);
+                        plot2.settings.setMerged(0, true);
+                    }
+                }
+                
+            }
+        }
+        
+        Location megaPlotBot = getPlotBottomLoc(world, pos1);
+        Location megaPlotTop = getPlotTopLoc(world, pos2).add(1,0,1);
         
         short[] result_w = PlotHelper.getBlock(plotworld.WALL_BLOCK);
         short w_id = result_w[0];
         byte w_v = (byte) result_w[1];
         
-        for (int x = pos1.getBlockX(); x<=pos2.getBlockX(); x++) {
-            for (int z = pos1.getBlockZ(); z<=pos2.getBlockZ(); z++) {
-                if (z == pos1.getBlockZ() || z==pos2.getBlockZ() || x==pos1.getBlockX() || x==pos2.getBlockX()) {
+        for (int x = megaPlotBot.getBlockX(); x<=megaPlotTop.getBlockX(); x++) {
+            for (int z = megaPlotBot.getBlockZ(); z<=megaPlotTop.getBlockZ(); z++) {
+                if (z == megaPlotBot.getBlockZ() || z==megaPlotTop.getBlockZ() || x==megaPlotBot.getBlockX() || x==megaPlotTop.getBlockX()) {
                     world.getBlockAt(x, plotworld.WALL_HEIGHT+1, z).setTypeIdAndData(w_id, w_v, false);
                 }
             }
         }
+        
         return true;
     }
-        
 
     /**
      * Merges 2 plots
@@ -184,7 +179,7 @@ public class PlotHelper {
      * <br> - Assumes the first plot parameter is lower
      * <br> - Assumes neither are a Mega-plot
      * <br> - Assumes plots are directly next to each other
-     * <br> - Does not save to DB
+     * <br> - Saves to DB
      * @param world
      * @param lesserPlot
      * @param greaterPlot
@@ -245,14 +240,13 @@ public class PlotHelper {
             startz--;
             endz++;
         }
-        
         if (!noMerge) {
-        
+            DBFunc.setMerged(world.getName(), lesserPlot, lesserPlot.settings.getMerged());
+            DBFunc.setMerged(world.getName(), greaterPlot, greaterPlot.settings.getMerged());
             setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
             setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
             setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
             setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
-            
         }
     }
     
@@ -361,6 +355,72 @@ public class PlotHelper {
             setWall(block, "" + id + ":" + data);
         }
     }
+    
+    public static void autoMerge(World world, Plot plot, Player player) {
+        if (plot==null) {
+            return;
+        }
+        if(plot.owner==null) {
+            return;
+        }
+        if (!plot.owner.equals(player.getUniqueId())) {
+            return;
+        }
+        
+        ArrayList<PlotId> plots;
+        boolean merge = true;
+        while (merge) {
+            PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
+            PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+            merge = false;
+            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x,bot.y-1), new PlotId(top.x,top.y)); 
+            if (ownsPlots(world,plots,player, 0)) {
+                merge = true;
+                mergePlots(world, plots);
+                continue;
+            }
+            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x,bot.y), new PlotId(top.x+1,top.y));
+            if (ownsPlots(world,plots,player, 1)) {
+                merge = true;
+                mergePlots(world, plots);
+                continue;
+            }
+            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x,bot.y), new PlotId(top.x,top.y+1));
+            if (ownsPlots(world,plots,player, 2)) {
+                merge = true;
+                mergePlots(world, plots);
+                continue;
+            }
+            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x-1,bot.y), new PlotId(top.x,top.y));
+            if (ownsPlots(world,plots,player, 3)) {
+                merge = true;
+                mergePlots(world, plots);
+                continue;
+            }
+        }
+        if (canSetFast) {
+            SetBlockFast.update(player);
+        }
+    }
+    private static boolean ownsPlots(World world, ArrayList<PlotId> plots, Player player, int dir) {
+        PlotId id_min = plots.get(0);
+        PlotId id_max = plots.get(plots.size()-1);
+        for (PlotId myid:plots) {
+            Plot myplot = PlotMain.getPlots(world).get(myid);
+            if (myplot==null || !myplot.hasOwner() || !(myplot.getOwner().equals(player.getUniqueId()))) {
+                return false;
+            }
+            PlotId top = PlayerFunctions.getTopPlot(world, myplot).id;
+            if ((top.x > id_max.x && dir != 1) || (top.y > id_max.y && dir != 2)) {
+                return false;
+            }
+            PlotId bot = PlayerFunctions.getBottomPlot(world, myplot).id;
+            if ((bot.x < id_min.x && dir != 3) || (bot.y < id_min.y && dir != 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean createPlot(Player player, Plot plot) {
         @SuppressWarnings("deprecation")
@@ -369,6 +429,11 @@ public class PlotHelper {
         PlotMain.updatePlot(p);
         DBFunc.createPlot(p);
         DBFunc.createPlotSettings(DBFunc.getId(w.getName(), p.id), p);
+        PlotWorld plotworld = PlotMain.getWorldSettings(w);
+        if (plotworld.AUTO_MERGE) {
+            autoMerge(w, p, player);
+        }
+        
         return true;
     }
 
@@ -715,12 +780,6 @@ public class PlotHelper {
         h = (prime * h) + pos1.getBlockZ();
         state = h;
 
-        try {
-            new SetBlockFast();
-            canSetFast = true;
-        } catch (Exception e) {
-            canSetFast = false;
-        }
         if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), 1, pos2.getBlockZ()), (short) 7);
             setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX(), world.getMaxHeight(), pos2.getBlockZ()), (short) 0);

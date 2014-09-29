@@ -40,10 +40,7 @@ public class Unlink extends SubCommand {
     private byte wf_v;
     private short f1_id;
     private byte f1_v;
-    private short f2_id;
-    private byte f2_v;
     private int pathsize;
-    private boolean stripes_enabled;
     private int wallheight;
     private int roadheight;
     public Unlink() {
@@ -81,6 +78,12 @@ public class Unlink extends SubCommand {
         
         for (PlotId id:ids) {
             Plot myplot = PlotMain.getPlots(world).get(id);
+            
+            if (plot.helpers!=null)
+                myplot.helpers = plot.helpers;
+            if (plot.denied!=null)
+                myplot.denied = plot.denied;
+            myplot.deny_entry = plot.deny_entry;
             myplot.settings.setMerged(new boolean[] {false, false, false, false} );
             DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
         }
@@ -89,9 +92,7 @@ public class Unlink extends SubCommand {
         this.pathsize = plotworld.ROAD_WIDTH;
         this.roadheight = plotworld.ROAD_HEIGHT;
         this.wallheight = plotworld.WALL_HEIGHT;
-        this.stripes_enabled = plotworld.ROAD_STRIPES_ENABLED;
-        
-     // WALL
+        // WALL
         short[] result_w = PlotHelper.getBlock(plotworld.WALL_BLOCK);
         this.w_id = result_w[0];
         this.w_v = (byte) result_w[1];
@@ -109,12 +110,8 @@ public class Unlink extends SubCommand {
 
         // Floor 2
         short[] result_f2 = PlotHelper.getBlock(plotworld.ROAD_STRIPES);
-        this.f2_id = result_f2[0];
-        this.f2_v = (byte) result_f2[1];
-        
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
-                
                 boolean lx = x < pos2.x;
                 boolean ly = y < pos2.y;
                 

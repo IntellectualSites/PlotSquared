@@ -73,6 +73,7 @@ public class WorldGenerator extends ChunkGenerator {
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
 
+        options.put("worlds." + world + ".plot.auto_merge", AUTO_MERGE_DEFAULT);
         options.put("worlds." + world + ".plot.height", PLOT_HEIGHT_DEFAULT);
         options.put("worlds." + world + ".plot.size", PLOT_WIDTH_DEFAULT);
         options.put("worlds." + world + ".plot.biome", PLOT_BIOME_DEFAULT);
@@ -104,6 +105,7 @@ public class WorldGenerator extends ChunkGenerator {
         } catch (IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
+        this.plotworld.AUTO_MERGE = config.getBoolean("worlds." + world + ".plot.auto_merge");
         this.plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot.height");
         this.plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot.size");
         this.plotworld.PLOT_BIOME = config.getString("worlds." + world + ".plot.biome");
@@ -175,6 +177,7 @@ public class WorldGenerator extends ChunkGenerator {
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
+        world.setSpawnFlags(false, false);
         return Arrays.asList((BlockPopulator) new XPopulator(PlotMain.getWorldSettings(world)));
     }
 
