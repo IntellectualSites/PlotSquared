@@ -10,7 +10,6 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -26,15 +25,16 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
 import me.confuser.barapi.BarAPI;
-
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -94,6 +94,9 @@ public class PlotMain extends JavaPlugin {
     public static CameraAPI cameraAPI;
 
     public static WorldGuardPlugin worldGuard;
+
+    public static Economy economy;
+    public static boolean useEconomy;
 
     /**
      * !!WorldGeneration!!
@@ -545,7 +548,13 @@ public class PlotMain extends JavaPlugin {
             checkExpired(PlotMain.getMain(), true);
             checkForExpiredPlots();
         }
-
+        if(getServer().getPluginManager().getPlugin("Vault") != null) {
+            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if(economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+            useEconomy = (economy != null);
+        }
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
 
         if (Web.ENABLED) {

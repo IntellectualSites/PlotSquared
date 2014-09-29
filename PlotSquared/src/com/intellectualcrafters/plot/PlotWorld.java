@@ -210,4 +210,8 @@ public class PlotWorld {
      * Default default flags
      */
     public static String[] DEFAULT_FLAGS_DEFAULT = new String[] {};
+
+    public boolean USE_ECONOMY = false;
+    public double PLOT_PRICE = 100;
+    public double MERGE_PRICE = 100;
 }

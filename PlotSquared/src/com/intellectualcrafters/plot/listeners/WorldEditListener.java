@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
+import com.intellectualcrafters.plot.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -8,20 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-
-import com.intellectualcrafters.plot.PWE;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import org.bukkit.event.player.*;
 
 /**
  * 

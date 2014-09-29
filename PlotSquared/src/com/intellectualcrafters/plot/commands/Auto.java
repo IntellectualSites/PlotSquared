@@ -9,16 +9,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.*;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
 
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
@@ -68,6 +63,32 @@ public class Auto extends SubCommand {
             id = new PlotId(x, z);
             if (PlotHelper.getPlot(world, id).owner == null) {
                 Plot plot = PlotHelper.getPlot(world, id);
+                PlotWorld plotworld = PlotMain.getWorldSettings(plot.getWorld());
+                if(PlotMain.useEconomy && plotworld.USE_ECONOMY) {
+                    double cost = plotworld.PLOT_PRICE;
+                    if(cost > 0d) {
+                        Economy economy = PlotMain.economy;
+                        if(economy.getBalance(plr) < cost) {
+                            sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                            return true;
+                        }
+                        economy.withdrawPlayer(plr, cost);
+                        sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+                    }
+                }
+                String schematic;
+                if(args.length > 0 && !(schematic = args[0]).equals("")) {
+                    if(plotworld.SCHEMATIC_CLAIM_SPECIFY) {
+                        if(!plotworld.SCHEMATICS.contains(schematic.toLowerCase())) {
+                            sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+                            return true;
+                        }
+                        if(!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                            PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                            return true;
+                        }
+                    }
+                }
                 boolean result = Claim.claimPlot(plr, plot, true);
                 br = !result;
             }

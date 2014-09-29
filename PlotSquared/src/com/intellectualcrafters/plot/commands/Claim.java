@@ -9,17 +9,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SchematicHandler;
-import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 
 /**
  * 
@@ -51,8 +45,20 @@ public class Claim extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_IS_CLAIMED);
             return false;
         }
+        PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+        if(PlotMain.useEconomy && world.USE_ECONOMY) {
+            double cost = world.PLOT_PRICE;
+            if(cost > 0d) {
+                Economy economy = PlotMain.economy;
+                if(economy.getBalance(plr) < cost) {
+                    sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                    return true;
+                }
+                economy.withdrawPlayer(plr, cost);
+                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
         if(!schematic.equals("")) {
-            PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
             if(world.SCHEMATIC_CLAIM_SPECIFY) {
                 if(!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");

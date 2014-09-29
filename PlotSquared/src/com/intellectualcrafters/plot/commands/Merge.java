@@ -9,25 +9,15 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.events.PlotMergeEvent;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SetBlockFast;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotMergeEvent;
+import java.util.ArrayList;
 
 /**
  * 
@@ -45,13 +35,34 @@ public class Merge extends SubCommand {
 
     public static String direction(float yaw) {
         yaw = yaw / 90;
-        yaw = (float)Math.round(yaw);
-     
-        if (yaw == -4 || yaw == 0 || yaw == 4) {return "SOUTH";}
-        if (yaw == -1 || yaw == 3) {return "EAST";}
-        if (yaw == -2 || yaw == 2) {return "NORTH";}
-        if (yaw == -3 || yaw == 1) {return "WEST";}
-        return "";
+        // yaw = (float)Math.round(yaw);
+        /*
+        * if (yaw == -4 || yaw == 0 || yaw == 4) {return "SOUTH";}
+        * if (yaw == -1 || yaw == 3) {return "EAST";}
+        * if (yaw == -2 || yaw == 2) {return "NORTH";}
+        * if (yaw == -3 || yaw == 1) {return "WEST";}
+        */
+        int i = Math.round(yaw);
+        switch(i) {
+            case -4:
+            case  0:
+            case  4:
+                return "SOUTH";
+            case -1:
+            case  3:
+                return "EAST";
+            case -2:
+            case  2:
+                return "NORTH";
+            case -3:
+            case  1:
+                return "WEST";
+            default:
+                return "";
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // Had to... I'm sorry xD But it looks soo much better, and should be equally as fast. //
+        /////////////////////////////////////////////////////////////////////////////////////////
     }
     
     @Override
@@ -106,7 +117,7 @@ public class Merge extends SubCommand {
             default:
                 return false;
         }
-        for (PlotId myid:plots) {
+        for (PlotId myid : plots) {
             Plot myplot = PlotMain.getPlots(world).get(myid);
             if (myplot==null || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
@@ -117,7 +128,21 @@ public class Merge extends SubCommand {
                 return false;
             }
         }
-        
+
+        PlotWorld plotWorld = PlotMain.getWorldSettings(world);
+        if(PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
+            double cost = plotWorld.MERGE_PRICE;
+            if(cost > 0d) {
+                Economy economy = PlotMain.economy;
+                if(economy.getBalance(plr) < cost) {
+                    sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
+                    return false;
+                }
+                economy.withdrawPlayer(plr, cost);
+                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+
         PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
         
         Bukkit.getServer().getPluginManager().callEvent(event);

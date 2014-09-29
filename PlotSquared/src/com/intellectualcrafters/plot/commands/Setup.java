@@ -157,6 +157,7 @@ public class Setup extends SubCommand implements Listener {
             sendMessage(plr, C.SETUP_INIT);
             return true;
         }
+        return true;
     }
 
 }
