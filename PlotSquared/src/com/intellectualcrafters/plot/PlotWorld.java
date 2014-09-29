@@ -26,6 +26,8 @@ import java.util.List;
  **/
 public class PlotWorld {
 
+    public boolean AUTO_MERGE;
+    public static boolean AUTO_MERGE_DEFAULT = false;
     /**
      * Road Height
      */

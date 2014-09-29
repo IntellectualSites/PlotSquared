@@ -71,6 +71,7 @@ public class Merge extends SubCommand {
         }
         if (args.length<1) {
             PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         int direction = -1;
@@ -80,7 +81,6 @@ public class Merge extends SubCommand {
                 break;
             }
         }
-        int direction2 = direction > 1 ? direction-2 : direction+2;
         if (direction==-1) {
             PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
             PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
@@ -92,16 +92,16 @@ public class Merge extends SubCommand {
         ArrayList<PlotId> plots;
         switch (direction) {
             case 0: // north = -y
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y-1), new PlotId(top.x,bot.y-1));
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y-1), new PlotId(top.x,top.y));
                 break;
             case 1: // east = +x
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(top.x+1,bot.y), new PlotId(top.x+1,top.y));
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x+1,top.y));
                 break;
             case 2: // south = +y
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,top.y+1), new PlotId(top.x,top.y+1));
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y+1));
                 break;
             case 3: // west = -x
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x-1,bot.y), new PlotId(bot.x-1,top.y));
+                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x-1,bot.y), new PlotId(top.x,top.y));
                 break;
             default:
                 return false;
@@ -110,10 +110,6 @@ public class Merge extends SubCommand {
             Plot myplot = PlotMain.getPlots(world).get(myid);
             if (myplot==null || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
-                return false;
-            }
-            if (!PlayerFunctions.getBottomPlot(world, myplot).equals(PlayerFunctions.getTopPlot(world, myplot))) {
-                PlayerFunctions.sendMessage(plr, C.NO_MERGE_TO_MEGA);
                 return false;
             }
         }
@@ -127,7 +123,10 @@ public class Merge extends SubCommand {
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
-        return PlotHelper.mergePlot(world, plr, PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y)), plots, direction, direction2);
+        PlotHelper.mergePlots(world, plots);
+        if (PlotHelper.canSetFast) {
+            SetBlockFast.update(plr);
+        }
+        return true;
     }
-    
 }
