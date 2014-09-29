@@ -9,10 +9,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
+import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,19 +21,9 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.AbstractFlag;
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
-import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -42,30 +32,26 @@ import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
  */
 public class Set extends SubCommand{
 
-	public Set() {
-		super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS);
-	}
-	
-	public static String[] values = new String[] {
-		"biome", "wall", "wall_filling", "floor", "alias", "home", "rain", "flag"
-	};
-	public static String[] aliases = new String[] {
-		"b", "w", "wf", "f", "a", "h", "r", "fl"
-	};
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean execute(Player plr, String ... args) {
-		if(!PlayerFunctions.isInPlot(plr)) {
-			PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-			return false;
-		}
-		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+    public Set() {
+        super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS);
+    }
 
-		if(!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
-			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-			return false;
-		}
+    public static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "rain", "flag" };
+    public static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "r", "fl" };
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean execute(Player plr, String... args) {
+        if (!PlayerFunctions.isInPlot(plr)) {
+            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            return false;
+        }
+        Plot plot = PlayerFunctions.getCurrentPlot(plr);
+
+        if (!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
+            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
 		if(args.length < 1) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
@@ -92,10 +78,10 @@ public class Set extends SubCommand{
         
         if(args[0].equalsIgnoreCase("flag")) {
             if(args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(PlotMain.getFlags(),"&c, &6")));
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(FlagManager.getFlags(),"&c, &6")));
                 return false;
             }
-            if (!PlotMain.isRegisteredFlag(args[1])) {
+            if (!FlagManager.getFlags().contains(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
@@ -127,7 +113,7 @@ public class Set extends SubCommand{
             }
             try {
                 String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length)," ");
-                Flag flag = new Flag(args[1], value);
+                Flag flag = new Flag(FlagManager.getFlag(args[1], true), value);
                 PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if(event.isCancelled()) {
