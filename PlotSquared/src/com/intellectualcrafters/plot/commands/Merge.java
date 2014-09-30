@@ -35,13 +35,6 @@ public class Merge extends SubCommand {
 
     public static String direction(float yaw) {
         yaw = yaw / 90;
-        // yaw = (float)Math.round(yaw);
-        /*
-        * if (yaw == -4 || yaw == 0 || yaw == 4) {return "SOUTH";}
-        * if (yaw == -1 || yaw == 3) {return "EAST";}
-        * if (yaw == -2 || yaw == 2) {return "NORTH";}
-        * if (yaw == -3 || yaw == 1) {return "WEST";}
-        */
         int i = Math.round(yaw);
         switch(i) {
             case -4:
@@ -60,9 +53,6 @@ public class Merge extends SubCommand {
             default:
                 return "";
         }
-        /////////////////////////////////////////////////////////////////////////////////////////
-        // Had to... I'm sorry xD But it looks soo much better, and should be equally as fast. //
-        /////////////////////////////////////////////////////////////////////////////////////////
     }
     
     @Override
