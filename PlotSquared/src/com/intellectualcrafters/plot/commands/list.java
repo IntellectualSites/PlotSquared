@@ -38,7 +38,7 @@ public class list extends SubCommand {
         if (args.length < 1) {
             StringBuilder builder = new StringBuilder();
             builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-            builder.append(getArgumentList(new String[] { "mine", "all", "world" }));
+            builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all" }));
             PlayerFunctions.sendMessage(plr, builder.toString());
             return true;
         }
@@ -55,6 +55,17 @@ public class list extends SubCommand {
                 return true;
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
+            PlayerFunctions.sendMessage(plr, string.toString());
+            return true;
+        } else if (args[0].equalsIgnoreCase("shared")) {
+            StringBuilder string = new StringBuilder();
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all") + "\n");
+            for (Plot p : PlotMain.getPlots()) {
+                if (p.helpers.contains(plr.getUniqueId())) {
+                    string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id%", p.id.x + ";" + p.id.y + ";" + p.world).replaceAll("%owner%", getName(p.owner)) + "\n");
+                }
+            }
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotMain.getPlots().size() + "").replaceAll("%plot%", PlotMain.getPlots().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("all")) {

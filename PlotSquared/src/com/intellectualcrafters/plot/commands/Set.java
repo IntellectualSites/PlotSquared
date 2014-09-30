@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -177,8 +179,12 @@ public class Set extends SubCommand{
                 return false;
             }
             String alias = args[1];
-            for(Plot p : PlotMain.getPlots()) {
+            for(Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
                 if(p.settings.getAlias().equalsIgnoreCase(alias)) {
+                    PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
+                    return false;
+                }
+                if (Bukkit.getOfflinePlayer(alias).hasPlayedBefore()) {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }

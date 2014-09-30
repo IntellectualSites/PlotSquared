@@ -71,12 +71,20 @@ public enum C {
      */
     NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"),
     NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
+
     NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."), UNLINK_IMPOSSIBLE("&cYou can only unlink a mega-plot"),
     NO_MERGE_TO_MEGA("&cMega plots cannot be merged into. Please merge from the desired mega plot."),
     /*
      * Commands
      */
     NOT_VALID_SUBCOMMAND("&cThat is not a valid subcommand."), NO_COMMANDS("&cI'm sorry, but you're not permitted to use any subcommands."), SUBCOMMAND_SET_OPTIONS_HEADER("&cPossible Values: "),
+    /*
+     * Player not found
+     */
+    INVALID_PLAYER("&cPlayer not found: &6%player%."),
+    /*
+     * 
+     */
     /*
      * No {plot}
      */

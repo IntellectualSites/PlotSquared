@@ -31,16 +31,16 @@ public class Delete extends SubCommand {
     public boolean execute(Player plr, String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
             PlayerFunctions.sendMessage(plr, "You're not in a plot.");
-            return true;
+            return false;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
-            return true;
+            return false;
         }
         if ((plot==null || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return true;
+            return false;
         }
         boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {

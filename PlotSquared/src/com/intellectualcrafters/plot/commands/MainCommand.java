@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.PlotMain;
  */
 public class MainCommand implements CommandExecutor {
 
-    private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Reload(), new Merge(), new Unlink() };
+    private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Reload(), new Merge(), new Unlink(), new Kick() };
 
     public static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {

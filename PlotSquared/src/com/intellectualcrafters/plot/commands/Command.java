@@ -26,7 +26,7 @@ public enum Command {
     // (Rating system) (ratings can be stored as the average, and number of ratings)
     //  - /plot rate <number out of 10>
     //  - /plot list <some parameter to list the most popular, and highest rated plots>
-    
+    KICK("kick","k"),
     /**
      *
      */
