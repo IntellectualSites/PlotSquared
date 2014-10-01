@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -115,7 +117,7 @@ public class WorldEditListener implements Listener {
                 e.setCancelled(true);
             } else if (msg.startsWith("/up") || msg.startsWith("//up") || msg.startsWith("/worldedit:up") || msg.startsWith("/worldedit:/up")) {
                 Plot plot = PlayerFunctions.getCurrentPlot(p);
-                if ((p == null) || !plot.hasRights(p)) {
+                if ((p == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                     e.setCancelled(true);
                 }
             }
@@ -132,7 +134,7 @@ public class WorldEditListener implements Listener {
             if (((e.getAction() == Action.LEFT_CLICK_BLOCK) || (e.getAction() == Action.RIGHT_CLICK_BLOCK)) && (p.getItemInHand() != null) && (p.getItemInHand().getType() != Material.AIR)) {
                 Block b = e.getClickedBlock();
                 Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
-                if ((plot != null) && plot.hasRights(p)) {
+                if ((plot != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                     PWE.setMask(p, b.getLocation());
                 } else {
                     e.setCancelled(true);

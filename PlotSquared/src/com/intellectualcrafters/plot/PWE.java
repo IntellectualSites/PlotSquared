@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot;
 
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.sk89q.worldedit.*;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ public class PWE {
                 boolean r;
                 r = plot.getOwner() != null && plot.getOwner().equals(p.getUniqueId());
                 if (!r) {
-                    if (p.hasPermission("plots.we.member") && plot.hasRights(p)) {
+                    if (p.hasPermission("plots.we.member") && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                         r = true;
                     } else if (p.hasPermission("plots.we.bypass")) {
                         s.setMask(null);

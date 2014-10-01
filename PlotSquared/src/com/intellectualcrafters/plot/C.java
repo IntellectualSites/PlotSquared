@@ -124,7 +124,7 @@ public enum C {
     /*
      * Info
      */
-    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"), PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Denied:&6%denied%&c, plot flags: &6%flags%"), PLOT_USER_LIST(" &6%user%&c,"),
+    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"), PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Trusted:&6%trusted%&c, plot Denied:&6%denied%&c, plot flags: &6%flags%"), PLOT_USER_LIST(" &6%user%&c,"),
     /*
      * Generating
      */
@@ -169,6 +169,10 @@ public enum C {
      * Helper
      */
     HELPER_ADDED("&6You successfully added a helper to the plot"), HELPER_REMOVED("&6You successfully removed a helper from the plot"), HELPER_NEED_ARGUMENT("&cArguments are missing. &6/plot helpers add {name} &cor &6/plot helpers remove {name}"), WAS_NOT_ADDED("&cThat player was not added as a helper on this plot"),
+    /*
+     * Trusted
+     */
+    TRUSTED_ADDED("&6You successfully added a trusted user to the plot"), TRUSTED_REMOVED("&6You successfully removed a trusted user from the plot"), TRUSTED_NEED_ARGUMENT("&cArguments are missing. &6/plot trusted add {name} &cor &6/plot trusted remove {name}"), T_WAS_NOT_ADDED("&cThat player was not added as a trusted user on this plot"),
     /*
      * Set Owner
      */

@@ -49,6 +49,10 @@ public class Plot implements Cloneable {
      */
     public ArrayList<UUID> helpers;
     /**
+     * List of trusted users (with plot permissions)
+     */
+    public ArrayList<UUID> trusted;
+    /**
      * List of denied players
      */
     public ArrayList<UUID> denied;
@@ -104,12 +108,13 @@ public class Plot implements Cloneable {
      * @param time
      * @param merged 
      */
-    public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world, boolean[] merged) {
+    public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> trusted, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world, boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.settings.setBiome(plotBiome);
         this.owner = owner;
         this.deny_entry = this.owner != null;
+        this.trusted = trusted;
         this.helpers = helpers;
         this.denied = denied;
         this.settings.setTime(time);
@@ -152,7 +157,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean hasRights(Player player) {
-        return player.hasPermission("plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(player.getUniqueId())) || ((this.owner != null) && this.owner.equals(player.getUniqueId()));
+        return player.hasPermission("plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(player.getUniqueId())) || ((this.owner != null) && this.owner.equals(player.getUniqueId())) || (this.owner != null && this.trusted != null && Bukkit.getPlayer(this.owner) != null && (this.trusted.contains(player.getUniqueId()) || this.trusted.contains(DBFunc.everyone)));
     }
 
     /**
@@ -220,6 +225,16 @@ public class Plot implements Cloneable {
     public void addHelper(UUID uuid) {
         this.helpers.add(uuid);
     }
+    
+
+    /**
+     * Add someone as a trusted user (use DBFunc as well)
+     * 
+     * @param uuid
+     */
+    public void addTrusted(UUID uuid) {
+        this.trusted.add(uuid);
+    }
 
     /**
      * Get plot display name
@@ -250,6 +265,15 @@ public class Plot implements Cloneable {
     public void removeHelper(UUID uuid) {
         this.helpers.remove(uuid);
     }
+    
+    /**
+     * Remove a trusted user (use DBFunc as well)
+     * 
+     * @param uuid
+     */
+    public void removeTrusted(UUID uuid) {
+        this.trusted.remove(uuid);
+    }
 
     /**
      * Clear a plot
@@ -261,14 +285,4 @@ public class Plot implements Cloneable {
         PlotHelper.clear(plr, this);
     }
 
-    /**
-     * Delete a plot
-     * 
-     * @param plr
-     *            initiator
-     */
-    @SuppressWarnings("unused")
-    public void delete(Player plr) {
-        this.clear(plr);
-    }
 }

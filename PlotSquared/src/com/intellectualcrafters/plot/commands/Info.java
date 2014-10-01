@@ -49,6 +49,7 @@ public class Info extends SubCommand {
 
         boolean hasOwner = plot.hasOwner();
         boolean containsEveryone;
+        boolean trustedEveryone;
 
         // Wildcard player {added}
         {
@@ -57,10 +58,15 @@ public class Info extends SubCommand {
             } else {
                 containsEveryone = plot.helpers.contains(DBFunc.everyone);
             }
+            if (plot.trusted == null) {
+                trustedEveryone = false;
+            } else {
+                trustedEveryone = plot.trusted.contains(DBFunc.everyone);
+            }
         }
 
         // Unclaimed?
-        if (!hasOwner && !containsEveryone) {
+        if (!hasOwner && !containsEveryone && !trustedEveryone) {
             PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.id.x + ";" + plot.id.y);
             return true;
         }
@@ -83,6 +89,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%time%", plot.settings.getChangeTime() ? plot.settings.getTime() + "" : "default");
         info = info.replaceAll("%weather%", plot.settings.getRain() ? "rain" : "default");
         info = info.replaceAll("%helpers%", getPlayerList(plot.helpers));
+        info = info.replaceAll("%trusted%", getPlayerList(plot.trusted));
         info = info.replaceAll("%denied%", getPlayerList(plot.denied));
         info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), ",") : "none");
         PlayerFunctions.sendMessage(player, PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());

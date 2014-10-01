@@ -40,7 +40,6 @@ public class PlotMeConverter {
                     if (plots!=null) {
                         
                         // TODO generate configuration based on PlotMe config
-                        // TODO
                         //   - Plugin doesn't display a message if database is not setup at all
                         
                         PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
@@ -48,6 +47,7 @@ public class PlotMeConverter {
                             PlayerList denied = null;
                             PlayerList added = null;
                             ArrayList<UUID> psAdded = new ArrayList<>();
+                            ArrayList<UUID> psTrusted = new ArrayList<>();
                             ArrayList<UUID> psDenied = new ArrayList<>();
                             if (world == null) {
                                 world = Bukkit.getWorld("world");
@@ -81,7 +81,7 @@ public class PlotMeConverter {
                             }
                             stream.println(eR3040bl230);
                             PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
-                            com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {false, false, false, false} );
+                            com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {false, false, false, false} );
                             
                             // TODO createPlot doesn't add helpers / denied users
                             

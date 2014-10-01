@@ -37,9 +37,6 @@ public class Home extends SubCommand {
 
     @Override
     public boolean execute(Player plr, String... args) {
-
-        // TODO plot names / alias
-
         Plot[] plots = PlotMain.getPlots(plr).toArray(new Plot[0]);
         if (plots.length == 1) {
             PlotMain.teleportPlayer(plr, plr.getLocation(), plots[0]);

@@ -100,6 +100,7 @@ public class DBFunc {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot` (" + "`id` INT(11) NOT NULL AUTO_INCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)," + "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("ALTER TABLE `plot_settings` ADD CONSTRAINT `plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `plot` (`id`) ON DELETE CASCADE");
 
@@ -107,6 +108,7 @@ public class DBFunc {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot` (" + "`id` INTEGER(11) PRIMARY KEY," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
         }
 
@@ -134,6 +136,10 @@ public class DBFunc {
                     stmt.executeUpdate();
                     stmt.close();
                     stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    stmt = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
@@ -270,6 +276,7 @@ public class DBFunc {
                     }
                 }
                 ArrayList<UUID> helpers = plotHelpers(id);
+                ArrayList<UUID> trusted = plotTrusted(id);
                 ArrayList<UUID> denied = plotDenied(id);
                 // boolean changeTime = ((Short) settings.get("custom_time") ==
                 // 0) ? false : true;
@@ -309,7 +316,7 @@ public class DBFunc {
                 for (int i = 0; i < 4; i++) {
                     merged[3-i] = (merged_int & (1 << i)) != 0;
                 }
-                p = new Plot(plot_id, owner, plotBiome, helpers, denied, /* changeTime */false, time, rain, alias, position, flags, worldname, merged);
+                p = new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, /* changeTime */false, time, rain, alias, position, flags, worldname, merged);
                 if (plots.containsKey(worldname)) {
                     plots.get(worldname).put((plot_id), p);
                 } else {
@@ -559,6 +566,29 @@ public class DBFunc {
         }
         return l;
     }
+    
+    /**
+     * @param id
+     * @return
+     */
+    private static ArrayList<UUID> plotTrusted(int id) {
+        ArrayList<UUID> l = new ArrayList<UUID>();
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            ResultSet r = stmt.executeQuery("SELECT `user_uuid` FROM `plot_trusted` WHERE `plot_plot_id` = " + id);
+            UUID u;
+            while (r.next()) {
+                u = UUID.fromString(r.getString("user_uuid"));
+                l.add(u);
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            Logger.add(LogLevel.WARNING, "Failed to load trusted users for plot: " + id);
+            e.printStackTrace();
+        }
+        return l;
+    }
 
     /**
      * @param plot
@@ -581,6 +611,28 @@ public class DBFunc {
             }
         });
     }
+    
+    /**
+     * @param plot
+     * @param player
+     */
+    public static void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
+                    statement.setInt(1, getId(world, plot.id));
+                    statement.setString(2, player.getUniqueId().toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "Failed to remove trusted user for plot " + plot.id);
+                }
+            }
+        });
+    }
 
     /**
      * @param plot
@@ -598,6 +650,28 @@ public class DBFunc {
                     statement.close();
                 } catch (SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set helper for plot " + plot.id);
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    /**
+     * @param plot
+     * @param player
+     */
+    public static void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement = connection.prepareStatement("INSERT INTO `plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
+                    statement.setInt(1, getId(world, plot.id));
+                    statement.setString(2, player.getUniqueId().toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (SQLException e) {
+                    Logger.add(LogLevel.WARNING, "Failed to set plot trusted for plot " + plot.id);
                     e.printStackTrace();
                 }
             }
