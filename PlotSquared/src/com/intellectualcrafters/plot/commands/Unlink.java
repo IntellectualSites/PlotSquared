@@ -140,7 +140,7 @@ public class Unlink extends SubCommand {
             
         }
         
-        PlayerFunctions.sendMessage(plr, "&cPLOT UNLINKING IS NOT FINISHED (as you can see by the lack of roads appearing)");
+        PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
     /**
