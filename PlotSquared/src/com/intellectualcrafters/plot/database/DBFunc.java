@@ -64,7 +64,75 @@ public class DBFunc {
             }
         });
     }
+    
+    public static void createAllSettings() {
+        final ArrayList<Integer> ids = new ArrayList<Integer>();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `plot`");
+            ResultSet result = stmt.executeQuery();
+            while (result.next()) {
+                int id = result.getInt("id");
+                ids.add(id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (ids.size()==0) {
+            System.out.print("ERROR: No plots found");
+            return;
+        }
+        final StringBuilder statement = new StringBuilder("INSERT INTO `plot_settings`(`plot_plot_id`) values ");
+        for (int i = 0; i<ids.size()-1; i++) {
+            statement.append("(?),");
+        }
+        statement.append("(?)");
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(statement.toString());
+            for (int i = 0; i<ids.size(); i++) {
+                stmt.setInt(i+1, ids.get(i));
+            }
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Create a plot
+     * 
+     * @param plot
+     */
+    public static void createPlots(ArrayList<Plot> plots) {
+        if (plots.size()==0) {
+            return;
+        }
+        StringBuilder statement = new StringBuilder("INSERT INTO `plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ");
+        
+        for (int i = 0; i<plots.size()-1; i++) {
+            statement.append("(?, ?, ?, ?),");
+        }
+        statement.append("(?, ?, ?, ?)");
 
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(statement.toString());
+            for (int i = 0; i<plots.size(); i++) {
+                Plot plot = plots.get(i);
+                stmt.setInt(i*4+1, plot.id.x);
+                stmt.setInt(i*4+2, plot.id.y);
+                stmt.setString(i*4+3, plot.owner.toString());
+                stmt.setString(i*4+4, plot.world);
+            }
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.add(LogLevel.DANGER, "Failed to save plots!");
+        }
+    }
+    
     /**
      * Create a plot
      * 

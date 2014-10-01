@@ -13,6 +13,7 @@ import org.bukkit.World;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
@@ -35,6 +36,8 @@ public class PlotMeConverter {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             @Override
             public void run() {
+                ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
+                ArrayList<Integer> createdIds = new ArrayList<Integer>();
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots!=null) {
@@ -85,11 +88,13 @@ public class PlotMeConverter {
                             
                             // TODO createPlot doesn't add helpers / denied users
                             
-                            DBFunc.createPlot(pl);
-                            DBFunc.createPlotSettings(DBFunc.getId(world.getName(), pl.id), pl);
+                            createdPlots.add(pl);
                         }
                     }
                 }
+                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Saving to DB");
+                DBFunc.createPlots(createdPlots);
+                DBFunc.createAllSettings();
                 stream.close();
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
                 
