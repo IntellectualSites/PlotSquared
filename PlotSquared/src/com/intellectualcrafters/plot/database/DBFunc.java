@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -65,36 +66,88 @@ public class DBFunc {
         });
     }
     
-    public static void createAllSettings() {
-        final ArrayList<Integer> ids = new ArrayList<Integer>();
+    public static void createAllSettingsAndHelpers(ArrayList<Plot> plots) {
+        HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap< String, HashMap<PlotId, Integer>>();
+        HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<Integer, ArrayList<UUID>>();
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `plot`");
+            PreparedStatement stmt = connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `plot`");
             ResultSet result = stmt.executeQuery();
             while (result.next()) {
                 int id = result.getInt("id");
-                ids.add(id);
+                int idx = result.getInt("plot_id_x");
+                int idz = result.getInt("plot_id_z");
+                String world = result.getString("world");
+                
+                if (!stored.containsKey(world)) {
+                    stored.put(world,new HashMap<PlotId, Integer>());
+                }
+                stored.get(world).put(new PlotId(idx,idz), id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (ids.size()==0) {
-            System.out.print("ERROR: No plots found");
+        
+        for (Plot plot:plots) {
+            String world = Bukkit.getWorld(plot.world).getName();
+            if (stored.containsKey(world)) {
+                Integer id = stored.get(world).get(plot.id);
+                if (id!=null) {
+                    helpers.put(id,plot.helpers);
+                }
+            }
+        }
+        
+        if (helpers.size()==0) {
             return;
         }
-        final StringBuilder statement = new StringBuilder("INSERT INTO `plot_settings`(`plot_plot_id`) values ");
-        for (int i = 0; i<ids.size()-1; i++) {
+        
+        // add plot settings
+        Integer[] ids = helpers.keySet().toArray(new Integer[0]);
+        StringBuilder statement = new StringBuilder("INSERT INTO `plot_settings` (`plot_plot_id`) values ");
+        for (int i = 0; i<ids.length-1; i++) {
             statement.append("(?),");
         }
         statement.append("(?)");
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(statement.toString());
-            for (int i = 0; i<ids.size(); i++) {
-                stmt.setInt(i+1, ids.get(i));
+            for (int i = 0; i<ids.length; i++) {
+                stmt.setInt(i+1, ids[i]);
             }
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        // add plot helpers
+        String prefix = "";
+        statement = new StringBuilder("INSERT INTO `plot_helpers` (`plot_plot_id`, `user_uuid`) values ");
+        for (Integer id:helpers.keySet()) {
+            for (UUID helper:helpers.get(id)) {
+                statement.append(prefix+"(?, ?)");
+                prefix = ",";
+            }
+        }
+        if (prefix.equals("")) {
+            return;
+        }
+        try {
+            stmt = connection.prepareStatement(statement.toString());
+            int counter = 0;
+            for (Integer id:helpers.keySet()) {
+                for (UUID helper:helpers.get(id)) {
+                    
+                    stmt.setInt(counter*2+1, id);
+                    stmt.setString(counter*2+2, helper.toString());
+                    
+                    counter++;
+                }
+            }
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException e) {
+            Logger.add(LogLevel.WARNING, "Failed to set helper for plots");
             e.printStackTrace();
         }
     }

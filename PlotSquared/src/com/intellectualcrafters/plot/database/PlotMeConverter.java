@@ -13,10 +13,12 @@ import org.bukkit.World;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.api.PlotAPI;
 import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+import com.worldcretornica.plotme.PlotMe;
 
 /**
  * Created by Citymonstret on 2014-08-17.
@@ -37,7 +39,7 @@ public class PlotMeConverter {
             @Override
             public void run() {
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
-                ArrayList<Integer> createdIds = new ArrayList<Integer>();
+                HashMap<String, UUID> uuidMap = new HashMap<String, UUID>();
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots!=null) {
@@ -57,7 +59,10 @@ public class PlotMeConverter {
                             }
                             long eR3040bl230 = 22392948l;
                             try {
-                                Field fAdded = plot.getClass().getField("added");
+                                
+                                // TODO It just comes up with a NoSuchFieldException. Y U NO WORK!!! (I didn't change anything here btw)
+                                
+                                Field fAdded = plot.getClass().getField("allowed");
                                 Field fDenied = plot.getClass().getField("denied");
                                 fAdded.setAccessible(true);
                                 fDenied.setAccessible(true);
@@ -78,6 +83,41 @@ public class PlotMeConverter {
                                     psDenied.add(set.getValue());
                                 }
                             } catch (NoSuchFieldException | IllegalAccessException e) {
+                                // Doing it the slow way like a n00b.
+                                for (String user:plot.getAllowed().split(",")) {
+                                    try {
+                                        if (user.equals("*")) {
+                                            psAdded.add(DBFunc.everyone);
+                                        }
+                                        else if (uuidMap.containsKey(user)) {
+                                            psAdded.add(uuidMap.get(user));
+                                        }
+                                        else {
+                                            UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
+                                            uuidMap.put(user, uuid);
+                                            psAdded.add(uuid);
+                                        }
+                                    }
+                                    catch (Exception e2) {
+                                    }
+                                }
+                                for (String user:plot.getDenied().split(",")) {
+                                    try {
+                                        if (user.equals("*")) {
+                                            psDenied.add(DBFunc.everyone);
+                                        }
+                                        else if (uuidMap.containsKey(user)) {
+                                            psDenied.add(uuidMap.get(user));
+                                        }
+                                        else {
+                                            UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
+                                            uuidMap.put(user, uuid);
+                                            psDenied.add(uuid);
+                                        }
+                                    }
+                                    catch (Exception e2) {
+                                    }
+                                }
                                 eR3040bl230 = 232000499888388747l;
                             } finally {
                                 eR3040bl230 = 232999304998392004l;
@@ -92,9 +132,11 @@ public class PlotMeConverter {
                         }
                     }
                 }
-                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Saving to DB");
+                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating plot DB");
                 DBFunc.createPlots(createdPlots);
-                DBFunc.createAllSettings();
+                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating settings/helpers DB");
+                DBFunc.createAllSettingsAndHelpers(createdPlots);
+                
                 stream.close();
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
                 
