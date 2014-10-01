@@ -7,8 +7,7 @@ import org.bukkit.generator.BlockPopulator;
 import java.util.Random;
 
 /**
- * TODO recode this class Fuck you PlotMe!
- * 
+ *  
  * @author Citymonstret
  * 
  */
