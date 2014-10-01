@@ -93,7 +93,8 @@ public class PlotMain extends JavaPlugin {
      */
     public static CameraAPI cameraAPI;
 
-    public static WorldGuardPlugin worldGuard;
+    public static WorldGuardPlugin worldGuard = null;
+    public static WorldGuardListener worldGuardListener = null;
 
     public static Economy economy;
     public static boolean useEconomy;
@@ -548,7 +549,8 @@ public class PlotMain extends JavaPlugin {
         if (Settings.WORLDGUARD)
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
-            getServer().getPluginManager().registerEvents(new WorldGuardListener(this), this);
+            worldGuardListener = new WorldGuardListener(this);
+            getServer().getPluginManager().registerEvents(worldGuardListener, this);
         }
         if(Settings.AUTO_CLEAR) {
             checkExpired(PlotMain.getMain(), true);

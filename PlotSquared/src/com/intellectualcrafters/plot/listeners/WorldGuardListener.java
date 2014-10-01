@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.Plot;
@@ -14,7 +16,9 @@ import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -32,8 +36,55 @@ import org.bukkit.event.Listener;
  * Created by Citymonstret on 2014-09-24.
  */
 public class WorldGuardListener implements Listener {
+    public ArrayList<String> str_flags = new ArrayList<String>();
+    public ArrayList<Flag<?>> flags = new ArrayList<Flag<?>>();
+    
+    
     public WorldGuardListener(PlotMain plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        for (Flag<?> flag:DefaultFlag.getFlags()) {
+            str_flags.add(flag.getName());
+            flags.add(flag);
+        }
+    }
+    public void removeFlag(Player requester, World world, Plot plot,String key) {
+        boolean op = requester.isOp();
+        requester.setOp(true);
+        try {
+            RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
+            for (Flag flag:flags) {
+                if (flag.getName().equalsIgnoreCase(key)) {
+                    requester.performCommand("region flag "+(plot.id.x + "-" + plot.id.y)+" "+key);
+                }
+            }
+        }
+        catch (Exception e) {
+            requester.setOp(op);
+        }
+        finally {
+            requester.setOp(op);
+        }
+    }
+    
+    public void addFlag(Player requester, World world, Plot plot,String key, String value) {
+        boolean op = requester.isOp();
+        requester.setOp(true);
+        try {
+            RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
+            for (Flag flag:flags) {
+                if (flag.getName().equalsIgnoreCase(key)) {
+                    requester.performCommand("region flag "+(plot.id.x + "-" + plot.id.y)+" "+key+" "+value);
+                }
+            }
+        }
+        catch (Exception e) {
+            requester.setOp(op);
+        }
+        finally {
+            requester.setOp(op);
+        }
     }
 
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)

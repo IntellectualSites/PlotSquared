@@ -13,7 +13,7 @@ public class FlagManager {
     //  - greeting / leaving message
     //  OR in the flag command, allow users to set worldguard flags.
 
-    private static ArrayList<AbstractFlag> flags;
+    private static ArrayList<AbstractFlag> flags = new ArrayList<AbstractFlag>();
 
     /**
      * Register an AbstractFlag with PlotSquared

@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -59,16 +58,14 @@ public class Set extends SubCommand{
 			builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
 			builder.append(getArgumentList(values));
 			PlayerFunctions.sendMessage(plr, builder.toString());
-			return true;
+			return false;
 		}
-		
 		for(int i = 0; i < aliases.length; i++) {
 			if(aliases[i].equalsIgnoreCase(args[0])) {
 				args[0] = values[i];
 				break;
 			}
 		}
-
         /* TODO: Implement option */
         boolean advanced_permissions = false;
         if(advanced_permissions) {
@@ -80,10 +77,17 @@ public class Set extends SubCommand{
         
         if(args[0].equalsIgnoreCase("flag")) {
             if(args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", StringUtils.join(FlagManager.getFlags(),"&c, &6")));
+                String message = StringUtils.join(FlagManager.getFlags(),"&c, &6");
+                if (PlotMain.worldGuardListener != null) {
+                    if (message.equals(""))
+                        message = StringUtils.join(PlotMain.worldGuardListener.str_flags,"&c, &6");
+                    else
+                        message += ","+StringUtils.join(PlotMain.worldGuardListener.str_flags,"&c, &6");
+                }
+                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
                 return false;
             }
-            if (!FlagManager.getFlags().contains(args[1])) {
+            if (!FlagManager.getFlags().contains(args[1].toLowerCase()) && PlotMain.worldGuardListener != null && !PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
@@ -93,6 +97,12 @@ public class Set extends SubCommand{
             }
             if (args.length==2) {
                 if (plot.settings.getFlag(args[1].toLowerCase())==null) {
+                    if (PlotMain.worldGuardListener != null) {
+                        if (PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
+                            PlotMain.worldGuardListener.removeFlag(plr, plr.getWorld(), plot, args[1]);
+                            return false;
+                        }
+                    }
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
@@ -115,7 +125,11 @@ public class Set extends SubCommand{
             }
             try {
                 String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length)," ");
-                Flag flag = new Flag(FlagManager.getFlag(args[1], true), value);
+                if (FlagManager.getFlag(args[1].toLowerCase())==null && PlotMain.worldGuardListener != null) {
+                    PlotMain.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], value);
+                    return false;
+                }
+                Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), value);
                 PlotFlagAddEvent event = new PlotFlagAddEvent(flag,plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if(event.isCancelled()) {
@@ -338,8 +352,11 @@ public class Set extends SubCommand{
 			PlotHelper.adjustWallFilling(plr, plr.getWorld(), plot, (short)material.getId(), data);
 			return true;
 		}
-		PlayerFunctions.sendMessage(plr, "Not a valid option. Use {TODO: Insert list.}");
-		return true;
+		StringBuilder builder = new StringBuilder();
+        builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
+        builder.append(getArgumentList(values));
+        PlayerFunctions.sendMessage(plr, builder.toString());
+		return false;
 	}
 	
 	private String getMaterial(Material m) {
