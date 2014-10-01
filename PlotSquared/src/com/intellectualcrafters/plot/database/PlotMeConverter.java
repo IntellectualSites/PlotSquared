@@ -61,28 +61,60 @@ public class PlotMeConverter {
                             try {
                                 
                                 // TODO It just comes up with a NoSuchFieldException. Y U NO WORK!!! (I didn't change anything here btw)
-                                
-                                Field fAdded = plot.getClass().getField("allowed");
-                                Field fDenied = plot.getClass().getField("denied");
+                                Field fAdded = plot.getClass().getDeclaredField("allowed");
+                                Field fDenied = plot.getClass().getDeclaredField("denied");
                                 fAdded.setAccessible(true);
                                 fDenied.setAccessible(true);
                                 added = (PlayerList) fAdded.get(plot);
                                 denied = (PlayerList) fDenied.get(plot);
                                 for (Map.Entry<String, UUID> set : added.getAllPlayers().entrySet()) {
-                                    if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equalsIgnoreCase("*")) {
-                                        psAdded.add(com.intellectualcrafters.plot.database.DBFunc.everyone);
-                                        continue;
+                                    if (set.getValue() != null || set.getKey().equals("*")) {
+                                        if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equals("*")) {
+                                            psAdded.add(DBFunc.everyone);
+                                            continue;
+                                        }
+                                    }
+                                    else {
+                                        
+                                        /*
+                                         * Does this work for offline mode servers?
+                                         */
+                                        
+                                        if (uuidMap.containsKey(set.getKey())) {
+                                            psAdded.add(uuidMap.get(set.getKey()));
+                                            continue;
+                                        }
+                                        UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
+                                        if (value!=null) {
+                                            uuidMap.put(set.getKey(), value);
+                                            psAdded.add(value);
+                                            continue;
+                                        }
                                     }
                                     psAdded.add(set.getValue());
                                 }
                                 for (Map.Entry<String, UUID> set : denied.getAllPlayers().entrySet()) {
-                                    if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equalsIgnoreCase("*")) {
-                                        psDenied.add(com.intellectualcrafters.plot.database.DBFunc.everyone);
-                                        continue;
+                                    if (set.getValue() != null || set.getKey().equals("*")) {
+                                        if (set.getKey().equals("*") || set.getValue().toString().equals("*")) {
+                                            psDenied.add(DBFunc.everyone);
+                                            continue;
+                                        }
+                                    }
+                                    else {
+                                        if (uuidMap.containsKey(set.getKey())) {
+                                            psDenied.add(uuidMap.get(set.getKey()));
+                                            continue;
+                                        }
+                                        UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
+                                        if (value!=null) {
+                                            uuidMap.put(set.getKey(), value);
+                                            psDenied.add(value);
+                                            continue;
+                                        }
                                     }
                                     psDenied.add(set.getValue());
                                 }
-                            } catch (NoSuchFieldException | IllegalAccessException e) {
+                            } catch (Exception e) {
                                 // Doing it the slow way like a n00b.
                                 for (String user:plot.getAllowed().split(",")) {
                                     try {
