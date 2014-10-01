@@ -99,7 +99,7 @@ public class Info extends SubCommand {
     }
 
     private String getPlayerList(ArrayList<UUID> l) {
-        if ((l == null) || (l.size() < 1)) {
+        if (l == null || l.size() < 1) {
             return " none";
         }
         String c = C.PLOT_USER_LIST.s();
@@ -122,7 +122,7 @@ public class Info extends SubCommand {
             return "everyone";
         }
         OfflinePlayer plr = Bukkit.getOfflinePlayer(uuid);
-        if (plr == null) {
+        if (plr.getName() == null) {
             return "unknown";
         }
         return plr.getName();

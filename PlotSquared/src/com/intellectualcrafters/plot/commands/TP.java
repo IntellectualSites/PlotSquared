@@ -69,7 +69,7 @@ public class TP extends SubCommand {
 
     private Plot isAlias(World world, String a) {
         int index = 0;
-        if (a.contains(":")) {
+        if (a.contains(";")) {
             String[] split = a.split(";");
             if (split[1].length()>0 && StringUtils.isNumeric(split[1])) {
                 index = Integer.parseInt(split[1]);

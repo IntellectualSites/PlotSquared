@@ -97,7 +97,11 @@ public class list extends SubCommand {
         if (id == null) {
             return "none";
         }
-        return Bukkit.getOfflinePlayer(id).getName();
+        String name = Bukkit.getOfflinePlayer(id).getName();
+        if (name == null) {
+            return "none";
+        }
+        return name;
     }
 
     private String getArgumentList(String[] strings) {

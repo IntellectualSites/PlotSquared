@@ -83,9 +83,9 @@ import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 public class PlayerEvents implements Listener {
 
     private String getName(UUID uuid) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        String player = Bukkit.getOfflinePlayer(uuid).getName();
         if (player != null) {
-            return player.getName();
+            return player;
         }
         return "unknown";
     }
