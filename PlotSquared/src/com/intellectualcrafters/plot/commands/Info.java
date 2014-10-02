@@ -9,9 +9,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,11 +22,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * 
@@ -92,8 +91,8 @@ public class Info extends SubCommand {
         info = info.replaceAll("%trusted%", getPlayerList(plot.trusted));
         info = info.replaceAll("%denied%", getPlayerList(plot.denied));
         info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), ",") : "none");
-        PlayerFunctions.sendMessage(player, PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
-        PlayerFunctions.sendMessage(player, PlayerFunctions.getBottomPlot(player.getWorld(), plot).id.toString());
+        //PlayerFunctions.sendMessage(player, PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
+        //PlayerFunctions.sendMessage(player, PlayerFunctions.getBottomPlot(player.getWorld(), plot).id.toString());
         PlayerFunctions.sendMessage(player, info);
         return true;
     }

@@ -9,19 +9,17 @@
 
 package com.intellectualcrafters.plot;
 
-import com.google.common.collect.SetMultimap;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.sk89q.worldedit.blocks.ClothColor.ID;
-
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -442,10 +440,10 @@ public class PlotHelper {
         return x;
     }
 
-    public static double getWorldFolderSize() {
-        // long size =
-        // FileUtils.sizeOfDirectory(Bukkit.getWorld(Settings.PLOT_WORLD).getWorldFolder());
-        long size = 10;
+    public static double getWorldFolderSize(World world) {
+        //long size = FileUtil.sizeOfDirectory(world.getWorldFolder());
+        File folder = world.getWorldFolder();
+        long size = folder.length();
         return (((size) / 1024) / 1024);
     }
 
@@ -727,7 +725,23 @@ public class PlotHelper {
         }
         return new short[] { Short.parseShort(block), 0 };
     }
-    
+
+    public static void teleportPlayers(World world, Plot plot, boolean tile) {
+        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        final Location pos2 = getPlotTopLoc(world, plot.id);
+        for (int i = (pos2.getBlockX() / 16) * 16; i < 16 + (pos2. getBlockX() / 16) * 16; i= 16) {
+            for (int j = (pos1. getBlockZ() / 16) * 16; j < 16 + (pos2.getBlockZ() / 16) * 16; j += 16) {
+                Chunk chunk = world.getChunkAt(i, j);
+                for (Entity entity : chunk.getEntities()) {
+                    PlotId id = PlayerFunctions.getPlot(entity.getLocation());
+                    if(id != null && id.equals(plot.id) && entity.getType() == EntityType.PLAYER) {
+                        entity.teleport(world.getSpawnLocation());
+                        // Should this teleport them to floor instead?
+                    }
+                }
+            }
+        }
+    }
     public static void clearAllEntities(World world, Plot plot, boolean  tile) {
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
@@ -755,15 +769,15 @@ public class PlotHelper {
      * @param plot
      */
     public static void clear(final Player requester, final Plot plot) {
-        
-        // TODO teleport any players underground to the surface
-        
+
         final long start = System.nanoTime();
         final World world = requester.getWorld();
         
         // clear entities:
         clearAllEntities(world, plot, false);
-        
+        //teleport players
+        teleportPlayers(world, plot, false);
+
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);

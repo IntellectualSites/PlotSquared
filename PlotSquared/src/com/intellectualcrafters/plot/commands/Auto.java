@@ -93,6 +93,7 @@ public class Auto extends SubCommand {
                 PlotId end = new PlotId(x+size_x-1, z+size_z-1);
                 if (isUnowned(world, start, end)) {
                     // TODO claim event
+                    // Claim.claimPlot calls that event...
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = PlotHelper.getPlot(world, new PlotId(i,j));

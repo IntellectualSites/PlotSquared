@@ -1,24 +1,20 @@
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.PlotHomePosition;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.worldcretornica.plotme.PlayerList;
+import com.worldcretornica.plotme.Plot;
+import com.worldcretornica.plotme.PlotManager;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.api.PlotAPI;
-import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
-import com.worldcretornica.plotme.PlayerList;
-import com.worldcretornica.plotme.Plot;
-import com.worldcretornica.plotme.PlotManager;
-import com.worldcretornica.plotme.PlotMe;
 
 /**
  * Created by Citymonstret on 2014-08-17.
@@ -32,6 +28,10 @@ public class PlotMeConverter {
     }
 
     public void runAsync() throws Exception {
+
+        /* TODO Fix this... */
+        boolean offlineMode = Bukkit.getOnlineMode();
+
         final PrintStream stream = new PrintStream("converter_log.txt");
 
         PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has started");
@@ -174,7 +174,8 @@ public class PlotMeConverter {
                 
                 // TODO disable PlotMe -> Unload all plot worlds, change the generator, restart the server automatically
                 // Possibly use multiverse / multiworld if it's to difficult modifying a world's generator while the server is running
-                
+                // Should really do that? Would seem pretty bad from our side + bukkit wouldn't approve
+
                 Bukkit.getPluginManager().disablePlugin(PlotMeConverter.this.plugin);
             }
         });
