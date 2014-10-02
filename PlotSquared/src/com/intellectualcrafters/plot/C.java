@@ -18,7 +18,15 @@ import org.bukkit.ChatColor;
  * 
  */
 public enum C {
-    /**
+    /*
+     * Ratings
+     */
+    RATING_NOT_VALID("&cYou need to specify a number between 1 and 10"),
+    RATING_ALREADY_EXISTS("&cYou have already rated plot &c%s"),
+    RATING_APPLIED("&cYou successfully rated plot &6%s"),
+    RATING_NOT_YOUR_OWN("&cYou cannot rate your own plot"),
+    RATING_NOT_OWNED("&cYou cannot rate a plot that is not claimed by anyone"),
+    /*
      * Economy Stuff
      */
     CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"),
@@ -85,6 +93,7 @@ public enum C {
     /*
      * 
      */
+    COMMAND_WENT_WRONG("&cSomething went wrong when executing that command..."),
     /*
      * No {plot}
      */
@@ -124,7 +133,7 @@ public enum C {
     /*
      * Info
      */
-    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"), PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Trusted:&6%trusted%&c, plot Denied:&6%denied%&c, plot flags: &6%flags%"), PLOT_USER_LIST(" &6%user%&c,"),
+    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"), PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Trusted:&6%trusted%&c, plot Denied:&6%denied%&c, plot Rating: &6%rating%, &cplot flags: &6%flags%"), PLOT_USER_LIST(" &6%user%&c,"),
     /*
      * Generating
      */

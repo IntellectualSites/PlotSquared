@@ -90,6 +90,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%helpers%", getPlayerList(plot.helpers));
         info = info.replaceAll("%trusted%", getPlayerList(plot.trusted));
         info = info.replaceAll("%denied%", getPlayerList(plot.denied));
+        info = info.replaceAll("%rating%", "" + DBFunc.getRatings(plot));
         info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), ",") : "none");
         //PlayerFunctions.sendMessage(player, PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
         //PlayerFunctions.sendMessage(player, PlayerFunctions.getBottomPlot(player.getWorld(), plot).id.toString());
