@@ -42,6 +42,7 @@ import sun.java2d.pipe.hw.ExtendedBufferCapabilities.VSyncType;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,7 +92,7 @@ public class Setup extends SubCommand implements Listener {
                     value = Float.parseFloat(string);
                     break;
                 case "biome":
-                    value = Biome.valueOf(string.toUpperCase());
+                    value = (string.toUpperCase());
                     break;
                 case "block":
                     value = string;
@@ -160,6 +161,9 @@ public class Setup extends SubCommand implements Listener {
         }
 
         public Object getValue() {
+            if (this.value instanceof String[]) {
+                return (List<String>)(List<?>) Arrays.asList((String[]) this.value);
+            }
             return this.value;
         }
 
@@ -168,6 +172,9 @@ public class Setup extends SubCommand implements Listener {
         }
 
         public Object getDefaultValue() {
+            if (this.default_value instanceof String[]) {
+                return StringUtils.join((String[]) this.default_value,",");
+            }
             return this.default_value;
         }
 
@@ -230,7 +237,7 @@ public class Setup extends SubCommand implements Listener {
                 SetupStep[] steps = object.step;
                 String world = object.world;
                 for (SetupStep step:steps) {
-                    PlotMain.config.set("worlds."+world+"."+step.constant, step.value);
+                    PlotMain.config.set("worlds."+world+"."+step.constant, step.getValue());
                 }
                 try {
                     PlotMain.config.save(PlotMain.configFile);
@@ -238,8 +245,8 @@ public class Setup extends SubCommand implements Listener {
                     e.printStackTrace();
                 }
                 
-                World newWorld = WorldCreator.name(world).generator(new WorldGenerator(world)).createWorld();
-                plr.teleport(newWorld.getSpawnLocation());
+//                World newWorld = WorldCreator.name(world).generator(new WorldGenerator(world)).createWorld();
+//                plr.teleport(newWorld.getSpawnLocation());
                 
                 setupMap.remove(plr.getName());
                 
@@ -272,11 +279,17 @@ public class Setup extends SubCommand implements Listener {
                     sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
                     object.current++;
+                    if(object.getCurrent() == object.getMax()) {
+                        execute(plr, args);
+                        return true;
+                    }
                     step = object.step[object.current];
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType(), step.getDefaultValue() + "");
+                    return true;
                 } else {
                     sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType(), step.getDefaultValue() + "");
+                    return true;
                 }
             }
         } else {
@@ -300,7 +313,6 @@ public class Setup extends SubCommand implements Listener {
             sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType(), step.getDefaultValue() + "");
             return true;
         }
-        return true;
     }
 
 }

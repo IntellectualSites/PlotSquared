@@ -69,6 +69,7 @@ public class WorldGenerator extends ChunkGenerator {
     }
 
     public WorldGenerator(String world) {
+        
         YamlConfiguration config = PlotMain.config;
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
@@ -219,7 +220,7 @@ public class WorldGenerator extends ChunkGenerator {
     public short[][] generateExtBlockSections(World world, Random random, int cx, int cz, BiomeGrid biomes) {
         int maxY = world.getMaxHeight();
 
-        this.result = new short[maxY / 16][];
+        this.result = new short[maxY / 16][];   
         double pathWidthLower;
         if ((pathsize % 2) == 0) {
             pathWidthLower = Math.floor(this.pathsize / 2)-1;
