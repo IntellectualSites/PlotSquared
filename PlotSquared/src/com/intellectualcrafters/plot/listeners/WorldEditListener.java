@@ -57,7 +57,7 @@ public class WorldEditListener implements Listener {
         }
         Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
         if (plot != null) {
-            if ((plot != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+            if ((plot != null) && plot.hasOwner() && plot.helpers!=null && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                 PWE.setMask(p, l);
             }
         }

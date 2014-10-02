@@ -2,6 +2,8 @@ package com.intellectualcrafters.plot;
 
 import static com.intellectualcrafters.plot.ReflectionUtils.getRefClass;
 
+import org.bukkit.Bukkit;
+
 import com.intellectualcrafters.plot.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.ReflectionUtils.RefMethod;
 
@@ -40,8 +42,9 @@ public class SetBlockFast {
     }
 
     public static void update(org.bukkit.entity.Player player) {
-        for (int cx = -8; cx < 8; cx++) {
-            for (int cz = -8; cz < 8; cz++) {
+        int distance = Bukkit.getViewDistance()+1;
+        for (int cx = -distance; cx < distance; cx++) {
+            for (int cz = -distance; cz < distance; cz++) {
                 player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
             }
         }
