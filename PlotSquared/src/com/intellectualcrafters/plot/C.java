@@ -29,11 +29,11 @@ public enum C {
      */
     SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
     SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"),
-    SETUP_INVALID_ARG("&c%s is not a valid argument for step %s"),
+    SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: /plot setup cancel"),
     SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
-    SETUP_FINISHED("&cFinished setup for world &c%s"),
+    SETUP_FINISHED("&cFinished setup for world  &c%s. To create it, type &6/plots setup create"),
     SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
-    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup {world}&c)"),
+    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup {world}&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
     /*
      * Schematic Stuff
      */

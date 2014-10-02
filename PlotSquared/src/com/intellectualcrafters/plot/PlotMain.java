@@ -10,6 +10,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -25,8 +26,10 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -603,6 +606,14 @@ public class PlotMain extends JavaPlugin {
         if (Web.ENABLED) {
             sendConsoleSenderMessage(C.PREFIX.s() + "Web Is not implemented yet. Please bear with us.");
         }
+        
+        try {
+            new SetBlockFast();
+            PlotHelper.canSetFast = true;
+        } catch (Exception e) {
+            PlotHelper.canSetFast = false;
+        }
+        
     }
 
     /**

@@ -16,8 +16,11 @@ import com.sk89q.worldedit.blocks.ClothColor.ID;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 import java.util.*;
 
@@ -31,21 +34,6 @@ public class PlotHelper {
     public static boolean canSetFast = false;
     static long state = 1;
 
-    /**
-     * 
-     * @param blocks
-     * @param blocks_per_second
-     * @return
-     */
-    public PlotHelper() {
-        try {
-            new SetBlockFast();
-            canSetFast = true;
-        } catch (Exception e) {
-            canSetFast = false;
-        }
-    }
-    
     private static double calculateNeededTime(double blocks, double blocks_per_second) {
         return (blocks / blocks_per_second);
     }
@@ -740,6 +728,27 @@ public class PlotHelper {
         return new short[] { Short.parseShort(block), 0 };
     }
     
+    public static void clearAllEntities(World world, Plot plot, boolean  tile) {
+        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        final Location pos2 = getPlotTopLoc(world, plot.id);
+        for (int i = (pos1.getBlockX() / 16) * 16; i < 16+(pos2.getBlockX() / 16) * 16; i += 16) {
+            for (int j = (pos1.getBlockZ() / 16) * 16; j < 16+(pos2.getBlockZ() / 16) * 16; j += 16) {
+                Chunk chunk = world.getChunkAt(i, j);
+                for (Entity entity:chunk.getEntities()) {
+                    PlotId id = PlayerFunctions.getPlot(entity.getLocation());
+                    if (id!=null && id.equals(plot.id)) {
+                        entity.remove();
+                    }
+                }
+                if (tile) {
+                    for (BlockState entity:chunk.getTileEntities()) {
+                        entity.setRawData((byte) 0);
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Clear a plot
      * @param requester
@@ -750,10 +759,14 @@ public class PlotHelper {
         // TODO teleport any players underground to the surface
         
         final long start = System.nanoTime();
-        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
+        final World world = requester.getWorld();
+        
+        // clear entities:
+        clearAllEntities(world, plot, false);
+        
+        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
-        final World world = requester.getWorld();
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
         
