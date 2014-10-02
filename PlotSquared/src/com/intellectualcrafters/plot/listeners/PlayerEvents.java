@@ -200,7 +200,7 @@ public class PlayerEvents implements Listener {
             }
         }
         catch (Exception e) {
-            // Gotta catch them all.
+            // Gotta catch 'em all.
         }
     }
 

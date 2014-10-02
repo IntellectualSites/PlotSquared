@@ -144,6 +144,41 @@ public class PlotMain extends JavaPlugin {
         }
         return 0;
     }
+    
+    /**
+     * Check a player for a permission<br>
+     *  - Op has all permissions <br>
+     *  - checks for '*' nodes
+     * @param player
+     * @param perm
+     * @return
+     */
+    public static boolean hasPermissions(Player player, String[] perms) {
+        if (player.isOp()) {
+            return true;
+        }
+        for (String perm:perms) {
+            boolean hasperm = false;
+            if (player.hasPermission(perm)) {
+                hasperm = true;
+            }
+            else {
+                String[] nodes = perm.split("\\.");
+                StringBuilder n = new StringBuilder();
+                for(int i = 0; i < nodes.length-1; i++) {
+                    n.append(nodes[i]+".");
+                    if (player.hasPermission(n+"*")) {
+                        hasperm = true;
+                        break;
+                    }
+                }
+            }
+            if (!hasperm)
+                return false;
+        }
+        
+        return true;
+    }
 
     /**
      * Check a player for a permission<br>
