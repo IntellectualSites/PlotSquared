@@ -608,6 +608,12 @@ public class PlotMain extends JavaPlugin {
                         if (!res.next()) {
                             DBFunc.createTables("mysql", false);
                         }
+                        else {
+                            res = meta.getTables(null, null, "plot_ratings", null);
+                            if (!res.next()) {
+                                DBFunc.createTables("mysql", false);
+                            }
+                        }
                     }
                 }
             } catch (ClassNotFoundException | SQLException e) {
@@ -630,6 +636,17 @@ public class PlotMain extends JavaPlugin {
                     ResultSet res = meta.getTables(null, null, "plot", null);
                     if (!res.next()) {
                         DBFunc.createTables("sqlite", true);
+                    } else {
+                        res = meta.getTables(null, null, "plot_trusted", null);
+                        if (!res.next()) {
+                            DBFunc.createTables("sqlite", false);
+                        }
+                        else {
+                            res = meta.getTables(null, null, "plot_ratings", null);
+                            if (!res.next()) {
+                                DBFunc.createTables("sqlite", false);
+                            }
+                        }
                     }
                 }
             } catch (ClassNotFoundException | SQLException e) {

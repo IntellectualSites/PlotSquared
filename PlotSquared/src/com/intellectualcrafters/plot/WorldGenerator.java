@@ -287,6 +287,11 @@ public class WorldGenerator extends ChunkGenerator {
         // ROAD (0/24) The following is an inefficient placeholder as it is too
         // much work to finish it
 
+        if (pathsize>16 && ((plotMinX > roadStartX) || (plotMinZ > roadStartZ)) && !(roadStartX<16 && roadStartZ<16) && ((roadStartX>16 && roadStartZ>16) || (plotMinX > roadStartX) && (plotMinZ > roadStartZ))) {
+            setCuboidRegion(0, 16, 1, this.roadheight + 1, 0, 16, this.floor1);
+            return this.result;
+        }
+
         if (((plotMinZ + 1) <= 16) || ((roadStartZ <= 16) && (roadStartZ > 0))) {
             int start = Math.max((16 - plotMinZ - this.pathsize) + 1, (16 - roadStartZ) + 1);
             int end = Math.min(16 - plotMinZ - 1, (16 - roadStartZ) + this.pathsize);

@@ -739,23 +739,6 @@ public class PlotHelper {
         return new short[] { Short.parseShort(block), 0 };
     }
 
-    public static void teleportPlayers(World world, Plot plot, boolean tile) {
-        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = getPlotTopLoc(world, plot.id);
-        for (int i = (pos2.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i = 16) {
-            for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
-                Chunk chunk = world.getChunkAt(i, j);
-                for (Entity entity : chunk.getEntities()) {
-                    PlotId id = PlayerFunctions.getPlot(entity.getLocation());
-                    if ((id != null) && id.equals(plot.id) && (entity.getType() == EntityType.PLAYER)) {
-                        entity.teleport(world.getSpawnLocation());
-                        // Should this teleport them to floor instead?
-                    }
-                }
-            }
-        }
-    }
-
     public static void clearAllEntities(World world, Plot plot, boolean tile) {
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
@@ -765,7 +748,12 @@ public class PlotHelper {
                 for (Entity entity : chunk.getEntities()) {
                     PlotId id = PlayerFunctions.getPlot(entity.getLocation());
                     if ((id != null) && id.equals(plot.id)) {
-                        entity.remove();
+                        if (entity instanceof Player) {
+                            PlotMain.teleportPlayer((Player) entity, entity.getLocation(), plot);
+                        }
+                        else {
+                            entity.remove();
+                        }
                     }
                 }
                 if (tile) {
@@ -788,10 +776,8 @@ public class PlotHelper {
         final long start = System.nanoTime();
         final World world = requester.getWorld();
 
-        // clear entities:
+        // clear entities/teleport players
         clearAllEntities(world, plot, false);
-        // teleport players
-        teleportPlayers(world, plot, false);
 
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);

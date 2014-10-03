@@ -240,7 +240,6 @@ public class DBFunc {
         stmt.executeBatch();
         stmt.clearBatch();
         stmt.close();
-
     }
 
     /**

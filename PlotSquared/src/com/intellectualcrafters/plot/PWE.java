@@ -84,18 +84,12 @@ public class PWE {
     }
 
     public static void removeMask(Player p, LocalSession s) {
-        System.out.print(0);
         try {
-            System.out.print(1);
             s.setMask(null);
-            System.out.print(2);
         } catch (Throwable e) {
-            System.out.print(3);
             com.sk89q.worldedit.masks.Mask mask = null;
             s.setMask(mask);
-            System.out.print(4);
         }
-        System.out.print(5);
     }
 
     public static void removeMask(Player p) {
