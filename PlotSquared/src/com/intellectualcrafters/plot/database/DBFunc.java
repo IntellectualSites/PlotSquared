@@ -137,10 +137,9 @@ public class DBFunc {
             int counter = 0;
             for (Integer id : helpers.keySet()) {
                 for (UUID helper : helpers.get(id)) {
-
+                    
                     stmt.setInt((counter * 2) + 1, id);
                     stmt.setString((counter * 2) + 2, helper.toString());
-
                     counter++;
                 }
             }
@@ -214,7 +213,6 @@ public class DBFunc {
      */
     public static void createTables(String database, boolean add_constraint) throws SQLException {
         boolean mysql = database.equals("mysql");
-
         Statement stmt = connection.createStatement();
 
         if (mysql) {
@@ -236,7 +234,6 @@ public class DBFunc {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
         }
-
         stmt.executeBatch();
         stmt.clearBatch();
         stmt.close();

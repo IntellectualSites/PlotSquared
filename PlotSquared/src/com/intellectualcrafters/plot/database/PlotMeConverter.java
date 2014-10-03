@@ -4,15 +4,18 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
@@ -30,16 +33,14 @@ public class PlotMeConverter {
 
     public void runAsync() throws Exception {
 
-        Bukkit.getOnlineMode();
-
         final PrintStream stream = new PrintStream("converter_log.txt");
 
-        PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has started");
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             @Override
             public void run() {
+                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has started");
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
-                HashMap<String, UUID> uuidMap = new HashMap<String, UUID>();
+                Map<String, UUID> uuidMap = new HashMap<String, UUID>();
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots != null) {
@@ -47,11 +48,27 @@ public class PlotMeConverter {
                         // TODO generate configuration based on PlotMe config
                         // - Plugin doesn't display a message if database is not
                         // setup at all
-
+                        
+//                        List<String> names = new ArrayList<String>();
+//                        for (Plot plot : plots.values()) {
+//                            try {
+//                            String owner = plot.getOwner();
+//                            names.add(owner);
+//                            }
+//                            catch (Exception e) {
+//                                
+//                            }
+//                            
+//                        }
+//                        UUIDFetcher fetcher = new UUIDFetcher(names);
+//                        try {
+//                            uuidMap = fetcher.call();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+                        
                         PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {
-                            PlayerList denied = null;
-                            PlayerList added = null;
                             ArrayList<UUID> psAdded = new ArrayList<>();
                             ArrayList<UUID> psTrusted = new ArrayList<>();
                             ArrayList<UUID> psDenied = new ArrayList<>();
@@ -60,99 +77,90 @@ public class PlotMeConverter {
                             }
                             long eR3040bl230 = 22392948l;
                             try {
-
-                                // TODO It just comes up with a
-                                // NoSuchFieldException. Y U NO WORK!!! (I
-                                // didn't change anything here btw)
-                                Field fAdded = plot.getClass().getDeclaredField("allowed");
-                                Field fDenied = plot.getClass().getDeclaredField("denied");
-                                fAdded.setAccessible(true);
-                                fDenied.setAccessible(true);
-                                added = (PlayerList) fAdded.get(plot);
-                                denied = (PlayerList) fDenied.get(plot);
-                                for (Map.Entry<String, UUID> set : added.getAllPlayers().entrySet()) {
-                                    if ((set.getValue() != null) || set.getKey().equals("*")) {
-                                        if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equals("*")) {
-                                            psAdded.add(DBFunc.everyone);
-                                            continue;
+                                PlayerList denied = null;
+                                PlayerList added = null;
+                                if (Bukkit.getServer().getOnlineMode()) {
+                                    Field fAdded = plot.getClass().getDeclaredField("allowed");
+                                    Field fDenied = plot.getClass().getDeclaredField("denied");
+                                    fAdded.setAccessible(true);
+                                    fDenied.setAccessible(true);
+                                    added = (PlayerList) fAdded.get(plot);
+                                    denied = (PlayerList) fDenied.get(plot);
+                                    for (Map.Entry<String, UUID> set : added.getAllPlayers().entrySet()) {
+                                        if ((set.getValue() != null) || set.getKey().equals("*")) {
+                                            if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equals("*")) {
+                                                psAdded.add(DBFunc.everyone);
+                                                continue;
+                                            }
                                         }
-                                    } else {
-
-                                        /*
-                                         * Does this work for offline mode
-                                         * servers?
-                                         */
-
-                                        if (uuidMap.containsKey(set.getKey())) {
-                                            psAdded.add(uuidMap.get(set.getKey()));
-                                            continue;
-                                        }
-                                        UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
-                                        if (value != null) {
-                                            uuidMap.put(set.getKey(), value);
-                                            psAdded.add(value);
-                                            continue;
+                                        if (set.getValue()!=null) {
+                                            psAdded.add(set.getValue());
                                         }
                                     }
-                                    psAdded.add(set.getValue());
-                                }
-                                for (Map.Entry<String, UUID> set : denied.getAllPlayers().entrySet()) {
-                                    if ((set.getValue() != null) || set.getKey().equals("*")) {
-                                        if (set.getKey().equals("*") || set.getValue().toString().equals("*")) {
-                                            psDenied.add(DBFunc.everyone);
-                                            continue;
+                                    for (Map.Entry<String, UUID> set : denied.getAllPlayers().entrySet()) {
+                                        if ((set.getValue() != null) || set.getKey().equals("*")) {
+                                            if (set.getKey().equals("*") || set.getValue().toString().equals("*")) {
+                                                psDenied.add(DBFunc.everyone);
+                                                continue;
+                                            }
                                         }
-                                    } else {
-                                        if (uuidMap.containsKey(set.getKey())) {
-                                            psDenied.add(uuidMap.get(set.getKey()));
-                                            continue;
-                                        }
-                                        UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
-                                        if (value != null) {
-                                            uuidMap.put(set.getKey(), value);
-                                            psDenied.add(value);
-                                            continue;
+                                        if (set.getValue()!=null) {
+                                            psDenied.add(set.getValue());
                                         }
                                     }
-                                    psDenied.add(set.getValue());
                                 }
-                            } catch (Exception e) {
-                                // Doing it the slow way like a n00b.
-                                for (String user : plot.getAllowed().split(",")) {
+                                else {
+                                    for (String user : plot.getAllowed().split(",")) {
+                                        try {
+                                            if (user.equals("*")) {
+                                                psAdded.add(DBFunc.everyone);
+                                            } else if (uuidMap.containsKey(user)) {
+                                                psAdded.add(uuidMap.get(user));
+                                            } else {
+                                                UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
+                                                uuidMap.put(user, uuid);
+                                                psAdded.add(uuid);
+                                            }
+                                        } catch (Exception e2) {
+                                            e2.printStackTrace();
+                                        }
+                                    }
                                     try {
-                                        if (user.equals("*")) {
-                                            psAdded.add(DBFunc.everyone);
-                                        } else if (uuidMap.containsKey(user)) {
-                                            psAdded.add(uuidMap.get(user));
-                                        } else {
-                                            UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
-                                            uuidMap.put(user, uuid);
-                                            psAdded.add(uuid);
+                                        for (String user : plot.getDenied().split(",")) {
+                                            try {
+                                                if (user.equals("*")) {
+                                                    psDenied.add(DBFunc.everyone);
+                                                } else if (uuidMap.containsKey(user)) {
+                                                    psDenied.add(uuidMap.get(user));
+                                                } else {
+                                                    UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
+                                                    uuidMap.put(user, uuid);
+                                                    psDenied.add(uuid);
+                                                }
+                                            } catch (Exception e2) {
+                                                e2.printStackTrace();
+                                            }
                                         }
-                                    } catch (Exception e2) {
+                                    }
+                                    catch (Throwable e) {
+                                        
                                     }
                                 }
-                                for (String user : plot.getDenied().split(",")) {
-                                    try {
-                                        if (user.equals("*")) {
-                                            psDenied.add(DBFunc.everyone);
-                                        } else if (uuidMap.containsKey(user)) {
-                                            psDenied.add(uuidMap.get(user));
-                                        } else {
-                                            UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
-                                            uuidMap.put(user, uuid);
-                                            psDenied.add(uuid);
-                                        }
-                                    } catch (Exception e2) {
-                                    }
-                                }
+                            } catch (Throwable e) {
+                                e.printStackTrace();
                                 eR3040bl230 = 232000499888388747l;
                             } finally {
                                 eR3040bl230 = 232999304998392004l;
                             }
                             stream.println(eR3040bl230);
                             PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
-                            com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+                            com.intellectualcrafters.plot.Plot pl;
+                            if (Bukkit.getServer().getOnlineMode()) {
+                                pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+                            }
+                            else {
+                                pl = new com.intellectualcrafters.plot.Plot(id, Bukkit.getOfflinePlayer(plot.getOwner()).getUniqueId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+                            }
 
                             // TODO createPlot doesn't add helpers / denied
                             // users
@@ -165,10 +173,8 @@ public class PlotMeConverter {
                 DBFunc.createPlots(createdPlots);
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating settings/helpers DB");
                 DBFunc.createAllSettingsAndHelpers(createdPlots);
-
                 stream.close();
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
-
                 // TODO disable PlotMe -> Unload all plot worlds, change the
                 // generator, restart the server automatically
                 // Possibly use multiverse / multiworld if it's to difficult
