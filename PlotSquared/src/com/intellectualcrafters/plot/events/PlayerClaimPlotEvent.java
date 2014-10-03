@@ -27,6 +27,7 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
 
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed
+     * 
      * @param player
      * @param plot
      */
@@ -34,9 +35,10 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
         super(player);
         this.plot = plot;
     }
-    
+
     /**
      * Get the plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {

@@ -57,7 +57,7 @@ public class WorldEditListener implements Listener {
         }
         Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
         if (plot != null) {
-            if ((plot != null) && plot.hasOwner() && plot.helpers!=null && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+            if ((plot != null) && plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                 PWE.setMask(p, l);
             }
         }
@@ -106,14 +106,14 @@ public class WorldEditListener implements Listener {
         }
         Location f = e.getFrom();
         Player p = e.getPlayer();
-        
+
         if ((f.getBlockX() != t.getBlockX()) || (f.getBlockZ() != t.getBlockZ())) {
             PlotId idF = PlayerFunctions.getPlot(f);
             PlotId idT = PlayerFunctions.getPlot(t);
             if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
                 return;
             }
-            if (idT!=null && !(idF == idT)) {
+            if ((idT != null) && !(idF == idT)) {
                 PWE.setMask(p, t);
             }
         }
@@ -130,8 +130,7 @@ public class WorldEditListener implements Listener {
         if (!isPlotWorld(t)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
-            }
-            else {
+            } else {
                 return;
             }
         }
@@ -149,8 +148,7 @@ public class WorldEditListener implements Listener {
         if (!isPlotWorld(t)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
-            }
-            else {
+            } else {
                 return;
             }
         }

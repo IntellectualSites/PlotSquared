@@ -19,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -65,7 +64,6 @@ import org.bukkit.event.world.StructureGrowEvent;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
@@ -138,7 +136,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onChangeWorld(PlayerChangedWorldEvent event) {
-        if (isPlotWorld(event.getFrom()) && Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) {
+        if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
             event.getPlayer().setResourcePack("");
         } else {
             textures(event.getPlayer());
@@ -174,7 +172,7 @@ public class PlayerEvents implements Listener {
                             Bukkit.getPluginManager().callEvent(callEvent);
                         }
                         boolean admin = player.hasPermission("plots.admin");
-    
+
                         PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
                         if (plot.deny_entry(player) && !admin) {
                             event.setCancelled(true);
@@ -198,8 +196,7 @@ public class PlayerEvents implements Listener {
                     PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Gotta catch 'em all.
         }
     }
@@ -251,7 +248,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getBlock().getLocation())==null) {
+        if (PlayerFunctions.getPlot(event.getBlock().getLocation()) == null) {
             event.setCancelled(true);
         }
     }
@@ -271,7 +268,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation())==null) {
+        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation()) == null) {
             event.setCancelled(true);
         }
     }
@@ -488,7 +485,7 @@ public class PlayerEvents implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (PlayerFunctions.getPlot(event.getClickedBlock().getLocation())==null) {
+        if (PlayerFunctions.getPlot(event.getClickedBlock().getLocation()) == null) {
             event.setCancelled(true);
         }
     }

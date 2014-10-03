@@ -17,6 +17,7 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
 
     /**
      * PlayerEnterPlotEvent: Called when a player leaves a plot
+     * 
      * @param player
      * @param plot
      */
@@ -27,6 +28,7 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
 
     /**
      * Get the plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {

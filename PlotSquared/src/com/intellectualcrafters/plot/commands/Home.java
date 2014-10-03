@@ -26,6 +26,7 @@ public class Home extends SubCommand {
     public Home() {
         super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT);
     }
+
     private Plot isAlias(String a) {
         for (Plot p : PlotMain.getPlots()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {

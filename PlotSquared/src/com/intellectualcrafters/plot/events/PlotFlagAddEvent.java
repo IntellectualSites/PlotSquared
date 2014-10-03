@@ -28,6 +28,7 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
 
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot
+     * 
      * @param flag
      * @param plot
      */
@@ -38,6 +39,7 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
 
     /**
      * Get the plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {
@@ -46,6 +48,7 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
 
     /**
      * Get the flag involved
+     * 
      * @return Flag
      */
     public Flag getFlag() {

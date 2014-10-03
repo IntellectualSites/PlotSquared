@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.PlotMain;
  * Created by Citymonstret on 2014-09-20.
  */
 public class PlotWeb {
-    
+
     // TODO instructions on how to setup and use PlotWeb.
 
     public static PlotWeb PLOTWEB;

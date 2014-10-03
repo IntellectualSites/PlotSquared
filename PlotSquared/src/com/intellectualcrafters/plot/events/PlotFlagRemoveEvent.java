@@ -28,6 +28,7 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
 
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
+     * 
      * @param flag
      * @param plot
      */
@@ -35,21 +36,25 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
         this.plot = plot;
         this.flag = flag;
     }
+
     /**
      * Get the plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {
         return this.plot;
     }
+
     /**
      * Get the flag involved
+     * 
      * @return Flag
      */
     public Flag getFlag() {
         return this.flag;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

@@ -16,6 +16,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 import com.intellectualcrafters.plot.Plot;
+
 /**
  * Called when a player teleports to a plot
  */
@@ -26,8 +27,10 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     private Plot plot;
 
     private boolean cancelled;
+
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
+     * 
      * @param player
      * @param from
      * @param plot
@@ -45,6 +48,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
 
     /**
      * Get the from location
+     * 
      * @return Location
      */
     public Location getFrom() {
@@ -53,6 +57,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
 
     /**
      * Get the plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {

@@ -9,9 +9,15 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.Lag;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.RUtils;
 
 /**
  * @author Citymonstret \\SuperCharged Compiler made by Citymonstret\\
@@ -80,8 +86,9 @@ public class Debug extends SubCommand {
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PlotMain.getPlots().size()));
-            //information.append(getLine(line, "PlotWorld Size", PlotHelper.getWorldFolderSize() + "MB"));
-            for(String world : PlotMain.getPlotWorlds()) {
+            // information.append(getLine(line, "PlotWorld Size",
+            // PlotHelper.getWorldFolderSize() + "MB"));
+            for (String world : PlotMain.getPlotWorlds()) {
                 information.append(getLine(line, "World: " + world + " size", PlotHelper.getWorldFolderSize(Bukkit.getWorld(world))));
             }
             information.append(getLine(line, "Entities", PlotHelper.getEntities(plr.getWorld())));

@@ -11,7 +11,7 @@ import com.intellectualcrafters.plot.ReflectionUtils.RefMethod;
  * 
  * SetBlockFast class<br>
  * Used to do fast world editing
- *
+ * 
  */
 public class SetBlockFast {
 
@@ -42,7 +42,7 @@ public class SetBlockFast {
     }
 
     public static void update(org.bukkit.entity.Player player) {
-        int distance = Bukkit.getViewDistance()+1;
+        int distance = Bukkit.getViewDistance() + 1;
         for (int cx = -distance; cx < distance; cx++) {
             for (int cz = -distance; cz < distance; cz++) {
                 player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);

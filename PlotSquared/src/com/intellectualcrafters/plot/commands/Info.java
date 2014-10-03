@@ -9,11 +9,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,8 +20,11 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
  * 
@@ -76,7 +77,7 @@ public class Info extends SubCommand {
         if (plot.owner != null) {
             owner = Bukkit.getOfflinePlayer(plot.owner).getName();
         }
-        if (owner==null) {
+        if (owner == null) {
             owner = plot.owner.toString();
         }
 
@@ -92,14 +93,17 @@ public class Info extends SubCommand {
         info = info.replaceAll("%denied%", getPlayerList(plot.denied));
         info = info.replaceAll("%rating%", "" + DBFunc.getRatings(plot));
         info = info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), ",") : "none");
-        //PlayerFunctions.sendMessage(player, PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
-        //PlayerFunctions.sendMessage(player, PlayerFunctions.getBottomPlot(player.getWorld(), plot).id.toString());
+        // PlayerFunctions.sendMessage(player,
+        // PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
+        // PlayerFunctions.sendMessage(player,
+        // PlayerFunctions.getBottomPlot(player.getWorld(),
+        // plot).id.toString());
         PlayerFunctions.sendMessage(player, info);
         return true;
     }
 
     private String getPlayerList(ArrayList<UUID> l) {
-        if (l == null || l.size() < 1) {
+        if ((l == null) || (l.size() < 1)) {
             return " none";
         }
         String c = C.PLOT_USER_LIST.s();

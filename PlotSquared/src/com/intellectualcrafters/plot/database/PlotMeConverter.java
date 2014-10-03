@@ -1,20 +1,21 @@
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.worldcretornica.plotme.PlayerList;
-import com.worldcretornica.plotme.Plot;
-import com.worldcretornica.plotme.PlotManager;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import com.intellectualcrafters.plot.PlotHomePosition;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.worldcretornica.plotme.PlayerList;
+import com.worldcretornica.plotme.Plot;
+import com.worldcretornica.plotme.PlotManager;
 
 /**
  * Created by Citymonstret on 2014-08-17.
@@ -29,8 +30,7 @@ public class PlotMeConverter {
 
     public void runAsync() throws Exception {
 
-        /* TODO Fix this... */
-        boolean offlineMode = Bukkit.getOnlineMode();
+        Bukkit.getOnlineMode();
 
         final PrintStream stream = new PrintStream("converter_log.txt");
 
@@ -42,11 +42,12 @@ public class PlotMeConverter {
                 HashMap<String, UUID> uuidMap = new HashMap<String, UUID>();
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
-                    if (plots!=null) {
-                        
+                    if (plots != null) {
+
                         // TODO generate configuration based on PlotMe config
-                        //   - Plugin doesn't display a message if database is not setup at all
-                        
+                        // - Plugin doesn't display a message if database is not
+                        // setup at all
+
                         PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {
                             PlayerList denied = null;
@@ -59,8 +60,10 @@ public class PlotMeConverter {
                             }
                             long eR3040bl230 = 22392948l;
                             try {
-                                
-                                // TODO It just comes up with a NoSuchFieldException. Y U NO WORK!!! (I didn't change anything here btw)
+
+                                // TODO It just comes up with a
+                                // NoSuchFieldException. Y U NO WORK!!! (I
+                                // didn't change anything here btw)
                                 Field fAdded = plot.getClass().getDeclaredField("allowed");
                                 Field fDenied = plot.getClass().getDeclaredField("denied");
                                 fAdded.setAccessible(true);
@@ -68,24 +71,24 @@ public class PlotMeConverter {
                                 added = (PlayerList) fAdded.get(plot);
                                 denied = (PlayerList) fDenied.get(plot);
                                 for (Map.Entry<String, UUID> set : added.getAllPlayers().entrySet()) {
-                                    if (set.getValue() != null || set.getKey().equals("*")) {
+                                    if ((set.getValue() != null) || set.getKey().equals("*")) {
                                         if (set.getKey().equalsIgnoreCase("*") || set.getValue().toString().equals("*")) {
                                             psAdded.add(DBFunc.everyone);
                                             continue;
                                         }
-                                    }
-                                    else {
-                                        
+                                    } else {
+
                                         /*
-                                         * Does this work for offline mode servers?
+                                         * Does this work for offline mode
+                                         * servers?
                                          */
-                                        
+
                                         if (uuidMap.containsKey(set.getKey())) {
                                             psAdded.add(uuidMap.get(set.getKey()));
                                             continue;
                                         }
                                         UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
-                                        if (value!=null) {
+                                        if (value != null) {
                                             uuidMap.put(set.getKey(), value);
                                             psAdded.add(value);
                                             continue;
@@ -94,19 +97,18 @@ public class PlotMeConverter {
                                     psAdded.add(set.getValue());
                                 }
                                 for (Map.Entry<String, UUID> set : denied.getAllPlayers().entrySet()) {
-                                    if (set.getValue() != null || set.getKey().equals("*")) {
+                                    if ((set.getValue() != null) || set.getKey().equals("*")) {
                                         if (set.getKey().equals("*") || set.getValue().toString().equals("*")) {
                                             psDenied.add(DBFunc.everyone);
                                             continue;
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         if (uuidMap.containsKey(set.getKey())) {
                                             psDenied.add(uuidMap.get(set.getKey()));
                                             continue;
                                         }
                                         UUID value = Bukkit.getOfflinePlayer(set.getKey()).getUniqueId();
-                                        if (value!=null) {
+                                        if (value != null) {
                                             uuidMap.put(set.getKey(), value);
                                             psDenied.add(value);
                                             continue;
@@ -116,38 +118,32 @@ public class PlotMeConverter {
                                 }
                             } catch (Exception e) {
                                 // Doing it the slow way like a n00b.
-                                for (String user:plot.getAllowed().split(",")) {
+                                for (String user : plot.getAllowed().split(",")) {
                                     try {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
-                                        }
-                                        else if (uuidMap.containsKey(user)) {
+                                        } else if (uuidMap.containsKey(user)) {
                                             psAdded.add(uuidMap.get(user));
-                                        }
-                                        else {
+                                        } else {
                                             UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
                                             uuidMap.put(user, uuid);
                                             psAdded.add(uuid);
                                         }
-                                    }
-                                    catch (Exception e2) {
+                                    } catch (Exception e2) {
                                     }
                                 }
-                                for (String user:plot.getDenied().split(",")) {
+                                for (String user : plot.getDenied().split(",")) {
                                     try {
                                         if (user.equals("*")) {
                                             psDenied.add(DBFunc.everyone);
-                                        }
-                                        else if (uuidMap.containsKey(user)) {
+                                        } else if (uuidMap.containsKey(user)) {
                                             psDenied.add(uuidMap.get(user));
-                                        }
-                                        else {
+                                        } else {
                                             UUID uuid = Bukkit.getOfflinePlayer(user).getUniqueId();
                                             uuidMap.put(user, uuid);
                                             psDenied.add(uuid);
                                         }
-                                    }
-                                    catch (Exception e2) {
+                                    } catch (Exception e2) {
                                     }
                                 }
                                 eR3040bl230 = 232000499888388747l;
@@ -156,10 +152,11 @@ public class PlotMeConverter {
                             }
                             stream.println(eR3040bl230);
                             PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
-                            com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {false, false, false, false} );
-                            
-                            // TODO createPlot doesn't add helpers / denied users
-                            
+                            com.intellectualcrafters.plot.Plot pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+
+                            // TODO createPlot doesn't add helpers / denied
+                            // users
+
                             createdPlots.add(pl);
                         }
                     }
@@ -168,13 +165,16 @@ public class PlotMeConverter {
                 DBFunc.createPlots(createdPlots);
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating settings/helpers DB");
                 DBFunc.createAllSettingsAndHelpers(createdPlots);
-                
+
                 stream.close();
                 PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
-                
-                // TODO disable PlotMe -> Unload all plot worlds, change the generator, restart the server automatically
-                // Possibly use multiverse / multiworld if it's to difficult modifying a world's generator while the server is running
-                // Should really do that? Would seem pretty bad from our side + bukkit wouldn't approve
+
+                // TODO disable PlotMe -> Unload all plot worlds, change the
+                // generator, restart the server automatically
+                // Possibly use multiverse / multiworld if it's to difficult
+                // modifying a world's generator while the server is running
+                // Should really do that? Would seem pretty bad from our side +
+                // bukkit wouldn't approve
 
                 Bukkit.getPluginManager().disablePlugin(PlotMeConverter.this.plugin);
             }

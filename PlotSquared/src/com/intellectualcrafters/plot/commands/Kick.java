@@ -15,9 +15,6 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -35,11 +32,11 @@ public class Kick extends SubCommand {
             return false;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if ((plot==null || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length!=1) {
+        if (args.length != 1) {
             PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
             return false;
         }
@@ -47,8 +44,8 @@ public class Kick extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }
-        Player player = Bukkit.getPlayer(args[0]); 
-        if (!player.getWorld().equals(plr.getWorld()) || !PlayerFunctions.isInPlot(player) || PlayerFunctions.getCurrentPlot(player)==null || !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
+        Player player = Bukkit.getPlayer(args[0]);
+        if (!player.getWorld().equals(plr.getWorld()) || !PlayerFunctions.isInPlot(player) || (PlayerFunctions.getCurrentPlot(player) == null) || !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
             PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }

@@ -9,8 +9,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -71,13 +69,13 @@ public class TP extends SubCommand {
         int index = 0;
         if (a.contains(";")) {
             String[] split = a.split(";");
-            if (split[1].length()>0 && StringUtils.isNumeric(split[1])) {
+            if ((split[1].length() > 0) && StringUtils.isNumeric(split[1])) {
                 index = Integer.parseInt(split[1]);
             }
             a = split[0];
         }
-        Player player = Bukkit.getPlayer(a); 
-        if (player!=null) {
+        Player player = Bukkit.getPlayer(a);
+        if (player != null) {
             Plot[] plots = PlotMain.getPlots(world, player).toArray(new Plot[0]);
             if (plots.length > index) {
                 return plots[index];

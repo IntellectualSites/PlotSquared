@@ -5,18 +5,19 @@ import java.util.List;
 import java.util.Set;
 
 public class FlagManager {
-    
+
     // TODO add some flags
-    //  - Plot clear interval
-    //  - Mob cap
-    //  - customized plot composition
-    //  - greeting / leaving message
-    //  OR in the flag command, allow users to set worldguard flags.
+    // - Plot clear interval
+    // - Mob cap
+    // - customized plot composition
+    // - greeting / leaving message
+    // OR in the flag command, allow users to set worldguard flags.
 
     private static ArrayList<AbstractFlag> flags = new ArrayList<AbstractFlag>();
 
     /**
      * Register an AbstractFlag with PlotSquared
+     * 
      * @param flag
      * @return
      */
@@ -29,6 +30,7 @@ public class FlagManager {
 
     /**
      * Get a list of registered AbstractFlag objects
+     * 
      * @return List (AbstractFlag)
      */
     public static List<AbstractFlag> getFlags() {
@@ -36,8 +38,8 @@ public class FlagManager {
     }
 
     /**
-     * Get an AbstractFlag by a string
-     * Returns null if flag does not exist
+     * Get an AbstractFlag by a string Returns null if flag does not exist
+     * 
      * @param string
      * @return AbstractFlag
      */
@@ -55,7 +57,7 @@ public class FlagManager {
      * 
      * @param string
      * @param create
-     *      If to create the flag if it does not exist
+     *            If to create the flag if it does not exist
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(String string, boolean create) {
@@ -66,12 +68,12 @@ public class FlagManager {
         }
         return getFlag(string);
     }
-    
+
     /**
      * Remove a registered AbstractFlag
+     * 
      * @param flag
-     * @return boolean
-     *      Result of operation
+     * @return boolean Result of operation
      */
     public static boolean removeFlag(AbstractFlag flag) {
         return flags.remove(flag);
@@ -79,6 +81,7 @@ public class FlagManager {
 
     /**
      * Get the flags for a plot
+     * 
      * @param plot
      * @return List (AbstractFlag)
      */

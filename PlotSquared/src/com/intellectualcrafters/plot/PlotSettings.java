@@ -15,8 +15,6 @@ import java.util.Set;
 
 import org.bukkit.block.Biome;
 
-import com.intellectualcrafters.plot.RUtils.Direction;
-
 /**
  * plot settings
  * 
@@ -27,7 +25,7 @@ public class PlotSettings {
     /**
      * merged plots
      */
-    private boolean[] merged = new boolean[] {false,false,false,false};
+    private boolean[] merged = new boolean[] { false, false, false, false };
     /**
      * plot alias
      */
@@ -62,35 +60,37 @@ public class PlotSettings {
     public PlotSettings(Plot plot) {
         this.alias = "";
     }
-    
+
     /**
      * <b>Check if the plot is merged in a direction</b><br>
      * 0 = North<br>
      * 1 = East<br>
      * 2 = South<br>
      * 3 = West<br>
+     * 
      * @param direction
      * @return boolean
      */
     public boolean getMerged(int direction) {
-        return merged[direction];
+        return this.merged[direction];
     }
-    
+
     public boolean isMerged() {
-        return (merged[0] || merged[1] || merged[2] || merged[3]);
+        return (this.merged[0] || this.merged[1] || this.merged[2] || this.merged[3]);
     }
-    
+
     public boolean[] getMerged() {
         return this.merged;
     }
-    
+
     public void setMerged(boolean[] merged) {
         this.merged = merged;
     }
-    
+
     public void setMerged(int direction, boolean merged) {
         this.merged[direction] = merged;
     }
+
     /**
      * 
      * @param b

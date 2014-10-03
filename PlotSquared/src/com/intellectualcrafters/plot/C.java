@@ -21,27 +21,15 @@ public enum C {
     /*
      * Ratings
      */
-    RATING_NOT_VALID("&cYou need to specify a number between 1 and 10"),
-    RATING_ALREADY_EXISTS("&cYou have already rated plot &c%s"),
-    RATING_APPLIED("&cYou successfully rated plot &6%s"),
-    RATING_NOT_YOUR_OWN("&cYou cannot rate your own plot"),
-    RATING_NOT_OWNED("&cYou cannot rate a plot that is not claimed by anyone"),
+    RATING_NOT_VALID("&cYou need to specify a number between 1 and 10"), RATING_ALREADY_EXISTS("&cYou have already rated plot &c%s"), RATING_APPLIED("&cYou successfully rated plot &6%s"), RATING_NOT_YOUR_OWN("&cYou cannot rate your own plot"), RATING_NOT_OWNED("&cYou cannot rate a plot that is not claimed by anyone"),
     /*
      * Economy Stuff
      */
-    CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"),
-    CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"),
-    REMOVED_BALANCE("&6%s &chas been taken from your balance"),
+    CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"), CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"), REMOVED_BALANCE("&6%s &chas been taken from your balance"),
     /*
      * Setup Stuff
      */
-    SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
-    SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"),
-    SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: /plot setup cancel"),
-    SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
-    SETUP_FINISHED("&cFinished setup for world  &c%s.\n&4If you are using MULTIVERSE or MULTIWORLD you will need to import this world. Otherwise you will need to add this world to the 'bukkit.yml' file (See installation tutorial for more info)"),
-    SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
-    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup {world}&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
+    SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"), SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"), SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: /plot setup cancel"), SETUP_VALID_ARG("&cValue &6%s &cset for step %s"), SETUP_FINISHED("&cFinished setup for world  &c%s.\n&4If you are using MULTIVERSE or MULTIWORLD you will need to import this world. Otherwise you will need to add this world to the 'bukkit.yml' file (See installation tutorial for more info)"), SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"), SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup {world}&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
     /*
      * Schematic Stuff
      */
@@ -77,11 +65,9 @@ public enum C {
     /*
      * Permission
      */
-    NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"),
-    NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
+    NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"), NO_PERMISSION("&cYou don't have the permissions required to use this command."), NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"), CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."), YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
 
-    NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."), UNLINK_IMPOSSIBLE("&cYou can only unlink a mega-plot"),
-    NO_MERGE_TO_MEGA("&cMega plots cannot be merged into. Please merge from the desired mega plot."),
+    NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"), UNLINK_REQUIRED("&cAn unlink is required to do this."), UNLINK_IMPOSSIBLE("&cYou can only unlink a mega-plot"), NO_MERGE_TO_MEGA("&cMega plots cannot be merged into. Please merge from the desired mega plot."),
     /*
      * Commands
      */
@@ -223,13 +209,13 @@ public enum C {
 
     /**
      * Constructor
-     *
+     * 
      * @param d
      *            default
      */
     C(String d) {
         this.d = d;
-        if(PlotMain.translations == null) {
+        if (PlotMain.translations == null) {
             this.s = d;
         } else {
             this.s = PlotMain.translations.getString(this.toString());
@@ -241,7 +227,7 @@ public enum C {
 
     /**
      * Get the default string
-     *
+     * 
      * @return default
      */
     @SuppressWarnings("unused")
@@ -251,7 +237,7 @@ public enum C {
 
     /**
      * Get translated if exists
-     *
+     * 
      * @return translated if exists else default
      */
     public String s() {
@@ -262,7 +248,7 @@ public enum C {
     }
 
     /**
-     *
+     * 
      * @return translated and color decoded
      */
     public String translated() {

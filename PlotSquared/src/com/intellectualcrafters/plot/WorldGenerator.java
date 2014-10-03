@@ -1,5 +1,32 @@
 package com.intellectualcrafters.plot;
 
+import static com.intellectualcrafters.plot.PlotWorld.AUTO_MERGE_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.DEFAULT_FLAGS_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.MAIN_BLOCK_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.PLOT_BIOME_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.PLOT_CHAT_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.PLOT_HEIGHT_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.PLOT_WIDTH_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.ROAD_BLOCK_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.ROAD_HEIGHT_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.ROAD_STRIPES_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.ROAD_STRIPES_ENABLED_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.ROAD_WIDTH_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.SCHEMATIC_FILE_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.TOP_BLOCK_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.WALL_BLOCK_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.WALL_FILLING_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.WALL_HEIGHT_DEFAULT;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,14 +35,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static com.intellectualcrafters.plot.PlotWorld.*;
-
 /**
- *  
+ * 
  * @auther Empire92
  * @author Citymonstret
  * 
@@ -69,7 +90,7 @@ public class WorldGenerator extends ChunkGenerator {
     }
 
     public WorldGenerator(String world) {
-        
+
         YamlConfiguration config = PlotMain.config;
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
@@ -91,11 +112,20 @@ public class WorldGenerator extends ChunkGenerator {
         options.put("worlds." + world + ".schematic.on_claim", SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("worlds." + world + ".schematic.file", SCHEMATIC_FILE_DEFAULT);
         options.put("worlds." + world + ".flags.default", DEFAULT_FLAGS_DEFAULT);
-        options.put("worlds." + world + ".schematic.schematics", plotworld.SCHEMATICS);
-        options.put("worlds." + world + ".schematic.specify_on_claim", plotworld.SCHEMATIC_CLAIM_SPECIFY);
-        options.put("worlds." + world + ".economy.use", plotworld.USE_ECONOMY); // Access should be static
-        options.put("worlds." + world + ".economy.prices.claim", plotworld.PLOT_PRICE); // Access should be static
-        options.put("worlds." + world + ".economy.prices.merge", plotworld.MERGE_PRICE); // Access should be static
+        options.put("worlds." + world + ".schematic.schematics", this.plotworld.SCHEMATICS);
+        options.put("worlds." + world + ".schematic.specify_on_claim", this.plotworld.SCHEMATIC_CLAIM_SPECIFY);
+        options.put("worlds." + world + ".economy.use", this.plotworld.USE_ECONOMY); // Access
+                                                                                     // should
+                                                                                     // be
+                                                                                     // static
+        options.put("worlds." + world + ".economy.prices.claim", this.plotworld.PLOT_PRICE); // Access
+                                                                                             // should
+                                                                                             // be
+                                                                                             // static
+        options.put("worlds." + world + ".economy.prices.merge", this.plotworld.MERGE_PRICE); // Access
+                                                                                              // should
+                                                                                              // be
+                                                                                              // static
         options.put("worlds." + world + ".chat.enabled", PLOT_CHAT_DEFAULT);
         for (Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -220,12 +250,11 @@ public class WorldGenerator extends ChunkGenerator {
     public short[][] generateExtBlockSections(World world, Random random, int cx, int cz, BiomeGrid biomes) {
         int maxY = world.getMaxHeight();
 
-        this.result = new short[maxY / 16][];   
+        this.result = new short[maxY / 16][];
         double pathWidthLower;
-        if ((pathsize % 2) == 0) {
-            pathWidthLower = Math.floor(this.pathsize / 2)-1;
-        }
-        else {
+        if ((this.pathsize % 2) == 0) {
+            pathWidthLower = Math.floor(this.pathsize / 2) - 1;
+        } else {
             pathWidthLower = Math.floor(this.pathsize / 2);
         }
         final int prime = 31;

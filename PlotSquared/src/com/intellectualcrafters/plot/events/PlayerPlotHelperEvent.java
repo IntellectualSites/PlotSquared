@@ -18,8 +18,10 @@ public class PlayerPlotHelperEvent extends Event {
     private Player initiator;
     private boolean added;
     private UUID player;
+
     /**
      * PlayerPlotHelperEvent: Called when a plot helper is added/removed
+     * 
      * @param initiator
      * @param plot
      * @param player
@@ -31,30 +33,37 @@ public class PlayerPlotHelperEvent extends Event {
         this.added = added;
         this.player = player;
     }
-    
+
     /**
-     * If a player was added 
+     * If a player was added
+     * 
      * @return boolean
      */
     public boolean wasAdded() {
         return this.added;
     }
+
     /**
      * The UUID added/removed
+     * 
      * @return UUID
      */
     public UUID getPlayer() {
         return this.player;
     }
+
     /**
      * The plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {
         return this.plot;
     }
+
     /**
      * The player initiating the action
+     * 
      * @return Player
      */
     public Player getInitiator() {

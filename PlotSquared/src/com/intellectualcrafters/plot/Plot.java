@@ -106,7 +106,7 @@ public class Plot implements Cloneable {
      * @param denied
      * @param changeTime
      * @param time
-     * @param merged 
+     * @param merged
      */
     public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> trusted, ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias, PlotHomePosition position, Flag[] flags, String world, boolean[] merged) {
         this.id = id;
@@ -157,7 +157,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean hasRights(Player player) {
-        return player.hasPermission("plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(player.getUniqueId())) || ((this.owner != null) && this.owner.equals(player.getUniqueId())) || (this.owner != null && this.trusted != null && Bukkit.getPlayer(this.owner) != null && (this.trusted.contains(player.getUniqueId()) || this.trusted.contains(DBFunc.everyone)));
+        return player.hasPermission("plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(player.getUniqueId())) || ((this.owner != null) && this.owner.equals(player.getUniqueId())) || ((this.owner != null) && (this.trusted != null) && (Bukkit.getPlayer(this.owner) != null) && (this.trusted.contains(player.getUniqueId()) || this.trusted.contains(DBFunc.everyone)));
     }
 
     /**
@@ -225,7 +225,6 @@ public class Plot implements Cloneable {
     public void addHelper(UUID uuid) {
         this.helpers.add(uuid);
     }
-    
 
     /**
      * Add someone as a trusted user (use DBFunc as well)
@@ -265,7 +264,7 @@ public class Plot implements Cloneable {
     public void removeHelper(UUID uuid) {
         this.helpers.remove(uuid);
     }
-    
+
     /**
      * Remove a trusted user (use DBFunc as well)
      * 

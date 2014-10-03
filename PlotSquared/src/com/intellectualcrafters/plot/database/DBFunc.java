@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.PlotMain;
  * @author Citymonstret
  */
 public class DBFunc {
-    
+
     // TODO MongoDB @Brandon
 
     /**
@@ -65,9 +65,9 @@ public class DBFunc {
             }
         });
     }
-    
+
     public static void createAllSettingsAndHelpers(ArrayList<Plot> plots) {
-        HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap< String, HashMap<PlotId, Integer>>();
+        HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<String, HashMap<PlotId, Integer>>();
         HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<Integer, ArrayList<UUID>>();
         try {
             PreparedStatement stmt = connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `plot`");
@@ -77,55 +77,55 @@ public class DBFunc {
                 int idx = result.getInt("plot_id_x");
                 int idz = result.getInt("plot_id_z");
                 String world = result.getString("world");
-                
+
                 if (!stored.containsKey(world)) {
-                    stored.put(world,new HashMap<PlotId, Integer>());
+                    stored.put(world, new HashMap<PlotId, Integer>());
                 }
-                stored.get(world).put(new PlotId(idx,idz), id);
+                stored.get(world).put(new PlotId(idx, idz), id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        for (Plot plot:plots) {
+
+        for (Plot plot : plots) {
             String world = Bukkit.getWorld(plot.world).getName();
             if (stored.containsKey(world)) {
                 Integer id = stored.get(world).get(plot.id);
-                if (id!=null) {
-                    helpers.put(id,plot.helpers);
+                if (id != null) {
+                    helpers.put(id, plot.helpers);
                 }
             }
         }
-        
-        if (helpers.size()==0) {
+
+        if (helpers.size() == 0) {
             return;
         }
-        
+
         // add plot settings
         Integer[] ids = helpers.keySet().toArray(new Integer[0]);
         StringBuilder statement = new StringBuilder("INSERT INTO `plot_settings` (`plot_plot_id`) values ");
-        for (int i = 0; i<ids.length-1; i++) {
+        for (int i = 0; i < (ids.length - 1); i++) {
             statement.append("(?),");
         }
         statement.append("(?)");
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(statement.toString());
-            for (int i = 0; i<ids.length; i++) {
-                stmt.setInt(i+1, ids[i]);
+            for (int i = 0; i < ids.length; i++) {
+                stmt.setInt(i + 1, ids[i]);
             }
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         // add plot helpers
         String prefix = "";
         statement = new StringBuilder("INSERT INTO `plot_helpers` (`plot_plot_id`, `user_uuid`) values ");
-        for (Integer id:helpers.keySet()) {
-            for (UUID helper:helpers.get(id)) {
-                statement.append(prefix+"(?, ?)");
+        for (Integer id : helpers.keySet()) {
+            for (UUID helper : helpers.get(id)) {
+                statement.append(prefix + "(?, ?)");
                 prefix = ",";
             }
         }
@@ -135,12 +135,12 @@ public class DBFunc {
         try {
             stmt = connection.prepareStatement(statement.toString());
             int counter = 0;
-            for (Integer id:helpers.keySet()) {
-                for (UUID helper:helpers.get(id)) {
-                    
-                    stmt.setInt(counter*2+1, id);
-                    stmt.setString(counter*2+2, helper.toString());
-                    
+            for (Integer id : helpers.keySet()) {
+                for (UUID helper : helpers.get(id)) {
+
+                    stmt.setInt((counter * 2) + 1, id);
+                    stmt.setString((counter * 2) + 2, helper.toString());
+
                     counter++;
                 }
             }
@@ -151,19 +151,19 @@ public class DBFunc {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Create a plot
      * 
      * @param plot
      */
     public static void createPlots(ArrayList<Plot> plots) {
-        if (plots.size()==0) {
+        if (plots.size() == 0) {
             return;
         }
         StringBuilder statement = new StringBuilder("INSERT INTO `plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ");
-        
-        for (int i = 0; i<plots.size()-1; i++) {
+
+        for (int i = 0; i < (plots.size() - 1); i++) {
             statement.append("(?, ?, ?, ?),");
         }
         statement.append("(?, ?, ?, ?)");
@@ -171,12 +171,12 @@ public class DBFunc {
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(statement.toString());
-            for (int i = 0; i<plots.size(); i++) {
+            for (int i = 0; i < plots.size(); i++) {
                 Plot plot = plots.get(i);
-                stmt.setInt(i*4+1, plot.id.x);
-                stmt.setInt(i*4+2, plot.id.y);
-                stmt.setString(i*4+3, plot.owner.toString());
-                stmt.setString(i*4+4, plot.world);
+                stmt.setInt((i * 4) + 1, plot.id.x);
+                stmt.setInt((i * 4) + 2, plot.id.y);
+                stmt.setString((i * 4) + 3, plot.owner.toString());
+                stmt.setString((i * 4) + 4, plot.world);
             }
             stmt.executeUpdate();
             stmt.close();
@@ -185,7 +185,7 @@ public class DBFunc {
             Logger.add(LogLevel.DANGER, "Failed to save plots!");
         }
     }
-    
+
     /**
      * Create a plot
      * 
@@ -415,7 +415,7 @@ public class DBFunc {
                 boolean rain;
                 try {
                     rain = (int) settings.get("rain") == 1 ? true : false;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     rain = false;
                 }
                 String alias = (String) settings.get("alias");
@@ -436,10 +436,10 @@ public class DBFunc {
                     position = PlotHomePosition.DEFAULT;
                 }
                 int merged_int = settings.get("merged") == null ? 0 : (int) settings.get("merged");
-                
+
                 boolean[] merged = new boolean[4];
                 for (int i = 0; i < 4; i++) {
-                    merged[3-i] = (merged_int & (1 << i)) != 0;
+                    merged[3 - i] = (merged_int & (1 << i)) != 0;
                 }
                 p = new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, /* changeTime */false, time, rain, alias, position, flags, worldname, merged);
                 if (plots.containsKey(worldname)) {
@@ -481,7 +481,7 @@ public class DBFunc {
             }
         });
     }
-    
+
     public static void setMerged(final String world, final Plot plot, final boolean[] merged) {
         plot.settings.setMerged(merged);
         runTask(new Runnable() {
@@ -691,7 +691,7 @@ public class DBFunc {
         }
         return l;
     }
-    
+
     /**
      * @param id
      * @return
@@ -736,7 +736,7 @@ public class DBFunc {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -780,7 +780,7 @@ public class DBFunc {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -849,18 +849,18 @@ public class DBFunc {
 
     public static double getRatings(final Plot plot) {
         try {
-          PreparedStatement statement = connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `plot_ratings` WHERE `plot_plot_id` = ? ");
-          statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
-          ResultSet set = statement.executeQuery();
-          double rating = 0;
-          while(set.next()) {
-              rating = set.getDouble("rating");
-          }
-          statement.close();
-          return rating;
+            PreparedStatement statement = connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `plot_ratings` WHERE `plot_plot_id` = ? ");
+            statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
+            ResultSet set = statement.executeQuery();
+            double rating = 0;
+            while (set.next()) {
+                rating = set.getDouble("rating");
+            }
+            statement.close();
+            return rating;
         } catch (SQLException e) {
-          Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
-          e.printStackTrace();
+            Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
+            e.printStackTrace();
         }
         return 0.0d;
     }

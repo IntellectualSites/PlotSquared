@@ -11,9 +11,9 @@ public class PlotSquaredException extends RuntimeException {
     }
 
     public static enum PlotError {
-        MISSING_DEPENDENCY("Missing Dependency")
-        ;
+        MISSING_DEPENDENCY("Missing Dependency");
         private String errorHeader;
+
         PlotError(String errorHeader) {
             this.errorHeader = errorHeader;
         }

@@ -20,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.AbstractFlag;
 import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.FlagManager;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;

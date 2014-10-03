@@ -10,16 +10,12 @@
 package com.intellectualcrafters.plot.events;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
-import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotId;
 
 /**
@@ -34,6 +30,7 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
 
     /**
      * Called when a mega-plot is unlinked.
+     * 
      * @param world
      * @param plots
      */
@@ -41,9 +38,10 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
         this.plots = plots;
         this.world = world;
     }
-    
+
     /**
      * Get the plots involved
+     * 
      * @return PlotId
      */
     public ArrayList<PlotId> getPlots() {
@@ -53,7 +51,7 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     public World getWorld() {
         return this.world;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

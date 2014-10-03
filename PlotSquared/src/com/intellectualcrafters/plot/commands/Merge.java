@@ -9,15 +9,24 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.events.PlotMergeEvent;
+import java.util.ArrayList;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.SetBlockFast;
+import com.intellectualcrafters.plot.events.PlotMergeEvent;
 
 /**
  * 
@@ -27,8 +36,8 @@ import java.util.ArrayList;
 public class Merge extends SubCommand {
 
     public static String[] values = new String[] { "north", "east", "south", "west" };
-    public static String[] aliases = new String[] { "n", "e", "s", "w"};
-    
+    public static String[] aliases = new String[] { "n", "e", "s", "w" };
+
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS);
     }
@@ -36,25 +45,25 @@ public class Merge extends SubCommand {
     public static String direction(float yaw) {
         yaw = yaw / 90;
         int i = Math.round(yaw);
-        switch(i) {
-            case -4:
-            case  0:
-            case  4:
-                return "SOUTH";
-            case -1:
-            case  3:
-                return "EAST";
-            case -2:
-            case  2:
-                return "NORTH";
-            case -3:
-            case  1:
-                return "WEST";
-            default:
-                return "";
+        switch (i) {
+        case -4:
+        case 0:
+        case 4:
+            return "SOUTH";
+        case -1:
+        case 3:
+            return "EAST";
+        case -2:
+        case 2:
+            return "NORTH";
+        case -3:
+        case 1:
+            return "WEST";
+        default:
+            return "";
         }
     }
-    
+
     @Override
     public boolean execute(Player plr, String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -62,7 +71,7 @@ public class Merge extends SubCommand {
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (plot==null || !plot.hasOwner()) {
+        if ((plot == null) || !plot.hasOwner()) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -70,20 +79,20 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length<1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+        if (args.length < 1) {
+            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
             PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         int direction = -1;
-        for (int i = 0; i<values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
                 direction = i;
                 break;
             }
         }
-        if (direction==-1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values,C.BLOCK_LIST_SEPARATER.s()));
+        if (direction == -1) {
+            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
             PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
@@ -92,35 +101,35 @@ public class Merge extends SubCommand {
         PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
         ArrayList<PlotId> plots;
         switch (direction) {
-            case 0: // north = -y
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y-1), new PlotId(top.x,top.y));
-                break;
-            case 1: // east = +x
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x+1,top.y));
-                break;
-            case 2: // south = +y
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x,bot.y), new PlotId(top.x,top.y+1));
-                break;
-            case 3: // west = -x
-                plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x-1,bot.y), new PlotId(top.x,top.y));
-                break;
-            default:
-                return false;
+        case 0: // north = -y
+            plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+            break;
+        case 1: // east = +x
+            plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+            break;
+        case 2: // south = +y
+            plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+            break;
+        case 3: // west = -x
+            plots = PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+            break;
+        default:
+            return false;
         }
         for (PlotId myid : plots) {
             Plot myplot = PlotMain.getPlots(world).get(myid);
-            if (myplot==null || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
+            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
         }
 
         PlotWorld plotWorld = PlotMain.getWorldSettings(world);
-        if(PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
+        if (PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
-            if(cost > 0d) {
+            if (cost > 0d) {
                 Economy economy = PlotMain.economy;
-                if(economy.getBalance(plr) < cost) {
+                if (economy.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
                 }
@@ -130,7 +139,7 @@ public class Merge extends SubCommand {
         }
 
         PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
-        
+
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);

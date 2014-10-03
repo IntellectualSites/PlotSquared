@@ -24,8 +24,10 @@ public class PlotClearEvent extends Event implements Cancellable {
 
     private PlotId id;
     private String world;
+
     /**
      * PlotDeleteEvent: Called when a plot is cleared
+     * 
      * @param world
      * @param id
      */
@@ -36,6 +38,7 @@ public class PlotClearEvent extends Event implements Cancellable {
 
     /**
      * Get the PlotId
+     * 
      * @return PlotId
      */
     public PlotId getPlotId() {
@@ -44,6 +47,7 @@ public class PlotClearEvent extends Event implements Cancellable {
 
     /**
      * Get the world name
+     * 
      * @return String
      */
     public String getWorld() {

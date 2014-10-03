@@ -18,8 +18,11 @@ public class PlayerPlotDeniedEvent extends Event {
     private Player initiator;
     private boolean added;
     private UUID player;
+
     /**
-     * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a plot
+     * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a
+     * plot
+     * 
      * @param initiator
      * @param plot
      * @param player
@@ -34,27 +37,34 @@ public class PlayerPlotDeniedEvent extends Event {
 
     /**
      * If a user was added
+     * 
      * @return boolean
      */
     public boolean wasAdded() {
         return this.added;
     }
+
     /**
      * The player added/removed
+     * 
      * @return UUID
      */
     public UUID getPlayer() {
         return this.player;
     }
+
     /**
      * The plot involved
+     * 
      * @return Plot
      */
     public Plot getPlot() {
         return this.plot;
     }
+
     /**
      * The player initiating the action
+     * 
      * @return Player
      */
     public Player getInitiator() {

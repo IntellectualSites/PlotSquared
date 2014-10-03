@@ -22,11 +22,9 @@ import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotSettings;
 import com.intellectualcrafters.plot.PlotWorld;
 import com.intellectualcrafters.plot.SetBlockFast;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
 
 /**
@@ -43,6 +41,7 @@ public class Unlink extends SubCommand {
     private int pathsize;
     private int wallheight;
     private int roadheight;
+
     public Unlink() {
         super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS);
     }
@@ -54,7 +53,7 @@ public class Unlink extends SubCommand {
             return true;
         }
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if ((plot==null || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -66,28 +65,30 @@ public class Unlink extends SubCommand {
         PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
         PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
         ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(world, pos1, pos2);
-        
+
         PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
-        
+
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
             PlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
         }
-        
-        for (PlotId id:ids) {
+
+        for (PlotId id : ids) {
             Plot myplot = PlotMain.getPlots(world).get(id);
-            
-            if (plot.helpers!=null)
+
+            if (plot.helpers != null) {
                 myplot.helpers = plot.helpers;
-            if (plot.denied!=null)
+            }
+            if (plot.denied != null) {
                 myplot.denied = plot.denied;
+            }
             myplot.deny_entry = plot.deny_entry;
-            myplot.settings.setMerged(new boolean[] {false, false, false, false} );
+            myplot.settings.setMerged(new boolean[] { false, false, false, false });
             DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
         }
-        
+
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         this.pathsize = plotworld.ROAD_WIDTH;
         this.roadheight = plotworld.ROAD_HEIGHT;
@@ -108,105 +109,109 @@ public class Unlink extends SubCommand {
         this.f1_v = (byte) result_f1[1];
         //
 
-        // Floor 2
-        short[] result_f2 = PlotHelper.getBlock(plotworld.ROAD_STRIPES);
+        PlotHelper.getBlock(plotworld.ROAD_STRIPES);
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 boolean lx = x < pos2.x;
                 boolean ly = y < pos2.y;
-                
-                PlotId id = new PlotId(x,y);
-                
+
+                PlotId id = new PlotId(x, y);
+
                 if (lx) {
                     setRoadX(world, id);
-                    
+
                     if (ly) {
                         setRoadXY(world, id);
                     }
-                    
+
                 }
-                
+
                 if (ly) {
                     setRoadY(world, id);
                 }
-                
+
             }
         }
-        
+
         try {
             SetBlockFast.update(plr);
+        } catch (Exception e) {
+
         }
-        catch (Exception e) {
-            
-        }
-        
+
         PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
+
     /**
      * Setting the road with the greatest X value
+     * 
      * @param world
      * @param id
      */
     public void setRoadX(World w, PlotId id) {
         Location pos1 = PlotHelper.getPlotBottomLocAbs(w, id);
         Location pos2 = PlotHelper.getPlotTopLocAbs(w, id);
-        
-        int sx = pos2.getBlockX()+1;
-        int ex = sx + pathsize - 1;
-        int sz = pos1.getBlockZ()-1;
-        int ez = pos2.getBlockZ()+2;
-        
-        PlotHelper.setSimpleCuboid(w, new Location(w,sx,Math.min(wallheight, roadheight)+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
-        
-        PlotHelper.setCuboid(w, new Location(w,sx,1,sz+1), new Location(w,sx+1,wallheight+1,ez), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,sx,wallheight+1,sz+1), new Location(w,sx+1,wallheight+2,ez), new short[] {w_id}, new short[] {w_v});
-        
-        PlotHelper.setCuboid(w, new Location(w,ex,1,sz+1), new Location(w,ex+1,wallheight+1,ez), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,ex,wallheight+1,sz+1), new Location(w,ex+1,wallheight+2,ez), new short[] {w_id}, new short[] {w_v});
-        
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
+
+        int sx = pos2.getBlockX() + 1;
+        int ex = (sx + this.pathsize) - 1;
+        int sz = pos1.getBlockZ() - 1;
+        int ez = pos2.getBlockZ() + 2;
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(this.wallheight, this.roadheight) + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), (short) 0);
+
+        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz + 1), new Location(w, sx + 1, this.wallheight + 1, ez), new short[] { this.wf_id }, new short[] { this.wf_v });
+        PlotHelper.setCuboid(w, new Location(w, sx, this.wallheight + 1, sz + 1), new Location(w, sx + 1, this.wallheight + 2, ez), new short[] { this.w_id }, new short[] { this.w_v });
+
+        PlotHelper.setCuboid(w, new Location(w, ex, 1, sz + 1), new Location(w, ex + 1, this.wallheight + 1, ez), new short[] { this.wf_id }, new short[] { this.wf_v });
+        PlotHelper.setCuboid(w, new Location(w, ex, this.wallheight + 1, sz + 1), new Location(w, ex + 1, this.wallheight + 2, ez), new short[] { this.w_id }, new short[] { this.w_v });
+
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, this.roadheight + 1, ez), new short[] { this.f1_id }, new short[] { this.f1_v });
     }
+
     /**
      * Setting the road with the greatest Y value
+     * 
      * @param world
      * @param id
      */
-    
+
     public void setRoadY(World w, PlotId id) {
         Location pos1 = PlotHelper.getPlotBottomLocAbs(w, id);
         Location pos2 = PlotHelper.getPlotTopLocAbs(w, id);
-        
-        int sz = pos2.getBlockZ()+1;
-        int ez = sz + pathsize - 1;
-        int sx = pos1.getBlockX()-1;
-        int ex = pos2.getBlockX()+2;
-        
-        PlotHelper.setSimpleCuboid(w, new Location(w,sx,Math.min(wallheight, roadheight)+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
-        
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz), new Location(w,ex,wallheight+1,sz+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,sx+1,wallheight+1,sz), new Location(w,ex,wallheight+2,sz+1), new short[] {w_id}, new short[] {w_v});
-        
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz), new Location(w,ex,wallheight+1,sz+1), new short[] {wf_id}, new short[] {wf_v});
-        PlotHelper.setCuboid(w, new Location(w,sx+1,wallheight+1,ez), new Location(w,ex,wallheight+2,ez+1), new short[] {w_id}, new short[] {w_v});
-        
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
+
+        int sz = pos2.getBlockZ() + 1;
+        int ez = (sz + this.pathsize) - 1;
+        int sx = pos1.getBlockX() - 1;
+        int ex = pos2.getBlockX() + 2;
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(this.wallheight, this.roadheight) + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), (short) 0);
+
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, this.wallheight + 1, sz + 1), new short[] { this.wf_id }, new short[] { this.wf_v });
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, this.wallheight + 1, sz), new Location(w, ex, this.wallheight + 2, sz + 1), new short[] { this.w_id }, new short[] { this.w_v });
+
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, this.wallheight + 1, sz + 1), new short[] { this.wf_id }, new short[] { this.wf_v });
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, this.wallheight + 1, ez), new Location(w, ex, this.wallheight + 2, ez + 1), new short[] { this.w_id }, new short[] { this.w_v });
+
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, this.roadheight + 1, ez), new short[] { this.f1_id }, new short[] { this.f1_v });
     }
+
     /**
      * Setting the intersection with the greatest X and Y value
+     * 
      * @param world
      * @param id
      */
     public void setRoadXY(World w, PlotId id) {
         Location pos2 = PlotHelper.getPlotTopLocAbs(w, id);
-        
-        int sx = pos2.getBlockX()+1;
-        int ex = sx + pathsize - 1;
-        int sz = pos2.getBlockZ()+1;
-        int ez = sz + pathsize - 1;
-        
-        PlotHelper.setSimpleCuboid(w, new Location(w,sx,roadheight+1,sz+1), new Location(w,ex+1,257+1,ez), (short) 0);
-        
-        PlotHelper.setCuboid(w, new Location(w,sx+1,1,sz+1), new Location(w,ex,roadheight+1,ez), new short[] {f1_id}, new short[] {f1_v});
+
+        int sx = pos2.getBlockX() + 1;
+        int ex = (sx + this.pathsize) - 1;
+        int sz = pos2.getBlockZ() + 1;
+        int ez = (sz + this.pathsize) - 1;
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, this.roadheight + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), (short) 0);
+
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, this.roadheight + 1, ez), new short[] { this.f1_id }, new short[] { this.f1_v });
     }
 }

@@ -10,14 +10,11 @@
 package com.intellectualcrafters.plot.events;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotId;
@@ -35,32 +32,36 @@ public class PlotMergeEvent extends Event implements Cancellable {
 
     /**
      * PlotMergeEvent: Called when plots are merged
+     * 
      * @param player
      * @param plot
      */
     public PlotMergeEvent(World world, Plot plot, ArrayList<PlotId> plots) {
         this.plots = plots;
     }
-    
+
     /**
      * Get the plots being added;
+     * 
      * @return Plot
      */
     public ArrayList<PlotId> getPlots() {
         return this.plots;
     }
+
     /**
      * Get the main plot
+     * 
      * @return Plot
      */
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     public World getWorld() {
         return this.world;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

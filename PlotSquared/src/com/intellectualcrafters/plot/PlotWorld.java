@@ -1,28 +1,35 @@
 package com.intellectualcrafters.plot;
 
-import org.bukkit.Material;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
+
 /**
- * This is the PlotWorld class (obviously)
- * <br> - All existing PlotWorld instances should be kept in PlotMain (worlds variable)
- * <br> - The accessors and mutators are: 
- * <br> PlotMain.isPlotWorld(world)
- * <br> PlotMain.getPlotWorlds() or PlotMain.getPlotWorldsString() <- use this if you don't need to get world objects
- * <br> PlotMain.getWorldSettings(World) - get the PlotWorld class for a world
- * <br> 
- * <br> Also added is getWorldPlots(World) as the plots are now sorted per world
- * <br> 
- * <br> To get the world of a plot, you can use plot.world - (string)   or plot.getWorld() (world object)
- * <br> 
- * <br> All PlotWorld settings are per world in the settings.yml (these settings are automatically added when a world is loaded, either at startup or if a new world is created):
- * <br>  - You can find this in the WorldGenerator class (yeah, it's possibly not the best place, but it makes sure worlds are added to the settings.yml)
- * <br> 
- * <br> All new DEFAULT CONSTANTS should be static and be given a value
- * <br> All new variables should not be static and should not be given any values here, but rather in the WorldGenerator class
- *  
+ * This is the PlotWorld class (obviously) <br>
+ * - All existing PlotWorld instances should be kept in PlotMain (worlds
+ * variable) <br>
+ * - The accessors and mutators are: <br>
+ * PlotMain.isPlotWorld(world) <br>
+ * PlotMain.getPlotWorlds() or PlotMain.getPlotWorldsString() <- use this if you
+ * don't need to get world objects <br>
+ * PlotMain.getWorldSettings(World) - get the PlotWorld class for a world <br>
+ * <br>
+ * Also added is getWorldPlots(World) as the plots are now sorted per world <br>
+ * <br>
+ * To get the world of a plot, you can use plot.world - (string) or
+ * plot.getWorld() (world object) <br>
+ * <br>
+ * All PlotWorld settings are per world in the settings.yml (these settings are
+ * automatically added when a world is loaded, either at startup or if a new
+ * world is created): <br>
+ * - You can find this in the WorldGenerator class (yeah, it's possibly not the
+ * best place, but it makes sure worlds are added to the settings.yml) <br>
+ * <br>
+ * All new DEFAULT CONSTANTS should be static and be given a value <br>
+ * All new variables should not be static and should not be given any values
+ * here, but rather in the WorldGenerator class
+ * 
  **/
 public class PlotWorld {
 

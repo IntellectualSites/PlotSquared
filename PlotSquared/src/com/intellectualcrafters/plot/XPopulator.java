@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot;
 
+import java.util.Random;
+
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
-import java.util.Random;
-
 /**
- *  
+ * 
  * @author Citymonstret
  * 
  */
@@ -124,10 +124,9 @@ public class XPopulator extends BlockPopulator {
             this.f_id[i] = result[0];
             this.f_v[i] = result[1];
         }
-        if ((pathsize % 2) == 0) {
-            pathWidthLower = Math.floor(this.pathsize / 2)-1;
-        }
-        else {
+        if ((this.pathsize % 2) == 0) {
+            this.pathWidthLower = Math.floor(this.pathsize / 2) - 1;
+        } else {
             this.pathWidthLower = Math.floor(this.pathsize / 2);
         }
     }

@@ -81,7 +81,10 @@ public class Settings {
      * 
      */
     public static class DB {
-        public static boolean USE_MONGO = false; /* TODO: Implement Mongo @Brandon */;
+        public static boolean USE_MONGO = false; /*
+                                                  * TODO: Implement Mongo
+                                                  * @Brandon
+                                                  */;
         public static boolean USE_SQLITE = false;
         public static boolean USE_MYSQL = true; /* NOTE: Fixed connector */
         public static String SQLITE_DB = "storage";

@@ -90,8 +90,6 @@ public abstract class SubCommand {
         this.category = category;
     }
 
-
-
     /**
      * Execute.
      * 
@@ -109,6 +107,7 @@ public abstract class SubCommand {
 
     /**
      * Send a message
+     * 
      * @param plr
      * @param c
      * @param args

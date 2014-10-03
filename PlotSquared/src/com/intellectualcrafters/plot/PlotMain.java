@@ -9,6 +9,126 @@
 
 package com.intellectualcrafters.plot;
 
+import static org.bukkit.Material.ACACIA_STAIRS;
+import static org.bukkit.Material.BEACON;
+import static org.bukkit.Material.BEDROCK;
+import static org.bukkit.Material.BIRCH_WOOD_STAIRS;
+import static org.bukkit.Material.BOOKSHELF;
+import static org.bukkit.Material.BREWING_STAND;
+import static org.bukkit.Material.BRICK;
+import static org.bukkit.Material.BRICK_STAIRS;
+import static org.bukkit.Material.BURNING_FURNACE;
+import static org.bukkit.Material.CAKE_BLOCK;
+import static org.bukkit.Material.CAULDRON;
+import static org.bukkit.Material.CLAY;
+import static org.bukkit.Material.CLAY_BRICK;
+import static org.bukkit.Material.COAL_BLOCK;
+import static org.bukkit.Material.COAL_ORE;
+import static org.bukkit.Material.COBBLESTONE;
+import static org.bukkit.Material.COBBLESTONE_STAIRS;
+import static org.bukkit.Material.COBBLE_WALL;
+import static org.bukkit.Material.COMMAND;
+import static org.bukkit.Material.DARK_OAK_STAIRS;
+import static org.bukkit.Material.DAYLIGHT_DETECTOR;
+import static org.bukkit.Material.DIAMOND_BLOCK;
+import static org.bukkit.Material.DIAMOND_ORE;
+import static org.bukkit.Material.DIRT;
+import static org.bukkit.Material.DISPENSER;
+import static org.bukkit.Material.DROPPER;
+import static org.bukkit.Material.EMERALD_BLOCK;
+import static org.bukkit.Material.EMERALD_ORE;
+import static org.bukkit.Material.ENCHANTMENT_TABLE;
+import static org.bukkit.Material.ENDER_PORTAL_FRAME;
+import static org.bukkit.Material.ENDER_STONE;
+import static org.bukkit.Material.FURNACE;
+import static org.bukkit.Material.GLASS;
+import static org.bukkit.Material.GLOWSTONE;
+import static org.bukkit.Material.GOLD_BLOCK;
+import static org.bukkit.Material.GOLD_ORE;
+import static org.bukkit.Material.GRASS;
+import static org.bukkit.Material.GRAVEL;
+import static org.bukkit.Material.HARD_CLAY;
+import static org.bukkit.Material.HAY_BLOCK;
+import static org.bukkit.Material.HUGE_MUSHROOM_1;
+import static org.bukkit.Material.HUGE_MUSHROOM_2;
+import static org.bukkit.Material.IRON_BLOCK;
+import static org.bukkit.Material.IRON_ORE;
+import static org.bukkit.Material.JACK_O_LANTERN;
+import static org.bukkit.Material.JUKEBOX;
+import static org.bukkit.Material.JUNGLE_WOOD_STAIRS;
+import static org.bukkit.Material.LAPIS_BLOCK;
+import static org.bukkit.Material.LAPIS_ORE;
+import static org.bukkit.Material.LEAVES;
+import static org.bukkit.Material.LEAVES_2;
+import static org.bukkit.Material.LOG;
+import static org.bukkit.Material.LOG_2;
+import static org.bukkit.Material.MELON_BLOCK;
+import static org.bukkit.Material.MOB_SPAWNER;
+import static org.bukkit.Material.MOSSY_COBBLESTONE;
+import static org.bukkit.Material.MYCEL;
+import static org.bukkit.Material.NETHERRACK;
+import static org.bukkit.Material.NETHER_BRICK;
+import static org.bukkit.Material.NETHER_BRICK_STAIRS;
+import static org.bukkit.Material.NOTE_BLOCK;
+import static org.bukkit.Material.OBSIDIAN;
+import static org.bukkit.Material.PACKED_ICE;
+import static org.bukkit.Material.PUMPKIN;
+import static org.bukkit.Material.QUARTZ_BLOCK;
+import static org.bukkit.Material.QUARTZ_ORE;
+import static org.bukkit.Material.QUARTZ_STAIRS;
+import static org.bukkit.Material.REDSTONE_BLOCK;
+import static org.bukkit.Material.SAND;
+import static org.bukkit.Material.SANDSTONE;
+import static org.bukkit.Material.SANDSTONE_STAIRS;
+import static org.bukkit.Material.SMOOTH_BRICK;
+import static org.bukkit.Material.SMOOTH_STAIRS;
+import static org.bukkit.Material.SNOW_BLOCK;
+import static org.bukkit.Material.SOUL_SAND;
+import static org.bukkit.Material.SPONGE;
+import static org.bukkit.Material.SPRUCE_WOOD_STAIRS;
+import static org.bukkit.Material.STONE;
+import static org.bukkit.Material.WOOD;
+import static org.bukkit.Material.WOOD_STAIRS;
+import static org.bukkit.Material.WOOL;
+import static org.bukkit.Material.WORKBENCH;
+import static org.bukkit.Material.getMaterial;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+
+import me.confuser.barapi.BarAPI;
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import ca.mera.CameraAPI;
 
 import com.intellectualcrafters.plot.Logger.LogLevel;
@@ -26,31 +146,6 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
-import me.confuser.barapi.BarAPI;
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.*;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static org.bukkit.Material.*;
 
 /**
  * @awesome @author Citymonstret, Empire92 PlotMain class.
@@ -120,10 +215,11 @@ public class PlotMain extends JavaPlugin {
             }
         }, 0l, 12 * 60 * 60 * 20l);
     }
-    
+
     /**
      * Check a range of permissions e.g. 'plots.plot.<0-100>'<br>
      * Returns highest integer in range.
+     * 
      * @param player
      * @param stub
      * @param range
@@ -133,21 +229,22 @@ public class PlotMain extends JavaPlugin {
         if (player.isOp()) {
             return range;
         }
-        if (player.hasPermission(stub+".*")) {
+        if (player.hasPermission(stub + ".*")) {
             return range;
         }
-        for (int i = range; i>0; i--) {
-            if (player.hasPermission(stub+"."+i)) {
+        for (int i = range; i > 0; i--) {
+            if (player.hasPermission(stub + "." + i)) {
                 return i;
             }
         }
         return 0;
     }
-    
+
     /**
      * Check a player for a permission<br>
-     *  - Op has all permissions <br>
-     *  - checks for '*' nodes
+     * - Op has all permissions <br>
+     * - checks for '*' nodes
+     * 
      * @param player
      * @param perm
      * @return
@@ -156,33 +253,34 @@ public class PlotMain extends JavaPlugin {
         if (player.isOp()) {
             return true;
         }
-        for (String perm:perms) {
+        for (String perm : perms) {
             boolean hasperm = false;
             if (player.hasPermission(perm)) {
                 hasperm = true;
-            }
-            else {
+            } else {
                 String[] nodes = perm.split("\\.");
                 StringBuilder n = new StringBuilder();
-                for(int i = 0; i < nodes.length-1; i++) {
-                    n.append(nodes[i]+".");
-                    if (player.hasPermission(n+"*")) {
+                for (int i = 0; i < (nodes.length - 1); i++) {
+                    n.append(nodes[i] + ".");
+                    if (player.hasPermission(n + "*")) {
                         hasperm = true;
                         break;
                     }
                 }
             }
-            if (!hasperm)
+            if (!hasperm) {
                 return false;
+            }
         }
-        
+
         return true;
     }
 
     /**
      * Check a player for a permission<br>
-     *  - Op has all permissions <br>
-     *  - checks for '*' nodes
+     * - Op has all permissions <br>
+     * - checks for '*' nodes
+     * 
      * @param player
      * @param perm
      * @return
@@ -196,16 +294,16 @@ public class PlotMain extends JavaPlugin {
         }
         String[] nodes = perm.split("\\.");
         StringBuilder n = new StringBuilder();
-        for(int i = 0; i < nodes.length-1; i++) {
-            n.append(nodes[i]+".");
-            if (player.hasPermission(n+"*")) {
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i] + ".");
+            if (player.hasPermission(n + "*")) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * All loaded plots
      */
@@ -214,6 +312,7 @@ public class PlotMain extends JavaPlugin {
      * All loaded plot worlds
      */
     private static HashMap<String, PlotWorld> worlds = new HashMap<String, PlotWorld>();
+
     /**
      * Get all plots
      * 
@@ -277,6 +376,7 @@ public class PlotMain extends JavaPlugin {
         }
         return new HashMap<PlotId, Plot>();
     }
+
     /**
      * get all plot worlds
      */
@@ -363,21 +463,20 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * TODO: Implement better system
-     * The whole point of this system is to recycle old plots
-     * So why not just allow users to claim old plots, and try to hide the fact that the are owned.
-     * Reduce amount of expired plots:
-     *   - On /plot auto - allow claiming of old plot, clear it so the user doesn't know
-     *   - On /plot info, - show that the plot is expired and allowed to be claimed
+     * TODO: Implement better system The whole point of this system is to
+     * recycle old plots So why not just allow users to claim old plots, and try
+     * to hide the fact that the are owned. Reduce amount of expired plots: - On
+     * /plot auto - allow claiming of old plot, clear it so the user doesn't
+     * know - On /plot info, - show that the plot is expired and allowed to be
+     * claimed
      * 
-     * Have the task run less often:
-     *   - Run the task when there are very little, or no players online (great for small servers)
-     *   - Run the task at startup (also only useful for small servers)
-     *   
-     * Also, in terms of faster code:
-     *  - Have an array of plots, sorted by expiry time.
-     *  - Add new plots to the end.
-     *  - The task then only needs to go through the first few plots
+     * Have the task run less often: - Run the task when there are very little,
+     * or no players online (great for small servers) - Run the task at startup
+     * (also only useful for small servers)
+     * 
+     * Also, in terms of faster code: - Have an array of plots, sorted by expiry
+     * time. - Add new plots to the end. - The task then only needs to go
+     * through the first few plots
      * 
      * @param plugin
      *            Plugin
@@ -396,8 +495,10 @@ public class PlotMain extends JavaPlugin {
                                     continue;
                                 }
                                 long lastPlayed = getLastPlayed(plot.owner);
-                                if(lastPlayed == 0) continue;
-                                int days = (int) (lastPlayed / (1000*60*60*24));
+                                if (lastPlayed == 0) {
+                                    continue;
+                                }
+                                int days = (int) (lastPlayed / (1000 * 60 * 60 * 24));
                                 if (days >= Settings.AUTO_CLEAR_DAYS) {
                                     PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                                     Bukkit.getServer().getPluginManager().callEvent(event);
@@ -501,12 +602,11 @@ public class PlotMain extends JavaPlugin {
                     DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, "plot", null);
                     if (!res.next()) {
-                        DBFunc.createTables("mysql",true);
-                    }
-                    else {
+                        DBFunc.createTables("mysql", true);
+                    } else {
                         res = meta.getTables(null, null, "plot_trusted", null);
                         if (!res.next()) {
-                            DBFunc.createTables("mysql",false);
+                            DBFunc.createTables("mysql", false);
                         }
                     }
                 }
@@ -579,19 +679,20 @@ public class PlotMain extends JavaPlugin {
             worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
         }
-        if (Settings.WORLDGUARD)
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
-            worldGuardListener = new WorldGuardListener(this);
-            getServer().getPluginManager().registerEvents(worldGuardListener, this);
+        if (Settings.WORLDGUARD) {
+            if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+                worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+                worldGuardListener = new WorldGuardListener(this);
+                getServer().getPluginManager().registerEvents(worldGuardListener, this);
+            }
         }
-        if(Settings.AUTO_CLEAR) {
+        if (Settings.AUTO_CLEAR) {
             checkExpired(PlotMain.getMain(), true);
             checkForExpiredPlots();
         }
-        if(getServer().getPluginManager().getPlugin("Vault") != null) {
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
             RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-            if(economyProvider != null) {
+            if (economyProvider != null) {
                 economy = economyProvider.getProvider();
             }
             useEconomy = (economy != null);
@@ -601,14 +702,14 @@ public class PlotMain extends JavaPlugin {
         if (Web.ENABLED) {
             sendConsoleSenderMessage(C.PREFIX.s() + "Web Is not implemented yet. Please bear with us.");
         }
-        
+
         try {
             new SetBlockFast();
             PlotHelper.canSetFast = true;
         } catch (Exception e) {
             PlotHelper.canSetFast = false;
         }
-        
+
     }
 
     /**
@@ -720,13 +821,16 @@ public class PlotMain extends JavaPlugin {
     }
 
     public static long getLastPlayed(UUID uuid) {
-        if(uuid == null) return 0;
+        if (uuid == null) {
+            return 0;
+        }
         OfflinePlayer player;
-        if((player = Bukkit.getOfflinePlayer(uuid)) == null || !player.hasPlayedBefore()) {
+        if (((player = Bukkit.getOfflinePlayer(uuid)) == null) || !player.hasPlayedBefore()) {
             return 0;
         }
         return player.getLastPlayed();
     }
+
     /**
      * Load configuration files
      */
@@ -797,10 +901,10 @@ public class PlotMain extends JavaPlugin {
             Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
             Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         }
-        if(Settings.DEBUG) {
+        if (Settings.DEBUG) {
             Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
-            settings.put("Use Metrics",  "" + Settings.METRICS);
+            settings.put("Use Metrics", "" + Settings.METRICS);
             settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
             settings.put("Web Enabled", "" + Web.ENABLED);
             settings.put("Web Port", "" + Web.PORT);
@@ -808,7 +912,7 @@ public class PlotMain extends JavaPlugin {
             settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
             settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
             settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
-            for(Entry<String, String> setting : settings.entrySet()) {
+            for (Entry<String, String> setting : settings.entrySet()) {
                 sendConsoleSenderMessage(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
             }
         }
@@ -891,7 +995,7 @@ public class PlotMain extends JavaPlugin {
                                                     default:
                                                         pos = this.location;
                                                         break;
-    
+
                                                     }
                                                     if (PlayerEvents.isInPlot(pos)) {
                                                         entity.teleport(pos.add(0.5, 0, 0.5));
@@ -899,8 +1003,9 @@ public class PlotMain extends JavaPlugin {
                                                         break;
                                                     }
                                                 }
-                                                // Welp! how did this entity get here?
-                                                entity.teleport(location.subtract(location.getDirection().normalize().multiply(2)));
+                                                // Welp! how did this entity get
+                                                // here?
+                                                entity.teleport(this.location.subtract(this.location.getDirection().normalize().multiply(2)));
                                             }
                                         }
                                         if (!tamed) {
@@ -944,7 +1049,7 @@ public class PlotMain extends JavaPlugin {
             }
         }
         Settings.DEBUG = config.getBoolean("debug");
-        if(Settings.DEBUG) {
+        if (Settings.DEBUG) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Web.ENABLED = config.getBoolean("web.enabled");
