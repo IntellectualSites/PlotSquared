@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.database;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,13 +40,38 @@ public class PlotMeConverter {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             @Override
             public void run() {
-                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has started");
+                PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has started");
+                PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Caching playerdata...");
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
                 Map<String, UUID> uuidMap = new HashMap<String, UUID>();
+                
+                if (!Bukkit.getServer().getOnlineMode()) {
+                    File playersFolder = new File("world" + File.separator + "playerdata");
+                    String[] dat = playersFolder.list(new FilenameFilter() {
+                        public boolean accept(File f, String s) {
+                            return s.endsWith(".dat");
+                        }
+                    });
+                    for (String current : dat) {
+                        UUID uuid = null;
+                        try {
+                            uuid = UUID.fromString(current.replaceAll(".dat$", ""));
+                        }
+                        catch (Exception e) {
+                            
+                        }
+                        if (uuid!=null) {
+                            String name = Bukkit.getOfflinePlayer(uuid).getName();
+                            if (name!=null) {
+                                uuidMap.put(name, uuid);
+                            }
+                        }
+                    }
+                }
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots != null) {
-
+                        PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '"+plots.size()+"' plots for world '"+world.getName()+"'");
                         // TODO generate configuration based on PlotMe config
                         // - Plugin doesn't display a message if database is not
                         // setup at all
@@ -67,7 +94,7 @@ public class PlotMeConverter {
 //                            e.printStackTrace();
 //                        }
                         
-                        PlotMain.sendConsoleSenderMessage("Converting " + plots.size() + " plots for '" + world.toString() + "'...");
+                        PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {
                             ArrayList<UUID> psAdded = new ArrayList<>();
                             ArrayList<UUID> psTrusted = new ArrayList<>();
@@ -169,12 +196,12 @@ public class PlotMeConverter {
                         }
                     }
                 }
-                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating plot DB");
+                PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Creating plot DB");
                 DBFunc.createPlots(createdPlots);
-                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Creating settings/helpers DB");
+                PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Creating settings/helpers DB");
                 DBFunc.createAllSettingsAndHelpers(createdPlots);
                 stream.close();
-                PlotMain.sendConsoleSenderMessage("PlotMe->PlotSquared Conversion has finished");
+                PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has finished");
                 // TODO disable PlotMe -> Unload all plot worlds, change the
                 // generator, restart the server automatically
                 // Possibly use multiverse / multiworld if it's to difficult

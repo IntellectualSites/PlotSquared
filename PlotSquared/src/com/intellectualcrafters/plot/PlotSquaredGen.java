@@ -42,7 +42,7 @@ import org.bukkit.generator.ChunkGenerator;
  * 
  */
 @SuppressWarnings("deprecation")
-public class WorldGenerator extends ChunkGenerator {
+public class PlotSquaredGen extends ChunkGenerator {
     private long state;
 
     public final long nextLong() {
@@ -89,7 +89,7 @@ public class WorldGenerator extends ChunkGenerator {
         return Short.parseShort(block);
     }
 
-    public WorldGenerator(String world) {
+    public PlotSquaredGen(String world) {
 
         YamlConfiguration config = PlotMain.config;
         this.plotworld = new PlotWorld();

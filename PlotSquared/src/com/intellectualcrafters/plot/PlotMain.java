@@ -202,7 +202,7 @@ public class PlotMain extends JavaPlugin {
      */
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldname, String id) {
-        return new WorldGenerator(worldname);
+        return new PlotSquaredGen(worldname);
     }
 
     @SuppressWarnings("deprecation")
@@ -1078,16 +1078,57 @@ public class PlotMain extends JavaPlugin {
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.MAX_PLOTS = config.getInt("max_plots");
-
-        for (String node : config.getConfigurationSection("worlds").getKeys(false)) {
-            World world = Bukkit.getWorld(node);
-            if (world == null) {
-                Logger.add(LogLevel.WARNING, "World '" + node + "' in settings.yml does not exist (case sensitive)");
-            } else {
-                ChunkGenerator gen = world.getGenerator();
-                if ((gen == null) || !gen.toString().equals("PlotSquared")) {
-                    Logger.add(LogLevel.WARNING, "World '" + node + "' in settings.yml is not using PlotSquared generator");
+    }
+    
+    /**
+     * Adds an external world as a recognized PlotSquared world
+     *  - The PlotWorld class created is based off the configuration in the settings.yml
+     *  - Do not use this method unless the required world is preconfigured in the settings.yml 
+     * 
+     * @param world
+     */
+    public static void loadWorld(World world) {
+        if (world == null) {
+            return;
+        }
+        Set<String> worlds = config.getConfigurationSection("worlds").getKeys(false);
+        if (worlds.contains(world.getName())) {
+            ChunkGenerator gen = world.getGenerator();
+            if ((gen == null) || !gen.getClass().getSimpleName().equals("PlotSquaredGen")) {
+                sendConsoleSenderMessage("&cWorld '" + world.getName() + "' in settings.yml is not using PlotSquared generator!");
+                
+                PlotWorld plotworld = new PlotWorld();
+                
+                try {
+                    plotworld.AUTO_MERGE = config.getBoolean("worlds." + world + ".plot.auto_merge");
+                    plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot.height");
+                    plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot.size");
+                    plotworld.PLOT_BIOME = config.getString("worlds." + world + ".plot.biome");
+                    plotworld.MAIN_BLOCK = config.getStringList("worlds." + world + ".plot.filling").toArray(new String[0]);
+                    plotworld.TOP_BLOCK = config.getStringList("worlds." + world + ".plot.floor").toArray(new String[0]);
+                    plotworld.WALL_BLOCK = config.getString("worlds." + world + ".wall.block");
+                    plotworld.ROAD_WIDTH = config.getInt("worlds." + world + ".road.width");
+                    plotworld.ROAD_HEIGHT = config.getInt("worlds." + world + ".road.height");
+                    plotworld.ROAD_STRIPES_ENABLED = config.getBoolean("worlds." + world + ".road.enable_stripes");
+                    plotworld.ROAD_BLOCK = config.getString("worlds." + world + ".road.block");
+                    plotworld.ROAD_STRIPES = config.getString("worlds." + world + ".road.stripes");
+                    plotworld.WALL_FILLING = config.getString("worlds." + world + ".wall.filling");
+                    plotworld.WALL_HEIGHT = config.getInt("worlds." + world + ".wall.height");
+                    plotworld.PLOT_CHAT = config.getBoolean("worlds." + world + ".plot_chat");
+                    plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds." + world + ".schematic.on_claim");
+                    plotworld.SCHEMATIC_FILE = config.getString("worlds." + world + ".schematic.file");
+                    plotworld.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("worlds." + world + ".schematic.specify_on_claim");
+                    plotworld.SCHEMATICS = config.getStringList("worlds." + world + ".schematic.schematics");
+                    plotworld.USE_ECONOMY = config.getBoolean("worlds." + world + ".economy.use");
+                    plotworld.PLOT_PRICE = config.getDouble("worlds." + world + ".economy.prices.claim");
+                    plotworld.MERGE_PRICE = config.getDouble("worlds." + world + ".economy.prices.merge");
+                    plotworld.PLOT_CHAT = config.getBoolean("worlds." + world + ".chat.enabled");
                 }
+                catch (Exception e) {
+                    sendConsoleSenderMessage("&cThe configuration for '"+world.getName()+"' is not configured incorrectly. Please see the below stacktrace for more information:");
+                    e.printStackTrace();
+                }
+                addPlotWorld(world.getName(), plotworld);
             }
         }
     }
