@@ -13,6 +13,10 @@ public abstract class PlotManager {
         this.plotworld = plotworld;
     }
     
+    public PlotWorld getPlotWorld() {
+        return this.plotworld;
+    }
+    
     /*
      *  Plot locations (methods with Abs in them will not need to consider mega plots)
      */
