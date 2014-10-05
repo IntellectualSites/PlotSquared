@@ -6,18 +6,15 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
@@ -44,10 +41,11 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Caching playerdata...");
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
                 Map<String, UUID> uuidMap = new HashMap<String, UUID>();
-                boolean online = Bukkit.getServer().getOnlineMode(); 
+                boolean online = Bukkit.getServer().getOnlineMode();
                 if (!online) {
                     File playersFolder = new File("world" + File.separator + "playerdata");
                     String[] dat = playersFolder.list(new FilenameFilter() {
+                        @Override
                         public boolean accept(File f, String s) {
                             return s.endsWith(".dat");
                         }
@@ -56,13 +54,12 @@ public class PlotMeConverter {
                         UUID uuid = null;
                         try {
                             uuid = UUID.fromString(current.replaceAll(".dat$", ""));
+                        } catch (Exception e) {
+
                         }
-                        catch (Exception e) {
-                            
-                        }
-                        if (uuid!=null) {
+                        if (uuid != null) {
                             String name = Bukkit.getOfflinePlayer(uuid).getName();
-                            if (name!=null) {
+                            if (name != null) {
                                 uuidMap.put(name, uuid);
                             }
                         }
@@ -71,8 +68,8 @@ public class PlotMeConverter {
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots != null) {
-                        PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '"+plots.size()+"' plots for world '"+world.getName()+"'");
-                        
+                        PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '" + plots.size() + "' plots for world '" + world.getName() + "'");
+
                         PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting " + plots.size() + " plots for '" + world.toString() + "'...");
                         for (Plot plot : plots.values()) {
                             ArrayList<UUID> psAdded = new ArrayList<>();
@@ -99,7 +96,7 @@ public class PlotMeConverter {
                                                 continue;
                                             }
                                         }
-                                        if (set.getValue()!=null) {
+                                        if (set.getValue() != null) {
                                             psAdded.add(set.getValue());
                                         }
                                     }
@@ -110,12 +107,11 @@ public class PlotMeConverter {
                                                 continue;
                                             }
                                         }
-                                        if (set.getValue()!=null) {
+                                        if (set.getValue() != null) {
                                             psDenied.add(set.getValue());
                                         }
                                     }
-                                }
-                                else {
+                                } else {
                                     for (String user : plot.getAllowed().split(",")) {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
@@ -131,9 +127,8 @@ public class PlotMeConverter {
                                                 psDenied.add(uuidMap.get(user));
                                             }
                                         }
-                                    }
-                                    catch (Throwable e) {
-                                        
+                                    } catch (Throwable e) {
+
                                     }
                                 }
                             } catch (Throwable e) {
@@ -147,8 +142,7 @@ public class PlotMeConverter {
                             com.intellectualcrafters.plot.Plot pl = null;
                             if (online) {
                                 pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
-                            }
-                            else {
+                            } else {
                                 String owner = plot.getOwner();
                                 if (uuidMap.containsKey(owner)) {
                                     pl = new com.intellectualcrafters.plot.Plot(id, uuidMap.get(owner), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
@@ -157,7 +151,7 @@ public class PlotMeConverter {
 
                             // TODO createPlot doesn't add helpers / denied
                             // users
-                            if (pl!=null) {
+                            if (pl != null) {
                                 createdPlots.add(pl);
                             }
                         }

@@ -125,7 +125,7 @@ public class PlayerEvents implements Listener {
     public void onWorldLoad(WorldLoadEvent event) {
         PlotMain.loadWorld(event.getWorld());
     }
-    
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (!event.getPlayer().hasPlayedBefore()) {

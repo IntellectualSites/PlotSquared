@@ -137,7 +137,7 @@ public class DBFunc {
             int counter = 0;
             for (Integer id : helpers.keySet()) {
                 for (UUID helper : helpers.get(id)) {
-                    
+
                     stmt.setInt((counter * 2) + 1, id);
                     stmt.setString((counter * 2) + 2, helper.toString());
                     counter++;

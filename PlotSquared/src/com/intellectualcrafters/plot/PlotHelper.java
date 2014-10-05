@@ -27,7 +27,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -750,8 +749,7 @@ public class PlotHelper {
                     if ((id != null) && id.equals(plot.id)) {
                         if (entity instanceof Player) {
                             PlotMain.teleportPlayer((Player) entity, entity.getLocation(), plot);
-                        }
-                        else {
+                        } else {
                             entity.remove();
                         }
                     }
@@ -776,12 +774,15 @@ public class PlotHelper {
         final long start = System.nanoTime();
         final World world = requester.getWorld();
 
-        // clear entities/teleport players
+        /*
+         * keep
+         */
         clearAllEntities(world, plot, false);
-
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
+        
+        
         final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = getPlotTopLoc(world, plot.id);
 
@@ -802,6 +803,9 @@ public class PlotHelper {
             filling_data[i] = result[1];
         }
 
+        /*
+         * keep
+         */
         final int prime = 31;
         int h = 1;
         h = (prime * h) + pos1.getBlockX();
@@ -904,6 +908,11 @@ public class PlotHelper {
             setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT, plotMaxZ + 1), filling, filling_data);
             setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloors, plotfloors_data);
         }
+        
+        
+        /*
+         * keep
+         */
         PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
         if (canSetFast) {
             SetBlockFast.update(requester);

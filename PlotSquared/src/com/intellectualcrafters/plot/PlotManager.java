@@ -7,63 +7,56 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public abstract class PlotManager {
-    public final PlotWorld plotworld;
-    
-    public PlotManager(PlotWorld plotworld) {
-        this.plotworld = plotworld;
-    }
-    
-    public PlotWorld getPlotWorld() {
-        return this.plotworld;
-    }
-    
+
     /*
-     *  Plot locations (methods with Abs in them will not need to consider mega plots)
+     * Plot locations (methods with Abs in them will not need to consider mega
+     * plots)
      */
-    
-    public abstract PlotId getPlotIdAbs(World world, Location loc);
-    
-    public abstract boolean isInPlotAbs(Location loc, Plot plot);
-    
-    public abstract Location getPlotBottomLocAbs(Plot plot); // If you have a circular plot, just return the corner if it were a square
-    
-    public abstract Location getPlotTopLocAbs(Plot plot); // the same applies here
-    
+
+    public abstract PlotId getPlotIdAbs(PlotWorld plotworld, Location loc);
+
+    public abstract boolean isInPlotAbs(PlotWorld plotworld, Location loc, Plot plot);
+    //  If you have a circular plot, just return the corner if it were a square
+    public abstract Location getPlotBottomLocAbs(PlotWorld plotworld, Plot plot); 
+    // the same applies here
+    public abstract Location getPlotTopLocAbs(PlotWorld plotworld, Plot plot); 
+
     /*
-     *  Plot clearing (return false if you do not support some method)
+     * Plot clearing (return false if you do not support some method)
+     * 
+     * 
      */
-    
-    public abstract boolean clearPlotAbs(Player player, Plot plot);
-    
-    public abstract boolean clearSignAbs(Player player, Plot plot);
-    
-    public abstract boolean clearEntitiesAbs(Player player, Plot plot);
-    
-        // The function below will apply to MEGA PLOTS, return false if you don't support clearing of mega plots
-        // the function getPlotBottomLoc(plot) will return the bottom location of the entire mega plot
-    public abstract boolean clearMegaPlot(Player player, Plot plot);
-    
+
+    public abstract boolean clearPlot(Player player, Plot plot, boolean mega);
+
+    public abstract boolean clearSign(Player player, Plot plot, boolean mega);
+
+    // clearEntities also needs to clear Player entities (e.g. teleport them to the surface)
+    public abstract boolean clearEntities(Player player, Plot plot, boolean mega);
+
     /*
-     * Plot set functions (return false if you do not support the specific set method)
+     * Plot set functions (return false if you do not support the specific set
+     * method)
      */
-    
+
     public abstract boolean setWall(Player player, Plot plot, Block block);
-    
+
     public abstract boolean setBiome(Player player, Plot plot, Biome biome);
-    
+
     /*
-     *  PLOT MERGING (return false if your generator does not support plot merging)
+     * PLOT MERGING (return false if your generator does not support plot
+     * merging)
      */
     public abstract boolean createRoadEast(Plot plot);
-    
+
     public abstract boolean createRoadSouth(Plot plot);
-    
+
     public abstract boolean createRoadSouthEast(Plot plot);
-    
+
     public abstract boolean removeRoadEast(Plot plot);
-    
+
     public abstract boolean removeRoadSouth(Plot plot);
-    
+
     public abstract boolean removeRoadSouthEast(Plot plot);
-    
+
 }

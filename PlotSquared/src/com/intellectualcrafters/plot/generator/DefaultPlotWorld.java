@@ -1,0 +1,198 @@
+package com.intellectualcrafters.plot.generator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.block.Biome;
+
+import com.intellectualcrafters.plot.ConfigurationNode;
+import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.PlotBlock;
+import com.intellectualcrafters.plot.PlotWorld;
+
+public class DefaultPlotWorld extends PlotWorld {
+
+    public boolean AUTO_MERGE;
+    public static boolean AUTO_MERGE_DEFAULT = false;
+    /**
+     * Road Height
+     */
+    public int ROAD_HEIGHT;
+    /**
+     * Default Road Height: 64
+     */
+    public static int ROAD_HEIGHT_DEFAULT = 64;
+
+    /**
+     * plot height
+     */
+    public int PLOT_HEIGHT;
+    /**
+     * Default plot height: 64
+     */
+    public static int PLOT_HEIGHT_DEFAULT = 64;
+
+    /**
+     * Wall height
+     */
+    public int WALL_HEIGHT;
+    /**
+     * Default Wall Height: 64
+     */
+    public static int WALL_HEIGHT_DEFAULT = 64;
+
+    /**
+     * plot width
+     */
+    public int PLOT_WIDTH;
+    /**
+     * Default plot width: 32
+     */
+    public static int PLOT_WIDTH_DEFAULT = 32;
+
+    /**
+     * Road width
+     */
+    public int ROAD_WIDTH;
+    /**
+     * Default road width: 7
+     */
+    public static int ROAD_WIDTH_DEFAULT = 7;
+
+    /**
+     * Plot biome
+     */
+    public Biome PLOT_BIOME;
+    /**
+     * Default biome = FOREST
+     */
+    public static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
+    /**
+     * PlotMain block
+     */
+    public PlotBlock[] MAIN_BLOCK;
+    /**
+     * Default main block: 1
+     */
+    public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock(1, (byte) 0) };
+    /**
+     * Top blocks
+     */
+    public PlotBlock[] TOP_BLOCK;
+    /**
+     * Default top blocks: {"2"}
+     */
+    public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock(2, (byte) 0) };
+
+    /**
+     * Wall block
+     */
+    public PlotBlock WALL_BLOCK;
+    /**
+     * Default wall block: 44
+     */
+    public static String WALL_BLOCK_DEFAULT = "44:0";
+
+    /**
+     * Wall filling
+     */
+    public PlotBlock WALL_FILLING;
+    /**
+     * Default wall filling: 1
+     */
+    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock(1, (byte) 0);
+
+    /**
+     * Road stripes
+     */
+    public PlotBlock ROAD_STRIPES;
+    /**
+     * Default road stripes: 35
+     */
+    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock(98, (byte) 0);
+    /**
+     * enable road stripes 
+     */
+    public boolean ROAD_STRIPES_ENABLED;
+    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
+    /**
+     * Road block
+     */
+    public PlotBlock ROAD_BLOCK;
+    /**
+     * Default road block: 155
+     */
+    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock(155, (byte) 0);
+
+    /**
+     * plot chat?
+     */
+    public boolean PLOT_CHAT;
+    /**
+     * Default plot chat: true
+     */
+    public static boolean PLOT_CHAT_DEFAULT = false;
+
+    /**
+     * Blocks available in /p set
+     */
+    public static ArrayList<Material> BLOCKS = new ArrayList<Material>();
+
+    /**
+     * schematic on claim
+     */
+    public boolean SCHEMATIC_ON_CLAIM;
+    /**
+     * Default schematic on claim: false
+     */
+    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
+    public List<String> SCHEMATICS = new ArrayList<>();
+
+    /**
+     * schematic file
+     */
+    public String SCHEMATIC_FILE;
+    /**
+     * Default schematic file: 'null'
+     */
+    public static String SCHEMATIC_FILE_DEFAULT = "null";
+    /**
+     * default flags
+     */
+    public Flag[] DEFAULT_FLAGS;
+    /**
+     * Default default flags
+     */
+    public static String[] DEFAULT_FLAGS_DEFAULT = new String[] {};
+
+    public boolean USE_ECONOMY;
+    public static boolean USE_ECONOMY_DEFAULT = false;
+    
+    public double PLOT_PRICE;
+    public static double PLOT_PRICE_DEFAULT = 100;
+    
+    public double MERGE_PRICE;
+    public static double MERGE_PRICE_DEFAULT = 100;
+    
+    public DefaultPlotWorld(String worldname) {
+        super(worldname);
+        
+        
+    }
+
+    @Override
+    public ConfigurationNode[] getSettingNodes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setSettingNode(String key, String value) {
+        switch (key) {
+            
+        }
+    }
+}
+ 
