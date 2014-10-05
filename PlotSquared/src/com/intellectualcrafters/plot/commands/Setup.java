@@ -169,7 +169,7 @@ public class Setup extends SubCommand implements Listener {
     }
 
     public Setup() {
-        super("setup", "plots.admin", "Setup a PlotWorld", "/plot setup {world}", "setup", CommandCategory.ACTIONS);
+        super("setup", "plots.admin", "Setup a PlotWorld", "setup {world}", "setup", CommandCategory.ACTIONS);
     }
 
     @Override
