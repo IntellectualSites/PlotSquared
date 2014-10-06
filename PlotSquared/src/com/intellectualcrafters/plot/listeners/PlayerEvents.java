@@ -456,13 +456,12 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onStructureGrow(final StructureGrowEvent e) {
         List<BlockState> blocks = e.getBlocks();
-        boolean f = false;
-        for (int i = 0; i < blocks.size(); i++) {
-            if (f || isPlotWorld(blocks.get(i).getLocation())) {
-                f = true;
+        boolean remove = false;
+        for (int i = blocks.size() -1; i >= 0; i--) {
+            if (remove || isPlotWorld(blocks.get(i).getLocation())) {
+                remove = true;
                 if (!isInPlot(blocks.get(i).getLocation())) {
                     e.getBlocks().remove(i);
-                    i--;
                 }
             }
         }

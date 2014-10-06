@@ -29,8 +29,8 @@ public class Trusted extends SubCommand {
     }
 
     private boolean hasBeenOnServer(String name) {
-        Player plr;
-        if ((plr = Bukkit.getPlayer(name)) == null) {
+        Player plr = Bukkit.getPlayerExact(name);
+        if (plr == null) {
             OfflinePlayer oplr = Bukkit.getOfflinePlayer(name);
             if (oplr == null) {
                 return false;
@@ -74,10 +74,14 @@ public class Trusted extends SubCommand {
                 return true;
             }
             UUID uuid = null;
-            if ((Bukkit.getPlayer(args[1]) != null) && Bukkit.getPlayer(args[1]).isOnline()) {
-                uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+            if ((Bukkit.getPlayerExact(args[1]) != null)) {
+                uuid = Bukkit.getPlayerExact(args[1]).getUniqueId();
             } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+            }
+            if (uuid == null) {
+                PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
+                return true;
             }
             plot.addTrusted(uuid);
             DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
@@ -101,10 +105,14 @@ public class Trusted extends SubCommand {
                 return true;
             }
             UUID uuid = null;
-            if (Bukkit.getPlayer(args[1]).isOnline()) {
-                uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+            if (Bukkit.getPlayerExact(args[1]) != null) {
+                uuid = Bukkit.getPlayerExact(args[1]).getUniqueId();
             } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+            }
+            if (uuid == null) {
+                PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
+                return true;
             }
             if (!plot.trusted.contains(uuid)) {
                 PlayerFunctions.sendMessage(plr, C.T_WAS_NOT_ADDED);
