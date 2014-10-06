@@ -65,7 +65,7 @@ public enum Command {
     /**
      * 
      */
-    DELETE("delete", "d", new CommandPermission("plots.clear.delete")),
+    DELETE("delete", "d", new CommandPermission("plots.delete")),
     /**
      *
      */

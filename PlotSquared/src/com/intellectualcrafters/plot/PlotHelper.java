@@ -423,7 +423,7 @@ public class PlotHelper {
     public static boolean createPlot(Player player, Plot plot) {
         @SuppressWarnings("deprecation")
         World w = plot.getWorld();
-        Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), null, null, w.getName());
+        Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotMain.updatePlot(p);
         DBFunc.createPlot(p);
         DBFunc.createPlotSettings(DBFunc.getId(w.getName(), p.id), p);
@@ -824,10 +824,12 @@ public class PlotHelper {
         int startZ = (pos1.getBlockZ() / 16) * 16;
         int chunkX = 16 + pos2.getBlockX();
         int chunkZ = 16 + pos2.getBlockZ();
-        int plotMinX = getPlotBottomLoc(world, plot.id).getBlockX() + 1;
-        int plotMinZ = getPlotBottomLoc(world, plot.id).getBlockZ() + 1;
-        int plotMaxX = getPlotTopLoc(world, plot.id).getBlockX();
-        int plotMaxZ = getPlotTopLoc(world, plot.id).getBlockZ();
+        Location l1 = getPlotBottomLoc(world, plot.id);
+        Location l2 = getPlotTopLoc(world, plot.id);
+        int plotMinX = l1.getBlockX() + 1;
+        int plotMinZ = l1.getBlockZ() + 1;
+        int plotMaxX = l2.getBlockX();
+        int plotMaxZ = l2.getBlockZ();
         Location min = null;
         Location max = null;
         for (int i = startX; i < chunkX; i += 16) {
@@ -878,7 +880,7 @@ public class PlotHelper {
             if (max.getBlockX() > plotMaxX) {
                 max.setX(plotMaxX);
             }
-            if (max.getBlockX() > plotMaxZ) {
+            if (max.getBlockZ() > plotMaxZ) {
                 max.setZ(plotMaxZ);
             }
             

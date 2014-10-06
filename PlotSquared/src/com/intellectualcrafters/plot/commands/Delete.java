@@ -38,7 +38,7 @@ public class Delete extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))) && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
