@@ -153,8 +153,8 @@ public class Unlink extends SubCommand {
         Location pos1 = PlotHelper.getPlotBottomLocAbs(w, id);
         Location pos2 = PlotHelper.getPlotTopLocAbs(w, id);
 
-        int sx = pos2.getBlockX() + 1;
-        int ex = (sx + this.pathsize) - 1;
+        int sx = pos2.getBlockX();
+        int ex = (sx + this.pathsize);
         int sz = pos1.getBlockZ() - 1;
         int ez = pos2.getBlockZ() + 2;
 
@@ -180,8 +180,8 @@ public class Unlink extends SubCommand {
         Location pos1 = PlotHelper.getPlotBottomLocAbs(w, id);
         Location pos2 = PlotHelper.getPlotTopLocAbs(w, id);
 
-        int sz = pos2.getBlockZ() + 1;
-        int ez = (sz + this.pathsize) - 1;
+        int sz = pos2.getBlockZ();
+        int ez = (sz + this.pathsize);
         int sx = pos1.getBlockX() - 1;
         int ex = pos2.getBlockX() + 2;
 

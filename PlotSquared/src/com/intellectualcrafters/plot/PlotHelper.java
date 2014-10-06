@@ -868,6 +868,20 @@ public class PlotHelper {
             setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling, filling_data);
             setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloors, plotfloors_data);
         } else {
+            
+            if (min.getBlockX() < plotMinX) {
+                min.setX(plotMinX);
+            }
+            if (min.getBlockZ() < plotMinZ) {
+                min.setZ(plotMinZ);
+            }
+            if (max.getBlockX() > plotMaxX) {
+                max.setX(plotMaxX);
+            }
+            if (max.getBlockX() > plotMaxZ) {
+                max.setZ(plotMaxZ);
+            }
+            
             setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX() + 1, 1, min.getBlockZ() + 1), (short) 7);
             setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), (short) 0);
             setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, min.getBlockZ() + 1), filling, filling_data);
