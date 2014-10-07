@@ -19,7 +19,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  */
 public class PWE {
 
-    @SuppressWarnings("unused")
     public static void setMask(Player p, Location l) {
         try {
             LocalSession s;
@@ -37,7 +36,7 @@ public class PWE {
                     r = (plot.getOwner() != null) && plot.getOwner().equals(p.getUniqueId());
 
                     if (!r) {
-                        if (p.hasPermission("plots.worldedit.member") && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+                        if ((plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                             r = true;
                         } else if (p.hasPermission("plots.worldedit.bypass")) {
                             removeMask(p, s);
@@ -70,7 +69,7 @@ public class PWE {
                 s.setMask(new com.sk89q.worldedit.masks.RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
             }
         } catch (Exception e) {
-            throw new PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY, "WorldEdit == Null?");
+//            throw new PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY, "WorldEdit == Null?");
         }
     }
 
@@ -102,7 +101,7 @@ public class PWE {
             }
             removeMask(p, s);
         } catch (Exception e) {
-            throw new PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY, "WorldEdit == Null?");
+//            throw new PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY, "WorldEdit == Null?");
         }
     }
 }

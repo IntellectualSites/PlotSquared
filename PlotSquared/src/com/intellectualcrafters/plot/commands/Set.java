@@ -75,7 +75,7 @@ public class Set extends SubCommand {
             }
         }
         /* TODO: Implement option */
-        boolean advanced_permissions = false;
+        boolean advanced_permissions = true;
         if (advanced_permissions) {
             if (!plr.hasPermission("plots.set." + args[0].toLowerCase())) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);

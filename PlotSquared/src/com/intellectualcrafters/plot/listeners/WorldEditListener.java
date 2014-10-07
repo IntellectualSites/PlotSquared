@@ -98,7 +98,7 @@ public class WorldEditListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent e) {
         Location t = e.getTo();
         if (!isPlotWorld(t)) {

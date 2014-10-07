@@ -353,6 +353,7 @@ public class PlotMain extends JavaPlugin {
      * @return
      */
     public static Set<Plot> getPlots(World world, Player player) {
+        int i = 0;
         UUID uuid = player.getUniqueId();
         ArrayList<Plot> myplots = new ArrayList<Plot>();
         for (Plot plot : getPlots(world).values()) {
@@ -1093,7 +1094,13 @@ public class PlotMain extends JavaPlugin {
         if (world == null) {
             return;
         }
-        Set<String> worlds = config.getConfigurationSection("worlds").getKeys(false);
+        Set<String> worlds;
+        if (config.contains("worlds")) {
+            worlds = config.getConfigurationSection("worlds").getKeys(false);
+        }
+        else {
+            worlds = new HashSet<String>();
+        }
         if (worlds.contains(world.getName())) {
             ChunkGenerator gen = world.getGenerator();
             if ((gen == null) || !gen.getClass().getSimpleName().equals("PlotSquaredGen")) {

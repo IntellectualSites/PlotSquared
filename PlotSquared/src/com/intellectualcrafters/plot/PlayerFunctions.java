@@ -122,7 +122,7 @@ public class PlayerFunctions {
         int rz = (z) % size;
 
         int end = pathWidthLower + plotworld.PLOT_WIDTH;
-        boolean northSouth = (rz <= pathWidthLower) || (rz > (pathWidthLower + plotworld.PLOT_WIDTH));
+        boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         boolean eastWest = (rx <= pathWidthLower) || (rx > end);
 
         if (northSouth || eastWest) {
@@ -165,9 +165,8 @@ public class PlayerFunctions {
 
         int end = pathWidthLower + plotworld.PLOT_WIDTH;
 
-        boolean northSouth = (rz <= pathWidthLower) || (rz > (pathWidthLower + plotworld.PLOT_WIDTH));
+        boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-
         if (northSouth && eastWest) {
             // This means you are in the intersection
             PlotId id = getPlotAbs(loc.add(plotworld.ROAD_WIDTH, 0, plotworld.ROAD_WIDTH));

@@ -421,7 +421,6 @@ public class PlotHelper {
     }
 
     public static boolean createPlot(Player player, Plot plot) {
-        @SuppressWarnings("deprecation")
         World w = plot.getWorld();
         Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotMain.updatePlot(p);

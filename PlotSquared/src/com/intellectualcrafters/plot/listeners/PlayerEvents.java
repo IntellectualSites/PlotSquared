@@ -65,6 +65,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
@@ -90,11 +91,27 @@ public class PlayerEvents implements Listener {
     }
 
     public boolean enteredPlot(Location l1, Location l2) {
-        return !isInPlot(l1) && isInPlot(l2);
+        PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(),l1.getBlockX(),64,l1.getBlockZ()));
+        PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(),l2.getBlockX(),64,l2.getBlockZ()));
+        if (p2==null)
+            return false;
+        if (p1==null)
+            return true;
+        if (p1.equals(p2))
+            return false;
+        return true;
     }
 
     public boolean leftPlot(Location l1, Location l2) {
-        return isInPlot(l1) && !isInPlot(l2);
+        PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(),l1.getBlockX(),64,l1.getBlockZ()));
+        PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(),l2.getBlockX(),64,l2.getBlockZ()));
+        if (p1==null)
+            return false;
+        if (p2==null)
+            return true;
+        if (p1.equals(p2))
+            return false;
+        return true;
     }
 
     private boolean isPlotWorld(Location l) {
@@ -149,7 +166,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void PlayerMove(PlayerMoveEvent event) {
         try {
             Player player = event.getPlayer();
@@ -159,7 +176,7 @@ public class PlayerEvents implements Listener {
                 if (!isPlotWorld(player.getWorld())) {
                     return;
                 }
-                if (enteredPlot(event.getFrom(), event.getTo())) {
+                if (enteredPlot(from,to)) {
                     Plot plot = getCurrentPlot(event.getTo());
                     if (plot.hasOwner()) {
                         if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
@@ -501,7 +518,7 @@ public class PlayerEvents implements Listener {
         if (!isPlotWorld(world)) {
             return;
         }
-        if ((event.getSpawnReason() != SpawnReason.SPAWNER_EGG) || !isInPlot(event.getLocation())) {
+        if (!isInPlot(event.getLocation())) {
             event.setCancelled(true);
         }
     }
@@ -611,7 +628,7 @@ public class PlayerEvents implements Listener {
         Block b = e.getBlock();
         if (isPlotWorld(b.getLocation())) {
             Player p = e.getPlayer();
-            if (isInPlot(b.getLocation())) {
+            if (!isInPlot(b.getLocation())) {
                 if (!p.hasPermission("plots.admin")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
                     e.setCancelled(true);

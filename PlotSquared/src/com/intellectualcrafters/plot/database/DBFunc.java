@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -366,9 +368,14 @@ public class DBFunc {
             e.printStackTrace();
         }
         HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<String, HashMap<PlotId, Plot>>();
-        new HashMap<String, World>();
         Statement stmt = null;
         try {
+            
+            Set<String> worlds = new HashSet<String>();
+            if (PlotMain.config.contains("worlds")) {
+                worlds = PlotMain.config.getConfigurationSection("worlds").getKeys(false);
+            }
+            
             stmt = connection.createStatement();
             ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world` FROM `plot`");
             PlotId plot_id;
@@ -441,9 +448,14 @@ public class DBFunc {
                 if (plots.containsKey(worldname)) {
                     plots.get(worldname).put((plot_id), p);
                 } else {
-                    HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
-                    map.put((plot_id), p);
-                    plots.put(worldname, map);
+                    if (worlds.contains(p.world)) {
+                        HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
+                        map.put((plot_id), p);
+                        plots.put(worldname, map);
+                    }
+                    else {
+                        PlotMain.sendConsoleSenderMessage("&cPlot '"+p.id+"' in DB for world '"+p.world+"' does not exist! Please create this world, or remove the plots from the DB!");
+                    }
                 }
             }
             stmt.close();

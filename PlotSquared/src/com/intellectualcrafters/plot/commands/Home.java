@@ -9,6 +9,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
@@ -44,14 +46,12 @@ public class Home extends SubCommand {
             return true;
         } else if (plots.length > 1) {
             if (args.length < 1) {
-                PlayerFunctions.sendMessage(plr, C.NEED_PLOT_NUMBER);
-                return true;
+                args = new String[] {"1"}; 
             }
             int id = 0;
             try {
                 id = Integer.parseInt(args[0]);
             } catch (Exception e) {
-
                 Plot temp;
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
