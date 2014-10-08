@@ -9,24 +9,15 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import net.milkbowl.vault.economy.Economy;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SetBlockFast;
-import com.intellectualcrafters.plot.events.PlotMergeEvent;
+import java.util.ArrayList;
 
 /**
  * 
@@ -127,6 +118,7 @@ public class Merge extends SubCommand {
         PlotWorld plotWorld = PlotMain.getWorldSettings(world);
         if (PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
+            cost = plots.size() * cost;
             if (cost > 0d) {
                 Economy economy = PlotMain.economy;
                 if (economy.getBalance(plr) < cost) {

@@ -4,7 +4,7 @@ version: 2.0.5
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
-authors: [Citymonstret, brandonrelph]
+authors: [Citymonstret, Empire92]
 softdepend: [WorldEdit, BarAPI, PlotMe, CameraAPI]
 database: false
 commands:

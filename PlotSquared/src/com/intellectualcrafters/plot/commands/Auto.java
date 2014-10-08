@@ -70,6 +70,7 @@ public class Auto extends SubCommand {
         PlotWorld pWorld = PlotMain.getWorldSettings(world);
         if(PlotMain.useEconomy && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
+            cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 Economy economy = PlotMain.economy;
                 if (economy.getBalance(plr) < cost) {
@@ -119,16 +120,16 @@ public class Auto extends SubCommand {
                 PlotId start = new PlotId(x, z);
                 PlotId end = new PlotId((x + size_x) - 1, (z + size_z) - 1);
                 if (isUnowned(world, start, end)) {
-                    // TODO claim event
-                    // Claim.claimPlot calls that event...
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
-                            boolean teleport = ((i == end.x) && (j == end.y)) ? true : false;
+                            boolean teleport = ((i == end.x) && (j == end.y));
                             Claim.claimPlot(plr, plot, teleport);
                         }
                     }
-                    PlotHelper.mergePlots(world, PlayerFunctions.getPlotSelectionIds(world, start, end));
+                    if(!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {
+                        return false;
+                    }
                     br = true;
                 }
                 if ((z < q) && ((z - x) < q)) {
