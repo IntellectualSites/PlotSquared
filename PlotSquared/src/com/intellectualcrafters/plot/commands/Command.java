@@ -89,6 +89,10 @@ public enum Command {
     /**
      *
      */
+    SETUP("setup"),
+    /**
+     *
+     */
     TP("tp", "tp");
     /**
      *

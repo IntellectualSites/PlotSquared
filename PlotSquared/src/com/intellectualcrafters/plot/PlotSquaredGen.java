@@ -18,6 +18,7 @@ import static com.intellectualcrafters.plot.PlotWorld.TOP_BLOCK_DEFAULT;
 import static com.intellectualcrafters.plot.PlotWorld.WALL_BLOCK_DEFAULT;
 import static com.intellectualcrafters.plot.PlotWorld.WALL_FILLING_DEFAULT;
 import static com.intellectualcrafters.plot.PlotWorld.WALL_HEIGHT_DEFAULT;
+import static com.intellectualcrafters.plot.PlotWorld.MOB_SPAWNING_DEFAULT;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -94,7 +95,7 @@ public class PlotSquaredGen extends ChunkGenerator {
         YamlConfiguration config = PlotMain.config;
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();
-
+        options.put("worlds." + world + ".natural_mob_spawning", MOB_SPAWNING_DEFAULT);
         options.put("worlds." + world + ".plot.auto_merge", AUTO_MERGE_DEFAULT);
         options.put("worlds." + world + ".plot.height", PLOT_HEIGHT_DEFAULT);
         options.put("worlds." + world + ".plot.size", PLOT_WIDTH_DEFAULT);
@@ -137,6 +138,7 @@ public class PlotSquaredGen extends ChunkGenerator {
         } catch (IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
+        this.plotworld.MOB_SPAWNING = config.getBoolean("worlds." + world + ".natural_mob_spawning");
         this.plotworld.AUTO_MERGE = config.getBoolean("worlds." + world + ".plot.auto_merge");
         this.plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot.height");
         this.plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot.size");
@@ -210,7 +212,13 @@ public class PlotSquaredGen extends ChunkGenerator {
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        world.setSpawnFlags(false, false);
+        if (!this.plotworld.MOB_SPAWNING) {
+            world.setSpawnFlags(false, false);
+            world.setAmbientSpawnLimit(0);
+            world.setAnimalSpawnLimit(0);
+            world.setMonsterSpawnLimit(0);
+            world.setWaterAnimalSpawnLimit(0);
+        }
         return Arrays.asList((BlockPopulator) new XPopulator(PlotMain.getWorldSettings(world)));
     }
 

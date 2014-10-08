@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
@@ -40,31 +41,7 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has started");
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Caching playerdata...");
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
-                Map<String, UUID> uuidMap = new HashMap<String, UUID>();
                 boolean online = Bukkit.getServer().getOnlineMode();
-                if (!online) {
-                    File playersFolder = new File("world" + File.separator + "playerdata");
-                    String[] dat = playersFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File f, String s) {
-                            return s.endsWith(".dat");
-                        }
-                    });
-                    for (String current : dat) {
-                        UUID uuid = null;
-                        try {
-                            uuid = UUID.fromString(current.replaceAll(".dat$", ""));
-                        } catch (Exception e) {
-
-                        }
-                        if (uuid != null) {
-                            String name = Bukkit.getOfflinePlayer(uuid).getName();
-                            if (name != null) {
-                                uuidMap.put(name, uuid);
-                            }
-                        }
-                    }
-                }
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots != null) {
@@ -115,16 +92,18 @@ public class PlotMeConverter {
                                     for (String user : plot.getAllowed().split(",")) {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
-                                        } else if (uuidMap.containsKey(user)) {
-                                            psAdded.add(uuidMap.get(user));
+                                        } else {
+                                            UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
+                                            psAdded.add(uuid);
                                         }
                                     }
                                     try {
                                         for (String user : plot.getDenied().split(",")) {
                                             if (user.equals("*")) {
                                                 psDenied.add(DBFunc.everyone);
-                                            } else if (uuidMap.containsKey(user)) {
-                                                psDenied.add(uuidMap.get(user));
+                                            } else {
+                                                UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
+                                                psDenied.add(uuid);
                                             }
                                         }
                                     } catch (Throwable e) {
@@ -144,9 +123,7 @@ public class PlotMeConverter {
                                 pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
                             } else {
                                 String owner = plot.getOwner();
-                                if (uuidMap.containsKey(owner)) {
-                                    pl = new com.intellectualcrafters.plot.Plot(id, uuidMap.get(owner), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
-                                }
+                                pl = new com.intellectualcrafters.plot.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
                             }
 
                             // TODO createPlot doesn't add helpers / denied

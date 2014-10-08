@@ -166,6 +166,42 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    public void plotEntry(Player player, Plot plot) {
+        if (plot.hasOwner()) {
+            if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
+                String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
+                String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
+                ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
+                ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
+                Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
+                title.setTitleColor(sTitleMainColor);
+                title.setSubtitleColor(sTitleSubColor);
+                title.setTimingsToTicks();
+                title.send(player);
+            }
+            {
+                PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
+                Bukkit.getPluginManager().callEvent(callEvent);
+            }
+            PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
+            if (plot.settings.getRain()) {
+                PlayerFunctions.togglePlotWeather(player, plot);
+            }
+            if (plot.settings.getChangeTime()) {
+                PlayerFunctions.togglePlotTime(player, plot);
+            }
+        }
+    }
+    public void plotExit(Player player, Plot plot) {
+        {
+            PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
+            Bukkit.getPluginManager().callEvent(callEvent);
+        }
+        player.resetPlayerTime();
+        player.resetPlayerWeather();
+        PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
+    }
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void PlayerMove(PlayerMoveEvent event) {
         try {
@@ -178,45 +214,15 @@ public class PlayerEvents implements Listener {
                 }
                 if (enteredPlot(from,to)) {
                     Plot plot = getCurrentPlot(event.getTo());
-                    if (plot.hasOwner()) {
-                        if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
-                            String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
-                            String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
-                            ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
-                            ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
-                            Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
-                            title.setTitleColor(sTitleMainColor);
-                            title.setSubtitleColor(sTitleSubColor);
-                            title.setTimingsToTicks();
-                            title.send(player);
-                        }
-                        {
-                            PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
-                            Bukkit.getPluginManager().callEvent(callEvent);
-                        }
-                        boolean admin = player.hasPermission("plots.admin");
-
-                        PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
-                        if (plot.deny_entry(player) && !admin) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                        if (plot.settings.getRain()) {
-                            PlayerFunctions.togglePlotWeather(player, plot);
-                        }
-                        if (plot.settings.getChangeTime()) {
-                            PlayerFunctions.togglePlotTime(player, plot);
-                        }
+                    boolean admin = player.hasPermission("plots.admin");
+                    if (plot.deny_entry(player) && !admin) {
+                        event.setCancelled(true);
+                        return;
                     }
+                    plotEntry(player, plot);
                 } else if (leftPlot(event.getFrom(), event.getTo())) {
                     Plot plot = getCurrentPlot(event.getFrom());
-                    {
-                        PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
-                        Bukkit.getPluginManager().callEvent(callEvent);
-                    }
-                    event.getPlayer().resetPlayerTime();
-                    event.getPlayer().resetPlayerWeather();
-                    PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
+                    plotExit(player, plot);
                 }
             }
         } catch (Exception e) {
@@ -518,6 +524,9 @@ public class PlayerEvents implements Listener {
         if (!isPlotWorld(world)) {
             return;
         }
+        if (event.getEntity() instanceof Player) {
+            return;
+        }
         if (!isInPlot(event.getLocation())) {
             event.setCancelled(true);
         }
@@ -557,12 +566,27 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
+        
+        Location f = event.getFrom();
+        Location t = event.getTo();
+        
         if (isPlotWorld(event.getTo())) {
             if (isInPlot(event.getTo())) {
                 Plot plot = getCurrentPlot(event.getTo());
                 if (plot.deny_entry(event.getPlayer())) {
                     PlayerFunctions.sendMessage(event.getPlayer(), C.YOU_BE_DENIED);
                     event.setCancelled(true);
+                }
+                else {
+                    if (enteredPlot(f, t)) {
+                        plotEntry(event.getPlayer(), plot);
+                    }
+                }
+            }
+            else {
+                if (leftPlot(f, t)) {
+                    Plot plot = getCurrentPlot(event.getTo());
+                    plotExit(event.getPlayer(), plot);
                 }
             }
             if ((event.getTo().getBlockX() >= 29999999) || (event.getTo().getBlockX() <= -29999999) || (event.getTo().getBlockZ() >= 29999999) || (event.getTo().getBlockZ() <= -29999999)) {

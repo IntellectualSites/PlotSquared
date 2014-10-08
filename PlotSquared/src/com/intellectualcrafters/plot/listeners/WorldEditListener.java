@@ -127,14 +127,18 @@ public class WorldEditListener implements Listener {
         Player p = e.getPlayer();
         Location t = e.getTo();
         Location f = e.getFrom();
-        if (!isPlotWorld(t)) {
-            if (isPlotWorld(f)) {
-                PWE.removeMask(p);
-            } else {
-                return;
-            }
+        if (t==null) {
+            PWE.removeMask(p);
+            return;
         }
-        PWE.setMask(p, t);
+        if (isPlotWorld(t)) {
+            PWE.setMask(p, t);
+            return;
+        }
+        if (f!=null && isPlotWorld(f)) {
+            PWE.removeMask(p);
+            return;
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

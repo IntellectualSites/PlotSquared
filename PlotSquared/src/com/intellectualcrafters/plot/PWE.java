@@ -33,12 +33,9 @@ public class PWE {
                 Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
                     boolean r;
-                    r = (plot.getOwner() != null) && plot.getOwner().equals(p.getUniqueId());
-
+                    r = (plot.getOwner() != null) && plot.getOwner().equals(p.getUniqueId()) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId());
                     if (!r) {
-                        if ((plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
-                            r = true;
-                        } else if (p.hasPermission("plots.worldedit.bypass")) {
+                        if (p.hasPermission("plots.worldedit.bypass")) {
                             removeMask(p, s);
                             return;
                         }

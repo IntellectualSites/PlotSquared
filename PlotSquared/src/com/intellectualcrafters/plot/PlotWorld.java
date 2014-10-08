@@ -35,6 +35,8 @@ public class PlotWorld {
 
     public boolean AUTO_MERGE;
     public static boolean AUTO_MERGE_DEFAULT = false;
+    public boolean MOB_SPAWNING;
+    public static boolean MOB_SPAWNING_DEFAULT = false;
     /**
      * Road Height
      */

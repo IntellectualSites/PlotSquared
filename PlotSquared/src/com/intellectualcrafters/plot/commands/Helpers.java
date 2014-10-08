@@ -29,7 +29,7 @@ public class Helpers extends SubCommand {
     }
 
     private boolean hasBeenOnServer(String name) {
-        Player plr = Bukkit.getPlayerExact(name);
+        Player plr = Bukkit.getPlayer(name);
         if (plr == null) {
             OfflinePlayer oplr = Bukkit.getOfflinePlayer(name);
             if (oplr == null) {
@@ -74,8 +74,8 @@ public class Helpers extends SubCommand {
                 return true;
             }
             UUID uuid = null;
-            if ((Bukkit.getPlayerExact(args[1]) != null)) {
-                uuid = Bukkit.getPlayerExact(args[1]).getUniqueId();
+            if ((Bukkit.getPlayer(args[1]) != null)) {
+                uuid = Bukkit.getPlayer(args[1]).getUniqueId();
             } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
             }
@@ -105,8 +105,8 @@ public class Helpers extends SubCommand {
                 return true;
             }
             UUID uuid = null;
-            if (Bukkit.getPlayerExact(args[1]) != null) {
-                uuid = Bukkit.getPlayerExact(args[1]).getUniqueId();
+            if (Bukkit.getPlayer(args[1]) != null) {
+                uuid = Bukkit.getPlayer(args[1]).getUniqueId();
             } else {
                 uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
             }
