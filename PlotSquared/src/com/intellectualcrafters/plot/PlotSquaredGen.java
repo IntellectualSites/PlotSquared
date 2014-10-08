@@ -21,6 +21,7 @@ import static com.intellectualcrafters.plot.PlotWorld.WALL_HEIGHT_DEFAULT;
 import static com.intellectualcrafters.plot.PlotWorld.MOB_SPAWNING_DEFAULT;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,6 @@ public class PlotSquaredGen extends ChunkGenerator {
     }
 
     public PlotSquaredGen(String world) {
-
         YamlConfiguration config = PlotMain.config;
         this.plotworld = new PlotWorld();
         Map<String, Object> options = new HashMap<String, Object>();

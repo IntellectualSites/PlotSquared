@@ -259,47 +259,146 @@ public class DefaultPlotManager extends PlotManager {
     }
     
     @Override
-    public boolean setWall(Player player, Plot plot, Block block) {
-        // TODO Auto-generated method stub
+    public boolean setWall(Player player, Plot plot, Block block, PlotBlock newblock) {
+        
+        // CURRENTLY NOT IMPLEMENTED
+        
         return false;
     }
 
     @Override
     public boolean setBiome(Player player, Plot plot, Biome biome) {
-        // TODO Auto-generated method stub
-        return false;
+        
+        World world = player.getWorld();
+        
+        int bottomX = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
+        int topX = PlotHelper.getPlotTopLoc(world, plot.id).getBlockX() + 1;
+        int bottomZ = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
+        int topZ = PlotHelper.getPlotTopLoc(world, plot.id).getBlockZ() + 1;
+
+        for (int x = bottomX; x <= topX; x++) {
+            for (int z = bottomZ; z <= topZ; z++) {
+                world.getBlockAt(x, 0, z).setBiome(biome);
+            }
+        }
+
+        plot.settings.setBiome(biome);
+        PlotMain.updatePlot(plot);
+        PlotHelper.refreshPlotChunks(world, plot);
+        
+        return true;
     }
 
     // PLOT MERGING
     
     @Override
     public boolean createRoadEast(PlotWorld plotworld, Plot plot) {
-        // TODO Auto-generated method stub
-        return false;
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+        World w = Bukkit.getWorld(plot.world);
+        
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+
+        int sx = pos2.getBlockX();
+        int ex = (sx + dpw.ROAD_WIDTH);
+        int sz = pos1.getBlockZ() - 1;
+        int ez = pos2.getBlockZ() + 2;
+        
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), new PlotBlock((short) 0, (byte) 0));
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, ex, 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
+        PlotHelper.setSimpleCuboid(w, new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+        
+        return true;
     }
 
     @Override
     public boolean createRoadSouth(PlotWorld plotworld, Plot plot) {
-        // TODO Auto-generated method stub
-        return false;
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+        World w = Bukkit.getWorld(plot.world);
+        
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+
+        int sz = pos2.getBlockZ();
+        int ez = (sz + dpw.ROAD_WIDTH);
+        int sx = pos1.getBlockX() - 1;
+        int ex = pos2.getBlockX() + 2;
+        
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), dpw.WALL_FILLING);
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 2, sz + 1), dpw.WALL_BLOCK);
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 1, ez + 1), dpw.WALL_FILLING);
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 2, ez + 1), dpw.WALL_BLOCK);
+
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+        
+        return true;
     }
 
     @Override
     public boolean createRoadSouthEast(PlotWorld plotworld, Plot plot) {
-        // TODO Auto-generated method stub
-        return false;
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+        World w = Bukkit.getWorld(plot.world);
+        
+        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+
+        int sx = pos2.getBlockX() + 1;
+        int ex = (sx + dpw.ROAD_WIDTH) - 1;
+        int sz = pos2.getBlockZ() + 1;
+        int ez = (sz + dpw.ROAD_WIDTH) - 1;
+        
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.ROAD_HEIGHT + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+        
+        return true;
     }
 
     @Override
     public boolean removeRoadEast(PlotWorld plotworld, Plot plot) {
-        // TODO Auto-generated method stub
-        return false;
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+        World w = Bukkit.getWorld(plot.world);
+        
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+
+        int sx = pos2.getBlockX();
+        int ex = (sx + dpw.ROAD_WIDTH);
+        int sz = pos1.getBlockZ() - 1;
+        int ez = pos2.getBlockZ() + 2;
+        
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
+        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
+        PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT+1, ez + 1), dpw.TOP_BLOCK);
+        
+        return true;
     }
 
     @Override
     public boolean removeRoadSouth(PlotWorld plotworld, Plot plot) {
-        // TODO Auto-generated method stub
-        return false;
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+        World w = Bukkit.getWorld(plot.world);
+        
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+
+        int sz = pos2.getBlockZ();
+        int ez = (sz + dpw.ROAD_WIDTH);
+        int sx = pos1.getBlockX() - 1;
+        int ex = pos2.getBlockX() + 2;
+        
+        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
+        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
+        PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT+1, ez + 1), dpw.TOP_BLOCK);
+        
+        return true;
     }
 
     @Override
@@ -314,11 +413,11 @@ public class DefaultPlotManager extends PlotManager {
         int sz = loc.getBlockZ() + 1;
         int ez = (sz + dpw.ROAD_WIDTH) - 1;
 
-        PlotHelper.setSimpleCuboid(world, new Location(world, sx, dpw.ROAD_HEIGHT + 1, sz), new Location(world, ex + 1, 257 + 1, ez + 1), new PlotBlock((short) 0, (byte) 0));
+        PlotHelper.setSimpleCuboid(world, new Location(world, sx, dpw.ROAD_HEIGHT + 1, sz), new Location(world, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
 
         PlotHelper.setCuboid(world, new Location(world, sx + 1, 1, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT, ez), dpw.MAIN_BLOCK);
         PlotHelper.setCuboid(world, new Location(world, sx + 1, dpw.ROAD_HEIGHT, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.TOP_BLOCK);
-        return false;
+        return true;
     }
 
     /*
@@ -343,7 +442,7 @@ public class DefaultPlotManager extends PlotManager {
                 }
             }
         }
-        return false;
+        return true;
     }
     
 

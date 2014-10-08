@@ -41,7 +41,7 @@ public abstract class PlotManager {
      * method)
      */
 
-    public abstract boolean setWall(Player player, Plot plot, Block block);
+    public abstract boolean setWall(Player player, Plot plot, Block block, PlotBlock newBlock);
 
     public abstract boolean setBiome(Player player, Plot plot, Biome biome);
 

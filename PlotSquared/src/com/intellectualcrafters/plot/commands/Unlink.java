@@ -190,7 +190,7 @@ public class Unlink extends SubCommand {
         PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, this.wallheight + 1, sz + 1), new short[] { this.wf_id }, new short[] { this.wf_v });
         PlotHelper.setCuboid(w, new Location(w, sx + 1, this.wallheight + 1, sz), new Location(w, ex, this.wallheight + 2, sz + 1), new short[] { this.w_id }, new short[] { this.w_v });
 
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, this.wallheight + 1, sz + 1), new short[] { this.wf_id }, new short[] { this.wf_v });
+        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, ez), new Location(w, ex, this.wallheight + 1, ez + 1), new short[] { this.wf_id }, new short[] { this.wf_v });
         PlotHelper.setCuboid(w, new Location(w, sx + 1, this.wallheight + 1, ez), new Location(w, ex, this.wallheight + 2, ez + 1), new short[] { this.w_id }, new short[] { this.w_v });
 
         PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, this.roadheight + 1, ez), new short[] { this.f1_id }, new short[] { this.f1_v });
