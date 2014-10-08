@@ -20,7 +20,7 @@ import com.intellectualcrafters.plot.Settings;
 public class plugin extends SubCommand {
 
     public plugin() {
-        super("plugin", "", "Show plugin information", "plugin", "pl", CommandCategory.INFO);
+        super("plugin", "plots.use", "Show plugin information", "plugin", "pl", CommandCategory.INFO);
     }
 
     @Override

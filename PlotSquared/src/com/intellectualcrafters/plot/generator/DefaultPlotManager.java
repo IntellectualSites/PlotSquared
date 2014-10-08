@@ -114,7 +114,7 @@ public class DefaultPlotManager extends PlotManager {
     public boolean clearSign(Player player, Plot plot, boolean mega) {
         World world = player.getWorld();
         DefaultPlotWorld plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
-        Location pl = new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), plotworld.ROAD_HEIGHT + 1, getPlotBottomLoc(world, plot.id).getBlockZ());
+        Location pl = new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), plotworld.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ());
         Block bs = pl.add(0, 0, -1).getBlock();
         bs.setType(Material.AIR);
         return true;

@@ -11,17 +11,13 @@ public class DefaultPlotGenerator extends PlotGenerator {
 
     private final PlotWorld plotworld;
     private final ChunkGenerator generator;
-    private static BlockPopulator populator = null;
     private static PlotManager manager = null;
     
     public DefaultPlotGenerator(String worldname) {
         super(worldname);
         
         this.plotworld = new DefaultPlotWorld(worldname);
-        this.generator = new WorldGenerator(worldname);
-        if (populator==null) {
-            populator = new XPopulator((DefaultPlotWorld) this.plotworld);
-        }
+        this.generator = new WorldGenerator(plotworld, worldname);
         if (manager==null) {
             DefaultPlotGenerator.manager = new DefaultPlotManager();
         }
@@ -33,13 +29,8 @@ public class DefaultPlotGenerator extends PlotGenerator {
     }
     
     @Override
-    public ChunkGenerator getChunkGenerator(String worldname) {
+    public ChunkGenerator getChunkGenerator(PlotWorld plotworld, String worldname) {
         return this.generator;
-    }
-
-    @Override
-    public BlockPopulator getBlockPopulator(PlotWorld plotworld) {
-        return populator;
     }
 
     @Override

@@ -3,9 +3,13 @@ package com.intellectualcrafters.plot.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
 
+import com.intellectualcrafters.plot.Configuration.*;
+import com.intellectualcrafters.plot.Configuration;
 import com.intellectualcrafters.plot.ConfigurationNode;
 import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.PlotBlock;
@@ -75,7 +79,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default main block: 1
      */
-    public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock(1, (byte) 0) };
+    public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
     /**
      * Top blocks
      */
@@ -83,7 +87,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default top blocks: {"2"}
      */
-    public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock(2, (byte) 0) };
+    public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
 
     /**
      * Wall block
@@ -101,7 +105,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default wall filling: 1
      */
-    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock(1, (byte) 0);
+    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
 
     /**
      * Road stripes
@@ -110,7 +114,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default road stripes: 35
      */
-    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock(98, (byte) 0);
+    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
     /**
      * enable road stripes 
      */
@@ -123,7 +127,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default road block: 155
      */
-    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock(155, (byte) 0);
+    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
 
     /**
      * plot chat?
@@ -165,7 +169,7 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default default flags
      */
-    public static String[] DEFAULT_FLAGS_DEFAULT = new String[] {};
+    public static Flag[] DEFAULT_FLAGS_DEFAULT = new Flag[] {};
 
     public boolean USE_ECONOMY;
     public static boolean USE_ECONOMY_DEFAULT = false;
@@ -178,21 +182,62 @@ public class DefaultPlotWorld extends PlotWorld {
     
     public DefaultPlotWorld(String worldname) {
         super(worldname);
-        
-        
     }
 
     @Override
     public ConfigurationNode[] getSettingNodes() {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO return a set of configuration nodes (used for setup command)
+        return
+            new ConfigurationNode[] {
+                new ConfigurationNode("plot.auto_merge", AUTO_MERGE, "Enable Auto plot merging", Configuration.BOOLEAN, false),
+                new ConfigurationNode("plot.height", PLOT_HEIGHT, "Plot height", Configuration.INTEGER, true),
+                new ConfigurationNode("plot.width", PLOT_WIDTH, "Plot width", Configuration.INTEGER, true),
+                new ConfigurationNode("plot.biome", PLOT_BIOME, "Plot biome", Configuration.BIOME, true),
+                new ConfigurationNode("plot.filling", MAIN_BLOCK, "Plot block", Configuration.BLOCKLIST, true),
+                new ConfigurationNode("plot.floor", TOP_BLOCK, "Plot floor block", Configuration.BLOCKLIST, true),
+                new ConfigurationNode("wall.block", WALL_BLOCK, "Top wall block", Configuration.BLOCK, true),
+                new ConfigurationNode("road.width", ROAD_WIDTH, "Road width", Configuration.INTEGER, true),
+                new ConfigurationNode("road.height", ROAD_HEIGHT, "Road height", Configuration.INTEGER, true),
+                new ConfigurationNode("road.enable_stripes", ROAD_STRIPES_ENABLED, "Enable road stripes", Configuration.BOOLEAN, true),
+                new ConfigurationNode("road.block", ROAD_BLOCK, "Road block", Configuration.BLOCK, true),
+                new ConfigurationNode("road.stripes", ROAD_STRIPES, "Road stripe block", Configuration.BLOCK, true),
+                new ConfigurationNode("wall.filling", WALL_FILLING, "Wall filling block", Configuration.BLOCK, true),
+                new ConfigurationNode("wall.height", WALL_HEIGHT, "Wall height", Configuration.INTEGER, true),
+                new ConfigurationNode("schematic.on_claim", SCHEMATIC_ON_CLAIM, "Enable schematic paste on claim", Configuration.BOOLEAN, false),
+                new ConfigurationNode("schematic.file", SCHEMATIC_FILE, "Schematic file directory", Configuration.STRING, false),
+                new ConfigurationNode("schematic.specify_on_claim", SCHEMATIC_CLAIM_SPECIFY, "Enable specifying schematics on claim", Configuration.BOOLEAN, false),
+                new ConfigurationNode("schematic.schematics", SCHEMATICS, "List of schematic paths", Configuration.STRINGLIST, false),
+                new ConfigurationNode("economy.use", USE_ECONOMY, "Enable economy features", Configuration.BOOLEAN, false),
+                new ConfigurationNode("economy.prices.claim", PLOT_PRICE, "Plot claim price", Configuration.DOUBLE, false),
+                new ConfigurationNode("economy.prices.merge", MERGE_PRICE, "Plot merge price", Configuration.DOUBLE, false),
+                new ConfigurationNode("chat.enabled", PLOT_CHAT, "Enable plot chat", Configuration.BOOLEAN, false)
+            };
     }
 
     @Override
-    public void setSettingNode(String key, String value) {
-        switch (key) {
-            
-        }
+    public void loadConfiguration(ConfigurationSection config) {
+        this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        this.PLOT_HEIGHT = config.getInt("plot.height");
+        this.PLOT_WIDTH = config.getInt("plot.width");
+        this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
+        this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"),','));
+        this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.floor"),','));
+        this.WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block"));
+        this.ROAD_WIDTH = config.getInt("road.width");
+        this.ROAD_HEIGHT = config.getInt("road.height");
+        this.ROAD_STRIPES_ENABLED = config.getBoolean("road.enable_stripes");
+        this.ROAD_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.block"));
+        this.ROAD_STRIPES = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.stripes"));
+        this.WALL_FILLING = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.filling"));
+        this.WALL_HEIGHT = config.getInt("wall.height");
+        this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
+        this.SCHEMATIC_FILE = config.getString("schematic.file");
+        this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
+        this.SCHEMATICS = config.getStringList("schematic.schematics");
+        this.USE_ECONOMY = config.getBoolean("economy.use");
+        this.PLOT_PRICE = config.getDouble("economy.prices.claim");
+        this.MERGE_PRICE = config.getDouble("economy.prices.merge");
+        this.PLOT_CHAT = config.getBoolean("chat.enabled");
     }
 }
  

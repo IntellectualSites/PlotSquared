@@ -13,7 +13,7 @@ public class ConfigurationNode {
     private Object value = 0;
     private SettingValue type;
 
-    public ConfigurationNode(String constant, Object default_value, String description, SettingValue type) {
+    public ConfigurationNode(String constant, Object default_value, String description, SettingValue type, boolean required) {
         this.constant = constant;
         this.default_value = default_value;
         this.description = description;
@@ -28,7 +28,7 @@ public class ConfigurationNode {
         if (!this.type.validateValue(string)) {
             return false;
         }
-        this.value = this.type.parseValue(string);
+        this.value = this.type.parseString(string);
         return true;
     }
 
