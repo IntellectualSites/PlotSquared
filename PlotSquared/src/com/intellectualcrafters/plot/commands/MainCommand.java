@@ -9,18 +9,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotMain;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * PlotMain command class
@@ -123,7 +122,7 @@ public class MainCommand implements CommandExecutor {
             if (cmd.permission.hasPermission(player) && (cmd.category == category)) {
                 String s = t(C.HELP_PAGE.s());
                 s = s.replaceAll("%alias%", cmd.alias);
-                s = s.replaceAll("%usage%", "/plot " + cmd.usage);
+                s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);
                 s = s.replaceAll("%cmd%", cmd.cmd);
                 s = s.replaceAll("%desc%", cmd.description);
                 help.add(s);
