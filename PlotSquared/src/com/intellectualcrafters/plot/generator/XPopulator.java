@@ -16,6 +16,14 @@ import com.intellectualcrafters.plot.PlotWorld;
  * 
  */
 public class XPopulator extends BlockPopulator {
+    
+    /*
+     * Sorry, this isn't well documented at the moment.
+     * 
+     * We advise you to take a look at a world generation tutorial for information about how a BlockPopulator works.
+     * 
+     */
+    
     private int X;
     private int Z;
     private long state;

@@ -25,14 +25,33 @@ import com.intellectualcrafters.plot.PlotWorld;
 
 public class DefaultPlotManager extends PlotManager {
 
+    /*
+     * Default implementation of getting a plot at a given location
+     * 
+     * For a simplified explanation of the math involved:
+     *  - Get the current coords
+     *  - shift these numbers down to something relatable for a single plot 
+     *  (similar to reducing trigonometric functions down to the first quadrant)
+     *  - e.g. If the plot size is 20 blocks, and we are at x=25, it's equivalent to x=5 for that specific plot
+     *  
+     *  From this, and knowing how thick the road is, we can say whether x=5 is road, or plot.
+     *  The number of shifts done, is also counted, and this number gives us the PlotId
+     *  
+     * 
+     */
     @Override
     public PlotId getPlotIdAbs(PlotWorld plotworld, Location loc) {
         DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
 
+        // get x,z loc
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
 
+        // get plot size
         int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+        
+        // get size of path on bottom part, and top part of plot
+        // (As 0,0 is in the middle of a road, not the very start)
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
             pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
@@ -40,9 +59,9 @@ public class DefaultPlotManager extends PlotManager {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
 
+        // calulating how many shifts need to be done
         int dx = x / size;
         int dz = z / size;
-
         if (x < 0) {
             dx--;
             x += ((-dx) * size);
@@ -52,19 +71,26 @@ public class DefaultPlotManager extends PlotManager {
             z += ((-dz) * size);
         }
 
+        // reducing to first plot
         int rx = (x) % size;
         int rz = (z) % size;
 
+        // checking if road (return null if so)
         int end = pathWidthLower + dpw.PLOT_WIDTH;
         boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-
         if (northSouth || eastWest) {
             return null;
         }
+        
+        // returning the plot id (based on the number of shifts required)
         return new PlotId(dx + 1, dz + 1);
     }
 
+    /*
+     *  Check if a location is inside a specific plot(non-Javadoc)
+     *   - For this implementation, we don't need to do anything fancier than referring to getPlotIdAbs(...)
+     */
     @Override
     public boolean isInPlotAbs(PlotWorld plotworld, Location loc, Plot plot) {
         PlotId result = getPlotIdAbs(plotworld, loc);
@@ -74,6 +100,10 @@ public class DefaultPlotManager extends PlotManager {
         return result==plot.id;
     }
 
+    /*
+     * Get the bottom plot loc
+     * (some basic math)
+     */
     @Override
     public Location getPlotBottomLocAbs(PlotWorld plotworld, Plot plot) {
         DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
@@ -86,7 +116,11 @@ public class DefaultPlotManager extends PlotManager {
 
         return new Location(Bukkit.getWorld(plot.world), x, 1, z);
     }
-
+    
+    /*
+     * Get the top plot loc
+     * (some basic math)
+     */
     @Override
     public Location getPlotTopLocAbs(PlotWorld plotworld, Plot plot) {
         DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
@@ -100,6 +134,14 @@ public class DefaultPlotManager extends PlotManager {
         return new Location(Bukkit.getWorld(plot.world), x, 256, z);
     }
 
+    /*
+     * Clearing the plot needs to only consider removing the blocks
+     *  - This implementation has used the SetCuboid function, as it is fast, and uses NMS code
+     *  - It also makes use of the fact that deleting chunks is a lot faster than block updates
+     * 
+     * This code is very messy, but you don't need to do something quite as complex unless you happen to have 512x512 sized plots
+     * 
+     */
     @Override
     public boolean clearPlot(Player player, Plot plot, boolean mega) {
         World world = player.getWorld();
@@ -225,6 +267,9 @@ public class DefaultPlotManager extends PlotManager {
         return true;
     }
 
+    /*
+     * Remove sign for a plot 
+     */
     @Override
     public boolean clearSign(Player player, Plot plot, boolean mega) {
         World world = player.getWorld();
@@ -235,6 +280,9 @@ public class DefaultPlotManager extends PlotManager {
         return true;
     }
 
+    /*
+     * Remove any entities, and teleport players inside a plot being cleared
+     */
     @Override
     public boolean clearEntities(Player player, Plot plot, boolean mega) {
         World world = Bukkit.getWorld(plot.world);
@@ -266,6 +314,9 @@ public class DefaultPlotManager extends PlotManager {
         return false;
     }
 
+    /*
+     * Set a plot biome
+     */
     @Override
     public boolean setBiome(Player player, Plot plot, Biome biome) {
         
@@ -289,7 +340,9 @@ public class DefaultPlotManager extends PlotManager {
         return true;
     }
 
-    // PLOT MERGING
+    /*
+     * PLOT MERGING
+     */
     
     @Override
     public boolean createRoadEast(PlotWorld plotworld, Plot plot) {

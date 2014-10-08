@@ -20,6 +20,10 @@ import com.intellectualcrafters.plot.PlotWorld;
  * @auther Empire92
  * @author Citymonstret
  * 
+ * The default generator is very messy, as we have decided to try externalize all calculations from within the loop.
+ *  - You will see a lot of slower implementations have a single for loop.
+ *  - This is perfectly fine to do, it will just mean world generation may take somewhat longer
+ * 
  */
 public class WorldGenerator extends PlotGenerator {
     /*

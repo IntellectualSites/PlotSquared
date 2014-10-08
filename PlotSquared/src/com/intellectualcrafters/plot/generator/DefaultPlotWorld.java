@@ -17,6 +17,12 @@ import com.intellectualcrafters.plot.PlotWorld;
 
 public class DefaultPlotWorld extends PlotWorld {
 
+    /*
+     * These variables are set to ensure fast access to config settings
+     * Strings are used as little as possible to optimize math performance in many of the functions/algorithms
+     * 
+     */
+    
     public boolean AUTO_MERGE;
     public static boolean AUTO_MERGE_DEFAULT = false;
     public boolean MOB_SPAWNING;
@@ -182,10 +188,21 @@ public class DefaultPlotWorld extends PlotWorld {
     public double MERGE_PRICE;
     public static double MERGE_PRICE_DEFAULT = 100;
     
+    
+    /*
+     * Here we are just calling the super method, nothing special
+     */
     public DefaultPlotWorld(String worldname) {
         super(worldname);
     }
 
+    /*
+     * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
+     * 
+     * Set the last boolean to false if you do not require a specific config node to be set while using the setup command
+     *  - this may be useful if a config value can be changed at a later date, and has no impact on the actual world generation
+     * 
+     */
     @Override
     public ConfigurationNode[] getSettingNodes() {
         // TODO return a set of configuration nodes (used for setup command)
@@ -217,6 +234,10 @@ public class DefaultPlotWorld extends PlotWorld {
             };
     }
 
+    /*
+     * This method is called when a world loads. Make sure you set all your constants here.
+     * You are provided with the configuration section for that specific world.
+     */
     @Override
     public void loadConfiguration(ConfigurationSection config) {
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.block.Biome;
 
+
 public class Configuration {
     public static final SettingValue STRING = new SettingValue("STRING") {
         @Override
@@ -179,6 +180,11 @@ public class Configuration {
         }
     };
 
+    /**
+     * 
+     * Create your own SettingValue object to make the management of plotworld configuration easier
+     *
+     */
     public static abstract class SettingValue {
         private String type;
 
