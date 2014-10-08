@@ -9,14 +9,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.database.DBFunc;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.entity.Player;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -41,6 +37,15 @@ public class Delete extends SubCommand {
         if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))) && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
+        }
+        PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
+        if(PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+            double c = pWorld.SELL_PRICE;
+            if(c > 0d) {
+                Economy economy = PlotMain.economy;
+                economy.depositPlayer(plr, c);
+                sendMessage(plr, C.ADDED_BALANCE, c + "");
+            }
         }
         boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {

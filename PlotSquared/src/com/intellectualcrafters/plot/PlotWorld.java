@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot;
 
+import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.Material;
 
 /**
  * This is the PlotWorld class (obviously) <br>
@@ -225,4 +225,5 @@ public class PlotWorld {
     public boolean USE_ECONOMY = false;
     public double PLOT_PRICE = 100;
     public double MERGE_PRICE = 100;
+    public double SELL_PRICE = 75;
 }

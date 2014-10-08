@@ -25,7 +25,7 @@ public enum C {
     /*
      * Economy Stuff
      */
-    CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"), CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"), REMOVED_BALANCE("&6%s &chas been taken from your balance"),
+    CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"), CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"), ADDED_BALANCE("&6%s &chas been added to your balance"), REMOVED_BALANCE("&6%s &chas been taken from your balance"),
     /*
      * Setup Stuff
      */

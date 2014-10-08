@@ -184,6 +184,9 @@ public class DefaultPlotWorld extends PlotWorld {
     
     public double PLOT_PRICE;
     public static double PLOT_PRICE_DEFAULT = 100;
+
+    public double SELL_PRICE;
+    public static double SELL_PRICE_DEFAULT = 75;
     
     public double MERGE_PRICE;
     public static double MERGE_PRICE_DEFAULT = 100;
@@ -230,6 +233,7 @@ public class DefaultPlotWorld extends PlotWorld {
                 new ConfigurationNode("economy.use", USE_ECONOMY, "Enable economy features", Configuration.BOOLEAN, false),
                 new ConfigurationNode("economy.prices.claim", PLOT_PRICE, "Plot claim price", Configuration.DOUBLE, false),
                 new ConfigurationNode("economy.prices.merge", MERGE_PRICE, "Plot merge price", Configuration.DOUBLE, false),
+                new ConfigurationNode("economy.prices.sell",  SELL_PRICE, "Plot Sell Price", Configuration.DOUBLE, false),
                 new ConfigurationNode("chat.enabled", PLOT_CHAT, "Enable plot chat", Configuration.BOOLEAN, false)
             };
     }
@@ -262,6 +266,7 @@ public class DefaultPlotWorld extends PlotWorld {
         this.USE_ECONOMY = config.getBoolean("economy.use");
         this.PLOT_PRICE = config.getDouble("economy.prices.claim");
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
+        this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
     }
 }
