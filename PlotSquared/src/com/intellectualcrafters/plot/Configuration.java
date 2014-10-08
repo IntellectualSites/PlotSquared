@@ -1,5 +1,8 @@
 package com.intellectualcrafters.plot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.block.Biome;
 
 public class Configuration {
@@ -93,6 +96,11 @@ public class Configuration {
         public Object parseString(String string) {
             return Biome.valueOf(string.toUpperCase());
         }
+        
+        @Override
+        public Object parseObject(Object object) {
+            return ((Biome) object).toString();
+        }
     };
 
     public static final SettingValue BLOCK = new SettingValue("BLOCK") {
@@ -120,6 +128,11 @@ public class Configuration {
             } else {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
+        }
+        
+        @Override
+        public Object parseObject(Object object) {
+            return ((PlotBlock) object).id+":"+((PlotBlock) object).data;
         }
     };
 
@@ -156,6 +169,14 @@ public class Configuration {
             }
             return values;
         }
+        @Override
+        public Object parseObject(Object object) {
+            List<String> list = new ArrayList<String>();
+            for (PlotBlock block:(PlotBlock[]) object) {
+                list.add((block.id+":"+(block.data)));
+            }
+            return list;
+        }
     };
 
     public static abstract class SettingValue {
@@ -167,6 +188,10 @@ public class Configuration {
 
         public String getType() {
             return this.type;
+        }
+        
+        public Object parseObject(Object object) {
+            return object;
         }
 
         public abstract Object parseString(String string);

@@ -19,6 +19,8 @@ public class DefaultPlotWorld extends PlotWorld {
 
     public boolean AUTO_MERGE;
     public static boolean AUTO_MERGE_DEFAULT = false;
+    public boolean MOB_SPAWNING;
+    public static boolean MOB_SPAWNING_DEFAULT = false;
     /**
      * Road Height
      */
@@ -152,7 +154,7 @@ public class DefaultPlotWorld extends PlotWorld {
      */
     public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
-    public List<String> SCHEMATICS = new ArrayList<>();
+    public List<String> SCHEMATICS = new ArrayList<String>();
 
     /**
      * schematic file
@@ -189,6 +191,7 @@ public class DefaultPlotWorld extends PlotWorld {
         // TODO return a set of configuration nodes (used for setup command)
         return
             new ConfigurationNode[] {
+                new ConfigurationNode("natural_mob_spawning", MOB_SPAWNING, "Enable mob spawning", Configuration.BOOLEAN, false),
                 new ConfigurationNode("plot.auto_merge", AUTO_MERGE, "Enable Auto plot merging", Configuration.BOOLEAN, false),
                 new ConfigurationNode("plot.height", PLOT_HEIGHT, "Plot height", Configuration.INTEGER, true),
                 new ConfigurationNode("plot.width", PLOT_WIDTH, "Plot width", Configuration.INTEGER, true),
@@ -216,6 +219,7 @@ public class DefaultPlotWorld extends PlotWorld {
 
     @Override
     public void loadConfiguration(ConfigurationSection config) {
+        this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.PLOT_HEIGHT = config.getInt("plot.height");
         this.PLOT_WIDTH = config.getInt("plot.width");

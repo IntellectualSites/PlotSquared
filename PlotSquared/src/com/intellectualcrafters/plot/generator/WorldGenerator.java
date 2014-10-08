@@ -11,6 +11,8 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotBlock;
+import com.intellectualcrafters.plot.PlotGenerator;
+import com.intellectualcrafters.plot.PlotManager;
 import com.intellectualcrafters.plot.PlotWorld;
 
 /**
@@ -19,9 +21,61 @@ import com.intellectualcrafters.plot.PlotWorld;
  * @author Citymonstret
  * 
  */
-public class WorldGenerator extends ChunkGenerator {
-    private long state;
+public class WorldGenerator extends PlotGenerator {
+    /*
+     * result object is returned for each generated chunk, do stuff to it
+     */
+    short[][] result;
+    
+    /*
+     * plotworld object
+     */
+    DefaultPlotWorld plotworld;
+    /*
+     * Set to static to re-use the same managet for all Default World Generators
+     */
+    private static PlotManager manager = null;
+    
+    /*
+     * Some generator specific variables (implementation dependent) 
+     */
+    int plotsize;
+    int pathsize;
+    PlotBlock wall;
+    PlotBlock wallfilling;
+    PlotBlock floor1;
+    PlotBlock floor2;
+    int size;
+    Biome biome;
+    int roadheight;
+    int wallheight;
+    int plotheight;
+    PlotBlock[] plotfloors;
+    PlotBlock[] filling;
+    
+    /*
+     * Return the plot manager for this type of generator, or create one
+     * 
+     */
+    @Override
+    public PlotManager getPlotManager() {
+        if (manager==null) {
+            manager = new DefaultPlotManager();
+        }
+        return null;
+    }
+    
+    // return the PlotWorld
+    
+    @Override
+    public PlotWorld getPlotWorld() {
+        return this.plotworld;
+    }
 
+    /*
+     * Faster sudo-random number generator than java.util.random
+     */
+    private long state;
     public final long nextLong() {
         long a = this.state;
         this.state = xorShift64(a);
@@ -39,69 +93,11 @@ public class WorldGenerator extends ChunkGenerator {
         long r = ((nextLong() >>> 32) * n) >> 32;
         return (int) r;
     }
-
-    DefaultPlotWorld plotworld;
-    short[][] result;
-    int plotsize;
-    int pathsize;
-    PlotBlock wall;
-    PlotBlock wallfilling;
-    PlotBlock floor1;
-    PlotBlock floor2;
-    int size;
-    Biome biome;
-    int roadheight;
-    int wallheight;
-    int plotheight;
-
-    PlotBlock[] plotfloors;
-    PlotBlock[] filling;
-
-    public Short getBlock(String block) {
-        if (block.contains(":")) {
-            String[] split = block.split(":");
-            return Short.parseShort(split[0]);
-        }
-        return Short.parseShort(block);
-    }
-
-    public WorldGenerator(PlotWorld pw, String world) {
-        
-        // 
-        this.plotworld = (DefaultPlotWorld) pw;
-
-        // save configuration
-
-        plotsize = plotworld.PLOT_WIDTH;
-        pathsize = plotworld.ROAD_WIDTH;
-
-        floor1 = plotworld.ROAD_BLOCK;
-        floor2 = plotworld.ROAD_STRIPES;
-        
-        wallfilling = plotworld.WALL_FILLING;
-        size = pathsize + plotsize;
-        wall = plotworld.WALL_BLOCK;
-
-        plotfloors = plotworld.TOP_BLOCK;
-        filling = plotworld.MAIN_BLOCK;
-        wallheight = plotworld.WALL_HEIGHT;
-        roadheight = plotworld.ROAD_HEIGHT;
-        plotheight = plotworld.PLOT_HEIGHT;
-
-        biome = plotworld.PLOT_BIOME;
-    }
-
-    @Override
-    public List<BlockPopulator> getDefaultPopulators(World world) {
-        world.setSpawnFlags(false, false);
-        return Arrays.asList((BlockPopulator) new XPopulator(plotworld));
-    }
-
-    @Override
-    public Location getFixedSpawnLocation(World world, Random random) {
-        return new Location(world, 0, plotworld.ROAD_HEIGHT + 2, 0);
-    }
-
+    
+    /*
+     * Cuboid based plot generation is quick, as it requires no calculations inside the loop
+     *  - You don't have to use this this method, but you may find it useful.
+     */
     public void setCuboidRegion(int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock block) {
         for (int x = x1; x < x2; x++) {
             for (int z = z1; z < z2; z++) {
@@ -125,9 +121,72 @@ public class WorldGenerator extends ChunkGenerator {
                 }
             }
         }
+    }
+    
+    /*
+     * Standard setblock method for world generation
+     */
+    private void setBlock(short[][] result, int x, int y, int z, short blkid) {
+        if (result[y >> 4] == null) {
+            result[y >> 4] = new short[4096];
+        }
+        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
+    }
+    
+    /*
+     * Initialize variables, and create plotworld object used in calculations
+     */
+    public WorldGenerator(String world) {
+        this.plotworld = new DefaultPlotWorld(world);
 
+        plotsize = plotworld.PLOT_WIDTH;
+        pathsize = plotworld.ROAD_WIDTH;
+
+        floor1 = plotworld.ROAD_BLOCK;
+        floor2 = plotworld.ROAD_STRIPES;
+        
+        wallfilling = plotworld.WALL_FILLING;
+        size = pathsize + plotsize;
+        wall = plotworld.WALL_BLOCK;
+
+        plotfloors = plotworld.TOP_BLOCK;
+        filling = plotworld.MAIN_BLOCK;
+        wallheight = plotworld.WALL_HEIGHT;
+        roadheight = plotworld.ROAD_HEIGHT;
+        plotheight = plotworld.PLOT_HEIGHT;
+
+        biome = plotworld.PLOT_BIOME;
     }
 
+    /*
+     * Return the block populator
+     */
+    @Override
+    public List<BlockPopulator> getDefaultPopulators(World world) {
+        // disabling spawning for this world
+        if (!this.plotworld.MOB_SPAWNING) {
+            world.setSpawnFlags(false, false);
+            world.setAmbientSpawnLimit(0);
+            world.setAnimalSpawnLimit(0);
+            world.setMonsterSpawnLimit(0);
+            world.setWaterAnimalSpawnLimit(0);
+        }
+        // You can have as many populators as you would like, e.g. tree populator, ore populator
+        return Arrays.asList((BlockPopulator) new XPopulator(plotworld));
+    }
+
+    /*
+     * Return the default spawn location for this world 
+     */
+    @Override
+    public Location getFixedSpawnLocation(World world, Random random) {
+        return new Location(world, 0, plotworld.ROAD_HEIGHT + 2, 0);
+    }
+
+    /*
+     * This part is a fucking mess. 
+     *  - Refer to a proper tutorial if you would like to learn how to make a world generator
+     */
     @Override
     public short[][] generateExtBlockSections(World world, Random random, int cx, int cz, BiomeGrid biomes) {
         
@@ -456,13 +515,8 @@ public class WorldGenerator extends ChunkGenerator {
                 setCuboidRegion(16 - roadStartX, (16 - roadStartX) + 1, this.wallheight + 1, this.wallheight + 2, start, 16, this.wall);
             }
         }
+        // Return the chunk
         return this.result;
     }
 
-    private void setBlock(short[][] result, int x, int y, int z, short blkid) {
-        if (result[y >> 4] == null) {
-            result[y >> 4] = new short[4096];
-        }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
-    }
 }
