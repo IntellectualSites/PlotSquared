@@ -83,7 +83,7 @@ public class Info extends SubCommand {
 
         String info = C.PLOT_INFO.s();
         info = info.replaceAll("%alias%", plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none");
-        info = info.replaceAll("%id%", plot.id.x + ";" + plot.id.y);
+        info = info.replaceAll("%id%", plot.id.toString());
         info = info.replaceAll("%biome%", getBiomeAt(plot).toString());
         info = info.replaceAll("%owner%", owner);
         info = info.replaceAll("%time%", plot.settings.getChangeTime() ? plot.settings.getTime() + "" : "default");

@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
@@ -40,31 +41,7 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has started");
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Caching playerdata...");
                 ArrayList<com.intellectualcrafters.plot.Plot> createdPlots = new ArrayList<com.intellectualcrafters.plot.Plot>();
-                Map<String, UUID> uuidMap = new HashMap<String, UUID>();
                 boolean online = Bukkit.getServer().getOnlineMode();
-                if (!online) {
-                    File playersFolder = new File("world" + File.separator + "playerdata");
-                    String[] dat = playersFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File f, String s) {
-                            return s.endsWith(".dat");
-                        }
-                    });
-                    for (String current : dat) {
-                        UUID uuid = null;
-                        try {
-                            uuid = UUID.fromString(current.replaceAll(".dat$", ""));
-                        } catch (Exception e) {
-
-                        }
-                        if (uuid != null) {
-                            String name = Bukkit.getOfflinePlayer(uuid).getName();
-                            if (name != null) {
-                                uuidMap.put(name, uuid);
-                            }
-                        }
-                    }
-                }
                 for (World world : Bukkit.getWorlds()) {
                     HashMap<String, Plot> plots = PlotManager.getPlots(world);
                     if (plots != null) {
@@ -115,7 +92,10 @@ public class PlotMeConverter {
                                     for (String user : plot.getAllowed().split(",")) {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
-                                        } else if (uuidMap.containsKey(user)) {
+                                        } else {
+                                            
+                                            UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
+                                            
                                             psAdded.add(uuidMap.get(user));
                                         }
                                     }
@@ -123,7 +103,7 @@ public class PlotMeConverter {
                                         for (String user : plot.getDenied().split(",")) {
                                             if (user.equals("*")) {
                                                 psDenied.add(DBFunc.everyone);
-                                            } else if (uuidMap.containsKey(user)) {
+                                            } else {
                                                 psDenied.add(uuidMap.get(user));
                                             }
                                         }

@@ -729,7 +729,7 @@ public class PlotMain extends JavaPlugin {
         }
 
 
-        UUIDHandler.startFetch(this);
+//        UUIDHandler.startFetch(this);
     }
 
     /**
