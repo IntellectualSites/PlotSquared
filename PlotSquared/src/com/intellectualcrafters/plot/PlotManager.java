@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -47,16 +49,18 @@ public abstract class PlotManager {
      * PLOT MERGING (return false if your generator does not support plot
      * merging)
      */
-    public abstract boolean createRoadEast(Plot plot);
+    public abstract boolean createRoadEast(PlotWorld plotworld, Plot plot);
 
-    public abstract boolean createRoadSouth(Plot plot);
+    public abstract boolean createRoadSouth(PlotWorld plotworld, Plot plot);
 
-    public abstract boolean createRoadSouthEast(Plot plot);
+    public abstract boolean createRoadSouthEast(PlotWorld plotworld, Plot plot);
 
-    public abstract boolean removeRoadEast(Plot plot);
+    public abstract boolean removeRoadEast(PlotWorld plotworld, Plot plot);
 
-    public abstract boolean removeRoadSouth(Plot plot);
+    public abstract boolean removeRoadSouth(PlotWorld plotworld, Plot plot);
 
-    public abstract boolean removeRoadSouthEast(Plot plot);
+    public abstract boolean removeRoadSouthEast(PlotWorld plotworld, Plot plot);
+    
+    public abstract boolean finishPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds);
 
 }
