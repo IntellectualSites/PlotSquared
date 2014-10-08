@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by Citymonstret on 2014-10-06.
- */
 public class UUIDHandler {
 
     private static ConcurrentHashMap<String, UUID> uuidMap = new ConcurrentHashMap<>();
@@ -29,6 +26,10 @@ public class UUIDHandler {
         uuidMap.put(name, uuid);
     }
 
+    /**
+     *
+     * @param plugin
+     */
     public static void startFetch(JavaPlugin plugin) {
        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
            @Override
@@ -53,6 +54,11 @@ public class UUIDHandler {
        });
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static UUID getUUID(String name) {
         if (nameExists(name)) {
             return uuidMap.get(name);
@@ -72,6 +78,11 @@ public class UUIDHandler {
         return null;
     }
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
     private static String loopSearch(UUID uuid) {
         for(Map.Entry<String, UUID> entry : uuidMap.entrySet()) {
             if(entry.getValue().equals(uuid)) {
@@ -81,6 +92,11 @@ public class UUIDHandler {
         return "";
     }
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
     public static String getName(UUID uuid) {
         if(uuidExists(uuid)) {
             return loopSearch(uuid);
@@ -95,12 +111,22 @@ public class UUIDHandler {
         return null;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     private static UUID getUuidOfflineMode(String name) {
         UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
         add(name, uuid);
         return uuid;
     }
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
     private static String getNameOnlinePlayer(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if(player == null || !player.isOnline()) {
@@ -111,6 +137,11 @@ public class UUIDHandler {
         return name;
     }
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
     private static String getNameOfflinePlayer(UUID uuid) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         if (player == null || !player.hasPlayedBefore()) {
@@ -121,6 +152,11 @@ public class UUIDHandler {
         return name;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     private static UUID getUuidOnlinePlayer(String name) {
         Player player = Bukkit.getPlayer(name);
         if (player == null || !player.isOnline()) {
@@ -131,6 +167,11 @@ public class UUIDHandler {
         return uuid;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     private static UUID getUuidOfflinePlayer(String name) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
         if (player == null || !player.hasPlayedBefore()) {

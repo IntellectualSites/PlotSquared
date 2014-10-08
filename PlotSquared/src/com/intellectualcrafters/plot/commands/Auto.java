@@ -8,16 +8,11 @@
  */
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.*;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
 
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
@@ -31,6 +26,7 @@ public class Auto extends SubCommand {
         World world;
         int size_x = 1;
         int size_z = 1;
+        String schematic = "";
         if (PlotMain.getPlotWorlds().length == 1) {
             world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
         } else {
@@ -41,7 +37,7 @@ public class Auto extends SubCommand {
                 return false;
             }
         }
-        if (args.length == 1) {
+        if (args.length > 0) {
             if (PlotMain.hasPermission(plr, "plots.auto.mega")) {
                 try {
                     String[] split = args[0].split(",");
@@ -53,18 +49,48 @@ public class Auto extends SubCommand {
                     if ((size_x > 4) || (size_z > 4)) {
                         PlayerFunctions.sendMessage(plr, "&cError: size>4");
                     }
+                    if(args.length > 1) {
+                        schematic = args[1];
+                    }
                 } catch (Exception e) {
-                    PlayerFunctions.sendMessage(plr, "&cError: Invalid size (X,Y)");
-                    return false;
+                    schematic = args[0];
+                    //PlayerFunctions.sendMessage(plr, "&cError: Invalid size (X,Y)");
+                    //return false;
                 }
             } else {
-                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
-                return false;
+                schematic = args[0];
+                //PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+                //return false;
             }
         }
         if (PlayerFunctions.getPlayerPlotCount(world, plr) >= PlayerFunctions.getAllowedPlots(plr)) {
             PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             return false;
+        }
+        PlotWorld pWorld = PlotMain.getWorldSettings(world);
+        if(PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+            double cost = pWorld.PLOT_PRICE;
+            if (cost > 0d) {
+                Economy economy = PlotMain.economy;
+                if (economy.getBalance(plr) < cost) {
+                    sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                    return true;
+                }
+                economy.withdrawPlayer(plr, cost);
+                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+        if(!schematic.equals("")) {
+            if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
+                if(pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
+                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                    return true;
+                }
+                if (!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                    PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                    return true;
+                }
+            }
         }
         boolean br = false;
         int x = 0, z = 0, q = 100;
