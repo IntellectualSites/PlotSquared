@@ -728,8 +728,8 @@ public class PlotMain extends JavaPlugin {
             PlotHelper.canSetFast = false;
         }
 
-
-//        UUIDHandler.startFetch(this);
+        //TODO Test...
+        UUIDHandler.startFetch(this);
     }
 
     /**

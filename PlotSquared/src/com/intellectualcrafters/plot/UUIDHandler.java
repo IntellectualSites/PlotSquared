@@ -1,11 +1,14 @@
 package com.intellectualcrafters.plot;
 
 import com.google.common.base.Charsets;
+import com.intellectualcrafters.plot.uuid.NameFetcher;
+import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,7 +74,13 @@ public class UUIDHandler {
             return uuid;
         }
         if(Bukkit.getOnlineMode()) {
-            /* TODO: Add mojang API support */
+            try {
+                UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
+                uuid = fetcher.call().get(name);
+                add(name, uuid);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         } else {
             return getUuidOfflineMode(name);
         }
@@ -108,7 +117,19 @@ public class UUIDHandler {
         if ((name = getNameOfflinePlayer(uuid)) != null) {
             return name;
         }
-        return null;
+        if (Bukkit.getOnlineMode()) {
+            try {
+                NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
+                name = fetcher.call().get(uuid);
+                add(name, uuid);
+                return name;
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            return "unknown";
+        }
+        return "";
     }
 
     /**

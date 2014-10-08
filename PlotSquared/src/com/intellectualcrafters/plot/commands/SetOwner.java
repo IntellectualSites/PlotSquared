@@ -9,17 +9,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class SetOwner extends SubCommand {
@@ -28,9 +22,14 @@ public class SetOwner extends SubCommand {
         super("setowner", "plots.admin", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS);
     }
 
+    /*
     private UUID getUUID(String string) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(string);
         return ((player != null) && player.hasPlayedBefore()) ? player.getUniqueId() : null;
+    }*/
+
+    private UUID getUUID(String string) {
+        return UUIDHandler.getUUID(string);
     }
 
     @Override
