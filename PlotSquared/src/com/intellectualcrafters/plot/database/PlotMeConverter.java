@@ -93,10 +93,8 @@ public class PlotMeConverter {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
                                         } else {
-                                            
                                             UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
-                                            
-                                            psAdded.add(uuidMap.get(user));
+                                            psAdded.add(uuid);
                                         }
                                     }
                                     try {
@@ -104,7 +102,8 @@ public class PlotMeConverter {
                                             if (user.equals("*")) {
                                                 psDenied.add(DBFunc.everyone);
                                             } else {
-                                                psDenied.add(uuidMap.get(user));
+                                                UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
+                                                psDenied.add(uuid);
                                             }
                                         }
                                     } catch (Throwable e) {
@@ -124,9 +123,7 @@ public class PlotMeConverter {
                                 pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
                             } else {
                                 String owner = plot.getOwner();
-                                if (uuidMap.containsKey(owner)) {
-                                    pl = new com.intellectualcrafters.plot.Plot(id, uuidMap.get(owner), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
-                                }
+                                pl = new com.intellectualcrafters.plot.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
                             }
 
                             // TODO createPlot doesn't add helpers / denied
