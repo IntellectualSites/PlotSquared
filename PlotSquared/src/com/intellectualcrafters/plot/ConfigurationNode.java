@@ -17,6 +17,7 @@ public class ConfigurationNode {
         this.constant = constant;
         this.default_value = default_value;
         this.description = description;
+        this.value = default_value;
         this.type = type;
     }
 

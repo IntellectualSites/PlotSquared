@@ -1,228 +1,113 @@
 package com.intellectualcrafters.plot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Material;
+import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
 
-/**
- * This is the PlotWorld class (obviously) <br>
- * - All existing PlotWorld instances should be kept in PlotMain (worlds
- * variable) <br>
- * - The accessors and mutators are: <br>
- * PlotMain.isPlotWorld(world) <br>
- * PlotMain.getPlotWorlds() or PlotMain.getPlotWorldsString() <- use this if you
- * don't need to get world objects <br>
- * PlotMain.getWorldSettings(World) - get the PlotWorld class for a world <br>
- * <br>
- * Also added is getWorldPlots(World) as the plots are now sorted per world <br>
- * <br>
- * To get the world of a plot, you can use plot.world - (string) or
- * plot.getWorld() (world object) <br>
- * <br>
- * All PlotWorld settings are per world in the settings.yml (these settings are
- * automatically added when a world is loaded, either at startup or if a new
- * world is created): <br>
- * - You can find this in the WorldGenerator class (yeah, it's possibly not the
- * best place, but it makes sure worlds are added to the settings.yml) <br>
- * <br>
- * All new DEFAULT CONSTANTS should be static and be given a value <br>
- * All new variables should not be static and should not be given any values
- * here, but rather in the WorldGenerator class
- * 
- **/
-public class PlotWorld {
+import com.sk89q.worldedit.util.YAMLConfiguration;
 
+public abstract class PlotWorld {
+    
     public boolean AUTO_MERGE;
     public static boolean AUTO_MERGE_DEFAULT = false;
+    
     public boolean MOB_SPAWNING;
     public static boolean MOB_SPAWNING_DEFAULT = false;
-    /**
-     * Road Height
-     */
-    public int ROAD_HEIGHT;
-    /**
-     * Default Road Height: 64
-     */
-    public static int ROAD_HEIGHT_DEFAULT = 64;
-
-    /**
-     * plot height
-     */
-    public int PLOT_HEIGHT;
-    /**
-     * Default plot height: 64
-     */
-    public static int PLOT_HEIGHT_DEFAULT = 64;
-
-    /**
-     * Wall height
-     */
-    public int WALL_HEIGHT;
-    /**
-     * Default Wall Height: 64
-     */
-    public static int WALL_HEIGHT_DEFAULT = 64;
-
-    /**
-     * plot width
-     */
-    public int PLOT_WIDTH;
-    /**
-     * Default plot width: 32
-     */
-    public static int PLOT_WIDTH_DEFAULT = 32;
-
-    /**
-     * Road width
-     */
-    public int ROAD_WIDTH;
-    /**
-     * Default road width: 7
-     */
-    public static int ROAD_WIDTH_DEFAULT = 7;
-
-    /**
-     * Plot biome
-     */
-    public String PLOT_BIOME;
-    /**
-     * Default biome = FOREST
-     */
-    public static String PLOT_BIOME_DEFAULT = "FOREST";
-    /**
-     * PlotMain block
-     */
-    public String[] MAIN_BLOCK;
-    /**
-     * Default main block: 1
-     */
-    public static String[] MAIN_BLOCK_DEFAULT = new String[] { "1:0" };
-    /**
-     * Top blocks
-     */
-    public String[] TOP_BLOCK;
-    /**
-     * Default top blocks: {"2"}
-     */
-    public static String[] TOP_BLOCK_DEFAULT = new String[] { "2:0" };
-
-    /**
-     * Wall block
-     */
-    public String WALL_BLOCK;
-    /**
-     * Default wall block: 44
-     */
-    public static String WALL_BLOCK_DEFAULT = "44:0";
-
-    /**
-     * Wall filling
-     */
-    public String WALL_FILLING;
-    /**
-     * Default wall filling: 1
-     */
-    public static String WALL_FILLING_DEFAULT = "1:0";
-
-    /**
-     * Road stripes
-     */
-    public String ROAD_STRIPES;
-    public boolean ROAD_STRIPES_ENABLED;
-    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
-    /**
-     * Default road stripes: 35
-     */
-    public static String ROAD_STRIPES_DEFAULT = "98:0";
-    //
-    // /**
-    // * Road stripes data value (byte)
-    // */
-    // public int ROAD_STRIPES_DATA;
-    // /**
-    // * Default road stripes data value: (byte) 0
-    // */
-    // public static int ROAD_STRIPES_DATA_DEFAULT = 0;
-    //
-    // /**
-    // * Wall block data value (byte)
-    // */
-    // public int WALL_BLOCK_DATA;
-    // /**
-    // * Default wall block data value: (byte) 0
-    // */
-    // public static int WALL_BLOCK_DATA_DEFAULT = 0;
-    //
-    // /**
-    // * Wall filling data value (byte)
-    // */
-    // public int WALL_FILLING_DATA;
-    // /**
-    // * Default wall filling data value: (byte) 0
-    // */
-    // public static int WALL_FILLING_DATA_DEFAULT = 0;
-    /**
-     * Road block
-     */
-    public String ROAD_BLOCK;
-    /**
-     * Default road block: 155
-     */
-    public static String ROAD_BLOCK_DEFAULT = "155:0";
-    //
-    // /**
-    // * Road block data value (byte)
-    // */
-    // public int ROAD_BLOCK_DATA;
-    // /**
-    // * Default road block data value: (byte) 0
-    // */
-    // public static int ROAD_BLOCK_DATA_DEFAULT = 0;
-
-    /**
-     * plot chat?
-     */
+    
+    public Biome PLOT_BIOME;
+    public static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
+    
     public boolean PLOT_CHAT;
-    /**
-     * Default plot chat: true
-     */
     public static boolean PLOT_CHAT_DEFAULT = false;
-
-    /**
-     * Blocks available in /p set
-     */
-    public static ArrayList<Material> BLOCKS = new ArrayList<Material>();
-
-    /**
-     * schematic on claim
-     */
-    public boolean SCHEMATIC_ON_CLAIM;
-    /**
-     * Default schematic on claim: false
-     */
-    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
-    public List<String> SCHEMATICS = new ArrayList<>();
-
-    /**
-     * schematic file
-     */
+    public static boolean SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
+    
+    public boolean SCHEMATIC_ON_CLAIM;
+    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    
     public String SCHEMATIC_FILE;
-    /**
-     * Default schematic file: 'null'
-     */
     public static String SCHEMATIC_FILE_DEFAULT = "null";
-    /**
-     * default flags
-     */
-    public Flag[] DEFAULT_FLAGS;
-    /**
-     * Default default flags
-     */
-    public static String[] DEFAULT_FLAGS_DEFAULT = new String[] {};
+    
+    public List<String> SCHEMATICS;
+    public static List<String> SCHEMATICS_DEFAULT = null;
+    
+    public List<String> DEFAULT_FLAGS;
+    public static List<String> DEFAULT_FLAGS_DEFAULT = new ArrayList<String>();
+    
+    public boolean USE_ECONOMY;
+    public static boolean USE_ECONOMY_DEFAULT = false;
+  
+    public double PLOT_PRICE;
+    public static double PLOT_PRICE_DEFAULT = 100;
+    
+    public double MERGE_PRICE;
+    public static double MERGE_PRICE_DEFAULT = 100;
 
-    public boolean USE_ECONOMY = false;
-    public double PLOT_PRICE = 100;
-    public double MERGE_PRICE = 100;
+    public PlotWorld(String worldname) {
+        this.worldname = worldname;
+    }
+    
+    /**
+     * When a world is created, the following method will be called for each node set in the configuration
+     *  - You may ignore this if you generator does not support configuration, or if you want to implement your own methods
+     * 
+     * @param key
+     * @param value
+     */
+    public void loadConfiguration(ConfigurationSection config) {
+        this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
+        this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
+        this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
+        this.SCHEMATIC_FILE = config.getString("schematic.file");
+        this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
+        this.SCHEMATICS = config.getStringList("schematic.schematics");
+        this.USE_ECONOMY = config.getBoolean("economy.use");
+        this.PLOT_PRICE = config.getDouble("economy.prices.claim");
+        this.MERGE_PRICE = config.getDouble("economy.prices.merge");
+        this.PLOT_CHAT = config.getBoolean("chat.enabled");
+        this.DEFAULT_FLAGS = config.getStringList("flags.default");
+    }
+    
+    public void saveConfiguration(ConfigurationSection config) {
+        
+        /*
+         * Saving core plotworld settings
+         */
+        config.set("natural_mob_spawning",this.MOB_SPAWNING);
+        config.set("plot.auto_merge",this.AUTO_MERGE);
+        config.set("plot.biome",this.PLOT_BIOME.name());
+        config.set("schematic.on_claim",this.SCHEMATIC_ON_CLAIM);
+        config.set("schematic.file",this.SCHEMATIC_FILE);
+        config.set("schematic.specify_on_claim",this.SCHEMATIC_CLAIM_SPECIFY);
+        config.set("schematic.schematics",this.SCHEMATICS);
+        config.set("economy.use",this.USE_ECONOMY);
+        config.set("economy.prices.claim",this.PLOT_PRICE);
+        config.set("economy.prices.merge",this.MERGE_PRICE);
+        config.set("chat.enabled",this.PLOT_CHAT);
+        config.set("flags.default",this.DEFAULT_FLAGS);
+        
+        ConfigurationNode[] settings = getSettingNodes();
+        
+        /*
+         * Saving generator specific settings
+         */
+        for (ConfigurationNode setting:settings) {
+            config.set(setting.getConstant(), setting.getValue());
+        }
+    }
+    
+    public String worldname;
+
+    /**
+     * Used for the <b>/plot setup</b> command
+     * Return null if you do not want to support this feature
+     * 
+     * @return ConfigurationNode[]
+     */
+    public abstract ConfigurationNode[] getSettingNodes();
 }

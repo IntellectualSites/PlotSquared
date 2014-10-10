@@ -82,22 +82,107 @@ public class DefaultPlotManager extends PlotManager {
         if (northSouth || eastWest) {
             return null;
         }
-        
         // returning the plot id (based on the number of shifts required)
         return new PlotId(dx + 1, dz + 1);
     }
+    
+    /*
+     * Some complex stuff for traversing mega plots (return getPlotIdAbs if you do not support mega plots)
+     */
+    @Override
+    public PlotId getPlotId(PlotWorld plotworld, Location loc) {
+        DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
 
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
+
+        String world = loc.getWorld().getName();
+        if (plotworld == null) {
+            return null;
+        }
+        int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+        int pathWidthLower;
+        if ((dpw.ROAD_WIDTH % 2) == 0) {
+            pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
+        } else {
+            pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
+        }
+
+        int dx = x / size;
+        int dz = z / size;
+
+        if (x < 0) {
+            dx--;
+            x += ((-dx) * size);
+        }
+        if (z < 0) {
+            dz--;
+            z += ((-dz) * size);
+        }
+
+        int rx = (x) % size;
+        int rz = (z) % size;
+
+        int end = pathWidthLower + dpw.PLOT_WIDTH;
+
+        boolean northSouth = (rz <= pathWidthLower) || (rz > end);
+        boolean eastWest = (rx <= pathWidthLower) || (rx > end);
+        if (northSouth && eastWest) {
+            // This means you are in the intersection
+            PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot == null) {
+                return null;
+            }
+            if ((plot.settings.getMerged(0) && plot.settings.getMerged(3))) {
+                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+            }
+            return null;
+        }
+        if (northSouth) {
+            // You are on a road running West to East (yeah, I named the var
+            // poorly)
+            PlotId id = PlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot == null) {
+                return null;
+            }
+            if (plot.settings.getMerged(0)) {
+                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+            }
+            return null;
+        }
+        if (eastWest) {
+            // This is the road separating an Eastern and Western plot
+            PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
+            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            if (plot == null) {
+                return null;
+            }
+            if (plot.settings.getMerged(3)) {
+                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+            }
+            return null;
+        }
+        PlotId id = new PlotId(dx + 1, dz + 1);
+        Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+        if (plot == null) {
+            return id;
+        }
+        return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+    }
+    
     /*
      *  Check if a location is inside a specific plot(non-Javadoc)
      *   - For this implementation, we don't need to do anything fancier than referring to getPlotIdAbs(...)
      */
     @Override
-    public boolean isInPlotAbs(PlotWorld plotworld, Location loc, Plot plot) {
+    public boolean isInPlotAbs(PlotWorld plotworld, Location loc, PlotId plotid) {
         PlotId result = getPlotIdAbs(plotworld, loc);
         if (result==null) {
             return false;
         }
-        return result==plot.id;
+        return result==plotid;
     }
 
     /*
@@ -105,16 +190,16 @@ public class DefaultPlotManager extends PlotManager {
      * (some basic math)
      */
     @Override
-    public Location getPlotBottomLocAbs(PlotWorld plotworld, Plot plot) {
+    public Location getPlotBottomLocAbs(PlotWorld plotworld, PlotId plotid) {
         DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
         
-        int px = plot.id.x;
-        int pz = plot.id.y;
+        int px = plotid.x;
+        int pz = plotid.y;
 
         int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
 
-        return new Location(Bukkit.getWorld(plot.world), x, 1, z);
+        return new Location(Bukkit.getWorld(plotworld.worldname), x, 1, z);
     }
     
     /*
@@ -122,16 +207,16 @@ public class DefaultPlotManager extends PlotManager {
      * (some basic math)
      */
     @Override
-    public Location getPlotTopLocAbs(PlotWorld plotworld, Plot plot) {
+    public Location getPlotTopLocAbs(PlotWorld plotworld, PlotId plotid) {
         DefaultPlotWorld dpw = ((DefaultPlotWorld) plotworld);
         
-        int px = plot.id.x;
-        int pz = plot.id.y;
+        int px = plotid.x;
+        int pz = plotid.y;
 
         int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
 
-        return new Location(Bukkit.getWorld(plot.world), x, 256, z);
+        return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
     }
 
     /*
@@ -349,8 +434,8 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World w = Bukkit.getWorld(plot.world);
         
-        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
-        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
         int sx = pos2.getBlockX();
         int ex = (sx + dpw.ROAD_WIDTH);
@@ -375,8 +460,8 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World w = Bukkit.getWorld(plot.world);
         
-        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
-        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
         int sz = pos2.getBlockZ();
         int ez = (sz + dpw.ROAD_WIDTH);
@@ -401,7 +486,7 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World w = Bukkit.getWorld(plot.world);
         
-        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
         int sx = pos2.getBlockX() + 1;
         int ex = (sx + dpw.ROAD_WIDTH) - 1;
@@ -419,8 +504,8 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World w = Bukkit.getWorld(plot.world);
         
-        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
-        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
         int sx = pos2.getBlockX();
         int ex = (sx + dpw.ROAD_WIDTH);
@@ -439,8 +524,8 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World w = Bukkit.getWorld(plot.world);
         
-        Location pos1 = getPlotBottomLocAbs(plotworld, plot);
-        Location pos2 = getPlotTopLocAbs(plotworld, plot);
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
         int sz = pos2.getBlockZ();
         int ez = (sz + dpw.ROAD_WIDTH);
@@ -459,7 +544,7 @@ public class DefaultPlotManager extends PlotManager {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World world = Bukkit.getWorld(plot.world);
         
-        Location loc = getPlotTopLocAbs(dpw, plot);
+        Location loc = getPlotTopLocAbs(dpw, plot.id);
 
         int sx = loc.getBlockX() + 1;
         int ex = (sx + dpw.ROAD_WIDTH) - 1;
@@ -497,6 +582,4 @@ public class DefaultPlotManager extends PlotManager {
         }
         return true;
     }
-    
-
 }

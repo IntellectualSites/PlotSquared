@@ -4,11 +4,11 @@ public class PlotId {
     /**
      * x value
      */
-    public int x;
+    public Integer x;
     /**
      * y value
      */
-    public int y;
+    public Integer y;
 
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)

@@ -23,10 +23,7 @@ public class DefaultPlotWorld extends PlotWorld {
      * 
      */
     
-    public boolean AUTO_MERGE;
-    public static boolean AUTO_MERGE_DEFAULT = false;
-    public boolean MOB_SPAWNING;
-    public static boolean MOB_SPAWNING_DEFAULT = false;
+   
     /**
      * Road Height
      */
@@ -74,14 +71,6 @@ public class DefaultPlotWorld extends PlotWorld {
 
     /**
      * Plot biome
-     */
-    public Biome PLOT_BIOME;
-    /**
-     * Default biome = FOREST
-     */
-    public static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
-    /**
-     * PlotMain block
      */
     public PlotBlock[] MAIN_BLOCK;
     /**
@@ -136,57 +125,6 @@ public class DefaultPlotWorld extends PlotWorld {
      * Default road block: 155
      */
     public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
-
-    /**
-     * plot chat?
-     */
-    public boolean PLOT_CHAT;
-    /**
-     * Default plot chat: true
-     */
-    public static boolean PLOT_CHAT_DEFAULT = false;
-
-    /**
-     * Blocks available in /p set
-     */
-    public static ArrayList<Material> BLOCKS = new ArrayList<Material>();
-
-    /**
-     * schematic on claim
-     */
-    public boolean SCHEMATIC_ON_CLAIM;
-    /**
-     * Default schematic on claim: false
-     */
-    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
-    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
-    public List<String> SCHEMATICS = new ArrayList<String>();
-
-    /**
-     * schematic file
-     */
-    public String SCHEMATIC_FILE;
-    /**
-     * Default schematic file: 'null'
-     */
-    public static String SCHEMATIC_FILE_DEFAULT = "null";
-    /**
-     * default flags
-     */
-    public Flag[] DEFAULT_FLAGS;
-    /**
-     * Default default flags
-     */
-    public static Flag[] DEFAULT_FLAGS_DEFAULT = new Flag[] {};
-
-    public boolean USE_ECONOMY;
-    public static boolean USE_ECONOMY_DEFAULT = false;
-    
-    public double PLOT_PRICE;
-    public static double PLOT_PRICE_DEFAULT = 100;
-    
-    public double MERGE_PRICE;
-    public static double MERGE_PRICE_DEFAULT = 100;
     
     
     /*
@@ -208,11 +146,8 @@ public class DefaultPlotWorld extends PlotWorld {
         // TODO return a set of configuration nodes (used for setup command)
         return
             new ConfigurationNode[] {
-                new ConfigurationNode("natural_mob_spawning", MOB_SPAWNING, "Enable mob spawning", Configuration.BOOLEAN, false),
-                new ConfigurationNode("plot.auto_merge", AUTO_MERGE, "Enable Auto plot merging", Configuration.BOOLEAN, false),
                 new ConfigurationNode("plot.height", PLOT_HEIGHT, "Plot height", Configuration.INTEGER, true),
                 new ConfigurationNode("plot.width", PLOT_WIDTH, "Plot width", Configuration.INTEGER, true),
-                new ConfigurationNode("plot.biome", PLOT_BIOME, "Plot biome", Configuration.BIOME, true),
                 new ConfigurationNode("plot.filling", MAIN_BLOCK, "Plot block", Configuration.BLOCKLIST, true),
                 new ConfigurationNode("plot.floor", TOP_BLOCK, "Plot floor block", Configuration.BLOCKLIST, true),
                 new ConfigurationNode("wall.block", WALL_BLOCK, "Top wall block", Configuration.BLOCK, true),
@@ -223,14 +158,6 @@ public class DefaultPlotWorld extends PlotWorld {
                 new ConfigurationNode("road.stripes", ROAD_STRIPES, "Road stripe block", Configuration.BLOCK, true),
                 new ConfigurationNode("wall.filling", WALL_FILLING, "Wall filling block", Configuration.BLOCK, true),
                 new ConfigurationNode("wall.height", WALL_HEIGHT, "Wall height", Configuration.INTEGER, true),
-                new ConfigurationNode("schematic.on_claim", SCHEMATIC_ON_CLAIM, "Enable schematic paste on claim", Configuration.BOOLEAN, false),
-                new ConfigurationNode("schematic.file", SCHEMATIC_FILE, "Schematic file directory", Configuration.STRING, false),
-                new ConfigurationNode("schematic.specify_on_claim", SCHEMATIC_CLAIM_SPECIFY, "Enable specifying schematics on claim", Configuration.BOOLEAN, false),
-                new ConfigurationNode("schematic.schematics", SCHEMATICS, "List of schematic paths", Configuration.STRINGLIST, false),
-                new ConfigurationNode("economy.use", USE_ECONOMY, "Enable economy features", Configuration.BOOLEAN, false),
-                new ConfigurationNode("economy.prices.claim", PLOT_PRICE, "Plot claim price", Configuration.DOUBLE, false),
-                new ConfigurationNode("economy.prices.merge", MERGE_PRICE, "Plot merge price", Configuration.DOUBLE, false),
-                new ConfigurationNode("chat.enabled", PLOT_CHAT, "Enable plot chat", Configuration.BOOLEAN, false)
             };
     }
 
@@ -240,11 +167,9 @@ public class DefaultPlotWorld extends PlotWorld {
      */
     @Override
     public void loadConfiguration(ConfigurationSection config) {
-        this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
-        this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        
         this.PLOT_HEIGHT = config.getInt("plot.height");
         this.PLOT_WIDTH = config.getInt("plot.width");
-        this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
         this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"),','));
         this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.floor"),','));
         this.WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block"));
@@ -255,14 +180,7 @@ public class DefaultPlotWorld extends PlotWorld {
         this.ROAD_STRIPES = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.stripes"));
         this.WALL_FILLING = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.filling"));
         this.WALL_HEIGHT = config.getInt("wall.height");
-        this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
-        this.SCHEMATIC_FILE = config.getString("schematic.file");
-        this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
-        this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use");
-        this.PLOT_PRICE = config.getDouble("economy.prices.claim");
-        this.MERGE_PRICE = config.getDouble("economy.prices.merge");
-        this.PLOT_CHAT = config.getBoolean("chat.enabled");
+        
     }
 }
  

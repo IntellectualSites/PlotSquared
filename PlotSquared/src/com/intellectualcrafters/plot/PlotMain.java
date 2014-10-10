@@ -141,6 +141,7 @@ import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
@@ -202,7 +203,7 @@ public class PlotMain extends JavaPlugin {
      */
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldname, String id) {
-        return new PlotSquaredGen(worldname);
+        return new WorldGenerator(worldname);
     }
 
     @SuppressWarnings("deprecation")
@@ -312,6 +313,7 @@ public class PlotMain extends JavaPlugin {
      * All loaded plot worlds
      */
     private static HashMap<String, PlotWorld> worlds = new HashMap<String, PlotWorld>();
+    private static HashMap<String, PlotManager> managers = new HashMap<String, PlotManager>();
 
     /**
      * Get all plots
@@ -402,6 +404,30 @@ public class PlotMain extends JavaPlugin {
         return (worlds.containsKey(world.getName()));
     }
 
+    /**
+     * 
+     * @param world
+     * @return
+     */
+    public static PlotManager getPlotManager(World world) {
+        if (managers.containsKey(world.getName())) {
+            return managers.get(world.getName());
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param world
+     * @return
+     */
+    public static PlotManager getPlotManager(String world) {
+        if (managers.containsKey(world)) {
+            return managers.get(world);
+        }
+        return null;
+    }
+    
     /**
      * 
      * @param world
@@ -586,8 +612,6 @@ public class PlotMain extends JavaPlugin {
             }
         }
 
-        PlotWorld.BLOCKS = new ArrayList<>(Arrays.asList(new Material[] { ACACIA_STAIRS, BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK, NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE, QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND, SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK,
-                SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD, WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44), getMaterial(126) }));
         if (Settings.KILL_ROAD_MOBS) {
             killAllEntities();
         }
@@ -992,7 +1016,7 @@ public class PlotMain extends JavaPlugin {
                                                 int x = this.location.getBlockX();
                                                 int y = this.location.getBlockY();
                                                 int z = this.location.getBlockZ();
-                                                while (!found || (radius > plotworld.ROAD_WIDTH)) {
+                                                while (!found && (radius < 4)) {
                                                     Location pos;
                                                     switch (dir) {
                                                     case 0:
@@ -1083,6 +1107,28 @@ public class PlotMain extends JavaPlugin {
         Settings.MAX_PLOTS = config.getInt("max_plots");
     }
     
+    public static void createConfiguration(PlotWorld plotworld) {
+        String w = plotworld.worldname;
+        Map<String, Object> options = new HashMap<String, Object>();
+        
+        for (ConfigurationNode setting:plotworld.getSettingNodes()) {
+            setting.getConstant();
+            setting.getValue();
+        }
+        
+        for (Entry<String, Object> node : options.entrySet()) {
+            if (!config.contains(node.getKey())) {
+                config.set(node.getKey(), node.getValue());
+            }
+        }
+        
+        try {
+            config.save(PlotMain.configFile);
+        } catch (IOException e) {
+            PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
+        }
+    }
+    
     /**
      * Adds an external world as a recognized PlotSquared world
      *  - The PlotWorld class created is based off the configuration in the settings.yml
@@ -1101,43 +1147,28 @@ public class PlotMain extends JavaPlugin {
         else {
             worlds = new HashSet<String>();
         }
-        if (worlds.contains(world.getName())) {
-            ChunkGenerator gen = world.getGenerator();
-            if ((gen == null) || !gen.getClass().getSimpleName().equals("PlotSquaredGen")) {
+        ChunkGenerator generator = world.getGenerator();
+        if (generator instanceof PlotGenerator) {
+            sendConsoleSenderMessage(C.PREFIX.s()+"&aDetected world load for '"+world.getName()+"'.");
+            PlotGenerator plotgen = (PlotGenerator) generator;
+            
+            PlotWorld plotworld = plotgen.getPlotWorld();
+            
+            PlotManager manager = plotgen.getPlotManager();
+            
+            config.createSection("worlds."+world.getName());
+            
+            plotworld.saveConfiguration(config.getConfigurationSection("worlds."+world.getName()));
+            
+            plotworld.loadConfiguration(config.getConfigurationSection("worlds."+world.getName()));
+            
+            addPlotWorld(world.getName(), plotworld, manager);
+            
+            
+        }
+        else {
+            if (worlds.contains(world.getName())) {
                 sendConsoleSenderMessage("&cWorld '" + world.getName() + "' in settings.yml is not using PlotSquared generator!");
-                
-                PlotWorld plotworld = new PlotWorld();
-                
-                try {
-                    plotworld.AUTO_MERGE = config.getBoolean("worlds." + world + ".plot.auto_merge");
-                    plotworld.PLOT_HEIGHT = config.getInt("worlds." + world + ".plot.height");
-                    plotworld.PLOT_WIDTH = config.getInt("worlds." + world + ".plot.size");
-                    plotworld.PLOT_BIOME = config.getString("worlds." + world + ".plot.biome");
-                    plotworld.MAIN_BLOCK = config.getStringList("worlds." + world + ".plot.filling").toArray(new String[0]);
-                    plotworld.TOP_BLOCK = config.getStringList("worlds." + world + ".plot.floor").toArray(new String[0]);
-                    plotworld.WALL_BLOCK = config.getString("worlds." + world + ".wall.block");
-                    plotworld.ROAD_WIDTH = config.getInt("worlds." + world + ".road.width");
-                    plotworld.ROAD_HEIGHT = config.getInt("worlds." + world + ".road.height");
-                    plotworld.ROAD_STRIPES_ENABLED = config.getBoolean("worlds." + world + ".road.enable_stripes");
-                    plotworld.ROAD_BLOCK = config.getString("worlds." + world + ".road.block");
-                    plotworld.ROAD_STRIPES = config.getString("worlds." + world + ".road.stripes");
-                    plotworld.WALL_FILLING = config.getString("worlds." + world + ".wall.filling");
-                    plotworld.WALL_HEIGHT = config.getInt("worlds." + world + ".wall.height");
-                    plotworld.PLOT_CHAT = config.getBoolean("worlds." + world + ".plot_chat");
-                    plotworld.SCHEMATIC_ON_CLAIM = config.getBoolean("worlds." + world + ".schematic.on_claim");
-                    plotworld.SCHEMATIC_FILE = config.getString("worlds." + world + ".schematic.file");
-                    plotworld.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("worlds." + world + ".schematic.specify_on_claim");
-                    plotworld.SCHEMATICS = config.getStringList("worlds." + world + ".schematic.schematics");
-                    plotworld.USE_ECONOMY = config.getBoolean("worlds." + world + ".economy.use");
-                    plotworld.PLOT_PRICE = config.getDouble("worlds." + world + ".economy.prices.claim");
-                    plotworld.MERGE_PRICE = config.getDouble("worlds." + world + ".economy.prices.merge");
-                    plotworld.PLOT_CHAT = config.getBoolean("worlds." + world + ".chat.enabled");
-                }
-                catch (Exception e) {
-                    sendConsoleSenderMessage("&cThe configuration for '"+world.getName()+"' is not configured incorrectly. Please see the below stacktrace for more information:");
-                    e.printStackTrace();
-                }
-                addPlotWorld(world.getName(), plotworld);
             }
         }
     }
@@ -1201,8 +1232,9 @@ public class PlotMain extends JavaPlugin {
          */
     }
 
-    public static void addPlotWorld(String world, PlotWorld plotworld) {
-        PlotMain.worlds.put(world, plotworld);
+    public static void addPlotWorld(String world, PlotWorld plotworld, PlotManager manager) {
+        worlds.put(world, plotworld);
+        managers.put(world, manager);
         if (!plots.containsKey(world)) {
             plots.put(world, new HashMap<PlotId, Plot>());
         }

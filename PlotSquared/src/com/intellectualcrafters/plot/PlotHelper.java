@@ -935,17 +935,16 @@ public class PlotHelper {
         return;
     }
 
-    public static void setCuboid(World world, Location pos1, Location pos2, short[] id_l, short[] d_l) {
+    public static void setCuboid(World world, Location pos1, Location pos2, PlotBlock[] blocks) {
         if (!canSetFast) {
             for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                 for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                     for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
-                        int i = random(id_l.length);
-                        short id = id_l[i];
-                        byte d = (byte) d_l[i];
+                        int i = random(blocks.length);
+                        PlotBlock newblock = blocks[i];
                         Block block = world.getBlockAt(x, y, z);
-                        if (!((block.getTypeId() == id) && (block.getData() == d))) {
-                            block.setTypeIdAndData(id, d, false);
+                        if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+                            block.setTypeIdAndData(newblock.id, newblock.data, false);
                         }
                     }
                 }
@@ -955,12 +954,11 @@ public class PlotHelper {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                         for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
-                            int i = random(id_l.length);
-                            short id = id_l[i];
-                            byte d = (byte) d_l[i];
+                            int i = random(blocks.length);
+                            PlotBlock newblock = blocks[i];
                             Block block = world.getBlockAt(x, y, z);
-                            if (!((block.getTypeId() == id) && (block.getData() == d))) {
-                                SetBlockFast.set(world, x, y, z, id, d);
+                            if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+                                SetBlockFast.set(world, x, y, z, newblock.id, newblock.data);
                             }
                         }
                     }
@@ -970,14 +968,14 @@ public class PlotHelper {
         }
     }
 
-    public static void setSimpleCuboid(World world, Location pos1, Location pos2, short id) {
+    public static void setSimpleCuboid(World world, Location pos1, Location pos2, PlotBlock newblock) {
         if (!canSetFast) {
             for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                 for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                     for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
                         Block block = world.getBlockAt(x, y, z);
-                        if (!((block.getTypeId() == id))) {
-                            block.setTypeId(id, false);
+                        if (!((block.getTypeId() == newblock.id))) {
+                            block.setTypeId(newblock.id, false);
                         }
                     }
                 }
@@ -988,8 +986,8 @@ public class PlotHelper {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                         for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
                             Block block = world.getBlockAt(x, y, z);
-                            if (!((block.getTypeId() == id))) {
-                                SetBlockFast.set(world, x, y, z, id, (byte) 0);
+                            if (!((block.getTypeId() == newblock.id))) {
+                                SetBlockFast.set(world, x, y, z, newblock.id, (byte) 0);
                             }
                         }
                     }
@@ -1161,30 +1159,5 @@ public class PlotHelper {
             return PlotMain.getPlots(loc.getWorld()).get(id);
         }
         return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
-    }
-
-    @SuppressWarnings({ "deprecation" })
-    private static void setWall(Block block, String currentBlockId) {
-        int blockId;
-        byte blockData = 0;
-        if (currentBlockId.contains(":")) {
-            try {
-                blockId = Integer.parseInt(currentBlockId.substring(0, currentBlockId.indexOf(":")));
-                blockData = Byte.parseByte(currentBlockId.substring(currentBlockId.indexOf(":") + 1));
-            } catch (NumberFormatException e) {
-                blockId = 1;
-                blockData = (byte) 0;
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                blockId = Integer.parseInt(currentBlockId);
-            } catch (NumberFormatException e) {
-                blockId = 1;
-                blockData = (byte) 0;
-                e.printStackTrace();
-            }
-        }
-        block.setTypeIdAndData(blockId, blockData, true);
     }
 }

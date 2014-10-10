@@ -16,12 +16,14 @@ public abstract class PlotManager {
      */
 
     public abstract PlotId getPlotIdAbs(PlotWorld plotworld, Location loc);
+    
+    public abstract PlotId getPlotId(PlotWorld plotworld, Location loc);
 
-    public abstract boolean isInPlotAbs(PlotWorld plotworld, Location loc, Plot plot);
+    public abstract boolean isInPlotAbs(PlotWorld plotworld, Location loc, PlotId plotid);
     //  If you have a circular plot, just return the corner if it were a square
-    public abstract Location getPlotBottomLocAbs(PlotWorld plotworld, Plot plot); 
+    public abstract Location getPlotBottomLocAbs(PlotWorld plotworld, PlotId plotid); 
     // the same applies here
-    public abstract Location getPlotTopLocAbs(PlotWorld plotworld, Plot plot); 
+    public abstract Location getPlotTopLocAbs(PlotWorld plotworld, PlotId plotid); 
 
     /*
      * Plot clearing (return false if you do not support some method)

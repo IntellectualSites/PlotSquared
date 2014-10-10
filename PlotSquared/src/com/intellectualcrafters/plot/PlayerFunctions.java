@@ -93,45 +93,28 @@ public class PlayerFunctions {
      * @return
      */
     public static PlotId getPlotAbs(Location loc) {
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
-
         String world = loc.getWorld().getName();
+        PlotManager manager = PlotMain.getPlotManager(world);
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int size = plotworld.PLOT_WIDTH + plotworld.ROAD_WIDTH;
-        int pathWidthLower;
-        if ((plotworld.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(plotworld.ROAD_WIDTH / 2) - 1);
-        } else {
-            pathWidthLower = (int) Math.floor(plotworld.ROAD_WIDTH / 2);
-        }
-
-        int dx = x / size;
-        int dz = z / size;
-
-        if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
-        }
-        if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
-        }
-
-        int rx = (x) % size;
-        int rz = (z) % size;
-
-        int end = pathWidthLower + plotworld.PLOT_WIDTH;
-        boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-
-        if (northSouth || eastWest) {
+        PlotId id = manager.getPlotIdAbs(plotworld, loc);
+        
+        if (id.x == null || id.y == null) {
             return null;
         }
-        return new PlotId(dx + 1, dz + 1);
+        
+        return id;
+        
     }
 
     public static PlotId getPlot(Location loc) {
+
+        PlotId plotid = getPlotAbs(loc);
+        
+        if (plotid == null) {
+            
+        }
+        return plotid;
+        
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
 
