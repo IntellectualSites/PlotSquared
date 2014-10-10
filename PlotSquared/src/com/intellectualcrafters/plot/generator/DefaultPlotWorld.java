@@ -1,17 +1,10 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.intellectualcrafters.plot.Configuration.*;
 import com.intellectualcrafters.plot.Configuration;
 import com.intellectualcrafters.plot.ConfigurationNode;
-import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.PlotBlock;
 import com.intellectualcrafters.plot.PlotWorld;
 

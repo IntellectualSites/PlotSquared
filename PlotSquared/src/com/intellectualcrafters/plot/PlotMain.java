@@ -490,8 +490,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * TODO: Implement better system The whole point of this system is to
-     * recycle old plots So why not just allow users to claim old plots, and try
+     * TODO: Implement better system
+     * The whole point of this system is to recycle old plots So why not just allow users to claim old plots, and try
      * to hide the fact that the are owned. Reduce amount of expired plots: - On
      * /plot auto - allow claiming of old plot, clear it so the user doesn't
      * know - On /plot info, - show that the plot is expired and allowed to be
@@ -752,8 +752,8 @@ public class PlotMain extends JavaPlugin {
             PlotHelper.canSetFast = false;
         }
 
-
-//        UUIDHandler.startFetch(this);
+        //TODO Test...
+        UUIDHandler.startFetch(this);
     }
 
     /**

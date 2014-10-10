@@ -9,17 +9,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class Helpers extends SubCommand {
@@ -69,7 +69,7 @@ public class Helpers extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
                 return true;
             }
-            if (!hasBeenOnServer(args[1])) {
+            /*if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
@@ -82,7 +82,8 @@ public class Helpers extends SubCommand {
             if (uuid == null) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
-            }
+            }*/
+            UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.addHelper(uuid);
             DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
@@ -100,7 +101,7 @@ public class Helpers extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
-            if (!hasBeenOnServer(args[1])) {
+            /*if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
@@ -117,7 +118,8 @@ public class Helpers extends SubCommand {
             if (!plot.helpers.contains(uuid)) {
                 PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                 return true;
-            }
+            }*/
+            UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
             DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);

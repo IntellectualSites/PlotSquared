@@ -9,19 +9,9 @@
 
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import com.intellectualcrafters.plot.database.DBFunc;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -29,7 +19,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.io.File;
+import java.util.*;
 
 /**
  * plot functions
@@ -48,7 +39,7 @@ public class PlotHelper {
     /**
      * direction 0 = north, 1 = south, etc:
      * 
-     * @param plot
+     * @param id
      * @param direction
      * @return
      */
@@ -64,6 +55,23 @@ public class PlotHelper {
             return new PlotId(id.x - 1, id.y);
         }
         return id;
+    }
+
+    public static boolean mergePlots(Player plr, World world, ArrayList<PlotId> plotIds) {
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        if(PlotMain.useEconomy && plotworld.USE_ECONOMY) {
+            double cost = plotIds.size() * plotworld.MERGE_PRICE;
+            if (cost > 0d) {
+                Economy economy = PlotMain.economy;
+                if (economy.getBalance(plr) < cost) {
+                    PlayerFunctions.sendMessage(plr, C.CANNOT_AFFORD_MERGE, "" + cost);
+                    return false;
+                }
+                economy.withdrawPlayer(plr, cost);
+                PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+        return mergePlots(world, plotIds);
     }
 
     /**

@@ -1,14 +1,10 @@
 package com.intellectualcrafters.plot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
-
-import com.sk89q.worldedit.util.YAMLConfiguration;
-
 public abstract class PlotWorld {
     
     public boolean AUTO_MERGE;

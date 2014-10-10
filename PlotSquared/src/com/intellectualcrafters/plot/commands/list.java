@@ -9,18 +9,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
+import com.intellectualcrafters.plot.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * 
@@ -97,11 +91,12 @@ public class list extends SubCommand {
         if (id == null) {
             return "none";
         }
-        String name = Bukkit.getOfflinePlayer(id).getName();
+        /*String name = Bukkit.getOfflinePlayer(id).getName();
         if (name == null) {
             return "none";
         }
-        return name;
+        return name;*/
+        return UUIDHandler.getName(id);
     }
 
     private String getArgumentList(String[] strings) {

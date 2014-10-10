@@ -9,17 +9,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class Trusted extends SubCommand {
@@ -69,7 +69,7 @@ public class Trusted extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
                 return true;
             }
-            if (!hasBeenOnServer(args[1])) {
+           /*if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
             }
@@ -82,7 +82,8 @@ public class Trusted extends SubCommand {
             if (uuid == null) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
-            }
+            }*/
+            UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.addTrusted(uuid);
             DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
@@ -100,6 +101,7 @@ public class Trusted extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
+            /*
             if (!hasBeenOnServer(args[1])) {
                 PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
                 return true;
@@ -117,7 +119,8 @@ public class Trusted extends SubCommand {
             if (!plot.trusted.contains(uuid)) {
                 PlayerFunctions.sendMessage(plr, C.T_WAS_NOT_ADDED);
                 return true;
-            }
+            }*/
+            UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
             DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
             PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);

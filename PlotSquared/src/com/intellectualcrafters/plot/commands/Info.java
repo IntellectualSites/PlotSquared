@@ -9,22 +9,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * 
@@ -125,11 +120,13 @@ public class Info extends SubCommand {
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
             return "everyone";
         }
+        /*
         OfflinePlayer plr = Bukkit.getOfflinePlayer(uuid);
         if (plr.getName() == null) {
             return "unknown";
         }
-        return plr.getName();
+        return plr.getName();*/
+        return UUIDHandler.getName(uuid);
     }
 
     private Biome getBiomeAt(Plot plot) {
