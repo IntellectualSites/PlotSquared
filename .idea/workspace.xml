@@ -11,7 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/plugin.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/plugin.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -101,9 +100,12 @@
       <file leaf-file-name="UUIDHandler.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8177083" vertical-offset="332" max-vertical-offset="3060">
-              <caret line="57" column="50" selection-start-line="55" selection-start-column="54" selection-end-line="57" selection-end-column="50" />
-              <folding />
+            <state vertical-scroll-proportion="0.6015625" vertical-offset="568" max-vertical-offset="3230">
+              <caret line="64" column="107" selection-start-line="64" selection-start-column="107" selection-end-line="64" selection-end-column="107" />
+              <folding>
+                <element signature="e#1028#1991#0" expanded="true" />
+                <element signature="e#1986#1987#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -823,7 +825,7 @@
       <workItem from="1412604972390" duration="154000" />
       <workItem from="1412703923710" duration="784000" />
       <workItem from="1412743333917" duration="1775000" />
-      <workItem from="1412776443029" duration="14443000" />
+      <workItem from="1412776443029" duration="14757000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -941,11 +943,15 @@
       <created>1413044690771</created>
       <updated>1413044690771</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Yes, I am really stupid... -_-">
+      <created>1413045024427</created>
+      <updated>1413045024427</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="62295000" />
+    <option name="totallyTimeSpent" value="62609000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1014,7 +1020,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Use this xD" />
     <MESSAGE value="Included source..." />
     <MESSAGE value="Yey!" />
     <MESSAGE value="Removed web stuff (caused crash)" />
@@ -1039,7 +1044,8 @@
     <MESSAGE value="Added money given on delete." />
     <MESSAGE value="Well, some stuff..." />
     <MESSAGE value="I am stupid." />
-    <option name="LAST_COMMIT_MESSAGE" value="I am stupid." />
+    <MESSAGE value="Yes, I am really stupid... -_-" />
+    <option name="LAST_COMMIT_MESSAGE" value="Yes, I am really stupid... -_-" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1468,9 +1474,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8177083" vertical-offset="332" max-vertical-offset="3060">
-          <caret line="57" column="50" selection-start-line="55" selection-start-column="54" selection-end-line="57" selection-end-column="50" />
-          <folding />
+        <state vertical-scroll-proportion="0.6015625" vertical-offset="568" max-vertical-offset="3230">
+          <caret line="64" column="107" selection-start-line="64" selection-start-column="107" selection-end-line="64" selection-end-column="107" />
+          <folding>
+            <element signature="e#1028#1991#0" expanded="true" />
+            <element signature="e#1986#1987#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -53,9 +53,16 @@ public class UUIDHandler {
 				}
 
 				long time = System.currentTimeMillis() - start;
-                double timePerUUID = uuidMap.size() / time;
-				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms (&6" + timePerUUID + "&c per millisecond), &6"
-						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + uuidMap.size()
+                int size = uuidMap.size();
+                double ups;
+                if(time == 0l || size == 0) {
+                    ups = size;
+                } else {
+                    ups = size / time;
+                }
+
+				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms (&6" + ups + "&c per millisecond), &6"
+						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + size
 						+ " &ccached.");
 			}
 		});
