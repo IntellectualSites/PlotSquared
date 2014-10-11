@@ -10,7 +10,7 @@ public class ConfigurationNode {
 	private String constant;
 	private Object default_value;
 	private String description;
-	private Object value = 0;
+	private Object value;
 	private SettingValue type;
 
 	public ConfigurationNode(String constant, Object default_value,
@@ -22,8 +22,8 @@ public class ConfigurationNode {
 		this.type = type;
 	}
 
-	public String getType() {
-		return this.type.getType();
+	public SettingValue getType() {
+		return this.type;
 	}
 
 	public boolean isValid(String string) {

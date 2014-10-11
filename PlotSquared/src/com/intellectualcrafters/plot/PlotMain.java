@@ -55,6 +55,8 @@ import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.DefaultPlotManager;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
@@ -1131,6 +1133,65 @@ public class PlotMain extends JavaPlugin {
 			PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
 		}
 	}
+	
+	public static void loadWorld(String world, ChunkGenerator generator) {
+	    if (getWorldSettings(world)!=null) {
+	        return;
+	    }
+        Set<String> worlds;
+        if (config.contains("worlds")) {
+            worlds = config.getConfigurationSection("worlds").getKeys(false);
+        } else {
+            worlds = new HashSet<String>();
+        }
+        if (generator!=null && generator instanceof PlotGenerator) {
+            sendConsoleSenderMessage(C.PREFIX.s()
+                    + "&aDetected world load for '" + world + "'.");
+            PlotGenerator plotgen = (PlotGenerator) generator;
+            PlotWorld plotworld = plotgen.getNewPlotWorld(world);
+            PlotManager manager = plotgen.getPlotManager();
+
+            if (!config.contains("worlds." + world)) {
+                config.createSection("worlds." + world);
+            }
+            plotworld.saveConfiguration(config.getConfigurationSection("worlds." + world));
+
+            plotworld.loadDefaultConfiguration(config.getConfigurationSection("worlds." + world));
+            
+            try {
+                config.save(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            addPlotWorld(world, plotworld, manager);
+
+        } else {
+            if (worlds.contains(world)) {
+                sendConsoleSenderMessage("&cWorld '"
+                        + world
+                        + "' in settings.yml is not using PlotSquared generator!");
+                
+                PlotWorld plotworld = new DefaultPlotWorld(world);
+                PlotManager manager = new DefaultPlotManager();
+                
+                if (!config.contains("worlds." + world)) {
+                    config.createSection("worlds." + world);
+                }
+                plotworld.saveConfiguration(config.getConfigurationSection("worlds." + world));
+
+                plotworld.loadConfiguration(config.getConfigurationSection("worlds." + world));
+                
+                try {
+                    config.save(configFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                addPlotWorld(world, plotworld, manager);
+            }
+        }
+	}
 
 	/**
 	 * Adds an external world as a recognized PlotSquared world - The PlotWorld
@@ -1144,39 +1205,8 @@ public class PlotMain extends JavaPlugin {
 		if (world == null) {
 			return;
 		}
-		Set<String> worlds;
-		if (config.contains("worlds")) {
-			worlds = config.getConfigurationSection("worlds").getKeys(false);
-		} else {
-			worlds = new HashSet<String>();
-		}
 		ChunkGenerator generator = world.getGenerator();
-		if (generator instanceof PlotGenerator) {
-			sendConsoleSenderMessage(C.PREFIX.s()
-					+ "&aDetected world load for '" + world.getName() + "'.");
-			PlotGenerator plotgen = (PlotGenerator) generator;
-
-			PlotWorld plotworld = plotgen.getPlotWorld();
-
-			PlotManager manager = plotgen.getPlotManager();
-
-			config.createSection("worlds." + world.getName());
-
-			plotworld.saveConfiguration(config
-					.getConfigurationSection("worlds." + world.getName()));
-
-			plotworld.loadConfiguration(config
-					.getConfigurationSection("worlds." + world.getName()));
-
-			addPlotWorld(world.getName(), plotworld, manager);
-
-		} else {
-			if (worlds.contains(world.getName())) {
-				sendConsoleSenderMessage("&cWorld '"
-						+ world.getName()
-						+ "' in settings.yml is not using PlotSquared generator!");
-			}
-		}
+		loadWorld(world.getName(), generator);
 	}
 
 	/**

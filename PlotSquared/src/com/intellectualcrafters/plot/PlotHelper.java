@@ -118,7 +118,7 @@ public class PlotHelper {
 					if (ly) {
 						if (!plot.settings.getMerged(1)
 								|| !plot.settings.getMerged(2)) {
-							manager.createRoadSouthEast(plotworld, plot);
+							manager.removeRoadSouthEast(plotworld, plot);
 						}
 					}
 					if (!plot.settings.getMerged(1)) {
@@ -165,13 +165,13 @@ public class PlotHelper {
 			if (!lesserPlot.settings.getMerged(2)) {
 				lesserPlot.settings.setMerged(2, true);
 				greaterPlot.settings.setMerged(0, true);
-				manager.createRoadSouth(plotworld, lesserPlot);
+				manager.removeRoadSouth(plotworld, lesserPlot);
 			}
 		} else {
 			if (!lesserPlot.settings.getMerged(1)) {
 				lesserPlot.settings.setMerged(1, true);
 				greaterPlot.settings.setMerged(3, true);
-				manager.createRoadSouth(plotworld, lesserPlot);
+				manager.removeRoadEast(plotworld, lesserPlot);
 			}
 		}
 	}

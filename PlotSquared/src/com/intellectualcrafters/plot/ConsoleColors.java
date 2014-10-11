@@ -66,7 +66,7 @@ public class ConsoleColors {
 				.replaceAll("&n", fromChatColor(ChatColor.UNDERLINE))
 				.replaceAll("&o", fromChatColor(ChatColor.ITALIC))
 				.replaceAll("&r", fromChatColor(ChatColor.RESET));
-		return input + ConsoleColor.RESET.toString();
+		return input + "\u001B[0m";
 	}
 
 	public static String fromChatColor(ChatColor color) {

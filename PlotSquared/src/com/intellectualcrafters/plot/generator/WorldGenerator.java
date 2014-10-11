@@ -44,19 +44,19 @@ public class WorldGenerator extends PlotGenerator {
 	/*
 	 * Some generator specific variables (implementation dependent)
 	 */
-	int plotsize;
-	int pathsize;
-	PlotBlock wall;
-	PlotBlock wallfilling;
-	PlotBlock floor1;
-	PlotBlock floor2;
-	int size;
-	Biome biome;
-	int roadheight;
-	int wallheight;
-	int plotheight;
-	PlotBlock[] plotfloors;
-	PlotBlock[] filling;
+	final int plotsize;
+	final int pathsize;
+	final PlotBlock wall;
+	final PlotBlock wallfilling;
+	final PlotBlock floor1;
+	final PlotBlock floor2;
+	final int size;
+	final Biome biome;
+	final int roadheight;
+	final int wallheight;
+	final int plotheight;
+	final PlotBlock[] plotfloors;
+	final PlotBlock[] filling;
 
 	/*
 	 * Return the plot manager for this type of generator, or create one
@@ -66,14 +66,15 @@ public class WorldGenerator extends PlotGenerator {
 		if (manager == null) {
 			manager = new DefaultPlotManager();
 		}
-		return null;
+		return manager;
 	}
 
 	// return the PlotWorld
 
 	@Override
-	public PlotWorld getPlotWorld() {
-		return this.plotworld;
+	public PlotWorld getNewPlotWorld(String world) {
+	    this.plotworld = new DefaultPlotWorld(world);
+	    return this.plotworld;
 	}
 
 	/*
@@ -104,19 +105,17 @@ public class WorldGenerator extends PlotGenerator {
 	 * inside the loop - You don't have to use this this method, but you may
 	 * find it useful.
 	 */
-	public void setCuboidRegion(int x1, int x2, int y1, int y2, int z1, int z2,
-			PlotBlock block) {
+	public void setCuboidRegion(int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock block) {
 		for (int x = x1; x < x2; x++) {
 			for (int z = z1; z < z2; z++) {
 				for (int y = y1; y < y2; y++) {
-					setBlock(this.result, x, y, z, block.data);
+					setBlock(this.result, x, y, z, block.id);
 				}
 			}
 		}
 	}
 
-	private void setCuboidRegion(int x1, int x2, int y1, int y2, int z1,
-			int z2, PlotBlock[] blocks) {
+	private void setCuboidRegion(int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock[] blocks) {
 		if (blocks.length == 1) {
 			setCuboidRegion(x1, x2, y1, y2, z1, z2, blocks[0]);
 		} else {
@@ -145,9 +144,9 @@ public class WorldGenerator extends PlotGenerator {
 	 * Initialize variables, and create plotworld object used in calculations
 	 */
 	public WorldGenerator(String world) {
-		this.plotworld = new DefaultPlotWorld(world);
-
+	    super(world);
 		this.plotsize = this.plotworld.PLOT_WIDTH;
+		
 		this.pathsize = this.plotworld.ROAD_WIDTH;
 
 		this.floor1 = this.plotworld.ROAD_BLOCK;
@@ -197,25 +196,23 @@ public class WorldGenerator extends PlotGenerator {
 	 * like to learn how to make a world generator
 	 */
 	@Override
-	public short[][] generateExtBlockSections(World world, Random random,
-			int cx, int cz, BiomeGrid biomes) {
-
+	public short[][] generateExtBlockSections(World world, Random random, int cx, int cz, BiomeGrid biomes) {
+	    
+	    int maxY = world.getMaxHeight();
+	    this.result = new short[maxY / 16][];
+	    
 		final int prime = 31;
 		int h = 1;
 		h = (prime * h) + cx;
 		h = (prime * h) + cz;
 		this.state = h;
-
-		int maxY = world.getMaxHeight();
-
-		this.result = new short[maxY / 16][];
+		
 		double pathWidthLower;
 		if ((this.pathsize % 2) == 0) {
 			pathWidthLower = Math.floor(this.pathsize / 2) - 1;
 		} else {
 			pathWidthLower = Math.floor(this.pathsize / 2);
 		}
-
 		cx = (cx % this.size) + (8 * this.size);
 		cz = (cz % this.size) + (8 * this.size);
 		int absX = (int) ((((cx * 16) + 16) - pathWidthLower - 1) + (8 * this.size));
@@ -230,7 +227,7 @@ public class WorldGenerator extends PlotGenerator {
 		if (roadStartZ >= this.size) {
 			roadStartZ -= this.size;
 		}
-
+		
 		// BOTTOM (1/1 cuboids)
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -240,7 +237,6 @@ public class WorldGenerator extends PlotGenerator {
 		}
 		// ROAD (0/24) The following is an inefficient placeholder as it is too
 		// much work to finish it
-
 		if ((this.pathsize > 16)
 				&& ((plotMinX > roadStartX) || (plotMinZ > roadStartZ))
 				&& !((roadStartX < 16) && (roadStartZ < 16))
@@ -248,7 +244,6 @@ public class WorldGenerator extends PlotGenerator {
 			setCuboidRegion(0, 16, 1, this.roadheight + 1, 0, 16, this.floor1);
 			return this.result;
 		}
-
 		if (((plotMinZ + 1) <= 16) || ((roadStartZ <= 16) && (roadStartZ > 0))) {
 			int start = Math.max((16 - plotMinZ - this.pathsize) + 1,
 					(16 - roadStartZ) + 1);

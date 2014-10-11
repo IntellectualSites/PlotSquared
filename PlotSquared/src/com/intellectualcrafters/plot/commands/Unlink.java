@@ -94,16 +94,16 @@ public class Unlink extends SubCommand {
 				new PlotId(x, y);
 
 				if (lx) {
-					manager.removeRoadEast(plotworld, plot);
+					manager.createRoadEast(plotworld, plot);
 
 					if (ly) {
-						manager.removeRoadSouthEast(plotworld, plot);
+						manager.createRoadSouthEast(plotworld, plot);
 					}
 
 				}
 
 				if (ly) {
-					manager.removeRoadSouth(plotworld, plot);
+					manager.createRoadSouth(plotworld, plot);
 				}
 
 			}

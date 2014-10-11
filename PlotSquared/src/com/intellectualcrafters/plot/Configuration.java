@@ -94,7 +94,12 @@ public class Configuration {
 
 		@Override
 		public Object parseString(String string) {
-			return Biome.valueOf(string.toUpperCase());
+			for (Biome biome:Biome.values()) {
+			    if (biome.name().equals(string.toUpperCase())) {
+			        return biome;
+			    }
+			}
+			return Biome.FOREST;
 		}
 
 		@Override

@@ -729,8 +729,8 @@ public class DefaultPlotManager extends PlotManager {
 
 		int sx = pos2.getBlockX();
 		int ex = (sx + dpw.ROAD_WIDTH);
-		int sz = pos1.getBlockZ() - 1;
-		int ez = pos2.getBlockZ() + 2;
+		int sz = pos1.getBlockZ();
+		int ez = pos2.getBlockZ() + 1;
 
 		PlotHelper.setSimpleCuboid(w,
 				new Location(w, sx,
@@ -756,8 +756,8 @@ public class DefaultPlotManager extends PlotManager {
 
 		int sz = pos2.getBlockZ();
 		int ez = (sz + dpw.ROAD_WIDTH);
-		int sx = pos1.getBlockX() - 1;
-		int ex = pos2.getBlockX() + 2;
+		int sx = pos1.getBlockX();
+		int ex = pos2.getBlockX() + 1;
 
 		PlotHelper.setSimpleCuboid(w,
 				new Location(w, sx,

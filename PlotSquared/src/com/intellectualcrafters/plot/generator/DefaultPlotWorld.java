@@ -62,7 +62,7 @@ public class DefaultPlotWorld extends PlotWorld {
 	public static int ROAD_WIDTH_DEFAULT = 7;
 
 	/**
-	 * Plot biome
+	 * Plot main block
 	 */
 	public PlotBlock[] MAIN_BLOCK;
 	/**
@@ -87,7 +87,7 @@ public class DefaultPlotWorld extends PlotWorld {
 	/**
 	 * Default wall block: 44
 	 */
-	public static String WALL_BLOCK_DEFAULT = "44:0";
+	public static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
 
 	/**
 	 * Wall filling
@@ -142,32 +142,32 @@ public class DefaultPlotWorld extends PlotWorld {
 	@Override
 	public ConfigurationNode[] getSettingNodes() {
 		// TODO return a set of configuration nodes (used for setup command)
-		return new ConfigurationNode[] {
-				new ConfigurationNode("plot.height", this.PLOT_HEIGHT,
-						"Plot height", Configuration.INTEGER, true),
-				new ConfigurationNode("plot.width", this.PLOT_WIDTH,
-						"Plot width", Configuration.INTEGER, true),
-				new ConfigurationNode("plot.filling", this.MAIN_BLOCK,
-						"Plot block", Configuration.BLOCKLIST, true),
-				new ConfigurationNode("plot.floor", this.TOP_BLOCK,
-						"Plot floor block", Configuration.BLOCKLIST, true),
-				new ConfigurationNode("wall.block", this.WALL_BLOCK,
-						"Top wall block", Configuration.BLOCK, true),
-				new ConfigurationNode("road.width", this.ROAD_WIDTH,
-						"Road width", Configuration.INTEGER, true),
-				new ConfigurationNode("road.height", this.ROAD_HEIGHT,
-						"Road height", Configuration.INTEGER, true),
-				new ConfigurationNode("road.enable_stripes",
-						this.ROAD_STRIPES_ENABLED, "Enable road stripes",
-						Configuration.BOOLEAN, true),
-				new ConfigurationNode("road.block", this.ROAD_BLOCK,
-						"Road block", Configuration.BLOCK, true),
-				new ConfigurationNode("road.stripes", this.ROAD_STRIPES,
-						"Road stripe block", Configuration.BLOCK, true),
-				new ConfigurationNode("wall.filling", this.WALL_FILLING,
-						"Wall filling block", Configuration.BLOCK, true),
-				new ConfigurationNode("wall.height", this.WALL_HEIGHT,
-						"Wall height", Configuration.INTEGER, true), };
+	    return new ConfigurationNode[] {
+                new ConfigurationNode("plot.height", DefaultPlotWorld.PLOT_HEIGHT_DEFAULT,
+                        "Plot height", Configuration.INTEGER, true),
+                new ConfigurationNode("plot.width", DefaultPlotWorld.PLOT_WIDTH_DEFAULT,
+                        "Plot width", Configuration.INTEGER, true),
+                new ConfigurationNode("plot.filling", DefaultPlotWorld.MAIN_BLOCK_DEFAULT,
+                        "Plot block", Configuration.BLOCKLIST, true),
+                new ConfigurationNode("plot.floor", DefaultPlotWorld.TOP_BLOCK_DEFAULT,
+                        "Plot floor block", Configuration.BLOCKLIST, true),
+                new ConfigurationNode("wall.block", DefaultPlotWorld.WALL_BLOCK_DEFAULT,
+                        "Top wall block", Configuration.BLOCK, true),
+                new ConfigurationNode("road.width", DefaultPlotWorld.ROAD_WIDTH_DEFAULT,
+                        "Road width", Configuration.INTEGER, true),
+                new ConfigurationNode("road.height", DefaultPlotWorld.ROAD_HEIGHT_DEFAULT,
+                        "Road height", Configuration.INTEGER, true),
+                new ConfigurationNode("road.enable_stripes",
+                        DefaultPlotWorld.ROAD_STRIPES_ENABLED_DEFAULT, "Enable road stripes",
+                        Configuration.BOOLEAN, true),
+                new ConfigurationNode("road.block", DefaultPlotWorld.ROAD_BLOCK_DEFAULT,
+                        "Road block", Configuration.BLOCK, true),
+                new ConfigurationNode("road.stripes", DefaultPlotWorld.ROAD_STRIPES_DEFAULT,
+                        "Road stripe block", Configuration.BLOCK, true),
+                new ConfigurationNode("wall.filling", DefaultPlotWorld.WALL_FILLING_DEFAULT,
+                        "Wall filling block", Configuration.BLOCK, true),
+                new ConfigurationNode("wall.height", DefaultPlotWorld.WALL_HEIGHT_DEFAULT,
+                        "Wall height", Configuration.INTEGER, true), };
 	}
 
 	/*
@@ -177,7 +177,6 @@ public class DefaultPlotWorld extends PlotWorld {
 	 */
 	@Override
 	public void loadConfiguration(ConfigurationSection config) {
-
 		this.PLOT_HEIGHT = config.getInt("plot.height");
 		this.PLOT_WIDTH = config.getInt("plot.width");
 		this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST

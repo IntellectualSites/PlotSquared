@@ -86,6 +86,7 @@ import static org.bukkit.Material.getMaterial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -164,13 +165,11 @@ public abstract class PlotWorld {
 
 	/**
 	 * When a world is created, the following method will be called for each
-	 * node set in the configuration - You may ignore this if you generator does
-	 * not support configuration, or if you want to implement your own methods
 	 * 
 	 * @param key
 	 * @param value
 	 */
-	public void loadConfiguration(ConfigurationSection config) {
+	public void loadDefaultConfiguration(ConfigurationSection config) {
 		this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
 		this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
 		this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config
@@ -186,26 +185,32 @@ public abstract class PlotWorld {
 		this.SELL_PRICE = config.getDouble("economy.prices.sell");
 		this.PLOT_CHAT = config.getBoolean("chat.enabled");
 		this.DEFAULT_FLAGS = config.getStringList("flags.default");
+		loadConfiguration(config);
 	}
+	
+	public abstract void loadConfiguration(ConfigurationSection config);
 
 	public void saveConfiguration(ConfigurationSection config) {
 
 		/*
 		 * Saving core plotworld settings
 		 */
-		config.set("natural_mob_spawning", this.MOB_SPAWNING);
-		config.set("plot.auto_merge", this.AUTO_MERGE);
-		config.set("plot.biome", this.PLOT_BIOME.name());
-		config.set("schematic.on_claim", this.SCHEMATIC_ON_CLAIM);
-		config.set("schematic.file", this.SCHEMATIC_FILE);
-		config.set("schematic.specify_on_claim", this.SCHEMATIC_CLAIM_SPECIFY);
-		config.set("schematic.schematics", this.SCHEMATICS);
-		config.set("economy.use", this.USE_ECONOMY);
-		config.set("economy.prices.claim", this.PLOT_PRICE);
-		config.set("economy.prices.merge", this.MERGE_PRICE);
-		config.set("economy.prices.sell", this.SELL_PRICE);
-		config.set("chat.enabled", this.PLOT_CHAT);
-		config.set("flags.default", this.DEFAULT_FLAGS);
+	    
+	    HashMap<String, Object> options = new HashMap<String, Object>();
+	    
+	    options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
+	    options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
+	    options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
+	    options.put("schematic.on_claim", PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT);
+	    options.put("schematic.file", PlotWorld.SCHEMATIC_FILE_DEFAULT);
+	    options.put("schematic.specify_on_claim", PlotWorld.SCHEMATIC_CLAIM_SPECIFY_DEFAULT);
+	    options.put("schematic.schematics", PlotWorld.SCHEMATICS_DEFAULT);
+	    options.put("economy.use", PlotWorld.USE_ECONOMY_DEFAULT);
+	    options.put("economy.prices.claim", PlotWorld.PLOT_PRICE_DEFAULT);
+	    options.put("economy.prices.merge", PlotWorld.MERGE_PRICE_DEFAULT);
+	    options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
+	    options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
+	    options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
 
 		ConfigurationNode[] settings = getSettingNodes();
 
@@ -213,7 +218,13 @@ public abstract class PlotWorld {
 		 * Saving generator specific settings
 		 */
 		for (ConfigurationNode setting : settings) {
-			config.set(setting.getConstant(), setting.getValue());
+			options.put(setting.getConstant(), setting.getType().parseObject(setting.getValue()));
+		}
+		
+		for (String option:options.keySet()) {
+		    if (!config.contains(option)) {
+		        config.set(option, options.get(option));
+		    }
 		}
 	}
 

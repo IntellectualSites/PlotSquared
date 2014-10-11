@@ -11,12 +11,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 
 public class UUIDHandler {
 
-	private static ConcurrentHashMap<String, UUID> uuidMap = new ConcurrentHashMap<>();
+    private static boolean online = Bukkit.getServer().getOnlineMode();
+    
+	private static BiMap<String, UUID> uuidMap = HashBiMap.create();
 
 	public static boolean uuidExists(UUID uuid) {
 		return uuidMap.containsValue(uuid);
@@ -41,15 +45,15 @@ public class UUIDHandler {
 					public void run() {
 						OfflinePlayer[] offlinePlayers = Bukkit
 								.getOfflinePlayers();
-						int lenght = offlinePlayers.length;
+						int length = offlinePlayers.length;
 						long start = System.currentTimeMillis();
 
 						String name;
 						UUID uuid;
 						for (OfflinePlayer player : offlinePlayers) {
-							name = player.getName();
 							uuid = player.getUniqueId();
 							if (!uuidExists(uuid)) {
+							    name = player.getName();
 								add(name, uuid);
 							}
 						}
@@ -58,7 +62,7 @@ public class UUIDHandler {
 						PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6"
 								+ time
 								+ "&cms, &6"
-								+ lenght
+								+ length
 								+ " &cUUID's were cached"
 								+ " and there is now a grand total of &6"
 								+ uuidMap.size() + " &ccached.");
@@ -82,7 +86,7 @@ public class UUIDHandler {
 		if ((uuid = getUuidOfflinePlayer(name)) != null) {
 			return uuid;
 		}
-		if (Bukkit.getOnlineMode()) {
+		if (online) {
 			try {
 				UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 				uuid = fetcher.call().get(name);
@@ -102,12 +106,7 @@ public class UUIDHandler {
 	 * @return
 	 */
 	private static String loopSearch(UUID uuid) {
-		for (Map.Entry<String, UUID> entry : uuidMap.entrySet()) {
-			if (entry.getValue().equals(uuid)) {
-				return entry.getKey();
-			}
-		}
-		return "";
+	    return uuidMap.inverse().get(uuid);
 	}
 
 	/**
@@ -116,9 +115,9 @@ public class UUIDHandler {
 	 * @return
 	 */
 	public static String getName(UUID uuid) {
-		if (uuidExists(uuid)) {
-			return loopSearch(uuid);
-		}
+	    if (uuidExists(uuid)) {
+            return loopSearch(uuid);
+        }
 		String name;
 		if ((name = getNameOnlinePlayer(uuid)) != null) {
 			return name;
@@ -126,7 +125,7 @@ public class UUIDHandler {
 		if ((name = getNameOfflinePlayer(uuid)) != null) {
 			return name;
 		}
-		if (Bukkit.getOnlineMode()) {
+		if (online) {
 			try {
 				NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
 				name = fetcher.call().get(uuid);
@@ -204,11 +203,7 @@ public class UUIDHandler {
 	 * @return
 	 */
 	private static UUID getUuidOfflinePlayer(String name) {
-		OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-		if (player == null || !player.hasPlayedBefore()) {
-			return null;
-		}
-		UUID uuid = player.getUniqueId();
+	    UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
 		add(name, uuid);
 		return uuid;
 	}

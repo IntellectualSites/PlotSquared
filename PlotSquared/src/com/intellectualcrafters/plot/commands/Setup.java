@@ -94,7 +94,7 @@ public class Setup extends SubCommand implements Listener {
 			ConfigurationNode step = object.step[object.current];
 			if (args.length < 1) {
 				sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-						step.getDescription(), step.getType(),
+						step.getDescription(), step.getType().getType(),
 						step.getDefaultValue() + "");
 				return true;
 			} else {
@@ -108,12 +108,12 @@ public class Setup extends SubCommand implements Listener {
 						object.current--;
 						step = object.step[object.current];
 						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-								step.getDescription(), step.getType(),
+								step.getDescription(), step.getType().getType(),
 								step.getDefaultValue() + "");
 						return true;
 					} else {
 						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-								step.getDescription(), step.getType(),
+								step.getDescription(), step.getType().getType(),
 								step.getDefaultValue() + "");
 						return true;
 					}
@@ -130,14 +130,14 @@ public class Setup extends SubCommand implements Listener {
 					}
 					step = object.step[object.current];
 					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-							step.getDescription(), step.getType(),
+							step.getDescription(), step.getType().getType(),
 							step.getDefaultValue() + "");
 					return true;
 				} else {
 					sendMessage(plr, C.SETUP_INVALID_ARG, args[0],
 							step.getConstant());
 					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-							step.getDescription(), step.getType(),
+							step.getDescription(), step.getType().getType(),
 							step.getDefaultValue() + "");
 					return true;
 				}
@@ -186,7 +186,7 @@ public class Setup extends SubCommand implements Listener {
 			}
 			PlotWorld plotworld;
 			if (generator instanceof PlotGenerator) {
-				plotworld = ((PlotGenerator) generator).getPlotWorld();
+				plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
 			}
 			else {
 				plotworld = new DefaultPlotWorld(world);
@@ -197,7 +197,7 @@ public class Setup extends SubCommand implements Listener {
 			SetupObject object = setupMap.get(plr.getName());
 			ConfigurationNode step = object.step[object.current];
 			sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-					step.getDescription(), step.getType(),
+					step.getDescription(), step.getType().getType(),
 					step.getDefaultValue() + "");
 			return true;
 		}
