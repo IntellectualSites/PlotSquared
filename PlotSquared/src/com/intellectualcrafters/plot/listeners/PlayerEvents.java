@@ -251,10 +251,8 @@ public class PlayerEvents implements Listener {
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getLocation().distanceSquared(event.getPlayer().getLocation()) <= Math.pow(plotworld.PLOT_WIDTH, 2d)) {
-                if (getCurrentPlot(p.getLocation()) == plot) {
-                    recipients.add(p);
-                }
+            if (getCurrentPlot(p.getLocation()) == plot) {
+                recipients.add(p);
             }
         }
         format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);

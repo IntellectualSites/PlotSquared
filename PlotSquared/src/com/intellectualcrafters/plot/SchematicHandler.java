@@ -35,8 +35,10 @@ public class SchematicHandler {
             CuboidClipboard clipboard = CuboidClipboard.loadSchematic(schematic.getFile());
             Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
             PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
-            PlotWorld plotWorld = PlotMain.getWorldSettings(plot.getWorld());
-            Vector v1 = new Vector(l1.getBlockX() + 1, plotWorld.PLOT_HEIGHT + 2, l1.getBlockZ() + 1);
+            int x = l1.getBlockX() + 1;
+            int z = l1.getBlockZ() + 1;
+            int y = location.getWorld().getHighestBlockYAt(x,z);
+            Vector v1 = new Vector(x, y+1, z);
             clipboard.paste(session, v1, true);
         } catch (Exception e) {
             return false;
