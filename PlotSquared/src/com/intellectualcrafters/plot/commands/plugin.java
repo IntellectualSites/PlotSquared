@@ -94,22 +94,16 @@ public class plugin extends SubCommand {
 	 * @param link
 	 * @return
 	 */
-	private static String getInfo(String link) {
-		try {
-			URLConnection connection = new URL(link).openConnection();
-			connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String document = "", line;
-			while ((line = reader.readLine()) != null) {
-				document += (line + "\n");
-			}
-			reader.close();
-			return document;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
+	private static String getInfo(String link) throws Exception {
+        URLConnection connection = new URL(link).openConnection();
+        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String document = "", line;
+        while ((line = reader.readLine()) != null) {
+            document += (line + "\n");
+        }
+        reader.close();
+        return document;
 	}
 
 }

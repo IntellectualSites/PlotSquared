@@ -53,7 +53,7 @@ public class UUIDHandler {
 				}
 
 				long time = System.currentTimeMillis() - start;
-                long timePerUUID = uuidMap.size() / time;
+                double timePerUUID = uuidMap.size() / time;
 				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms (&6" + timePerUUID + "&c per millisecond), &6"
 						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + uuidMap.size()
 						+ " &ccached.");
