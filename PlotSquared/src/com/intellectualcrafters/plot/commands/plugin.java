@@ -35,15 +35,24 @@ public class plugin extends SubCommand {
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                downloads =
-                        convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=downloads&url=http://www.spigotmc.org/resources/plotsquared.1177/"), false);
+                try {
+                    downloads =
+                            convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=downloads&url=http://www.spigotmc.org/resources/plotsquared.1177/"), false);
+                } catch (Exception e) {
+                    downloads = "unknown";
+                }
             }
         }, 1l);
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                version =
-                        convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=version&resource=1177"), true);
+                try {
+                    version =
+                            convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=version&resource=1177"), true);
+                } catch(Exception e) {
+                    //Let's just ignore this, most likely error 500...
+                    version = "unknown";
+                }
             }
         }, 200l);
     }
