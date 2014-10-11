@@ -27,21 +27,21 @@ import com.intellectualcrafters.plot.PlotWorld;
  *
  */
 public class WorldGenerator extends PlotGenerator {
-	/*
+	/**
 	 * result object is returned for each generated chunk, do stuff to it
 	 */
 	short[][] result;
 
-	/*
+	/**
 	 * plotworld object
 	 */
 	DefaultPlotWorld plotworld;
-	/*
+	/**
 	 * Set to static to re-use the same managet for all Default World Generators
 	 */
 	private static PlotManager manager = null;
 
-	/*
+	/**
 	 * Some generator specific variables (implementation dependent)
 	 */
 	final int plotsize;
@@ -58,8 +58,9 @@ public class WorldGenerator extends PlotGenerator {
 	final PlotBlock[] plotfloors;
 	final PlotBlock[] filling;
 
-	/*
+	/**
 	 * Return the plot manager for this type of generator, or create one
+	 * For square plots you may as well use the default plot manager which comes with PlotSquared
 	 */
 	@Override
 	public PlotManager getPlotManager() {
@@ -69,15 +70,18 @@ public class WorldGenerator extends PlotGenerator {
 		return manager;
 	}
 
-	// return the PlotWorld
-
+	/**
+	 *  Get a new plotworld class
+	 *  For square plots you can use the DefaultPlotWorld class which comes with PlotSquared
+	 * 
+	 */
 	@Override
 	public PlotWorld getNewPlotWorld(String world) {
 	    this.plotworld = new DefaultPlotWorld(world);
 	    return this.plotworld;
 	}
 
-	/*
+	/**
 	 * Faster sudo-random number generator than java.util.random
 	 */
 	private long state;
@@ -100,7 +104,7 @@ public class WorldGenerator extends PlotGenerator {
 		return (int) r;
 	}
 
-	/*
+	/**
 	 * Cuboid based plot generation is quick, as it requires no calculations
 	 * inside the loop - You don't have to use this this method, but you may
 	 * find it useful.
@@ -130,7 +134,7 @@ public class WorldGenerator extends PlotGenerator {
 		}
 	}
 
-	/*
+	/**
 	 * Standard setblock method for world generation
 	 */
 	private void setBlock(short[][] result, int x, int y, int z, short blkid) {
@@ -140,7 +144,7 @@ public class WorldGenerator extends PlotGenerator {
 		result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
 	}
 
-	/*
+	/**
 	 * Initialize variables, and create plotworld object used in calculations
 	 */
 	public WorldGenerator(String world) {
@@ -165,7 +169,7 @@ public class WorldGenerator extends PlotGenerator {
 		this.biome = this.plotworld.PLOT_BIOME;
 	}
 
-	/*
+	/**
 	 * Return the block populator
 	 */
 	@Override
@@ -183,7 +187,7 @@ public class WorldGenerator extends PlotGenerator {
 		return Arrays.asList((BlockPopulator) new XPopulator(this.plotworld));
 	}
 
-	/*
+	/**
 	 * Return the default spawn location for this world
 	 */
 	@Override
@@ -191,7 +195,7 @@ public class WorldGenerator extends PlotGenerator {
 		return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
 	}
 
-	/*
+	/**
 	 * This part is a fucking mess. - Refer to a proper tutorial if you would
 	 * like to learn how to make a world generator
 	 */

@@ -20,7 +20,7 @@ import com.intellectualcrafters.plot.PlotWorld;
 
 public class DefaultPlotManager extends PlotManager {
 
-	/*
+	/**
 	 * Default implementation of getting a plot at a given location
 	 * 
 	 * For a simplified explanation of the math involved: - Get the current
@@ -80,7 +80,7 @@ public class DefaultPlotManager extends PlotManager {
 		return new PlotId(dx + 1, dz + 1);
 	}
 
-	/*
+	/**
 	 * Some complex stuff for traversing mega plots (return getPlotIdAbs if you
 	 * do not support mega plots)
 	 */
@@ -169,7 +169,7 @@ public class DefaultPlotManager extends PlotManager {
 		return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
 	}
 
-	/*
+	/**
 	 * Check if a location is inside a specific plot(non-Javadoc) - For this
 	 * implementation, we don't need to do anything fancier than referring to
 	 * getPlotIdAbs(...)
@@ -183,7 +183,7 @@ public class DefaultPlotManager extends PlotManager {
 		return result == plotid;
 	}
 
-	/*
+	/**
 	 * Get the bottom plot loc (some basic math)
 	 */
 	@Override
@@ -201,7 +201,7 @@ public class DefaultPlotManager extends PlotManager {
 		return new Location(Bukkit.getWorld(plotworld.worldname), x, 1, z);
 	}
 
-	/*
+	/**
 	 * Get the top plot loc (some basic math)
 	 */
 	@Override
@@ -219,7 +219,7 @@ public class DefaultPlotManager extends PlotManager {
 		return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
 	}
 
-	/*
+	/**
 	 * Clearing the plot needs to only consider removing the blocks - This
 	 * implementation has used the SetCuboid function, as it is fast, and uses
 	 * NMS code - It also makes use of the fact that deleting chunks is a lot
@@ -519,7 +519,7 @@ public class DefaultPlotManager extends PlotManager {
 		return true;
 	}
 
-	/*
+	/**
 	 * Remove sign for a plot
 	 */
 	@Override
@@ -586,7 +586,7 @@ public class DefaultPlotManager extends PlotManager {
 		return true;
 	}
 
-	/*
+	/**
 	 * Set a plot biome
 	 */
 	@Override
@@ -612,7 +612,7 @@ public class DefaultPlotManager extends PlotManager {
 		return true;
 	}
 
-	/*
+	/**
 	 * PLOT MERGING
 	 */
 
@@ -797,7 +797,7 @@ public class DefaultPlotManager extends PlotManager {
 		return true;
 	}
 
-	/*
+	/**
 	 * Finishing off plot merging by adding in the walls surrounding the plot
 	 * (OPTIONAL)(UNFINISHED)
 	 */
