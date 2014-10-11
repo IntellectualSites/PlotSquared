@@ -24,26 +24,25 @@ public abstract class PlotManager {
     public abstract Location getPlotBottomLocAbs(PlotWorld plotworld, PlotId plotid); 
     // the same applies here
     public abstract Location getPlotTopLocAbs(PlotWorld plotworld, PlotId plotid); 
-
+    
     /*
      * Plot clearing (return false if you do not support some method)
      * 
      * 
      */
 
-    public abstract boolean clearPlot(Player player, Plot plot, boolean mega);
+    public abstract boolean clearPlot(Player player, Plot plot);
 
-    public abstract boolean clearSign(Player player, Plot plot, boolean mega);
-
-    // clearEntities also needs to clear Player entities (e.g. teleport them to the surface)
-    public abstract boolean clearEntities(Player player, Plot plot, boolean mega);
+    public abstract Location getSignLoc(Player player, PlotWorld plotworld, Plot plot);
 
     /*
      * Plot set functions (return false if you do not support the specific set
      * method)
      */
 
-    public abstract boolean setWall(Player player, Plot plot, Block block, PlotBlock newBlock);
+    public abstract boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock block);
+    
+    public abstract boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] block);
 
     public abstract boolean setBiome(Player player, Plot plot, Biome biome);
 

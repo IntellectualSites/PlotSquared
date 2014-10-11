@@ -95,104 +95,21 @@ public class PlayerFunctions {
     public static PlotId getPlotAbs(Location loc) {
         String world = loc.getWorld().getName();
         PlotManager manager = PlotMain.getPlotManager(world);
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        PlotId id = manager.getPlotIdAbs(plotworld, loc);
-        
-        if (id.x == null || id.y == null) {
-            return null;
+        if (manager == null) {
+        	return null;
         }
-        
-        return id;
-        
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        return manager.getPlotIdAbs(plotworld, loc);
     }
 
     public static PlotId getPlot(Location loc) {
-
-        PlotId plotid = getPlotAbs(loc);
-        
-        if (plotid == null) {
-            
+    	String world = loc.getWorld().getName();
+        PlotManager manager = PlotMain.getPlotManager(world);
+        if (manager == null) {
+        	return null;
         }
-        return plotid;
-        
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
-
-        String world = loc.getWorld().getName();
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        if (plotworld == null) {
-            return null;
-        }
-        int size = plotworld.PLOT_WIDTH + plotworld.ROAD_WIDTH;
-        int pathWidthLower;
-        if ((plotworld.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(plotworld.ROAD_WIDTH / 2) - 1);
-        } else {
-            pathWidthLower = (int) Math.floor(plotworld.ROAD_WIDTH / 2);
-        }
-
-        int dx = x / size;
-        int dz = z / size;
-
-        if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
-        }
-        if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
-        }
-
-        int rx = (x) % size;
-        int rz = (z) % size;
-
-        int end = pathWidthLower + plotworld.PLOT_WIDTH;
-
-        boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-        if (northSouth && eastWest) {
-            // This means you are in the intersection
-            PlotId id = getPlotAbs(loc.add(plotworld.ROAD_WIDTH, 0, plotworld.ROAD_WIDTH));
-            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if ((plot.settings.getMerged(0) && plot.settings.getMerged(3))) {
-                return getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        if (northSouth) {
-            // You are on a road running West to East (yeah, I named the var
-            // poorly)
-            PlotId id = getPlotAbs(loc.add(0, 0, plotworld.ROAD_WIDTH));
-            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.settings.getMerged(0)) {
-                return getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        if (eastWest) {
-            // This is the road separating an Eastern and Western plot
-            PlotId id = getPlotAbs(loc.add(plotworld.ROAD_WIDTH, 0, 0));
-            Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.settings.getMerged(3)) {
-                return getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        PlotId id = new PlotId(dx + 1, dz + 1);
-        Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-        if (plot == null) {
-            return id;
-        }
-        return getBottomPlot(loc.getWorld(), plot).id;
+        return manager.getPlotId(plotworld, loc);
     }
 
     /**
@@ -218,7 +135,6 @@ public class PlayerFunctions {
      * @param player
      * @return
      */
-    @SuppressWarnings("deprecation")
     public static Plot getCurrentPlot(Player player) {
         if (!PlotMain.isPlotWorld(player.getWorld())) {
             return null;

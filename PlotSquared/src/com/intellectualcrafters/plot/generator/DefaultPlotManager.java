@@ -1,19 +1,13 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.ArrayList;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.Configuration;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotBlock;
@@ -96,7 +90,6 @@ public class DefaultPlotManager extends PlotManager {
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
 
-        String world = loc.getWorld().getName();
         if (plotworld == null) {
             return null;
         }
@@ -228,7 +221,7 @@ public class DefaultPlotManager extends PlotManager {
      * 
      */
     @Override
-    public boolean clearPlot(Player player, Plot plot, boolean mega) {
+    public boolean clearPlot(Player player, Plot plot) {
         World world = player.getWorld();
         DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain.getWorldSettings(world));
         
@@ -356,47 +349,63 @@ public class DefaultPlotManager extends PlotManager {
      * Remove sign for a plot 
      */
     @Override
-    public boolean clearSign(Player player, Plot plot, boolean mega) {
+    public Location getSignLoc(Player player, PlotWorld plotworld, Plot plot) {
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         World world = player.getWorld();
-        DefaultPlotWorld plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
-        Location pl = new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), plotworld.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ());
-        Block bs = pl.add(0, 0, -1).getBlock();
-        bs.setType(Material.AIR);
-        return true;
-    }
-
-    /*
-     * Remove any entities, and teleport players inside a plot being cleared
-     */
-    @Override
-    public boolean clearEntities(Player player, Plot plot, boolean mega) {
-        World world = Bukkit.getWorld(plot.world);
-        Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
-        for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
-                Chunk chunk = world.getChunkAt(i, j);
-                for (Entity entity : chunk.getEntities()) {
-                    Location eloc = entity.getLocation();
-                    if (eloc.getBlockX() >= pos1.getBlockX() && eloc.getBlockZ() >= pos1.getBlockZ() && eloc.getBlockX() <= pos2.getBlockX() && eloc.getBlockZ() <= pos2.getBlockZ()) {
-                        if (entity instanceof Player) {
-                            PlotMain.teleportPlayer((Player) entity, entity.getLocation(), plot);
-                        } else {
-                            entity.remove();
-                        }
-                    }
-                }
-            }
-        }
-        return true;
+        return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
     }
     
+
+	@Override
+	public boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] blocks) {
+		World world = player.getWorld();
+        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
+        final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
+        PlotHelper.setCuboid(world, pos1, pos2, blocks);
+		return true;
+	}
+    
     @Override
-    public boolean setWall(Player player, Plot plot, Block block, PlotBlock newblock) {
+    public boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
+    	DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+    	World w = player.getWorld();
+
+        Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
+        Location top = PlotHelper.getPlotTopLoc(w, plotid);
+
+        int x, z;
+
+        Block block;
         
-        // CURRENTLY NOT IMPLEMENTED
+        // TODO use PlotHelper.setSimpleCuboid rather than this for loop
         
-        return false;
+        for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
+            z = bottom.getBlockZ();
+
+            block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+            PlotHelper.setBlock(block, plotblock);
+        }
+
+        for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
+            x = top.getBlockX() + 1;
+
+            block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+            PlotHelper.setBlock(block, plotblock);
+        }
+
+        for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
+            z = top.getBlockZ() + 1;
+
+            block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+            PlotHelper.setBlock(block, plotblock);
+        }
+
+        for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
+            x = bottom.getBlockX();
+            block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+            PlotHelper.setBlock(block, plotblock);
+        }
+        return true;
     }
 
     /*
@@ -564,6 +573,9 @@ public class DefaultPlotManager extends PlotManager {
      */
     @Override
     public boolean finishPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+    	
+    	// TODO set plot wall
+    	
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
         
         PlotId pos1 = plotIds.get(0);

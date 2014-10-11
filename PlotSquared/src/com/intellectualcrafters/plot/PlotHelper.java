@@ -10,7 +10,9 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -89,34 +91,15 @@ public class PlotHelper {
      * @return boolean (success)
      */
     public static boolean mergePlots(World world, ArrayList<PlotId> plotIds) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int pathsize = plotworld.ROAD_WIDTH;
-        int plotheight = plotworld.PLOT_HEIGHT;
-
         if (plotIds.size() < 2) {
             return false;
         }
-
-        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
-        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
-
-        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
-        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
-
-        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
-            plotfloors[i] = result[0];
-            plotfloors_data[i] = result[1];
-        }
-        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
-            filling[i] = result[0];
-            filling_data[i] = result[1];
-        }
-
         PlotId pos1 = plotIds.get(0);
         PlotId pos2 = plotIds.get(plotIds.size() - 1);
 
+        PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
 
@@ -129,17 +112,7 @@ public class PlotHelper {
                 if (lx) {
                     if (ly) {
                         if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
-                            Location loc = getPlotTopLocAbs(world, id);
-
-                            int sx = loc.getBlockX() + 1;
-                            int ex = (sx + pathsize) - 1;
-                            int sz = loc.getBlockZ() + 1;
-                            int ez = (sz + pathsize) - 1;
-
-                            PlotHelper.setSimpleCuboid(world, new Location(world, sx, plotheight + 1, sz), new Location(world, ex + 1, 257 + 1, ez + 1), (short) 0);
-
-                            PlotHelper.setCuboid(world, new Location(world, sx + 1, 1, sz + 1), new Location(world, ex, plotheight, ez), filling, filling_data);
-                            PlotHelper.setCuboid(world, new Location(world, sx + 1, plotheight, sz + 1), new Location(world, ex, plotheight + 1, ez), plotfloors, plotfloors_data);
+                        	manager.createRoadSouthEast(plotworld, plot);
                         }
                     }
                     if (!plot.settings.getMerged(1)) {
@@ -160,22 +133,8 @@ public class PlotHelper {
 
             }
         }
-
-        Location megaPlotBot = getPlotBottomLoc(world, pos1);
-        Location megaPlotTop = getPlotTopLoc(world, pos2).add(1, 0, 1);
-
-        short[] result_w = PlotHelper.getBlock(plotworld.WALL_BLOCK);
-        short w_id = result_w[0];
-        byte w_v = (byte) result_w[1];
-
-        for (int x = megaPlotBot.getBlockX(); x <= megaPlotTop.getBlockX(); x++) {
-            for (int z = megaPlotBot.getBlockZ(); z <= megaPlotTop.getBlockZ(); z++) {
-                if ((z == megaPlotBot.getBlockZ()) || (z == megaPlotTop.getBlockZ()) || (x == megaPlotBot.getBlockX()) || (x == megaPlotTop.getBlockX())) {
-                    world.getBlockAt(x, plotworld.WALL_HEIGHT + 1, z).setTypeIdAndData(w_id, w_v, false);
-                }
-            }
-        }
-
+        
+        manager.finishPlotMerge(world, plotworld, plotIds);
         return true;
     }
 
@@ -191,67 +150,21 @@ public class PlotHelper {
      * @param greaterPlot
      */
     public static void mergePlot(World world, Plot lesserPlot, Plot greaterPlot) {
-        Location pos1 = getPlotBottomLocAbs(world, lesserPlot.id).add(1, 0, 1);
-        Location pos2 = getPlotTopLocAbs(world, lesserPlot.id);
-
-        Location pos3 = getPlotBottomLocAbs(world, greaterPlot.id).add(1, 0, 1);
-        Location pos4 = getPlotTopLocAbs(world, greaterPlot.id);
-
-        int sx = Math.max(pos1.getBlockX(), pos2.getBlockX());
-        int ex = Math.min(pos3.getBlockX(), pos4.getBlockX());
-        int sz = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-        int ez = Math.min(pos3.getBlockZ(), pos4.getBlockZ());
-
-        int startx = Math.min(sx, ex);
-        int startz = Math.min(sz, ez);
-        int endx = Math.max(sx, ex) + 1;
-        int endz = Math.max(sz, ez) + 1;
-
+        PlotManager manager = PlotMain.getPlotManager(world);
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-
-        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
-        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
-
-        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
-        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
-
-        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
-            plotfloors[i] = result[0];
-            plotfloors_data[i] = result[1];
-        }
-        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
-            filling[i] = result[0];
-            filling_data[i] = result[1];
-        }
-
-        boolean noMerge = false;
-
+        
         if (lesserPlot.id.x == greaterPlot.id.x) {
-
-            noMerge = lesserPlot.settings.getMerged(2);
-
-            lesserPlot.settings.setMerged(2, true);
-            greaterPlot.settings.setMerged(0, true);
-            startx--;
-            endx++;
+            if (!lesserPlot.settings.getMerged(2)) {
+		        lesserPlot.settings.setMerged(2, true);
+		        greaterPlot.settings.setMerged(0, true);
+		        manager.createRoadSouth(plotworld, lesserPlot);
+            }
         } else {
-
-            noMerge = lesserPlot.settings.getMerged(1);
-
-            lesserPlot.settings.setMerged(1, true);
-            greaterPlot.settings.setMerged(3, true);
-            startz--;
-            endz++;
-        }
-        if (!noMerge) {
-            DBFunc.setMerged(world.getName(), lesserPlot, lesserPlot.settings.getMerged());
-            DBFunc.setMerged(world.getName(), greaterPlot, greaterPlot.settings.getMerged());
-            setSimpleCuboid(world, new Location(world, startx, 0, startz), new Location(world, endx, 1, endz), (short) 7);
-            setSimpleCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT + 1, startz), new Location(world, endx, world.getMaxHeight(), endz), (short) 0);
-            setCuboid(world, new Location(world, startx, 1, startz), new Location(world, endx, plotworld.PLOT_HEIGHT, endz), filling, filling_data);
-            setCuboid(world, new Location(world, startx, plotworld.PLOT_HEIGHT, startz), new Location(world, endx, plotworld.PLOT_HEIGHT + 1, endz), plotfloors, plotfloors_data);
+            if (!lesserPlot.settings.getMerged(1)) {
+	            lesserPlot.settings.setMerged(1, true);
+	            greaterPlot.settings.setMerged(3, true);
+            	manager.createRoadSouth(plotworld, lesserPlot);
+            }
         }
     }
 
@@ -277,18 +190,20 @@ public class PlotHelper {
     }
 
     public static void removeSign(Player plr, Plot p) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(p.world));
-        Location pl = new Location(plr.getWorld(), getPlotBottomLoc(plr.getWorld(), p.id).getBlockX(), plotworld.ROAD_HEIGHT + 1, getPlotBottomLoc(plr.getWorld(), p.id).getBlockZ());
-        Block bs = pl.add(0, 0, -1).getBlock();
-        bs.setType(Material.AIR);
+    	World world = plr.getWorld();
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        Location loc = manager.getSignLoc(plr, plotworld, p);
+        loc.getBlock().setType(Material.AIR);
     }
 
     @SuppressWarnings("deprecation")
     public static void setSign(Player plr, Plot p) {
-        World world = Bukkit.getWorld(p.world);
+    	World world = plr.getWorld();
+    	PlotManager manager = PlotMain.getPlotManager(world);
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        Location pl = new Location(world, getPlotBottomLoc(world, p.id).getBlockX(), plotworld.ROAD_HEIGHT + 1, getPlotBottomLoc(world, p.id).getBlockZ());
-        Block bs = pl.add(0, 0, -1).getBlock();
+        Location loc = manager.getSignLoc(plr, plotworld, p);
+        Block bs = loc.getBlock();
         bs.setType(Material.AIR);
         bs.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
         String id = p.id.y + ";" + p.id.x;
@@ -317,48 +232,40 @@ public class PlotHelper {
         }
         return string;
     }
+    
+    public static void setBlock(Block block, PlotBlock plotblock) {
+    	
+    	if (canSetFast) {
+    		if (block.getTypeId() != plotblock.id && plotblock.data != block.getData()) {
+    			try {
+					SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
+					return;
+				} catch (NoSuchMethodException e) {
+					canSetFast = false;
+				}
+    		}
+    	}
+    	if (block.getData() == plotblock.data) {
+    		if (block.getTypeId() != plotblock.id) {
+    			block.setTypeId(plotblock.id);
+    		}
+    	}
+    	else {
+			if (block.getTypeId() == plotblock.id) {
+				block.setData(plotblock.data);
+    		}
+    		else {
+    			block.setTypeIdAndData(plotblock.id, plotblock.data, false);
+    		}
+    	}
+    }
 
-    public static void adjustWall(World w, Plot plot, short id, byte data) {
-
-        PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
-
-        List<String> wallIds = new ArrayList<String>();
-
-        wallIds.add("" + id + ":" + data);
-
-        Location bottom = getPlotBottomLoc(w, plot.id);
-        Location top = getPlotTopLoc(w, plot.id);
-
-        int x, z;
-
-        Block block;
-
-        for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-            z = bottom.getBlockZ();
-
-            block = w.getBlockAt(x, plotworld.ROAD_HEIGHT + 1, z);
-            setWall(block, "" + id + ":" + data);
-        }
-
-        for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-            x = top.getBlockX() + 1;
-
-            block = w.getBlockAt(x, plotworld.ROAD_HEIGHT + 1, z);
-            setWall(block, "" + id + ":" + data);
-        }
-
-        for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-            z = top.getBlockZ() + 1;
-
-            block = w.getBlockAt(x, plotworld.ROAD_HEIGHT + 1, z);
-            setWall(block, "" + id + ":" + data);
-        }
-
-        for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-            x = bottom.getBlockX();
-            block = w.getBlockAt(x, plotworld.ROAD_HEIGHT + 1, z);
-            setWall(block, "" + id + ":" + data);
-        }
+    public static void adjustWall(Player player, World w, Plot plot, short id, byte data) {
+    	World world = player.getWorld();
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        
+        manager.setWall(player, plotworld, plot.id, new PlotBlock(id,data));
     }
 
     public static void autoMerge(World world, Plot plot, Player player) {
@@ -629,112 +536,36 @@ public class PlotHelper {
     public static ArrayList<String> runners_p = new ArrayList<String>();
     public static HashMap<Plot, Integer> runners = new HashMap<Plot, Integer>();
 
-    public static void adjustWallFilling(final Player requester, final World w, final Plot plot, final short id, final byte data) {
+    public static void adjustWallFilling(final Player requester, final World w, final Plot plot, PlotBlock block) {
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
             return;
         }
         PlayerFunctions.sendMessage(requester, C.GENERATING_WALL_FILLING);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(w);
-        runners.put(plot, Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
-            Location bottom = getPlotBottomLoc(w, plot.id);
-            Location top = getPlotTopLoc(w, plot.id);
-            int y = plotworld.ROAD_HEIGHT;
-            int x, z;
-
-            @Override
-            public void run() {
-                for (this.x = this.bottom.getBlockX(); this.x < (this.top.getBlockX() + 1); this.x++) {
-                    this.z = this.bottom.getBlockZ();
-                    setWall(w.getBlockAt(this.x, this.y, this.z), "" + id + ":" + data);
-                }
-
-                for (this.z = this.bottom.getBlockZ(); this.z < (this.top.getBlockZ() + 1); this.z++) {
-                    this.x = this.top.getBlockX() + 1;
-                    setWall(w.getBlockAt(this.x, this.y, this.z), "" + id + ":" + data);
-                }
-
-                for (this.x = this.top.getBlockX() + 1; this.x > (this.bottom.getBlockX() - 1); this.x--) {
-                    this.z = this.top.getBlockZ() + 1;
-                    setWall(w.getBlockAt(this.x, this.y, this.z), "" + id + ":" + data);
-                }
-
-                for (this.z = this.top.getBlockZ() + 1; this.z > (this.bottom.getBlockZ() - 1); this.z--) {
-                    this.x = this.bottom.getBlockX();
-                    setWall(w.getBlockAt(this.x, this.y, this.z), "" + id + ":" + data);
-                }
-
-                this.y--;
-                if (this.y < 1) {
-                    int runner = runners.get(plot);
-                    runners.remove(plot);
-                    PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-                    Bukkit.getScheduler().cancelTask(runner);
-                }
-            }
-        }, 0l, 5l));
+        World world = requester.getWorld();
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        
+        manager.setWall(requester, plotworld, plot.id, block);
+        PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
     }
 
-    public static void setFloor(final Player requester, final Plot plot, final Material material[], final byte data[]) {
-        final PlotWorld plotworld = PlotMain.getWorldSettings(Bukkit.getWorld(plot.world));
+    public static void setFloor(final Player requester, final Plot plot, PlotBlock[] blocks) {
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
             return;
         }
-        String time = RUtils.formatTime(calculateNeededTime(square(plotworld.PLOT_WIDTH), 2 * plotworld.PLOT_WIDTH));
-        String send = C.GENERATING_FLOOR.s().replaceAll("%time%", time);
-        PlayerFunctions.sendMessage(requester, send);
-        runners.put(plot, Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
-            World world = Bukkit.getWorld(plot.world);
-            int x1 = getPlotBottomLoc(this.world, plot.id).getBlockX();
-            int x2 = this.x1 + plotworld.PLOT_WIDTH;
-            int z1 = getPlotBottomLoc(this.world, plot.id).getBlockZ();
-            int z2 = this.z1 + plotworld.PLOT_WIDTH;
-
-            int xMin = Math.min(this.x1, this.x2) + 1;
-            int xMax = Math.max(this.x1, this.x2);
-
-            int zMin = Math.min(this.z1, this.z2) + 1;
-            int zMax = Math.max(this.z1, this.z2);
-            Random random = new Random();
-            int x = this.xMin;
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void run() {
-                for (int z = this.zMin; z <= this.zMax; z++) {
-                    int y = plotworld.PLOT_HEIGHT;
-                    byte d;
-                    short id;
-                    if (material.length > 1) {
-                        int index = this.random.nextInt(material.length);
-                        d = data[index];
-                        id = (short) material[index].getId();
-                    } else {
-                        d = data[0];
-                        id = (short) material[0].getId();
-                    }
-                    this.world.getBlockAt(this.x, y, z).setTypeIdAndData(id, d, true);
-                }
-                this.x++;
-                if (this.x > this.xMax) {
-                    int runner = runners.get(plot);
-                    runners.remove(plot);
-                    PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-                    Bukkit.getScheduler().cancelTask(runner);
-                }
-            }
-
-        }, 0l, 10l));
+        
+        PlayerFunctions.sendMessage(requester, C.GENERATING_FLOOR);
+        World world = requester.getWorld();
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
+        manager.setFloor(requester, plotworld, plot.id, blocks);
     }
 
     public static int square(int x) {
         return x * x;
-    }
-
-    public static int getPlotSize(World world) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        return (square(plotworld.PLOT_WIDTH)) * (world.getMaxHeight());
     }
 
     public static short[] getBlock(String block) {
@@ -778,6 +609,11 @@ public class PlotHelper {
      */
     public static void clear(final Player requester, final Plot plot) {
 
+    	if (runners.containsKey(plot)) {
+            PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
+            return;
+        }
+    	
         final long start = System.nanoTime();
         final World world = requester.getWorld();
 
@@ -785,160 +621,28 @@ public class PlotHelper {
          * keep
          */
         clearAllEntities(world, plot, false);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
-        PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
+        PlotManager manager = PlotMain.getPlotManager(world);
         
+        Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         
-        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = getPlotTopLoc(world, plot.id);
-
-        final short[] plotfloors = new short[plotworld.TOP_BLOCK.length];
-        final short[] plotfloors_data = new short[plotworld.TOP_BLOCK.length];
-
-        final short[] filling = new short[plotworld.MAIN_BLOCK.length];
-        final short[] filling_data = new short[plotworld.MAIN_BLOCK.length];
-
-        for (int i = 0; i < plotworld.TOP_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.TOP_BLOCK[i]);
-            plotfloors[i] = result[0];
-            plotfloors_data[i] = result[1];
-        }
-        for (int i = 0; i < plotworld.MAIN_BLOCK.length; i++) {
-            short[] result = getBlock(plotworld.MAIN_BLOCK[i]);
-            filling[i] = result[0];
-            filling_data[i] = result[1];
-        }
-
-        /*
-         * keep
-         */
         final int prime = 31;
         int h = 1;
         h = (prime * h) + pos1.getBlockX();
         h = (prime * h) + pos1.getBlockZ();
         state = h;
-
-        if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloors, plotfloors_data);
-            PlayerFunctions.sendMessage(requester, "&c(depreciated) &r" + C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
-            return;
-        }
-        int startX = (pos1.getBlockX() / 16) * 16;
-        int startZ = (pos1.getBlockZ() / 16) * 16;
-        int chunkX = 16 + pos2.getBlockX();
-        int chunkZ = 16 + pos2.getBlockZ();
-        Location l1 = getPlotBottomLoc(world, plot.id);
-        Location l2 = getPlotTopLoc(world, plot.id);
-        int plotMinX = l1.getBlockX() + 1;
-        int plotMinZ = l1.getBlockZ() + 1;
-        int plotMaxX = l2.getBlockX();
-        int plotMaxZ = l2.getBlockZ();
-        Location min = null;
-        Location max = null;
-        for (int i = startX; i < chunkX; i += 16) {
-            for (int j = startZ; j < chunkZ; j += 16) {
-                Plot plot1 = getCurrentPlot(new Location(world, i, 0, j));
-                if ((plot1 != null) && (plot1.getId() != plot.getId()) && plot1.hasOwner()) {
-                    break;
-                }
-                Plot plot2 = getCurrentPlot(new Location(world, i + 15, 0, j));
-                if ((plot2 != null) && (plot2.getId() != plot.getId()) && plot2.hasOwner()) {
-                    break;
-                }
-                Plot plot3 = getCurrentPlot(new Location(world, i + 15, 0, j + 15));
-                if ((plot3 != null) && (plot3.getId() != plot.getId()) && plot3.hasOwner()) {
-                    break;
-                }
-                Plot plot4 = getCurrentPlot(new Location(world, i, 0, j + 15));
-                if ((plot4 != null) && (plot4.getId() != plot.getId()) && plot4.hasOwner()) {
-                    break;
-                }
-                Plot plot5 = getCurrentPlot(new Location(world, i + 15, 0, j + 15));
-                if ((plot5 != null) && (plot5.getId() != plot.getId()) && plot5.hasOwner()) {
-                    break;
-                }
-                if (min == null) {
-                    min = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
-                    max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                } else if ((max.getBlockZ() < (j + 15)) || (max.getBlockX() < (i + 15))) {
-                    max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                }
-                world.regenerateChunk(i / 16, j / 16);
-            }
-        }
-
-        if (min == null) {
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, pos1.getBlockX(), plotworld.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloors, plotfloors_data);
-        } else {
-            
-            if (min.getBlockX() < plotMinX) {
-                min.setX(plotMinX);
-            }
-            if (min.getBlockZ() < plotMinZ) {
-                min.setZ(plotMinZ);
-            }
-            if (max.getBlockX() > plotMaxX) {
-                max.setX(plotMaxX);
-            }
-            if (max.getBlockZ() > plotMaxZ) {
-                max.setZ(plotMaxZ);
-            }
-            
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX() + 1, 1, min.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, min.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, plotMinZ), new Location(world, max.getBlockX() + 1, 1, min.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getBlockX() + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, min.getBlockX(), 1, plotMinZ), new Location(world, max.getBlockX() + 1, plotworld.PLOT_HEIGHT, min.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, max.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, plotMinZ), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT, min.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getBlockZ()), new Location(world, min.getBlockX() + 1, 1, max.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, max.getBlockZ() + 1), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, min.getBlockZ()), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT, max.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, max.getBlockZ() + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getBlockZ()), new Location(world, min.getBlockX() + 1, 1, plotMaxZ + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), (short) 0);
-            setCuboid(world, new Location(world, plotMinX, 1, max.getBlockZ()), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT, plotMaxZ + 1), filling, filling_data);
-            setCuboid(world, new Location(world, plotMinX, plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, min.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, max.getBlockZ()), new Location(world, max.getBlockX() + 1, 1, plotMaxZ + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, max.getBlockX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), (short) 0);
-            setCuboid(world, new Location(world, min.getBlockX(), 1, max.getBlockZ()), new Location(world, max.getBlockX() + 1, plotworld.PLOT_HEIGHT, plotMaxZ + 1), filling, filling_data);
-            setCuboid(world, new Location(world, min.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, max.getBlockX() + 1, plotworld.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX + 1, 1, max.getBlockZ() + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, plotMaxZ + 1), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, min.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT, max.getBlockZ() + 1), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, min.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT + 1, max.getBlockZ() + 1), plotfloors, plotfloors_data);
-
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), (short) 7);
-            setSimpleCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, plotMaxZ + 1), (short) 0);
-            setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT, plotMaxZ + 1), filling, filling_data);
-            setCuboid(world, new Location(world, max.getBlockX(), plotworld.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, plotworld.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloors, plotfloors_data);
-        }
         
+        PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
+        PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
+
+        manager.clearPlot(requester, plot);
         
-        /*
-         * keep
-         */
+        removeSign(requester, plot);
+        setSign(requester, plot);
+        
         PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
         if (canSetFast) {
-            SetBlockFast.update(requester);
+        	refreshPlotChunks(world, plot);
+//            SetBlockFast.update(requester);
         }
         return;
     }
@@ -1023,54 +727,29 @@ public class PlotHelper {
         refreshPlotChunks(world, plot);
     }
 
-    public static Location getPlotHome(World w, Plot plot) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(w);
-        if (plot.settings.getPosition() == PlotHomePosition.DEFAULT) {
-            int x = getPlotBottomLoc(w, plot.id).getBlockX() + (getPlotTopLoc(w, plot.id).getBlockX() - getPlotBottomLoc(w, plot.id).getBlockX());
-            int z = getPlotBottomLoc(w, plot.id).getBlockZ() - 2;
-            return new Location(w, x, plotworld.ROAD_HEIGHT + 2, z);
+    public static Location getPlotHome(World w, PlotId plotid) {
+        PlotMain.getWorldSettings(w);
+        if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
+            int x = getPlotBottomLoc(w, plotid).getBlockX() + (getPlotTopLoc(w, plotid).getBlockX() - getPlotBottomLoc(w, plotid).getBlockX());
+            int z = getPlotBottomLoc(w, plotid).getBlockZ() - 2;
+            int y = w.getHighestBlockYAt(x, z);
+            return new Location(w, x, y + 2, z);
         } else {
             World world = w;
-            int x1 = getPlotBottomLoc(world, plot.id).getBlockX();
-            int x2 = x1 + plotworld.PLOT_WIDTH;
-            int z1 = getPlotBottomLoc(world, plot.id).getBlockZ();
-            int z2 = z1 + plotworld.PLOT_WIDTH;
-
-            int xMin = Math.min(x1, x2) + 1;
-            // int xMax = Math.max(x1, x2);
-
-            int zMin = Math.min(z1, z2) + 1;
-            // int zMax = Math.max(z1, z2);
-
-            double adder = (plotworld.PLOT_WIDTH / 2);
-            double x = (xMin + adder), y = plotworld.ROAD_HEIGHT + 3, z = (zMin + adder);
-            return new Location(world, x, y, z);
+            
+            Location bot, top;
+            bot = getPlotBottomLoc(world, plotid);
+            top = getPlotTopLoc(world, plotid);
+            
+            int x = top.getBlockX()-bot.getBlockX();
+            int z = top.getBlockZ()-bot.getBlockZ();
+            int y = w.getHighestBlockYAt(x, z);
+            return new Location(w, x, y + 2, z);
         }
     }
 
-    public static Location getPlotHome(World w, PlotId id) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(w);
-        if (getPlot(w, id).settings.getPosition() == PlotHomePosition.DEFAULT) {
-            int x = getPlotBottomLoc(w, id).getBlockX() + (getPlotTopLoc(w, id).getBlockX() - getPlotBottomLoc(w, id).getBlockX());
-            int z = getPlotBottomLoc(w, id).getBlockZ() - 2;
-            return new Location(w, x, plotworld.ROAD_HEIGHT + 2, z);
-        } else {
-            World world = w;
-            int x1 = getPlotBottomLoc(world, id).getBlockX();
-            int x2 = x1 + plotworld.PLOT_WIDTH;
-            int z1 = getPlotBottomLoc(world, id).getBlockZ();
-            int z2 = z1 + plotworld.PLOT_WIDTH;
-
-            int xMin = Math.min(x1, x2) + 1;
-            Math.max(x1, x2);
-
-            int zMin = Math.min(z1, z2) + 1;
-            Math.max(z1, z2);
-
-            double adder = (plotworld.PLOT_WIDTH / 2);
-            double x = (xMin + adder), y = plotworld.ROAD_HEIGHT + 3, z = (zMin + adder);
-            return new Location(world, x, y, z);
-        }
+    public static Location getPlotHome(World w, Plot plot) {
+    	return getPlotBottomLoc(w, plot.id);
     }
 
     public static void refreshPlotChunks(World world, Plot plot) {
@@ -1092,25 +771,15 @@ public class PlotHelper {
     }
 
     public static Location getPlotTopLocAbs(World world, PlotId id) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int px = id.x;
-        int pz = id.y;
-
-        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(world, x, 255, z);
+    	PlotWorld plotworld = PlotMain.getWorldSettings(world);
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotTopLocAbs(plotworld, id);
     }
 
     public static Location getPlotBottomLocAbs(World world, PlotId id) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int px = id.x;
-        int pz = id.y;
-
-        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(world, x, 1, z);
+    	PlotWorld plotworld = PlotMain.getWorldSettings(world);
+    	PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
     public static Location getPlotTopLoc(World world, PlotId id) {
@@ -1119,13 +788,8 @@ public class PlotHelper {
             id = PlayerFunctions.getTopPlot(world, plot).id;
         }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int px = id.x;
-        int pz = id.y;
-
-        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(world, x, 255, z);
+        PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotTopLocAbs(plotworld, id);
     }
 
     public static Location getPlotBottomLoc(World world, PlotId id) {
@@ -1134,13 +798,8 @@ public class PlotHelper {
             id = PlayerFunctions.getBottomPlot(world, plot).id;
         }
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        int px = id.x;
-        int pz = id.y;
-
-        int x = (px * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-        int z = (pz * (plotworld.ROAD_WIDTH + plotworld.PLOT_WIDTH)) - plotworld.PLOT_WIDTH - ((int) Math.floor(plotworld.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(world, x, 1, z);
+        PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
     public static Plot getPlot(World world, PlotId id) {
@@ -1154,11 +813,6 @@ public class PlotHelper {
     }
 
     public static Plot getCurrentPlot(Location loc) {
-        /*
-         * Vector vector = player.getLocation().toVector(); for(plot plot :
-         * getPlots()) if(vector.isInAABB(plot.l1.toVector(),
-         * plot.l2.toVector())) return plot; return null;
-         */
         PlotId id = PlayerFunctions.getPlot(loc);
         if (id == null) {
             return null;
