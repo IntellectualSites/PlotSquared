@@ -52,6 +52,8 @@ public class TP extends SubCommand {
 			PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
 			return true;
 		}
+
+
 		try {
 			plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
 			PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));

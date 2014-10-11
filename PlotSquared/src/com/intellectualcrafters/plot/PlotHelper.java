@@ -8,19 +8,9 @@
 
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.database.DBFunc;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -28,7 +18,10 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * plot functions
@@ -749,19 +742,17 @@ public class PlotHelper {
 	}
 
 	public static Location getPlotHome(World w, PlotId plotid) {
-		PlotMain.getWorldSettings(w);
+		Location
+                bot = getPlotBottomLoc(w, plotid),
+                top = getPlotTopLoc(w, plotid);
+
 		if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
-			int x = getPlotBottomLoc(w, plotid).getBlockX() + (getPlotTopLoc(w, plotid).getBlockX() - getPlotBottomLoc(w, plotid).getBlockX());
-			int z = getPlotBottomLoc(w, plotid).getBlockZ() - 2;
+			int x = bot.getBlockX() + (top.getBlockX() - bot.getBlockX());
+			int z = bot.getBlockZ() - 2;
 			int y = w.getHighestBlockYAt(x, z);
 			return new Location(w, x, y + 2, z);
 		}
 		else {
-			World world = w;
-
-			Location bot, top;
-			bot = getPlotBottomLoc(world, plotid);
-			top = getPlotTopLoc(world, plotid);
 
 			int x = top.getBlockX() - bot.getBlockX();
 			int z = top.getBlockZ() - bot.getBlockZ();

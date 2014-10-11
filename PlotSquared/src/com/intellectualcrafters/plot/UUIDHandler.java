@@ -13,11 +13,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 import java.util.UUID;
 
+/**
+ * This class can be used to efficiently translate UUIDs and names back and forth.
+ * It uses three primary methods of achieving this:
+ * - Read From Cache
+ * - Read from OfflinePlayer objects
+ * - Read from (if onlinemode: mojang api) (else: playername hashing)
+ * All UUIDs/Usernames will be stored in a map (cache) until the server is
+ * restarted.
+ *
+ * You can use getUuidMap() to save the uuids/names to a file (SQLite db for example).
+ * Primary methods: getUUID(String name) & getName(UUID uuid) <-- You should ONLY use these.
+ * Call startFetch(JavaPlugin plugin) in your onEnable().
+ *
+ * Originally created by:
+ * @author Citymonstret
+ * @author Empire92
+ * for PlotSquared.
+ */
 public class UUIDHandler {
 
 	private static boolean online = Bukkit.getServer().getOnlineMode();
 
 	private static BiMap<String, UUID> uuidMap = HashBiMap.create();
+
+    public static BiMap<String, UUID> getUuidMap() {
+        return uuidMap;
+    }
 
 	public static boolean uuidExists(UUID uuid) {
 		return uuidMap.containsValue(uuid);
@@ -61,8 +83,9 @@ public class UUIDHandler {
                     ups = size / time;
                 }
 
-				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms (&6" + ups + "&c per millisecond), &6"
-						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + size
+                //Plot Squared Only...
+				PlotMain.sendConsoleSenderMessage("&cFinished caching of offline player UUIDs! Took &6" + time + "&cms (&6" + ups + "&c per millisecond), &6"
+						+ length + " &cUUIDs were cached" + " and there is now a grand total of &6" + size
 						+ " &ccached.");
 			}
 		});
@@ -70,7 +93,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param name
-	 * @return
+	 * @return uuid
 	 */
 	public static UUID getUUID(String name) {
 		if (nameExists(name)) {
@@ -101,7 +124,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param uuid
-	 * @return
+	 * @return name (cache)
 	 */
 	private static String loopSearch(UUID uuid) {
 		return uuidMap.inverse().get(uuid);
@@ -109,7 +132,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param uuid
-	 * @return
+	 * @return Name
 	 */
 	public static String getName(UUID uuid) {
 		if (uuidExists(uuid)) {
@@ -141,7 +164,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param name
-	 * @return
+	 * @return UUID (name hash)
 	 */
 	private static UUID getUuidOfflineMode(String name) {
 		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
@@ -151,7 +174,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param uuid
-	 * @return
+	 * @return String - name
 	 */
 	private static String getNameOnlinePlayer(UUID uuid) {
 		Player player = Bukkit.getPlayer(uuid);
@@ -165,7 +188,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param uuid
-	 * @return
+	 * @return String - name
 	 */
 	private static String getNameOfflinePlayer(UUID uuid) {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -179,7 +202,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param name
-	 * @return
+	 * @return UUID
 	 */
 	private static UUID getUuidOnlinePlayer(String name) {
 		Player player = Bukkit.getPlayer(name);
@@ -193,7 +216,7 @@ public class UUIDHandler {
 
 	/**
 	 * @param name
-	 * @return
+	 * @return UUID (username hash)
 	 */
 	private static UUID getUuidOfflinePlayer(String name) {
 		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
