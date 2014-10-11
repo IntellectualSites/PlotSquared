@@ -25,6 +25,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -523,16 +524,19 @@ public class PlayerEvents implements Listener {
 		}
 		if (isInPlot(event.getClickedBlock().getLocation())) {
 			Plot plot = getCurrentPlot(event.getClickedBlock().getLocation());
-			if (new ArrayList<>(Arrays.asList(new Material[] {
-					Material.STONE_BUTTON, Material.WOOD_BUTTON,
-					Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE,
-					Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
-					Material.WOOD_DOOR, Material.WOODEN_DOOR,
-					Material.DISPENSER, Material.DROPPER
-
-			})).contains(event.getClickedBlock().getType())) {
-				return;
-			}
+			
+			// They shouldn't be allowed to access other people's chests
+			
+//			if (new ArrayList<>(Arrays.asList(new Material[] {
+//					Material.STONE_BUTTON, Material.WOOD_BUTTON,
+//					Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE,
+//					Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
+//					Material.WOOD_DOOR, Material.WOODEN_DOOR,
+//					Material.DISPENSER, Material.DROPPER
+//
+//			})).contains(event.getClickedBlock().getType())) {
+//				return;
+//			}
 			if (!plot.hasRights(event.getPlayer())) {
 				event.setCancelled(true);
 			}
@@ -548,7 +552,7 @@ public class PlayerEvents implements Listener {
 		if (!isPlotWorld(world)) {
 			return;
 		}
-		if (event.getEntity() instanceof Player) {
+		if (event.getEntity().getType() == EntityType.PLAYER) {
 			return;
 		}
 		if (!isInPlot(event.getLocation())) {

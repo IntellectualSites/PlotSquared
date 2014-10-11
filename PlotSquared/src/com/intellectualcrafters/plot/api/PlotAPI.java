@@ -9,6 +9,7 @@
 
 package com.intellectualcrafters.plot.api;
 
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -26,7 +27,9 @@ import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotManager;
 import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.SchematicHandler;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
 
@@ -37,7 +40,35 @@ import com.intellectualcrafters.plot.commands.SubCommand;
  */
 @SuppressWarnings({ "unused", "javadoc" })
 public class PlotAPI {
+	
+	private static PlotHelper plotHelper;
+	private static PlayerFunctions playerFunctions;
+	private static FlagManager flagManager;
+	private static SchematicHandler schematicHandler;
+	private static C c;
+	
+	// Methods/fields in PlotMain class
 
+	//	PlotMain.config;
+	//	PlotMain.storage
+	//	PlotMain.translations
+	//	PlotMain.addPlotWorld(world, plotworld, manager);
+	//	
+	//	PlotMain.checkForExpiredPlots();
+	//	PlotMain.killAllEntities();
+	//	
+	//	PlotMain.createConfiguration(plotworld);
+	//	PlotMain.getPlots()
+	//	PlotMain.getPlots(player)
+	//	PlotMain.getPlots(world)
+	//	PlotMain.getPlots(world, player)
+	//	PlotMain.getWorldPlots(world)
+	//	PlotMain.getPlotWorlds()
+	//	PlotMain.isPlotWorld(world)
+	//	PlotMain.removePlot(world, id, callEvent)
+	//	PlotMain.teleportPlayer(player, from, plot)
+	//	PlotMain.updatePlot(plot);
+	
 	// To access plotMain stuff.
 	private PlotMain plotMain;
 	// Reference
@@ -51,7 +82,112 @@ public class PlotAPI {
 	public PlotAPI(JavaPlugin plugin) {
 		this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
 	}
-
+	
+	/**
+	 * Get the main class for this plugin <br>
+	 *  - Contains a lot of fields and methods
+	 *  - not very well organized
+	 * 
+	 * @return
+	 */
+	public PlotMain getMain() {
+		return plotMain;
+	}
+	
+	/**
+	 * PlotHelper class contains useful methods relating to plots.
+	 * 
+	 * @return
+	 */
+	public PlotHelper getPlotHelper() {
+		return plotHelper;
+	}
+	
+	/**
+	 * PlayerFunctions class contains useful methods relating to players
+	 *  - Some player/plot methods are here as well
+	 * 
+	 * @return
+	 */
+	public PlayerFunctions getPlayerFunctions() {
+		return playerFunctions;
+	}
+	
+	/**
+	 * FlagManager class contains methods relating to plot flags 
+	 * 
+	 * @return
+	 */
+	public FlagManager getFlagManager() {
+		return flagManager;
+	}
+	
+	/**
+	 * SchematicHandler class contains methods related to pasting schematics
+	 * 
+	 * @return
+	 */
+	public SchematicHandler getSchematicHandler() {
+		return schematicHandler;
+	}
+	
+	/**
+	 * C class contains all the captions from the translations.yml file.
+	 * 
+	 * @return
+	 */
+	public C getCaptions() {
+		return c;
+	}
+	
+	/**
+	 * Get the plot manager for a world.
+	 *  - Most of these methods can be accessed through the PlotHelper 
+	 * 
+	 * @param world
+	 * @return
+	 */
+	public PlotManager getPlotManager(World world) {
+		return PlotMain.getPlotManager(world);
+	}
+	
+	/**
+	 * Get the plot manager for a world.
+	 *  - Contains useful low level methods for plot merging, clearing, and tessellation
+	 * 
+	 * @param world
+	 * @return 
+	 */
+	public PlotManager getPlotManager(String world) {
+		return PlotMain.getPlotManager(world);
+	}
+	
+	/**
+	 * Get the settings for a world (settings bundled in PlotWorld class)
+	 *  - You will need to downcast for the specific settings a Generator has.
+	 *  e.g. DefaultPlotWorld class implements PlotWorld
+	 * 
+	 * @param world
+	 *            (to get settings of)
+	 * @return PlotWorld class for that world ! will return null if not a plot world
+	 *         world
+	 */
+	public PlotWorld getWorldSettings(World world) {
+		return PlotMain.getWorldSettings(world);
+	}
+	
+	/**
+	 * Get the settings for a world (settings bundled in PlotWorld class)
+	 * 
+	 * @param world
+	 *            (to get settings of)
+	 * @return PlotWorld class for that world ! will return null if not a plot world
+	 *         world
+	 */
+	public PlotWorld getWorldSettings(String world) {
+		return PlotMain.getWorldSettings(world);
+	}
+	
 	/**
 	 * Send a message to a player.
 	 * 
@@ -65,6 +201,7 @@ public class PlotAPI {
 
 	/**
 	 * Send a message to a player.
+	 *  - Supports color codes
 	 * 
 	 * @param player
 	 * @param string
@@ -75,6 +212,7 @@ public class PlotAPI {
 
 	/**
 	 * Send a message to the console.
+	 *  - Supports color codes
 	 * 
 	 * @param msg
 	 */
@@ -206,18 +344,6 @@ public class PlotAPI {
 	 */
 	public boolean isPlotWorld(World world) {
 		return PlotMain.isPlotWorld(world);
-	}
-
-	/**
-	 * Get the settings for a world (settings bundled in PlotWorld class)
-	 * 
-	 * @param world
-	 *            (to get settings of)
-	 * @return PlotWorld class for ther world ! will return null if not a plot
-	 *         world
-	 */
-	public PlotWorld getWorldSettings(World world) {
-		return PlotMain.getWorldSettings(world);
 	}
 
 	/**
