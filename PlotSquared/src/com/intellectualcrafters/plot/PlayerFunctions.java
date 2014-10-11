@@ -26,238 +26,254 @@ import org.bukkit.entity.Player;
 
 /**
  * Functions involving players, plots and locations.
- * 
+ *
  * @author Citymonstret
- * 
+ *
  */
 @SuppressWarnings("javadoc")
 public class PlayerFunctions {
 
-    /**
-     * 
-     * @param player
-     *            player
-     * @return
-     */
-    public static boolean isInPlot(Player player) {
-        return getCurrentPlot(player) != null;
-    }
+	/**
+	 * 
+	 * @param player
+	 *            player
+	 * @return
+	 */
+	public static boolean isInPlot(Player player) {
+		return getCurrentPlot(player) != null;
+	}
 
-    /**
-     * 
-     * @param plot
-     *            plot
-     * @return
-     */
-    public static boolean hasExpired(Plot plot) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(plot.owner);
-        long lp = player.getLastPlayed();
-        long cu = System.currentTimeMillis();
-        return (lp - cu) > 30l;
-    }
+	/**
+	 * 
+	 * @param plot
+	 *            plot
+	 * @return
+	 */
+	public static boolean hasExpired(Plot plot) {
+		OfflinePlayer player = Bukkit.getOfflinePlayer(plot.owner);
+		long lp = player.getLastPlayed();
+		long cu = System.currentTimeMillis();
+		return (lp - cu) > 30l;
+	}
 
-    public static ArrayList<PlotId> getPlotSelectionIds(World world, PlotId pos1, PlotId pos2) {
-        ArrayList<PlotId> myplots = new ArrayList<PlotId>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                myplots.add(new PlotId(x, y));
-            }
-        }
+	public static ArrayList<PlotId> getPlotSelectionIds(World world,
+			PlotId pos1, PlotId pos2) {
+		ArrayList<PlotId> myplots = new ArrayList<PlotId>();
+		for (int x = pos1.x; x <= pos2.x; x++) {
+			for (int y = pos1.y; y <= pos2.y; y++) {
+				myplots.add(new PlotId(x, y));
+			}
+		}
 
-        return myplots;
-    }
+		return myplots;
+	}
 
-    public static Plot getBottomPlot(World world, Plot plot) {
-        if (plot.settings.getMerged(0)) {
-            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1)));
-        }
-        if (plot.settings.getMerged(3)) {
-            return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y)));
-        }
-        return plot;
-    }
+	public static Plot getBottomPlot(World world, Plot plot) {
+		if (plot.settings.getMerged(0)) {
+			return getBottomPlot(
+					world,
+					PlotMain.getPlots(world).get(
+							new PlotId(plot.id.x, plot.id.y - 1)));
+		}
+		if (plot.settings.getMerged(3)) {
+			return getBottomPlot(
+					world,
+					PlotMain.getPlots(world).get(
+							new PlotId(plot.id.x - 1, plot.id.y)));
+		}
+		return plot;
+	}
 
-    public static Plot getTopPlot(World world, Plot plot) {
-        if (plot.settings.getMerged(2)) {
-            return getTopPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
-        }
-        if (plot.settings.getMerged(1)) {
-            return getTopPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
-        }
-        return plot;
-    }
+	public static Plot getTopPlot(World world, Plot plot) {
+		if (plot.settings.getMerged(2)) {
+			return getTopPlot(
+					world,
+					PlotMain.getPlots(world).get(
+							new PlotId(plot.id.x, plot.id.y + 1)));
+		}
+		if (plot.settings.getMerged(1)) {
+			return getTopPlot(
+					world,
+					PlotMain.getPlots(world).get(
+							new PlotId(plot.id.x + 1, plot.id.y)));
+		}
+		return plot;
+	}
 
-    /**
-     * 
-     * @param loc
-     * @return
-     */
-    public static PlotId getPlotAbs(Location loc) {
-        String world = loc.getWorld().getName();
-        PlotManager manager = PlotMain.getPlotManager(world);
-        if (manager == null) {
-        	return null;
-        }
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        return manager.getPlotIdAbs(plotworld, loc);
-    }
+	/**
+	 * 
+	 * @param loc
+	 * @return
+	 */
+	public static PlotId getPlotAbs(Location loc) {
+		String world = loc.getWorld().getName();
+		PlotManager manager = PlotMain.getPlotManager(world);
+		if (manager == null) {
+			return null;
+		}
+		PlotWorld plotworld = PlotMain.getWorldSettings(world);
+		return manager.getPlotIdAbs(plotworld, loc);
+	}
 
-    public static PlotId getPlot(Location loc) {
-    	String world = loc.getWorld().getName();
-        PlotManager manager = PlotMain.getPlotManager(world);
-        if (manager == null) {
-        	return null;
-        }
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        return manager.getPlotId(plotworld, loc);
-    }
+	public static PlotId getPlot(Location loc) {
+		String world = loc.getWorld().getName();
+		PlotManager manager = PlotMain.getPlotManager(world);
+		if (manager == null) {
+			return null;
+		}
+		PlotWorld plotworld = PlotMain.getWorldSettings(world);
+		return manager.getPlotId(plotworld, loc);
+	}
 
-    /**
-     * 
-     * @param player
-     * @param plot
-     */
-    public static void togglePlotWeather(Player player, Plot plot) {
-        player.setPlayerWeather(plot.settings.getRain() ? WeatherType.DOWNFALL : WeatherType.CLEAR);
-    }
+	/**
+	 * 
+	 * @param player
+	 * @param plot
+	 */
+	public static void togglePlotWeather(Player player, Plot plot) {
+		player.setPlayerWeather(plot.settings.getRain() ? WeatherType.DOWNFALL
+				: WeatherType.CLEAR);
+	}
 
-    /**
-     * 
-     * @param player
-     * @param plot
-     */
-    public static void togglePlotTime(Player player, Plot plot) {
-        player.setPlayerTime(plot.settings.getTime(), false);
-    }
+	/**
+	 * 
+	 * @param player
+	 * @param plot
+	 */
+	public static void togglePlotTime(Player player, Plot plot) {
+		player.setPlayerTime(plot.settings.getTime(), false);
+	}
 
-    /**
-     * 
-     * @param player
-     * @return
-     */
-    public static Plot getCurrentPlot(Player player) {
-        if (!PlotMain.isPlotWorld(player.getWorld())) {
-            return null;
-        }
-        PlotId id = getPlot(player.getLocation());
-        World world = player.getWorld();
-        if (id == null) {
-            return null;
-        }
-        HashMap<PlotId, Plot> plots = PlotMain.getPlots(world);
-        if (plots != null) {
-            if (plots.containsKey(id)) {
-                return plots.get(id);
-            }
-        }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public static Plot getCurrentPlot(Player player) {
+		if (!PlotMain.isPlotWorld(player.getWorld())) {
+			return null;
+		}
+		PlotId id = getPlot(player.getLocation());
+		World world = player.getWorld();
+		if (id == null) {
+			return null;
+		}
+		HashMap<PlotId, Plot> plots = PlotMain.getPlots(world);
+		if (plots != null) {
+			if (plots.containsKey(id)) {
+				return plots.get(id);
+			}
+		}
+		return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(),
+				new ArrayList<UUID>(), world.getName());
 
-    }
+	}
 
-    /**
-     * @deprecated
-     * @param id
-     * @param plot
-     */
-    @Deprecated
-    public static void set(Integer[] id, Plot plot) {
-        PlotMain.updatePlot(plot);
-    }
+	/**
+	 * @deprecated
+	 * @param id
+	 * @param plot
+	 */
+	@Deprecated
+	public static void set(Integer[] id, Plot plot) {
+		PlotMain.updatePlot(plot);
+	}
 
-    /**
-     * 
-     * @param plr
-     * @return
-     */
-    // public static Set<Plot> getPlayerPlots(Player plr) {
-    // return PlotMain.getPlots(plr);
-    // }
-    //
-    public static Set<Plot> getPlayerPlots(World world, Player plr) {
-        Set<Plot> p = PlotMain.getPlots(world, plr);
-        if (p == null) {
-            return new HashSet<Plot>();
-        }
-        return p;
-    }
+	/**
+	 * 
+	 * @param plr
+	 * @return
+	 */
+	// public static Set<Plot> getPlayerPlots(Player plr) {
+	// return PlotMain.getPlots(plr);
+	// }
+	//
+	public static Set<Plot> getPlayerPlots(World world, Player plr) {
+		Set<Plot> p = PlotMain.getPlots(world, plr);
+		if (p == null) {
+			return new HashSet<Plot>();
+		}
+		return p;
+	}
 
-    /**
-     * 
-     * @param plr
-     * @return
-     */
-    // public static int getPlayerPlotCount(Player plr) {
-    // return getPlayerPlots(plr).size();
-    // }
-    //
-    public static int getPlayerPlotCount(World world, Player plr) {
-        return getPlayerPlots(world, plr).size();
-    }
+	/**
+	 * 
+	 * @param plr
+	 * @return
+	 */
+	// public static int getPlayerPlotCount(Player plr) {
+	// return getPlayerPlots(plr).size();
+	// }
+	//
+	public static int getPlayerPlotCount(World world, Player plr) {
+		return getPlayerPlots(world, plr).size();
+	}
 
-    /**
-     * 
-     * @param p
-     * @return
-     */
-    @SuppressWarnings("SuspiciousNameCombination")
-    public static int getAllowedPlots(Player p) {
-        return PlotMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
-    }
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@SuppressWarnings("SuspiciousNameCombination")
+	public static int getAllowedPlots(Player p) {
+		return PlotMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
+	}
 
-    /**
-     * 
-     * @return PlotMain.getPlots();
-     * @deprecated
-     */
-    @Deprecated
-    public static Set<Plot> getPlots() {
-        return PlotMain.getPlots();
-    }
+	/**
+	 * 
+	 * @return PlotMain.getPlots();
+	 * @deprecated
+	 */
+	@Deprecated
+	public static Set<Plot> getPlots() {
+		return PlotMain.getPlots();
+	}
 
-    /**
-     * \\previous\\
-     * 
-     * @param plr
-     * @param msg
-     *            Was used to wrap the chat client length (Packets out--)
-     */
-    public static void sendMessageWrapped(Player plr, String msg) {
-        plr.sendMessage(msg);
-    }
+	/**
+	 * \\previous\\
+	 * 
+	 * @param plr
+	 * @param msg
+	 *            Was used to wrap the chat client length (Packets out--)
+	 */
+	public static void sendMessageWrapped(Player plr, String msg) {
+		plr.sendMessage(msg);
+	}
 
-    /**
-     * Send a message to the player
-     * 
-     * @param plr
-     *            Player to recieve message
-     * @param msg
-     *            Message to send
-     */
-    public static void sendMessage(Player plr, String msg) {
-        if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
-            return;
-        }
-        sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
-    }
+	/**
+	 * Send a message to the player
+	 * 
+	 * @param plr
+	 *            Player to recieve message
+	 * @param msg
+	 *            Message to send
+	 */
+	public static void sendMessage(Player plr, String msg) {
+		if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
+			return;
+		}
+		sendMessageWrapped(plr,
+				ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
+	}
 
-    /**
-     * Send a message to the player
-     * 
-     * @param plr
-     *            Player to recieve message
-     * @param c
-     *            Caption to send
-     */
-    public static void sendMessage(Player plr, C c, String... args) {
-        if (c.s().length() < 1) {
-            return;
-        }
-        String msg = c.s();
-        if ((args != null) && (args.length > 0)) {
-            for (String str : args) {
-                msg = msg.replaceFirst("%s", str);
-            }
-        }
-        sendMessage(plr, msg);
-    }
+	/**
+	 * Send a message to the player
+	 * 
+	 * @param plr
+	 *            Player to recieve message
+	 * @param c
+	 *            Caption to send
+	 */
+	public static void sendMessage(Player plr, C c, String... args) {
+		if (c.s().length() < 1) {
+			return;
+		}
+		String msg = c.s();
+		if ((args != null) && (args.length > 0)) {
+			for (String str : args) {
+				msg = msg.replaceFirst("%s", str);
+			}
+		}
+		sendMessage(plr, msg);
+	}
 }

@@ -20,47 +20,47 @@ import com.intellectualcrafters.plot.Plot;
  * Created by Citymonstret on 2014-08-09.
  */
 public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
-    private static HandlerList handlers = new HandlerList();
-    private boolean cancelled;
+	private static HandlerList handlers = new HandlerList();
+	private boolean cancelled;
 
-    private Plot plot;
+	private Plot plot;
 
-    /**
-     * PlayerClaimPlotEvent: Called when a plot is claimed
-     * 
-     * @param player
-     * @param plot
-     */
-    public PlayerClaimPlotEvent(Player player, Plot plot) {
-        super(player);
-        this.plot = plot;
-    }
+	/**
+	 * PlayerClaimPlotEvent: Called when a plot is claimed
+	 * 
+	 * @param player
+	 * @param plot
+	 */
+	public PlayerClaimPlotEvent(Player player, Plot plot) {
+		super(player);
+		this.plot = plot;
+	}
 
-    /**
-     * Get the plot involved
-     * 
-     * @return Plot
-     */
-    public Plot getPlot() {
-        return this.plot;
-    }
+	/**
+	 * Get the plot involved
+	 * 
+	 * @return Plot
+	 */
+	public Plot getPlot() {
+		return this.plot;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return this.cancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        this.cancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		this.cancelled = b;
+	}
 }

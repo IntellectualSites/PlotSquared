@@ -20,57 +20,57 @@ import com.intellectualcrafters.plot.Plot;
  * Called when a flag is removed from a plot
  */
 public class PlotFlagRemoveEvent extends Event implements Cancellable {
-    private static HandlerList handlers = new HandlerList();
-    private boolean cancelled;
+	private static HandlerList handlers = new HandlerList();
+	private boolean cancelled;
 
-    private Plot plot;
-    private Flag flag;
+	private Plot plot;
+	private Flag flag;
 
-    /**
-     * PlotFlagRemoveEvent: Called when a flag is removed from a plot
-     * 
-     * @param flag
-     * @param plot
-     */
-    public PlotFlagRemoveEvent(Flag flag, Plot plot) {
-        this.plot = plot;
-        this.flag = flag;
-    }
+	/**
+	 * PlotFlagRemoveEvent: Called when a flag is removed from a plot
+	 * 
+	 * @param flag
+	 * @param plot
+	 */
+	public PlotFlagRemoveEvent(Flag flag, Plot plot) {
+		this.plot = plot;
+		this.flag = flag;
+	}
 
-    /**
-     * Get the plot involved
-     * 
-     * @return Plot
-     */
-    public Plot getPlot() {
-        return this.plot;
-    }
+	/**
+	 * Get the plot involved
+	 * 
+	 * @return Plot
+	 */
+	public Plot getPlot() {
+		return this.plot;
+	}
 
-    /**
-     * Get the flag involved
-     * 
-     * @return Flag
-     */
-    public Flag getFlag() {
-        return this.flag;
-    }
+	/**
+	 * Get the flag involved
+	 * 
+	 * @return Flag
+	 */
+	public Flag getFlag() {
+		return this.flag;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return this.cancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        this.cancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		this.cancelled = b;
+	}
 }

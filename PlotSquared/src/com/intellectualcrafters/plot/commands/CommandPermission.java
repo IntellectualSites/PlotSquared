@@ -13,29 +13,30 @@ import org.bukkit.entity.Player;
 
 /**
  * Created by Citymonstret on 2014-08-03.
- * 
+ *
  * @author Citymonstret
  */
 public class CommandPermission {
 
-    /**
-     *
-     */
-    private String permission;
+	/**
+	 *
+	 */
+	private String permission;
 
-    /**
-     * @param permission
-     */
-    public CommandPermission(String permission) {
-        this.permission = permission.toLowerCase();
-    }
+	/**
+	 * @param permission
+	 */
+	public CommandPermission(String permission) {
+		this.permission = permission.toLowerCase();
+	}
 
-    /**
-     * 
-     * @param player
-     * @return
-     */
-    public boolean hasPermission(Player player) {
-        return player.hasPermission(this.permission) || player.hasPermission("plots.admin");
-    }
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean hasPermission(Player player) {
+		return player.hasPermission(this.permission)
+				|| player.hasPermission("plots.admin");
+	}
 }

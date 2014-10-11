@@ -21,35 +21,43 @@ import com.intellectualcrafters.plot.Plot;
  */
 public class Kick extends SubCommand {
 
-    public Kick() {
-        super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS);
-    }
+	public Kick() {
+		super(Command.KICK, "Kick a player from your plot", "kick",
+				CommandCategory.ACTIONS);
+	}
 
-    @Override
-    public boolean execute(Player plr, String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, "You're not in a plot.");
-            return false;
-        }
-        Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return false;
-        }
-        if (args.length != 1) {
-            PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
-            return false;
-        }
-        if (Bukkit.getPlayer(args[0]) != null) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
-            return false;
-        }
-        Player player = Bukkit.getPlayer(args[0]);
-        if (!player.getWorld().equals(plr.getWorld()) || !PlayerFunctions.isInPlot(player) || (PlayerFunctions.getCurrentPlot(player) == null) || !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
-            return false;
-        }
-        player.teleport(player.getWorld().getSpawnLocation());
-        return true;
-    }
+	@Override
+	public boolean execute(Player plr, String... args) {
+		if (!PlayerFunctions.isInPlot(plr)) {
+			PlayerFunctions.sendMessage(plr, "You're not in a plot.");
+			return false;
+		}
+		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+		if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(
+				plr.getUniqueId()))
+				&& !plr.hasPermission("plots.admin")) {
+			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+			return false;
+		}
+		if (args.length != 1) {
+			PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
+			return false;
+		}
+		if (Bukkit.getPlayer(args[0]) != null) {
+			PlayerFunctions.sendMessage(plr,
+					C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
+			return false;
+		}
+		Player player = Bukkit.getPlayer(args[0]);
+		if (!player.getWorld().equals(plr.getWorld())
+				|| !PlayerFunctions.isInPlot(player)
+				|| (PlayerFunctions.getCurrentPlot(player) == null)
+				|| !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
+			PlayerFunctions.sendMessage(plr,
+					C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
+			return false;
+		}
+		player.teleport(player.getWorld().getSpawnLocation());
+		return true;
+	}
 }

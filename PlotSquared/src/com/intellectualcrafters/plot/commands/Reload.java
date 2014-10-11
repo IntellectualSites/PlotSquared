@@ -20,23 +20,24 @@ import com.intellectualcrafters.plot.PlotMain;
  */
 public class Reload extends SubCommand {
 
-    public Reload() {
-        super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO);
-    }
+	public Reload() {
+		super("reload", "plots.admin", "Reload configurations", "", "reload",
+				CommandCategory.INFO);
+	}
 
-    @Override
-    public boolean execute(Player plr, String... args) {
-        try {
-            PlotMain.reloadTranslations();
-            PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
-        } catch (Exception e) {
-            if (plr != null) {
-                PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
-            } else {
-                PlotMain.sendConsoleSenderMessage(C.RELOAD_FAILED);
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean execute(Player plr, String... args) {
+		try {
+			PlotMain.reloadTranslations();
+			PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
+		} catch (Exception e) {
+			if (plr != null) {
+				PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
+			} else {
+				PlotMain.sendConsoleSenderMessage(C.RELOAD_FAILED);
+			}
+		}
+		return true;
+	}
 
 }

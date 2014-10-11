@@ -9,44 +9,50 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 @SuppressWarnings("deprecation")
 public class SetOwner extends SubCommand {
 
-    public SetOwner() {
-        super("setowner", "plots.admin", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS);
-    }
+	public SetOwner() {
+		super("setowner", "plots.admin", "Set the plot owner",
+				"setowner {player}", "so", CommandCategory.ACTIONS);
+	}
 
-    /*
-    private UUID getUUID(String string) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(string);
-        return ((player != null) && player.hasPlayedBefore()) ? player.getUniqueId() : null;
-    }*/
+	/*
+	 * private UUID getUUID(String string) { OfflinePlayer player =
+	 * Bukkit.getOfflinePlayer(string); return ((player != null) &&
+	 * player.hasPlayedBefore()) ? player.getUniqueId() : null; }
+	 */
 
-    private UUID getUUID(String string) {
-        return UUIDHandler.getUUID(string);
-    }
+	private UUID getUUID(String string) {
+		return UUIDHandler.getUUID(string);
+	}
 
-    @Override
-    public boolean execute(Player plr, String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
-        }
-        Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_USER);
-            return true;
-        }
-        plot.owner = getUUID(args[0]);
-        PlotMain.updatePlot(plot);
-        DBFunc.setOwner(plot, plot.owner);
-        PlayerFunctions.sendMessage(plr, C.SET_OWNER);
-        return true;
-    }
+	@Override
+	public boolean execute(Player plr, String... args) {
+		if (!PlayerFunctions.isInPlot(plr)) {
+			PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+			return true;
+		}
+		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+		if (args.length < 1) {
+			PlayerFunctions.sendMessage(plr, C.NEED_USER);
+			return true;
+		}
+		plot.owner = getUUID(args[0]);
+		PlotMain.updatePlot(plot);
+		DBFunc.setOwner(plot, plot.owner);
+		PlayerFunctions.sendMessage(plr, C.SET_OWNER);
+		return true;
+	}
 }

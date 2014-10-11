@@ -22,52 +22,52 @@ import com.intellectualcrafters.plot.PlotId;
  * Created by Citymonstret on 2014-08-09.
  */
 public class PlotUnlinkEvent extends Event implements Cancellable {
-    private static HandlerList handlers = new HandlerList();
-    private boolean cancelled;
+	private static HandlerList handlers = new HandlerList();
+	private boolean cancelled;
 
-    private ArrayList<PlotId> plots;
-    private World world;
+	private ArrayList<PlotId> plots;
+	private World world;
 
-    /**
-     * Called when a mega-plot is unlinked.
-     * 
-     * @param world
-     * @param plots
-     */
-    public PlotUnlinkEvent(World world, ArrayList<PlotId> plots) {
-        this.plots = plots;
-        this.world = world;
-    }
+	/**
+	 * Called when a mega-plot is unlinked.
+	 * 
+	 * @param world
+	 * @param plots
+	 */
+	public PlotUnlinkEvent(World world, ArrayList<PlotId> plots) {
+		this.plots = plots;
+		this.world = world;
+	}
 
-    /**
-     * Get the plots involved
-     * 
-     * @return PlotId
-     */
-    public ArrayList<PlotId> getPlots() {
-        return this.plots;
-    }
+	/**
+	 * Get the plots involved
+	 * 
+	 * @return PlotId
+	 */
+	public ArrayList<PlotId> getPlots() {
+		return this.plots;
+	}
 
-    public World getWorld() {
-        return this.world;
-    }
+	public World getWorld() {
+		return this.world;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return this.cancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        this.cancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		this.cancelled = b;
+	}
 }

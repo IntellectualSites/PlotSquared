@@ -8,156 +8,172 @@
  */
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
+
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
-    public Auto() {
-        super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING);
-    }
+	public Auto() {
+		super("auto", "plots.auto", "Claim the nearest plot", "auto", "a",
+				CommandCategory.CLAIMING);
+	}
 
-    // TODO auto claim a mega plot!!!!!!!!!!!!
-    @Override
-    public boolean execute(Player plr, String... args) {
-        World world;
-        int size_x = 1;
-        int size_z = 1;
-        String schematic = "";
-        if (PlotMain.getPlotWorlds().length == 1) {
-            world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
-        } else {
-            if (PlotMain.isPlotWorld(plr.getWorld())) {
-                world = plr.getWorld();
-            } else {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return false;
-            }
-        }
-        if (args.length > 0) {
-            if (PlotMain.hasPermission(plr, "plots.auto.mega")) {
-                try {
-                    String[] split = args[0].split(",");
-                    size_x = Integer.parseInt(split[0]);
-                    size_z = Integer.parseInt(split[1]);
-                    if ((size_x < 1) || (size_z < 1)) {
-                        PlayerFunctions.sendMessage(plr, "&cError: size<=0");
-                    }
-                    if ((size_x > 4) || (size_z > 4)) {
-                        PlayerFunctions.sendMessage(plr, "&cError: size>4");
-                    }
-                    if(args.length > 1) {
-                        schematic = args[1];
-                    }
-                } catch (Exception e) {
-                    schematic = args[0];
-                    //PlayerFunctions.sendMessage(plr, "&cError: Invalid size (X,Y)");
-                    //return false;
-                }
-            } else {
-                schematic = args[0];
-                //PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
-                //return false;
-            }
-        }
-        if (PlayerFunctions.getPlayerPlotCount(world, plr) >= PlayerFunctions.getAllowedPlots(plr)) {
-            PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
-            return false;
-        }
-        PlotWorld pWorld = PlotMain.getWorldSettings(world);
-        if(PlotMain.useEconomy && pWorld.USE_ECONOMY) {
-            double cost = pWorld.PLOT_PRICE;
-            cost = (size_x * size_z) * cost;
-            if (cost > 0d) {
-                Economy economy = PlotMain.economy;
-                if (economy.getBalance(plr) < cost) {
-                    sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
-                    return true;
-                }
-                economy.withdrawPlayer(plr, cost);
-                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
-            }
-        }
-        if(!schematic.equals("")) {
-            if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
-                if(pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
-                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
-                    return true;
-                }
-                if (!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
-                    PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
-                    return true;
-                }
-            }
-        }
-        boolean br = false;
-        int x = 0, z = 0, q = 100;
-        PlotId id;
-        if ((size_x == 1) && (size_z == 1)) {
-            while (!br) {
-                id = new PlotId(x, z);
-                if (PlotHelper.getPlot(world, id).owner == null) {
-                    Plot plot = PlotHelper.getPlot(world, id);
-                    boolean result = Claim.claimPlot(plr, plot, true);
-                    br = !result;
-                }
-                if ((z < q) && ((z - x) < q)) {
-                    z++;
-                } else if (x < q) {
-                    x++;
-                    z = q - 100;
-                } else {
-                    q += 100;
-                    x = q;
-                    z = q;
-                }
-            }
-        } else {
-            while (!br) {
-                PlotId start = new PlotId(x, z);
-                PlotId end = new PlotId((x + size_x) - 1, (z + size_z) - 1);
-                if (isUnowned(world, start, end)) {
-                    for (int i = start.x; i <= end.x; i++) {
-                        for (int j = start.y; j <= end.y; j++) {
-                            Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
-                            boolean teleport = ((i == end.x) && (j == end.y));
-                            Claim.claimPlot(plr, plot, teleport);
-                        }
-                    }
-                    if(!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {
-                        return false;
-                    }
-                    br = true;
-                }
-                if ((z < q) && ((z - x) < q)) {
-                    z += size_z;
-                } else if (x < q) {
-                    x += size_x;
-                    z = q - 100;
-                } else {
-                    q += 100;
-                    x = q;
-                    z = q;
-                }
-            }
-        }
-        return true;
-    }
+	// TODO auto claim a mega plot!!!!!!!!!!!!
+	@Override
+	public boolean execute(Player plr, String... args) {
+		World world;
+		int size_x = 1;
+		int size_z = 1;
+		String schematic = "";
+		if (PlotMain.getPlotWorlds().length == 1) {
+			world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
+		} else {
+			if (PlotMain.isPlotWorld(plr.getWorld())) {
+				world = plr.getWorld();
+			} else {
+				PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+				return false;
+			}
+		}
+		if (args.length > 0) {
+			if (PlotMain.hasPermission(plr, "plots.auto.mega")) {
+				try {
+					String[] split = args[0].split(",");
+					size_x = Integer.parseInt(split[0]);
+					size_z = Integer.parseInt(split[1]);
+					if ((size_x < 1) || (size_z < 1)) {
+						PlayerFunctions.sendMessage(plr, "&cError: size<=0");
+					}
+					if ((size_x > 4) || (size_z > 4)) {
+						PlayerFunctions.sendMessage(plr, "&cError: size>4");
+					}
+					if (args.length > 1) {
+						schematic = args[1];
+					}
+				} catch (Exception e) {
+					schematic = args[0];
+					// PlayerFunctions.sendMessage(plr,
+					// "&cError: Invalid size (X,Y)");
+					// return false;
+				}
+			} else {
+				schematic = args[0];
+				// PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+				// return false;
+			}
+		}
+		if (PlayerFunctions.getPlayerPlotCount(world, plr) >= PlayerFunctions
+				.getAllowedPlots(plr)) {
+			PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+			return false;
+		}
+		PlotWorld pWorld = PlotMain.getWorldSettings(world);
+		if (PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+			double cost = pWorld.PLOT_PRICE;
+			cost = (size_x * size_z) * cost;
+			if (cost > 0d) {
+				Economy economy = PlotMain.economy;
+				if (economy.getBalance(plr) < cost) {
+					sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+					return true;
+				}
+				economy.withdrawPlayer(plr, cost);
+				sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+			}
+		}
+		if (!schematic.equals("")) {
+			if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
+				if (pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
+					sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: "
+							+ schematic);
+					return true;
+				}
+				if (!plr.hasPermission("plots.claim." + schematic)
+						&& !plr.hasPermission("plots.admin")) {
+					PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION,
+							schematic);
+					return true;
+				}
+			}
+		}
+		boolean br = false;
+		int x = 0, z = 0, q = 100;
+		PlotId id;
+		if ((size_x == 1) && (size_z == 1)) {
+			while (!br) {
+				id = new PlotId(x, z);
+				if (PlotHelper.getPlot(world, id).owner == null) {
+					Plot plot = PlotHelper.getPlot(world, id);
+					boolean result = Claim.claimPlot(plr, plot, true);
+					br = !result;
+				}
+				if ((z < q) && ((z - x) < q)) {
+					z++;
+				} else if (x < q) {
+					x++;
+					z = q - 100;
+				} else {
+					q += 100;
+					x = q;
+					z = q;
+				}
+			}
+		} else {
+			while (!br) {
+				PlotId start = new PlotId(x, z);
+				PlotId end = new PlotId((x + size_x) - 1, (z + size_z) - 1);
+				if (isUnowned(world, start, end)) {
+					for (int i = start.x; i <= end.x; i++) {
+						for (int j = start.y; j <= end.y; j++) {
+							Plot plot = PlotHelper.getPlot(world, new PlotId(i,
+									j));
+							boolean teleport = ((i == end.x) && (j == end.y));
+							Claim.claimPlot(plr, plot, teleport);
+						}
+					}
+					if (!PlotHelper.mergePlots(plr, world, PlayerFunctions
+							.getPlotSelectionIds(world, start, end))) {
+						return false;
+					}
+					br = true;
+				}
+				if ((z < q) && ((z - x) < q)) {
+					z += size_z;
+				} else if (x < q) {
+					x += size_x;
+					z = q - 100;
+				} else {
+					q += 100;
+					x = q;
+					z = q;
+				}
+			}
+		}
+		return true;
+	}
 
-    public boolean isUnowned(World world, PlotId pos1, PlotId pos2) {
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                PlotId id = new PlotId(x, y);
-                if (PlotMain.getPlots(world).get(id) != null) {
-                    if (PlotMain.getPlots(world).get(id).owner != null) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+	public boolean isUnowned(World world, PlotId pos1, PlotId pos2) {
+		for (int x = pos1.x; x <= pos2.x; x++) {
+			for (int y = pos1.y; y <= pos2.y; y++) {
+				PlotId id = new PlotId(x, y);
+				if (PlotMain.getPlots(world).get(id) != null) {
+					if (PlotMain.getPlots(world).get(id).owner != null) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 }

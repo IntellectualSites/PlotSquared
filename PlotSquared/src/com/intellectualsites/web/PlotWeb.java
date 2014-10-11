@@ -17,34 +17,35 @@ import com.intellectualcrafters.plot.PlotMain;
  */
 public class PlotWeb {
 
-    // TODO instructions on how to setup and use PlotWeb.
+	// TODO instructions on how to setup and use PlotWeb.
 
-    public static PlotWeb PLOTWEB;
+	public static PlotWeb PLOTWEB;
 
-    private String title;
-    private int port;
-    private Server server;
-    private Connection connection;
-    private Container container;
-    private SocketAddress address;
+	private String title;
+	private int port;
+	private Server server;
+	private Connection connection;
+	private Container container;
+	private SocketAddress address;
 
-    public PlotWeb(String title, int port) {
-        this.title = title;
-        this.port = port;
-    }
+	public PlotWeb(String title, int port) {
+		this.title = title;
+		this.port = port;
+	}
 
-    public void start() throws Exception {
-        this.container = new IndexHandler(JavaPlugin.getPlugin(PlotMain.class), this.title);
-        this.server = new ContainerServer(this.container);
-        this.connection = new SocketConnection(this.server);
-        this.address = new InetSocketAddress(this.port);
+	public void start() throws Exception {
+		this.container = new IndexHandler(JavaPlugin.getPlugin(PlotMain.class),
+				this.title);
+		this.server = new ContainerServer(this.container);
+		this.connection = new SocketConnection(this.server);
+		this.address = new InetSocketAddress(this.port);
 
-        this.connection.connect(this.address);
-        PLOTWEB = this;
-    }
+		this.connection.connect(this.address);
+		PLOTWEB = this;
+	}
 
-    public void stop() throws Exception {
-        this.connection.close();
-        PLOTWEB = null;
-    }
+	public void stop() throws Exception {
+		this.connection.close();
+		PLOTWEB = null;
+	}
 }

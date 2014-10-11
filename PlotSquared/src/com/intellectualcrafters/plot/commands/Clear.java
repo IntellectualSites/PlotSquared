@@ -20,22 +20,24 @@ import com.intellectualcrafters.plot.Plot;
  */
 public class Clear extends SubCommand {
 
-    public Clear() {
-        super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS);
-    }
+	public Clear() {
+		super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS);
+	}
 
-    @Override
-    public boolean execute(Player plr, String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, "You're not in a plot.");
-            return false;
-        }
-        Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !plr.hasPermission("plots.admin")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return false;
-        }
-        plot.clear(plr);
-        return true;
-    }
+	@Override
+	public boolean execute(Player plr, String... args) {
+		if (!PlayerFunctions.isInPlot(plr)) {
+			PlayerFunctions.sendMessage(plr, "You're not in a plot.");
+			return false;
+		}
+		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+		if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(
+				plr.getUniqueId()))
+				&& !plr.hasPermission("plots.admin")) {
+			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+			return false;
+		}
+		plot.clear(plr);
+		return true;
+	}
 }
