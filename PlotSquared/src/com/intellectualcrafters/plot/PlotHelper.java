@@ -751,9 +751,7 @@ public class PlotHelper {
 	public static Location getPlotHome(World w, PlotId plotid) {
 		PlotMain.getWorldSettings(w);
 		if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
-			int x =
-					getPlotBottomLoc(w, plotid).getBlockX()
-							+ (getPlotTopLoc(w, plotid).getBlockX() - getPlotBottomLoc(w, plotid).getBlockX());
+			int x = getPlotBottomLoc(w, plotid).getBlockX() + (getPlotTopLoc(w, plotid).getBlockX() - getPlotBottomLoc(w, plotid).getBlockX());
 			int z = getPlotBottomLoc(w, plotid).getBlockZ() - 2;
 			int y = w.getHighestBlockYAt(x, z);
 			return new Location(w, x, y + 2, z);
@@ -768,7 +766,7 @@ public class PlotHelper {
 			int x = top.getBlockX() - bot.getBlockX();
 			int z = top.getBlockZ() - bot.getBlockZ();
 			int y = w.getHighestBlockYAt(x, z);
-			return new Location(w, x, y + 2, z);
+			return new Location(w, bot.getBlockX() + x/2, y + 2, bot.getBlockZ() + z/2);
 		}
 	}
 
