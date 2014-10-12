@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
+import com.intellectualcrafters.plot.ConfigurationNode;
 import com.intellectualcrafters.plot.PlotBlock;
 import com.intellectualcrafters.plot.PlotGenerator;
 import com.intellectualcrafters.plot.PlotManager;
@@ -146,6 +147,7 @@ public class WorldGenerator extends PlotGenerator {
 	 */
 	public WorldGenerator(String world) {
 		super(world);
+		
 		this.plotsize = this.plotworld.PLOT_WIDTH;
 
 		this.pathsize = this.plotworld.ROAD_WIDTH;

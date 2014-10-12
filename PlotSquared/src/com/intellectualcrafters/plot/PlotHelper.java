@@ -773,7 +773,7 @@ public class PlotHelper {
 	}
 
 	public static Location getPlotHome(World w, Plot plot) {
-		return getPlotBottomLoc(w, plot.id);
+		return getPlotHome(w, plot.id);
 	}
 
 	public static void refreshPlotChunks(World world, Plot plot) {
