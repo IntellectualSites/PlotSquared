@@ -54,10 +54,7 @@ public class Schematic extends SubCommand {
 				sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
 				break;
 			}
-			if (!PlayerFunctions.isInPlot(plr)) {
-				sendMessage(plr, C.NOT_IN_PLOT);
-				break;
-			}
+            
 			int l1 = schematic.getSchematicDimension().getX();
 			int l2 = schematic.getSchematicDimension().getZ();
 

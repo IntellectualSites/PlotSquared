@@ -681,6 +681,9 @@ public class PlotMain extends JavaPlugin {
 			PlotHelper.canSetFast = false;
 		}
 
+        //Setup version + downloads, will not be updated... maybe setup runnable? TODO Let jesse decide...
+        com.intellectualcrafters.plot.commands.plugin.setup(this);
+
 		// TODO Test...
 		UUIDHandler.startFetch(this);
 	}

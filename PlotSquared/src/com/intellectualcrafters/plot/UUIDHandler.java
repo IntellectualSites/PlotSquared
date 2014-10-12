@@ -1,20 +1,17 @@
 package com.intellectualcrafters.plot;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 public class UUIDHandler {
 
@@ -56,8 +53,16 @@ public class UUIDHandler {
 				}
 
 				long time = System.currentTimeMillis() - start;
-				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms, &6"
-						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + uuidMap.size()
+                int size = uuidMap.size();
+                double ups;
+                if(time == 0l || size == 0) {
+                    ups = size;
+                } else {
+                    ups = size / time;
+                }
+
+				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms (&6" + ups + "&c per millisecond), &6"
+						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + size
 						+ " &ccached.");
 			}
 		});
