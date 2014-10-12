@@ -139,7 +139,7 @@ public class DefaultPlotWorld extends PlotWorld {
 		// TODO return a set of configuration nodes (used for setup command)
 		return new ConfigurationNode[] {
 				new ConfigurationNode("plot.height", DefaultPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true),
-				new ConfigurationNode("plot.width", DefaultPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true),
+				new ConfigurationNode("plot.size", DefaultPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true),
 				new ConfigurationNode("plot.filling", DefaultPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true),
 				new ConfigurationNode("plot.floor", DefaultPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true),
 				new ConfigurationNode("wall.block", DefaultPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true),
@@ -160,7 +160,7 @@ public class DefaultPlotWorld extends PlotWorld {
 	@Override
 	public void loadConfiguration(ConfigurationSection config) {
 		this.PLOT_HEIGHT = config.getInt("plot.height");
-		this.PLOT_WIDTH = config.getInt("plot.width");
+		this.PLOT_WIDTH = config.getInt("plot.size");
 		this.MAIN_BLOCK =
 				(PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));
 		this.TOP_BLOCK =
