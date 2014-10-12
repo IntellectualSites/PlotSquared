@@ -68,13 +68,13 @@ public class SchematicHandler {
 			InputStream iStream = new FileInputStream(file);
 			NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
 			CompoundTag tag = (CompoundTag) stream.readTag();
+			stream.close();
 			Map<String, Tag> tagMap = tag.getValue();
 
 			byte[] addId = new byte[0];
 			if (tagMap.containsKey("AddBlocks")) {
 				addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
 			}
-
 			short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
 			short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
 			short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
@@ -112,9 +112,7 @@ public class SchematicHandler {
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			return schematic;
-		}
+		return schematic;
 	}
 
 	public static class Schematic {
