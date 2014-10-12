@@ -8,11 +8,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.*;
 import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -35,7 +32,15 @@ public class Copy extends SubCommand {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
 		}
-		plot.clear(plr);
+        assert plot != null;
+        int size = (PlotHelper.getPlotTopLocAbs(plr.getWorld(), plot.getId()).getBlockX() - PlotHelper.getPlotBottomLocAbs(plr.getWorld(), plot.getId()).getBlockX());
+        PlotSelection selection = new PlotSelection(size, plr.getWorld(), plot);
+        if(PlotSelection.currentSelection.containsKey(plr.getName())) {
+            PlotSelection.currentSelection.remove(plr.getName());
+        }
+        PlotSelection.currentSelection.put(plr.getName(), selection);
+        sendMessage(plr, C.CLIPBOARD_SET);
+        //section.paste(plr.getWorld(), PlotHelper.getPlot(plr.getWorld()zs, new PlotId(plot.getId().x + 1, plot.getId().y)));
 		return true;
 	}
 }

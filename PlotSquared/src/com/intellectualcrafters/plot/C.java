@@ -16,6 +16,13 @@ import org.bukkit.ChatColor;
  * @author Citymonstret
  */
 public enum C {
+    /*
+        Clipboard
+     */
+    CLIPBOARD_SET("&cThe current plot is now copied, use &6/plot paste&c to pate it"),
+    PASTED("&cThe plot selection was successfully pasted"),
+    PASTE_FAILED("&cFailed to paste the selection. Reason: &c%s"),
+    NO_CLIPBOARD("&cYou don't have a selection in your clipboard"),
 	/*
 	 * Ratings
 	 */

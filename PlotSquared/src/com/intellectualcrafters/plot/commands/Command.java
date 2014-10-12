@@ -32,6 +32,7 @@ public enum Command {
 	/**
 	 *
 	 */
+    PASTE("paste"),
 	COPY("copy"),
 	/**
 	 *

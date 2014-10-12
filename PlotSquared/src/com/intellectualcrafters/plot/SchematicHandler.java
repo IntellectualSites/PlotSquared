@@ -1,23 +1,18 @@
 package com.intellectualcrafters.plot;
 
+import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.CuboidClipboard;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import org.bukkit.Location;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
-import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.sk89q.jnbt.ByteArrayTag;
-import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.NBTInputStream;
-import com.sk89q.jnbt.ShortTag;
-import com.sk89q.jnbt.Tag;
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 
 /**
  * Created by Citymonstret on 2014-09-15.

@@ -8,18 +8,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotMain;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * PlotMain command class
@@ -28,7 +27,7 @@ import com.intellectualcrafters.plot.PlotMain;
  */
 public class MainCommand implements CommandExecutor {
 
-	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Auto(), new Home(), new Visit(),
+	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Auto(), new Home(), new Visit(),
 			new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(),
 			new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(),
 			new Reload(), new Merge(), new Unlink(), new Kick(), new Setup() };
