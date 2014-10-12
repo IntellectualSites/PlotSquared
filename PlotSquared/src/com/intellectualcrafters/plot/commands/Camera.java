@@ -26,8 +26,7 @@ public class Camera extends SubCommand implements Listener {
 	private CameraAPI api;
 
 	public Camera() {
-		super("camera", "plots.camera", "Go into camera mode", "camera", "c",
-				CommandCategory.TELEPORT);
+		super("camera", "plots.camera", "Go into camera mode", "camera", "c", CommandCategory.TELEPORT);
 		this.api = CameraAPI.getInstance();
 		this.travelers = new ArrayList<String>();
 	}
@@ -48,8 +47,7 @@ public class Camera extends SubCommand implements Listener {
 			return true;
 		}
 		this.api.travel(getController(player, plot));
-		PlayerFunctions.sendMessage(player, C.CAMERA_STARTED, plot.getId().x
-				+ ";" + plot.getId().y);
+		PlayerFunctions.sendMessage(player, C.CAMERA_STARTED, plot.getId().x + ";" + plot.getId().y);
 		this.travelers.add(player.getName());
 		return true;
 	}
@@ -87,8 +85,7 @@ public class Camera extends SubCommand implements Listener {
 		loc4.setYaw(((2 / 4.0F) * 360.0F) - 0.5F);
 		loc2.setYaw(((0 / 4.0F) * 360.0F) - 0.5F);
 		loc5 = loc1.clone();
-		CameraController controller = this.api.createController(player,
-				seconds, loc1, loc2, loc3, loc4, loc5);
+		CameraController controller = this.api.createController(player, seconds, loc1, loc2, loc3, loc4, loc5);
 		return controller;
 	}
 }

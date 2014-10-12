@@ -39,7 +39,7 @@ public class Setup extends SubCommand implements Listener {
 			this.step = plotworld.getSettingNodes();
 			this.plugin = plugin;
 		}
-		
+
 		public String getPlugin() {
 			return this.plugin;
 		}
@@ -54,8 +54,7 @@ public class Setup extends SubCommand implements Listener {
 	}
 
 	public Setup() {
-		super("setup", "plots.admin", "Setup a PlotWorld", "setup {world}",
-				"setup", CommandCategory.ACTIONS);
+		super("setup", "plots.admin", "Setup a PlotWorld", "setup {world}", "setup", CommandCategory.ACTIONS);
 	}
 
 	@Override
@@ -68,23 +67,25 @@ public class Setup extends SubCommand implements Listener {
 				ConfigurationNode[] steps = object.step;
 				String world = object.world;
 				for (ConfigurationNode step : steps) {
-					PlotMain.config.set(
-							"worlds." + world + "." + step.getConstant(),
-							step.getValue());
+					PlotMain.config.set("worlds." + world + "." + step.getConstant(), step.getValue());
 				}
 				try {
 					PlotMain.config.save(PlotMain.configFile);
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					e.printStackTrace();
 				}
-				
+
 				// Creating the worlds
 				if (object.getPlugin().equals("Multiverse-Core")) {
-					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create "+world+" normal -g "+object.plugin);
+					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world
+							+ " normal -g " + object.plugin);
 				}
-				else if (object.getPlugin().equals("MultiWorld")) {
-					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create "+world+" plugin:"+object.plugin);
-				}
+				else
+					if (object.getPlugin().equals("MultiWorld")) {
+						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world
+								+ " plugin:" + object.plugin);
+					}
 				sendMessage(plr, C.SETUP_FINISHED, object.world);
 
 				setupMap.remove(plr.getName());
@@ -93,11 +94,11 @@ public class Setup extends SubCommand implements Listener {
 			}
 			ConfigurationNode step = object.step[object.current];
 			if (args.length < 1) {
-				sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-						step.getDescription(), step.getType().getType(),
-						step.getDefaultValue() + "");
+				sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+						+ "");
 				return true;
-			} else {
+			}
+			else {
 				if (args[0].equalsIgnoreCase("cancel")) {
 					setupMap.remove(plr.getName());
 					PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
@@ -107,21 +108,19 @@ public class Setup extends SubCommand implements Listener {
 					if (object.current > 0) {
 						object.current--;
 						step = object.step[object.current];
-						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-								step.getDescription(), step.getType().getType(),
-								step.getDefaultValue() + "");
+						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+								+ "");
 						return true;
-					} else {
-						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-								step.getDescription(), step.getType().getType(),
-								step.getDefaultValue() + "");
+					}
+					else {
+						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+								+ "");
 						return true;
 					}
 				}
 				boolean valid = step.isValid(args[0]);
 				if (valid) {
-					sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(),
-							args[0]);
+					sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
 					step.setValue(args[0]);
 					object.current++;
 					if (object.getCurrent() == object.getMax()) {
@@ -129,20 +128,19 @@ public class Setup extends SubCommand implements Listener {
 						return true;
 					}
 					step = object.step[object.current];
-					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-							step.getDescription(), step.getType().getType(),
-							step.getDefaultValue() + "");
+					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+							+ "");
 					return true;
-				} else {
-					sendMessage(plr, C.SETUP_INVALID_ARG, args[0],
-							step.getConstant());
-					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-							step.getDescription(), step.getType().getType(),
-							step.getDefaultValue() + "");
+				}
+				else {
+					sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
+					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+							+ "");
 					return true;
 				}
 			}
-		} else {
+		}
+		else {
 			if (args.length < 1) {
 				sendMessage(plr, C.SETUP_MISSING_WORLD);
 				return true;
@@ -156,32 +154,31 @@ public class Setup extends SubCommand implements Listener {
 				sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
 				return true;
 			}
-			
+
 			if (PlotMain.getWorldSettings(world) != null) {
 				sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
 				return true;
 			}
-			
+
 			ArrayList<String> generators = new ArrayList<String>();
-			
+
 			ChunkGenerator generator = null;
-			
+
 			for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 				if (plugin.isEnabled()) {
-					ChunkGenerator currentGen = plugin.getDefaultWorldGenerator("world", "");
-					if (currentGen != null) {
+					if (plugin.getDefaultWorldGenerator("world", "") != null) {
 						String name = plugin.getDescription().getName();
 						generators.add(name);
 						if (args[1].equals(name)) {
-							generator = currentGen;
+							generator = plugin.getDefaultWorldGenerator(world, "");
 							break;
 						}
 					}
-				
+
 				}
 			}
 			if (generator == null) {
-				sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringUtils.join(generators,C.BLOCK_LIST_SEPARATER.s()));
+				sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringUtils.join(generators, C.BLOCK_LIST_SEPARATER.s()));
 				return true;
 			}
 			PlotWorld plotworld;
@@ -196,9 +193,8 @@ public class Setup extends SubCommand implements Listener {
 			sendMessage(plr, C.SETUP_INIT);
 			SetupObject object = setupMap.get(plr.getName());
 			ConfigurationNode step = object.step[object.current];
-			sendMessage(plr, C.SETUP_STEP, object.current + 1 + "",
-					step.getDescription(), step.getType().getType(),
-					step.getDefaultValue() + "");
+			sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
+					+ "");
 			return true;
 		}
 	}

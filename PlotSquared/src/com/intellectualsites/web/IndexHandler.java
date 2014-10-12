@@ -37,15 +37,13 @@ public class IndexHandler implements Container {
 
 			if ((request.getInteger("page")) < 0) {
 			}
-			if (((coverage = request.getTarget()) == null)
-					|| coverage.equals("/")) {
+			if (((coverage = request.getTarget()) == null) || coverage.equals("/")) {
 				coverage = "index";
 			}
 
 			coverage = coverage.toLowerCase();
 
-			List<String> list = new ArrayList<>(Arrays.asList(new String[] {
-					"install", "index", "stylesheet" }));
+			List<String> list = new ArrayList<>(Arrays.asList(new String[] { "install", "index", "stylesheet" }));
 
 			if (!list.contains(coverage)) {
 				coverage = "index";
@@ -57,33 +55,29 @@ public class IndexHandler implements Container {
 				response.setDate("Date", time);
 				response.setDate("Last-Modified", time);
 
-				ResourceHandler stylesheet = new ResourceHandler("stylesheet",
-						ResourceHandler.FileType.CSS,
-						this.plugin.getDataFolder());
+				ResourceHandler stylesheet =
+						new ResourceHandler("stylesheet", ResourceHandler.FileType.CSS, this.plugin.getDataFolder());
 
 				String stylesheetHTML = stylesheet.getHTML();
 
 				stylesheet.done();
 
 				body.print(stylesheetHTML);
-			} else {
+			}
+			else {
 				response.setValue("Content-Type", "html");
 				response.setValue("Server", "PlotWeb/1.0 (Simple 5.0)");
 				response.setDate("Date", time);
 				response.setDate("Last-Modified", time);
 
-				ResourceHandler header = new ResourceHandler("header",
-						ResourceHandler.FileType.HTML,
-						this.plugin.getDataFolder());
-				ResourceHandler footer = new ResourceHandler("footer",
-						ResourceHandler.FileType.HTML,
-						this.plugin.getDataFolder());
-				ResourceHandler cPage = new ResourceHandler(coverage,
-						ResourceHandler.FileType.HTML,
-						this.plugin.getDataFolder());
+				ResourceHandler header =
+						new ResourceHandler("header", ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
+				ResourceHandler footer =
+						new ResourceHandler("footer", ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
+				ResourceHandler cPage =
+						new ResourceHandler(coverage, ResourceHandler.FileType.HTML, this.plugin.getDataFolder());
 
-				String headerHTML = header.getHTML().replace("@title",
-						this.title);
+				String headerHTML = header.getHTML().replace("@title", this.title);
 				String footerHTML = footer.getHTML();
 				String cPageHTML = cPage.getHTML();
 
@@ -96,7 +90,8 @@ public class IndexHandler implements Container {
 				body.print(footerHTML);
 			}
 			body.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

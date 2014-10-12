@@ -34,8 +34,7 @@ public class PlotWeb {
 	}
 
 	public void start() throws Exception {
-		this.container = new IndexHandler(JavaPlugin.getPlugin(PlotMain.class),
-				this.title);
+		this.container = new IndexHandler(JavaPlugin.getPlugin(PlotMain.class), this.title);
 		this.server = new ContainerServer(this.container);
 		this.connection = new SocketConnection(this.server);
 		this.address = new InetSocketAddress(this.port);

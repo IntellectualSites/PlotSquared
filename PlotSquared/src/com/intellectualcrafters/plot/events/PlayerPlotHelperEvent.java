@@ -27,8 +27,7 @@ public class PlayerPlotHelperEvent extends Event {
 	 * @param player
 	 * @param added
 	 */
-	public PlayerPlotHelperEvent(Player initiator, Plot plot, UUID player,
-			boolean added) {
+	public PlayerPlotHelperEvent(Player initiator, Plot plot, UUID player, boolean added) {
 		this.initiator = initiator;
 		this.plot = plot;
 		this.added = added;

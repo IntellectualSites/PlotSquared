@@ -18,12 +18,10 @@ public abstract class PlotManager {
 
 	public abstract PlotId getPlotId(PlotWorld plotworld, Location loc);
 
-	public abstract boolean isInPlotAbs(PlotWorld plotworld, Location loc,
-			PlotId plotid);
+	public abstract boolean isInPlotAbs(PlotWorld plotworld, Location loc, PlotId plotid);
 
 	// If you have a circular plot, just return the corner if it were a square
-	public abstract Location getPlotBottomLocAbs(PlotWorld plotworld,
-			PlotId plotid);
+	public abstract Location getPlotBottomLocAbs(PlotWorld plotworld, PlotId plotid);
 
 	// the same applies here
 	public abstract Location getPlotTopLocAbs(PlotWorld plotworld, PlotId plotid);
@@ -34,19 +32,16 @@ public abstract class PlotManager {
 
 	public abstract boolean clearPlot(Player player, Plot plot);
 
-	public abstract Location getSignLoc(Player player, PlotWorld plotworld,
-			Plot plot);
+	public abstract Location getSignLoc(Player player, PlotWorld plotworld, Plot plot);
 
 	/*
 	 * Plot set functions (return false if you do not support the specific set
 	 * method)
 	 */
 
-	public abstract boolean setWall(Player player, PlotWorld plotworld,
-			PlotId plotid, PlotBlock block);
+	public abstract boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock block);
 
-	public abstract boolean setFloor(Player player, PlotWorld plotworld,
-			PlotId plotid, PlotBlock[] block);
+	public abstract boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] block);
 
 	public abstract boolean setBiome(Player player, Plot plot, Biome biome);
 
@@ -66,7 +61,6 @@ public abstract class PlotManager {
 
 	public abstract boolean removeRoadSouthEast(PlotWorld plotworld, Plot plot);
 
-	public abstract boolean finishPlotMerge(World world, PlotWorld plotworld,
-			ArrayList<PlotId> plotIds);
+	public abstract boolean finishPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds);
 
 }

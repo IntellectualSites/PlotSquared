@@ -31,19 +31,17 @@ public class SchematicHandler {
 			return false;
 		}
 		try {
-			EditSession session = new EditSession(new BukkitWorld(
-					location.getWorld()), 999999999);
-			CuboidClipboard clipboard = CuboidClipboard.loadSchematic(schematic
-					.getFile());
-			Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(),
-					plot.getId());
+			EditSession session = new EditSession(new BukkitWorld(location.getWorld()), 999999999);
+			CuboidClipboard clipboard = CuboidClipboard.loadSchematic(schematic.getFile());
+			Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
 			PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
 			int x = l1.getBlockX() + 1;
 			int z = l1.getBlockZ() + 1;
 			int y = location.getWorld().getHighestBlockYAt(x, z);
 			Vector v1 = new Vector(x, y + 1, z);
 			clipboard.paste(session, v1, true);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 		return true;
@@ -51,35 +49,30 @@ public class SchematicHandler {
 
 	public Schematic getSchematic(String name) {
 		{
-			File parent = new File(JavaPlugin.getPlugin(PlotMain.class)
-					.getDataFolder() + File.separator + "schematics");
+			File parent =
+					new File(JavaPlugin.getPlugin(PlotMain.class).getDataFolder() + File.separator + "schematics");
 			if (!parent.exists()) {
 				parent.mkdir();
 			}
 		}
-		File file = new File(JavaPlugin.getPlugin(PlotMain.class)
-				.getDataFolder()
-				+ File.separator
-				+ "schematics"
-				+ File.separator + name + ".schematic");
+		File file =
+				new File(JavaPlugin.getPlugin(PlotMain.class).getDataFolder() + File.separator + "schematics"
+						+ File.separator + name + ".schematic");
 		if (!file.exists()) {
-			PlotMain.sendConsoleSenderMessage(file.toString()
-					+ " doesn't exist");
+			PlotMain.sendConsoleSenderMessage(file.toString() + " doesn't exist");
 			return null;
 		}
 
 		Schematic schematic = null;
 		try {
 			InputStream iStream = new FileInputStream(file);
-			NBTInputStream stream = new NBTInputStream(new GZIPInputStream(
-					iStream));
+			NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
 			CompoundTag tag = (CompoundTag) stream.readTag();
 			Map<String, Tag> tagMap = tag.getValue();
 
 			byte[] addId = new byte[0];
 			if (tagMap.containsKey("AddBlocks")) {
-				addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks"))
-						.getValue();
+				addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
 			}
 
 			short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
@@ -94,12 +87,14 @@ public class SchematicHandler {
 
 			for (int index = 0; index < b.length; index++) {
 				if ((index >> 1) >= addId.length) { // No corresponding
-													// AddBlocks index
+					// AddBlocks index
 					blocks[index] = (short) (b[index] & 0xFF);
-				} else {
+				}
+				else {
 					if ((index & 1) == 0) {
 						blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
-					} else {
+					}
+					else {
 						blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
 					}
 				}
@@ -112,10 +107,12 @@ public class SchematicHandler {
 			}
 
 			schematic = new Schematic(collection, dimension, file);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} finally {
+		}
+		finally {
 			return schematic;
 		}
 	}
@@ -125,8 +122,7 @@ public class SchematicHandler {
 		private Dimension schematicDimension;
 		private File file;
 
-		public Schematic(DataCollection[] blockCollection,
-				Dimension schematicDimension, File file) {
+		public Schematic(DataCollection[] blockCollection, Dimension schematicDimension, File file) {
 			this.blockCollection = blockCollection;
 			this.schematicDimension = schematicDimension;
 			this.file = file;

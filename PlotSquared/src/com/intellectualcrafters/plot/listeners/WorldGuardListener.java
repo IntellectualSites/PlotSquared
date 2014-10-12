@@ -50,19 +50,19 @@ public class WorldGuardListener implements Listener {
 			manager.getRegion(plot.id.x + "-" + plot.id.y);
 			for (Flag flag : this.flags) {
 				if (flag.getName().equalsIgnoreCase(key)) {
-					requester.performCommand("region flag "
-							+ (plot.id.x + "-" + plot.id.y) + " " + key);
+					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			requester.setOp(op);
-		} finally {
+		}
+		finally {
 			requester.setOp(op);
 		}
 	}
 
-	public void addFlag(Player requester, World world, Plot plot, String key,
-			String value) {
+	public void addFlag(Player requester, World world, Plot plot, String key, String value) {
 		boolean op = requester.isOp();
 		requester.setOp(true);
 		try {
@@ -70,19 +70,20 @@ public class WorldGuardListener implements Listener {
 			manager.getRegion(plot.id.x + "-" + plot.id.y);
 			for (Flag flag : this.flags) {
 				if (flag.getName().equalsIgnoreCase(key)) {
-					requester.performCommand("region flag "
-							+ (plot.id.x + "-" + plot.id.y) + " " + key + " "
-							+ value);
+					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			requester.setOp(op);
-		} finally {
+		}
+		finally {
 			requester.setOp(op);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(
+			priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onMerge(PlotMergeEvent event) {
 		Plot main = event.getPlot();
 		ArrayList<PlotId> plots = event.getPlots();
@@ -99,17 +100,12 @@ public class WorldGuardListener implements Listener {
 		DefaultDomain members = region.getMembers();
 		manager.removeRegion(main.id.x + "-" + main.id.y);
 
-		Location location1 = PlotHelper
-				.getPlotBottomLocAbs(world, plots.get(0));
-		Location location2 = PlotHelper.getPlotTopLocAbs(world,
-				plots.get(plots.size() - 1));
+		Location location1 = PlotHelper.getPlotBottomLocAbs(world, plots.get(0));
+		Location location2 = PlotHelper.getPlotTopLocAbs(world, plots.get(plots.size() - 1));
 
-		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1,
-				location1.getBlockZ());
-		BlockVector vector2 = new BlockVector(location2.getBlockX(),
-				world.getMaxHeight(), location2.getBlockZ());
-		ProtectedRegion rg = new ProtectedCuboidRegion(main.id.x + "-"
-				+ main.id.y, vector1, vector2);
+		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+		BlockVector vector2 = new BlockVector(location2.getBlockX(), world.getMaxHeight(), location2.getBlockZ());
+		ProtectedRegion rg = new ProtectedCuboidRegion(main.id.x + "-" + main.id.y, vector1, vector2);
 
 		rg.setFlags(flags);
 
@@ -120,7 +116,8 @@ public class WorldGuardListener implements Listener {
 		manager.addRegion(rg);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(
+			priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onUnlink(PlotUnlinkEvent event) {
 		World w = event.getWorld();
 		ArrayList<PlotId> plots = event.getPlots();
@@ -139,12 +136,9 @@ public class WorldGuardListener implements Listener {
 			Location location1 = PlotHelper.getPlotBottomLocAbs(w, id);
 			Location location2 = PlotHelper.getPlotTopLocAbs(w, id);
 
-			BlockVector vector1 = new BlockVector(location1.getBlockX(), 1,
-					location1.getBlockZ());
-			BlockVector vector2 = new BlockVector(location2.getBlockX(),
-					w.getMaxHeight(), location2.getBlockZ());
-			ProtectedRegion rg = new ProtectedCuboidRegion(id.x + "-" + id.y,
-					vector1, vector2);
+			BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+			BlockVector vector2 = new BlockVector(location2.getBlockX(), w.getMaxHeight(), location2.getBlockZ());
+			ProtectedRegion rg = new ProtectedCuboidRegion(id.x + "-" + id.y, vector1, vector2);
 
 			rg.setFlags(flags);
 
@@ -160,21 +154,16 @@ public class WorldGuardListener implements Listener {
 	public void onPlotClaim(PlayerClaimPlotEvent event) {
 		Player player = event.getPlayer();
 		Plot plot = event.getPlot();
-		RegionManager manager = PlotMain.worldGuard.getRegionManager(plot
-				.getWorld());
+		RegionManager manager = PlotMain.worldGuard.getRegionManager(plot.getWorld());
 
-		Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(),
-				plot.getId());
-		Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(),
-				plot.getId());
+		Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
+		Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
 
-		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1,
-				location1.getBlockZ());
-		BlockVector vector2 = new BlockVector(location2.getBlockX(), plot
-				.getWorld().getMaxHeight(), location2.getBlockZ());
+		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+		BlockVector vector2 =
+				new BlockVector(location2.getBlockX(), plot.getWorld().getMaxHeight(), location2.getBlockZ());
 
-		ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-"
-				+ plot.getId().y, vector1, vector2);
+		ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
 
 		DefaultDomain owner = new DefaultDomain();
 		owner.addPlayer(PlotMain.worldGuard.wrapPlayer(player));

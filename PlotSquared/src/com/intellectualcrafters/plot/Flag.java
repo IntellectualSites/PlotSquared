@@ -78,8 +78,7 @@ public class Flag {
 			return false;
 		}
 		Flag other = (Flag) obj;
-		return (this.key.getKey().equals(other.key.getKey()) && this.value
-				.equals(other.value));
+		return (this.key.getKey().equals(other.key.getKey()) && this.value.equals(other.value));
 	}
 
 	@Override

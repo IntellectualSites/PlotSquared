@@ -27,8 +27,7 @@ public class PlayerPlotTrustedEvent extends Event {
 	 * @param player
 	 * @param added
 	 */
-	public PlayerPlotTrustedEvent(Player initiator, Plot plot, UUID player,
-			boolean added) {
+	public PlayerPlotTrustedEvent(Player initiator, Plot plot, UUID player, boolean added) {
 		this.initiator = initiator;
 		this.plot = plot;
 		this.added = added;

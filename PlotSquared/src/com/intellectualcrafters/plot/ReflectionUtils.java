@@ -27,8 +27,7 @@ public class ReflectionUtils {
 	/** check server version and class names */
 	static {
 		if (Bukkit.getServer() != null) {
-			if (Bukkit.getVersion().contains("MCPC")
-					|| Bukkit.getVersion().contains("Forge")) {
+			if (Bukkit.getVersion().contains("MCPC") || Bukkit.getVersion().contains("Forge")) {
 				forge = true;
 			}
 			Server server = Bukkit.getServer();
@@ -39,8 +38,7 @@ public class ReflectionUtils {
 				preClassB += "." + verB;
 			}
 			try {
-				Method getHandle = bukkitServerClass
-						.getDeclaredMethod("getHandle");
+				Method getHandle = bukkitServerClass.getDeclaredMethod("getHandle");
 				Object handle = getHandle.invoke(server);
 				Class handleServerClass = handle.getClass();
 				pas = handleServerClass.getName().split("\\.");
@@ -48,7 +46,8 @@ public class ReflectionUtils {
 					String verM = pas[3];
 					preClassM += "." + verM;
 				}
-			} catch (Exception ignored) {
+			}
+			catch (Exception ignored) {
 			}
 		}
 	}
@@ -73,11 +72,11 @@ public class ReflectionUtils {
 	public static RefClass getRefClass(String... classes) {
 		for (String className : classes) {
 			try {
-				className = className.replace("{cb}", preClassB)
-						.replace("{nms}", preClassM)
-						.replace("{nm}", "net.minecraft");
+				className =
+						className.replace("{cb}", preClassB).replace("{nms}", preClassM).replace("{nm}", "net.minecraft");
 				return getRefClass(Class.forName(className));
-			} catch (ClassNotFoundException ignored) {
+			}
+			catch (ClassNotFoundException ignored) {
 			}
 		}
 		throw new RuntimeException("no class found");
@@ -135,27 +134,30 @@ public class ReflectionUtils {
 		 * @throws RuntimeException
 		 *             if method not found
 		 */
-		public RefMethod getMethod(String name, Object... types)
-				throws NoSuchMethodException {
+		public RefMethod getMethod(String name, Object... types) throws NoSuchMethodException {
 			try {
 				Class[] classes = new Class[types.length];
 				int i = 0;
 				for (Object e : types) {
 					if (e instanceof Class) {
 						classes[i++] = (Class) e;
-					} else if (e instanceof RefClass) {
-						classes[i++] = ((RefClass) e).getRealClass();
-					} else {
-						classes[i++] = e.getClass();
 					}
+					else
+						if (e instanceof RefClass) {
+							classes[i++] = ((RefClass) e).getRealClass();
+						}
+						else {
+							classes[i++] = e.getClass();
+						}
 				}
 				try {
 					return new RefMethod(this.clazz.getMethod(name, classes));
-				} catch (NoSuchMethodException ignored) {
-					return new RefMethod(this.clazz.getDeclaredMethod(name,
-							classes));
 				}
-			} catch (Exception e) {
+				catch (NoSuchMethodException ignored) {
+					return new RefMethod(this.clazz.getDeclaredMethod(name, classes));
+				}
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -176,20 +178,23 @@ public class ReflectionUtils {
 				for (Object e : types) {
 					if (e instanceof Class) {
 						classes[i++] = (Class) e;
-					} else if (e instanceof RefClass) {
-						classes[i++] = ((RefClass) e).getRealClass();
-					} else {
-						classes[i++] = e.getClass();
 					}
+					else
+						if (e instanceof RefClass) {
+							classes[i++] = ((RefClass) e).getRealClass();
+						}
+						else {
+							classes[i++] = e.getClass();
+						}
 				}
 				try {
-					return new RefConstructor(
-							this.clazz.getConstructor(classes));
-				} catch (NoSuchMethodException ignored) {
-					return new RefConstructor(
-							this.clazz.getDeclaredConstructor(classes));
+					return new RefConstructor(this.clazz.getConstructor(classes));
 				}
-			} catch (Exception e) {
+				catch (NoSuchMethodException ignored) {
+					return new RefConstructor(this.clazz.getDeclaredConstructor(classes));
+				}
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -209,16 +214,20 @@ public class ReflectionUtils {
 			for (Object e : types) {
 				if (e instanceof Class) {
 					classes[t++] = (Class) e;
-				} else if (e instanceof RefClass) {
-					classes[t++] = ((RefClass) e).getRealClass();
-				} else {
-					classes[t++] = e.getClass();
 				}
+				else
+					if (e instanceof RefClass) {
+						classes[t++] = ((RefClass) e).getRealClass();
+					}
+					else {
+						classes[t++] = e.getClass();
+					}
 			}
 			List<Method> methods = new ArrayList<>();
 			Collections.addAll(methods, this.clazz.getMethods());
 			Collections.addAll(methods, this.clazz.getDeclaredMethods());
-			findMethod: for (Method m : methods) {
+			findMethod:
+			for (Method m : methods) {
 				Class<?>[] methodTypes = m.getParameterTypes();
 				if (methodTypes.length != classes.length) {
 					continue;
@@ -305,8 +314,7 @@ public class ReflectionUtils {
 		public RefConstructor findConstructor(int number) {
 			List<Constructor> constructors = new ArrayList<>();
 			Collections.addAll(constructors, this.clazz.getConstructors());
-			Collections.addAll(constructors,
-					this.clazz.getDeclaredConstructors());
+			Collections.addAll(constructors, this.clazz.getDeclaredConstructors());
 			for (Constructor m : constructors) {
 				if (m.getParameterTypes().length == number) {
 					return new RefConstructor(m);
@@ -328,10 +336,12 @@ public class ReflectionUtils {
 			try {
 				try {
 					return new RefField(this.clazz.getField(name));
-				} catch (NoSuchFieldException ignored) {
+				}
+				catch (NoSuchFieldException ignored) {
 					return new RefField(this.clazz.getDeclaredField(name));
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -427,7 +437,8 @@ public class ReflectionUtils {
 		public Object call(Object... params) {
 			try {
 				return this.method.invoke(null, params);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -451,7 +462,8 @@ public class ReflectionUtils {
 			public Object call(Object... params) {
 				try {
 					return RefMethod.this.method.invoke(this.e, params);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -495,7 +507,8 @@ public class ReflectionUtils {
 		public Object create(Object... params) {
 			try {
 				return this.constructor.newInstance(params);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -557,7 +570,8 @@ public class ReflectionUtils {
 			public void set(Object param) {
 				try {
 					RefField.this.field.set(this.e, param);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -570,7 +584,8 @@ public class ReflectionUtils {
 			public Object get() {
 				try {
 					return RefField.this.field.get(this.e);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}

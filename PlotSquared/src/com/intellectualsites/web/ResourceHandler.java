@@ -13,23 +13,22 @@ public class ResourceHandler {
 	private File file;
 	private BufferedReader reader;
 
-	public ResourceHandler(String filePath, FileType fileType, File folder)
-			throws Exception {
+	public ResourceHandler(String filePath, FileType fileType, File folder) throws Exception {
 		if (fileType == FileType.CSS) {
-			this.file = new File(folder.toPath().toString() + File.separator
-					+ "web" + File.separator + "css" + File.separator
-					+ filePath + "." + fileType.toString());
-		} else {
-			this.file = new File(folder.toPath().toString() + File.separator
-					+ "web" + File.separator + filePath + "."
-					+ fileType.toString());
+			this.file =
+					new File(folder.toPath().toString() + File.separator + "web" + File.separator + "css"
+							+ File.separator + filePath + "." + fileType.toString());
+		}
+		else {
+			this.file =
+					new File(folder.toPath().toString() + File.separator + "web" + File.separator + filePath + "."
+							+ fileType.toString());
 		}
 	}
 
 	public String getHTML() throws Exception {
 		StringBuilder html = new StringBuilder();
-		this.reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(this.file)));
+		this.reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.file)));
 		String line = "";
 		while ((line = this.reader.readLine()) != null) {
 			html.append(line);
@@ -42,7 +41,9 @@ public class ResourceHandler {
 	}
 
 	public static enum FileType {
-		CSS("css"), HTML("html"), JS("js");
+		CSS("css"),
+		HTML("html"),
+		JS("js");
 
 		private String ext;
 

@@ -36,7 +36,8 @@ public class Configuration {
 			try {
 				Integer.parseInt(string);
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
@@ -53,7 +54,8 @@ public class Configuration {
 			try {
 				Boolean.parseBoolean(string);
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
@@ -70,7 +72,8 @@ public class Configuration {
 			try {
 				Double.parseDouble(string);
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
@@ -87,17 +90,18 @@ public class Configuration {
 			try {
 				Biome.valueOf(string.toUpperCase());
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
 
 		@Override
 		public Object parseString(String string) {
-			for (Biome biome:Biome.values()) {
-			    if (biome.name().equals(string.toUpperCase())) {
-			        return biome;
-			    }
+			for (Biome biome : Biome.values()) {
+				if (biome.name().equals(string.toUpperCase())) {
+					return biome;
+				}
 			}
 			return Biome.FOREST;
 		}
@@ -116,11 +120,13 @@ public class Configuration {
 					String[] split = string.split(":");
 					Short.parseShort(split[0]);
 					Short.parseShort(split[1]);
-				} else {
+				}
+				else {
 					Short.parseShort(string);
 				}
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
@@ -129,9 +135,9 @@ public class Configuration {
 		public Object parseString(String string) {
 			if (string.contains(":")) {
 				String[] split = string.split(":");
-				return new PlotBlock(Short.parseShort(split[0]),
-						Byte.parseByte(split[1]));
-			} else {
+				return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
+			}
+			else {
 				return new PlotBlock(Short.parseShort(string), (byte) 0);
 			}
 		}
@@ -151,12 +157,14 @@ public class Configuration {
 						String[] split = block.split(":");
 						Short.parseShort(split[0]);
 						Short.parseShort(split[1]);
-					} else {
+					}
+					else {
 						Short.parseShort(block);
 					}
 				}
 				return true;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				return false;
 			}
 		}
@@ -166,13 +174,12 @@ public class Configuration {
 			String[] blocks = string.split(",");
 			PlotBlock[] values = new PlotBlock[blocks.length];
 			for (int i = 0; i < blocks.length; i++) {
-				if (string.contains(":")) {
-					String[] split = string.split(":");
-					values[i] = new PlotBlock(Short.parseShort(split[0]),
-							Byte.parseByte(split[1]));
-				} else {
-					values[i] = new PlotBlock(Short.parseShort(string),
-							(byte) 0);
+				if (blocks[i].contains(":")) {
+					String[] split = blocks[i].split(":");
+					values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
+				}
+				else {
+					values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
 				}
 			}
 			return values;
@@ -189,10 +196,8 @@ public class Configuration {
 	};
 
 	/**
-	 * 
 	 * Create your own SettingValue object to make the management of plotworld
 	 * configuration easier
-	 *
 	 */
 	public static abstract class SettingValue {
 		private String type;

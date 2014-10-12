@@ -7,8 +7,7 @@ public class PlotSquaredException extends RuntimeException {
 
 	public PlotSquaredException(PlotError error, String details) {
 		super("PlotError >> " + error.getHeader() + ": " + details);
-		PlotMain.sendConsoleSenderMessage("&cPlotError &6>> &c"
-				+ error.getHeader() + ": &6" + details);
+		PlotMain.sendConsoleSenderMessage("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
 	}
 
 	public static enum PlotError {

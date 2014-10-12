@@ -17,8 +17,7 @@ public class Rate extends SubCommand {
 	 */
 
 	public Rate() {
-		super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt",
-				CommandCategory.ACTIONS);
+		super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS);
 	}
 
 	@Override
@@ -65,7 +64,8 @@ public class Rate extends SubCommand {
 		boolean success = false;
 		if (success) {
 			sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
-		} else {
+		}
+		else {
 			sendMessage(plr, C.COMMAND_WENT_WRONG);
 		}
 		return true;

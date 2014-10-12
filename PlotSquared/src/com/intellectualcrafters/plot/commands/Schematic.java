@@ -11,8 +11,7 @@ import com.intellectualcrafters.plot.SchematicHandler;
 public class Schematic extends SubCommand {
 
 	public Schematic() {
-		super("schematic", "plots.admin", "Schematic Command",
-				"schematic {arg}", "sch", CommandCategory.ACTIONS);
+		super("schematic", "plots.admin", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS);
 	}
 
 	@Override
@@ -36,11 +35,11 @@ public class Schematic extends SubCommand {
 			}
 			file = args[1];
 			schematic = new SchematicHandler().getSchematic(file);
-			boolean s = new SchematicHandler().paste(plr.getLocation(),
-					schematic, PlayerFunctions.getCurrentPlot(plr));
+			boolean s = new SchematicHandler().paste(plr.getLocation(), schematic, PlayerFunctions.getCurrentPlot(plr));
 			if (s) {
 				sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-			} else {
+			}
+			else {
 				sendMessage(plr, C.SCHEMATIC_PASTE_FAILED);
 			}
 			break;
@@ -66,8 +65,7 @@ public class Schematic extends SubCommand {
 			int length = PlotHelper.getPlotWidth(plr.getWorld(), plot.id);
 
 			if ((l1 != length) || (l2 != length)) {
-				sendMessage(plr, C.SCHEMATIC_INVALID, String.format(
-						"Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
+				sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
 				break;
 			}
 			sendMessage(plr, C.SCHEMATIC_VALID);

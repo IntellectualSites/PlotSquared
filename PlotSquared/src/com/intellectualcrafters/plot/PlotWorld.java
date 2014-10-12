@@ -97,28 +97,18 @@ public abstract class PlotWorld {
 
 	// TODO make this configurable
 	// make non static and static_default_valu + add config option
-	public static ArrayList<Material> BLOCKS = new ArrayList<Material>(
-			Arrays.asList(new Material[] { ACACIA_STAIRS, BEACON, BEDROCK,
-					BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK,
-					BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON,
-					CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL,
-					COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS,
-					DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT,
-					DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE,
-					ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE,
-					FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL,
-					GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1,
-					HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN,
-					JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE,
-					LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER,
-					MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK,
-					NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN,
-					PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE,
-					QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND,
-					SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK,
-					SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD,
-					WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44),
-					getMaterial(126) }));
+	public static ArrayList<Material> BLOCKS = new ArrayList<Material>(Arrays.asList(new Material[] { ACACIA_STAIRS,
+			BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE,
+			CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS,
+			COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER,
+			EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE,
+			GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2,
+			IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES,
+			LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK,
+			NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE,
+			QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND, SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK,
+			SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD, WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44),
+			getMaterial(126) }));
 
 	public boolean AUTO_MERGE;
 	public static boolean AUTO_MERGE_DEFAULT = false;
@@ -172,12 +162,10 @@ public abstract class PlotWorld {
 	public void loadDefaultConfiguration(ConfigurationSection config) {
 		this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
 		this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
-		this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config
-				.getString("plot.biome"));
+		this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
 		this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
 		this.SCHEMATIC_FILE = config.getString("schematic.file");
-		this.SCHEMATIC_CLAIM_SPECIFY = config
-				.getBoolean("schematic.specify_on_claim");
+		this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
 		this.SCHEMATICS = config.getStringList("schematic.schematics");
 		this.USE_ECONOMY = config.getBoolean("economy.use");
 		this.PLOT_PRICE = config.getDouble("economy.prices.claim");
@@ -187,7 +175,7 @@ public abstract class PlotWorld {
 		this.DEFAULT_FLAGS = config.getStringList("flags.default");
 		loadConfiguration(config);
 	}
-	
+
 	public abstract void loadConfiguration(ConfigurationSection config);
 
 	public void saveConfiguration(ConfigurationSection config) {
@@ -195,22 +183,22 @@ public abstract class PlotWorld {
 		/*
 		 * Saving core plotworld settings
 		 */
-	    
-	    HashMap<String, Object> options = new HashMap<String, Object>();
-	    
-	    options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
-	    options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
-	    options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
-	    options.put("schematic.on_claim", PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT);
-	    options.put("schematic.file", PlotWorld.SCHEMATIC_FILE_DEFAULT);
-	    options.put("schematic.specify_on_claim", PlotWorld.SCHEMATIC_CLAIM_SPECIFY_DEFAULT);
-	    options.put("schematic.schematics", PlotWorld.SCHEMATICS_DEFAULT);
-	    options.put("economy.use", PlotWorld.USE_ECONOMY_DEFAULT);
-	    options.put("economy.prices.claim", PlotWorld.PLOT_PRICE_DEFAULT);
-	    options.put("economy.prices.merge", PlotWorld.MERGE_PRICE_DEFAULT);
-	    options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
-	    options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
-	    options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
+
+		HashMap<String, Object> options = new HashMap<String, Object>();
+
+		options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
+		options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
+		options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
+		options.put("schematic.on_claim", PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT);
+		options.put("schematic.file", PlotWorld.SCHEMATIC_FILE_DEFAULT);
+		options.put("schematic.specify_on_claim", PlotWorld.SCHEMATIC_CLAIM_SPECIFY_DEFAULT);
+		options.put("schematic.schematics", PlotWorld.SCHEMATICS_DEFAULT);
+		options.put("economy.use", PlotWorld.USE_ECONOMY_DEFAULT);
+		options.put("economy.prices.claim", PlotWorld.PLOT_PRICE_DEFAULT);
+		options.put("economy.prices.merge", PlotWorld.MERGE_PRICE_DEFAULT);
+		options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
+		options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
+		options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
 
 		ConfigurationNode[] settings = getSettingNodes();
 
@@ -220,11 +208,11 @@ public abstract class PlotWorld {
 		for (ConfigurationNode setting : settings) {
 			options.put(setting.getConstant(), setting.getType().parseObject(setting.getValue()));
 		}
-		
-		for (String option:options.keySet()) {
-		    if (!config.contains(option)) {
-		        config.set(option, options.get(option));
-		    }
+
+		for (String option : options.keySet()) {
+			if (!config.contains(option)) {
+				config.set(option, options.get(option));
+			}
 		}
 	}
 

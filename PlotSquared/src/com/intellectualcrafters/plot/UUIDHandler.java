@@ -18,8 +18,8 @@ import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 
 public class UUIDHandler {
 
-    private static boolean online = Bukkit.getServer().getOnlineMode();
-    
+	private static boolean online = Bukkit.getServer().getOnlineMode();
+
 	private static BiMap<String, UUID> uuidMap = HashBiMap.create();
 
 	public static boolean uuidExists(UUID uuid) {
@@ -35,43 +35,35 @@ public class UUIDHandler {
 	}
 
 	/**
-	 *
 	 * @param plugin
 	 */
 	public static void startFetch(JavaPlugin plugin) {
-		plugin.getServer().getScheduler()
-				.runTaskAsynchronously(plugin, new Runnable() {
-					@Override
-					public void run() {
-						OfflinePlayer[] offlinePlayers = Bukkit
-								.getOfflinePlayers();
-						int length = offlinePlayers.length;
-						long start = System.currentTimeMillis();
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+				OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
+				int length = offlinePlayers.length;
+				long start = System.currentTimeMillis();
 
-						String name;
-						UUID uuid;
-						for (OfflinePlayer player : offlinePlayers) {
-							uuid = player.getUniqueId();
-							if (!uuidExists(uuid)) {
-							    name = player.getName();
-								add(name, uuid);
-							}
-						}
-
-						long time = System.currentTimeMillis() - start;
-						PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6"
-								+ time
-								+ "&cms, &6"
-								+ length
-								+ " &cUUID's were cached"
-								+ " and there is now a grand total of &6"
-								+ uuidMap.size() + " &ccached.");
+				String name;
+				UUID uuid;
+				for (OfflinePlayer player : offlinePlayers) {
+					uuid = player.getUniqueId();
+					if (!uuidExists(uuid)) {
+						name = player.getName();
+						add(name, uuid);
 					}
-				});
+				}
+
+				long time = System.currentTimeMillis() - start;
+				PlotMain.sendConsoleSenderMessage("&cFinished caching of offlineplayers! Took &6" + time + "&cms, &6"
+						+ length + " &cUUID's were cached" + " and there is now a grand total of &6" + uuidMap.size()
+						+ " &ccached.");
+			}
+		});
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @return
 	 */
@@ -91,33 +83,33 @@ public class UUIDHandler {
 				UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 				uuid = fetcher.call().get(name);
 				add(name, uuid);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else {
+		}
+		else {
 			return getUuidOfflineMode(name);
 		}
 		return null;
 	}
 
 	/**
-	 *
 	 * @param uuid
 	 * @return
 	 */
 	private static String loopSearch(UUID uuid) {
-	    return uuidMap.inverse().get(uuid);
+		return uuidMap.inverse().get(uuid);
 	}
 
 	/**
-	 *
 	 * @param uuid
 	 * @return
 	 */
 	public static String getName(UUID uuid) {
-	    if (uuidExists(uuid)) {
-            return loopSearch(uuid);
-        }
+		if (uuidExists(uuid)) {
+			return loopSearch(uuid);
+		}
 		String name;
 		if ((name = getNameOnlinePlayer(uuid)) != null) {
 			return name;
@@ -131,29 +123,28 @@ public class UUIDHandler {
 				name = fetcher.call().get(uuid);
 				add(name, uuid);
 				return name;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else {
+		}
+		else {
 			return "unknown";
 		}
 		return "";
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @return
 	 */
 	private static UUID getUuidOfflineMode(String name) {
-		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name)
-				.getBytes(Charsets.UTF_8));
+		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
 		add(name, uuid);
 		return uuid;
 	}
 
 	/**
-	 *
 	 * @param uuid
 	 * @return
 	 */
@@ -168,7 +159,6 @@ public class UUIDHandler {
 	}
 
 	/**
-	 *
 	 * @param uuid
 	 * @return
 	 */
@@ -183,7 +173,6 @@ public class UUIDHandler {
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @return
 	 */
@@ -198,12 +187,11 @@ public class UUIDHandler {
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @return
 	 */
 	private static UUID getUuidOfflinePlayer(String name) {
-	    UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
 		add(name, uuid);
 		return uuid;
 	}

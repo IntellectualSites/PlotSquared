@@ -21,17 +21,14 @@ import com.intellectualcrafters.plot.PlotWorld;
 public class DefaultPlotManager extends PlotManager {
 
 	/**
-	 * Default implementation of getting a plot at a given location
-	 * 
-	 * For a simplified explanation of the math involved: - Get the current
-	 * coords - shift these numbers down to something relatable for a single
-	 * plot (similar to reducing trigonometric functions down to the first
-	 * quadrant) - e.g. If the plot size is 20 blocks, and we are at x=25, it's
-	 * equivalent to x=5 for that specific plot
-	 * 
-	 * From this, and knowing how thick the road is, we can say whether x=5 is
-	 * road, or plot. The number of shifts done, is also counted, and this
-	 * number gives us the PlotId
+	 * Default implementation of getting a plot at a given location For a
+	 * simplified explanation of the math involved: - Get the current coords -
+	 * shift these numbers down to something relatable for a single plot
+	 * (similar to reducing trigonometric functions down to the first quadrant)
+	 * - e.g. If the plot size is 20 blocks, and we are at x=25, it's equivalent
+	 * to x=5 for that specific plot From this, and knowing how thick the road
+	 * is, we can say whether x=5 is road, or plot. The number of shifts done,
+	 * is also counted, and this number gives us the PlotId
 	 */
 	@Override
 	public PlotId getPlotIdAbs(PlotWorld plotworld, Location loc) {
@@ -49,7 +46,8 @@ public class DefaultPlotManager extends PlotManager {
 		int pathWidthLower;
 		if ((dpw.ROAD_WIDTH % 2) == 0) {
 			pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-		} else {
+		}
+		else {
 			pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
 		}
 
@@ -98,7 +96,8 @@ public class DefaultPlotManager extends PlotManager {
 		int pathWidthLower;
 		if ((dpw.ROAD_WIDTH % 2) == 0) {
 			pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-		} else {
+		}
+		else {
 			pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
 		}
 
@@ -123,8 +122,7 @@ public class DefaultPlotManager extends PlotManager {
 		boolean eastWest = (rx <= pathWidthLower) || (rx > end);
 		if (northSouth && eastWest) {
 			// This means you are in the intersection
-			PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0,
-					dpw.ROAD_WIDTH));
+			PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
 			Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
 			if (plot == null) {
 				return null;
@@ -137,8 +135,7 @@ public class DefaultPlotManager extends PlotManager {
 		if (northSouth) {
 			// You are on a road running West to East (yeah, I named the var
 			// poorly)
-			PlotId id = PlayerFunctions.getPlotAbs(loc
-					.add(0, 0, dpw.ROAD_WIDTH));
+			PlotId id = PlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
 			Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
 			if (plot == null) {
 				return null;
@@ -150,8 +147,7 @@ public class DefaultPlotManager extends PlotManager {
 		}
 		if (eastWest) {
 			// This is the road separating an Eastern and Western plot
-			PlotId id = PlayerFunctions.getPlotAbs(loc
-					.add(dpw.ROAD_WIDTH, 0, 0));
+			PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
 			Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
 			if (plot == null) {
 				return null;
@@ -193,10 +189,8 @@ public class DefaultPlotManager extends PlotManager {
 		int px = plotid.x;
 		int pz = plotid.y;
 
-		int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH
-				- ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-		int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH
-				- ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+		int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+		int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
 
 		return new Location(Bukkit.getWorld(plotworld.worldname), x, 1, z);
 	}
@@ -211,10 +205,8 @@ public class DefaultPlotManager extends PlotManager {
 		int px = plotid.x;
 		int pz = plotid.y;
 
-		int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))
-				- ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-		int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))
-				- ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+		int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+		int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
 
 		return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
 	}
@@ -223,46 +215,26 @@ public class DefaultPlotManager extends PlotManager {
 	 * Clearing the plot needs to only consider removing the blocks - This
 	 * implementation has used the SetCuboid function, as it is fast, and uses
 	 * NMS code - It also makes use of the fact that deleting chunks is a lot
-	 * faster than block updates
-	 * 
-	 * This code is very messy, but you don't need to do something quite as
-	 * complex unless you happen to have 512x512 sized plots
+	 * faster than block updates This code is very messy, but you don't need to
+	 * do something quite as complex unless you happen to have 512x512 sized
+	 * plots
 	 */
 	@Override
 	public boolean clearPlot(Player player, Plot plot) {
 		World world = player.getWorld();
-		DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain
-				.getWorldSettings(world));
+		DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain.getWorldSettings(world));
 
-		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(
-				1, 0, 1);
+		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
 		final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
 
 		PlotBlock[] plotfloor = dpw.TOP_BLOCK;
 		PlotBlock[] filling = dpw.TOP_BLOCK;
 
 		if ((pos2.getBlockX() - pos1.getBlockX()) < 16) {
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, 1, pos2
-							.getBlockZ() + 1), new PlotBlock((short) 7,
-							(byte) 0));
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, world
-							.getMaxHeight() + 1, pos2.getBlockZ() + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(),
-					1, pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT,
-							pos2.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(),
-					dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world,
-					pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1,
-					pos2.getBlockZ() + 1), plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloor);
 			return true;
 		}
 		int startX = (pos1.getBlockX() / 16) * 16;
@@ -279,73 +251,45 @@ public class DefaultPlotManager extends PlotManager {
 		Location max = null;
 		for (int i = startX; i < chunkX; i += 16) {
 			for (int j = startZ; j < chunkZ; j += 16) {
-				Plot plot1 = PlotHelper.getCurrentPlot(new Location(world, i,
-						0, j));
-				if ((plot1 != null) && (plot1.getId() != plot.getId())
-						&& plot1.hasOwner()) {
+				Plot plot1 = PlotHelper.getCurrentPlot(new Location(world, i, 0, j));
+				if ((plot1 != null) && (plot1.getId() != plot.getId()) && plot1.hasOwner()) {
 					break;
 				}
-				Plot plot2 = PlotHelper.getCurrentPlot(new Location(world,
-						i + 15, 0, j));
-				if ((plot2 != null) && (plot2.getId() != plot.getId())
-						&& plot2.hasOwner()) {
+				Plot plot2 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j));
+				if ((plot2 != null) && (plot2.getId() != plot.getId()) && plot2.hasOwner()) {
 					break;
 				}
-				Plot plot3 = PlotHelper.getCurrentPlot(new Location(world,
-						i + 15, 0, j + 15));
-				if ((plot3 != null) && (plot3.getId() != plot.getId())
-						&& plot3.hasOwner()) {
+				Plot plot3 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j + 15));
+				if ((plot3 != null) && (plot3.getId() != plot.getId()) && plot3.hasOwner()) {
 					break;
 				}
-				Plot plot4 = PlotHelper.getCurrentPlot(new Location(world, i,
-						0, j + 15));
-				if ((plot4 != null) && (plot4.getId() != plot.getId())
-						&& plot4.hasOwner()) {
+				Plot plot4 = PlotHelper.getCurrentPlot(new Location(world, i, 0, j + 15));
+				if ((plot4 != null) && (plot4.getId() != plot.getId()) && plot4.hasOwner()) {
 					break;
 				}
-				Plot plot5 = PlotHelper.getCurrentPlot(new Location(world,
-						i + 15, 0, j + 15));
-				if ((plot5 != null) && (plot5.getId() != plot.getId())
-						&& plot5.hasOwner()) {
+				Plot plot5 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j + 15));
+				if ((plot5 != null) && (plot5.getId() != plot.getId()) && plot5.hasOwner()) {
 					break;
 				}
 				if (min == null) {
-					min = new Location(world, Math.max(i - 1, plotMinX), 0,
-							Math.max(j - 1, plotMinZ));
-					max = new Location(world, Math.min(i + 16, plotMaxX), 0,
-							Math.min(j + 16, plotMaxZ));
-				} else if ((max.getBlockZ() < (j + 15))
-						|| (max.getBlockX() < (i + 15))) {
-					max = new Location(world, Math.min(i + 16, plotMaxX), 0,
-							Math.min(j + 16, plotMaxZ));
+					min = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
+					max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
 				}
+				else
+					if ((max.getBlockZ() < (j + 15)) || (max.getBlockX() < (i + 15))) {
+						max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
+					}
 				world.regenerateChunk(i / 16, j / 16);
 			}
 		}
 
 		if (min == null) {
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, 1, pos2
-							.getBlockZ() + 1), new PlotBlock((short) 7,
-							(byte) 0));
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, world
-							.getMaxHeight() + 1, pos2.getBlockZ() + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(),
-					1, pos1.getBlockZ()),
-					new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT,
-							pos2.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(),
-					dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world,
-					pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1,
-					pos2.getBlockZ() + 1), plotfloor);
-		} else {
+			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloor);
+		}
+		else {
 
 			if (min.getBlockX() < plotMinX) {
 				min.setX(plotMinX);
@@ -360,161 +304,45 @@ public class DefaultPlotManager extends PlotManager {
 				max.setZ(plotMaxZ);
 			}
 
-			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, 0,
-					plotMinZ),
-					new Location(world, min.getBlockX() + 1, 1,
-							min.getBlockZ() + 1), new PlotBlock((short) 7,
-							(byte) 0));
-			PlotHelper
-					.setSimpleCuboid(
-							world,
-							new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1,
-									plotMinZ),
-							new Location(world, min.getBlockX() + 1, world
-									.getMaxHeight() + 1, min.getBlockZ() + 1),
-							new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, plotMinX, 1,
-					plotMinZ), new Location(world, min.getBlockX() + 1,
-					dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, plotMinX,
-					dpw.PLOT_HEIGHT, plotMinZ),
-					new Location(world, min.getBlockX() + 1,
-							dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1),
-					plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getBlockX() + 1, 1, min.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, plotMinZ), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, min.getBlockX(), 0, plotMinZ),
-					new Location(world, max.getBlockX() + 1, 1,
-							min.getBlockZ() + 1), new PlotBlock((short) 7,
-							(byte) 0));
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							plotMinZ), new Location(world, max.getBlockX() + 1,
-							world.getMaxHeight() + 1, min.getBlockZ() + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), 1,
-					plotMinZ), new Location(world, max.getBlockX() + 1,
-					dpw.PLOT_HEIGHT, min.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(),
-					dpw.PLOT_HEIGHT, plotMinZ),
-					new Location(world, max.getBlockX() + 1,
-							dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1),
-					plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, plotMinZ), new Location(world, max.getBlockX() + 1, 1, min.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getBlockX() + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), 1, plotMinZ), new Location(world, max.getBlockX() + 1, dpw.PLOT_HEIGHT, min.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, max.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), 0, plotMinZ),
-					new Location(world, plotMaxX + 1, 1, min.getBlockZ() + 1),
-					new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							plotMinZ),
-					new Location(world, plotMaxX + 1, world.getMaxHeight() + 1,
-							min.getBlockZ() + 1), new PlotBlock((short) 0,
-							(byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1,
-					plotMinZ), new Location(world, plotMaxX + 1,
-					dpw.PLOT_HEIGHT, min.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(),
-					dpw.PLOT_HEIGHT, plotMinZ), new Location(world,
-					plotMaxX + 1, dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1),
-					plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, min.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, min.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, min.getBlockZ() + 1), plotfloor);
 
-			PlotHelper
-					.setSimpleCuboid(
-							world,
-							new Location(world, plotMinX, 0, min.getBlockZ()),
-							new Location(world, min.getBlockX() + 1, 1, max
-									.getBlockZ() + 1), new PlotBlock((short) 7,
-									(byte) 0));
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, min
-							.getBlockZ()),
-					new Location(world, min.getBlockX() + 1, world
-							.getMaxHeight() + 1, max.getBlockZ() + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world,
-					new Location(world, plotMinX, 1, min.getBlockZ()),
-					new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT,
-							max.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, plotMinX,
-					dpw.PLOT_HEIGHT, min.getBlockZ()),
-					new Location(world, min.getBlockX() + 1,
-							dpw.PLOT_HEIGHT + 1, max.getBlockZ() + 1),
-					plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getBlockZ()), new Location(world, min.getBlockX() + 1, 1, max.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, max.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, 1, min.getBlockZ()), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT, max.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, min.getBlockZ()), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, max.getBlockZ() + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, 0,
-					max.getBlockZ()), new Location(world, min.getBlockX() + 1,
-					1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, max
-							.getBlockZ()),
-					new Location(world, min.getBlockX() + 1, world
-							.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock(
-							(short) 0, (byte) 0));
-			PlotHelper.setCuboid(world,
-					new Location(world, plotMinX, 1, max.getBlockZ()),
-					new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT,
-							plotMaxZ + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, plotMinX,
-					dpw.PLOT_HEIGHT, max.getBlockZ()),
-					new Location(world, min.getBlockX() + 1,
-							dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getBlockZ()), new Location(world, min.getBlockX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, min.getBlockX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, 1, max.getBlockZ()), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, min.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, min.getBlockX(), 0, max.getBlockZ()),
-					new Location(world, max.getBlockX() + 1, 1, plotMaxZ + 1),
-					new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(
-					world,
-					new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							max.getBlockZ()),
-					new Location(world, max.getBlockX() + 1, world
-							.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock(
-							(short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), 1,
-					max.getBlockZ()), new Location(world, max.getBlockX() + 1,
-					dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(),
-					dpw.PLOT_HEIGHT, max.getBlockZ()),
-					new Location(world, max.getBlockX() + 1,
-							dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, min.getBlockX(), 0, max.getBlockZ()), new Location(world, max.getBlockX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, max.getBlockX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), 1, max.getBlockZ()), new Location(world, max.getBlockX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, max.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), 0, min.getBlockZ()),
-					new Location(world, plotMaxX + 1, 1, max.getBlockZ() + 1),
-					new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							max.getBlockZ()), new Location(world, plotMaxX + 1,
-							world.getMaxHeight() + 1, plotMaxZ + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1,
-					min.getBlockZ()), new Location(world, plotMaxX + 1,
-					dpw.PLOT_HEIGHT, max.getBlockZ() + 1), filling);
-			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(),
-					dpw.PLOT_HEIGHT, min.getBlockZ()), new Location(world,
-					plotMaxX + 1, dpw.PLOT_HEIGHT + 1, max.getBlockZ() + 1),
-					plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX + 1, 1, max.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1, min.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, max.getBlockZ() + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, min.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, max.getBlockZ() + 1), plotfloor);
 
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), 0, max.getBlockZ()),
-					new Location(world, plotMaxX + 1, 1, plotMaxZ + 1),
-					new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(world,
-					new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1,
-							max.getBlockZ()), new Location(world, plotMaxX + 1,
-							world.getMaxHeight() + 1, plotMaxZ + 1),
-					new PlotBlock((short) 0, (byte) 0));
-			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1,
-					max.getBlockZ()), new Location(world, plotMaxX + 1,
-					dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-			PlotHelper
-					.setCuboid(world, new Location(world, max.getBlockX(),
-							dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(
-							world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1,
-							plotMaxZ + 1), plotfloor);
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, max.getBlockZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1, max.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1, max.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
+			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
 		}
 		return true;
 	}
@@ -526,25 +354,20 @@ public class DefaultPlotManager extends PlotManager {
 	public Location getSignLoc(Player player, PlotWorld plotworld, Plot plot) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
 		World world = player.getWorld();
-		return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id)
-				.getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(
-				world, plot.id).getBlockZ() - 1);
+		return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
 	}
 
 	@Override
-	public boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid,
-			PlotBlock[] blocks) {
+	public boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] blocks) {
 		World world = player.getWorld();
-		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1,
-				0, 1);
+		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
 		final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
 		PlotHelper.setCuboid(world, pos1, pos2, blocks);
 		return true;
 	}
 
 	@Override
-	public boolean setWall(Player player, PlotWorld plotworld, PlotId plotid,
-			PlotBlock plotblock) {
+	public boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
 		World w = player.getWorld();
 
@@ -629,30 +452,15 @@ public class DefaultPlotManager extends PlotManager {
 		int sz = pos1.getBlockZ() - 1;
 		int ez = pos2.getBlockZ() + 2;
 
-		PlotHelper
-				.setSimpleCuboid(
-						w,
-						new Location(w, sx, Math.min(dpw.WALL_HEIGHT,
-								dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w,
-								ex + 1, 257 + 1, ez), new PlotBlock((short) 0,
-								(byte) 0));
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), new PlotBlock((short) 0, (byte) 0));
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx, 1, sz + 1),
-				new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez),
-				dpw.WALL_FILLING);
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.WALL_HEIGHT + 1,
-				sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 2, ez),
-				dpw.WALL_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, ex, 1, sz + 1),
-				new Location(w, ex + 1, dpw.WALL_HEIGHT + 1, ez),
-				dpw.WALL_FILLING);
-		PlotHelper.setSimpleCuboid(w, new Location(w, ex, dpw.WALL_HEIGHT + 1,
-				sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 2, ez),
-				dpw.WALL_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, ex, 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
+		PlotHelper.setSimpleCuboid(w, new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1),
-				new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
 
 		return true;
 	}
@@ -670,30 +478,15 @@ public class DefaultPlotManager extends PlotManager {
 		int sx = pos1.getBlockX() - 1;
 		int ex = pos2.getBlockX() + 2;
 
-		PlotHelper
-				.setSimpleCuboid(
-						w,
-						new Location(w, sx, Math.min(dpw.WALL_HEIGHT,
-								dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w,
-								ex + 1, 257, ez), new PlotBlock((short) 0,
-								(byte) 0));
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz),
-				new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1),
-				dpw.WALL_FILLING);
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1,
-				dpw.WALL_HEIGHT + 1, sz), new Location(w, ex,
-				dpw.WALL_HEIGHT + 2, sz + 1), dpw.WALL_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), dpw.WALL_FILLING);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 2, sz + 1), dpw.WALL_BLOCK);
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, ez),
-				new Location(w, ex, dpw.WALL_HEIGHT + 1, ez + 1),
-				dpw.WALL_FILLING);
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1,
-				dpw.WALL_HEIGHT + 1, ez), new Location(w, ex,
-				dpw.WALL_HEIGHT + 2, ez + 1), dpw.WALL_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 1, ez + 1), dpw.WALL_FILLING);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 2, ez + 1), dpw.WALL_BLOCK);
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1),
-				new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
 
 		return true;
 	}
@@ -710,11 +503,8 @@ public class DefaultPlotManager extends PlotManager {
 		int sz = pos2.getBlockZ() + 1;
 		int ez = (sz + dpw.ROAD_WIDTH) - 1;
 
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.ROAD_HEIGHT + 1,
-				sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock(
-				(short) 0, (byte) 0));
-		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1),
-				new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.ROAD_HEIGHT + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
 
 		return true;
 	}
@@ -732,16 +522,9 @@ public class DefaultPlotManager extends PlotManager {
 		int sz = pos1.getBlockZ();
 		int ez = pos2.getBlockZ() + 1;
 
-		PlotHelper.setSimpleCuboid(w,
-				new Location(w, sx,
-						Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
-				new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0,
-						(byte) 0));
-		PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w,
-				ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
-		PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz),
-				new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1),
-				dpw.TOP_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
+		PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
+		PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
 
 		return true;
 	}
@@ -759,16 +542,9 @@ public class DefaultPlotManager extends PlotManager {
 		int sx = pos1.getBlockX();
 		int ex = pos2.getBlockX() + 1;
 
-		PlotHelper.setSimpleCuboid(w,
-				new Location(w, sx,
-						Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
-				new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0,
-						(byte) 0));
-		PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w,
-				ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
-		PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz),
-				new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1),
-				dpw.TOP_BLOCK);
+		PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
+		PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
+		PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
 
 		return true;
 	}
@@ -785,15 +561,10 @@ public class DefaultPlotManager extends PlotManager {
 		int sz = loc.getBlockZ() + 1;
 		int ez = (sz + dpw.ROAD_WIDTH) - 1;
 
-		PlotHelper.setSimpleCuboid(world, new Location(world, sx,
-				dpw.ROAD_HEIGHT + 1, sz), new Location(world, ex + 1, 257,
-				ez + 1), new PlotBlock((short) 0, (byte) 0));
+		PlotHelper.setSimpleCuboid(world, new Location(world, sx, dpw.ROAD_HEIGHT + 1, sz), new Location(world, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
 
-		PlotHelper.setCuboid(world, new Location(world, sx + 1, 1, sz + 1),
-				new Location(world, ex, dpw.ROAD_HEIGHT, ez), dpw.MAIN_BLOCK);
-		PlotHelper.setCuboid(world, new Location(world, sx + 1,
-				dpw.ROAD_HEIGHT, sz + 1), new Location(world, ex,
-				dpw.ROAD_HEIGHT + 1, ez), dpw.TOP_BLOCK);
+		PlotHelper.setCuboid(world, new Location(world, sx + 1, 1, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT, ez), dpw.MAIN_BLOCK);
+		PlotHelper.setCuboid(world, new Location(world, sx + 1, dpw.ROAD_HEIGHT, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.TOP_BLOCK);
 		return true;
 	}
 
@@ -802,8 +573,7 @@ public class DefaultPlotManager extends PlotManager {
 	 * (OPTIONAL)(UNFINISHED)
 	 */
 	@Override
-	public boolean finishPlotMerge(World world, PlotWorld plotworld,
-			ArrayList<PlotId> plotIds) {
+	public boolean finishPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
 
 		// TODO set plot wall
 
@@ -815,16 +585,12 @@ public class DefaultPlotManager extends PlotManager {
 		PlotBlock block = dpw.WALL_BLOCK;
 
 		Location megaPlotBot = PlotHelper.getPlotBottomLoc(world, pos1);
-		Location megaPlotTop = PlotHelper.getPlotTopLoc(world, pos2).add(1, 0,
-				1);
+		Location megaPlotTop = PlotHelper.getPlotTopLoc(world, pos2).add(1, 0, 1);
 		for (int x = megaPlotBot.getBlockX(); x <= megaPlotTop.getBlockX(); x++) {
 			for (int z = megaPlotBot.getBlockZ(); z <= megaPlotTop.getBlockZ(); z++) {
-				if ((z == megaPlotBot.getBlockZ())
-						|| (z == megaPlotTop.getBlockZ())
-						|| (x == megaPlotBot.getBlockX())
+				if ((z == megaPlotBot.getBlockZ()) || (z == megaPlotTop.getBlockZ()) || (x == megaPlotBot.getBlockX())
 						|| (x == megaPlotTop.getBlockX())) {
-					world.getBlockAt(x, dpw.WALL_HEIGHT + 1, z)
-							.setTypeIdAndData(block.id, block.data, false);
+					world.getBlockAt(x, dpw.WALL_HEIGHT + 1, z).setTypeIdAndData(block.id, block.data, false);
 				}
 			}
 		}

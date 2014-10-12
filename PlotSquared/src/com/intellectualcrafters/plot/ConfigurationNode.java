@@ -13,8 +13,8 @@ public class ConfigurationNode {
 	private Object value;
 	private SettingValue type;
 
-	public ConfigurationNode(String constant, Object default_value,
-			String description, SettingValue type, boolean required) {
+	public ConfigurationNode(String constant, Object default_value, String description, SettingValue type,
+			boolean required) {
 		this.constant = constant;
 		this.default_value = default_value;
 		this.description = description;
@@ -33,7 +33,8 @@ public class ConfigurationNode {
 				return false;
 			}
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}

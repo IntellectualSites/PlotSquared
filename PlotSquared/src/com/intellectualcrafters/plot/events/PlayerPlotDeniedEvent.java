@@ -28,8 +28,7 @@ public class PlayerPlotDeniedEvent extends Event {
 	 * @param player
 	 * @param added
 	 */
-	public PlayerPlotDeniedEvent(Player initiator, Plot plot, UUID player,
-			boolean added) {
+	public PlayerPlotDeniedEvent(Player initiator, Plot plot, UUID player, boolean added) {
 		this.initiator = initiator;
 		this.plot = plot;
 		this.added = added;

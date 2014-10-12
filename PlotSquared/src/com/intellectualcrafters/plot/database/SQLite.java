@@ -36,8 +36,7 @@ public class SQLite extends Database {
 	}
 
 	@Override
-	public Connection openConnection() throws SQLException,
-			ClassNotFoundException {
+	public Connection openConnection() throws SQLException, ClassNotFoundException {
 		if (checkConnection()) {
 			return this.connection;
 		}
@@ -48,15 +47,15 @@ public class SQLite extends Database {
 		if (!(file.exists())) {
 			try {
 				file.createNewFile();
-			} catch (IOException e) {
-				this.plugin.getLogger().log(Level.SEVERE,
-						"Unable to create database!");
+			}
+			catch (IOException e) {
+				this.plugin.getLogger().log(Level.SEVERE, "Unable to create database!");
 			}
 		}
 		Class.forName("org.sqlite.JDBC");
-		this.connection = DriverManager.getConnection("jdbc:sqlite:"
-				+ this.plugin.getDataFolder().toPath().toString() + "/"
-				+ this.dbLocation);
+		this.connection =
+				DriverManager.getConnection("jdbc:sqlite:" + this.plugin.getDataFolder().toPath().toString() + "/"
+						+ this.dbLocation);
 		return this.connection;
 	}
 
@@ -80,8 +79,7 @@ public class SQLite extends Database {
 	}
 
 	@Override
-	public ResultSet querySQL(String query) throws SQLException,
-			ClassNotFoundException {
+	public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
 		if (checkConnection()) {
 			openConnection();
 		}
@@ -94,8 +92,7 @@ public class SQLite extends Database {
 	}
 
 	@Override
-	public int updateSQL(String query) throws SQLException,
-			ClassNotFoundException {
+	public int updateSQL(String query) throws SQLException, ClassNotFoundException {
 		if (checkConnection()) {
 			openConnection();
 		}

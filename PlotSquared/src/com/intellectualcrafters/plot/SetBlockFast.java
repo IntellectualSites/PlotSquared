@@ -8,10 +8,8 @@ import com.intellectualcrafters.plot.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.ReflectionUtils.RefMethod;
 
 /**
- *
  * SetBlockFast class<br>
  * Used to do fast world editing
- *
  */
 public class SetBlockFast {
 
@@ -27,15 +25,12 @@ public class SetBlockFast {
 
 	public SetBlockFast() throws NoSuchMethodException {
 		methodGetHandle = classCraftWorld.getMethod("getHandle");
-		methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class,
-				int.class);
-		methodA = classChunk.getMethod("a", int.class, int.class, int.class,
-				classBlock, int.class);
+		methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
+		methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
 		methodGetById = classBlock.getMethod("getById", int.class);
 	}
 
-	public static boolean set(org.bukkit.World world, int x, int y, int z,
-			int blockId, byte data) throws NoSuchMethodException {
+	public static boolean set(org.bukkit.World world, int x, int y, int z, int blockId, byte data) throws NoSuchMethodException {
 
 		Object w = methodGetHandle.of(world).call();
 		Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
@@ -48,9 +43,8 @@ public class SetBlockFast {
 		int distance = Bukkit.getViewDistance() + 1;
 		for (int cx = -distance; cx < distance; cx++) {
 			for (int cz = -distance; cz < distance; cz++) {
-				player.getWorld().refreshChunk(
-						player.getLocation().getChunk().getX() + cx,
-						player.getLocation().getChunk().getZ() + cz);
+				player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ()
+						+ cz);
 			}
 		}
 	}

@@ -2,30 +2,31 @@ package com.intellectualcrafters.plot;
 
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are
- * permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this list of
- * conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list
- * of conditions and the following disclaimer in the documentation and/or other materials
- * provided with the distribution.
- *
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are those of the
- * authors and contributors and should not be interpreted as representing official policies,
- * either expressed or implied, of anybody else.
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and contributors and should not be interpreted as
+ * representing official policies, either expressed or implied, of anybody else.
  */
 
 import java.io.BufferedReader;
@@ -79,8 +80,7 @@ public class Metrics {
 	/**
 	 * All of the custom graphs to submit to metrics
 	 */
-	private final Set<Graph> graphs = Collections
-			.synchronizedSet(new HashSet<Graph>());
+	private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
 	/**
 	 * The plugin configuration file
 	 */
@@ -113,16 +113,14 @@ public class Metrics {
 		this.plugin = plugin;
 		// load the config
 		this.configurationFile = getConfigFile();
-		this.configuration = YamlConfiguration
-				.loadConfiguration(this.configurationFile);
+		this.configuration = YamlConfiguration.loadConfiguration(this.configurationFile);
 		// add some defaults
 		this.configuration.addDefault("opt-out", false);
 		this.configuration.addDefault("guid", UUID.randomUUID().toString());
 		this.configuration.addDefault("debug", false);
 		// Do we need to create the file?
 		if (this.configuration.get("guid", null) == null) {
-			this.configuration.options().header("http://mcstats.org")
-					.copyDefaults(true);
+			this.configuration.options().header("http://mcstats.org").copyDefaults(true);
 			this.configuration.save(this.configurationFile);
 		}
 		// Load the guid then
@@ -185,52 +183,50 @@ public class Metrics {
 				return true;
 			}
 			// Begin hitting the server with glorious data
-			this.task = this.plugin.getServer().getScheduler()
-					.runTaskTimerAsynchronously(this.plugin, new Runnable() {
-						private boolean firstPost = true;
+			this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
+				private boolean firstPost = true;
 
-						@Override
-						public void run() {
-							try {
-								// This has to be synchronized or it can collide
-								// with
-								// the disable method.
-								synchronized (Metrics.this.optOutLock) {
-									// Disable Task, if it is running and the
-									// server
-									// owner decided to opt-out
-									if (isOptOut()
-											&& (Metrics.this.task != null)) {
-										Metrics.this.task.cancel();
-										Metrics.this.task = null;
-										// Tell all plotters to stop gathering
-										// information.
-										for (Graph graph : Metrics.this.graphs) {
-											graph.onOptOut();
-										}
-									}
-								}
-								// We use the inverse of firstPost because if it
-								// is the
-								// first time we are posting,
-								// it is not a interval ping, so it evaluates to
-								// FALSE
-								// Each time thereafter it will evaluate to
-								// TRUE, i.e
-								// PING!
-								postPlugin(!this.firstPost);
-								// After the first post we set firstPost to
-								// false
-								// Each post thereafter will be a ping
-								this.firstPost = false;
-							} catch (IOException e) {
-								if (Metrics.this.debug) {
-									Bukkit.getLogger().log(Level.INFO,
-											"[Metrics] " + e.getMessage());
+				@Override
+				public void run() {
+					try {
+						// This has to be synchronized or it can collide
+						// with
+						// the disable method.
+						synchronized (Metrics.this.optOutLock) {
+							// Disable Task, if it is running and the
+							// server
+							// owner decided to opt-out
+							if (isOptOut() && (Metrics.this.task != null)) {
+								Metrics.this.task.cancel();
+								Metrics.this.task = null;
+								// Tell all plotters to stop gathering
+								// information.
+								for (Graph graph : Metrics.this.graphs) {
+									graph.onOptOut();
 								}
 							}
 						}
-					}, 0, PING_INTERVAL * 1200);
+						// We use the inverse of firstPost because if it
+						// is the
+						// first time we are posting,
+						// it is not a interval ping, so it evaluates to
+						// FALSE
+						// Each time thereafter it will evaluate to
+						// TRUE, i.e
+						// PING!
+						postPlugin(!this.firstPost);
+						// After the first post we set firstPost to
+						// false
+						// Each post thereafter will be a ping
+						this.firstPost = false;
+					}
+					catch (IOException e) {
+						if (Metrics.this.debug) {
+							Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
+						}
+					}
+				}
+			}, 0, PING_INTERVAL * 1200);
 			return true;
 		}
 	}
@@ -245,16 +241,16 @@ public class Metrics {
 			try {
 				// Reload the metrics file
 				this.configuration.load(getConfigFile());
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) {
 				if (this.debug) {
-					Bukkit.getLogger().log(Level.INFO,
-							"[Metrics] " + ex.getMessage());
+					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
 				return true;
-			} catch (InvalidConfigurationException ex) {
+			}
+			catch (InvalidConfigurationException ex) {
 				if (this.debug) {
-					Bukkit.getLogger().log(Level.INFO,
-							"[Metrics] " + ex.getMessage());
+					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
 				return true;
 			}
@@ -335,10 +331,10 @@ public class Metrics {
 		PluginDescriptionFile description = this.plugin.getDescription();
 		String pluginName = description.getName();
 		boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if
-																	// online
-																	// mode
-																	// is
-																	// enabled
+		// online
+		// mode
+		// is
+		// enabled
 		String pluginVersion = description.getVersion();
 		String serverVersion = Bukkit.getVersion();
 		int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
@@ -388,8 +384,7 @@ public class Metrics {
 					StringBuilder graphJson = new StringBuilder();
 					graphJson.append('{');
 					for (Plotter plotter : graph.getPlotters()) {
-						appendJSONPair(graphJson, plotter.getColumnName(),
-								Integer.toString(plotter.getValue()));
+						appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
 					}
 					graphJson.append('}');
 					if (!firstGraph) {
@@ -406,15 +401,15 @@ public class Metrics {
 		// close json
 		json.append('}');
 		// Create the url
-		URL url = new URL(BASE_URL
-				+ String.format(REPORT_URL, urlEncode(pluginName)));
+		URL url = new URL(BASE_URL + String.format(REPORT_URL, urlEncode(pluginName)));
 		// Connect to the website
 		URLConnection connection;
 		// Mineshafter creates a socks proxy, so we can safely bypass it
 		// It does not reroute POST requests so we need to go around it
 		if (isMineshafterPresent()) {
 			connection = url.openConnection(Proxy.NO_PROXY);
-		} else {
+		}
+		else {
 			connection = url.openConnection();
 		}
 		byte[] uncompressed = json.toString().getBytes();
@@ -423,40 +418,37 @@ public class Metrics {
 		connection.addRequestProperty("User-Agent", "MCStats/" + REVISION);
 		connection.addRequestProperty("Content-Type", "application/json");
 		connection.addRequestProperty("Content-Encoding", "gzip");
-		connection.addRequestProperty("Content-Length",
-				Integer.toString(compressed.length));
+		connection.addRequestProperty("Content-Length", Integer.toString(compressed.length));
 		connection.addRequestProperty("Accept", "application/json");
 		connection.addRequestProperty("Connection", "close");
 		connection.setDoOutput(true);
 		if (this.debug) {
-			System.out.println("[Metrics] Prepared request for " + pluginName
-					+ " uncompressed=" + uncompressed.length + " compressed="
-					+ compressed.length);
+			System.out.println("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length
+					+ " compressed=" + compressed.length);
 		}
 		// Write the data
 		OutputStream os = connection.getOutputStream();
 		os.write(compressed);
 		os.flush();
 		// Now read the response
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				connection.getInputStream()));
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		String response = reader.readLine();
 		// close resources
 		os.close();
 		reader.close();
-		if ((response == null) || response.startsWith("ERR")
-				|| response.startsWith("7")) {
+		if ((response == null) || response.startsWith("ERR") || response.startsWith("7")) {
 			if (response == null) {
 				response = "null";
-			} else if (response.startsWith("7")) {
-				response = response
-						.substring(response.startsWith("7,") ? 2 : 1);
 			}
+			else
+				if (response.startsWith("7")) {
+					response = response.substring(response.startsWith("7,") ? 2 : 1);
+				}
 			throw new IOException(response);
-		} else {
+		}
+		else {
 			// Is this the first update this hour?
-			if (response.equals("1")
-					|| response.contains("This is your first update this hour")) {
+			if (response.equals("1") || response.contains("This is your first update this hour")) {
 				synchronized (this.graphs) {
 					final Iterator<Graph> iter = this.graphs.iterator();
 					while (iter.hasNext()) {
@@ -482,13 +474,16 @@ public class Metrics {
 		try {
 			gzos = new GZIPOutputStream(baos);
 			gzos.write(input.getBytes("UTF-8"));
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (gzos != null) {
 				try {
 					gzos.close();
-				} catch (IOException ignore) {
+				}
+				catch (IOException ignore) {
 				}
 			}
 		}
@@ -505,7 +500,8 @@ public class Metrics {
 		try {
 			Class.forName("mineshafter.MineServer");
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
@@ -518,15 +514,15 @@ public class Metrics {
 	 * @param value
 	 * @throws UnsupportedEncodingException
 	 */
-	private static void appendJSONPair(StringBuilder json, String key,
-			String value) throws UnsupportedEncodingException {
+	private static void appendJSONPair(StringBuilder json, String key, String value) throws UnsupportedEncodingException {
 		boolean isValueNumeric = false;
 		try {
 			if (value.equals("0") || !value.endsWith("0")) {
 				Double.parseDouble(value);
 				isValueNumeric = true;
 			}
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			isValueNumeric = false;
 		}
 		if (json.charAt(json.length() - 1) != '{') {
@@ -536,7 +532,8 @@ public class Metrics {
 		json.append(':');
 		if (isValueNumeric) {
 			json.append(value);
-		} else {
+		}
+		else {
 			json.append(escapeJSON(value));
 		}
 	}
@@ -574,7 +571,8 @@ public class Metrics {
 				if (chr < ' ') {
 					String t = "000" + Integer.toHexString(chr);
 					builder.append("\\u" + t.substring(t.length() - 4));
-				} else {
+				}
+				else {
 					builder.append(chr);
 				}
 				break;
@@ -591,8 +589,7 @@ public class Metrics {
 	 *            the text to encode
 	 * @return the encoded text, as UTF-8
 	 */
-	private static String urlEncode(final String text)
-			throws UnsupportedEncodingException {
+	private static String urlEncode(final String text) throws UnsupportedEncodingException {
 		return URLEncoder.encode(text, "UTF-8");
 	}
 
@@ -738,8 +735,7 @@ public class Metrics {
 				return false;
 			}
 			final Plotter plotter = (Plotter) object;
-			return plotter.name.equals(this.name)
-					&& (plotter.getValue() == getValue());
+			return plotter.name.equals(this.name) && (plotter.getValue() == getValue());
 		}
 	}
 }

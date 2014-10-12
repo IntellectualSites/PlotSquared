@@ -15,9 +15,7 @@ import org.json.simple.parser.JSONParser;
 import com.google.common.collect.ImmutableList;
 
 /**
- *
  * @author
- *
  */
 public class NameFetcher implements Callable<Map<UUID, String>> {
 	private static final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
@@ -35,11 +33,10 @@ public class NameFetcher implements Callable<Map<UUID, String>> {
 			if (uuidStringMap.containsKey(uuid)) {
 				continue;
 			}
-			HttpURLConnection connection = (HttpURLConnection) new URL(
-					PROFILE_URL + uuid.toString().replace("-", ""))
-					.openConnection();
-			JSONObject response = (JSONObject) this.jsonParser
-					.parse(new InputStreamReader(connection.getInputStream()));
+			HttpURLConnection connection =
+					(HttpURLConnection) new URL(PROFILE_URL + uuid.toString().replace("-", "")).openConnection();
+			JSONObject response =
+					(JSONObject) this.jsonParser.parse(new InputStreamReader(connection.getInputStream()));
 			String name = (String) response.get("name");
 			if (name == null) {
 				continue;

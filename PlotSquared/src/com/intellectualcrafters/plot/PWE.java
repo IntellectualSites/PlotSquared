@@ -13,9 +13,7 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
 /**
- *
  * @author Citymonstret
- *
  */
 public class PWE {
 
@@ -24,7 +22,8 @@ public class PWE {
 			LocalSession s;
 			if (PlotMain.worldEdit == null) {
 				s = WorldEdit.getInstance().getSession(p.getName());
-			} else {
+			}
+			else {
 				s = PlotMain.worldEdit.getSession(p);
 			}
 
@@ -33,33 +32,29 @@ public class PWE {
 				Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
 				if (plot != null) {
 					boolean r;
-					r = (plot.getOwner() != null)
-							&& plot.getOwner().equals(p.getUniqueId())
-							|| plot.helpers.contains(DBFunc.everyone)
-							|| plot.helpers.contains(p.getUniqueId());
+					r =
+							(plot.getOwner() != null) && plot.getOwner().equals(p.getUniqueId())
+									|| plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId());
 					if (!r) {
 						if (p.hasPermission("plots.worldedit.bypass")) {
 							removeMask(p, s);
 							return;
 						}
-					} else {
+					}
+					else {
 
 						World w = p.getWorld();
 
 						Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
 						Location tloc = PlotHelper.getPlotTopLoc(w, plot.id);
 
-						Vector bvec = new Vector(bloc.getBlockX() + 1,
-								bloc.getBlockY() + 1, bloc.getBlockZ() + 1);
-						Vector tvec = new Vector(tloc.getBlockX(),
-								tloc.getBlockY(), tloc.getBlockZ());
+						Vector bvec = new Vector(bloc.getBlockX() + 1, bloc.getBlockY() + 1, bloc.getBlockZ() + 1);
+						Vector tvec = new Vector(tloc.getBlockX(), tloc.getBlockY(), tloc.getBlockZ());
 
-						LocalWorld lw = PlotMain.worldEdit.wrapPlayer(p)
-								.getWorld();
+						LocalWorld lw = PlotMain.worldEdit.wrapPlayer(p).getWorld();
 
 						CuboidRegion region = new CuboidRegion(lw, bvec, tvec);
-						com.sk89q.worldedit.masks.RegionMask mask = new com.sk89q.worldedit.masks.RegionMask(
-								region);
+						com.sk89q.worldedit.masks.RegionMask mask = new com.sk89q.worldedit.masks.RegionMask(region);
 
 						s.setMask(mask);
 						return;
@@ -70,10 +65,10 @@ public class PWE {
 				BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
 				Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
 
-				s.setMask(new com.sk89q.worldedit.masks.RegionMask(
-						new CuboidRegion(plr.getWorld(), p1, p2)));
+				s.setMask(new com.sk89q.worldedit.masks.RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// throw new
 			// PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY,
 			// "WorldEdit == Null?");
@@ -84,7 +79,8 @@ public class PWE {
 		try {
 			com.sk89q.worldedit.masks.Mask mask = s.getMask();
 			return mask == null;
-		} catch (Throwable e) {
+		}
+		catch (Throwable e) {
 			return true;
 		}
 	}
@@ -92,7 +88,8 @@ public class PWE {
 	public static void removeMask(Player p, LocalSession s) {
 		try {
 			s.setMask(null);
-		} catch (Throwable e) {
+		}
+		catch (Throwable e) {
 			com.sk89q.worldedit.masks.Mask mask = null;
 			s.setMask(mask);
 		}
@@ -103,11 +100,13 @@ public class PWE {
 			LocalSession s;
 			if (PlotMain.worldEdit == null) {
 				s = WorldEdit.getInstance().getSession(p.getName());
-			} else {
+			}
+			else {
 				s = PlotMain.worldEdit.getSession(p);
 			}
 			removeMask(p, s);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// throw new
 			// PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY,
 			// "WorldEdit == Null?");

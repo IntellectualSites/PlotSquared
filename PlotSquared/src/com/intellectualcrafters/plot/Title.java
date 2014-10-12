@@ -80,8 +80,7 @@ public class Title {
 	 * @param fadeOutTime
 	 *            Fade out time
 	 */
-	public Title(String title, String subtitle, int fadeInTime, int stayTime,
-			int fadeOutTime) {
+	public Title(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
 		this.title = title;
 		this.subtitle = subtitle;
 		this.fadeInTime = fadeInTime;
@@ -170,59 +169,44 @@ public class Title {
 	 *            Player
 	 */
 	public void send(Player player) {
-		if ((getProtocolVersion(player) >= 47) && isSpigot()
-				&& (this.packetTitle != null)) {
+		if ((getProtocolVersion(player) >= 47) && isSpigot() && (this.packetTitle != null)) {
 			// First reset previous settings
 			resetTitle(player);
 			try {
 				// Send timings first
 				Object handle = getHandle(player);
-				Object connection = getField(handle.getClass(),
-						"playerConnection").get(handle);
+				Object connection = getField(handle.getClass(), "playerConnection").get(handle);
 				Object[] actions = this.packetActions.getEnumConstants();
-				Method sendPacket = getMethod(connection.getClass(),
-						"sendPacket");
-				Object packet = this.packetTitle.getConstructor(
-						this.packetActions, Integer.TYPE, Integer.TYPE,
-						Integer.TYPE).newInstance(actions[2],
-						this.fadeInTime * (this.ticks ? 1 : 20),
-						this.stayTime * (this.ticks ? 1 : 20),
-						this.fadeOutTime * (this.ticks ? 1 : 20));
+				Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+				Object packet =
+						this.packetTitle.getConstructor(this.packetActions, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], this.fadeInTime
+								* (this.ticks ? 1 : 20), this.stayTime * (this.ticks ? 1 : 20), this.fadeOutTime
+								* (this.ticks ? 1 : 20));
 				// Send if set
-				if ((this.fadeInTime != -1) && (this.fadeOutTime != -1)
-						&& (this.stayTime != -1)) {
+				if ((this.fadeInTime != -1) && (this.fadeOutTime != -1) && (this.stayTime != -1)) {
 					sendPacket.invoke(connection, packet);
 				}
 
 				// Send title
-				Object serialized = getMethod(this.nmsChatSerializer, "a",
-						String.class).invoke(
-						null,
-						"{text:\""
-								+ ChatColor.translateAlternateColorCodes('&',
-										this.title) + "\",color:"
+				Object serialized =
+						getMethod(this.nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
+								+ ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:"
 								+ this.titleColor.name().toLowerCase() + "}");
-				packet = this.packetTitle.getConstructor(this.packetActions,
-						getNMSClass("IChatBaseComponent")).newInstance(
-						actions[0], serialized);
+				packet =
+						this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[0], serialized);
 				sendPacket.invoke(connection, packet);
 				if (!this.subtitle.equals("")) {
 					// Send subtitle if present
-					serialized = getMethod(this.nmsChatSerializer, "a",
-							String.class).invoke(
-							null,
-							"{text:\""
-									+ ChatColor.translateAlternateColorCodes(
-											'&', this.subtitle) + "\",color:"
-									+ this.subtitleColor.name().toLowerCase()
-									+ "}");
-					packet = this.packetTitle.getConstructor(
-							this.packetActions,
-							getNMSClass("IChatBaseComponent")).newInstance(
-							actions[1], serialized);
+					serialized =
+							getMethod(this.nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
+									+ ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:"
+									+ this.subtitleColor.name().toLowerCase() + "}");
+					packet =
+							this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[1], serialized);
 					sendPacket.invoke(connection, packet);
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -248,15 +232,13 @@ public class Title {
 			try {
 				// Send timings first
 				Object handle = getHandle(player);
-				Object connection = getField(handle.getClass(),
-						"playerConnection").get(handle);
+				Object connection = getField(handle.getClass(), "playerConnection").get(handle);
 				Object[] actions = this.packetActions.getEnumConstants();
-				Method sendPacket = getMethod(connection.getClass(),
-						"sendPacket");
-				Object packet = this.packetTitle.getConstructor(
-						this.packetActions).newInstance(actions[3]);
+				Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+				Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[3]);
 				sendPacket.invoke(connection, packet);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -273,15 +255,13 @@ public class Title {
 			try {
 				// Send timings first
 				Object handle = getHandle(player);
-				Object connection = getField(handle.getClass(),
-						"playerConnection").get(handle);
+				Object connection = getField(handle.getClass(), "playerConnection").get(handle);
 				Object[] actions = this.packetActions.getEnumConstants();
-				Method sendPacket = getMethod(connection.getClass(),
-						"sendPacket");
-				Object packet = this.packetTitle.getConstructor(
-						this.packetActions).newInstance(actions[4]);
+				Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+				Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[4]);
 				sendPacket.invoke(connection, packet);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -298,14 +278,13 @@ public class Title {
 		int version = 0;
 		try {
 			Object handle = getHandle(player);
-			Object connection = getField(handle.getClass(), "playerConnection")
-					.get(handle);
+			Object connection = getField(handle.getClass(), "playerConnection").get(handle);
 			Object networkManager = getValue("networkManager", connection);
-			version = (Integer) getMethod("getVersion",
-					networkManager.getClass()).invoke(networkManager);
+			version = (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
 
 			return version;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			// ex.printStackTrace(); <-- spammy console
 		}
 		return version;
@@ -330,7 +309,8 @@ public class Title {
 	private Class<?> getClass(String namespace) {
 		try {
 			return Class.forName(namespace);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
@@ -346,8 +326,7 @@ public class Title {
 	}
 
 	private Class<?> getPrimitiveType(Class<?> clazz) {
-		return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES
-				.get(clazz) : clazz;
+		return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
 	}
 
 	private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
@@ -374,14 +353,14 @@ public class Title {
 	private Object getHandle(Object obj) {
 		try {
 			return getMethod("getHandle", obj.getClass()).invoke(obj);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	private Method getMethod(String name, Class<?> clazz,
-			Class<?>... paramTypes) {
+	private Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
 		Class<?>[] t = toPrimitiveTypeArray(paramTypes);
 		for (Method m : clazz.getMethods()) {
 			Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
@@ -402,7 +381,8 @@ public class Title {
 		Class<?> clazz = null;
 		try {
 			clazz = Class.forName(fullName);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return clazz;
@@ -413,7 +393,8 @@ public class Title {
 			Field field = clazz.getDeclaredField(name);
 			field.setAccessible(true);
 			return field;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -421,9 +402,7 @@ public class Title {
 
 	private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
 		for (Method m : clazz.getMethods()) {
-			if (m.getName().equals(name)
-					&& ((args.length == 0) || ClassListEqual(args,
-							m.getParameterTypes()))) {
+			if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
 				m.setAccessible(true);
 				return m;
 			}

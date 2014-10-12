@@ -85,7 +85,8 @@ public class FlagManager {
 			String[] split = flagstrings.get(i).split(";");
 			if (split.length == 1) {
 				flags[i] = new Flag(getFlag(split[0], true), "");
-			} else {
+			}
+			else {
 				flags[i] = new Flag(getFlag(split[0], true), split[1]);
 			}
 		}
