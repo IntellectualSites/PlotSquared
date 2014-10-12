@@ -251,7 +251,7 @@ public class DBFunc {
 
 		}
 		else {
-			stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot` (" + "`id` INTEGER(11) PRIMARY KEY,"
+			stmt.addBatch("CREATE TABLE IF NOT EXISTS `plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL,"
 					+ "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL,"
 					+ "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
@@ -340,8 +340,7 @@ public class DBFunc {
 	public static int getId(String world, PlotId id2) {
 		PreparedStatement stmt = null;
 		try {
-			stmt =
-					connection.prepareStatement("SELECT `id` FROM `plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
+			stmt = connection.prepareStatement("SELECT `id` FROM `plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
 			stmt.setInt(1, id2.x);
 			stmt.setInt(2, id2.y);
 			stmt.setString(3, world);

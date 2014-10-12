@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotManager;
@@ -84,26 +85,26 @@ public class Unlink extends SubCommand {
 				boolean lx = x < pos2.x;
 				boolean ly = y < pos2.y;
 
-				new PlotId(x, y);
+				Plot p = PlotHelper.getPlot(world, new PlotId(x, y));
 
 				if (lx) {
-					manager.createRoadEast(plotworld, plot);
-
+					manager.createRoadEast(plotworld, p);
 					if (ly) {
-						manager.createRoadSouthEast(plotworld, plot);
+						manager.createRoadSouthEast(plotworld, p);
 					}
 
 				}
 
 				if (ly) {
-					manager.createRoadSouth(plotworld, plot);
+					manager.createRoadSouth(plotworld, p);
 				}
 
 			}
 		}
-
 		try {
-			SetBlockFast.update(plr);
+			if (PlotHelper.canSetFast) {
+				SetBlockFast.update(plr);
+			}
 		}
 		catch (Exception e) {
 

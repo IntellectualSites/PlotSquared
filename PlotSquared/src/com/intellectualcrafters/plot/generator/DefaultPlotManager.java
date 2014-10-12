@@ -448,8 +448,8 @@ public class DefaultPlotManager extends PlotManager {
 		Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
 		Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
-		int sx = pos2.getBlockX();
-		int ex = (sx + dpw.ROAD_WIDTH);
+		int sx = pos2.getBlockX() + 1;
+		int ex = (sx + dpw.ROAD_WIDTH) - 1;
 		int sz = pos1.getBlockZ() - 1;
 		int ez = pos2.getBlockZ() + 2;
 
@@ -474,8 +474,8 @@ public class DefaultPlotManager extends PlotManager {
 		Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
 		Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
-		int sz = pos2.getBlockZ();
-		int ez = (sz + dpw.ROAD_WIDTH);
+		int sz = pos2.getBlockZ() + 1;
+		int ez = (sz + dpw.ROAD_WIDTH) - 1;
 		int sx = pos1.getBlockX() - 1;
 		int ex = pos2.getBlockX() + 2;
 
@@ -518,8 +518,8 @@ public class DefaultPlotManager extends PlotManager {
 		Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
 		Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
-		int sx = pos2.getBlockX();
-		int ex = (sx + dpw.ROAD_WIDTH);
+		int sx = pos2.getBlockX() + 1;
+		int ex = (sx + dpw.ROAD_WIDTH) - 1;
 		int sz = pos1.getBlockZ();
 		int ez = pos2.getBlockZ() + 1;
 
@@ -538,8 +538,8 @@ public class DefaultPlotManager extends PlotManager {
 		Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
 		Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
 
-		int sz = pos2.getBlockZ();
-		int ez = (sz + dpw.ROAD_WIDTH);
+		int sz = pos2.getBlockZ() + 1;
+		int ez = (sz + dpw.ROAD_WIDTH) - 1;
 		int sx = pos1.getBlockX();
 		int ex = pos2.getBlockX() + 1;
 

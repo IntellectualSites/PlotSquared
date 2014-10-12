@@ -343,7 +343,7 @@ public class PlotHelper {
 		Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
 		PlotMain.updatePlot(p);
 		DBFunc.createPlot(p);
-		DBFunc.createPlotSettings(DBFunc.getId(w.getName(), p.id), p);
+		DBFunc.createPlotSettings(DBFunc.getId(w.getName(), plot.id), plot);
 		PlotWorld plotworld = PlotMain.getWorldSettings(w);
 		if (plotworld.AUTO_MERGE) {
 			autoMerge(w, p, player);
@@ -750,14 +750,14 @@ public class PlotHelper {
 			int x = bot.getBlockX() + (top.getBlockX() - bot.getBlockX());
 			int z = bot.getBlockZ() - 2;
 			int y = w.getHighestBlockYAt(x, z);
-			return new Location(w, x, y + 2, z);
+			return new Location(w, x, y, z);
 		}
 		else {
 
 			int x = top.getBlockX() - bot.getBlockX();
 			int z = top.getBlockZ() - bot.getBlockZ();
 			int y = w.getHighestBlockYAt(x, z);
-			return new Location(w, bot.getBlockX() + x/2, y + 2, bot.getBlockZ() + z/2);
+			return new Location(w, bot.getBlockX() + x/2, y, bot.getBlockZ() + z/2);
 		}
 	}
 
