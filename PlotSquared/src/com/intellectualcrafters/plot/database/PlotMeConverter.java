@@ -131,15 +131,38 @@ public class PlotMeConverter {
 									new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
 							com.intellectualcrafters.plot.Plot pl = null;
 							if (online) {
-								pl =
-										new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {
-												false, false, false, false });
+								pl = new com.intellectualcrafters.plot.Plot(
+										id, 
+										plot.getOwnerId(), 
+										plot.getBiome(), 
+										psAdded, psTrusted, 
+										psDenied, 
+										false, 
+										8000l, 
+										false, 
+										"", 
+										PlotHomePosition.DEFAULT, 
+										null, 
+										world.getName(), 
+										new boolean[] { false, false, false, false }); 
 							}
 							else {
 								String owner = plot.getOwner();
-								pl =
-										new com.intellectualcrafters.plot.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied, false, 8000l, false, "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] {
-												false, false, false, false });
+								pl = new com.intellectualcrafters.plot.Plot(
+										id, 
+										UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), 
+										plot.getBiome(), 
+										psAdded, 
+										psTrusted, 
+										psDenied, 
+										false, 
+										8000l, 
+										false, 
+										"", 
+										PlotHomePosition.DEFAULT, 
+										null, 
+										world.getName(), 
+										new boolean[] { false, false, false, false });
 							}
 
 							// TODO createPlot doesn't add helpers /

@@ -359,10 +359,11 @@ public class DefaultPlotManager extends PlotManager {
 
 	@Override
 	public boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] blocks) {
+		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
 		World world = player.getWorld();
 		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
 		final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
-		PlotHelper.setCuboid(world, pos1, pos2, blocks);
+		PlotHelper.setCuboid(world, new Location(world,pos1.getX(),dpw.PLOT_HEIGHT,pos1.getZ()), new Location(world,pos2.getX()+1,dpw.PLOT_HEIGHT+1,pos2.getZ()+1), blocks);
 		return true;
 	}
 
