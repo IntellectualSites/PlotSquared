@@ -103,7 +103,9 @@ public class PlotHelper {
 
 		for (int x = pos1.x; x <= pos2.x; x++) {
 			for (int y = pos1.y; y <= pos2.y; y++) {
-
+				
+				boolean changed = false;
+				
 				boolean lx = x < pos2.x;
 				boolean ly = y < pos2.y;
 
@@ -113,10 +115,12 @@ public class PlotHelper {
 				if (lx) {
 					if (ly) {
 						if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
+							changed = true;
 							manager.removeRoadSouthEast(plotworld, plot);
 						}
 					}
 					if (!plot.settings.getMerged(1)) {
+						changed = true;
 						Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x + 1, y));
 						mergePlot(world, plot, plot2);
 						plot.settings.setMerged(1, true);
@@ -125,13 +129,16 @@ public class PlotHelper {
 				}
 				if (ly) {
 					if (!plot.settings.getMerged(2)) {
+						changed = true;
 						Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x, y + 1));
 						mergePlot(world, plot, plot2);
 						plot.settings.setMerged(2, true);
 						plot2.settings.setMerged(0, true);
 					}
 				}
-
+				if (changed) {
+					DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+				}
 			}
 		}
 
@@ -340,8 +347,7 @@ public class PlotHelper {
 
 	public static boolean createPlot(Player player, Plot plot) {
 		World w = plot.getWorld();
-		Plot p =
-				new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
+		Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
 		PlotMain.updatePlot(p);
 		DBFunc.createPlot(p);
 		DBFunc.createPlotSettings(DBFunc.getId(w.getName(), p.id), p);
@@ -549,9 +555,11 @@ public class PlotHelper {
 		World world = requester.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-
 		manager.setWall(requester, plotworld, plot.id, block);
 		PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
+		if (canSetFast) {
+			SetBlockFast.update(requester);
+		}
 	}
 
 	public static void setFloor(final Player requester, final Plot plot, PlotBlock[] blocks) {
@@ -566,6 +574,9 @@ public class PlotHelper {
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
 		manager.setFloor(requester, plotworld, plot.id, blocks);
+		if (canSetFast) {
+			SetBlockFast.update(requester);
+		}
 	}
 
 	public static int square(int x) {
