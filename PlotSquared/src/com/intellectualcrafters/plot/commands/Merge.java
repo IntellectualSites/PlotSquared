@@ -102,19 +102,19 @@ public class Merge extends SubCommand {
 		switch (direction) {
 		case 0: // north = -y
 			plots =
-					PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+					PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
 			break;
 		case 1: // east = +x
 			plots =
-					PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+					PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
 			break;
 		case 2: // south = +y
 			plots =
-					PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+					PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
 			break;
 		case 3: // west = -x
 			plots =
-					PlayerFunctions.getPlotSelectionIds(plr.getWorld(), new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+					PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
 			break;
 		default:
 			return false;

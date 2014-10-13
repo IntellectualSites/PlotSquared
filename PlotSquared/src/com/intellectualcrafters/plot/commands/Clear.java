@@ -30,6 +30,10 @@ public class Clear extends SubCommand {
 			return false;
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+		if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+            PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
+            return false;
+        }
 		if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))
 				&& !plr.hasPermission("plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);

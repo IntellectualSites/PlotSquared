@@ -54,15 +54,36 @@ public class PlayerFunctions {
 	}
 
 	public static ArrayList<PlotId> getPlotSelectionIds(World world, PlotId pos1, PlotId pos2) {
-		ArrayList<PlotId> myplots = new ArrayList<PlotId>();
-		for (int x = pos1.x; x <= pos2.x; x++) {
-			for (int y = pos1.y; y <= pos2.y; y++) {
-				myplots.add(new PlotId(x, y));
-			}
-		}
-
-		return myplots;
-	}
+        ArrayList<PlotId> myplots = new ArrayList<PlotId>();
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                myplots.add(new PlotId(x, y));
+            }
+        }
+        return myplots;
+    }
+	
+	public static ArrayList<PlotId> getMaxPlotSelectionIds(World world, PlotId pos1, PlotId pos2) {
+	    
+	    Plot plot1 = PlotMain.getPlots(world).get(pos1);
+	    Plot plot2 = PlotMain.getPlots(world).get(pos2);
+	    
+	    if (plot1 != null) {
+            pos1 = getBottomPlot(world, plot1).id;
+        }
+	    
+	    if (plot2 != null) {
+            pos2 = getTopPlot(world, plot2).id;
+        }
+	    
+        ArrayList<PlotId> myplots = new ArrayList<PlotId>();
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                myplots.add(new PlotId(x, y));
+            }
+        }
+        return myplots;
+    }
 
 	public static Plot getBottomPlot(World world, Plot plot) {
 		if (plot.settings.getMerged(0)) {

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -22,6 +23,10 @@ public class Paste extends SubCommand {
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))
                 && !plr.hasPermission("plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
+        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+            PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }
         assert plot != null;
