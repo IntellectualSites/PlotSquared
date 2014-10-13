@@ -19,8 +19,8 @@ public enum C {
     /*
         Clipboard
      */
-    CLIPBOARD_SET("&cThe current plot is now copied, use &6/plot paste&c to pate it"),
-    PASTED("&cThe plot selection was successfully pasted"),
+    CLIPBOARD_SET("&cThe current plot is now copied to your clipboard, use &6/plot paste&c to paste it"),
+    PASTED("&cThe plot selection was successfully pasted. It has been cleared from your clipboard."),
     PASTE_FAILED("&cFailed to paste the selection. Reason: &c%s"),
     NO_CLIPBOARD("&cYou don't have a selection in your clipboard"),
     CLIPBOARD_INFO("&cCurrent Selection - Plot ID: &6%id&c, Width: &6%width&c, Total Blocks: &6%total&c"),
@@ -44,21 +44,21 @@ public enum C {
 	 */
 	SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
 	SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"),
-	SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: /plot setup cancel"),
+	SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: &6/plot setup cancel"),
 	SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
 	SETUP_FINISHED("&cFinished setup for world  &c%s.\n&4If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml"),
 	SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
 	SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup &l{world}&6 {generator}&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
 	SETUP_MISSING_GENERATOR("&cYou need to specify a generator (&6/p setup {world} &l{generator}&r&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
-	SETUP_INVALID_GENERATOR("&cIncalid generator. Possible options: %s"),
+	SETUP_INVALID_GENERATOR("&cInvalid generator. Possible options: %s"),
 	/*
 	 * Schematic Stuff
 	 */
 	SCHEMATIC_MISSING_ARG("&cYou need to specify an argument. Possible values: &6test {name}"),
 	SCHEMATIC_INVALID("&cThat is not a valid schematic. Reason: &c%s"),
-	SCHEMATIC_VALID("&cThat's a valid schematic"),
-	SCHEMATIC_PASTE_FAILED("&cFailed to paste schematic"),
-	SCHEMATIC_PASTE_SUCCESS("&cSchematic pasted successfully"),
+	SCHEMATIC_VALID("&cThat is a valid schematic"),
+	SCHEMATIC_PASTE_FAILED("&cFailed to paste the schematic"),
+	SCHEMATIC_PASTE_SUCCESS("&cThe schematic pasted successfully"),
 	/*
 	 * Title Stuff
 	 */
@@ -74,7 +74,7 @@ public enum C {
 	 * Core Stuff
 	 */
 	PREFIX("&c[&6&lPlot&c] "),
-	ENABLED("&6Plots are now enabled"),
+	ENABLED("&6PlotSquared is now enabled"),
 	EXAMPLE_MESSAGE("&cThis is an example message &k!!!"),
 	/*
 	 * Reload
@@ -89,7 +89,7 @@ public enum C {
 	 * Alias
 	 */
 	ALIAS_SET_TO("&cPlot alias set to &6%alias%"),
-	MISSING_ALIAS("&cYou need to specify the alias"),
+	MISSING_ALIAS("&cYou need to specify an alias"),
 	ALIAS_IS_TAKEN("&cThat alias is already taken"),
 	/*
 	 * Position
@@ -188,7 +188,7 @@ public enum C {
 	 * Info
 	 */
 	PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-	PLOT_INFO("plot ID: &6%id%&c, plot Alias: &6%alias%&c, plot Owner: &6%owner%&c, plot Biome: &6%biome%&c, plot Time: &6%time%&c, plot Weather: &6%weather%&c, plot Helpers:&6%helpers%&c, plot Trusted:&6%trusted%&c, plot Denied:&6%denied%&c, plot Rating: &6%rating%, &cplot flags: &6%flags%"),
+	PLOT_INFO("ID: &6%id%&c, Alias: &6%alias%&c, Owner: &6%owner%&c, Biome: &6%biome%&c, Time: &6%time%&c, Weather: &6%weather%&c, Helpers:&6%helpers%&c, Trusted:&6%trusted%&c, Denied:&6%denied%&c, Rating: &6%rating%&c, Flags: &6%flags%"),
 	PLOT_USER_LIST(" &6%user%&c,"),
 	/*
 	 * Generating
