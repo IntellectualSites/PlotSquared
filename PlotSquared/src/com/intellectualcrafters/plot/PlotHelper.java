@@ -53,6 +53,13 @@ public class PlotHelper {
 		return id;
 	}
 
+	/**
+	 * Merges all plots in the arraylist (with cost)
+	 * @param plr
+	 * @param world
+	 * @param plotIds
+	 * @return
+	 */
 	public static boolean mergePlots(Player plr, World world, ArrayList<PlotId> plotIds) {
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		if (PlotMain.useEconomy && plotworld.USE_ECONOMY) {
@@ -170,6 +177,9 @@ public class PlotHelper {
 		}
 	}
 
+	/*
+	 * Random number gen section
+	 */
 	public static final long nextLong() {
 		long a = state;
 		state = xorShift64(a);
@@ -198,6 +208,9 @@ public class PlotHelper {
 		Location loc = manager.getSignLoc(plr, plotworld, p);
 		loc.getBlock().setType(Material.AIR);
 	}
+	/*
+	 * End of random number gen section
+	 */
 
 	@SuppressWarnings("deprecation")
 	public static void setSign(Player plr, Plot p) {
@@ -217,6 +230,7 @@ public class PlotHelper {
 		sign.update(true);
 	}
 
+	
 	public static String getPlayerName(UUID uuid) {
 		if (uuid == null) {
 			return "unknown";
@@ -235,6 +249,11 @@ public class PlotHelper {
 		return string;
 	}
 
+	/**
+	 * Set a block quickly, attempts to use NMS if possible
+	 * @param block
+	 * @param plotblock
+	 */
 	public static void setBlock(Block block, PlotBlock plotblock) {
 
 		if (canSetFast) {
@@ -263,6 +282,12 @@ public class PlotHelper {
 		}
 	}
 
+	/**
+	 * Adjusts a plot wall
+	 * @param player
+	 * @param plot
+	 * @param block
+	 */
 	public static void adjustWall(Player player, Plot plot, PlotBlock block) {
 		World world = player.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
@@ -783,22 +808,49 @@ public class PlotHelper {
 		}
 	}
 
+	/**
+	 * Gets the top plot location of a plot (all plots are treated as small plots)
+	 *  - To get the top loc of a mega plot use getPlotTopLoc(...)
+	 * @param world
+	 * @param id
+	 * @return
+	 */
 	public static Location getPlotTopLocAbs(World world, PlotId id) {
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		PlotManager manager = PlotMain.getPlotManager(world);
 		return manager.getPlotTopLocAbs(plotworld, id);
 	}
 
+	   /**
+     * Gets the bottom plot location of a plot (all plots are treated as small plots)
+     *  - To get the top loc of a mega plot use getPlotBottomLoc(...)
+     * @param world
+     * @param id
+     * @return
+     */
 	public static Location getPlotBottomLocAbs(World world, PlotId id) {
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		PlotManager manager = PlotMain.getPlotManager(world);
 		return manager.getPlotBottomLocAbs(plotworld, id);
 	}
 
+	/**
+	 * Obtains the width of a plot (x width)
+	 * @param world
+	 * @param id
+	 * @return
+	 */
 	public static int getPlotWidth(World world, PlotId id) {
 		return getPlotTopLoc(world, id).getBlockX() - getPlotBottomLoc(world, id).getBlockX();
 	}
 
+	/**
+	 * Gets the top loc of a plot (if mega, returns top loc of that mega plot)
+	 *  - If you would like each plot treated as a small plot use getPlotTopLocAbs(...)
+	 * @param world
+	 * @param id
+	 * @return
+	 */
 	public static Location getPlotTopLoc(World world, PlotId id) {
 		Plot plot = PlotMain.getPlots(world).get(id);
 		if (plot != null) {
@@ -809,6 +861,13 @@ public class PlotHelper {
 		return manager.getPlotTopLocAbs(plotworld, id);
 	}
 
+	   /**
+     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega plot)
+     *  - If you would like each plot treated as a small plot use getPlotBottomLocAbs(...)
+     * @param world
+     * @param id
+     * @return
+     */
 	public static Location getPlotBottomLoc(World world, PlotId id) {
 		Plot plot = PlotMain.getPlots(world).get(id);
 		if (plot != null) {
@@ -819,6 +878,12 @@ public class PlotHelper {
 		return manager.getPlotBottomLocAbs(plotworld, id);
 	}
 
+	/**
+	 * Fetches the plot from the main class
+	 * @param world
+	 * @param id
+	 * @return
+	 */
 	public static Plot getPlot(World world, PlotId id) {
 		if (id == null) {
 			return null;
@@ -829,6 +894,11 @@ public class PlotHelper {
 		return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
 	}
 
+	/**
+	 * Returns the plot at a given location
+	 * @param loc
+	 * @return
+	 */
 	public static Plot getCurrentPlot(Location loc) {
 		PlotId id = PlayerFunctions.getPlot(loc);
 		if (id == null) {

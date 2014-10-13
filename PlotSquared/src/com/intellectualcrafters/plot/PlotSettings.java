@@ -73,6 +73,9 @@ public class PlotSettings {
 		return this.merged[direction];
 	}
 
+	/**
+	 * Returns true if the plot is merged (i.e. if it's a mega plot)
+	 */
 	public boolean isMerged() {
 		return (this.merged[0] || this.merged[1] || this.merged[2] || this.merged[3]);
 	}

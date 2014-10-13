@@ -106,6 +106,7 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
 	 * @param loc
 	 * @return
 	 */
@@ -119,6 +120,11 @@ public class PlayerFunctions {
 		return manager.getPlotIdAbs(plotworld, loc);
 	}
 
+	/**
+	 * Returns the plot id at a location (mega plots are considered)
+	 * @param loc
+	 * @return
+	 */
 	public static PlotId getPlot(Location loc) {
 		String world = loc.getWorld().getName();
 		PlotManager manager = PlotMain.getPlotManager(world);
@@ -130,6 +136,7 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Sets the weather for a player, given the current plot settings
 	 * @param player
 	 * @param plot
 	 */
@@ -138,6 +145,7 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Sets the time for a player, given the current plot settings
 	 * @param player
 	 * @param plot
 	 */
@@ -146,6 +154,7 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Returns the plot a player is currently in.
 	 * @param player
 	 * @return
 	 */
@@ -169,23 +178,21 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Updates a given plot with another instance
 	 * @deprecated
 	 * @param id
 	 * @param plot
 	 */
 	@Deprecated
-	public static void set(Integer[] id, Plot plot) {
+	public static void set(Plot plot) {
 		PlotMain.updatePlot(plot);
 	}
 
 	/**
+	 * Get the plots for a player
 	 * @param plr
 	 * @return
 	 */
-	// public static Set<Plot> getPlayerPlots(Player plr) {
-	// return PlotMain.getPlots(plr);
-	// }
-	//
 	public static Set<Plot> getPlayerPlots(World world, Player plr) {
 		Set<Plot> p = PlotMain.getPlots(world, plr);
 		if (p == null) {
@@ -195,18 +202,16 @@ public class PlayerFunctions {
 	}
 
 	/**
+	 * Get the number of plots for a player
 	 * @param plr
 	 * @return
 	 */
-	// public static int getPlayerPlotCount(Player plr) {
-	// return getPlayerPlots(plr).size();
-	// }
-	//
 	public static int getPlayerPlotCount(World world, Player plr) {
 		return getPlayerPlots(world, plr).size();
 	}
 
 	/**
+	 * Get the maximum number of plots a player is allowed
 	 * @param p
 	 * @return
 	 */
