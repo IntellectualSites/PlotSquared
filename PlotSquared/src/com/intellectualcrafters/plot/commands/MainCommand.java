@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class MainCommand implements CommandExecutor {
 
-	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Auto(), new Home(), new Visit(),
+	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(),
 			new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(),
 			new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(),
 			new Reload(), new Merge(), new Unlink(), new Kick(), new Setup() };

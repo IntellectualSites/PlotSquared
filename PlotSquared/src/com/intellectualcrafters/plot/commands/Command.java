@@ -33,6 +33,7 @@ public enum Command {
 	 *
 	 */
     PASTE("paste"),
+    CLIPBOARD("clipboard", "cboard"),
 	COPY("copy"),
 	/**
 	 *

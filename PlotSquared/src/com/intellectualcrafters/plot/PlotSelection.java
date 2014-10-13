@@ -17,8 +17,11 @@ public class PlotSelection {
 
     private int width;
 
+    private Plot plot;
+
     public PlotSelection(int width, World world, Plot plot) {
         this.width = width;
+        this.plot = plot;
 
         plotBlocks = new PlotBlock[(width * width) * (world.getMaxHeight() - 1)];
 
@@ -55,6 +58,10 @@ public class PlotSelection {
 
     public int getWidth() {
         return width;
+    }
+
+    public Plot getPlot() {
+        return plot;
     }
 
     public void paste(World world, Plot plot) {

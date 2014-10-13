@@ -23,6 +23,7 @@ public enum C {
     PASTED("&cThe plot selection was successfully pasted"),
     PASTE_FAILED("&cFailed to paste the selection. Reason: &c%s"),
     NO_CLIPBOARD("&cYou don't have a selection in your clipboard"),
+    CLIPBOARD_INFO("&Current Clipboard - Plot ID: &6%id&c, Width: &6%width&c, Total Blocks: &6%total&c"),
 	/*
 	 * Ratings
 	 */
