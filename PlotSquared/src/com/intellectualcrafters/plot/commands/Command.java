@@ -16,10 +16,6 @@ package com.intellectualcrafters.plot.commands;
 public enum Command {
 
 	// TODO new commands
-	// (allow a plot to be transferred from one plot to another of the same
-	// size)
-	// - /plot copy
-	// - /plot paste
 	// (economy)
 	// - /plot buy
 	// - /plot sell <value>
