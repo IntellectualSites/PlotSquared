@@ -8,42 +8,7 @@
 
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import me.confuser.barapi.BarAPI;
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -60,13 +25,38 @@ import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
+import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
+import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import me.confuser.barapi.BarAPI;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @awesome @author Citymonstret, Empire92 PlotMain class.
  */
 public class PlotMain extends JavaPlugin {
+
+    private static UUIDSaver uuidSaver;
 
 	/**
 	 * settings.properties
@@ -162,7 +152,7 @@ public class PlotMain extends JavaPlugin {
 	 * - checks for '*' nodes
 	 * 
 	 * @param player
-	 * @param perm
+	 * @param perms
 	 * @return
 	 */
 	public static boolean hasPermissions(Player player, String[] perms) {
@@ -192,6 +182,14 @@ public class PlotMain extends JavaPlugin {
 
 		return true;
 	}
+
+    public static void setUUIDSaver(UUIDSaver saver) {
+        uuidSaver = saver;
+    }
+
+    public static UUIDSaver getUUIDSaver() {
+        return uuidSaver;
+    }
 
 	/**
 	 * Check a player for a permission<br>
@@ -684,6 +682,7 @@ public class PlotMain extends JavaPlugin {
         //Setup version + downloads, will not be updated... maybe setup runnable? TODO Let jesse decide...
         com.intellectualcrafters.plot.commands.plugin.setup(this);
 
+        setUUIDSaver(new PlotUUIDSaver());
 		UUIDHandler.startFetch(this);
 	}
 

@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
+import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -223,4 +224,12 @@ public class UUIDHandler {
 		add(name, uuid);
 		return uuid;
 	}
+
+
+    /* Save UUIDS */
+    public static void handleSaving() {
+        UUIDSaver saver = PlotMain.getUUIDSaver();
+        // Should it save per UUIDSet or all of them? TODO: Let Jesse decide xD
+        saver.globalSave(getUuidMap());
+    }
 }
