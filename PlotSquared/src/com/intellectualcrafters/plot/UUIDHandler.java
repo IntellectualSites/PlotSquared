@@ -9,7 +9,6 @@ import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -54,43 +53,6 @@ public class UUIDHandler {
 		uuidMap.put(name, uuid);
 	}
 
-	/**
-	 * @param plugin
-	 */
-	public static void startFetch(JavaPlugin plugin) {
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-			@Override
-			public void run() {
-				OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
-				int length = offlinePlayers.length;
-				long start = System.currentTimeMillis();
-
-				String name;
-				UUID uuid;
-				for (OfflinePlayer player : offlinePlayers) {
-					uuid = player.getUniqueId();
-					if (!uuidExists(uuid)) {
-						name = player.getName();
-						add(name, uuid);
-					}
-				}
-
-				long time = System.currentTimeMillis() - start;
-                int size = uuidMap.size();
-                double ups;
-                if(time == 0l || size == 0) {
-                    ups = size;
-                } else {
-                    ups = size / time;
-                }
-
-                //Plot Squared Only...
-				PlotMain.sendConsoleSenderMessage("&cFinished caching of offline player UUIDs! Took &6" + time + "&cms (&6" + ups + "&c per millisecond), &6"
-						+ length + " &cUUIDs were cached" + " and there is now a grand total of &6" + size
-						+ " &ccached.");
-			}
-		});
-	}
 
 	/**
 	 * @param name

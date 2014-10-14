@@ -10,7 +10,7 @@ database: false
 commands:
   plots:
     description: PlotMain PlotSquared command.
-    aliases: [p,plotme,plot]
+    aliases: [p,plotme,plot,ps]
     permission: plots.use
 permissions:
   plots.use:

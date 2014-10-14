@@ -502,18 +502,22 @@ public class PlotMain extends JavaPlugin {
 	@Override
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
+        // Init the logger
 		setupLogger();
 
 		// Check for outdated java version.
 		if (getJavaVersion() < 1.7) {
 			sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            // Didn't know of any other link :D
 			sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 
+        // Setup configurations
 		configs();
 
+        // Setup metrics
 		if (Settings.METRICS) {
 			try {
 				Metrics metrics = new Metrics(this);
@@ -525,13 +529,17 @@ public class PlotMain extends JavaPlugin {
 			}
 		}
 
+        // Kill mobs on roads?
 		if (Settings.KILL_ROAD_MOBS) {
 			killAllEntities();
 		}
 
+        // Enabled<3
 		if (C.ENABLED.s().length() > 0) {
 			Broadcast(C.ENABLED);
 		}
+
+        // Use mysql?
 		if (Settings.DB.USE_MYSQL) {
 			try {
 				mySQL =
@@ -568,10 +576,12 @@ public class PlotMain extends JavaPlugin {
 			plots = DBFunc.getPlots();
 
 		}
+        // TODO: Implement mongo
 		else
 			if (Settings.DB.USE_MONGO) {
 				sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
 			}
+            // Use Sqlite :D<3
 			else
 				if (Settings.DB.USE_SQLITE) {
 					try {
@@ -626,6 +636,7 @@ public class PlotMain extends JavaPlugin {
 		getCommand("plots").setAliases(new ArrayList<String>() {
 			{
 				add("p");
+                add("ps");
 				add("plotme");
 				add("plot");
 			}
@@ -683,7 +694,8 @@ public class PlotMain extends JavaPlugin {
         com.intellectualcrafters.plot.commands.plugin.setup(this);
 
         setUUIDSaver(new PlotUUIDSaver());
-		UUIDHandler.startFetch(this);
+		getUUIDSaver().globalPopulate();
+		//UUIDHandler.startFetch(this);
 	}
 
 	/**
