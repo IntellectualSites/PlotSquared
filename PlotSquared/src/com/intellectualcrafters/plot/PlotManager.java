@@ -62,5 +62,7 @@ public abstract class PlotManager {
 	public abstract boolean removeRoadSouthEast(PlotWorld plotworld, Plot plot);
 
 	public abstract boolean finishPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds);
+	
+	public abstract boolean finishPlotUnlink(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds);
 
 }

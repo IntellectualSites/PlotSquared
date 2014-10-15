@@ -109,6 +109,8 @@ public class Unlink extends SubCommand {
 		catch (Exception e) {
 
 		}
+		
+		manager.finishPlotUnlink(world, plotworld, ids);
 
 		PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
 		return true;

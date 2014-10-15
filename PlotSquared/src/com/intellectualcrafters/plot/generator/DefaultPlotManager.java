@@ -597,4 +597,9 @@ public class DefaultPlotManager extends PlotManager {
 		}
 		return true;
 	}
+
+    @Override
+    public boolean finishPlotUnlink(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        return true;
+    }
 }

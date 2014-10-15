@@ -43,8 +43,7 @@ public class SetBlockFast {
 		int distance = Bukkit.getViewDistance() + 1;
 		for (int cx = -distance; cx < distance; cx++) {
 			for (int cz = -distance; cz < distance; cz++) {
-				player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ()
-						+ cz);
+				player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
 			}
 		}
 	}
