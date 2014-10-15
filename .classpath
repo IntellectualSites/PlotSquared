@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/bukkit-1.7.9-R0.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/Vault-1.4.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/worldguard-6.0.0-beta-02.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/PlotMe.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/WorldEdit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
