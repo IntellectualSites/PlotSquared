@@ -33,24 +33,25 @@ public class SchematicHandler {
 		    
 		    DataCollection[] blocks = schematic.getBlockCollection();
 		    
+		    
+		    
 		    Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
-            int sx = l1.getBlockX() + 1;
-            int sz = l1.getBlockZ() + 1;
-            int sy = location.getWorld().getHighestBlockYAt(sx, sz);
-            
-            l1 = l1.add(sx,sy + 1,sz);
+		    
+		    int sy = location.getWorld().getHighestBlockYAt(l1.getBlockX()+1, l1.getBlockZ()+1);
+		    
+		    l1 = l1.add(1, sy-1, 1);
 		    
             World world = location.getWorld();
             
-		    for (int x = 0; x < WIDTH; ++x) {
-	            for (int z = 0; z < LENGTH; ++z) {
+		    for (int x = 0; x < WIDTH; x++) {
+	            for (int z = 0; z < LENGTH; z++) {
 	                for (int y = 0; y < HEIGHT; y++) {
 	                    int index = y * WIDTH * LENGTH + z * WIDTH + x;
 	                    
 	                    short id = blocks[index].getBlock();
 	                    byte data = blocks[index].getData();
 	                    
-	                    Block block = world.getBlockAt(l1.add(x,y,z));
+	                    Block block = world.getBlockAt(l1.getBlockX()+x, l1.getBlockY()+y, l1.getBlockZ()+z);
 	                    
 	                    PlotBlock plotblock = new PlotBlock(id, data);
 	                    
