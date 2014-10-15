@@ -1,12 +1,11 @@
 package com.intellectualcrafters.plot;
 
-import com.sk89q.jnbt.*;
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.intellectualcrafters.jnbt.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,22 +18,46 @@ import java.util.zip.GZIPInputStream;
  */
 public class SchematicHandler {
 
-	@SuppressWarnings("deprecation")
 	public boolean paste(Location location, Schematic schematic, Plot plot) {
 		if (schematic == null) {
 			PlotMain.sendConsoleSenderMessage("Schematic == null :|");
 			return false;
 		}
 		try {
-			EditSession session = new EditSession(new BukkitWorld(location.getWorld()), 999999999);
-			CuboidClipboard clipboard = CuboidClipboard.loadSchematic(schematic.getFile());
-			Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
-			PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
-			int x = l1.getBlockX() + 1;
-			int z = l1.getBlockZ() + 1;
-			int y = location.getWorld().getHighestBlockYAt(x, z);
-			Vector v1 = new Vector(x, y + 1, z);
-			clipboard.paste(session, v1, true);
+		    
+		    Dimension demensions = schematic.getSchematicDimension();
+	        
+		    int WIDTH = demensions.getX();
+	        int LENGTH = demensions.getZ();
+	        int HEIGHT = demensions.getY();
+		    
+		    DataCollection[] blocks = schematic.getBlockCollection();
+		    
+		    Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
+            int sx = l1.getBlockX() + 1;
+            int sz = l1.getBlockZ() + 1;
+            int sy = location.getWorld().getHighestBlockYAt(sx, sz);
+            
+            l1 = l1.add(sx,sy + 1,sz);
+		    
+            World world = location.getWorld();
+            
+		    for (int x = 0; x < WIDTH; ++x) {
+	            for (int z = 0; z < LENGTH; ++z) {
+	                for (int y = 0; y < HEIGHT; y++) {
+	                    int index = y * WIDTH * LENGTH + z * WIDTH + x;
+	                    
+	                    short id = blocks[index].getBlock();
+	                    byte data = blocks[index].getData();
+	                    
+	                    Block block = world.getBlockAt(l1.add(x,y,z));
+	                    
+	                    PlotBlock plotblock = new PlotBlock(id, data);
+	                    
+	                    PlotHelper.setBlock(block, plotblock);
+	                }
+	            }
+            }
 		}
 		catch (Exception e) {
 			return false;
