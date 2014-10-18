@@ -10,7 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -37,10 +38,10 @@
       <file leaf-file-name="PlotMain.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="20017" max-vertical-offset="20553">
-              <caret line="1258" column="55" selection-start-line="1258" selection-start-column="55" selection-end-line="1258" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="19934" max-vertical-offset="20655">
+              <caret line="1256" column="55" selection-start-line="1256" selection-start-column="55" selection-end-line="1256" selection-end-column="55" />
               <folding>
-                <element signature="e#0#36822#0" expanded="true" />
+                <element signature="e#0#37010#0" expanded="true" />
                 <element signature="e#3711#3804#0" expanded="true" />
                 <element signature="e#3799#3800#0" expanded="true" />
                 <element signature="e#5178#5179#0" expanded="true" />
@@ -66,10 +67,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbstractFlag.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="AbstractFlag.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5707071" vertical-offset="97" max-vertical-offset="765">
+            <state vertical-scroll-proportion="0.0" vertical-offset="97" max-vertical-offset="765">
               <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
               <folding />
             </state>
@@ -116,11 +117,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayerEvents.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="PlayerEvents.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="8442" max-vertical-offset="14535">
-              <caret line="517" column="0" selection-start-line="517" selection-start-column="0" selection-end-line="521" selection-end-column="51" />
+            <state vertical-scroll-proportion="0.3089431" vertical-offset="2020" max-vertical-offset="14858">
+              <caret line="146" column="34" selection-start-line="146" selection-start-column="34" selection-end-line="146" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1751#1752#0" expanded="true" />
@@ -217,9 +218,9 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/plugin.yml" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotWorld.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
       </list>
     </option>
   </component>
@@ -764,7 +765,7 @@
       <workItem from="1413065609242" duration="214000" />
       <workItem from="1413065904473" duration="9265000" />
       <workItem from="1413125251335" duration="4054000" />
-      <workItem from="1413221404445" duration="13605000" />
+      <workItem from="1413221404445" duration="17302000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -930,11 +931,15 @@
       <created>1413622665156</created>
       <updated>1413622665156</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Flags :D">
+      <created>1413627152131</created>
+      <updated>1413627152131</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92176000" />
+    <option name="totallyTimeSpent" value="95873000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -971,7 +976,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2072072" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32882884" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32882884" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32732734" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2072072" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1447,24 +1452,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8442" max-vertical-offset="14535">
-          <caret line="517" column="0" selection-start-line="517" selection-start-column="0" selection-end-line="521" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1751#1752#0" expanded="true" />
-            <element signature="e#1806#1807#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="290" max-vertical-offset="1870">
+          <caret line="27" column="31" selection-start-line="27" selection-start-column="31" selection-end-line="27" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="97" max-vertical-offset="765">
+          <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="20017" max-vertical-offset="20553">
-          <caret line="1258" column="55" selection-start-line="1258" selection-start-column="55" selection-end-line="1258" selection-end-column="55" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="19934" max-vertical-offset="20655">
+          <caret line="1256" column="55" selection-start-line="1256" selection-start-column="55" selection-end-line="1256" selection-end-column="55" />
           <folding>
-            <element signature="e#0#36822#0" expanded="true" />
+            <element signature="e#0#37010#0" expanded="true" />
             <element signature="e#3711#3804#0" expanded="true" />
             <element signature="e#3799#3800#0" expanded="true" />
             <element signature="e#5178#5179#0" expanded="true" />
@@ -1479,19 +1488,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java">
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="290" max-vertical-offset="1870">
-          <caret line="27" column="31" selection-start-line="27" selection-start-column="31" selection-end-line="27" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5707071" vertical-offset="97" max-vertical-offset="765">
-          <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
-          <folding />
+        <state vertical-scroll-proportion="0.3089431" vertical-offset="2020" max-vertical-offset="14858">
+          <caret line="146" column="34" selection-start-line="146" selection-start-column="34" selection-end-line="146" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1751#1752#0" expanded="true" />
+            <element signature="e#1806#1807#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

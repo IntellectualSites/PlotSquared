@@ -135,8 +135,27 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
+    private GameMode getGameMode(String str) {
+        str = str.toLowerCase();
+        List<String> creative   = Arrays.asList("creative" , "cr", "1");
+        List<String> survival   = Arrays.asList("survival" , "su", "0");
+        List<String> adventure  = Arrays.asList("adventure", "ad", "2");
+        if (creative.equals(str)) {
+            return GameMode.CREATIVE;
+        } else if (survival.equals(str)) {
+            return GameMode.SURVIVAL;
+        } else if (adventure.equals(str)) {
+            return GameMode.ADVENTURE;
+        } else {
+            return GameMode.SURVIVAL;
+        }
+    }
+
 	public void plotEntry(Player player, Plot plot) {
 		if (plot.hasOwner()) {
+            if(plot.settings.getFlag("gamemode") != null) {
+                player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
+            }
 			if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
 				String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
 				String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));

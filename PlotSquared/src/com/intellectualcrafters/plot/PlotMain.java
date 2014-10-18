@@ -1250,6 +1250,12 @@ public class PlotMain extends JavaPlugin {
         for(String str : materialFlags.values()) {
             FlagManager.addFlag(new AbstractFlag(str));
         }
+        List<String> otherFlags = Arrays.asList(
+            "gamemode"
+        );
+        for(String str : otherFlags) {
+            FlagManager.addFlag(new AbstractFlag(str));
+        }
     }
 
 	public static void addPlotWorld(String world, PlotWorld plotworld, PlotManager manager) {
