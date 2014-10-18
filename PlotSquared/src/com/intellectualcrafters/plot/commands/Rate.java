@@ -17,7 +17,7 @@ public class Rate extends SubCommand {
 	 */
 
 	public Rate() {
-		super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS);
+		super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

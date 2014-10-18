@@ -86,6 +86,10 @@ public enum Command {
 	/**
 	 *
 	 */
+	PURGE("purge"),
+	/**
+	 *
+	 */
 	SETUP("setup"),
 	/**
 	 *

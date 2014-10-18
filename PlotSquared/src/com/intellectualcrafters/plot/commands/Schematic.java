@@ -11,7 +11,9 @@ import com.intellectualcrafters.plot.SchematicHandler;
 public class Schematic extends SubCommand {
 
 	public Schematic() {
-		super("schematic", "plots.admin", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS);
+		super("schematic", "plots.admin", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, true);
+		
+		// TODO command to fetch schematic from worldedit directory
 	}
 
 	@Override

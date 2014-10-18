@@ -629,6 +629,10 @@ public class DBFunc {
 		PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
 	}
 
+	public static void purge(final String world) {
+		// TODO purge
+	}
+	
 	/**
 	 * @param plot
 	 * @param position

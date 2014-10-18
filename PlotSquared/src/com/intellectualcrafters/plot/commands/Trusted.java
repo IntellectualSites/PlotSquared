@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
 public class Trusted extends SubCommand {
 
 	public Trusted() {
-		super(Command.TRUSTED, "Manage trusted users for a plot", "trusted {add|remove} {player}", CommandCategory.ACTIONS);
+		super(Command.TRUSTED, "Manage trusted users for a plot", "trusted {add|remove} {player}", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

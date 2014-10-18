@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
 public class Unlink extends SubCommand {
 
 	public Unlink() {
-		super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS);
+		super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

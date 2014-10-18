@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 public class Claim extends SubCommand {
 
 	public Claim() {
-		super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING);
+		super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
 	}
 
 	@Override

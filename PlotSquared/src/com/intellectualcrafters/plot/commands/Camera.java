@@ -26,7 +26,7 @@ public class Camera extends SubCommand implements Listener {
 	private CameraAPI api;
 
 	public Camera() {
-		super("camera", "plots.camera", "Go into camera mode", "camera", "c", CommandCategory.TELEPORT);
+		super("camera", "plots.camera", "Go into camera mode", "camera", "c", CommandCategory.TELEPORT, true);
 		this.api = CameraAPI.getInstance();
 		this.travelers = new ArrayList<String>();
 	}

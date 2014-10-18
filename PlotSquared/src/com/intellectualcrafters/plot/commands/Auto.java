@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.PlotWorld;
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
 	public Auto() {
-		super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING);
+		super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
 	}
 
 	// TODO auto claim a mega plot!!!!!!!!!!!!

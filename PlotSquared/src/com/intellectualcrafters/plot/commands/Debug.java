@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
@@ -33,7 +34,7 @@ public class Debug extends SubCommand {
 	// private extends SubCommand^Implements {Command, Information} from
 	// >>\\S.txt6\\
 	public Debug() {
-		super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.INFO);
+		super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.INFO, false);
 		{
 			/**
 			 * This.
@@ -43,7 +44,6 @@ public class Debug extends SubCommand {
 
 	@Override
 	public boolean execute(Player plr, String... args) {
-		PlotMain.getWorldSettings(plr.getWorld());
 		if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
 			StringBuilder msg = new StringBuilder();
 			for (C c : C.values()) {
@@ -87,12 +87,13 @@ public class Debug extends SubCommand {
 			information.append(getLine(line, "Owned Plots", PlotMain.getPlots().size()));
 			// information.append(getLine(line, "PlotWorld Size",
 			// PlotHelper.getWorldFolderSize() + "MB"));
-			for (String world : PlotMain.getPlotWorlds()) {
-				information.append(getLine(line, "World: " + world + " size", PlotHelper.getWorldFolderSize(Bukkit.getWorld(world))));
+			for (String worldname : PlotMain.getPlotWorlds()) {
+				World world = Bukkit.getWorld(worldname);
+				information.append(getLine(line, "World: " + world + " size", PlotHelper.getWorldFolderSize(world)));
+				information.append(getLine(line, " - Entities", PlotHelper.getEntities(world)));
+				information.append(getLine(line, " - Loaded Tile Entities", PlotHelper.getTileEntities(world)));
+				information.append(getLine(line, " - Loaded Chunks", PlotHelper.getLoadedChunks(world)));
 			}
-			information.append(getLine(line, "Entities", PlotHelper.getEntities(plr.getWorld())));
-			information.append(getLine(line, "Loaded Tile Entities", PlotHelper.getTileEntities(plr.getWorld())));
-			information.append(getLine(line, "Loaded Chunks", PlotHelper.getLoadedChunks(plr.getWorld())));
 			information.append(getSection(section, "RAM"));
 			information.append(getLine(line, "Free Ram", RUtils.getFreeRam() + "MB"));
 			information.append(getLine(line, "Total Ram", RUtils.getTotalRam() + "MB"));
@@ -117,5 +118,4 @@ public class Debug extends SubCommand {
 	private String getLine(String line, String var, Object val) {
 		return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
 	}
-
 }

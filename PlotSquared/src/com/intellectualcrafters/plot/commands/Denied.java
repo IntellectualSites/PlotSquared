@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.events.PlayerPlotDeniedEvent;
 public class Denied extends SubCommand {
 
 	public Denied() {
-		super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS);
+		super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

@@ -40,7 +40,7 @@ import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 public class Set extends SubCommand {
 
 	public Set() {
-		super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS);
+		super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
 	}
 
 	public static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "rain",

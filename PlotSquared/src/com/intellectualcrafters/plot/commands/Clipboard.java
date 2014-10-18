@@ -13,7 +13,7 @@ import static com.intellectualcrafters.plot.PlotSelection.currentSelection;
 public class Clipboard extends SubCommand {
 
     public Clipboard() {
-        super(Command.CLIPBOARD, "View information about your current copy", "clipboard", CommandCategory.INFO);
+        super(Command.CLIPBOARD, "View information about your current copy", "clipboard", CommandCategory.INFO, true);
     }
 
     @Override

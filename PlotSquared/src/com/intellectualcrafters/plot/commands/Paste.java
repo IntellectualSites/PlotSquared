@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class Paste extends SubCommand {
 
     public Paste() {
-        super(Command.PASTE, "Paste a plot", "paste", CommandCategory.ACTIONS);
+        super(Command.PASTE, "Paste a plot", "paste", CommandCategory.ACTIONS, true);
     }
 
     @Override

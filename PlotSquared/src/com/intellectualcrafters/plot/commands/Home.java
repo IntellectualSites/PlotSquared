@@ -21,7 +21,7 @@ import com.intellectualcrafters.plot.PlotMain;
 public class Home extends SubCommand {
 
 	public Home() {
-		super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT);
+		super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT, true);
 	}
 
 	private Plot isAlias(String a) {

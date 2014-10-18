@@ -54,15 +54,22 @@ public class Setup extends SubCommand implements Listener {
 	}
 
 	public Setup() {
-		super("setup", "plots.admin", "Setup a PlotWorld", "setup {world}", "setup", CommandCategory.ACTIONS);
+		super("setup", "plots.admin", "Setup a PlotWorld", "setup {world}", "setup", CommandCategory.ACTIONS, false);
 	}
 
 	@Override
 	public boolean execute(Player plr, String... args) {
-		boolean finished = false;
-
-		if (setupMap.containsKey(plr.getName())) {
-			SetupObject object = setupMap.get(plr.getName());
+		String plrname;
+		
+		if (plr==null) {
+			plrname = "";
+		}
+		else {
+			plrname = plr.getName();
+		}
+		
+		if (setupMap.containsKey(plrname)) {
+			SetupObject object = setupMap.get(plrname);
 			if (object.getCurrent() == object.getMax()) {
 				ConfigurationNode[] steps = object.step;
 				String world = object.world;
@@ -88,7 +95,7 @@ public class Setup extends SubCommand implements Listener {
 					}
 				sendMessage(plr, C.SETUP_FINISHED, object.world);
 
-				setupMap.remove(plr.getName());
+				setupMap.remove(plrname);
 
 				return true;
 			}
@@ -100,7 +107,7 @@ public class Setup extends SubCommand implements Listener {
 			}
 			else {
 				if (args[0].equalsIgnoreCase("cancel")) {
-					setupMap.remove(plr.getName());
+					setupMap.remove(plrname);
 					PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
 					return true;
 				}
@@ -189,9 +196,9 @@ public class Setup extends SubCommand implements Listener {
 				plotworld = new DefaultPlotWorld(world);
 			}
 
-			setupMap.put(plr.getName(), new SetupObject(world, plotworld, args[1]));
+			setupMap.put(plrname, new SetupObject(world, plotworld, args[1]));
 			sendMessage(plr, C.SETUP_INIT);
-			SetupObject object = setupMap.get(plr.getName());
+			SetupObject object = setupMap.get(plrname);
 			ConfigurationNode step = object.step[object.current];
 			sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
 					+ "");

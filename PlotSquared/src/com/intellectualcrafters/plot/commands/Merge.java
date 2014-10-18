@@ -36,7 +36,7 @@ public class Merge extends SubCommand {
 	public static String[] aliases = new String[] { "n", "e", "s", "w" };
 
 	public Merge() {
-		super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS);
+		super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);
 	}
 
 	public static String direction(float yaw) {

@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 public class Delete extends SubCommand {
 
 	public Delete() {
-		super(Command.DELETE, "Delete a plot", "delete", CommandCategory.ACTIONS);
+		super(Command.DELETE, "Delete a plot", "delete", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 public class SetOwner extends SubCommand {
 
 	public SetOwner() {
-		super("setowner", "plots.admin", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS);
+		super("setowner", "plots.admin", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
 	}
 
 	/*

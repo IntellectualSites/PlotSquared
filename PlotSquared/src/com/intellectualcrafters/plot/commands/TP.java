@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.PlotMain;
 public class TP extends SubCommand {
 
 	public TP() {
-		super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT);
+		super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT, true);
 	}
 
 	@Override

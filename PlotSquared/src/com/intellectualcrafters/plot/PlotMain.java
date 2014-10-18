@@ -156,6 +156,10 @@ public class PlotMain extends JavaPlugin {
 	 * @return
 	 */
 	public static boolean hasPermissions(Player player, String[] perms) {
+		// Assumes null player is console.
+		if (player==null) {
+			return true;
+		}
 		if (player.isOp()) {
 			return true;
 		}

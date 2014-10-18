@@ -22,6 +22,9 @@ import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
 import com.intellectualcrafters.plot.UUIDHandler;
 import com.intellectualcrafters.plot.database.DBFunc;
 
@@ -31,18 +34,43 @@ import com.intellectualcrafters.plot.database.DBFunc;
 public class Info extends SubCommand {
 
 	public Info() {
-		super(Command.INFO, "Display plot info", "info", CommandCategory.INFO);
+		super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
 	}
 
 	@Override
 	public boolean execute(Player player, String... args) {
-		if (!PlayerFunctions.isInPlot(player)) {
-			PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
-			return true;
+		
+		Plot plot;
+		if (player!=null) {
+			if (!PlayerFunctions.isInPlot(player)) {
+				PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+				return false;
+			}
+			plot = PlayerFunctions.getCurrentPlot(player);
 		}
-
-		// ||
-		Plot plot = PlayerFunctions.getCurrentPlot(player);
+		else {
+			if (args.length!=2) {
+				PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
+				return false;
+			}
+			PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);
+			if (plotworld==null) {
+				PlayerFunctions.sendMessage(player, C.NOT_VALID_WORLD);
+				return false;
+			}
+			try {
+				String[] split = args[1].split(";");
+				PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+				plot = PlotHelper.getPlot(Bukkit.getWorld(plotworld.worldname), id);
+				if (plot==null) {
+					PlayerFunctions.sendMessage(player, C.NOT_VALID_PLOT_ID);
+				}
+			}
+			catch (Exception e) {
+				PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
+				return false;
+			}
+		}
 
 		boolean hasOwner = plot.hasOwner();
 		boolean containsEveryone;

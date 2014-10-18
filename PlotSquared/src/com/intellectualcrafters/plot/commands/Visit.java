@@ -22,7 +22,7 @@ import com.intellectualcrafters.plot.PlotMain;
 
 public class Visit extends SubCommand {
 	public Visit() {
-		super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT);
+		super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT, true);
 	}
 
 	public List<Plot> getPlots(UUID uuid) {

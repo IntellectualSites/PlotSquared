@@ -45,20 +45,14 @@ public class MainCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (!(sender instanceof Player)) {
-			if (args.length > 0) {
-				if (args[0].equalsIgnoreCase("reload")) {
-					new Reload().executeConsole(args);
-				}
-			}
-			else {
-				PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + C.HELP_HEADER.s());
-				PlotMain.sendConsoleSenderMessage("&6/plots reload &c-&6 reloads the plugin");
-			}
-			return false;
+		Player player;
+		if (sender instanceof Player) {
+			player = (Player) sender;
 		}
-		Player player = (Player) sender;
-		if (!player.hasPermission("plots.use")) {
+		else {
+			player = null;
+		}
+		if (PlotMain.hasPermission(player, "plots.use")) {
 			return no_permission(player);
 		}
 		if ((args.length < 1)
@@ -106,7 +100,13 @@ public class MainCommand implements CommandExecutor {
 						arguments[x - 1] = args[x];
 					}
 					if (command.permission.hasPermission(player)) {
-						return command.execute(player, arguments);
+						if (player!=null || !command.isPlayer ) {
+							return command.execute(player, arguments);
+						}
+						else {
+							PlayerFunctions.sendMessage(player, C.IS_CONSOLE);
+							return false;
+						}
 					}
 					else {
 						return no_permission(player);

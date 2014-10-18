@@ -11,6 +11,8 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.PlotMain;
+
 /**
  * Created by Citymonstret on 2014-08-03.
  *
@@ -35,6 +37,6 @@ public class CommandPermission {
 	 * @return
 	 */
 	public boolean hasPermission(Player player) {
-		return player.hasPermission(this.permission) || player.hasPermission("plots.admin");
+		return PlotMain.hasPermission(player, this.permission) || PlotMain.hasPermission(player, "plots.admin");
 	}
 }

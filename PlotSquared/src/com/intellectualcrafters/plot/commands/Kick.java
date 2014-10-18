@@ -21,7 +21,7 @@ import com.intellectualcrafters.plot.Plot;
 public class Kick extends SubCommand {
 
 	public Kick() {
-		super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS);
+		super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

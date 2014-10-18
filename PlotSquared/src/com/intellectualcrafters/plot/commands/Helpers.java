@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 public class Helpers extends SubCommand {
 
 	public Helpers() {
-		super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS);
+		super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

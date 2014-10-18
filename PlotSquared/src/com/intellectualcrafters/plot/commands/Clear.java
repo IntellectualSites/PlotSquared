@@ -20,7 +20,10 @@ import com.intellectualcrafters.plot.Plot;
 public class Clear extends SubCommand {
 
 	public Clear() {
-		super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS);
+		super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, true);
+		
+		// TODO console clear plot at location
+		
 	}
 
 	@Override

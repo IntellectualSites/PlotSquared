@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class plugin extends SubCommand {
 
 	public plugin() {
-		super("plugin", "plots.use", "Show plugin information", "plugin", "pl", CommandCategory.INFO);
+		super("plugin", "plots.use", "Show plugin information", "plugin", "pl", CommandCategory.INFO, false);
 	}
 
     public static String

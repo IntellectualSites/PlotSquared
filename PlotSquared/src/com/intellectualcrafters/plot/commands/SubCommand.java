@@ -8,6 +8,7 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
@@ -19,7 +20,7 @@ import com.intellectualcrafters.plot.PlayerFunctions;
  * @author Citymonstret
  */
 public abstract class SubCommand {
-
+	public boolean isPlayer;
 	/**
 	 * Command
 	 */
@@ -59,13 +60,14 @@ public abstract class SubCommand {
 	 *            CommandCategory. Pick whichever closests to what you want.
 	 */
 	public SubCommand(String cmd, String permission, String description, String usage, String alias,
-			CommandCategory category) {
+			CommandCategory category, boolean isPlayer) {
 		this.cmd = cmd;
 		this.permission = new CommandPermission(permission);
 		this.description = description;
 		this.alias = alias;
 		this.usage = usage;
 		this.category = category;
+		this.isPlayer = isPlayer;
 	}
 
 	/**
@@ -78,13 +80,14 @@ public abstract class SubCommand {
 	 * @param category
 	 *            CommandCategory. Pick whichever closests to what you want.
 	 */
-	public SubCommand(Command command, String description, String usage, CommandCategory category) {
+	public SubCommand(Command command, String description, String usage, CommandCategory category, boolean isPlayer) {
 		this.cmd = command.getCommand();
 		this.permission = command.getPermission();
 		this.alias = command.getAlias();
 		this.description = description;
 		this.usage = usage;
 		this.category = category;
+		this.isPlayer = isPlayer;
 	}
 
 	/**

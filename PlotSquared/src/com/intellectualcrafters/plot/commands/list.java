@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.UUIDHandler;
 public class list extends SubCommand {
 
 	public list() {
-		super(Command.LIST, "List all plots", "list {mine|all|world}", CommandCategory.INFO);
+		super(Command.LIST, "List all plots", "list {mine|shared|all|world}", CommandCategory.INFO, false);
 	}
 
 	@Override
@@ -35,11 +35,16 @@ public class list extends SubCommand {
 		if (args.length < 1) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-			builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all" }));
+			if (plr!=null) {
+				builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all" }));
+			}
+			else {
+				builder.append(getArgumentList(new String[] { "all" }));
+			}
 			PlayerFunctions.sendMessage(plr, builder.toString());
 			return true;
 		}
-		if (args[0].equalsIgnoreCase("mine")) {
+		if (args[0].equalsIgnoreCase("mine") && plr!=null) {
 			StringBuilder string = new StringBuilder();
 			string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your") + "\n");
 			int idx = 0;
@@ -58,7 +63,7 @@ public class list extends SubCommand {
 			return true;
 		}
 		else
-			if (args[0].equalsIgnoreCase("shared")) {
+			if (args[0].equalsIgnoreCase("shared") && plr!=null) {
 				StringBuilder string = new StringBuilder();
 				string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all") + "\n");
 				for (Plot p : PlotMain.getPlots()) {
@@ -86,7 +91,7 @@ public class list extends SubCommand {
 					return true;
 				}
 				else
-					if (args[0].equalsIgnoreCase("world")) {
+					if (args[0].equalsIgnoreCase("world") && plr!=null) {
 						StringBuilder string = new StringBuilder();
 						string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all") + "\n");
 						HashMap<PlotId, Plot> plots = PlotMain.getPlots(plr.getWorld());

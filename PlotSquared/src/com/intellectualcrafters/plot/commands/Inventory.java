@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class Inventory extends SubCommand {
 
 	public Inventory() {
-		super("inventory", "plots.inventory", "Open a command inventory", "inventory", "inv", CommandCategory.INFO);
+		super("inventory", "plots.inventory", "Open a command inventory", "inventory", "inv", CommandCategory.INFO, true);
 	}
 
 	@Override

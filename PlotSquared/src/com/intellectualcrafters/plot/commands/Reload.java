@@ -20,7 +20,10 @@ import com.intellectualcrafters.plot.PlotMain;
 public class Reload extends SubCommand {
 
 	public Reload() {
-		super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO);
+		super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO, false);
+		
+		// TODO reload worlds as well
+		
 	}
 
 	@Override
@@ -30,12 +33,7 @@ public class Reload extends SubCommand {
 			PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
 		}
 		catch (Exception e) {
-			if (plr != null) {
-				PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
-			}
-			else {
-				PlotMain.sendConsoleSenderMessage(C.RELOAD_FAILED);
-			}
+			PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
 		}
 		return true;
 	}

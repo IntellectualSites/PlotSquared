@@ -16,6 +16,11 @@ import org.bukkit.ChatColor;
  * @author Citymonstret
  */
 public enum C {
+	/*
+	 * Console
+	 */
+	NOT_CONSOLE("&cFor safety reasons, this command can only be executed by console."),
+	IS_CONSOLE("&cThis command can only be executed by a player."),
     /*
         Clipboard
      */
@@ -129,6 +134,11 @@ public enum C {
 			 */
 	COMMAND_WENT_WRONG("&cSomething went wrong when executing that command..."),
 	/*
+	 * purge
+	 */
+	PURGE_SYNTAX("&c/plots purge {world}"),
+	PURGE_SUCCESS("All plots for the specified world have now been purged."),
+	/*
 	 * No {plot}
 	 */
 	NOT_IN_PLOT("&cYou're not in a plot"),
@@ -190,6 +200,7 @@ public enum C {
 	PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
 	PLOT_INFO("ID: &6%id%&c, Alias: &6%alias%&c, Owner: &6%owner%&c, Biome: &6%biome%&c, Time: &6%time%&c, Weather: &6%weather%&c, Helpers:&6%helpers%&c, Trusted:&6%trusted%&c, Denied:&6%denied%&c, Rating: &6%rating%&c, Flags: &6%flags%"),
 	PLOT_USER_LIST(" &6%user%&c,"),
+	INFO_SYNTAX_CONSOLE("/plot info {world} X;Y"),
 	/*
 	 * Generating
 	 */
