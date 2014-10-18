@@ -132,7 +132,7 @@ public class PlotMain extends JavaPlugin {
 	 * @return
 	 */
 	public static int hasPermissionRange(Player player, String stub, int range) {
-		if (player.isOp()) {
+		if (player==null || player.isOp()) {
 			return range;
 		}
 		if (player.hasPermission(stub + ".*")) {
@@ -157,10 +157,7 @@ public class PlotMain extends JavaPlugin {
 	 */
 	public static boolean hasPermissions(Player player, String[] perms) {
 		// Assumes null player is console.
-		if (player==null) {
-			return true;
-		}
-		if (player.isOp()) {
+		if (player==null || player.isOp()) {
 			return true;
 		}
 		for (String perm : perms) {
@@ -205,7 +202,7 @@ public class PlotMain extends JavaPlugin {
 	 * @return
 	 */
 	public static boolean hasPermission(Player player, String perm) {
-		if (player.isOp()) {
+		if (player==null || player.isOp()) {
 			return true;
 		}
 		if (player.hasPermission(perm)) {

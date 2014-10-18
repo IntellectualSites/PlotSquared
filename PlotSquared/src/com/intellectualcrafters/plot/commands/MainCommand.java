@@ -29,7 +29,7 @@ public class MainCommand implements CommandExecutor {
 
 	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(),
 			new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(),
-			new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(),
+			new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(),
 			new Reload(), new Merge(), new Unlink(), new Kick(), new Setup() };
 
 	public static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
@@ -52,7 +52,7 @@ public class MainCommand implements CommandExecutor {
 		else {
 			player = null;
 		}
-		if (PlotMain.hasPermission(player, "plots.use")) {
+		if (!PlotMain.hasPermission(player, "plots.use")) {
 			return no_permission(player);
 		}
 		if ((args.length < 1)
