@@ -1,97 +1,15 @@
 package com.intellectualcrafters.plot;
 
-import static org.bukkit.Material.ACACIA_STAIRS;
-import static org.bukkit.Material.BEACON;
-import static org.bukkit.Material.BEDROCK;
-import static org.bukkit.Material.BIRCH_WOOD_STAIRS;
-import static org.bukkit.Material.BOOKSHELF;
-import static org.bukkit.Material.BREWING_STAND;
-import static org.bukkit.Material.BRICK;
-import static org.bukkit.Material.BRICK_STAIRS;
-import static org.bukkit.Material.BURNING_FURNACE;
-import static org.bukkit.Material.CAKE_BLOCK;
-import static org.bukkit.Material.CAULDRON;
-import static org.bukkit.Material.CLAY;
-import static org.bukkit.Material.CLAY_BRICK;
-import static org.bukkit.Material.COAL_BLOCK;
-import static org.bukkit.Material.COAL_ORE;
-import static org.bukkit.Material.COBBLESTONE;
-import static org.bukkit.Material.COBBLESTONE_STAIRS;
-import static org.bukkit.Material.COBBLE_WALL;
-import static org.bukkit.Material.COMMAND;
-import static org.bukkit.Material.DARK_OAK_STAIRS;
-import static org.bukkit.Material.DAYLIGHT_DETECTOR;
-import static org.bukkit.Material.DIAMOND_BLOCK;
-import static org.bukkit.Material.DIAMOND_ORE;
-import static org.bukkit.Material.DIRT;
-import static org.bukkit.Material.DISPENSER;
-import static org.bukkit.Material.DROPPER;
-import static org.bukkit.Material.EMERALD_BLOCK;
-import static org.bukkit.Material.EMERALD_ORE;
-import static org.bukkit.Material.ENCHANTMENT_TABLE;
-import static org.bukkit.Material.ENDER_PORTAL_FRAME;
-import static org.bukkit.Material.ENDER_STONE;
-import static org.bukkit.Material.FURNACE;
-import static org.bukkit.Material.GLASS;
-import static org.bukkit.Material.GLOWSTONE;
-import static org.bukkit.Material.GOLD_BLOCK;
-import static org.bukkit.Material.GOLD_ORE;
-import static org.bukkit.Material.GRASS;
-import static org.bukkit.Material.GRAVEL;
-import static org.bukkit.Material.HARD_CLAY;
-import static org.bukkit.Material.HAY_BLOCK;
-import static org.bukkit.Material.HUGE_MUSHROOM_1;
-import static org.bukkit.Material.HUGE_MUSHROOM_2;
-import static org.bukkit.Material.IRON_BLOCK;
-import static org.bukkit.Material.IRON_ORE;
-import static org.bukkit.Material.JACK_O_LANTERN;
-import static org.bukkit.Material.JUKEBOX;
-import static org.bukkit.Material.JUNGLE_WOOD_STAIRS;
-import static org.bukkit.Material.LAPIS_BLOCK;
-import static org.bukkit.Material.LAPIS_ORE;
-import static org.bukkit.Material.LEAVES;
-import static org.bukkit.Material.LEAVES_2;
-import static org.bukkit.Material.LOG;
-import static org.bukkit.Material.LOG_2;
-import static org.bukkit.Material.MELON_BLOCK;
-import static org.bukkit.Material.MOB_SPAWNER;
-import static org.bukkit.Material.MOSSY_COBBLESTONE;
-import static org.bukkit.Material.MYCEL;
-import static org.bukkit.Material.NETHERRACK;
-import static org.bukkit.Material.NETHER_BRICK;
-import static org.bukkit.Material.NETHER_BRICK_STAIRS;
-import static org.bukkit.Material.NOTE_BLOCK;
-import static org.bukkit.Material.OBSIDIAN;
-import static org.bukkit.Material.PACKED_ICE;
-import static org.bukkit.Material.PUMPKIN;
-import static org.bukkit.Material.QUARTZ_BLOCK;
-import static org.bukkit.Material.QUARTZ_ORE;
-import static org.bukkit.Material.QUARTZ_STAIRS;
-import static org.bukkit.Material.REDSTONE_BLOCK;
-import static org.bukkit.Material.SAND;
-import static org.bukkit.Material.SANDSTONE;
-import static org.bukkit.Material.SANDSTONE_STAIRS;
-import static org.bukkit.Material.SMOOTH_BRICK;
-import static org.bukkit.Material.SMOOTH_STAIRS;
-import static org.bukkit.Material.SNOW_BLOCK;
-import static org.bukkit.Material.SOUL_SAND;
-import static org.bukkit.Material.SPONGE;
-import static org.bukkit.Material.SPRUCE_WOOD_STAIRS;
-import static org.bukkit.Material.STONE;
-import static org.bukkit.Material.WOOD;
-import static org.bukkit.Material.WOOD_STAIRS;
-import static org.bukkit.Material.WOOL;
-import static org.bukkit.Material.WORKBENCH;
-import static org.bukkit.Material.getMaterial;
+import org.bukkit.Material;
+import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Material;
-import org.bukkit.block.Biome;
-import org.bukkit.configuration.ConfigurationSection;
+import static org.bukkit.Material.*;
 
 public abstract class PlotWorld {
 
@@ -149,6 +67,21 @@ public abstract class PlotWorld {
 	public double SELL_PRICE;
 	public static double SELL_PRICE_DEFAULT = 75;
 
+    public boolean PVP;
+    public static boolean PVP_DEFAULT = false;
+
+    public boolean PVE;
+    public static boolean PVE_DEFAULT = false;
+
+    public boolean SPAWN_EGGS;
+    public static boolean SPAWN_EGGS_DEFAULT = false;
+
+    public boolean SPAWN_CUSTOM;
+    public static boolean SPAWN_CUSTOM_DEFAULT = true;
+
+    public boolean SPAWN_BREEDING;
+    public static boolean SPAWN_BREEDING_DEFAULT = false;
+
 	public PlotWorld(String worldname) {
 		this.worldname = worldname;
 	}
@@ -156,8 +89,7 @@ public abstract class PlotWorld {
 	/**
 	 * When a world is created, the following method will be called for each
 	 * 
-	 * @param key
-	 * @param value
+        @param config
 	 */
 	public void loadDefaultConfiguration(ConfigurationSection config) {
 		this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
@@ -173,7 +105,12 @@ public abstract class PlotWorld {
 		this.SELL_PRICE = config.getDouble("economy.prices.sell");
 		this.PLOT_CHAT = config.getBoolean("chat.enabled");
 		this.DEFAULT_FLAGS = config.getStringList("flags.default");
-		loadConfiguration(config);
+		this.PVP = config.getBoolean("events.pvp");
+        this.PVE = config.getBoolean("events.pve");
+        this.SPAWN_EGGS = config.getBoolean("events.spawn.egg");
+        this.SPAWN_CUSTOM = config.getBoolean("events.spawn.custom");
+        this.SPAWN_BREEDING = config.getBoolean("events.spawn.breeding");
+        loadConfiguration(config);
 	}
 
 	public abstract void loadConfiguration(ConfigurationSection config);
@@ -199,7 +136,11 @@ public abstract class PlotWorld {
 		options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
 		options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
 		options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
-
+        options.put("events.pvp", PlotWorld.PVP_DEFAULT);
+        options.put("events.pve", PlotWorld.PVE_DEFAULT);
+        options.put("events.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
+        options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
+        options.put("events.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
 		ConfigurationNode[] settings = getSettingNodes();
 
 		/*

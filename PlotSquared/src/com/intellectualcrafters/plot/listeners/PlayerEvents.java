@@ -51,6 +51,10 @@ public class PlayerEvents implements Listener {
 		return UUIDHandler.getName(uuid);
     }
 
+    private PlotWorld getPlotWorld(World world) {
+        return PlotMain.getWorldSettings(world);
+    }
+
 	public boolean enteredPlot(Location l1, Location l2) {
 		PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
 		PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
@@ -530,10 +534,19 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler
 	public void MobSpawn(CreatureSpawnEvent event) {
-		World world = event.getLocation().getWorld();
-		if (!isPlotWorld(world)) {
-			return;
-		}
+        World world = event.getLocation().getWorld();
+        if (!isPlotWorld(world)) {
+            return;
+        }
+        PlotWorld pW = getPlotWorld(world);
+        CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
+        if (reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG && pW.SPAWN_EGGS) {
+            return;
+        } else if (reason == CreatureSpawnEvent.SpawnReason.BREEDING && pW.SPAWN_BREEDING) {
+            return;
+        } else if (reason == CreatureSpawnEvent.SpawnReason.CUSTOM && pW.SPAWN_CUSTOM) {
+            return;
+        }
 		if (event.getEntity().getType() == EntityType.PLAYER) {
 			return;
 		}
@@ -774,9 +787,17 @@ public class PlayerEvents implements Listener {
 	public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
 		Location l = e.getEntity().getLocation();
 		Entity d = e.getDamager();
-		if (isPlotWorld(l)) {
+		Entity a = e.getEntity();
+        if (isPlotWorld(l)) {
 			if (d instanceof Player) {
 				Player p = (Player) d;
+                boolean aPlr = a instanceof Player;
+                PlotWorld pW = getPlotWorld(l.getWorld());
+                if(!aPlr && pW.PVE) {
+                    return;
+                } else if(aPlr && pW.PVP) {
+                    return;
+                }
 				if (!isInPlot(l)) {
 					if (!p.hasPermission("plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
