@@ -637,7 +637,7 @@ public class DBFunc {
 				
 				// Fetching a list of plot IDs for a world
 				try {
-					PreparedStatement stmt = connection.prepareStatement("SELECT `id`, FROM `plot` WHERE `world` = ?");
+					PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `plot` WHERE `world` = ?");
 					stmt.setString(1, world);
 					ResultSet result = stmt.executeQuery();
 					while (result.next()) {
@@ -670,8 +670,12 @@ public class DBFunc {
 					stmt.close();
 					
 					stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = "+idstr+"");
-					stmt.executeUpdate();
-					stmt.close();
+                    stmt.executeUpdate();
+                    stmt.close();
+                    
+                    stmt = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = "+idstr+"");
+                    stmt.executeUpdate();
+                    stmt.close();
 					
 					stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `world` = ?");
 					stmt.setString(1, world);
