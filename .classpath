@@ -6,10 +6,11 @@
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/CameraAPI.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/simple-5.1.6.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/simple-xml.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/bukkit-1.7.9-R0.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/Vault-1.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/worldguard-6.0.0-beta-02.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/PlotMe.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/bukkit-1.7.9-R0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/PlotMe.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/PlotSquared.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/Vault-1.4.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

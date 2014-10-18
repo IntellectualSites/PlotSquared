@@ -252,6 +252,12 @@ public class PlayerFunctions {
 		if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
 			return;
 		}
+		
+		if (plr==null) {
+			PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
+			return;
+		}
+		
 		sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
 	}
 
@@ -264,6 +270,12 @@ public class PlayerFunctions {
 	 *            Caption to send
 	 */
 	public static void sendMessage(Player plr, C c, String... args) {
+		
+		if (plr==null) {
+			PlotMain.sendConsoleSenderMessage(c);
+			return;
+		}
+		
 		if (c.s().length() < 1) {
 			return;
 		}
