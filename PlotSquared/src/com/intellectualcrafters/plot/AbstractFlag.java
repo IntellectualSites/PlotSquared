@@ -17,7 +17,7 @@ public class AbstractFlag {
 	 *            in length
 	 */
 	public AbstractFlag(String key) {
-		if (!StringUtils.isAlpha(key)) {
+		if (!StringUtils.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
 			throw new IllegalArgumentException("Flag must be alphabetic characters");
 		}
 		if (key.length() > 16) {
