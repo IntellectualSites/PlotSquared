@@ -140,11 +140,11 @@ public class PlayerEvents implements Listener {
         List<String> creative   = Arrays.asList("creative" , "cr", "1");
         List<String> survival   = Arrays.asList("survival" , "su", "0");
         List<String> adventure  = Arrays.asList("adventure", "ad", "2");
-        if (creative.equals(str)) {
+        if (creative.contains(str)) {
             return GameMode.CREATIVE;
-        } else if (survival.equals(str)) {
+        } else if (survival.contains(str)) {
             return GameMode.SURVIVAL;
-        } else if (adventure.equals(str)) {
+        } else if (adventure.contains(str)) {
             return GameMode.ADVENTURE;
         } else {
             return GameMode.SURVIVAL;
