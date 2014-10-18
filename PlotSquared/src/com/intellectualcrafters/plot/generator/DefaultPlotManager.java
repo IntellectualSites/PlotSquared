@@ -602,4 +602,14 @@ public class DefaultPlotManager extends PlotManager {
     public boolean finishPlotUnlink(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
         return true;
     }
+
+    @Override
+    public boolean startPlotMerge(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        return true;
+    }
+
+    @Override
+    public boolean startPlotUnlink(World world, PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        return true;
+    }
 }

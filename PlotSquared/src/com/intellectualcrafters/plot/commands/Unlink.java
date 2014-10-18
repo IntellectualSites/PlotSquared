@@ -65,6 +65,11 @@ public class Unlink extends SubCommand {
 			return false;
 		}
 
+		PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+		
+		manager.startPlotUnlink(world, plotworld, ids);
+		
 		for (PlotId id : ids) {
 			Plot myplot = PlotMain.getPlots(world).get(id);
 
@@ -78,8 +83,7 @@ public class Unlink extends SubCommand {
 			myplot.settings.setMerged(new boolean[] { false, false, false, false });
 			DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
 		}
-		PlotManager manager = PlotMain.getPlotManager(world);
-		PlotWorld plotworld = PlotMain.getWorldSettings(world);
+		
 		for (int x = pos1.x; x <= pos2.x; x++) {
 			for (int y = pos1.y; y <= pos2.y; y++) {
 				boolean lx = x < pos2.x;

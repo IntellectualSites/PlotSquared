@@ -100,7 +100,9 @@ public class PlotHelper {
 
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-
+		
+		manager.startPlotMerge(world, plotworld, plotIds);
+		
 		for (int x = pos1.x; x <= pos2.x; x++) {
 			for (int y = pos1.y; y <= pos2.y; y++) {
 				
