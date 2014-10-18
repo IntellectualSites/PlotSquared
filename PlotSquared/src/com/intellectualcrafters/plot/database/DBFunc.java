@@ -650,42 +650,43 @@ public class DBFunc {
 					Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '"+world+"'!");
 					return;
 				}
-				
-				try {
-					
-					String prefix = "";
-					StringBuilder idstr = new StringBuilder("");
-					
-					for (Integer id:ids) {
-						idstr.append(prefix + id);
-						prefix = " OR `plot_plot_id` = ";
-					}
-					
-					PreparedStatement stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = "+idstr+"");
-					stmt.executeUpdate();
-					stmt.close();
-					
-					stmt = connection.prepareStatement("DELETE FROM `plot_denied` WHERE `plot_plot_id` = "+idstr+"");
-					stmt.executeUpdate();
-					stmt.close();
-					
-					stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = "+idstr+"");
-                    stmt.executeUpdate();
-                    stmt.close();
-                    
-                    stmt = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = "+idstr+"");
-                    stmt.executeUpdate();
-                    stmt.close();
-					
-					stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `world` = ?");
-					stmt.setString(1, world);
-					stmt.executeUpdate();
-					stmt.close();
-				}
-				catch (SQLException e) {
-					e.printStackTrace();
-					Logger.add(LogLevel.DANGER, "FAILED TO PURGE WORLD '"+world+"'!");
-					return;
+				if (ids.size() > 0) {
+    				try {
+    					
+    					String prefix = "";
+    					StringBuilder idstr = new StringBuilder("");
+    					
+    					for (Integer id:ids) {
+    						idstr.append(prefix + id);
+    						prefix = " OR `plot_plot_id` = ";
+    					}
+    					
+    					PreparedStatement stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = "+idstr+"");
+    					stmt.executeUpdate();
+    					stmt.close();
+    					
+    					stmt = connection.prepareStatement("DELETE FROM `plot_denied` WHERE `plot_plot_id` = "+idstr+"");
+    					stmt.executeUpdate();
+    					stmt.close();
+    					
+    					stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+                        
+                        stmt = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+    					
+    					stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `world` = ?");
+    					stmt.setString(1, world);
+    					stmt.executeUpdate();
+    					stmt.close();
+    				}
+    				catch (SQLException e) {
+    					e.printStackTrace();
+    					Logger.add(LogLevel.DANGER, "FAILED TO PURGE WORLD '"+world+"'!");
+    					return;
+    				}
 				}
 				Logger.add(LogLevel.GENERAL, "SUCCESSFULLY PURGED WORLD '"+world+"'!");
 			}
