@@ -34,10 +34,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Player Events involving plots
@@ -496,6 +493,10 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
+    public boolean getFlagValue(String value) {
+        return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
+    }
+
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) {
@@ -523,6 +524,13 @@ public class PlayerEvents implements Listener {
 			// })).contains(event.getClickedBlock().getType())) {
 			// return;
 			// }
+
+            if(PlotMain.materialFlags.containsKey(event.getClickedBlock().getType())) {
+                String flag = PlotMain.materialFlags.get(event.getClickedBlock().getType());
+                if(plot.settings.getFlag(flag) != null && getFlagValue(plot.settings.getFlag(flag).getValue()))
+                    return;
+            }
+
 			if (!plot.hasRights(event.getPlayer())) {
 				event.setCancelled(true);
 			}

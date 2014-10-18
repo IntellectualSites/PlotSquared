@@ -645,6 +645,8 @@ public class PlotMain extends JavaPlugin {
 
 		getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
+        defaultFlags();
+
 		if (getServer().getPluginManager().getPlugin("CameraAPI") != null) {
 			cameraAPI = CameraAPI.getInstance();
 			Camera camera = new Camera();
@@ -1222,6 +1224,33 @@ public class PlotMain extends JavaPlugin {
 		 * (Exception e) { e.printStackTrace(); } }
 		 */
 	}
+
+    // Material.STONE_BUTTON, Material.WOOD_BUTTON,
+    // Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE,
+    // Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
+    // Material.WOOD_DOOR, Material.WOODEN_DOOR,
+    // Material.DISPENSER, Material.DROPPER
+    public static HashMap<Material, String> materialFlags = new HashMap<>();
+    static {
+        materialFlags.put(Material.WOODEN_DOOR, "wooden_door");
+        materialFlags.put(Material.IRON_DOOR, "iron_door");
+        materialFlags.put(Material.STONE_BUTTON, "stone_button");
+        materialFlags.put(Material.WOOD_BUTTON, "wooden_button");
+        materialFlags.put(Material.LEVER, "lever");
+        materialFlags.put(Material.WOOD_PLATE, "wooden_plate");
+        materialFlags.put(Material.STONE_PLATE, "stone_plate");
+        materialFlags.put(Material.CHEST, "chest");
+        materialFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
+        materialFlags.put(Material.TRAP_DOOR, "trap_door");
+        materialFlags.put(Material.DISPENSER, "dispenser");
+        materialFlags.put(Material.DROPPER, "dropper");
+    }
+
+    private static void defaultFlags() {
+        for(String str : materialFlags.values()) {
+            FlagManager.addFlag(new AbstractFlag(str));
+        }
+    }
 
 	public static void addPlotWorld(String world, PlotWorld plotworld, PlotManager manager) {
 		worlds.put(world, plotworld);
