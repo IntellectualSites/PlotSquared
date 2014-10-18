@@ -601,7 +601,7 @@ public class PlayerEvents implements Listener {
 			}
 			else {
 				if (leftPlot(f, t)) {
-					Plot plot = getCurrentPlot(event.getTo());
+					Plot plot = getCurrentPlot(event.getFrom());
 					plotExit(event.getPlayer(), plot);
 				}
 			}
