@@ -39,5 +39,14 @@ public class AbstractFlag {
 	public String toString() {
 		return this.key;
 	}
+	
+	@Override
+	public boolean equals(Object other){
+	    if (other == null) return false;
+	    if (other == this) return true;
+	    if (!(other instanceof AbstractFlag)) return false;
+	    AbstractFlag otherObj = (AbstractFlag)other;
+	    return (otherObj.key.equals(this.key));
+	}
 
 }

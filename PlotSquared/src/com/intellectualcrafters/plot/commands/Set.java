@@ -20,6 +20,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.AbstractFlag;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.FlagManager;
@@ -96,8 +97,17 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
 				return false;
 			}
-			if (!FlagManager.getFlags().contains(args[1].toLowerCase()) && (PlotMain.worldGuardListener != null)
-					&& !PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
+			
+			AbstractFlag af = new AbstractFlag("");
+			
+			try {
+			    af = new AbstractFlag(args[1].toLowerCase());
+			}
+			catch (Exception e) {
+			    
+			}
+			
+			if (!FlagManager.getFlags().contains(af) && ((PlotMain.worldGuardListener == null) || !PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
 				PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
 				return false;
 			}
