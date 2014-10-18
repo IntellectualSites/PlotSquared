@@ -11,11 +11,17 @@ import java.util.List;
 
 import static org.bukkit.Material.*;
 
+/**
+ * 
+ * @author Jesse Boyd
+ *
+ */
 public abstract class PlotWorld {
 
 	// TODO make this configurable
 	// make non static and static_default_valu + add config option
-	public static ArrayList<Material> BLOCKS = new ArrayList<Material>(Arrays.asList(new Material[] { ACACIA_STAIRS,
+	@SuppressWarnings("deprecation")
+    public static ArrayList<Material> BLOCKS = new ArrayList<Material>(Arrays.asList(new Material[] { ACACIA_STAIRS,
 			BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE,
 			CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS,
 			COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER,
@@ -91,7 +97,8 @@ public abstract class PlotWorld {
 	 * 
         @param config
 	 */
-	public void loadDefaultConfiguration(ConfigurationSection config) {
+	public void loadDefaultConfiguration(ConfigurationSection config)
+	{
 		this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
 		this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
 		this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
@@ -115,12 +122,12 @@ public abstract class PlotWorld {
 
 	public abstract void loadConfiguration(ConfigurationSection config);
 
-	public void saveConfiguration(ConfigurationSection config) {
-
-		/*
-		 * Saving core plotworld settings
-		 */
-
+	/**
+	 * Saving core plotworld settings
+	 * @param config
+	 */
+	public void saveConfiguration(ConfigurationSection config)
+	{
 		HashMap<String, Object> options = new HashMap<String, Object>();
 
 		options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
@@ -146,11 +153,13 @@ public abstract class PlotWorld {
 		/*
 		 * Saving generator specific settings
 		 */
-		for (ConfigurationNode setting : settings) {
+		for (ConfigurationNode setting : settings)
+		{
 			options.put(setting.getConstant(), setting.getType().parseObject(setting.getValue()));
 		}
 
-		for (String option : options.keySet()) {
+		for (String option : options.keySet())
+		{
 			if (!config.contains(option)) {
 				config.set(option, options.get(option));
 			}

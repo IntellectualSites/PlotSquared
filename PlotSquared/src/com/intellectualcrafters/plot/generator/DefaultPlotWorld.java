@@ -125,7 +125,7 @@ public class DefaultPlotWorld extends PlotWorld {
 		super(worldname);
 	}
 
-	/*
+	/**
 	 * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED
 	 * FOR INITIAL SETUP
 	 * 
@@ -152,7 +152,7 @@ public class DefaultPlotWorld extends PlotWorld {
 				new ConfigurationNode("wall.height", DefaultPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), };
 	}
 
-	/*
+	/**
 	 * This method is called when a world loads. Make sure you set all your
 	 * constants here. You are provided with the configuration section for that
 	 * specific world.
