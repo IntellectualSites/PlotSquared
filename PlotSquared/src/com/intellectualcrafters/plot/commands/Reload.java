@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotWorld;
 
 /**
  * @Deprecated
@@ -30,6 +31,13 @@ public class Reload extends SubCommand {
 	public boolean execute(Player plr, String... args) {
 		try {
 			PlotMain.reloadTranslations();
+			
+			// The following won't affect world generation, as that has to be loaded during startup unfortunately.
+			PlotMain.config.load(PlotMain.configFile);
+			for (String pw: PlotMain.getPlotWorlds()) {
+				PlotWorld plotworld = PlotMain.getWorldSettings(pw);
+				plotworld.loadDefaultConfiguration(PlotMain.config.getConfigurationSection("worlds." + pw));
+			}
 			PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
 		}
 		catch (Exception e) {

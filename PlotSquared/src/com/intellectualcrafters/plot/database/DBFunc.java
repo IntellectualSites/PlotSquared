@@ -634,6 +634,8 @@ public class DBFunc {
 			@Override
 			public void run() {
 				ArrayList<Integer> ids = new ArrayList<Integer>();
+				
+				// Fetching a list of plot IDs for a world
 				try {
 					PreparedStatement stmt = connection.prepareStatement("SELECT `id`, FROM `plot` WHERE `world` = ?");
 					stmt.setString(1, world);
@@ -678,7 +680,7 @@ public class DBFunc {
 				}
 				catch (SQLException e) {
 					e.printStackTrace();
-					Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '"+world+"'!");
+					Logger.add(LogLevel.DANGER, "FAILED TO PURGE WORLD '"+world+"'!");
 					return;
 				}
 				Logger.add(LogLevel.GENERAL, "SUCCESSFULLY PURGED WORLD '"+world+"'!");
