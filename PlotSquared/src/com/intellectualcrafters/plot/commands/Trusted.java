@@ -45,8 +45,12 @@ public class Trusted extends SubCommand {
 		if (args[0].equalsIgnoreCase("add")) {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
-				plot.addTrusted(uuid);
-				DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				if (!plot.trusted.contains(uuid)) {
+					plot.addTrusted(uuid);
+					DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+					PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
+					Bukkit.getPluginManager().callEvent(event);
+				}
 				PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
 				return true;
 			}
@@ -60,10 +64,12 @@ public class Trusted extends SubCommand {
 			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; }
 			 */
 			UUID uuid = UUIDHandler.getUUID(args[1]);
-			plot.addTrusted(uuid);
-			DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-			PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
-			Bukkit.getPluginManager().callEvent(event);
+			if (!plot.trusted.contains(uuid)) {
+				plot.addTrusted(uuid);
+				DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
+				Bukkit.getPluginManager().callEvent(event);
+			}
 			PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
 		}
 		else

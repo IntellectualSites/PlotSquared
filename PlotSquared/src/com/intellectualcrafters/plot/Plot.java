@@ -219,9 +219,7 @@ public class Plot implements Cloneable {
 	 * @param uuid
 	 */
 	public void addDenied(UUID uuid) {
-		if (!denied.contains(uuid)) {
-			this.denied.add(uuid);
-		}
+		this.denied.add(uuid);
 	}
 
 	/**
@@ -230,9 +228,7 @@ public class Plot implements Cloneable {
 	 * @param uuid
 	 */
 	public void addHelper(UUID uuid) {
-		if (!helpers.contains(uuid)) {
-			this.helpers.add(uuid);
-		}
+		this.helpers.add(uuid);
 	}
 
 	/**
@@ -241,9 +237,7 @@ public class Plot implements Cloneable {
 	 * @param uuid
 	 */
 	public void addTrusted(UUID uuid) {
-		if (!trusted.contains(uuid)) {
-			this.trusted.add(uuid);
-		}
+		this.trusted.add(uuid);
 	}
 
 	/**

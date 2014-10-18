@@ -45,8 +45,12 @@ public class Helpers extends SubCommand {
 		if (args[0].equalsIgnoreCase("add")) {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
-				plot.addHelper(uuid);
-				DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				if (!plot.helpers.contains(uuid)) {
+					plot.addHelper(uuid);
+					DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+					PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
+					Bukkit.getPluginManager().callEvent(event);
+				}
 				PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
 				return true;
 			}
@@ -60,10 +64,12 @@ public class Helpers extends SubCommand {
 			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; }
 			 */
 			UUID uuid = UUIDHandler.getUUID(args[1]);
-			plot.addHelper(uuid);
-			DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-			PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
-			Bukkit.getPluginManager().callEvent(event);
+			if (!plot.helpers.contains(uuid)) {
+				plot.addHelper(uuid);
+				DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
+				Bukkit.getPluginManager().callEvent(event);
+			}
 			PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
 		}
 		else

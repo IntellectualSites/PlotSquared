@@ -48,8 +48,12 @@ public class Denied extends SubCommand {
 		if (args[0].equalsIgnoreCase("add")) {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
-				plot.addDenied(uuid);
-				DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				if (!plot.denied.contains(uuid)) {
+					plot.addDenied(uuid);
+					DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+					PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
+					Bukkit.getPluginManager().callEvent(event);
+				}
 				PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
 				return true;
 			}
@@ -63,10 +67,12 @@ public class Denied extends SubCommand {
 			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; }
 			 */
 			UUID uuid = UUIDHandler.getUUID(args[1]);
-			plot.addDenied(uuid);
-			DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-			PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
-			Bukkit.getPluginManager().callEvent(event);
+			if (!plot.denied.contains(uuid)) {
+				plot.addDenied(uuid);
+				DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+				PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
+				Bukkit.getPluginManager().callEvent(event);
+			}
 			PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
 			if ((Bukkit.getPlayer(uuid) != null) && Bukkit.getPlayer(uuid).isOnline()) {
 				Plot pl = PlayerFunctions.getCurrentPlot(Bukkit.getPlayer((uuid)));
