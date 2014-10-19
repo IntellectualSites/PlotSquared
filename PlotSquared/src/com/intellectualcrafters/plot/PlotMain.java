@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
@@ -29,8 +30,10 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -426,6 +429,9 @@ public class PlotMain extends JavaPlugin {
 				public void run() {
 					for (String world : getPlotWorldsString()) {
 						if (plots.containsKey(world)) {
+						    
+						    ArrayList<Plot> toDeletePlot = new ArrayList<Plot>();
+						    
 							for (Plot plot : plots.get(world).values()) {
 								if (plot.owner == null) {
 									continue;
@@ -442,9 +448,12 @@ public class PlotMain extends JavaPlugin {
 										event.setCancelled(true);
 									}
 									else {
-										DBFunc.delete(world, plot);
+									    toDeletePlot.add(plot);
 									}
 								}
+							}
+							for (Plot plot: toDeletePlot) {
+							    DBFunc.delete(world, plot);
 							}
 						}
 					}
