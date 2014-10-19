@@ -56,7 +56,6 @@ public class Delete extends SubCommand {
 		}
 		boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
 		if (result) {
-			PlotHelper.removeSign(plr, plot);
 			plot.clear(plr);
 			DBFunc.delete(plr.getWorld().getName(), plot);
 		}

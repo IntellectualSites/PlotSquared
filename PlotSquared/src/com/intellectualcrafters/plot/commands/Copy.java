@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 public class Copy extends SubCommand {
 
 	public Copy() {
-		super(Command.COPY, "Copy a plot", "clear", CommandCategory.ACTIONS, true);
+		super(Command.COPY, "Copy a plot", "copy", CommandCategory.ACTIONS, true);
 	}
 
 	@Override

@@ -9,7 +9,9 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -17,6 +19,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -202,17 +205,18 @@ public class PlotHelper {
 		long r = ((nextLong() >>> 32) * n) >> 32;
 		return (int) r;
 	}
+	/*
+     * End of random number gen section
+     */
 
 	public static void removeSign(Player plr, Plot p) {
 		World world = plr.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		Location loc = manager.getSignLoc(plr, plotworld, p);
-		loc.getBlock().setType(Material.AIR);
+		Block bs = loc.getBlock();
+		bs.setType(Material.AIR);
 	}
-	/*
-	 * End of random number gen section
-	 */
 
 	@SuppressWarnings("deprecation")
 	public static void setSign(Player plr, Plot p) {
@@ -673,7 +677,6 @@ public class PlotHelper {
 		manager.clearPlot(requester, plot);
 
 		removeSign(requester, plot);
-		setSign(requester, plot);
 
 		PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""
 				+ ((System.nanoTime() - start) / 1000000.0)));

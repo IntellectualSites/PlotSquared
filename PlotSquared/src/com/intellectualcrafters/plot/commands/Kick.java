@@ -40,7 +40,7 @@ public class Kick extends SubCommand {
 			PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
 			return false;
 		}
-		if (Bukkit.getPlayer(args[0]) != null) {
+		if (Bukkit.getPlayer(args[0]) == null) {
 			PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
 			return false;
 		}

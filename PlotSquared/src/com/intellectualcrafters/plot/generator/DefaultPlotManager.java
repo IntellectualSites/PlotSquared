@@ -252,23 +252,23 @@ public class DefaultPlotManager extends PlotManager {
 		for (int i = startX; i < chunkX; i += 16) {
 			for (int j = startZ; j < chunkZ; j += 16) {
 				Plot plot1 = PlotHelper.getCurrentPlot(new Location(world, i, 0, j));
-				if ((plot1 != null) && (plot1.getId() != plot.getId()) && plot1.hasOwner()) {
+				if ((plot1 != null) && (plot1.getId() != plot.getId())) {
 					break;
 				}
 				Plot plot2 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j));
-				if ((plot2 != null) && (plot2.getId() != plot.getId()) && plot2.hasOwner()) {
+				if ((plot2 != null) && (plot2.getId() != plot.getId())) {
 					break;
 				}
 				Plot plot3 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j + 15));
-				if ((plot3 != null) && (plot3.getId() != plot.getId()) && plot3.hasOwner()) {
+				if ((plot3 != null) && (plot3.getId() != plot.getId())) {
 					break;
 				}
 				Plot plot4 = PlotHelper.getCurrentPlot(new Location(world, i, 0, j + 15));
-				if ((plot4 != null) && (plot4.getId() != plot.getId()) && plot4.hasOwner()) {
+				if ((plot4 != null) && (plot4.getId() != plot.getId())) {
 					break;
 				}
 				Plot plot5 = PlotHelper.getCurrentPlot(new Location(world, i + 15, 0, j + 15));
-				if ((plot5 != null) && (plot5.getId() != plot.getId()) && plot5.hasOwner()) {
+				if ((plot5 != null) && (plot5.getId() != plot.getId())) {
 					break;
 				}
 				if (min == null) {
