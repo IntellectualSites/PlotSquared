@@ -282,6 +282,13 @@ public class PlotMain extends JavaPlugin {
 		}
 		return new HashSet<Plot>(myplots);
 	}
+	
+	public static HashMap<PlotId, Plot> getPlots(String world) {
+        if (plots.containsKey(world)) {
+            return plots.get(world);
+        }
+        return new HashMap<PlotId, Plot>();
+    }
 
 	/**
 	 * @param world
@@ -309,12 +316,20 @@ public class PlotMain extends JavaPlugin {
 	}
 
 	/**
-	 * @param world
-	 * @return
-	 */
-	public static boolean isPlotWorld(World world) {
-		return (worlds.containsKey(world.getName()));
-	}
+     * @param world
+     * @return
+     */
+    public static boolean isPlotWorld(World world) {
+        return (worlds.containsKey(world.getName()));
+    }
+    
+    /**
+     * @param world
+     * @return
+     */
+    public static boolean isPlotWorld(String world) {
+        return (worlds.containsKey(world));
+    }
 
 	/**
 	 * @param world

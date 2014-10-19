@@ -588,6 +588,72 @@ public class DBFunc {
 	private static void runTask(Runnable r) {
 		PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
 	}
+	
+	public static void purge(final String world, final PlotId id) {
+	    runTask(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Integer> ids = new ArrayList<Integer>();
+                
+                // Fetching a list of plot IDs for a world
+                try {
+                    PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?");
+                    stmt.setString(1, world);
+                    stmt.setInt(2, id.x);
+                    stmt.setInt(3, id.y);
+                    ResultSet result = stmt.executeQuery();
+                    while (result.next()) {
+                        int id = result.getInt("id");
+                        ids.add(id);
+                    }
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '"+world+"'!");
+                    return;
+                }
+                if (ids.size() > 0) {
+                    try {
+                        
+                        String prefix = "";
+                        StringBuilder idstr = new StringBuilder("");
+                        
+                        for (Integer id:ids) {
+                            idstr.append(prefix + id);
+                            prefix = " OR `plot_plot_id` = ";
+                        }
+                        
+                        PreparedStatement stmt = connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+                        
+                        stmt = connection.prepareStatement("DELETE FROM `plot_denied` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+                        
+                        stmt = connection.prepareStatement("DELETE FROM `plot_settings` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+                        
+                        stmt = connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `plot_plot_id` = "+idstr+"");
+                        stmt.executeUpdate();
+                        stmt.close();
+                        
+                        stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `world` = ?");
+                        stmt.setString(1, world);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    }
+                    catch (SQLException e) {
+                        e.printStackTrace();
+                        Logger.add(LogLevel.DANGER, "FAILED TO PURGE PLOT FROM DB '"+world+"' , '"+id+"' !");
+                        return;
+                    }
+                }
+                Logger.add(LogLevel.GENERAL, "SUCCESSFULLY PURGED PLOT FROM DB '"+world+"' , '"+id+"'!");
+            }
+        }); 
+	}
 
 	public static void purge(final String world) {
 		runTask(new Runnable() {

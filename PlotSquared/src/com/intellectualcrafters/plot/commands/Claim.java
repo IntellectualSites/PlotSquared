@@ -82,7 +82,6 @@ public class Claim extends SubCommand {
 			return false;
 		}
 		return true;
-
 	}
 
 	public static boolean claimPlot(Player player, Plot plot, boolean teleport) {
