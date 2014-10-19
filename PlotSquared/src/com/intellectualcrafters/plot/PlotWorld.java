@@ -112,11 +112,11 @@ public abstract class PlotWorld {
 		this.SELL_PRICE = config.getDouble("economy.prices.sell");
 		this.PLOT_CHAT = config.getBoolean("chat.enabled");
 		this.DEFAULT_FLAGS = config.getStringList("flags.default");
-		this.PVP = config.getBoolean("events.pvp");
-        this.PVE = config.getBoolean("events.pve");
-        this.SPAWN_EGGS = config.getBoolean("events.spawn.egg");
-        this.SPAWN_CUSTOM = config.getBoolean("events.spawn.custom");
-        this.SPAWN_BREEDING = config.getBoolean("events.spawn.breeding");
+		this.PVP = config.getBoolean("event.pvp");
+        this.PVE = config.getBoolean("event.pve");
+        this.SPAWN_EGGS = config.getBoolean("event.spawn.egg");
+        this.SPAWN_CUSTOM = config.getBoolean("event.spawn.custom");
+        this.SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
 	}
 
@@ -143,11 +143,11 @@ public abstract class PlotWorld {
 		options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
 		options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
 		options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
-        options.put("events.pvp", PlotWorld.PVP_DEFAULT);
-        options.put("events.pve", PlotWorld.PVE_DEFAULT);
-        options.put("events.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
+        options.put("event.pvp", PlotWorld.PVP_DEFAULT);
+        options.put("event.pve", PlotWorld.PVE_DEFAULT);
+        options.put("event.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
-        options.put("events.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
+        options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
 		ConfigurationNode[] settings = getSettingNodes();
 
 		/*
