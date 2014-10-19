@@ -10,7 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -44,10 +44,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayerEvents.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PlayerEvents.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.88245314" vertical-offset="2049" max-vertical-offset="15300">
+            <state vertical-scroll-proportion="-18.5" vertical-offset="2049" max-vertical-offset="15300">
               <caret line="167" column="38" selection-start-line="167" selection-start-column="38" selection-end-line="167" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -61,21 +61,15 @@
       <file leaf-file-name="PlotMain.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="19815" max-vertical-offset="20604">
-              <caret line="1251" column="67" selection-start-line="1251" selection-start-column="67" selection-end-line="1251" selection-end-column="67" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="20172" max-vertical-offset="20961">
+              <caret line="1266" column="67" selection-start-line="1266" selection-start-column="67" selection-end-line="1266" selection-end-column="67" />
               <folding>
-                <element signature="e#0#37228#0" expanded="true" />
+                <element signature="e#0#37610#0" expanded="true" />
+                <marker date="1413708372575" expanded="true" signature="7729:7774" placeholder="/**...*/" />
+                <marker date="1413708372575" expanded="true" signature="7907:7927" placeholder="/**...*/" />
+                <marker date="1413708372575" expanded="true" signature="8029:8067" placeholder="/**...*/" />
+                <marker date="1413708372575" expanded="true" signature="8190:8236" placeholder="/**...*/" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotHelper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="12801" max-vertical-offset="15538">
-              <caret line="761" column="0" selection-start-line="761" selection-start-column="0" selection-end-line="761" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -100,59 +94,69 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="C.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.39202657" vertical-offset="3062" max-vertical-offset="6239">
+              <caret line="200" column="89" selection-start-line="200" selection-start-column="89" selection-end-line="200" selection-end-column="89" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="DBFunc.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="14851" max-vertical-offset="15453">
-              <caret line="228" column="27" selection-start-line="228" selection-start-column="27" selection-end-line="228" selection-end-column="27" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="15939" max-vertical-offset="16575">
+              <caret line="294" column="27" selection-start-line="294" selection-start-column="27" selection-end-line="294" selection-end-column="27" />
               <folding>
-                <marker date="1413706684777" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
-                <marker date="1413706684777" expanded="true" signature="5580:5661" placeholder="INSERT INTO ..." />
-                <marker date="1413706684777" expanded="true" signature="6256:6632" placeholder="CREATE TABLE..plot..." />
-                <marker date="1413706684777" expanded="true" signature="6654:6816" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1413706684777" expanded="true" signature="6838:7001" placeholder="CREATE TABLE..plot_helpers..." />
-                <marker date="1413706684777" expanded="true" signature="7023:7186" placeholder="CREATE TABLE..plot_trusted..." />
-                <marker date="1413706684777" expanded="true" signature="7208:7814" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1413706684777" expanded="true" signature="7836:8033" placeholder="CREATE TABLE..plot_ratings..." />
-                <marker date="1413706684777" expanded="true" signature="8081:8203" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1413706684777" expanded="true" signature="8259:8551" placeholder="CREATE TABLE..plot..." />
-                <marker date="1413706684777" expanded="true" signature="8573:8700" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1413706684777" expanded="true" signature="8722:8850" placeholder="CREATE TABLE..plot_helpers..." />
-                <marker date="1413706684777" expanded="true" signature="8872:9000" placeholder="CREATE TABLE..plot_trusted..." />
-                <marker date="1413706684777" expanded="true" signature="9022:9545" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1413706684777" expanded="true" signature="9567:9728" placeholder="CREATE TABLE..plot_ratings..." />
-                <marker date="1413706684777" expanded="true" signature="10146:10198" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="10314:10365" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="10481:10532" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="10648:10681" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="11199:11257" placeholder="INSERT INTO ..." />
-                <marker date="1413706684777" expanded="true" signature="11548:11652" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413706684777" expanded="true" signature="13080:13442" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="13470:13488" placeholder="ALTER TABLE `plot`..." />
-                <marker date="1413706684777" expanded="true" signature="13830:13891" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1413706684777" expanded="true" signature="14391:14458" placeholder="SELECT `id`,..plot..." />
-                <marker date="1413706684777" expanded="true" signature="17415:17479" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="18235:18298" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="18913:18977" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="19714:19755" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413706684777" expanded="true" signature="20419:20469" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="20591:20640" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="20762:20813" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="20995:21045" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="21197:21233" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="21961:22028" placeholder="UPDATE `plot..." />
-                <marker date="1413706684777" expanded="true" signature="22557:22611" placeholder="SELECT * FRO..plot_settings..." />
-                <marker date="1413706684777" expanded="true" signature="23827:23889" placeholder="SELECT `user..plot_denied..." />
-                <marker date="1413706684777" expanded="true" signature="24463:24525" placeholder="SELECT `user..plot_helpers..." />
-                <marker date="1413706684777" expanded="true" signature="25048:25110" placeholder="SELECT `user..plot_trusted..." />
-                <marker date="1413706684777" expanded="true" signature="25683:25754" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="26378:26449" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="27075:27143" placeholder="INSERT INTO ..." />
-                <marker date="1413706684777" expanded="true" signature="27761:27829" placeholder="INSERT INTO ..." />
-                <marker date="1413706684777" expanded="true" signature="28455:28525" placeholder="DELETE FROM ..." />
-                <marker date="1413706684777" expanded="true" signature="29145:29212" placeholder="INSERT INTO ..." />
-                <marker date="1413706684777" expanded="true" signature="29671:29748" placeholder="SELECT AVG(`..plot_ratings..." />
+                <marker date="1413708372583" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
+                <marker date="1413708372583" expanded="true" signature="5580:5661" placeholder="INSERT INTO ..." />
+                <marker date="1413708372583" expanded="true" signature="6256:6632" placeholder="CREATE TABLE..plot..." />
+                <marker date="1413708372583" expanded="true" signature="6654:6816" placeholder="CREATE TABLE..plot_denied..." />
+                <marker date="1413708372583" expanded="true" signature="6838:7001" placeholder="CREATE TABLE..plot_helpers..." />
+                <marker date="1413708372583" expanded="true" signature="7023:7186" placeholder="CREATE TABLE..plot_trusted..." />
+                <marker date="1413708372583" expanded="true" signature="7208:7814" placeholder="CREATE TABLE..plot_settings..." />
+                <marker date="1413708372583" expanded="true" signature="7836:8033" placeholder="CREATE TABLE..plot_ratings..." />
+                <marker date="1413708372583" expanded="true" signature="8081:8203" placeholder="ALTER TABLE `plot_settings`..." />
+                <marker date="1413708372583" expanded="true" signature="8259:8551" placeholder="CREATE TABLE..plot..." />
+                <marker date="1413708372583" expanded="true" signature="8573:8700" placeholder="CREATE TABLE..plot_denied..." />
+                <marker date="1413708372583" expanded="true" signature="8722:8850" placeholder="CREATE TABLE..plot_helpers..." />
+                <marker date="1413708372583" expanded="true" signature="8872:9000" placeholder="CREATE TABLE..plot_trusted..." />
+                <marker date="1413708372583" expanded="true" signature="9022:9545" placeholder="CREATE TABLE..plot_settings..." />
+                <marker date="1413708372583" expanded="true" signature="9567:9728" placeholder="CREATE TABLE..plot_ratings..." />
+                <marker date="1413708372583" expanded="true" signature="10146:10198" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="10314:10365" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="10481:10532" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="10648:10681" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="11199:11257" placeholder="INSERT INTO ..." />
+                <marker date="1413708372583" expanded="true" signature="11548:11652" placeholder="SELECT `id` ..plot..." />
+                <marker date="1413708372583" expanded="true" signature="13080:13442" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="13470:13488" placeholder="ALTER TABLE `plot`..." />
+                <marker date="1413708372583" expanded="true" signature="13830:13891" placeholder="ALTER TABLE `plot_settings`..." />
+                <marker date="1413708372583" expanded="true" signature="14391:14458" placeholder="SELECT `id`,..plot..." />
+                <marker date="1413708372583" expanded="true" signature="17415:17479" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="18235:18298" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="18913:18977" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="22822:22863" placeholder="SELECT `id` ..plot..." />
+                <marker date="1413708372583" expanded="true" signature="23527:23577" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="23699:23748" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="23870:23921" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="24103:24153" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="24305:24341" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="25069:25136" placeholder="UPDATE `plot..." />
+                <marker date="1413708372583" expanded="true" signature="25665:25719" placeholder="SELECT * FRO..plot_settings..." />
+                <marker date="1413708372583" expanded="true" signature="26935:26997" placeholder="SELECT `user..plot_denied..." />
+                <marker date="1413708372583" expanded="true" signature="27571:27633" placeholder="SELECT `user..plot_helpers..." />
+                <marker date="1413708372583" expanded="true" signature="28156:28218" placeholder="SELECT `user..plot_trusted..." />
+                <marker date="1413708372583" expanded="true" signature="28791:28862" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="29486:29557" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="30183:30251" placeholder="INSERT INTO ..." />
+                <marker date="1413708372583" expanded="true" signature="30869:30937" placeholder="INSERT INTO ..." />
+                <marker date="1413708372583" expanded="true" signature="31563:31633" placeholder="DELETE FROM ..." />
+                <marker date="1413708372583" expanded="true" signature="32253:32320" placeholder="INSERT INTO ..." />
+                <marker date="1413708372583" expanded="true" signature="32779:32856" placeholder="SELECT AVG(`..plot_ratings..." />
               </folding>
             </state>
           </provider>
@@ -233,7 +237,6 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Clipboard.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/MainCommand.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Command.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/uuid/UUIDSet.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/uuid/UUIDSaver.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java" />
@@ -252,6 +255,7 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/PlotMeConverter.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
       </list>
     </option>
   </component>
@@ -826,7 +830,7 @@
       <workItem from="1413065609242" duration="214000" />
       <workItem from="1413065904473" duration="9265000" />
       <workItem from="1413125251335" duration="4054000" />
-      <workItem from="1413221404445" duration="22666000" />
+      <workItem from="1413221404445" duration="22791000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -1012,11 +1016,15 @@
       <created>1413706970695</created>
       <updated>1413706970695</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Some fixes :p">
+      <created>1413708341156</created>
+      <updated>1413708341156</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="101237000" />
+    <option name="totallyTimeSpent" value="101362000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1114,7 +1122,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="I seriously doubt this is working xD" />
     <MESSAGE value="Economy + schematics for /p auto :P" />
     <MESSAGE value="Updated plugin info: New link, total downloads + newest version" />
     <MESSAGE value="Improved economy (multiplies price * plots) :D&#10;Added you to plugin.yml" />
@@ -1139,7 +1146,8 @@
     <MESSAGE value="Gamemode :D" />
     <MESSAGE value="I'm sure I broke something :_:" />
     <MESSAGE value="Well, I knew it..." />
-    <option name="LAST_COMMIT_MESSAGE" value="Well, I knew it..." />
+    <MESSAGE value="Some fixes :p" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some fixes :p" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1376,14 +1384,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2839" max-vertical-offset="6239">
-          <caret line="175" column="7" selection-start-line="175" selection-start-column="7" selection-end-line="175" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ReflectionUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1677" max-vertical-offset="9435">
@@ -1524,56 +1524,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="14851" max-vertical-offset="15453">
-          <caret line="228" column="27" selection-start-line="228" selection-start-column="27" selection-end-line="228" selection-end-column="27" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="15939" max-vertical-offset="16575">
+          <caret line="294" column="27" selection-start-line="294" selection-start-column="27" selection-end-line="294" selection-end-column="27" />
           <folding>
-            <marker date="1413706684777" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
-            <marker date="1413706684777" expanded="true" signature="5580:5661" placeholder="INSERT INTO ..." />
-            <marker date="1413706684777" expanded="true" signature="6256:6632" placeholder="CREATE TABLE..plot..." />
-            <marker date="1413706684777" expanded="true" signature="6654:6816" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1413706684777" expanded="true" signature="6838:7001" placeholder="CREATE TABLE..plot_helpers..." />
-            <marker date="1413706684777" expanded="true" signature="7023:7186" placeholder="CREATE TABLE..plot_trusted..." />
-            <marker date="1413706684777" expanded="true" signature="7208:7814" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1413706684777" expanded="true" signature="7836:8033" placeholder="CREATE TABLE..plot_ratings..." />
-            <marker date="1413706684777" expanded="true" signature="8081:8203" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1413706684777" expanded="true" signature="8259:8551" placeholder="CREATE TABLE..plot..." />
-            <marker date="1413706684777" expanded="true" signature="8573:8700" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1413706684777" expanded="true" signature="8722:8850" placeholder="CREATE TABLE..plot_helpers..." />
-            <marker date="1413706684777" expanded="true" signature="8872:9000" placeholder="CREATE TABLE..plot_trusted..." />
-            <marker date="1413706684777" expanded="true" signature="9022:9545" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1413706684777" expanded="true" signature="9567:9728" placeholder="CREATE TABLE..plot_ratings..." />
-            <marker date="1413706684777" expanded="true" signature="10146:10198" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="10314:10365" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="10481:10532" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="10648:10681" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="11199:11257" placeholder="INSERT INTO ..." />
-            <marker date="1413706684777" expanded="true" signature="11548:11652" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413706684777" expanded="true" signature="13080:13442" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="13470:13488" placeholder="ALTER TABLE `plot`..." />
-            <marker date="1413706684777" expanded="true" signature="13830:13891" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1413706684777" expanded="true" signature="14391:14458" placeholder="SELECT `id`,..plot..." />
-            <marker date="1413706684777" expanded="true" signature="17415:17479" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="18235:18298" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="18913:18977" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="19714:19755" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413706684777" expanded="true" signature="20419:20469" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="20591:20640" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="20762:20813" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="20995:21045" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="21197:21233" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="21961:22028" placeholder="UPDATE `plot..." />
-            <marker date="1413706684777" expanded="true" signature="22557:22611" placeholder="SELECT * FRO..plot_settings..." />
-            <marker date="1413706684777" expanded="true" signature="23827:23889" placeholder="SELECT `user..plot_denied..." />
-            <marker date="1413706684777" expanded="true" signature="24463:24525" placeholder="SELECT `user..plot_helpers..." />
-            <marker date="1413706684777" expanded="true" signature="25048:25110" placeholder="SELECT `user..plot_trusted..." />
-            <marker date="1413706684777" expanded="true" signature="25683:25754" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="26378:26449" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="27075:27143" placeholder="INSERT INTO ..." />
-            <marker date="1413706684777" expanded="true" signature="27761:27829" placeholder="INSERT INTO ..." />
-            <marker date="1413706684777" expanded="true" signature="28455:28525" placeholder="DELETE FROM ..." />
-            <marker date="1413706684777" expanded="true" signature="29145:29212" placeholder="INSERT INTO ..." />
-            <marker date="1413706684777" expanded="true" signature="29671:29748" placeholder="SELECT AVG(`..plot_ratings..." />
+            <marker date="1413708372583" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
+            <marker date="1413708372583" expanded="true" signature="5580:5661" placeholder="INSERT INTO ..." />
+            <marker date="1413708372583" expanded="true" signature="6256:6632" placeholder="CREATE TABLE..plot..." />
+            <marker date="1413708372583" expanded="true" signature="6654:6816" placeholder="CREATE TABLE..plot_denied..." />
+            <marker date="1413708372583" expanded="true" signature="6838:7001" placeholder="CREATE TABLE..plot_helpers..." />
+            <marker date="1413708372583" expanded="true" signature="7023:7186" placeholder="CREATE TABLE..plot_trusted..." />
+            <marker date="1413708372583" expanded="true" signature="7208:7814" placeholder="CREATE TABLE..plot_settings..." />
+            <marker date="1413708372583" expanded="true" signature="7836:8033" placeholder="CREATE TABLE..plot_ratings..." />
+            <marker date="1413708372583" expanded="true" signature="8081:8203" placeholder="ALTER TABLE `plot_settings`..." />
+            <marker date="1413708372583" expanded="true" signature="8259:8551" placeholder="CREATE TABLE..plot..." />
+            <marker date="1413708372583" expanded="true" signature="8573:8700" placeholder="CREATE TABLE..plot_denied..." />
+            <marker date="1413708372583" expanded="true" signature="8722:8850" placeholder="CREATE TABLE..plot_helpers..." />
+            <marker date="1413708372583" expanded="true" signature="8872:9000" placeholder="CREATE TABLE..plot_trusted..." />
+            <marker date="1413708372583" expanded="true" signature="9022:9545" placeholder="CREATE TABLE..plot_settings..." />
+            <marker date="1413708372583" expanded="true" signature="9567:9728" placeholder="CREATE TABLE..plot_ratings..." />
+            <marker date="1413708372583" expanded="true" signature="10146:10198" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="10314:10365" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="10481:10532" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="10648:10681" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="11199:11257" placeholder="INSERT INTO ..." />
+            <marker date="1413708372583" expanded="true" signature="11548:11652" placeholder="SELECT `id` ..plot..." />
+            <marker date="1413708372583" expanded="true" signature="13080:13442" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="13470:13488" placeholder="ALTER TABLE `plot`..." />
+            <marker date="1413708372583" expanded="true" signature="13830:13891" placeholder="ALTER TABLE `plot_settings`..." />
+            <marker date="1413708372583" expanded="true" signature="14391:14458" placeholder="SELECT `id`,..plot..." />
+            <marker date="1413708372583" expanded="true" signature="17415:17479" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="18235:18298" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="18913:18977" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="22822:22863" placeholder="SELECT `id` ..plot..." />
+            <marker date="1413708372583" expanded="true" signature="23527:23577" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="23699:23748" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="23870:23921" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="24103:24153" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="24305:24341" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="25069:25136" placeholder="UPDATE `plot..." />
+            <marker date="1413708372583" expanded="true" signature="25665:25719" placeholder="SELECT * FRO..plot_settings..." />
+            <marker date="1413708372583" expanded="true" signature="26935:26997" placeholder="SELECT `user..plot_denied..." />
+            <marker date="1413708372583" expanded="true" signature="27571:27633" placeholder="SELECT `user..plot_helpers..." />
+            <marker date="1413708372583" expanded="true" signature="28156:28218" placeholder="SELECT `user..plot_trusted..." />
+            <marker date="1413708372583" expanded="true" signature="28791:28862" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="29486:29557" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="30183:30251" placeholder="INSERT INTO ..." />
+            <marker date="1413708372583" expanded="true" signature="30869:30937" placeholder="INSERT INTO ..." />
+            <marker date="1413708372583" expanded="true" signature="31563:31633" placeholder="DELETE FROM ..." />
+            <marker date="1413708372583" expanded="true" signature="32253:32320" placeholder="INSERT INTO ..." />
+            <marker date="1413708372583" expanded="true" signature="32779:32856" placeholder="SELECT AVG(`..plot_ratings..." />
           </folding>
         </state>
       </provider>
@@ -1604,23 +1604,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="19815" max-vertical-offset="20604">
-          <caret line="1251" column="67" selection-start-line="1251" selection-start-column="67" selection-end-line="1251" selection-end-column="67" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="20172" max-vertical-offset="20961">
+          <caret line="1266" column="67" selection-start-line="1266" selection-start-column="67" selection-end-line="1266" selection-end-column="67" />
           <folding>
-            <element signature="e#0#37228#0" expanded="true" />
+            <element signature="e#0#37610#0" expanded="true" />
+            <marker date="1413708372575" expanded="true" signature="7729:7774" placeholder="/**...*/" />
+            <marker date="1413708372575" expanded="true" signature="7907:7927" placeholder="/**...*/" />
+            <marker date="1413708372575" expanded="true" signature="8029:8067" placeholder="/**...*/" />
+            <marker date="1413708372575" expanded="true" signature="8190:8236" placeholder="/**...*/" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.88245314" vertical-offset="2049" max-vertical-offset="15300">
+        <state vertical-scroll-proportion="-18.5" vertical-offset="2049" max-vertical-offset="15300">
           <caret line="167" column="38" selection-start-line="167" selection-start-column="38" selection-end-line="167" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1804#1805#0" expanded="true" />
             <element signature="e#1859#1860#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.39202657" vertical-offset="3062" max-vertical-offset="6239">
+          <caret line="200" column="89" selection-start-line="200" selection-start-column="89" selection-end-line="200" selection-end-column="89" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -198,7 +198,7 @@ public enum C {
 	 * Info
 	 */
 	PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-	PLOT_INFO("ID: &6%id%&c, Alias: &6%alias%&c, Owner: &6%owner%&c, Biome: &6%biome%&c, Time: &6%time%&c, Weather: &6%weather%&c, Helpers:&6%helpers%&c, Trusted:&6%trusted%&c, Denied:&6%denied%&c, Rating: &6%rating%&c, Flags: &6%flags%"),
+	PLOT_INFO("ID: &6%id%&c, Alias: &6%alias%&c, Owner: &6%owner%&c, Biome: &6%biome%&c, Helpers:&6%helpers%&c, Trusted:&6%trusted%&c, Denied:&6%denied%&c, Rating: &6%rating%&c, Flags: &6%flags%"),
 	PLOT_USER_LIST(" &6%user%&c,"),
 	INFO_SYNTAX_CONSOLE("/plot info {world} X;Y"),
 	/*
