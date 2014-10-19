@@ -136,7 +136,7 @@ public enum C {
 	/*
 	 * purge
 	 */
-	PURGE_SYNTAX("&c/plots purge {world}"),
+	PURGE_SYNTAX("&c/plots purge {world|world;x,z}"),
 	PURGE_SUCCESS("All plots for the specified world have now been purged."),
 	/*
 	 * No {plot}

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -27,22 +28,52 @@ public class Purge extends SubCommand {
 
 	@Override
 	public boolean execute(Player plr, String... args) {
-		if (args.length!=1) {
+		if (args.length!=2) {
+		    if (args.length==1) {
+		        try {
+		            String[] split = args[0].split(";");
+		            String world = split[0];
+		            PlotId id = new PlotId(Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+		            
+		            System.out.print("VALID ID");
+		            
+		            if (plr!=null) {
+		                PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+		                return false;
+		            }
+		            
+		            if (!PlotMain.isPlotWorld(world)) {
+		                PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+		                return false;
+		            }
+	                PlotMain.getPlots(world).remove(id);
+	                DBFunc.purge(world, id);
+		        }
+		        catch (Exception e) {
+		            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+		        }
+		    }
 			PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
 			return false;
 		}
-		PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);
-		if (plotworld == null) {
-			PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
-			return false;
+		if (args[1].equals("-o")) {
+    		PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);
+    		if (plotworld == null) {
+    			PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+    			return false;
+    		}
+    		if (plr!=null) {
+    			PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+    			return false;
+    		}
+    		DBFunc.purge(args[0]);
+    		PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
+    		return true;
 		}
-		if (plr!=null) {
-			PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
-			return false;
+		else {
+		    PlayerFunctions.sendMessage(plr, "This is a dangerous command, if you are sure, use /plot purge {world} -o");
+		    return false;
 		}
-		DBFunc.purge(args[0]);
-		PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
-		return true;
 	}
 
 }
