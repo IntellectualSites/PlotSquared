@@ -574,7 +574,7 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	public void MobSpawn(CreatureSpawnEvent event) {
         World world = event.getLocation().getWorld();
         if (!isPlotWorld(world)) {
@@ -589,9 +589,10 @@ public class PlayerEvents implements Listener {
         } else if (reason == CreatureSpawnEvent.SpawnReason.CUSTOM && pW.SPAWN_CUSTOM) {
             return;
         }
-		if (event.getEntity().getType() == EntityType.PLAYER) {
+		if (event.getEntity() instanceof Player) {
 			return;
 		}
+		System.out.print(event.getEntityType().getName());
 		if (!isInPlot(event.getLocation())) {
 			event.setCancelled(true);
 		}
@@ -634,15 +635,15 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-	@EventHandler(
-			priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	public void onTeleport(PlayerTeleportEvent event) {
-
 		Location f = event.getFrom();
 		Location t = event.getTo();
-
-		if (isPlotWorld(event.getTo())) {
-			if (isInPlot(event.getTo())) {
+		Location q = new Location(t.getWorld(),t.getBlockX(), 64, t.getZ());
+		
+		
+		if (isPlotWorld(q)) {
+			if (isInPlot(q)) {
 				Plot plot = getCurrentPlot(event.getTo());
 				if (plot.deny_entry(event.getPlayer())) {
 					PlayerFunctions.sendMessage(event.getPlayer(), C.YOU_BE_DENIED);

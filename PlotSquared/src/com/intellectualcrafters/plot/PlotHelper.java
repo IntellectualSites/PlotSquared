@@ -770,23 +770,38 @@ public class PlotHelper {
 		PlotMain.updatePlot(plot);
 		refreshPlotChunks(world, plot);
 	}
+	public static int getHeighestBlock(World world, int x, int z) {
+	    boolean safe = false;
+	    for (int i = 1; i<world.getMaxHeight(); i++) {
+	        int id = world.getBlockAt(x,i,z).getTypeId();
+	        if (id==0) {
+	            if (safe) {
+	                return i-1;
+	            }
+	            safe = true;
+	        }
+	    }
+	    return 64;
+	}
 
 	public static Location getPlotHome(World w, PlotId plotid) {
-		Location
-                bot = getPlotBottomLoc(w, plotid),
-                top = getPlotTopLoc(w, plotid);
 
 		if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
-			int x = bot.getBlockX() + (top.getBlockX() - bot.getBlockX());
+		    
+		    Location bot = getPlotBottomLoc(w, plotid);
+		    
+			int x = bot.getBlockX();
 			int z = bot.getBlockZ() - 2;
-			int y = w.getHighestBlockYAt(x, z);
+			int y = getHeighestBlock(w, x, z);
 			return new Location(w, x, y, z);
 		}
 		else {
-
+		    Location
+            bot = getPlotBottomLoc(w, plotid),
+            top = getPlotTopLoc(w, plotid);
 			int x = top.getBlockX() - bot.getBlockX();
 			int z = top.getBlockZ() - bot.getBlockZ();
-			int y = w.getHighestBlockYAt(x, z);
+			int y = getHeighestBlock(w, x, z);
 			return new Location(w, bot.getBlockX() + x/2, y, bot.getBlockZ() + z/2);
 		}
 	}

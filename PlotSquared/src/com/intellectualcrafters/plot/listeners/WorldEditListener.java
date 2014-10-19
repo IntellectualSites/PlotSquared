@@ -148,8 +148,7 @@ public class WorldEditListener implements Listener {
 		}
 	}
 
-	@EventHandler(
-			priority = EventPriority.LOWEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onTeleport(final PlayerTeleportEvent e) {
 		if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
 			return;
