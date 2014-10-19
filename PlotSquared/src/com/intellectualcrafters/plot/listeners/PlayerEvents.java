@@ -118,6 +118,9 @@ public class PlayerEvents implements Listener {
 			event.getPlayer().saveData();
 		}
 		textures(event.getPlayer());
+        if(isInPlot(event.getPlayer().getLocation())) {
+            plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
+        }
 	}
 
 	private void textures(Player p) {
@@ -171,6 +174,7 @@ public class PlayerEvents implements Listener {
                 try {
                     int time = Integer.parseInt(plot.settings.getFlag("time").getValue());
                 } catch(Exception e) {
+                    e.printStackTrace();
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
             }

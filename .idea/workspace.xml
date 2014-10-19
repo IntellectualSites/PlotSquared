@@ -9,8 +9,8 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
+    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="Fix :3&#10;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -44,12 +44,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayerEvents.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="PlayerEvents.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-18.5" vertical-offset="2049" max-vertical-offset="15300">
-              <caret line="167" column="38" selection-start-line="167" selection-start-column="38" selection-end-line="167" selection-end-column="38" />
+            <state vertical-scroll-proportion="0.66721314" vertical-offset="1582" max-vertical-offset="15470">
+              <caret line="127" column="23" selection-start-line="127" selection-start-column="23" selection-end-line="127" selection-end-column="23" />
               <folding>
+                <element signature="e#0#26520#0" expanded="true" />
                 <element signature="imports" expanded="true" />
                 <element signature="e#1804#1805#0" expanded="true" />
                 <element signature="e#1859#1860#0" expanded="true" />
@@ -94,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="C.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="C.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7824" vertical-offset="5546" max-vertical-offset="6290">
-              <caret line="363" column="43" selection-start-line="363" selection-start-column="43" selection-end-line="363" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="5597" max-vertical-offset="6290">
+              <caret line="374" column="0" selection-start-line="374" selection-start-column="0" selection-end-line="374" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -253,9 +254,9 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/PlotMeConverter.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Info.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
       </list>
     </option>
   </component>
@@ -830,7 +831,7 @@
       <workItem from="1413065609242" duration="214000" />
       <workItem from="1413065904473" duration="9265000" />
       <workItem from="1413125251335" duration="4054000" />
-      <workItem from="1413221404445" duration="23714000" />
+      <workItem from="1413221404445" duration="24407000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -1024,11 +1025,15 @@
       <created>1413708479859</created>
       <updated>1413708479859</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Fix :3&#10;">
+      <created>1413709386703</created>
+      <updated>1413709386703</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102285000" />
+    <option name="totallyTimeSpent" value="102978000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1126,7 +1131,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Updated plugin info: New link, total downloads + newest version" />
     <MESSAGE value="Improved economy (multiplies price * plots) :D&#10;Added you to plugin.yml" />
     <MESSAGE value="Yup." />
     <MESSAGE value="I hope this works..." />
@@ -1151,7 +1155,8 @@
     <MESSAGE value="Well, I knew it..." />
     <MESSAGE value="Some fixes :p" />
     <MESSAGE value="Fixed caption" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed caption" />
+    <MESSAGE value="Fix :3&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix :3&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1612,18 +1617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.5" vertical-offset="2049" max-vertical-offset="15300">
-          <caret line="167" column="38" selection-start-line="167" selection-start-column="38" selection-end-line="167" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1859#1860#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Info.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="199" max-vertical-offset="2516">
@@ -1634,9 +1627,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7824" vertical-offset="5546" max-vertical-offset="6290">
-          <caret line="363" column="43" selection-start-line="363" selection-start-column="43" selection-end-line="363" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5597" max-vertical-offset="6290">
+          <caret line="374" column="0" selection-start-line="374" selection-start-column="0" selection-end-line="374" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.66721314" vertical-offset="1582" max-vertical-offset="15470">
+          <caret line="127" column="23" selection-start-line="127" selection-start-column="23" selection-end-line="127" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#26520#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1804#1805#0" expanded="true" />
+            <element signature="e#1859#1860#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
