@@ -485,8 +485,9 @@ public class DBFunc {
 						plots.put(worldname, map);
 					}
 					else {
-						PlotMain.sendConsoleSenderMessage("&cPlot '" + p.id + "' in DB for world '" + p.world
-								+ "' does not exist! Please create this world, or remove the plots from the DB!");
+					    if (PlotMain.config.getBoolean("debug" )) {
+    						PlotMain.sendConsoleSenderMessage("&cPlot '" + p.id + "' in DB for world '" + p.world + "' does not exist! Please create this world, or remove the plots from the DB!");
+					    }
 					}
 				}
 			}
