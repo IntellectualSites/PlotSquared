@@ -141,8 +141,7 @@ public class PlayerEvents implements Listener {
 
     private WeatherType getWeatherType(String str) {
         str = str.toLowerCase();
-        List<String> storm = Arrays.asList("storm", "rain", "on");
-        if(storm.contains(str)) {
+        if(str.equals("rain")) {
             return WeatherType.DOWNFALL;
         } else {
             return WeatherType.CLEAR;
@@ -150,15 +149,11 @@ public class PlayerEvents implements Listener {
     }
 
     private GameMode getGameMode(String str) {
-        str = str.toLowerCase();
-        List<String> creative   = Arrays.asList("creative" , "cr", "1");
-        List<String> survival   = Arrays.asList("survival" , "su", "0");
-        List<String> adventure  = Arrays.asList("adventure", "ad", "2");
-        if (creative.contains(str)) {
+        if (str.equals("creative")) {
             return GameMode.CREATIVE;
-        } else if (survival.contains(str)) {
+        } else if (str.equals("survival")) {
             return GameMode.SURVIVAL;
-        } else if (adventure.contains(str)) {
+        } else if (str.equals("adventure")) {
             return GameMode.ADVENTURE;
         } else {
             return Bukkit.getDefaultGameMode();
@@ -564,8 +559,8 @@ public class PlayerEvents implements Listener {
 			// return;
 			// }
 
-            if(PlotMain.materialFlags.containsKey(event.getClickedBlock().getType())) {
-                String flag = PlotMain.materialFlags.get(event.getClickedBlock().getType());
+            if(PlotMain.booleanFlags.containsKey(event.getClickedBlock().getType())) {
+                String flag = PlotMain.booleanFlags.get(event.getClickedBlock().getType());
                 if(plot.settings.getFlag(flag) != null && getFlagValue(plot.settings.getFlag(flag).getValue()))
                     return;
             }

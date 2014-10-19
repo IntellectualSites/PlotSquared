@@ -1254,34 +1254,132 @@ public class PlotMain extends JavaPlugin {
     // Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
     // Material.WOOD_DOOR, Material.WOODEN_DOOR,
     // Material.DISPENSER, Material.DROPPER
-    public static HashMap<Material, String> materialFlags = new HashMap<>();
+    public static HashMap<Material, String> booleanFlags = new HashMap<>();
     static {
-        materialFlags.put(Material.WOODEN_DOOR, "wooden_door");
-        materialFlags.put(Material.IRON_DOOR, "iron_door");
-        materialFlags.put(Material.STONE_BUTTON, "stone_button");
-        materialFlags.put(Material.WOOD_BUTTON, "wooden_button");
-        materialFlags.put(Material.LEVER, "lever");
-        materialFlags.put(Material.WOOD_PLATE, "wooden_plate");
-        materialFlags.put(Material.STONE_PLATE, "stone_plate");
-        materialFlags.put(Material.CHEST, "chest");
-        materialFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
-        materialFlags.put(Material.TRAP_DOOR, "trap_door");
-        materialFlags.put(Material.DISPENSER, "dispenser");
-        materialFlags.put(Material.DROPPER, "dropper");
+        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
+        booleanFlags.put(Material.IRON_DOOR, "iron_door");
+        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
+        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
+        booleanFlags.put(Material.LEVER, "lever");
+        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
+        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
+        booleanFlags.put(Material.CHEST, "chest");
+        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
+        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
+        booleanFlags.put(Material.DISPENSER, "dispenser");
+        booleanFlags.put(Material.DROPPER, "dropper");
     }
 
     private static void defaultFlags() {
-        for(String str : materialFlags.values()) {
-            FlagManager.addFlag(new AbstractFlag(str));
+        for(String str : booleanFlags.values()) {
+            FlagManager.addFlag(new AbstractFlag(str) {
+                
+                @Override
+                public String parseValue(String value) {
+                    switch (value) {
+                    case "true":
+                        return "true";
+                    case "yes":
+                        return "true";
+                    case "1":
+                        return "true";
+                    case "false":
+                        return "false";
+                    case "no":
+                        return "false";
+                    case "0":
+                        return "false";
+                    default:
+                        return null;
+                    
+                    }
+                }
+
+                @Override
+                public String getValueDesc() {
+                    return "Flag value must be a boolean: true, false";
+                }
+                
+                
+            });
         }
-        List<String> otherFlags = Arrays.asList(
-            "gamemode",
-            "weather",
-            "time"
-        );
-        for(String str : otherFlags) {
-            FlagManager.addFlag(new AbstractFlag(str));
-        }
+        
+        FlagManager.addFlag(new AbstractFlag("gamemode") {
+            @Override
+            public String parseValue(String value) {
+                switch (value) {
+                case "creative":
+                    return "creative";
+                case "survival":
+                    return "survival";
+                case "adventure":
+                    return "adventure";
+                case "c":
+                    return "creative";
+                case "s":
+                    return "survival";
+                case "a":
+                    return "adventure";
+                case "1":
+                    return "creative";
+                case "0":
+                    return "survival";
+                case "2":
+                    return "adventure";
+                default:
+                    return null;
+                }
+            }
+
+            @Override
+            public String getValueDesc() {
+                return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
+            }
+        });
+        
+        FlagManager.addFlag(new AbstractFlag("time") {
+            @Override
+            public String parseValue(String value) {
+                try {
+                    return Long.parseLong(value)+"";
+                }
+                catch (Exception e) {
+                    return null;
+                }
+            }
+
+            @Override
+            public String getValueDesc() {
+                return "Flag value must be a time in ticks: 0=sunrise 12000=noon 18000=sunset 24000=night";
+            }
+        });
+        
+        FlagManager.addFlag(new AbstractFlag("weather") {
+            @Override
+            public String parseValue(String value) {
+                switch (value) {
+                case "rain":
+                    return "rain";
+                case "storm":
+                    return "rain";
+                case "on":
+                    return "rain";
+                case "clear":
+                    return "clear";
+                case "sun":
+                    return "clear";
+                case "off":
+                    return "clear";
+                default:
+                    return null;
+                }
+            }
+
+            @Override
+            public String getValueDesc() {
+                return "Flag value must be weather type: 'clear' or 'rain'";
+            }
+        });
     }
 
 	public static void addPlotWorld(String world, PlotWorld plotworld, PlotManager manager) {

@@ -25,6 +25,15 @@ public class AbstractFlag {
 		}
 		this.key = key.toLowerCase();
 	}
+	
+	public String parseValue(String value) {
+	    return value;
+	}
+	
+	public String getValueDesc() {
+	    return "Flag value must be alphanumeric";
+	}
+	
 
 	/**
 	 * AbstractFlag key

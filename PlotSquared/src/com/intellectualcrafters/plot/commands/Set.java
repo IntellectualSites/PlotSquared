@@ -134,10 +134,18 @@ public class Set extends SubCommand {
 			}
 			try {
 				String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+				value = af.parseValue(value);
+				
+				if (value==null) {
+				    PlayerFunctions.sendMessage(plr, af.getValueDesc());
+				    return false;
+				}
+				
 				if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotMain.worldGuardListener != null)) {
 					PlotMain.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], value);
 					return false;
 				}
+				
 				Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), value);
 				PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
 				Bukkit.getServer().getPluginManager().callEvent(event);
