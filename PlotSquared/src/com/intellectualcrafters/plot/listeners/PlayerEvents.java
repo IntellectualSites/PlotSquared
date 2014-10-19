@@ -172,9 +172,9 @@ public class PlayerEvents implements Listener {
             }
             if(plot.settings.getFlag("time") != null) {
                 try {
-                    int time = Integer.parseInt(plot.settings.getFlag("time").getValue());
+                    Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
+                    player.setPlayerTime(time, true);
                 } catch(Exception e) {
-                    e.printStackTrace();
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
             }
