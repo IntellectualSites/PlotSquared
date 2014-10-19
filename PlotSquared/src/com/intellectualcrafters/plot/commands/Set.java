@@ -111,7 +111,7 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
 				return false;
 			}
-			if (!plr.hasPermission("plots.set.flag" + args[1].toLowerCase())) {
+			if (!plr.hasPermission("plots.set.flag." + args[1].toLowerCase())) {
 				PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
 				return false;
 			}
