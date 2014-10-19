@@ -8,9 +8,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,15 +17,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.UUIDHandler;
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -113,8 +105,6 @@ public class Info extends SubCommand {
 		info = info.replaceAll("%id%", plot.id.toString());
 		info = info.replaceAll("%biome%", getBiomeAt(plot).toString());
 		info = info.replaceAll("%owner%", owner);
-		info = info.replaceAll("%time%", plot.settings.getChangeTime() ? plot.settings.getTime() + "" : "default");
-		info = info.replaceAll("%weather%", plot.settings.getRain() ? "rain" : "default");
 		info = info.replaceAll("%helpers%", getPlayerList(plot.helpers));
 		info = info.replaceAll("%trusted%", getPlayerList(plot.trusted));
 		info = info.replaceAll("%denied%", getPlayerList(plot.denied));

@@ -8,15 +8,14 @@
 
 package com.intellectualcrafters.plot;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.database.DBFunc;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * The plot class
@@ -85,9 +84,6 @@ public class Plot implements Cloneable {
 		this.helpers = helpers;
 		this.denied = denied;
 		this.trusted = new ArrayList<UUID>();
-		this.settings.setTime(8000l);
-		this.settings.setRain(false);
-		this.settings.setTimeChange(false);
 		this.settings.setAlias("");
 		this.settings.setPosition(PlotHomePosition.DEFAULT);
 		this.delete = false;
@@ -108,7 +104,7 @@ public class Plot implements Cloneable {
 	 * @param merged
 	 */
 	public Plot(PlotId id, UUID owner, Biome plotBiome, ArrayList<UUID> helpers, ArrayList<UUID> trusted,
-			ArrayList<UUID> denied, boolean changeTime, long time, boolean rain, String alias,
+			ArrayList<UUID> denied, String alias,
 			PlotHomePosition position, Flag[] flags, String world, boolean[] merged) {
 		this.id = id;
 		this.settings = new PlotSettings(this);
@@ -118,9 +114,6 @@ public class Plot implements Cloneable {
 		this.trusted = trusted;
 		this.helpers = helpers;
 		this.denied = denied;
-		this.settings.setTime(time);
-		this.settings.setRain(rain);
-		this.settings.setTimeChange(changeTime);
 		this.settings.setAlias(alias);
 		this.settings.setPosition(position);
 		this.settings.setMerged(merged);

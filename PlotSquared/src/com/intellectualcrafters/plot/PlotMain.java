@@ -1251,7 +1251,9 @@ public class PlotMain extends JavaPlugin {
             FlagManager.addFlag(new AbstractFlag(str));
         }
         List<String> otherFlags = Arrays.asList(
-            "gamemode"
+            "gamemode",
+            "weather",
+            "time"
         );
         for(String str : otherFlags) {
             FlagManager.addFlag(new AbstractFlag(str));

@@ -28,6 +28,26 @@ public class FlagManager {
 		return flags.add(flag);
 	}
 
+    public static Flag[] removeFlag(Flag[] flags, String r) {
+        Flag[] f = new Flag[flags.length - 1];
+        int index = 0;
+        for(Flag flag : flags) {
+            if(!flag.getKey().equals(r))
+                f[index++] = flag;
+        }
+        return f;
+    }
+
+    public static Flag[] removeFlag(Set<Flag> flags, String r) {
+        Flag[] flagArray = new Flag[flags.size() - 1];
+        int index = 0;
+        for(Flag flag : flags) {
+            if(!flag.getKey().equals(r))
+                flagArray[index++] = flag;
+        }
+        return flagArray;
+    }
+
 	/**
 	 * Get a list of registered AbstractFlag objects
 	 * 

@@ -8,32 +8,20 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
+import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.AbstractFlag;
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotBlock;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
-import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Citymonstret
@@ -44,9 +32,9 @@ public class Set extends SubCommand {
 		super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
 	}
 
-	public static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "rain",
+	public static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home",
 			"flag" };
-	public static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "r", "fl" };
+	public static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -168,31 +156,7 @@ public class Set extends SubCommand {
 				return false;
 			}
 		}
-		if (args[0].equalsIgnoreCase("rain")) {
-			if (args.length < 2) {
-				PlayerFunctions.sendMessage(plr, C.NEED_ON_OFF);
-				return false;
-			}
-			String word = args[1];
-			if (!word.equalsIgnoreCase("on") && !word.equalsIgnoreCase("off")) {
-				PlayerFunctions.sendMessage(plr, C.NEED_ON_OFF);
-				return true;
-			}
-			boolean b = word.equalsIgnoreCase("on");
-			DBFunc.setWeather(plr.getWorld().getName(), plot, b);
-			PlayerFunctions.sendMessage(plr, C.SETTING_UPDATED);
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				if (PlayerFunctions.getCurrentPlot(plr).id == plot.id) {
-					if (b) {
-						p.setPlayerWeather(WeatherType.DOWNFALL);
-					}
-					else {
-						p.resetPlayerWeather();
-					}
-				}
-			}
-			return true;
-		}
+
 
 		if (args[0].equalsIgnoreCase("home")) {
 			if (args.length < 2) {

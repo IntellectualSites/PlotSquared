@@ -9,20 +9,11 @@
 
 package com.intellectualcrafters.plot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
+
+import java.util.*;
 
 /**
  * Functions involving players, plots and locations.
@@ -135,23 +126,7 @@ public class PlayerFunctions {
 		return manager.getPlotId(plotworld, loc);
 	}
 
-	/**
-	 * Sets the weather for a player, given the current plot settings
-	 * @param player
-	 * @param plot
-	 */
-	public static void togglePlotWeather(Player player, Plot plot) {
-		player.setPlayerWeather(plot.settings.getRain() ? WeatherType.DOWNFALL : WeatherType.CLEAR);
-	}
 
-	/**
-	 * Sets the time for a player, given the current plot settings
-	 * @param player
-	 * @param plot
-	 */
-	public static void togglePlotTime(Player player, Plot plot) {
-		player.setPlayerTime(plot.settings.getTime(), false);
-	}
 
 	/**
 	 * Returns the plot a player is currently in.
@@ -180,7 +155,7 @@ public class PlayerFunctions {
 	/**
 	 * Updates a given plot with another instance
 	 * @deprecated
-	 * @param id
+
 	 * @param plot
 	 */
 	@Deprecated

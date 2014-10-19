@@ -135,6 +135,16 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
+    private WeatherType getWeatherType(String str) {
+        str = str.toLowerCase();
+        List<String> storm = Arrays.asList("storm", "rain", "on");
+        if(storm.contains(str)) {
+            return WeatherType.DOWNFALL;
+        } else {
+            return WeatherType.CLEAR;
+        }
+    }
+
     private GameMode getGameMode(String str) {
         str = str.toLowerCase();
         List<String> creative   = Arrays.asList("creative" , "cr", "1");
@@ -151,10 +161,26 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    private HashMap<String, GameMode> previousGamemode = new HashMap<>();
+
 	public void plotEntry(Player player, Plot plot) {
 		if (plot.hasOwner()) {
             if(plot.settings.getFlag("gamemode") != null) {
+                if(previousGamemode.containsKey(player.getName())) {
+                    previousGamemode.remove(player.getName());
+                }
+                previousGamemode.put(player.getName(), player.getGameMode());
                 player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
+            }
+            if(plot.settings.getFlag("time") != null) {
+                try {
+                    int time = Integer.parseInt(plot.settings.getFlag("time").getValue());
+                } catch(Exception e) {
+                    plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
+                }
+            }
+            if(plot.settings.getFlag("weather") != null) {
+                player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
             }
 			if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
 				String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
@@ -172,12 +198,6 @@ public class PlayerEvents implements Listener {
 				Bukkit.getPluginManager().callEvent(callEvent);
 			}
 			PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
-			if (plot.settings.getRain()) {
-				PlayerFunctions.togglePlotWeather(player, plot);
-			}
-			if (plot.settings.getChangeTime()) {
-				PlayerFunctions.togglePlotTime(player, plot);
-			}
 		}
 	}
 
@@ -186,6 +206,10 @@ public class PlayerEvents implements Listener {
 			PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
 			Bukkit.getPluginManager().callEvent(callEvent);
 		}
+        if(previousGamemode.containsKey(player.getName())) {
+            player.setGameMode(previousGamemode.get(player.getName()));
+            previousGamemode.remove(player.getName());
+        }
 		player.resetPlayerTime();
 		player.resetPlayerWeather();
 		PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());

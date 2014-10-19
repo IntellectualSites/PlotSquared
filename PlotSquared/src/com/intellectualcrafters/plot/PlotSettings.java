@@ -8,11 +8,11 @@
 
 package com.intellectualcrafters.plot;
 
+import org.bukkit.block.Biome;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bukkit.block.Biome;
 
 /**
  * plot settings
@@ -32,22 +32,12 @@ public class PlotSettings {
 	 * plot biome
 	 */
 	private Biome biome;
-	/**
-	 * plot rain
-	 */
-	private boolean rain;
+
 	/**
 	 *
 	 */
 	private Set<Flag> flags;
-	/**
-	 * plot time
-	 */
-	private Long time;
-	/**
-	 * Change time?
-	 */
-	private boolean changeTime;
+
 	private PlotHomePosition position;
 
 	/**
@@ -99,19 +89,6 @@ public class PlotSettings {
 		this.biome = b;
 	}
 
-	/**
-	 * @param b
-	 */
-	public void setTimeChange(boolean b) {
-		this.changeTime = b;
-	}
-
-	/**
-	 * @param l
-	 */
-	public void setTime(long l) {
-		this.time = l;
-	}
 
 	/**
 	 * @return
@@ -122,30 +99,7 @@ public class PlotSettings {
 		return this.biome;
 	}
 
-	/**
-	 * @return
-	 */
-	public boolean getRain() {
-		return this.rain;
-	}
 
-	public void setRain(boolean b) {
-		this.rain = b;
-	}
-
-	/**
-	 * @return
-	 */
-	public long getTime() {
-		return this.time;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean getChangeTime() {
-		return this.changeTime;
-	}
 
 	/**
 	 * @param alias

@@ -160,7 +160,7 @@ public class DBFunc {
 	/**
 	 * Create a plot
 	 * 
-	 * @param plot
+	 * @param plots
 	 */
 	public static void createPlots(ArrayList<Plot> plots) {
 		if (plots.size() == 0) {
@@ -449,22 +449,7 @@ public class DBFunc {
 				ArrayList<UUID> helpers = plotHelpers(id);
 				ArrayList<UUID> trusted = plotTrusted(id);
 				ArrayList<UUID> denied = plotDenied(id);
-				// boolean changeTime = ((Short) settings.get("custom_time") ==
-				// 0) ? false : true;
-				long time = 8000l;
-				// if(changeTime) {
-				// time = Long.parseLong(settings.get("time").toString());
-				// }
-				// boolean rain =
-				// Integer.parseInt(settings.get("rain").toString()) == 1 ? true
-				// : false;
-				boolean rain;
-				try {
-					rain = (int) settings.get("rain") == 1 ? true : false;
-				}
-				catch (Exception e) {
-					rain = false;
-				}
+
 				String alias = (String) settings.get("alias");
 				if ((alias == null) || alias.equalsIgnoreCase("NEW")) {
 					alias = "";
@@ -489,7 +474,7 @@ public class DBFunc {
 					merged[3 - i] = (merged_int & (1 << i)) != 0;
 				}
 				p =
-						new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, /* changeTime */false, time, rain, alias, position, flags, worldname, merged);
+						new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, alias, position, flags, worldname, merged);
 				if (plots.containsKey(worldname)) {
 					plots.get(worldname).put((plot_id), p);
 				}
@@ -514,31 +499,6 @@ public class DBFunc {
 		return plots;
 	}
 
-	/**
-	 * @param plot
-	 * @param rain
-	 */
-	public static void setWeather(final String world, final Plot plot, final boolean rain) {
-		plot.settings.setRain(rain);
-		runTask(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					int weather = rain ? 1 : 0;
-					PreparedStatement stmt =
-							connection.prepareStatement("UPDATE `plot_settings` SET `rain` = ? WHERE `plot_plot_id` = ?");
-					stmt.setInt(1, weather);
-					stmt.setInt(2, getId(world, plot.id));
-					stmt.execute();
-					stmt.close();
-				}
-				catch (SQLException e) {
-					e.printStackTrace();
-					Logger.add(LogLevel.WARNING, "Could not set weather for plot " + plot.id);
-				}
-			}
-		});
-	}
 
 	public static void setMerged(final String world, final Plot plot, final boolean[] merged) {
 		plot.settings.setMerged(merged);
