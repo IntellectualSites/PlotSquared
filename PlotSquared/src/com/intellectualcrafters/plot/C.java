@@ -355,6 +355,9 @@ public enum C {
 	 * @return translated if exists else default
 	 */
 	public String s() {
+        if(PlotMain.translations != null){
+            this.s = PlotMain.translations.getString(this.toString());
+        }
 		if (this.s.length() < 1) {
 			return this.d.replace("\\n", "\n");
 		}
