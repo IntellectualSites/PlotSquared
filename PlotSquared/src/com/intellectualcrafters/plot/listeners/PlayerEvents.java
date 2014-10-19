@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import org.bukkit.*;
@@ -157,19 +158,13 @@ public class PlayerEvents implements Listener {
         } else if (adventure.contains(str)) {
             return GameMode.ADVENTURE;
         } else {
-            return GameMode.SURVIVAL;
+            return Bukkit.getDefaultGameMode();
         }
     }
-
-    private HashMap<String, GameMode> previousGamemode = new HashMap<>();
 
 	public void plotEntry(Player player, Plot plot) {
 		if (plot.hasOwner()) {
             if(plot.settings.getFlag("gamemode") != null) {
-                if(previousGamemode.containsKey(player.getName())) {
-                    previousGamemode.remove(player.getName());
-                }
-                previousGamemode.put(player.getName(), player.getGameMode());
                 player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
             }
             if(plot.settings.getFlag("time") != null) {
@@ -206,10 +201,7 @@ public class PlayerEvents implements Listener {
 			PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
 			Bukkit.getPluginManager().callEvent(callEvent);
 		}
-        if(previousGamemode.containsKey(player.getName())) {
-            player.setGameMode(previousGamemode.get(player.getName()));
-            previousGamemode.remove(player.getName());
-        }
+        player.setGameMode(Bukkit.getDefaultGameMode());
 		player.resetPlayerTime();
 		player.resetPlayerWeather();
 		PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
@@ -710,6 +702,16 @@ public class PlayerEvents implements Listener {
 			event.setCancelled(true);
 		}
 	}
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        if(PlotSelection.currentSelection.containsKey(event.getPlayer().getName())) {
+            PlotSelection.currentSelection.remove(event.getPlayer().getName());
+        }
+        if(Setup.setupMap.containsKey(event.getPlayer().getName())) {
+            Setup.setupMap.remove(event.getPlayer().getName());
+        }
+    }
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
