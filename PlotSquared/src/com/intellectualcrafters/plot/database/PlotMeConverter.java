@@ -1,15 +1,5 @@
 package com.intellectualcrafters.plot.database;
 
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
@@ -17,6 +7,15 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-08-17.
@@ -137,9 +136,7 @@ public class PlotMeConverter {
 										plot.getBiome(), 
 										psAdded, psTrusted, 
 										psDenied, 
-										false, 
-										8000l, 
-										false, 
+
 										"", 
 										PlotHomePosition.DEFAULT, 
 										null, 
@@ -155,9 +152,7 @@ public class PlotMeConverter {
 										psAdded, 
 										psTrusted, 
 										psDenied, 
-										false, 
-										8000l, 
-										false, 
+
 										"", 
 										PlotHomePosition.DEFAULT, 
 										null, 
