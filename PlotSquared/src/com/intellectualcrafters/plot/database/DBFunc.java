@@ -648,7 +648,7 @@ public class DBFunc {
                         stmt.executeUpdate();
                         stmt.close();
                         
-                        stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `world` = ?");
+                        stmt = connection.prepareStatement("DELETE FROM `plot` WHERE `plot_plot_id` = "+idstr+"");
                         stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();

@@ -227,7 +227,7 @@ public class PlotMain extends JavaPlugin {
 	 * List of all plots
 	 * DO NOT USE EXCEPT FOR DATABASE PURPOSES
 	 */
-	static HashMap<String, HashMap<PlotId, Plot>> plots;
+	private static HashMap<String, HashMap<PlotId, Plot>> plots;
 	/**
 	 * All loaded plot worlds
 	 */
