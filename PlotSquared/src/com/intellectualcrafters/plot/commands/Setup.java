@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
@@ -84,15 +86,37 @@ public class Setup extends SubCommand implements Listener {
 				}
 
 				// Creating the worlds
-				if (object.getPlugin().equals("Multiverse-Core")) {
+				if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world
 							+ " normal -g " + object.plugin);
 				}
-				else
-					if (object.getPlugin().equals("MultiWorld")) {
+				else {
+					if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
 						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world
 								+ " plugin:" + object.plugin);
 					}
+					else {
+					    
+					    for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			                if (plugin.isEnabled()) {
+			                    if (plugin.getDefaultWorldGenerator("world", "") != null) {
+			                        String name = plugin.getDescription().getName();
+			                        if (object.plugin.equals(name)) {
+			                            ChunkGenerator generator = plugin.getDefaultWorldGenerator(world, "");
+			                            World myworld = WorldCreator.name(world).generator(generator).createWorld();
+			                            PlayerFunctions.sendMessage(plr, "&aLoaded world.");
+			                            plr.teleport(myworld.getSpawnLocation());
+			                            break;
+			                        }
+			                    }
+
+			                }
+			            }
+					    
+					    object.getPlugin();
+//					    World world = WorldCreator.name("SkyWorld").generator(new object. ).createWorld();
+					}
+				}
 				sendMessage(plr, C.SETUP_FINISHED, object.world);
 
 				setupMap.remove(plrname);

@@ -224,9 +224,10 @@ public class PlotMain extends JavaPlugin {
 	}
 
 	/**
-	 * All loaded plots
+	 * List of all plots
+	 * DO NOT USE EXCEPT FOR DATABASE PURPOSES
 	 */
-	private static HashMap<String, HashMap<PlotId, Plot>> plots;
+	static HashMap<String, HashMap<PlotId, Plot>> plots;
 	/**
 	 * All loaded plot worlds
 	 */
@@ -1393,5 +1394,13 @@ public class PlotMain extends JavaPlugin {
 			plots.put(world, new HashMap<PlotId, Plot>());
 		}
 	}
+	
+	public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
+        return plots;
+    }
+
+    public static void setAllPlotsRaw(HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
+    }
 
 }

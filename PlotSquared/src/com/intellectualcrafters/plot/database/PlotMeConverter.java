@@ -1,22 +1,35 @@
 package com.intellectualcrafters.plot.database;
 
 import com.google.common.base.Charsets;
+import com.intellectualcrafters.plot.Configuration;
+import com.intellectualcrafters.plot.ConfigurationNode;
+import com.intellectualcrafters.plot.PlotBlock;
 import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -43,30 +56,55 @@ public class PlotMeConverter {
 						new ArrayList<com.intellectualcrafters.plot.Plot>();
 				boolean online = Bukkit.getServer().getOnlineMode();
 				
-				FileConfiguration plotConfig = Bukkit.getPluginManager().getPlugin("PlotMe").getConfig();
+				Plugin plotMePlugin = Bukkit.getPluginManager().getPlugin("PlotMe");
+				FileConfiguration plotConfig = plotMePlugin.getConfig();
+				
+				Set<String> worlds = new HashSet<String>();
 				
 				for (World world : Bukkit.getWorlds()) {
 					int duplicate = 0;
 					HashMap<String, Plot> plots = PlotManager.getPlots(world);
 					if (plots != null) {
+					    
+					    worlds.add(world.getName());
+					    
+						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting configuration for world '"+world.getName()+"'...");
 						
+						try {
 						
+					    Integer pathwidth = plotConfig.getInt("worlds."+world.getName()+".PathWidth"); //
+					    PlotMain.config.set("worlds."+world.getName()+".road.width", pathwidth);
+					    
+					    Integer plotsize = plotConfig.getInt("worlds."+world.getName()+".PlotSize"); //
+					    PlotMain.config.set("worlds."+world.getName()+".plot.size", plotsize);
+					    
+						String wallblock = plotConfig.getString("worlds."+world.getName()+".WallBlockId"); //
+						PlotMain.config.set("worlds."+world.getName()+".wall.block", wallblock);
 						
+						String floor = plotConfig.getString("worlds."+world.getName()+".PlotFloorBlockId"); //
+						PlotMain.config.set("worlds."+world.getName()+".plot.floor", Arrays.asList(new String[] {floor}));
 						
-						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '" + plots.size()
-								+ "' plots for world '" + world.getName() + "'");
-
-						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting configuration...");
+						String filling = plotConfig.getString("worlds."+world.getName()+".PlotFillingBlockId"); //
+						PlotMain.config.set("worlds."+world.getName()+".plot.filling", Arrays.asList(new String[] {filling}));
 						
-						int pathwidth = plotConfig.getInt("worlds."+world.getName()+".PathWidth");
-						int plotsize = plotConfig.getInt("worlds."+world.getName()+".PlotSize");
-						int wallblock = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".WallBlockId"));
-						int floor = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".PlotFloorBlockId"));
-						int filling = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".PlotFillingBlockId"));
-						int road = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".RoadMainBlockId"));
-						int road_height = plotConfig.getInt("worlds."+world.getName()+".RoadHeight");
+						String road = plotConfig.getString("worlds."+world.getName()+".RoadMainBlockId"); 
+						PlotMain.config.set("worlds."+world.getName()+".road.block", road);
 						
-//						PlotMain.config.
+						String road_stripe = plotConfig.getString("worlds."+world.getName()+".RoadStripeBlockId");
+						PlotMain.config.set("worlds."+world.getName()+".road.stripes", road_stripe);
+						
+						Integer height = plotConfig.getInt("worlds."+world.getName()+".RoadHeight"); //
+						PlotMain.config.set("worlds."+world.getName()+".road.height", height);
+						
+						Boolean auto_link = plotConfig.getBoolean("worlds."+world.getName()+".AutoLinkPlots"); // 
+						PlotMain.config.set("worlds."+world.getName()+".plot.auto_merge", auto_link);
+						
+						}
+						catch (Exception e) {
+						    PlotMain.sendConsoleSenderMessage(" - Failed to save configuration for world '"+world.getName()+"'. This will need to be done using the setup command or manually.");
+						}
+						
+						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '" + plots.size() + "' plots for world '" + world.getName() + "'");
 						
 						for (Plot plot : plots.values()) {
 							ArrayList<UUID> psAdded = new ArrayList<>();
@@ -201,22 +239,50 @@ public class PlotMeConverter {
 				// TODO createPlot doesn't add denied users
 				DBFunc.createAllSettingsAndHelpers(createdPlots);
 				stream.close();
-				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Copying configuration");
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Saving configuration...");
+				try {
+                    PlotMain.config.save(PlotMain.configFile);
+                } catch (IOException e) {
+                    PlotMain.sendConsoleSenderMessage(" - &cFailed to save configuration.");
+                }
 				
-				// TODO
+				boolean MV = false;
+				boolean MW = false;
 				
-				// copy over plotme config
+				if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+                    MV = true;
+                }
+                else {
+                    MW = true;
+                }
 				
-				// disable PlotMe
+				for (String worldname : worlds) {
+				    World world = Bukkit.getWorld(worldname);
+				    PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Reloading generator for world: '"+worldname+"'...");
+				    if (MV) {
+				        // unload
+				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + worldname);
+				        // load
+				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + worldname + " normal -g PlotSquared");
+				    }
+				    else if (MW) {
+				        // unload
+				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + worldname);
+				        // load
+				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname+" plugin:PlotSquared");
+				    }
+				    else {
+				        Bukkit.getServer().unloadWorld(world, true);
+                        World myworld = WorldCreator.name(worldname).generator(new WorldGenerator(worldname)).createWorld();
+                        myworld.save();
+				    }
+				}
 				
-				// unload all plot worlds with MV or MW
+				PlotMain.setAllPlotsRaw(DBFunc.getPlots());
 				
-				// import those worlds with MV or MW
-				
-				// have server owner stop the server and delete PlotMe at some point
-				
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Disabling PlotMe...");
+				Bukkit.getPluginManager().disablePlugin(plotMePlugin);
 				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has finished");
-				Bukkit.getPluginManager().disablePlugin(PlotMeConverter.this.plugin);
 			}
 		});
 	}
