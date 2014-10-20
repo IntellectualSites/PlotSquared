@@ -1395,6 +1395,12 @@ public class PlotMain extends JavaPlugin {
 		}
 	}
 	
+	public static void removePlotWorld(String world) {
+	    plots.remove(world);
+	    managers.remove(world);
+	    worlds.remove(world);
+	}
+	
 	public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }

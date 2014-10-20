@@ -483,12 +483,10 @@ public class DBFunc {
 					plots.get(worldname).put((plot_id), p);
 				}
 				else {
-					if (worlds.contains(p.world)) {
-						HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
-						map.put((plot_id), p);
-						plots.put(worldname, map);
-					}
-					else {
+				    HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
+                    map.put((plot_id), p);
+                    plots.put(worldname, map);
+					if (!worlds.contains(p.world)) {
 						if (noExist.containsKey(worldname)) {
 							noExist.put(worldname,noExist.get(worldname)+1);
 						}
@@ -499,7 +497,7 @@ public class DBFunc {
 				}
 			}
 			for (String worldname: noExist.keySet()) {
-				PlotMain.sendConsoleSenderMessage("&4[WARNING] Found "+noExist.get(worldname)+" plots in DB for non existant world; '"+worldname+"'!!!\n&c - Please create this world, or remove the plots from the DB using the purge command!");
+				PlotMain.sendConsoleSenderMessage("&c[WARNING] Found "+noExist.get(worldname)+" plots in DB for non existant world; '"+worldname+"'!!!\n&c - Please create this world, or remove the plots from the DB using the purge command!");
 			}
 			stmt.close();
 		}

@@ -96,7 +96,6 @@ public class Setup extends SubCommand implements Listener {
 								+ " plugin:" + object.plugin);
 					}
 					else {
-					    
 					    for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			                if (plugin.isEnabled()) {
 			                    if (plugin.getDefaultWorldGenerator("world", "") != null) {
@@ -112,9 +111,6 @@ public class Setup extends SubCommand implements Listener {
 
 			                }
 			            }
-					    
-					    object.getPlugin();
-//					    World world = WorldCreator.name("SkyWorld").generator(new object. ).createWorld();
 					}
 				}
 				sendMessage(plr, C.SETUP_FINISHED, object.world);

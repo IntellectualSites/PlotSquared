@@ -219,7 +219,7 @@ public class PlotMeConverter {
 							}
 
 							if (pl != null) {
-								if (!PlotMain.getPlots(world).containsKey(pl.id)) {
+								if (!PlotMain.getPlots(world).containsKey(id)) {
 									createdPlots.add(pl);
 								}
 								else {
@@ -228,7 +228,7 @@ public class PlotMeConverter {
 							}
 						}
 						if (duplicate>0) {
-							PlotMain.sendConsoleSenderMessage("&4[WARNING] Found "+duplicate+" duplicate plots already in DB for world: '"+world.getName()+"'. Have you run the converter already?");
+							PlotMain.sendConsoleSenderMessage("&c[WARNING] Found "+duplicate+" duplicate plots already in DB for world: '"+world.getName()+"'. Have you run the converter already?");
 						}
 					}
 				}
@@ -239,7 +239,7 @@ public class PlotMeConverter {
 				// TODO createPlot doesn't add denied users
 				DBFunc.createAllSettingsAndHelpers(createdPlots);
 				stream.close();
-				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Saving configuration...");
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Saving configuration...");
 				try {
                     PlotMain.config.save(PlotMain.configFile);
                 } catch (IOException e) {
@@ -258,16 +258,29 @@ public class PlotMeConverter {
 				
 				for (String worldname : worlds) {
 				    World world = Bukkit.getWorld(worldname);
-				    PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Reloading generator for world: '"+worldname+"'...");
+				    PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Reloading generator for world: '"+worldname+"'...");
+				    
+				    PlotMain.removePlotWorld(worldname);
+				    
 				    if (MV) {
 				        // unload
 				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + worldname);
+				        try {
+				            Thread.sleep(1000);
+				        } catch(InterruptedException ex) {
+				            Thread.currentThread().interrupt();
+				        }
 				        // load
 				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + worldname + " normal -g PlotSquared");
 				    }
 				    else if (MW) {
 				        // unload
 				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + worldname);
+				        try {
+				            Thread.sleep(1000);
+				        } catch(InterruptedException ex) {
+				            Thread.currentThread().interrupt();
+				        }
 				        // load
 				        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname+" plugin:PlotSquared");
 				    }
@@ -280,9 +293,10 @@ public class PlotMeConverter {
 				
 				PlotMain.setAllPlotsRaw(DBFunc.getPlots());
 				
-				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: Disabling PlotMe...");
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Disabling PlotMe...");
 				Bukkit.getPluginManager().disablePlugin(plotMePlugin);
-				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has finished");
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Conversion has finished");
+				PlotMain.sendConsoleSenderMessage("&cAlthough the server may be functional in it's current state, it is recommended that you restart the server and remove PlotMe to finalize the installation. Please make careful note of any warning messages that may have showed up during conversion.");
 			}
 		});
 	}

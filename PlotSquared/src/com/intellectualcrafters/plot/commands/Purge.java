@@ -48,6 +48,8 @@ public class Purge extends SubCommand {
 		            }
 	                PlotMain.getPlots(world).remove(id);
 	                DBFunc.purge(world, id);
+	                PlayerFunctions.sendMessage(plr, "&aPurge of '"+args[0]+"' was successful!");
+	                return true;
 		        }
 		        catch (Exception e) {
 		            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
@@ -66,6 +68,7 @@ public class Purge extends SubCommand {
     			PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
     			return false;
     		}
+    		PlotMain.removePlotWorld(args[0]);
     		DBFunc.purge(args[0]);
     		PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
     		return true;
