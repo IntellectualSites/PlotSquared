@@ -39,38 +39,42 @@ public class Trusted extends SubCommand {
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
 		if ((plot.owner == null) || !plot.hasRights(plr)) {
-			PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return true;
 		}
 		if (args[0].equalsIgnoreCase("add")) {
+		    UUID uuid;
 			if (args[1].equalsIgnoreCase("*")) {
-				UUID uuid = DBFunc.everyone;
-				if (!plot.trusted.contains(uuid)) {
-					plot.addTrusted(uuid);
-					DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-					PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
-					Bukkit.getPluginManager().callEvent(event);
-				}
-				PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
-				return true;
+				uuid = DBFunc.everyone;
+				
 			}
-			/*
-			 * if (!hasBeenOnServer(args[1])) { PlayerFunctions.sendMessage(plr,
-			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; } UUID uuid = null; if
-			 * ((Bukkit.getPlayer(args[1]) != null)) { uuid =
-			 * Bukkit.getPlayer(args[1]).getUniqueId(); } else { uuid =
-			 * Bukkit.getOfflinePlayer(args[1]).getUniqueId(); } if (uuid ==
-			 * null) { PlayerFunctions.sendMessage(plr,
-			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; }
-			 */
-			UUID uuid = UUIDHandler.getUUID(args[1]);
+			else {
+			    uuid = UUIDHandler.getUUID(args[1]);
+			}
 			if (!plot.trusted.contains(uuid)) {
-				plot.addTrusted(uuid);
-				DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-				PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
-				Bukkit.getPluginManager().callEvent(event);
-			}
-			PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
+                if (plot.owner == uuid) {
+                    PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    return false;
+                }
+                if (plot.helpers.contains(uuid)) {
+                    plot.helpers.remove(uuid);
+                    DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                }
+                if (plot.denied.contains(uuid)) {
+                    plot.denied.remove(uuid);
+                    DBFunc.removeDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                }
+                plot.addTrusted(uuid);
+                DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+                PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
+                Bukkit.getPluginManager().callEvent(event);
+            }
+            else {
+                PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                return false;
+            }
+            PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
+            return true;
 		}
 		else
 			if (args[0].equalsIgnoreCase("remove")) {

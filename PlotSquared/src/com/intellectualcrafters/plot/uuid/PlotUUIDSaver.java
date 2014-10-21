@@ -2,7 +2,9 @@ package com.intellectualcrafters.plot.uuid;
 
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.StringWrapper;
 import com.intellectualcrafters.plot.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +30,7 @@ public class PlotUUIDSaver extends UUIDSaver {
                     uuid = player.getUniqueId();
                     if (!UUIDHandler.uuidExists(uuid)) {
                         name = player.getName();
-                        UUIDHandler.add(name, uuid);
+                        UUIDHandler.add(new StringWrapper(name), uuid);
                     }
                 }
 
@@ -49,7 +51,7 @@ public class PlotUUIDSaver extends UUIDSaver {
         });
     }
 
-    public void globalSave(BiMap<String, UUID> map) {
+    public void globalSave(BiMap<StringWrapper, UUID> map) {
 
     }
 

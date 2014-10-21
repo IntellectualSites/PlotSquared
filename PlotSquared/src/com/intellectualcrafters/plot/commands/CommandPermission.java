@@ -23,7 +23,7 @@ public class CommandPermission {
 	/**
 	 *
 	 */
-	private String permission;
+	public String permission;
 
 	/**
 	 * @param permission

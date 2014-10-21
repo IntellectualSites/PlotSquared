@@ -6,11 +6,13 @@ import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -35,9 +37,9 @@ public class UUIDHandler {
 
 	private static boolean online = Bukkit.getServer().getOnlineMode();
 
-	private static BiMap<String, UUID> uuidMap = HashBiMap.create();
+	private static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
-    public static BiMap<String, UUID> getUuidMap() {
+    public static BiMap<StringWrapper, UUID> getUuidMap() {
         return uuidMap;
     }
 
@@ -45,42 +47,45 @@ public class UUIDHandler {
 		return uuidMap.containsValue(uuid);
 	}
 
-	public static boolean nameExists(String name) {
+	public static boolean nameExists(StringWrapper name) {
 		return uuidMap.containsKey(name);
 	}
 
-	public static void add(String name, UUID uuid) {
+	public static void add(StringWrapper name, UUID uuid) {
 		uuidMap.put(name, uuid);
 	}
-
 
 	/**
 	 * @param name
 	 * @return uuid
 	 */
 	public static UUID getUUID(String name) {
-		if (nameExists(name)) {
-			return uuidMap.get(name);
+	    StringWrapper nameWrap = new StringWrapper(name);
+		if (uuidMap.containsKey(nameWrap)) {
+			return uuidMap.get(nameWrap);
+		}
+		Player player = Bukkit.getPlayer(name);
+		if (player!=null) {
+		    UUID uuid = player.getUniqueId();
+		    uuidMap.put(nameWrap, uuid);
+		    return uuid;
 		}
 		UUID uuid;
-		if ((uuid = getUuidOnlinePlayer(name)) != null) {
-			return uuid;
-		}
-		if ((uuid = getUuidOfflinePlayer(name)) != null) {
-			return uuid;
-		}
 		if (online) {
+		    if ((uuid = getUuidOnlinePlayer(nameWrap)) != null) {
+	            return uuid;
+	        }
 			try {
 				UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 				uuid = fetcher.call().get(name);
-				add(name, uuid);
+				add(nameWrap, uuid);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		else {
-			return getUuidOfflineMode(name);
+			return getUuidOfflineMode(nameWrap);
 		}
 		return null;
 	}
@@ -89,7 +94,7 @@ public class UUIDHandler {
 	 * @param uuid
 	 * @return name (cache)
 	 */
-	private static String loopSearch(UUID uuid) {
+	private static StringWrapper loopSearch(UUID uuid) {
 		return uuidMap.inverse().get(uuid);
 	}
 
@@ -99,7 +104,7 @@ public class UUIDHandler {
 	 */
 	public static String getName(UUID uuid) {
 		if (uuidExists(uuid)) {
-			return loopSearch(uuid);
+			return loopSearch(uuid).value;
 		}
 		String name;
 		if ((name = getNameOnlinePlayer(uuid)) != null) {
@@ -112,7 +117,7 @@ public class UUIDHandler {
 			try {
 				NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
 				name = fetcher.call().get(uuid);
-				add(name, uuid);
+				add(new StringWrapper(name), uuid);
 				return name;
 			}
 			catch (Exception e) {
@@ -129,7 +134,7 @@ public class UUIDHandler {
 	 * @param name
 	 * @return UUID (name hash)
 	 */
-	private static UUID getUuidOfflineMode(String name) {
+	private static UUID getUuidOfflineMode(StringWrapper name) {
 		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
 		add(name, uuid);
 		return uuid;
@@ -145,7 +150,7 @@ public class UUIDHandler {
 			return null;
 		}
 		String name = player.getName();
-		add(name, uuid);
+		add(new StringWrapper(name), uuid);
 		return name;
 	}
 
@@ -159,7 +164,7 @@ public class UUIDHandler {
 			return null;
 		}
 		String name = player.getName();
-		add(name, uuid);
+		add(new StringWrapper(name), uuid);
 		return name;
 	}
 
@@ -167,9 +172,9 @@ public class UUIDHandler {
 	 * @param name
 	 * @return UUID
 	 */
-	private static UUID getUuidOnlinePlayer(String name) {
-		Player player = Bukkit.getPlayer(name);
-		if (player == null || !player.isOnline()) {
+	private static UUID getUuidOnlinePlayer(StringWrapper name) {
+		Player player = Bukkit.getPlayer(name.value);
+		if (player == null) {
 			return null;
 		}
 		UUID uuid = player.getUniqueId();
@@ -181,8 +186,8 @@ public class UUIDHandler {
 	 * @param name
 	 * @return UUID (username hash)
 	 */
-	private static UUID getUuidOfflinePlayer(String name) {
-		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+	private static UUID getUuidOfflinePlayer(StringWrapper name) {
+		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
 		add(name, uuid);
 		return uuid;
 	}
