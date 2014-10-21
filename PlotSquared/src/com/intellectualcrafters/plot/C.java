@@ -359,7 +359,10 @@ public enum C {
 	 */
 	public String s() {
         if(PlotMain.translations != null){
-            this.s = PlotMain.translations.getString(this.toString());
+            String t = PlotMain.translations.getString(this.toString());
+            if (t!=null) {
+                this.s = t;
+            }
         }
 		if (this.s.length() < 1) {
 			return this.d.replace("\\n", "\n");

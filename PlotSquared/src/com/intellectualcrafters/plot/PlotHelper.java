@@ -115,7 +115,8 @@ public class PlotHelper {
 
 				PlotId id = new PlotId(x, y);
 				Plot plot = PlotMain.getPlots(world).get(id);
-
+				Plot plot2 = null;
+				
 				if (lx) {
 					if (ly) {
 						if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
@@ -125,7 +126,7 @@ public class PlotHelper {
 					}
 					if (!plot.settings.getMerged(1)) {
 						changed = true;
-						Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x + 1, y));
+						plot2 = PlotMain.getPlots(world).get(new PlotId(x + 1, y));
 						mergePlot(world, plot, plot2);
 						plot.settings.setMerged(1, true);
 						plot2.settings.setMerged(3, true);
@@ -134,7 +135,7 @@ public class PlotHelper {
 				if (ly) {
 					if (!plot.settings.getMerged(2)) {
 						changed = true;
-						Plot plot2 = PlotMain.getPlots(world).get(new PlotId(x, y + 1));
+						plot2 = PlotMain.getPlots(world).get(new PlotId(x, y + 1));
 						mergePlot(world, plot, plot2);
 						plot.settings.setMerged(2, true);
 						plot2.settings.setMerged(0, true);
@@ -142,7 +143,10 @@ public class PlotHelper {
 				}
 				if (changed) {
 				    result = true;
-					DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+				    DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+				    if (plot2!=null) {
+				        DBFunc.setMerged(world.getName(), plot2, plot2.settings.getMerged());
+				    }
 				}
 			}
 		}
