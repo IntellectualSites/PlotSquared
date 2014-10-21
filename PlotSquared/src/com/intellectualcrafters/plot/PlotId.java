@@ -35,7 +35,7 @@ public class PlotId {
 			return false;
 		}
 		PlotId other = (PlotId) obj;
-		return ((this.x == other.x) && (this.y == other.y));
+		return (((int) this.x == (int) other.x) && ((int) this.y == (int) other.y));
 	}
 
 	@Override

@@ -106,6 +106,8 @@ public class PlotHelper {
 		
 		manager.startPlotMerge(world, plotworld, plotIds);
 		
+		boolean result = false;
+		
 		for (int x = pos1.x; x <= pos2.x; x++) {
 			for (int y = pos1.y; y <= pos2.y; y++) {
 				
@@ -142,13 +144,14 @@ public class PlotHelper {
 					}
 				}
 				if (changed) {
+				    result = true;
 					DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
 				}
 			}
 		}
 
 		manager.finishPlotMerge(world, plotworld, plotIds);
-		return true;
+		return result;
 	}
 
 	/**
@@ -315,34 +318,48 @@ public class PlotHelper {
 
 		ArrayList<PlotId> plots;
 		boolean merge = true;
+		int count = 0;
 		while (merge) {
+		    if (count>16) {
+		        break;
+		    }
+		    count++;
 			PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
 			PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
 			merge = false;
 			plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
 			if (ownsPlots(world, plots, player, 0)) {
-				merge = true;
-				mergePlots(world, plots);
-				continue;
+				boolean result = mergePlots(world, plots);
+				if (result) {
+				    merge = true;
+				    continue;
+				}
 			}
 			plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
 			if (ownsPlots(world, plots, player, 1)) {
-				merge = true;
-				mergePlots(world, plots);
-				continue;
+				boolean result = mergePlots(world, plots);
+				if (result) {
+                    merge = true;
+                    continue;
+                }
 			}
 			plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
 			if (ownsPlots(world, plots, player, 2)) {
-				merge = true;
-				mergePlots(world, plots);
-				continue;
+				boolean result = mergePlots(world, plots);
+				if (result) {
+                    merge = true;
+                    continue;
+                }
 			}
 			plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
 			if (ownsPlots(world, plots, player, 3)) {
-				merge = true;
-				mergePlots(world, plots);
-				continue;
+				boolean result = mergePlots(world, plots);
+				if (result) {
+                    merge = true;
+                    continue;
+                }
 			}
+			merge = false;
 		}
 		if (canSetFast) {
 			SetBlockFast.update(player);

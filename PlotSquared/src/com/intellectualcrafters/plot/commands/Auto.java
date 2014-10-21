@@ -119,7 +119,7 @@ public class Auto extends SubCommand {
 				if ((z < q) && ((z - x) < q)) {
 					z++;
 				}
-				else
+				else {
 					if (x < q) {
 						x++;
 						z = q - 100;
@@ -129,6 +129,7 @@ public class Auto extends SubCommand {
 						x = q;
 						z = q;
 					}
+				}
 			}
 		}
 		else {
