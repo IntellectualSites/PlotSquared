@@ -339,6 +339,9 @@ public enum C {
 		}
 	}
 
+    public static class Potato {
+
+    }
 	/**
 	 * Get the default string
 	 *

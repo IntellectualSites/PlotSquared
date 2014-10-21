@@ -53,6 +53,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @awesome @author Citymonstret, Empire92 PlotMain class.
@@ -456,8 +457,8 @@ public class PlotMain extends JavaPlugin {
 								if (lastPlayed == 0) {
 									continue;
 								}
-								int days = (int) (lastPlayed / (1000 * 60 * 60 * 24));
-								if (days >= Settings.AUTO_CLEAR_DAYS) {
+                                long compared = System.currentTimeMillis() - lastPlayed;
+								if (TimeUnit.MILLISECONDS.toDays(compared) >= Settings.AUTO_CLEAR_DAYS) {
 									PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
 									Bukkit.getServer().getPluginManager().callEvent(event);
 									if (event.isCancelled()) {
@@ -1282,21 +1283,16 @@ public class PlotMain extends JavaPlugin {
                 @Override
                 public String parseValue(String value) {
                     switch (value) {
-                    case "true":
-                        return "true";
-                    case "yes":
-                        return "true";
-                    case "1":
-                        return "true";
-                    case "false":
-                        return "false";
-                    case "no":
-                        return "false";
-                    case "0":
-                        return "false";
-                    default:
-                        return null;
-                    
+                        case "true":
+                        case "1":
+                        case "yes":
+                            return "true";
+                        case "false":
+                        case "off":
+                        case "0":
+                            return "false";
+                        default:
+                            return null;
                     }
                 }
 
@@ -1313,26 +1309,20 @@ public class PlotMain extends JavaPlugin {
             @Override
             public String parseValue(String value) {
                 switch (value) {
-                case "creative":
-                    return "creative";
-                case "survival":
-                    return "survival";
-                case "adventure":
-                    return "adventure";
-                case "c":
-                    return "creative";
-                case "s":
-                    return "survival";
-                case "a":
-                    return "adventure";
-                case "1":
-                    return "creative";
-                case "0":
-                    return "survival";
-                case "2":
-                    return "adventure";
-                default:
-                    return null;
+                    case "creative":
+                    case "c":
+                    case "1":
+                        return "creative";
+                    case "survival":
+                    case "s":
+                    case "0":
+                        return "survival";
+                    case "adventure":
+                    case "a":
+                    case "2":
+                        return "adventure";
+                    default:
+                        return null;
                 }
             }
 
@@ -1364,16 +1354,12 @@ public class PlotMain extends JavaPlugin {
             public String parseValue(String value) {
                 switch (value) {
                 case "rain":
-                    return "rain";
                 case "storm":
-                    return "rain";
                 case "on":
                     return "rain";
                 case "clear":
-                    return "clear";
-                case "sun":
-                    return "clear";
                 case "off":
+                case "sun":
                     return "clear";
                 default:
                     return null;
