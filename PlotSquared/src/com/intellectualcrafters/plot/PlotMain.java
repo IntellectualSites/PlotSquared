@@ -592,9 +592,13 @@ public class PlotMain extends JavaPlugin {
 			}
 			catch (ClassNotFoundException | SQLException e) {
 				Logger.add(LogLevel.DANGER, "MySQL connection failed.");
-				System.out.print("\u001B[31m[Plots] MySQL is not setup correctly. The plugin will disable itself.\u001B[0m");
-				System.out.print("\u001B[36m==== Here is an ugly stacktrace if you are interested in those things ====\u001B[0m");
-				e.printStackTrace();
+				sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
+				if (config==null || config.getBoolean("debug")) {
+					sendConsoleSenderMessage("&d==== Here is an ugly stacktrace if you are interested in those things ====");
+					e.printStackTrace();
+					sendConsoleSenderMessage("&d==== End of stacktrace ====");
+					sendConsoleSenderMessage("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
+				}
 				Bukkit.getPluginManager().disablePlugin(this);
 				return;
 			}

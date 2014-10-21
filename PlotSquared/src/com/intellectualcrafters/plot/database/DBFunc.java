@@ -163,6 +163,9 @@ public class DBFunc {
 	 * @param plots
 	 */
 	public static void createPlots(ArrayList<Plot> plots) {
+		
+		// TODO collect list of plots to check if plot exists.
+		
 		if (plots.size() == 0) {
 			return;
 		}
@@ -422,6 +425,7 @@ public class DBFunc {
 			PlotId plot_id;
 			int id;
 			Plot p;
+			HashMap<String, Integer> noExist = new HashMap<String, Integer>();
 			while (r.next()) {
 				plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
 				id = r.getInt("id");
@@ -485,11 +489,17 @@ public class DBFunc {
 						plots.put(worldname, map);
 					}
 					else {
-					    if (PlotMain.config.getBoolean("debug" )) {
-    						PlotMain.sendConsoleSenderMessage("&cPlot '" + p.id + "' in DB for world '" + p.world + "' does not exist! Please create this world, or remove the plots from the DB!");
-					    }
+						if (noExist.containsKey(worldname)) {
+							noExist.put(worldname,noExist.get(worldname)+1);
+						}
+						else {
+							noExist.put(worldname,1);
+						}
 					}
 				}
+			}
+			for (String worldname: noExist.keySet()) {
+				PlotMain.sendConsoleSenderMessage("&4[WARNING] Found "+noExist.get(worldname)+" plots in DB for non existant world; '"+worldname+"'!!!\n&c - Please create this world, or remove the plots from the DB using the purge command!");
 			}
 			stmt.close();
 		}

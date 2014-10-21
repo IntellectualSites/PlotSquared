@@ -7,8 +7,10 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -40,14 +42,32 @@ public class PlotMeConverter {
 				ArrayList<com.intellectualcrafters.plot.Plot> createdPlots =
 						new ArrayList<com.intellectualcrafters.plot.Plot>();
 				boolean online = Bukkit.getServer().getOnlineMode();
+				
+				FileConfiguration plotConfig = Bukkit.getPluginManager().getPlugin("PlotMe").getConfig();
+				
 				for (World world : Bukkit.getWorlds()) {
+					int duplicate = 0;
 					HashMap<String, Plot> plots = PlotManager.getPlots(world);
 					if (plots != null) {
+						
+						
+						
+						
 						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Processing '" + plots.size()
 								+ "' plots for world '" + world.getName() + "'");
 
-						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting " + plots.size()
-								+ " plots for '" + world.toString() + "'...");
+						PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Converting configuration...");
+						
+						int pathwidth = plotConfig.getInt("worlds."+world.getName()+".PathWidth");
+						int plotsize = plotConfig.getInt("worlds."+world.getName()+".PlotSize");
+						int wallblock = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".WallBlockId"));
+						int floor = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".PlotFloorBlockId"));
+						int filling = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".PlotFillingBlockId"));
+						int road = Integer.parseInt(plotConfig.getString("worlds."+world.getName()+".RoadMainBlockId"));
+						int road_height = plotConfig.getInt("worlds."+world.getName()+".RoadHeight");
+						
+//						PlotMain.config.
+						
 						for (Plot plot : plots.values()) {
 							ArrayList<UUID> psAdded = new ArrayList<>();
 							ArrayList<UUID> psTrusted = new ArrayList<>();
@@ -160,32 +180,42 @@ public class PlotMeConverter {
 										new boolean[] { false, false, false, false });
 							}
 
-							// TODO createPlot doesn't add helpers /
-							// denied
-							// users
 							if (pl != null) {
-								createdPlots.add(pl);
+								if (!PlotMain.getPlots(world).containsKey(pl.id)) {
+									createdPlots.add(pl);
+								}
+								else {
+									duplicate++;
+								}
 							}
+						}
+						if (duplicate>0) {
+							PlotMain.sendConsoleSenderMessage("&4[WARNING] Found "+duplicate+" duplicate plots already in DB for world: '"+world.getName()+"'. Have you run the converter already?");
 						}
 					}
 				}
 				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Creating plot DB");
 				DBFunc.createPlots(createdPlots);
 				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Creating settings/helpers DB");
+				
+				// TODO createPlot doesn't add denied users
 				DBFunc.createAllSettingsAndHelpers(createdPlots);
 				stream.close();
+				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Copying configuration");
+				
+				// TODO
+				
+				// copy over plotme config
+				
+				// disable PlotMe
+				
+				// unload all plot worlds with MV or MW
+				
+				// import those worlds with MV or MW
+				
+				// have server owner stop the server and delete PlotMe at some point
+				
 				PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8: &7Conversion has finished");
-				// TODO disable PlotMe -> Unload all plot worlds, change
-				// the
-				// generator, restart the server automatically
-				// Possibly use multiverse / multiworld if it's to
-				// difficult
-				// modifying a world's generator while the server is
-				// running
-				// Should really do that? Would seem pretty bad from our
-				// side +
-				// bukkit wouldn't approve
-
 				Bukkit.getPluginManager().disablePlugin(PlotMeConverter.this.plugin);
 			}
 		});
