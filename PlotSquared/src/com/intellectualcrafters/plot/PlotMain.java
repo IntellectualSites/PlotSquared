@@ -931,11 +931,13 @@ public class PlotMain extends JavaPlugin {
 
 			Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
 			Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+            Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
 		}
 		if (Settings.DEBUG) {
 			Map<String, String> settings = new HashMap<>();
 			settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
 			settings.put("Use Metrics", "" + Settings.METRICS);
+            settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
 			settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
 			settings.put("Web Enabled", "" + Web.ENABLED);
 			settings.put("Web Port", "" + Web.PORT);
@@ -1075,6 +1077,7 @@ public class PlotMain extends JavaPlugin {
 		options.put("debug", true);
 		options.put("clear.auto.enabled", false);
 		options.put("clear.auto.days", 365);
+        options.put("clear.on.ban", false);
 		options.put("max_plots", Settings.MAX_PLOTS);
 
 		for (Entry<String, Object> node : options.entrySet()) {
@@ -1278,6 +1281,31 @@ public class PlotMain extends JavaPlugin {
     }
 
     private static void defaultFlags() {
+        FlagManager.addFlag(new AbstractFlag("fly") {
+            @Override
+            public String parseValue(String value) {
+                switch (value) {
+                    case "on":
+                    case "enabled":
+                    case "true":
+                    case "1":
+                        return "true";
+                    case "off":
+                    case "disabled":
+                    case "false":
+                    case "0":
+                        return "false";
+                    default:
+                        return null;
+                }
+            }
+
+            @Override
+            public String getValueDesc() {
+                return "Flag value must be a boolean: true, false, enabled, disabled";
+            }
+        });
+
         for(String str : booleanFlags.values()) {
             FlagManager.addFlag(new AbstractFlag(str) {
                 

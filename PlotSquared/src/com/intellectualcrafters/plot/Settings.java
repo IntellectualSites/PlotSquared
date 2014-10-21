@@ -44,6 +44,10 @@ public class Settings {
 	 * Default mob pathfinding: true
 	 */
 	public static boolean MOB_PATHFINDING_DEFAULT = true;
+    /**
+     * Delete plots on ban?
+     */
+    public static boolean DELETE_PLOTS_ON_BAN = false;
 	/**
 	 * Update settings
 	 * 

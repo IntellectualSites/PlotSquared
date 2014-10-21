@@ -10,15 +10,12 @@ package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.commands.Setup;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.bukkit.*;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,7 +32,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Player Events involving plots
@@ -43,69 +41,7 @@ import java.util.*;
  * @author Citymonstret
  */
 @SuppressWarnings("unused")
-public class PlayerEvents implements Listener {
-
-	private String getName(UUID uuid) {
-		return UUIDHandler.getName(uuid);
-    }
-
-    private PlotWorld getPlotWorld(World world) {
-        return PlotMain.getWorldSettings(world);
-    }
-
-	public boolean enteredPlot(Location l1, Location l2) {
-		PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-		PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-		if (p2 == null) {
-			return false;
-		}
-		if (p1 == null) {
-			return true;
-		}
-		if (p1.equals(p2)) {
-			return false;
-		}
-		return true;
-	}
-
-	public boolean leftPlot(Location l1, Location l2) {
-		PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-		PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-		if (p1 == null) {
-			return false;
-		}
-		if (p2 == null) {
-			return true;
-		}
-		if (p1.equals(p2)) {
-			return false;
-		}
-		return true;
-	}
-
-	private boolean isPlotWorld(Location l) {
-		return PlotMain.isPlotWorld(l.getWorld());
-	}
-
-	private boolean isPlotWorld(World w) {
-		return PlotMain.isPlotWorld(w);
-	}
-
-	public static boolean isInPlot(Location loc) {
-		return getCurrentPlot(loc) != null;
-	}
-
-	public static Plot getCurrentPlot(Location loc) {
-		PlotId id = PlayerFunctions.getPlot(loc);
-		if (id == null) {
-			return null;
-		}
-		World world = loc.getWorld();
-		if (PlotMain.getPlots(world).containsKey(id)) {
-			return PlotMain.getPlots(world).get(id);
-		}
-		return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
-	}
+public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
 	@EventHandler
 	public void onWorldLoad(WorldLoadEvent event) {
@@ -117,125 +53,52 @@ public class PlayerEvents implements Listener {
 		if (!event.getPlayer().hasPlayedBefore()) {
 			event.getPlayer().saveData();
 		}
-		textures(event.getPlayer());
+		//textures(event.getPlayer());
         if(isInPlot(event.getPlayer().getLocation())) {
             plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
         }
 	}
 
-	private void textures(Player p) {
-		if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
-			p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
-		}
-	}
-
 	@EventHandler
 	public void onChangeWorld(PlayerChangedWorldEvent event) {
-		if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
+		/*if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
 			event.getPlayer().setResourcePack("");
 		}
 		else {
 			textures(event.getPlayer());
-		}
-	}
-
-    private WeatherType getWeatherType(String str) {
-        str = str.toLowerCase();
-        if(str.equals("rain")) {
-            return WeatherType.DOWNFALL;
-        } else {
-            return WeatherType.CLEAR;
-        }
-    }
-
-    private GameMode getGameMode(String str) {
-        if (str.equals("creative")) {
-            return GameMode.CREATIVE;
-        } else if (str.equals("survival")) {
-            return GameMode.SURVIVAL;
-        } else if (str.equals("adventure")) {
-            return GameMode.ADVENTURE;
-        } else {
-            return Bukkit.getDefaultGameMode();
-        }
-    }
-
-	public void plotEntry(Player player, Plot plot) {
-		if (plot.hasOwner()) {
-            if(plot.settings.getFlag("gamemode") != null) {
-                player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
-            }
-            if(plot.settings.getFlag("time") != null) {
-                try {
-                    Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
-                    player.setPlayerTime(time, true);
-                } catch(Exception e) {
-                    plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
-                }
-            }
-            if(plot.settings.getFlag("weather") != null) {
-                player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
-            }
-			if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
-				String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
-				String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
-				ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
-				ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
-				Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
-				title.setTitleColor(sTitleMainColor);
-				title.setSubtitleColor(sTitleSubColor);
-				title.setTimingsToTicks();
-				title.send(player);
-			}
-			{
-				PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
-				Bukkit.getPluginManager().callEvent(callEvent);
-			}
-			PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
-		}
-	}
-
-	public void plotExit(Player player, Plot plot) {
-		{
-			PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
-			Bukkit.getPluginManager().callEvent(callEvent);
-		}
-        player.setGameMode(Bukkit.getDefaultGameMode());
-		player.resetPlayerTime();
-		player.resetPlayerWeather();
-		PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
+		}*/
 	}
 
 	@EventHandler(
 			priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void PlayerMove(PlayerMoveEvent event) {
-		try {
-			Player player = event.getPlayer();
-			Location from = event.getFrom();
-			Location to = event.getTo();
-			if ((from.getBlockX() != to.getBlockX()) || (from.getBlockZ() != to.getBlockZ())) {
-				if (!isPlotWorld(player.getWorld())) {
-					return;
-				}
-				if (enteredPlot(from, to)) {
-					Plot plot = getCurrentPlot(event.getTo());
-					boolean admin = player.hasPermission("plots.admin");
-					if (plot.deny_entry(player) && !admin) {
-						event.setCancelled(true);
-						return;
-					}
-					plotEntry(player, plot);
-				}
-				else
-					if (leftPlot(event.getFrom(), event.getTo())) {
-						Plot plot = getCurrentPlot(event.getFrom());
-						plotExit(player, plot);
-					}
-			}
-		}
-		catch (Exception e) {
-			// Gotta catch 'em all.
-		}
+        try {
+            Player player = event.getPlayer();
+            Location from = event.getFrom();
+            Location to = event.getTo();
+            if ((from.getBlockX() != to.getBlockX()) || (from.getBlockZ() != to.getBlockZ())) {
+                if (!isPlotWorld(player.getWorld())) {
+                    return;
+                }
+                if (enteredPlot(from, to)) {
+                    Plot plot = getCurrentPlot(event.getTo());
+                    boolean admin = player.hasPermission("plots.admin");
+                    if (plot.deny_entry(player) && !admin) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    plotEntry(player, plot);
+                }
+                else
+                if (leftPlot(event.getFrom(), event.getTo())) {
+                    Plot plot = getCurrentPlot(event.getFrom());
+                    plotExit(player, plot);
+                }
+            }
+        }
+        catch (Exception e) {
+            // Gotta catch 'em all.
+        }
 	}
 
 	@EventHandler(
@@ -527,10 +390,6 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-    public boolean getFlagValue(String value) {
-        return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
-    }
-
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) {
@@ -710,6 +569,15 @@ public class PlayerEvents implements Listener {
         }
         if(Setup.setupMap.containsKey(event.getPlayer().getName())) {
             Setup.setupMap.remove(event.getPlayer().getName());
+        }
+        if(Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
+            Set<Plot> plots = PlotMain.getPlots(event.getPlayer());
+            for(Plot plot : plots) {
+                PlotManager manager = PlotMain.getPlotManager(plot.getWorld());
+                manager.clearPlot(null, plot);
+                DBFunc.delete(plot.getWorld().getName(), plot);
+                PlotMain.sendConsoleSenderMessage(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
+            }
         }
     }
 
