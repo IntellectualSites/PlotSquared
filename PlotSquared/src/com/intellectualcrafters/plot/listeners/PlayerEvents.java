@@ -45,15 +45,15 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class PlayerEvents implements Listener {
 
-	private String getName(UUID uuid) {
+	private static String getName(UUID uuid) {
 		return UUIDHandler.getName(uuid);
     }
 
-    private PlotWorld getPlotWorld(World world) {
+    private static PlotWorld getPlotWorld(World world) {
         return PlotMain.getWorldSettings(world);
     }
 
-	public boolean enteredPlot(Location l1, Location l2) {
+	public static boolean enteredPlot(Location l1, Location l2) {
 		PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
 		PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
 		if (p2 == null) {
@@ -68,7 +68,7 @@ public class PlayerEvents implements Listener {
 		return true;
 	}
 
-	public boolean leftPlot(Location l1, Location l2) {
+	public static boolean leftPlot(Location l1, Location l2) {
 		PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
 		PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
 		if (p1 == null) {
@@ -83,11 +83,11 @@ public class PlayerEvents implements Listener {
 		return true;
 	}
 
-	private boolean isPlotWorld(Location l) {
+	private static boolean isPlotWorld(Location l) {
 		return PlotMain.isPlotWorld(l.getWorld());
 	}
 
-	private boolean isPlotWorld(World w) {
+	private static boolean isPlotWorld(World w) {
 		return PlotMain.isPlotWorld(w);
 	}
 
@@ -108,12 +108,12 @@ public class PlayerEvents implements Listener {
 	}
 
 	@EventHandler
-	public void onWorldLoad(WorldLoadEvent event) {
+	public static void onWorldLoad(WorldLoadEvent event) {
 		PlotMain.loadWorld(event.getWorld());
 	}
 
 	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
+	public static void onJoin(PlayerJoinEvent event) {
 		if (!event.getPlayer().hasPlayedBefore()) {
 			event.getPlayer().saveData();
 		}
@@ -123,14 +123,14 @@ public class PlayerEvents implements Listener {
         }
 	}
 
-	private void textures(Player p) {
+	private static void textures(Player p) {
 		if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
 			p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
 		}
 	}
 
 	@EventHandler
-	public void onChangeWorld(PlayerChangedWorldEvent event) {
+	public static void onChangeWorld(PlayerChangedWorldEvent event) {
 		if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
 			event.getPlayer().setResourcePack("");
 		}
@@ -139,7 +139,7 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-    private WeatherType getWeatherType(String str) {
+    private static WeatherType getWeatherType(String str) {
         str = str.toLowerCase();
         if(str.equals("rain")) {
             return WeatherType.DOWNFALL;
@@ -148,7 +148,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    private GameMode getGameMode(String str) {
+    private static GameMode getGameMode(String str) {
         if (str.equals("creative")) {
             return GameMode.CREATIVE;
         } else if (str.equals("survival")) {
@@ -160,7 +160,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-	public void plotEntry(Player player, Plot plot) {
+	public static void plotEntry(Player player, Plot plot) {
 		if (plot.hasOwner()) {
             if(plot.settings.getFlag("gamemode") != null) {
                 player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
@@ -168,7 +168,7 @@ public class PlayerEvents implements Listener {
             if(plot.settings.getFlag("time") != null) {
                 try {
                     Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
-                    player.setPlayerTime(time, true);
+                    player.setPlayerTime(time, false);
                 } catch(Exception e) {
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
@@ -195,7 +195,7 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-	public void plotExit(Player player, Plot plot) {
+	public static void plotExit(Player player, Plot plot) {
 		{
 			PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
 			Bukkit.getPluginManager().callEvent(callEvent);
@@ -208,7 +208,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void PlayerMove(PlayerMoveEvent event) {
+	public static void PlayerMove(PlayerMoveEvent event) {
 		try {
 			Player player = event.getPlayer();
 			Location from = event.getFrom();
@@ -240,7 +240,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGHEST)
-	public void onChat(AsyncPlayerChatEvent event) {
+	public static void onChat(AsyncPlayerChatEvent event) {
 		World world = event.getPlayer().getWorld();
 		if (!isPlotWorld(world)) {
 			return;
@@ -272,7 +272,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH)
-	public void BlockDestroy(BlockBreakEvent event) {
+	public static void BlockDestroy(BlockBreakEvent event) {
 		World world = event.getPlayer().getWorld();
 		if (!isPlotWorld(world)) {
 			return;
@@ -293,7 +293,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH)
-	public void BlockCreate(BlockPlaceEvent event) {
+	public static void BlockCreate(BlockPlaceEvent event) {
 		World world = event.getPlayer().getWorld();
 		if (!isPlotWorld(world)) {
 			return;
@@ -313,7 +313,7 @@ public class PlayerEvents implements Listener {
 	}
 
 	@EventHandler
-	public void onBigBoom(EntityExplodeEvent event) {
+	public static void onBigBoom(EntityExplodeEvent event) {
 		World world = event.getLocation().getWorld();
 		if (!isPlotWorld(world)) {
 			return;
@@ -323,7 +323,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPeskyMobsChangeTheWorldLikeWTFEvent( // LOL!
+	public static void onPeskyMobsChangeTheWorldLikeWTFEvent( // LOL!
 	EntityChangeBlockEvent event) {
 		World world = event.getBlock().getWorld();
 		if (!isPlotWorld(world)) {
@@ -362,7 +362,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onEntityBlockForm(final EntityBlockFormEvent event) {
+	public static void onEntityBlockForm(final EntityBlockFormEvent event) {
 		World world = event.getBlock().getWorld();
 		if (!isPlotWorld(world)) {
 			return;
@@ -374,7 +374,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBS(final BlockSpreadEvent e) {
+	public static void onBS(final BlockSpreadEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -385,7 +385,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBF(final BlockFormEvent e) {
+	public static void onBF(final BlockFormEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -396,7 +396,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBD(final BlockDamageEvent e) {
+	public static void onBD(final BlockDamageEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -407,7 +407,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onFade(final BlockFadeEvent e) {
+	public static void onFade(final BlockFadeEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -418,7 +418,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onChange(final BlockFromToEvent e) {
+	public static void onChange(final BlockFromToEvent e) {
 		Block b = e.getToBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -429,7 +429,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onGrow(final BlockGrowEvent e) {
+	public static void onGrow(final BlockGrowEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			if (!isInPlot(b.getLocation())) {
@@ -440,7 +440,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockPistonExtend(final BlockPistonExtendEvent e) {
+	public static void onBlockPistonExtend(final BlockPistonExtendEvent e) {
 		if (isInPlot(e.getBlock().getLocation())) {
 
 			e.getDirection();
@@ -503,7 +503,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockPistonRetract(final BlockPistonRetractEvent e) {
+	public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
 		Block b = e.getRetractLocation().getBlock();
 		if (isPlotWorld(b.getLocation()) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
 			if (!isInPlot(b.getLocation())) {
@@ -514,7 +514,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onStructureGrow(final StructureGrowEvent e) {
+	public static void onStructureGrow(final StructureGrowEvent e) {
 		List<BlockState> blocks = e.getBlocks();
 		boolean remove = false;
 		for (int i = blocks.size() - 1; i >= 0; i--) {
@@ -527,12 +527,12 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-    public boolean getFlagValue(String value) {
+    public static boolean getFlagValue(String value) {
         return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }
 
 	@EventHandler
-	public void onInteract(PlayerInteractEvent event) {
+	public static void onInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) {
 			return;
 		}
@@ -575,7 +575,7 @@ public class PlayerEvents implements Listener {
 	}
 
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
-	public void MobSpawn(CreatureSpawnEvent event) {
+	public static void MobSpawn(CreatureSpawnEvent event) {
         World world = event.getLocation().getWorld();
         if (!isPlotWorld(world)) {
             return;
@@ -600,7 +600,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockIgnite(final BlockIgniteEvent e) {
+	public static void onBlockIgnite(final BlockIgniteEvent e) {
 		if (e.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
 			e.setCancelled(true);
 			return;
@@ -636,7 +636,7 @@ public class PlayerEvents implements Listener {
 	}
 
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
-	public void onTeleport(PlayerTeleportEvent event) {
+	public static void onTeleport(PlayerTeleportEvent event) {
 		Location f = event.getFrom();
 		Location t = event.getTo();
 		Location q = new Location(t.getWorld(),t.getBlockX(), 64, t.getZ());
@@ -670,7 +670,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+	public static void onBucketEmpty(PlayerBucketEmptyEvent e) {
 		if (!e.getPlayer().hasPermission("plots.admin")) {
 			BlockFace bf = e.getBlockFace();
 			Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
@@ -697,14 +697,14 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGHEST)
-	public void onInventoryClick(InventoryClickEvent event) {
+	public static void onInventoryClick(InventoryClickEvent event) {
 		if (event.getInventory().getName().equalsIgnoreCase("PlotSquared Commands")) {
 			event.setCancelled(true);
 		}
 	}
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
+    public static void onLeave(PlayerQuitEvent event) {
         if(PlotSelection.currentSelection.containsKey(event.getPlayer().getName())) {
             PlotSelection.currentSelection.remove(event.getPlayer().getName());
         }
@@ -715,7 +715,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBucketFill(PlayerBucketFillEvent e) {
+	public static void onBucketFill(PlayerBucketFillEvent e) {
 		if (!e.getPlayer().hasPermission("plots.admin")) {
 			Block b = e.getBlockClicked();
 			if (isPlotWorld(b.getLocation())) {
@@ -741,7 +741,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onHangingPlace(final HangingPlaceEvent e) {
+	public static void onHangingPlace(final HangingPlaceEvent e) {
 		Block b = e.getBlock();
 		if (isPlotWorld(b.getLocation())) {
 			Player p = e.getPlayer();
@@ -772,7 +772,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
+	public static void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
 		Entity r = e.getRemover();
 		if (r instanceof Player) {
 			Player p = (Player) r;
@@ -806,7 +806,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
+	public static void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
 		Location l = e.getRightClicked().getLocation();
 		if (isPlotWorld(l)) {
 			Player p = e.getPlayer();
@@ -837,7 +837,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
+	public static void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
 		Location l = e.getEntity().getLocation();
 		Entity d = e.getDamager();
 		Entity a = e.getEntity();
@@ -879,7 +879,7 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
+	public static void onPlayerEggThrow(final PlayerEggThrowEvent e) {
 		Location l = e.getEgg().getLocation();
 		if (isPlotWorld(l)) {
 			Player p = e.getPlayer();

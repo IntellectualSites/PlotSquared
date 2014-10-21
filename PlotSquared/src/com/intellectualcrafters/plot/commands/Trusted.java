@@ -46,10 +46,26 @@ public class Trusted extends SubCommand {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
 				if (!plot.trusted.contains(uuid)) {
+				    if (plot.owner == uuid) {
+				        PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+	                    return false;
+				    }
+				    if (plot.helpers.contains(uuid)) {
+                        plot.helpers.remove(uuid);
+                        DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
+				    if (plot.denied.contains(uuid)) {
+                        plot.denied.remove(uuid);
+                        DBFunc.removeDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
 					plot.addTrusted(uuid);
 					DBFunc.setTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
 					PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
 					Bukkit.getPluginManager().callEvent(event);
+				}
+				else {
+				    PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+				    return false;
 				}
 				PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
 				return true;

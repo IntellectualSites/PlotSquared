@@ -270,6 +270,8 @@ public enum C {
 	/*
 	 * Trusted
 	 */
+	ALREADY_OWNER("&cThat user is already the plot owner."),
+	ALREADY_ADDED("&cThat user is already added to that category."),
 	TRUSTED_ADDED("&6You successfully added a trusted user to the plot"),
 	TRUSTED_REMOVED("&6You successfully removed a trusted user from the plot"),
 	TRUSTED_NEED_ARGUMENT("&cArguments are missing. &6/plot trusted add {name} &cor &6/plot trusted remove {name}"),

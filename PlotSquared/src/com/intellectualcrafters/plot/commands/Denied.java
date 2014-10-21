@@ -49,11 +49,27 @@ public class Denied extends SubCommand {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
 				if (!plot.denied.contains(uuid)) {
+				    if (plot.owner == uuid) {
+                        PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                        return false;
+                    }
+                    if (plot.trusted.contains(uuid)) {
+                        plot.trusted.remove(uuid);
+                        DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
+                    if (plot.helpers.contains(uuid)) {
+                        plot.helpers.remove(uuid);
+                        DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
 					plot.addDenied(uuid);
 					DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
 					PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
 					Bukkit.getPluginManager().callEvent(event);
 				}
+				else {
+                    PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                    return false;
+                }
 				PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
 				return true;
 			}

@@ -12,6 +12,8 @@ import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+import com.intellectualcrafters.plot.listeners.PlayerEvents;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -133,6 +135,7 @@ public class Set extends SubCommand {
 				plot.settings.setFlags(newflags.toArray(new Flag[0]));
 				DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[0]));
 				PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
+	            PlayerEvents.plotEntry(plr, plot);
 				return true;
 			}
 			try {
@@ -160,6 +163,7 @@ public class Set extends SubCommand {
 				plot.settings.addFlag(flag);
 				DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags().toArray(new Flag[0]));
 				PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
+				PlayerEvents.plotEntry(plr, plot);
 				return true;
 			}
 			catch (Exception e) {

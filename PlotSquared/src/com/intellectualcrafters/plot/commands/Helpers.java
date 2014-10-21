@@ -46,11 +46,27 @@ public class Helpers extends SubCommand {
 			if (args[1].equalsIgnoreCase("*")) {
 				UUID uuid = DBFunc.everyone;
 				if (!plot.helpers.contains(uuid)) {
+				    if (plot.owner == uuid) {
+                        PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                        return false;
+                    }
+				    if (plot.trusted.contains(uuid)) {
+                        plot.trusted.remove(uuid);
+                        DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
+                    if (plot.denied.contains(uuid)) {
+                        plot.denied.remove(uuid);
+                        DBFunc.removeDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    }
 					plot.addHelper(uuid);
 					DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
 					PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
 					Bukkit.getPluginManager().callEvent(event);
 				}
+				else {
+                    PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                    return false;
+                }
 				PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
 				return true;
 			}
