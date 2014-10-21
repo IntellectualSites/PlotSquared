@@ -213,30 +213,32 @@ public class PlotHelper {
      * End of random number gen section
      */
 
-	public static void removeSign(Player plr, Plot p) {
-		World world = plr.getWorld();
+	public static void removeSign(World world, Plot p) {
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-		Location loc = manager.getSignLoc(plr, plotworld, p);
+		Location loc = manager.getSignLoc(world, plotworld, p);
 		Block bs = loc.getBlock();
 		bs.setType(Material.AIR);
 	}
+	
+	public static void setSign(Player player, Plot p) {
+	    setSign(player.getWorld(), player.getName(), p);
+	}
 
 	@SuppressWarnings("deprecation")
-	public static void setSign(Player plr, Plot p) {
-		World world = plr.getWorld();
+	public static void setSign(World world, String name, Plot p) {
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-		Location loc = manager.getSignLoc(plr, plotworld, p);
+		Location loc = manager.getSignLoc(world, plotworld, p);
 		Block bs = loc.getBlock();
 		bs.setType(Material.AIR);
 		bs.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
 		String id = p.id.x + ";" + p.id.y;
 		Sign sign = (Sign) bs.getState();
 		sign.setLine(0, C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id));
-		sign.setLine(1, C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
-		sign.setLine(2, C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
-		sign.setLine(3, C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
+		sign.setLine(1, C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", name));
+		sign.setLine(2, C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", name));
+		sign.setLine(3, C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", name));
 		sign.update(true);
 	}
 
@@ -658,7 +660,28 @@ public class PlotHelper {
 			}
 		}
 	}
+	public static void clear(final World world, final Plot plot) {
+	    PlotManager manager = PlotMain.getPlotManager(world);
 
+        Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+
+        final int prime = 31;
+        int h = 1;
+        h = (prime * h) + pos1.getBlockX();
+        h = (prime * h) + pos1.getBlockZ();
+        state = h;
+
+        PlotHelper.setBiome(world, plot, Biome.FOREST);
+
+        manager.clearPlot(world, plot);
+        
+        if (canSetFast) {
+            refreshPlotChunks(world, plot);
+            // SetBlockFast.update(requester);
+        }
+	}
+	
+	
 	/**
 	 * Clear a plot
 	 * 
@@ -670,37 +693,27 @@ public class PlotHelper {
 			PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
 			return;
 		}
+		
+		PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
 
 		final long start = System.nanoTime();
-		final World world = requester.getWorld();
+		
+		final World world;
+		if (requester!=null) {
+		    world = requester.getWorld();
+		}
+		else {
+		    world = Bukkit.getWorld(plot.world);
+		}
 
 		/*
 		 * keep
 		 */
 		clearAllEntities(world, plot, false);
-		PlotManager manager = PlotMain.getPlotManager(world);
-
-		Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-
-		final int prime = 31;
-		int h = 1;
-		h = (prime * h) + pos1.getBlockX();
-		h = (prime * h) + pos1.getBlockZ();
-		state = h;
-
-		PlotHelper.setBiome(requester.getWorld(), plot, Biome.FOREST);
-		PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
-
-		manager.clearPlot(requester, plot);
-
-		removeSign(requester, plot);
-
+		clear(world, plot);
+		removeSign(world, plot);
 		PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", ""
 				+ ((System.nanoTime() - start) / 1000000.0)));
-		if (canSetFast) {
-			refreshPlotChunks(world, plot);
-			// SetBlockFast.update(requester);
-		}
 
 		return;
 	}

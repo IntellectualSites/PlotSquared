@@ -470,8 +470,11 @@ public class PlotMain extends JavaPlugin {
 								}
 							}
 							for (Plot plot: toDeletePlot) {
-							    getPlotManager(world).clearPlot(null, plot);
+							    World worldobj = Bukkit.getWorld(world);
+							    PlotHelper.clear(worldobj, plot);
+							    PlotHelper.removeSign(worldobj, plot);
                                 DBFunc.delete(world, plot);
+                                removePlot(world, plot.id, true);
                             }
 						}
 					}
@@ -708,8 +711,8 @@ public class PlotMain extends JavaPlugin {
 			if (economyProvider != null) {
 				economy = economyProvider.getProvider();
 			}
-			useEconomy = (economy != null);
 		}
+		useEconomy = (economy != null);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
 
 		if (Web.ENABLED) {

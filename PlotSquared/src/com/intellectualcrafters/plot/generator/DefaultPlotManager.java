@@ -220,8 +220,7 @@ public class DefaultPlotManager extends PlotManager {
 	 * plots
 	 */
 	@Override
-	public boolean clearPlot(Player player, Plot plot) {
-		World world = player.getWorld();
+	public boolean clearPlot(World world, Plot plot) {
 		DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain.getWorldSettings(world));
 
 		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
@@ -351,9 +350,8 @@ public class DefaultPlotManager extends PlotManager {
 	 * Remove sign for a plot
 	 */
 	@Override
-	public Location getSignLoc(Player player, PlotWorld plotworld, Plot plot) {
+	public Location getSignLoc(World world, PlotWorld plotworld, Plot plot) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
-		World world = player.getWorld();
 		return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
 	}
 

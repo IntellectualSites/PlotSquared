@@ -30,9 +30,9 @@ public abstract class PlotManager {
 	 * Plot clearing (return false if you do not support some method)
 	 */
 
-	public abstract boolean clearPlot(Player player, Plot plot);
+	public abstract boolean clearPlot(World world, Plot plot);
 
-	public abstract Location getSignLoc(Player player, PlotWorld plotworld, Plot plot);
+	public abstract Location getSignLoc(World world, PlotWorld plotworld, Plot plot);
 
 	/*
 	 * Plot set functions (return false if you do not support the specific set
