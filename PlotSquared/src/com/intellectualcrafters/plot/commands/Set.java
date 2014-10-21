@@ -44,7 +44,10 @@ public class Set extends SubCommand {
 			return false;
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
-
+        if(!plot.hasOwner()) {
+            sendMessage(plr, C.PLOT_NOT_CLAIMED);
+            return true;
+        }
 		if (!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
