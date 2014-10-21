@@ -666,7 +666,6 @@ public class PlotHelper {
 	 * @param plot
 	 */
 	public static void clear(final Player requester, final Plot plot) {
-
 		if (runners.containsKey(plot)) {
 			PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
 			return;

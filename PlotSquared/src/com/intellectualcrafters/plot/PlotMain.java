@@ -470,8 +470,9 @@ public class PlotMain extends JavaPlugin {
 								}
 							}
 							for (Plot plot: toDeletePlot) {
-							    DBFunc.delete(world, plot);
-							}
+							    getPlotManager(world).clearPlot(null, plot);
+                                DBFunc.delete(world, plot);
+                            }
 						}
 					}
 				}
