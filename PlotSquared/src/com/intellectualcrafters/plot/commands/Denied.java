@@ -42,61 +42,49 @@ public class Denied extends SubCommand {
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
 		if ((plot.owner == null) || !plot.hasRights(plr)) {
-			PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return true;
 		}
 		if (args[0].equalsIgnoreCase("add")) {
+		    UUID uuid;
 			if (args[1].equalsIgnoreCase("*")) {
-				UUID uuid = DBFunc.everyone;
-				if (!plot.denied.contains(uuid)) {
-				    if (plot.owner == uuid) {
-                        PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
-                        return false;
-                    }
-                    if (plot.trusted.contains(uuid)) {
-                        plot.trusted.remove(uuid);
-                        DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
-                    }
-                    if (plot.helpers.contains(uuid)) {
-                        plot.helpers.remove(uuid);
-                        DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
-                    }
-					plot.addDenied(uuid);
-					DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-					PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
-					Bukkit.getPluginManager().callEvent(event);
-				}
-				else {
-                    PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+				uuid = DBFunc.everyone;
+				
+			}
+			else {
+			    uuid = UUIDHandler.getUUID(args[1]);
+			}
+			if (!plot.denied.contains(uuid)) {
+                if (plot.owner == uuid) {
+                    PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
-				PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
-				return true;
-			}
-			/*
-			 * if (!hasBeenOnServer(args[1])) { PlayerFunctions.sendMessage(plr,
-			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; } UUID uuid = null; if
-			 * ((Bukkit.getPlayer(args[1]) != null)) { uuid =
-			 * Bukkit.getPlayer(args[1]).getUniqueId(); } else { uuid =
-			 * Bukkit.getOfflinePlayer(args[1]).getUniqueId(); } if (uuid ==
-			 * null) { PlayerFunctions.sendMessage(plr,
-			 * C.PLAYER_HAS_NOT_BEEN_ON); return true; }
-			 */
-			UUID uuid = UUIDHandler.getUUID(args[1]);
-			if (!plot.denied.contains(uuid)) {
-				plot.addDenied(uuid);
-				DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
-				PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
-				Bukkit.getPluginManager().callEvent(event);
-			}
-			PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
-			if ((Bukkit.getPlayer(uuid) != null) && Bukkit.getPlayer(uuid).isOnline()) {
+                if (plot.trusted.contains(uuid)) {
+                    plot.trusted.remove(uuid);
+                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                }
+                if (plot.helpers.contains(uuid)) {
+                    plot.helpers.remove(uuid);
+                    DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                }
+                plot.addDenied(uuid);
+                DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+                PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
+                Bukkit.getPluginManager().callEvent(event);
+            }
+            else {
+                PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                return false;
+            }
+			if (!uuid.equals(DBFunc.everyone) && (Bukkit.getPlayer(uuid) != null) && Bukkit.getPlayer(uuid).isOnline()) {
 				Plot pl = PlayerFunctions.getCurrentPlot(Bukkit.getPlayer((uuid)));
 				if (pl.id == plot.id) {
 					PlayerFunctions.sendMessage(Bukkit.getPlayer(uuid), C.YOU_BE_DENIED);
 					Bukkit.getPlayer(uuid).teleport(Bukkit.getPlayer(uuid).getWorld().getSpawnLocation());
 				}
 			}
+			PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
+            return true;
 		}
 		else
 			if (args[0].equalsIgnoreCase("remove")) {

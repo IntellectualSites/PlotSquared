@@ -110,7 +110,7 @@ public enum C {
 	 * Permission
 	 */
 	NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"),
-	NO_PERMISSION("&cYou don't have the permissions required to use this command."),
+	NO_PERMISSION("&cYou are lacking the permission node: &6%s"),
 	NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"),
 	CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."),
 	YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
@@ -216,7 +216,7 @@ public enum C {
 	/*
 	 * Claiming
 	 */
-	PLOT_NOT_CLAIMED("&cCannot claim plot"),
+	PLOT_NOT_CLAIMED("&cPlot not claimed"),
 	PLOT_IS_CLAIMED("&cThis plot is already claimed"),
 	CLAIMED("&6You successfully claimed the plot"),
 	/*

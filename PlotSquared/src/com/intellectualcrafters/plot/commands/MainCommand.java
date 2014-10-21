@@ -38,8 +38,8 @@ public class MainCommand implements CommandExecutor {
 		}
 	};
 
-	public static boolean no_permission(Player player) {
-		PlayerFunctions.sendMessage(player, C.NO_PERMISSION);
+	public static boolean no_permission(Player player, String permission) {
+		PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
 		return false;
 	}
 
@@ -53,7 +53,7 @@ public class MainCommand implements CommandExecutor {
 			player = null;
 		}
 		if (!PlotMain.hasPermission(player, "plots.use")) {
-			return no_permission(player);
+			return no_permission(player, "plots.use");
 		}
 		if ((args.length < 1)
 				|| ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
@@ -109,7 +109,7 @@ public class MainCommand implements CommandExecutor {
 						}
 					}
 					else {
-						return no_permission(player);
+						return no_permission(player, command.permission.permission.toLowerCase());
 					}
 				}
 			}

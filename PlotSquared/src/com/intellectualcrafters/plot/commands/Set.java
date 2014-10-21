@@ -48,7 +48,7 @@ public class Set extends SubCommand {
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if(!plot.hasOwner()) {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
-            return true;
+            return false;
         }
 		if (!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
@@ -71,7 +71,7 @@ public class Set extends SubCommand {
 		boolean advanced_permissions = true;
 		if (advanced_permissions) {
 			if (!plr.hasPermission("plots.set." + args[0].toLowerCase())) {
-				PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+				PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set."+args[0].toLowerCase());
 				return false;
 			}
 		}
@@ -104,7 +104,7 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
 				return false;
 			}
-			if (!plr.hasPermission("plots.set.flag." + args[1].toLowerCase())) {
+			if (!PlotMain.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
 				PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
 				return false;
 			}

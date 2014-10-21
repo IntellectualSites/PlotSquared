@@ -676,18 +676,18 @@ public class PlayerEvents implements Listener {
 			Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
 			if (isPlotWorld(b.getLocation())) {
 				if (!isInPlot(b.getLocation())) {
-					PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+					PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
 				else {
 					Plot plot = getCurrentPlot(b.getLocation());
 					if (plot == null) {
-						PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 					else
 						if (!plot.hasRights(e.getPlayer())) {
-							PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 				}
@@ -720,18 +720,18 @@ public class PlayerEvents implements Listener {
 			Block b = e.getBlockClicked();
 			if (isPlotWorld(b.getLocation())) {
 				if (!isInPlot(b.getLocation())) {
-					PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+					PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
 				else {
 					Plot plot = getCurrentPlot(b.getLocation());
 					if (plot == null) {
-						PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 					else
 						if (!plot.hasRights(e.getPlayer())) {
-							PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 				}
@@ -747,7 +747,7 @@ public class PlayerEvents implements Listener {
 			Player p = e.getPlayer();
 			if (!isInPlot(b.getLocation())) {
 				if (!p.hasPermission("plots.admin")) {
-					PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
 			}
@@ -755,14 +755,14 @@ public class PlayerEvents implements Listener {
 				Plot plot = getCurrentPlot(b.getLocation());
 				if (plot == null) {
 					if (!p.hasPermission("plots.admin")) {
-						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
 						if (!p.hasPermission("plots.admin")) {
-							PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
@@ -780,7 +780,7 @@ public class PlayerEvents implements Listener {
 			if (isPlotWorld(l)) {
 				if (!isInPlot(l)) {
 					if (!p.hasPermission("plots.admin")) {
-						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
@@ -788,14 +788,14 @@ public class PlayerEvents implements Listener {
 					Plot plot = getCurrentPlot(l);
 					if (plot == null) {
 						if (!p.hasPermission("plots.admin")) {
-							PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
 					else
 						if (!plot.hasRights(p)) {
 							if (!p.hasPermission("plots.admin")) {
-								PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+								PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 								e.setCancelled(true);
 							}
 						}
@@ -812,7 +812,7 @@ public class PlayerEvents implements Listener {
 			Player p = e.getPlayer();
 			if (!isInPlot(l)) {
 				if (!p.hasPermission("plots.admin")) {
-					PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
 			}
@@ -820,14 +820,14 @@ public class PlayerEvents implements Listener {
 				Plot plot = getCurrentPlot(l);
 				if (plot == null) {
 					if (!p.hasPermission("plots.admin")) {
-						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
 						if (!p.hasPermission("plots.admin")) {
-							PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
@@ -853,7 +853,7 @@ public class PlayerEvents implements Listener {
                 }
 				if (!isInPlot(l)) {
 					if (!p.hasPermission("plots.admin")) {
-						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
@@ -861,14 +861,14 @@ public class PlayerEvents implements Listener {
 					Plot plot = getCurrentPlot(l);
 					if (plot == null) {
 						if (!p.hasPermission("plots.admin")) {
-							PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
 					else
 						if (!plot.hasRights(p)) {
 							if (!p.hasPermission("plots.admin")) {
-								PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+								PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 								e.setCancelled(true);
 							}
 						}
@@ -885,7 +885,7 @@ public class PlayerEvents implements Listener {
 			Player p = e.getPlayer();
 			if (!isInPlot(l)) {
 				if (!p.hasPermission("plots.admin")) {
-					PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setHatching(false);
 				}
 			}
@@ -893,14 +893,14 @@ public class PlayerEvents implements Listener {
 				Plot plot = getCurrentPlot(l);
 				if (plot == null) {
 					if (!p.hasPermission("plots.admin")) {
-						PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setHatching(false);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
 						if (!p.hasPermission("plots.admin")) {
-							PlayerFunctions.sendMessage(p, C.NO_PERMISSION);
+							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setHatching(false);
 						}
 					}
