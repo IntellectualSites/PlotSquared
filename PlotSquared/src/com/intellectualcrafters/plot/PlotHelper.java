@@ -231,7 +231,7 @@ public class PlotHelper {
 		Block bs = loc.getBlock();
 		bs.setType(Material.AIR);
 		bs.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
-		String id = p.id.y + ";" + p.id.x;
+		String id = p.id.x + ";" + p.id.y;
 		Sign sign = (Sign) bs.getState();
 		sign.setLine(0, C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id));
 		sign.setLine(1, C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", plr.getName()));
