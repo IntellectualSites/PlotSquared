@@ -61,7 +61,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
 	@EventHandler
 	public void onChangeWorld(PlayerChangedWorldEvent event) {
-		if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
+		/*if (isPlotWorld(event.getFrom()) && (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
 			event.getPlayer().setResourcePack("");
 		}
 		else {
@@ -88,46 +88,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     plotEntry(player, plot);
-                }
-                else
-                if (leftPlot(event.getFrom(), event.getTo())) {
+                } else if (leftPlot(event.getFrom(), event.getTo())) {
                     Plot plot = getCurrentPlot(event.getFrom());
                     plotExit(player, plot);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Gotta catch 'em all.
         }
-	public static void PlayerMove(PlayerMoveEvent event) {
-		try {
-			Player player = event.getPlayer();
-			Location from = event.getFrom();
-			Location to = event.getTo();
-			if ((from.getBlockX() != to.getBlockX()) || (from.getBlockZ() != to.getBlockZ())) {
-				if (!isPlotWorld(player.getWorld())) {
-					return;
-				}
-				if (enteredPlot(from, to)) {
-					Plot plot = getCurrentPlot(event.getTo());
-					boolean admin = player.hasPermission("plots.admin");
-					if (plot.deny_entry(player) && !admin) {
-						event.setCancelled(true);
-						return;
-					}
-					plotEntry(player, plot);
-				}
-				else
-					if (leftPlot(event.getFrom(), event.getTo())) {
-						Plot plot = getCurrentPlot(event.getFrom());
-						plotExit(player, plot);
-					}
-			}
-		}
-		catch (Exception e) {
-			// Gotta catch 'em all.
-		}
-	}
+    }
+
+
 
 	@EventHandler(
 			priority = EventPriority.HIGHEST)
