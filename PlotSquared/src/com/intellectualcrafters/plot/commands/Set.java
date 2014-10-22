@@ -78,7 +78,7 @@ public class Set extends SubCommand {
 
 		if (args[0].equalsIgnoreCase("flag")) {
 			if (args.length < 2) {
-				String message = StringUtils.join(FlagManager.getFlags(), "&c, &6");
+				String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
 				if (PlotMain.worldGuardListener != null) {
 					if (message.equals("")) {
 						message = StringUtils.join(PlotMain.worldGuardListener.str_flags, "&c, &6");

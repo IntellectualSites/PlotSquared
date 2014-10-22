@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot;
 
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +58,20 @@ public class FlagManager {
 	public static List<AbstractFlag> getFlags() {
 		return flags;
 	}
+
+    /**
+     * Get a list of registerd AbstragFlag objects based on player permissions
+     * @param player with permissions
+     * @return List (AbstractFlag)
+     */
+    public static List<AbstractFlag> getFlags(Player player) {
+        List<AbstractFlag> returnFlags = new ArrayList<>();
+        for(AbstractFlag flag : flags) {
+            if(player.hasPermission("plots.set." + flag.getKey().toLowerCase()))
+                returnFlags.add(flag);
+        }
+        return returnFlags;
+    }
 
 	/**
 	 * Get an AbstractFlag by a string Returns null if flag does not exist
