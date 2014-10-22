@@ -8,13 +8,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.intellectualcrafters.plot.*;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -46,7 +45,7 @@ public class Comment extends SubCommand {
 		        PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));
 		        plot.settings.addComment(comment);
 		        
-		        DBFunc.addComment(...) // Can you do this?
+		        //DBFunc.addComment(...) // Can you do this?
 		        
 		        
 		        return true;    
