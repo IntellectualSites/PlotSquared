@@ -39,11 +39,13 @@ public abstract class PlotManager {
 	 * method)
 	 */
 
-	public abstract boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock block);
+	public abstract boolean setWallFilling(World world, PlotWorld plotworld, PlotId plotid, PlotBlock block);
+	
+	public abstract boolean setWall(World world, PlotWorld plotworld, PlotId plotid, PlotBlock block);
 
-	public abstract boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] block);
+	public abstract boolean setFloor(World world, PlotWorld plotworld, PlotId plotid, PlotBlock[] block);
 
-	public abstract boolean setBiome(Player player, Plot plot, Biome biome);
+	public abstract boolean setBiome(World world, Plot plot, Biome biome);
 
 	/*
 	 * PLOT MERGING (return false if your generator does not support plot

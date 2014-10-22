@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.UUIDHandler;
 
 public class Visit extends SubCommand {
 	public Visit() {
@@ -43,8 +44,13 @@ public class Visit extends SubCommand {
 			return true;
 		}
 		String username = args[0];
-		List<Plot> plots = getPlots(Bukkit.getOfflinePlayer(username).getUniqueId());
-		if (plots.isEmpty()) {
+		
+		UUID uuid = UUIDHandler.getUUID(username);
+		List<Plot> plots = null;
+		if (uuid!=null) {
+		plots = getPlots(uuid);
+		}
+		if (uuid==null || plots.isEmpty()) {
 			PlayerFunctions.sendMessage(plr, C.FOUND_NO_PLOTS);
 			return true;
 		}

@@ -305,7 +305,7 @@ public class PlotHelper {
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
-		manager.setWall(player, plotworld, plot.id, block);
+		manager.setWall(world, plotworld, plot.id, block);
 	}
 
 	public static void autoMerge(World world, Plot plot, Player player) {
@@ -599,7 +599,7 @@ public class PlotHelper {
 		World world = requester.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-		manager.setWall(requester, plotworld, plot.id, block);
+		manager.setWallFilling(world, plotworld, plot.id, block);
 		PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
 		if (canSetFast) {
 			SetBlockFast.update(requester);
@@ -617,7 +617,7 @@ public class PlotHelper {
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
 		PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-		manager.setFloor(requester, plotworld, plot.id, blocks);
+		manager.setFloor(world, plotworld, plot.id, blocks);
 		if (canSetFast) {
 			SetBlockFast.update(requester);
 		}

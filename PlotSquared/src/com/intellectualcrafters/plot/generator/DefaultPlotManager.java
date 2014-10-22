@@ -229,6 +229,19 @@ public class DefaultPlotManager extends PlotManager {
 		PlotBlock[] plotfloor = dpw.TOP_BLOCK;
 		PlotBlock[] filling = dpw.TOP_BLOCK;
 
+		PlotBlock wall = dpw.WALL_BLOCK;
+		PlotBlock wall_filling = dpw.WALL_FILLING;
+		
+		Block block = world.getBlockAt(new Location(world, pos1.getBlockX()-1, 1, pos1.getBlockZ()));
+        if (block.getTypeId()!=wall_filling.id || block.getData()!=wall_filling.data) {
+            setWallFilling(world, dpw, plot.id, wall_filling);
+        }
+        
+        block = world.getBlockAt(new Location(world, pos1.getBlockX()-1, dpw.WALL_HEIGHT+1, pos1.getBlockZ()));
+        if (block.getTypeId()!=wall.id || block.getData()!=wall.data) {
+            setWall(world, dpw, plot.id, wall_filling);
+        }
+		
 		if ((pos2.getBlockX() - pos1.getBlockX()) < 48) {
 			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
 			PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
@@ -356,9 +369,8 @@ public class DefaultPlotManager extends PlotManager {
 	}
 
 	@Override
-	public boolean setFloor(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock[] blocks) {
+	public boolean setFloor(World world, PlotWorld plotworld, PlotId plotid, PlotBlock[] blocks) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
-		World world = player.getWorld();
 		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
 		final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
 		PlotHelper.setCuboid(world, new Location(world,pos1.getX(),dpw.PLOT_HEIGHT,pos1.getZ()), new Location(world,pos2.getX()+1,dpw.PLOT_HEIGHT+1,pos2.getZ()+1), blocks);
@@ -366,9 +378,52 @@ public class DefaultPlotManager extends PlotManager {
 	}
 
 	@Override
-	public boolean setWall(Player player, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
+    public boolean setWallFilling(World w, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
+        DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
+
+        Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
+        Location top = PlotHelper.getPlotTopLoc(w, plotid);
+
+        int x, z;
+
+        Block block;
+        
+        z = bottom.getBlockZ();
+        for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
+            for (int y = 1; y<= dpw.WALL_HEIGHT; y++) {
+                block = w.getBlockAt(x, y, z);
+                PlotHelper.setBlock(block, plotblock);
+            }
+        }
+        
+        x = top.getBlockX() + 1;
+        for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
+            for (int y = 1; y<= dpw.WALL_HEIGHT; y++) {
+                block = w.getBlockAt(x, y, z);
+                PlotHelper.setBlock(block, plotblock);
+            }
+        }
+        
+        z = top.getBlockZ() + 1;
+        for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
+            for (int y = 1; y<= dpw.WALL_HEIGHT; y++) {
+                block = w.getBlockAt(x, y, z);
+                PlotHelper.setBlock(block, plotblock);
+            }
+        }
+        x = bottom.getBlockX();
+        for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
+            for (int y = 1; y<= dpw.WALL_HEIGHT; y++) {
+                block = w.getBlockAt(x, y, z);
+                PlotHelper.setBlock(block, plotblock);
+            }
+        }
+        return true;
+    }
+	
+	@Override
+	public boolean setWall(World w, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
-		World w = player.getWorld();
 
 		Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
 		Location top = PlotHelper.getPlotTopLoc(w, plotid);
@@ -376,33 +431,24 @@ public class DefaultPlotManager extends PlotManager {
 		int x, z;
 
 		Block block;
-
-		// TODO use PlotHelper.setSimpleCuboid rather than this for loop
-
+		z = bottom.getBlockZ();
 		for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-			z = bottom.getBlockZ();
-
-			block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+			block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
 			PlotHelper.setBlock(block, plotblock);
 		}
-
+		x = top.getBlockX() + 1;
 		for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-			x = top.getBlockX() + 1;
-
-			block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+			block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
 			PlotHelper.setBlock(block, plotblock);
 		}
-
+		z = top.getBlockZ() + 1;
 		for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-			z = top.getBlockZ() + 1;
-
-			block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+			block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
 			PlotHelper.setBlock(block, plotblock);
 		}
-
+		x = bottom.getBlockX();
 		for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-			x = bottom.getBlockX();
-			block = w.getBlockAt(x, dpw.ROAD_HEIGHT + 1, z);
+			block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
 			PlotHelper.setBlock(block, plotblock);
 		}
 		return true;
@@ -412,9 +458,7 @@ public class DefaultPlotManager extends PlotManager {
 	 * Set a plot biome
 	 */
 	@Override
-	public boolean setBiome(Player player, Plot plot, Biome biome) {
-
-		World world = player.getWorld();
+	public boolean setBiome(World world, Plot plot, Biome biome) {
 
 		int bottomX = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
 		int topX = PlotHelper.getPlotTopLoc(world, plot.id).getBlockX() + 1;

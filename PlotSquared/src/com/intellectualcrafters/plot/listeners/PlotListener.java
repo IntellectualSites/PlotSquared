@@ -161,9 +161,15 @@ public class PlotListener {
             PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
             Bukkit.getPluginManager().callEvent(callEvent);
         }
-        player.setGameMode(Bukkit.getDefaultGameMode());
-        player.resetPlayerTime();
-        player.resetPlayerWeather();
+        if(plot.settings.getFlag("gamemode") != null) {
+            player.setGameMode(Bukkit.getDefaultGameMode());
+        }
+        if(plot.settings.getFlag("time") != null) {
+            player.resetPlayerTime();
+        }
+        if(plot.settings.getFlag("weather") != null) {
+            player.resetPlayerWeather();
+        }
         PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
     }
 
