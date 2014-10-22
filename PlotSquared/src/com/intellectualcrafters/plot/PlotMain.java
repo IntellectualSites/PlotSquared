@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
@@ -572,6 +573,7 @@ public class PlotMain extends JavaPlugin {
 
         // Use mysql?
 		if (Settings.DB.USE_MYSQL) {
+		    DBFunc.dbManager = new SQLManager();
 			try {
 				mySQL =
 						new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
@@ -596,7 +598,7 @@ public class PlotMain extends JavaPlugin {
 					}
 				}
 			}
-			catch (ClassNotFoundException | SQLException e) {
+			catch (Exception e) {
 				Logger.add(LogLevel.DANGER, "MySQL connection failed.");
 				sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
 				if (config==null || config.getBoolean("debug")) {
@@ -614,11 +616,12 @@ public class PlotMain extends JavaPlugin {
         // TODO: Implement mongo
 		else
 			if (Settings.DB.USE_MONGO) {
+//			    DBFunc.dbManager = new MongoManager();
 				sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
 			}
-            // Use Sqlite :D<3
 			else
 				if (Settings.DB.USE_SQLITE) {
+				    DBFunc.dbManager = new SQLManager();
 					try {
 						connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
 						{
@@ -641,7 +644,7 @@ public class PlotMain extends JavaPlugin {
 							}
 						}
 					}
-					catch (ClassNotFoundException | SQLException e) {
+					catch (Exception e) {
 						Logger.add(LogLevel.DANGER, "SQLite connection failed");
 						sendConsoleSenderMessage(C.PREFIX.s()
 								+ "&cFailed to open SQLite connection. The plugin will disable itself.");
