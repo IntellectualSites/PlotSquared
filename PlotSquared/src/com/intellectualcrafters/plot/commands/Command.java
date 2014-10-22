@@ -28,6 +28,10 @@ public enum Command {
     /**
      *
      */
+    DEBUGCLAIMTEST("debugclaimtest"),
+    /**
+     *
+     */
     COMMENT("comment", "msg"),
     /**
      *

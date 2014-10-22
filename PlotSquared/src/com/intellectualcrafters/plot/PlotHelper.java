@@ -595,7 +595,6 @@ public class PlotHelper {
 			PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
 			return;
 		}
-		PlayerFunctions.sendMessage(requester, C.GENERATING_WALL_FILLING);
 		World world = requester.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);
@@ -612,7 +611,6 @@ public class PlotHelper {
 			return;
 		}
 
-		PlayerFunctions.sendMessage(requester, C.GENERATING_FLOOR);
 		World world = requester.getWorld();
 		PlotManager manager = PlotMain.getPlotManager(world);
 		PlotWorld plotworld = PlotMain.getWorldSettings(world);

@@ -227,7 +227,7 @@ public class DefaultPlotManager extends PlotManager {
 		final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
 
 		PlotBlock[] plotfloor = dpw.TOP_BLOCK;
-		PlotBlock[] filling = dpw.TOP_BLOCK;
+		PlotBlock[] filling = dpw.MAIN_BLOCK;
 
 		PlotBlock wall = dpw.WALL_BLOCK;
 		PlotBlock wall_filling = dpw.WALL_FILLING;
@@ -239,7 +239,7 @@ public class DefaultPlotManager extends PlotManager {
         
         block = world.getBlockAt(new Location(world, pos1.getBlockX()-1, dpw.WALL_HEIGHT+1, pos1.getBlockZ()));
         if (block.getTypeId()!=wall.id || block.getData()!=wall.data) {
-            setWall(world, dpw, plot.id, wall_filling);
+            setWall(world, dpw, plot.id, wall);
         }
 		
 		if ((pos2.getBlockX() - pos1.getBlockX()) < 48) {
@@ -347,7 +347,7 @@ public class DefaultPlotManager extends PlotManager {
 			PlotHelper.setCuboid(world, new Location(world, min.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, max.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
 
 			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), 0, min.getBlockZ()), new Location(world, plotMaxX + 1, 1, max.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
-			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, max.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
+			PlotHelper.setSimpleCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT + 1, min.getBlockZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, max.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
 			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), 1, min.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, max.getBlockZ() + 1), filling);
 			PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, min.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, max.getBlockZ() + 1), plotfloor);
 

@@ -371,7 +371,7 @@ public enum C {
             }
         }
 		if (this.s.length() < 1) {
-			return this.d.replace("\\n", "\n");
+			return "";
 		}
 		return this.s.replace("\\n", "\n");
 	}
