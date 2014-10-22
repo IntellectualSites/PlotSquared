@@ -105,7 +105,7 @@ public class PlotMain extends JavaPlugin {
 	public static WorldGuardListener worldGuardListener = null;
 
 	public static Economy economy;
-	public static boolean useEconomy;
+	public static boolean useEconomy = false;
 
 	/**
 	 * !!WorldGeneration!!
@@ -705,7 +705,7 @@ public class PlotMain extends JavaPlugin {
 			checkExpired(PlotMain.getMain(), true);
 			checkForExpiredPlots();
 		}
-		if (getServer().getPluginManager().getPlugin("Vault") != null) {
+		if (getServer().getPluginManager().getPlugin("Vault") != null && getServer().getPluginManager().getPlugin("Vault").isEnabled()) {
 			RegisteredServiceProvider<Economy> economyProvider =
 					getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 			if (economyProvider != null) {

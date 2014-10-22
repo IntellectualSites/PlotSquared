@@ -10,6 +10,7 @@ package com.intellectualcrafters.plot;
 
 import org.bukkit.block.Biome;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +34,7 @@ public class PlotSettings {
 	 */
 	private Biome biome;
 
+	private ArrayList<PlotComment> comments;
 	/**
 	 *
 	 */
@@ -164,5 +166,18 @@ public class PlotSettings {
 
 	public String getLeaveMessage() {
 		return "";
+	}
+	public ArrayList<PlotComment> getComments() {
+	    if (this.comments == null) {
+	        return new ArrayList<PlotComment>();
+	    }
+	    return this.comments;
+	}
+	
+	public void addComment(PlotComment comment) {
+	    if (this.comments == null) {
+            this.comments = new ArrayList<PlotComment>();
+        }
+        this.comments.add(comment);
 	}
 }

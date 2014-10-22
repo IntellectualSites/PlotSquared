@@ -24,7 +24,7 @@ public class Copy extends SubCommand {
 	@Override
 	public boolean execute(Player plr, String... args) {
 		if (!PlayerFunctions.isInPlot(plr)) {
-			PlayerFunctions.sendMessage(plr, "You're not in a plot.");
+		    PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
 			return false;
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);

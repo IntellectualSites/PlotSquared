@@ -16,6 +16,10 @@ import org.bukkit.ChatColor;
  * @author Citymonstret
  */
 public enum C {
+    /*
+     * Comment
+     */
+    COMMENT_SYNTAX("&cUse /plot comment <everyone|trusted|helper|owner|admin> <comment>"),
 	/*
 	 * Console
 	 */
