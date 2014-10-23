@@ -28,7 +28,10 @@ public class Flag {
 			throw new IllegalArgumentException("Value must be <= 48 characters");
 		}
 		this.key = key;
-		this.value = value;
+		this.value = key.parseValue(value);
+		if (this.value==null) {
+		    throw new IllegalArgumentException(key.getValueDesc()); 
+		}
 	}
 
 	/**

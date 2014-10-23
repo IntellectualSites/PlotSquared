@@ -91,13 +91,13 @@ public class Set extends SubCommand {
 				return false;
 			}
 			
-			AbstractFlag af = new AbstractFlag("");
+			AbstractFlag af;
 			
 			try {
-			    af = new AbstractFlag(args[1].toLowerCase());
+			    af = FlagManager.getFlag(args[1].toLowerCase());
 			}
 			catch (Exception e) {
-			    
+			    af = new AbstractFlag(args[1].toLowerCase());
 			}
 			
 			if (!FlagManager.getFlags().contains(af) && ((PlotMain.worldGuardListener == null) || !PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
@@ -141,7 +141,6 @@ public class Set extends SubCommand {
 			try {
 				String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
 				value = af.parseValue(value);
-				
 				if (value==null) {
 				    PlayerFunctions.sendMessage(plr, af.getValueDesc());
 				    return false;
