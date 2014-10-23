@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -190,7 +191,20 @@ public class SchematicHandler {
 			return this.z;
 		}
 	}
+	
+	/**
+	 * Saves a schematic to a file path
+	 * @param tag
+	 * @param path
+	 * @return
+	 */
 	public boolean save(CompoundTag tag, String path) {
+	    
+	    if (tag==null) {
+	        PlotMain.sendConsoleSenderMessage("&cCannot save empty tag");
+	        return false;
+	    }
+	    
         try {
             OutputStream stream = new FileOutputStream(path);
             NBTOutputStream output = new NBTOutputStream(stream);
@@ -204,139 +218,88 @@ public class SchematicHandler {
         return true;
 	}
 	
+	/**
+	 * Gets the schematic of a plot
+	 * @param world
+	 * @param plot
+	 * @return
+	 */
 	public CompoundTag getCompoundTag(World world, Plot plot) {
 
+	    if (!PlotMain.getPlots(world).containsKey(plot.id)) {
+	        return null;
+	        // Plot is empty
+	    }
+	    
 	    // loading chunks
 	    final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
         for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
             for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
                 Chunk chunk = world.getChunkAt(i, j);
-                chunk.load(true);
+                boolean result = chunk.load(false);
+                if (!result) {
+                    
+                    // Plot is not even generated
+                    
+                    return null;
+                }
             }
         }
-        
-        // TODO get blocks
-        
-        // save as a schematic
-        int MAX_SIZE = Short.MAX_VALUE - Short.MIN_VALUE;
-        int width = region.getWidth();
-        int height = region.getHeight();
-        int length = region.getLength();
-
-        if (width > MAX_SIZE) {
-            throw new IllegalArgumentException("Width of region too large for a .schematic");
-        }
-        if (height > MAX_SIZE) {
-            throw new IllegalArgumentException("Height of region too large for a .schematic");
-        }
-        if (length > MAX_SIZE) {
-            throw new IllegalArgumentException("Length of region too large for a .schematic");
-        }
-
-        // ====================================================================
-        // Metadata
-        // ====================================================================
+        int width = pos2.getBlockX()-pos1.getBlockX();
+        int height = 256;
+        int length = pos2.getBlockZ()-pos1.getBlockZ();
 
         HashMap<String, Tag> schematic = new HashMap<String, Tag>();
         schematic.put("Width", new ShortTag("Width", (short) width));
         schematic.put("Length", new ShortTag("Length", (short) length));
         schematic.put("Height", new ShortTag("Height", (short) height));
         schematic.put("Materials", new StringTag("Materials", "Alpha"));
-        schematic.put("WEOriginX", new IntTag("WEOriginX", min.getBlockX()));
-        schematic.put("WEOriginY", new IntTag("WEOriginY", min.getBlockY()));
-        schematic.put("WEOriginZ", new IntTag("WEOriginZ", min.getBlockZ()));
-        schematic.put("WEOffsetX", new IntTag("WEOffsetX", offset.getBlockX()));
-        schematic.put("WEOffsetY", new IntTag("WEOffsetY", offset.getBlockY()));
-        schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", offset.getBlockZ()));
-
-        // ====================================================================
-        // Block handling
-        // ====================================================================
+        schematic.put("WEOriginX", new IntTag("WEOriginX", 0));
+        schematic.put("WEOriginY", new IntTag("WEOriginY", 0));
+        schematic.put("WEOriginZ", new IntTag("WEOriginZ", 0));
+        schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
+        schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
+        schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
 
         byte[] blocks = new byte[width * height * length];
         byte[] addBlocks = null;
         byte[] blockData = new byte[width * height * length];
-        List<Tag> tileEntities = new ArrayList<Tag>();
 
-        for (Vector point : region) {
-            Vector relative = point.subtract(min);
-            int x = relative.getBlockX();
-            int y = relative.getBlockY();
-            int z = relative.getBlockZ();
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < length; z++) {
+                for (int y = 0; y < height; y++) {
+                    int index = y * width * length + z * width + x;
+                    
+                    Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, 0 + y, pos1.getBlockZ() + z));
+                    
+                    int id = block.getTypeId(); 
+                    
+                    if (id > 255) {
+                        if (addBlocks == null) {
+                            addBlocks = new byte[(blocks.length >> 1) + 1];
+                        }
 
-            int index = y * width * length + z * width + x;
-            BaseBlock block = clipboard.getBlock(point);
+                        addBlocks[index >> 1] = (byte) (((index & 1) == 0) ?
+                                addBlocks[index >> 1] & 0xF0 | (id >> 8) & 0xF
+                                : addBlocks[index >> 1] & 0xF | ((id >> 8) & 0xF) << 4);
+                    }
 
-            // Save 4096 IDs in an AddBlocks section
-            if (block.getType() > 255) {
-                if (addBlocks == null) { // Lazily create section
-                    addBlocks = new byte[(blocks.length >> 1) + 1];
+                    blocks[index] = (byte) id;
+                    blockData[index] = (byte) block.getData();
+                    
+                    
+                    // We need worldedit to save tileentity data or entities
+                    //  - it uses NMS and CB internal code, which changes every update
                 }
-
-                addBlocks[index >> 1] = (byte) (((index & 1) == 0) ?
-                        addBlocks[index >> 1] & 0xF0 | (block.getType() >> 8) & 0xF
-                        : addBlocks[index >> 1] & 0xF | ((block.getType() >> 8) & 0xF) << 4);
-            }
-
-            blocks[index] = (byte) block.getType();
-            blockData[index] = (byte) block.getData();
-
-            // Store TileEntity data
-            CompoundTag rawTag = block.getNbtData();
-            if (rawTag != null) {
-                Map<String, Tag> values = new HashMap<String, Tag>();
-                for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
-                    values.put(entry.getKey(), entry.getValue());
-                }
-
-                values.put("id", new StringTag("id", block.getNbtId()));
-                values.put("x", new IntTag("x", x));
-                values.put("y", new IntTag("y", y));
-                values.put("z", new IntTag("z", z));
-
-                CompoundTag tileEntityTag = new CompoundTag("TileEntity", values);
-                tileEntities.add(tileEntityTag);
             }
         }
-
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
         schematic.put("Data", new ByteArrayTag("Data", blockData));
-        schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
 
         if (addBlocks != null) {
             schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
         }
-
-        // ====================================================================
-        // Entities
-        // ====================================================================
-
-        List<Tag> entities = new ArrayList<Tag>();
-        for (Entity entity : clipboard.getEntities()) {
-            BaseEntity state = entity.getState();
-
-            if (state != null) {
-                Map<String, Tag> values = new HashMap<String, Tag>();
-
-                // Put NBT provided data
-                CompoundTag rawTag = state.getNbtData();
-                if (rawTag != null) {
-                    values.putAll(rawTag.getValue());
-                }
-
-                // Store our location data, overwriting any
-                values.put("id", new StringTag("id", state.getTypeId()));
-                values.put("Pos", writeVector(entity.getLocation().toVector(), "Pos"));
-                values.put("Rotation", writeRotation(entity.getLocation(), "Rotation"));
-
-                CompoundTag entityTag = new CompoundTag("Entity", values);
-                entities.add(entityTag);
-            }
-        }
-
-        schematic.put("Entities", new ListTag("Entities", CompoundTag.class, entities));
-
 
         CompoundTag schematicTag = new CompoundTag("Schematic", schematic);
         return schematicTag;
