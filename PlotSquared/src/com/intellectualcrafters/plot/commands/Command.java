@@ -24,6 +24,10 @@ public enum Command {
 	// - /plot rate <number out of 10>
 	// - /plot list <some parameter to list the most popular, and highest rated
 	// plots>
+    SWAP("swap"),
+    /**
+     *
+     */
     INBOX("inbox"),
     /**
      *

@@ -33,7 +33,7 @@ public class Copy extends SubCommand {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
 		}
-		if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+		if (!plot.settings.isMerged()) {
             PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }

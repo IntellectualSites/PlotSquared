@@ -102,10 +102,10 @@ public class PlotSelection {
         return plot;
     }
     
-    public static boolean swap(World world, Plot plot1, Plot plot2) {
+    public static boolean swap(World world, PlotId id1, PlotId id2) {
         
-        Location bot2 = PlotHelper.getPlotBottomLocAbs(world, plot2.getId()).add(1, 0, 1);
-        Location top2 = PlotHelper.getPlotTopLocAbs(world, plot2.getId());
+        Location bot2 = PlotHelper.getPlotBottomLocAbs(world, id2).add(1, 0, 1);
+        Location top2 = PlotHelper.getPlotTopLocAbs(world, id2);
         
         ArrayList<BlockState> states2 = new ArrayList<BlockState>();
         
@@ -120,15 +120,15 @@ public class PlotSelection {
                 
                 for (BlockState tile :chunk.getTileEntities()) {
                     PlotId id = PlayerFunctions.getPlot(tile.getLocation());
-                    if ((id != null) && id.equals(plot2.id)) {
+                    if ((id != null) && id.equals(id2)) {
                         states2.add(tile);
                     }
                 }
             }
         }
         
-        Location bot1 = PlotHelper.getPlotBottomLocAbs(world, plot1.getId()).add(1, 0, 1);
-        Location top1 = PlotHelper.getPlotTopLocAbs(world, plot1.getId());
+        Location bot1 = PlotHelper.getPlotBottomLocAbs(world, id1).add(1, 0, 1);
+        Location top1 = PlotHelper.getPlotTopLocAbs(world, id1);
         
         ArrayList<BlockState> states1 = new ArrayList<BlockState>();
         
@@ -143,7 +143,7 @@ public class PlotSelection {
                 
                 for (BlockState tile :chunk.getTileEntities()) {
                     PlotId id = PlayerFunctions.getPlot(tile.getLocation());
-                    if ((id != null) && id.equals(plot1.id)) {
+                    if ((id != null) && id.equals(id1)) {
                         states1.add(tile);
                     }
                 }
