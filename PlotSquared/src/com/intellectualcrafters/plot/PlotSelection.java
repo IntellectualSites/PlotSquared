@@ -107,48 +107,8 @@ public class PlotSelection {
         Location bot2 = PlotHelper.getPlotBottomLocAbs(world, id2).add(1, 0, 1);
         Location top2 = PlotHelper.getPlotTopLocAbs(world, id2);
         
-        ArrayList<BlockState> states2 = new ArrayList<BlockState>();
-        
-        for (int i = (bot2.getBlockX() / 16) * 16; i < (16 + ((top2.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (bot2.getBlockZ() / 16) * 16; j < (16 + ((top2.getBlockZ() / 16) * 16)); j += 16) {
-                Chunk chunk = world.getChunkAt(i, j);
-                
-                boolean result = chunk.load(false);
-                if (!result) {
-                    return false;
-                }
-                
-                for (BlockState tile :chunk.getTileEntities()) {
-                    PlotId id = PlayerFunctions.getPlot(tile.getLocation());
-                    if ((id != null) && id.equals(id2)) {
-                        states2.add(tile);
-                    }
-                }
-            }
-        }
-        
         Location bot1 = PlotHelper.getPlotBottomLocAbs(world, id1).add(1, 0, 1);
         Location top1 = PlotHelper.getPlotTopLocAbs(world, id1);
-        
-        ArrayList<BlockState> states1 = new ArrayList<BlockState>();
-        
-        for (int i = (bot1.getBlockX() / 16) * 16; i < (16 + ((top1.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (bot1.getBlockZ() / 16) * 16; j < (16 + ((top1.getBlockZ() / 16) * 16)); j += 16) {
-                Chunk chunk = world.getChunkAt(i, j);
-                
-                boolean result = chunk.load(false);
-                if (!result) {
-                    return false;
-                }
-                
-                for (BlockState tile :chunk.getTileEntities()) {
-                    PlotId id = PlayerFunctions.getPlot(tile.getLocation());
-                    if ((id != null) && id.equals(id1)) {
-                        states1.add(tile);
-                    }
-                }
-            }
-        }
         
         int
         minX = bot1.getBlockX(),
@@ -161,9 +121,9 @@ public class PlotSelection {
         
         boolean canSetFast = PlotHelper.canSetFast;
         
-        for (int x = 0; x < maxX - minX; x++) {
-            for (int z = 0; z < maxZ - minZ; z++) {
-                for (int y = 1; y < world.getMaxHeight(); y++) {
+        for (int x = 0; x <= maxX - minX; x++) {
+            for (int z = 0; z <= maxZ - minZ; z++) {
+                for (int y = 1; y <= world.getMaxHeight(); y++) {
                     
                     final Block block1 = world.getBlockAt(x + minX, y, z + minZ);
                     final Block block2 = world.getBlockAt(x + minX2, y, z + minZ2);
@@ -199,17 +159,6 @@ public class PlotSelection {
                 }
             }
         }
-        
-        for (BlockState state : states1) {
-            Location loc = new Location(world,state.getX() - minX + minX2, state.getY(), state.getZ() - minZ + minZ2);
-            world.getBlockAt(loc).getState().setRawData(state.getRawData());
-        }
-        
-        for (BlockState state : states2) {
-            Location loc = new Location(world,state.getX() - minX2 + minX, state.getY(), state.getZ() - minZ2 + minZ);
-            world.getBlockAt(loc).getState().setRawData(state.getRawData());
-        }
-        
         return true;
     }
     

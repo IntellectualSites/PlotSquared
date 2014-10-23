@@ -59,8 +59,18 @@ public class Swap extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
+		if (plot.id.equals(plotid)) {
+		    PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
+            return false;
+		}
         PlotSelection.swap(world, plot.id, plotid);
         PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
+        
+        if (PlotHelper.canSetFast) {
+            SetBlockFast.update(plr);
+        }
+        
 		return true;
 	}
 }
