@@ -33,7 +33,7 @@ public class Copy extends SubCommand {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
 		}
-		if (!plot.settings.isMerged()) {
+		if (plot.settings.isMerged()) {
             PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }

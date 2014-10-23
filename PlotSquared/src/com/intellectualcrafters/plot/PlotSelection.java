@@ -27,10 +27,6 @@ public class PlotSelection {
     private Plot plot;
     
     private Biome biome;
-    
-    private BlockState[] tiles = null;
-    
-    private Location origin = null;
 
     public PlotSelection(int width, World world, Plot plot) {
         this.width = width;
@@ -52,26 +48,6 @@ public class PlotSelection {
         
         this.biome = world.getBiome(minX, minZ);
         
-        ArrayList<BlockState> states = new ArrayList<BlockState>();
-        
-        for (int i = (bot.getBlockX() / 16) * 16; i < (16 + ((top.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (bot.getBlockZ() / 16) * 16; j < (16 + ((top.getBlockZ() / 16) * 16)); j += 16) {
-                Chunk chunk = world.getChunkAt(i, j);
-                
-                for (BlockState tile :chunk.getTileEntities()) {
-                    PlotId id = PlayerFunctions.getPlot(tile.getLocation());
-                    if ((id != null) && id.equals(plot.id)) {
-                        states.add(tile);
-                    }
-                }
-            }
-        }
-        if (states.size() > 0) {
-            this.tiles = (BlockState[]) states.toArray();
-            this.origin = bot;
-        }
-        
-
         int index = 0;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
@@ -105,8 +81,6 @@ public class PlotSelection {
     public static boolean swap(World world, PlotId id1, PlotId id2) {
         
         Location bot2 = PlotHelper.getPlotBottomLocAbs(world, id2).add(1, 0, 1);
-        Location top2 = PlotHelper.getPlotTopLocAbs(world, id2);
-        
         Location bot1 = PlotHelper.getPlotBottomLocAbs(world, id1).add(1, 0, 1);
         Location top1 = PlotHelper.getPlotTopLocAbs(world, id1);
         
@@ -182,13 +156,6 @@ public class PlotSelection {
         
         if (this.biome != world.getBiome(minX, minZ)) {
             PlotHelper.setBiome(world, plot, this.biome);
-        }
-        
-        if (this.origin!=null) {
-            for (BlockState state : this.tiles) {
-                Location loc = new Location(world,state.getX() - this.origin.getBlockX() + minX + 1, state.getY() - this.origin.getBlockY() + minY, state.getZ() - this.origin.getBlockZ() + minZ + 1);
-                world.getBlockAt(loc).getState().setRawData(state.getRawData());
-            }
         }
         
         int index = 0;
