@@ -35,9 +35,13 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
 		return this.plot;
 	}
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
 }

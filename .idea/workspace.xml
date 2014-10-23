@@ -9,9 +9,13 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlotListener.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlotListener.java" />
+    <list default="true" id="f6aaf715-4424-4f9e-96dc-b47edea10520" name="Default" comment="* Added Fly Flag&#10;* Moved stuff away from the actual listener class&#10;* Ability to delete plot on player ban">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotTrustedEvent.java" afterPath="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotTrustedEvent.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="plot_news.iws" />
@@ -35,211 +39,118 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Plot.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="140" max-vertical-offset="4318">
-              <caret line="281" column="22" selection-start-line="281" selection-start-column="22" selection-end-line="281" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotHelper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="11215" max-vertical-offset="15759">
-              <caret line="667" column="71" selection-start-line="667" selection-start-column="71" selection-end-line="667" selection-end-column="71" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlayerEvents.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.50830567" vertical-offset="493" max-vertical-offset="12784">
-              <caret line="78" column="4" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="4" />
-              <folding>
-                <element signature="e#1478#1505#0" expanded="true" />
-                <element signature="e#1685#1686#0" expanded="true" />
-                <element signature="e#1728#1729#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlotListener.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-9.192983" vertical-offset="2417" max-vertical-offset="3043">
-              <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#740#741#0" expanded="true" />
-                <element signature="e#795#796#0" expanded="true" />
-                <element signature="e#844#845#0" expanded="true" />
-                <element signature="e#905#906#0" expanded="true" />
-                <element signature="e#959#960#0" expanded="true" />
-                <element signature="e#1009#1010#0" expanded="true" />
-                <element signature="e#1066#1067#0" expanded="true" />
-                <element signature="e#1121#1122#0" expanded="true" />
-                <element signature="e#1168#1169#0" expanded="true" />
-                <element signature="e#1216#1217#0" expanded="true" />
-                <element signature="e#1263#1264#0" expanded="true" />
-                <element signature="e#1311#1312#0" expanded="true" />
-                <element signature="e#2365#2366#0" expanded="true" />
-                <element signature="e#2422#2423#0" expanded="true" />
-                <element signature="e#2474#2475#0" expanded="true" />
-                <element signature="e#2524#2525#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Settings.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="429" max-vertical-offset="1666">
-              <caret line="41" column="36" selection-start-line="41" selection-start-column="36" selection-end-line="41" selection-end-column="36" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotMain.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.821429" vertical-offset="16950" max-vertical-offset="23103">
-              <caret line="1079" column="43" selection-start-line="1079" selection-start-column="43" selection-end-line="1079" selection-end-column="43" />
-              <folding>
-                <element signature="e#0#42042#0" expanded="true" />
-                <element signature="e#3567#3599#0" expanded="true" />
-                <element signature="e#3752#3845#0" expanded="true" />
-                <element signature="e#3840#3841#0" expanded="true" />
-                <element signature="e#13692#13724#0" expanded="true" />
-                <element signature="e#20416#20443#0" expanded="true" />
-                <element signature="e#22651#22678#0" expanded="true" />
-                <element signature="e#23966#23998#0" expanded="true" />
-                <element signature="e#27693#27725#0" expanded="true" />
-                <element signature="e#38323#38324#0" expanded="true" />
-                <element signature="e#38424#38425#0" expanded="true" />
-                <element signature="e#39170#39171#0" expanded="true" />
-                <element signature="e#39260#39261#0" expanded="true" />
-                <element signature="e#41313#41314#0" expanded="true" />
-                <element signature="e#41404#41405#0" expanded="true" />
-                <element signature="e#41884#41885#0" expanded="true" />
-                <element signature="e#41912#41913#0" expanded="true" />
-                <element signature="e#41999#42000#0" expanded="true" />
-                <element signature="e#42037#42038#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="254" max-vertical-offset="1241">
-              <caret line="32" column="28" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="DBFunc.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="294" max-vertical-offset="16677">
-              <caret line="277" column="5" selection-start-line="277" selection-start-column="5" selection-end-line="277" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3213">
+              <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
               <folding>
-                <element signature="e#14615#14632#0" expanded="true" />
-                <element signature="e#16691#16705#0" expanded="true" />
-                <marker date="1413868860914" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
-                <marker date="1413868860914" expanded="true" signature="5643:5724" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="6319:6695" placeholder="CREATE TABLE..plot..." />
-                <marker date="1413868860914" expanded="true" signature="6717:6879" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1413868860914" expanded="true" signature="6901:7064" placeholder="CREATE TABLE..plot_helpers..." />
-                <marker date="1413868860914" expanded="true" signature="7086:7249" placeholder="CREATE TABLE..plot_trusted..." />
-                <marker date="1413868860914" expanded="true" signature="7271:7877" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1413868860914" expanded="true" signature="7899:8096" placeholder="CREATE TABLE..plot_ratings..." />
-                <marker date="1413868860914" expanded="true" signature="8144:8266" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1413868860914" expanded="true" signature="8322:8614" placeholder="CREATE TABLE..plot..." />
-                <marker date="1413868860914" expanded="true" signature="8636:8763" placeholder="CREATE TABLE..plot_denied..." />
-                <marker date="1413868860914" expanded="true" signature="8785:8913" placeholder="CREATE TABLE..plot_helpers..." />
-                <marker date="1413868860914" expanded="true" signature="8885:8963" placeholder="CREATE TABLE..plot_helpers..." />
-                <marker date="1413868860914" expanded="true" signature="9035:9113" placeholder="CREATE TABLE..plot_trusted..." />
-                <marker date="1413868860914" expanded="true" signature="9188:9713" placeholder="CREATE TABLE..plot_settings..." />
-                <marker date="1413868860914" expanded="true" signature="9813:9974" placeholder="CREATE TABLE..plot_ratings..." />
-                <marker date="1413868860914" expanded="true" signature="10209:10261" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10306:10358" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10377:10428" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10473:10524" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10544:10595" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10640:10691" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10711:10744" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="10789:10822" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="11262:11320" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="11390:11448" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="11611:11715" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413868860914" expanded="true" signature="11877:11981" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413868860914" expanded="true" signature="13143:13505" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="13533:13816" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="13533:13551" placeholder="ALTER TABLE `plot`..." />
-                <marker date="1413868860914" expanded="true" signature="13752:13770" placeholder="ALTER TABLE `plot`..." />
-                <marker date="1413868860914" expanded="true" signature="13893:13954" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1413868860914" expanded="true" signature="14044:14105" placeholder="ALTER TABLE `plot_settings`..." />
-                <marker date="1413868860914" expanded="true" signature="14454:14521" placeholder="SELECT `id`,..plot..." />
-                <marker date="1413868860914" expanded="true" signature="14672:14739" placeholder="SELECT `id`,..plot..." />
-                <marker date="1413868860914" expanded="true" signature="17821:17885" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="18641:18704" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="19319:19383" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="20222:20303" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413868860914" expanded="true" signature="21408:21458" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="21640:21689" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="21871:21922" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="22104:22154" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="22336:22372" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="22336:22378" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="23243:23284" placeholder="SELECT `id` ..plot..." />
-                <marker date="1413868860914" expanded="true" signature="23948:23998" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="24120:24169" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="24291:24342" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="24524:24574" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="24726:24762" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="25490:25557" placeholder="UPDATE `plot..." />
-                <marker date="1413868860914" expanded="true" signature="26086:26140" placeholder="SELECT * FRO..plot_settings..." />
-                <marker date="1413868860914" expanded="true" signature="27356:27418" placeholder="SELECT `user..plot_denied..." />
-                <marker date="1413868860914" expanded="true" signature="27992:28054" placeholder="SELECT `user..plot_helpers..." />
-                <marker date="1413868860914" expanded="true" signature="28577:28639" placeholder="SELECT `user..plot_trusted..." />
-                <marker date="1413868860914" expanded="true" signature="29212:29283" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="29907:29978" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="30604:30672" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="31290:31358" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="31984:32054" placeholder="DELETE FROM ..." />
-                <marker date="1413868860914" expanded="true" signature="32674:32741" placeholder="INSERT INTO ..." />
-                <marker date="1413868860914" expanded="true" signature="33200:33277" placeholder="SELECT AVG(`..plot_ratings..." />
+                <marker date="1414069739244" expanded="true" signature="1052:1174" placeholder="ALTER TABLE `plot_settings`..." />
+                <marker date="1414069739244" expanded="true" signature="1227:1254" placeholder="DELETE FROM ..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="C.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
+      <file leaf-file-name="PlayerEnterPlotEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5722" max-vertical-offset="6426">
-              <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="31" max-vertical-offset="765">
+              <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
+              <folding>
+                <element signature="e#705#706#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlotMergeEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotMergeEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="335" max-vertical-offset="986">
+              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="71" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlotWorld.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotWorld.java">
+      <file leaf-file-name="PlayerClaimPlotEvent.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerClaimPlotEvent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="545" max-vertical-offset="2941">
-              <caret line="108" column="60" selection-start-line="108" selection-start-column="60" selection-end-line="108" selection-end-column="60" />
+            <state vertical-scroll-proportion="0.6406504" vertical-offset="235" max-vertical-offset="850">
+              <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayerLeavePlotEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="14" max-vertical-offset="731">
+              <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+              <folding>
+                <element signature="e#681#682#0" expanded="true" />
+                <element signature="e#704#705#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayerPlotDeniedEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="539" max-vertical-offset="1224">
+              <caret line="79" column="5" selection-start-line="79" selection-start-column="5" selection-end-line="79" selection-end-column="5" />
+              <folding>
+                <element signature="e#1264#1265#0" expanded="true" />
+                <element signature="e#1292#1293#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayerPlotHelperEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="524" max-vertical-offset="1207">
+              <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+              <folding>
+                <element signature="e#1247#1248#0" expanded="true" />
+                <element signature="e#1275#1276#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayerPlotTrustedEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotTrustedEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="524" max-vertical-offset="1207">
+              <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+              <folding>
+                <element signature="e#1256#1257#0" expanded="true" />
+                <element signature="e#1284#1285#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayerTeleportToPlotEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerTeleportToPlotEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="422" max-vertical-offset="1037">
+              <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlotClearEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotClearEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="371" max-vertical-offset="986">
+              <caret line="49" column="7" selection-start-line="49" selection-start-column="7" selection-end-line="49" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -258,13 +169,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Flag.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/WorldGenerator.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/api/PlotAPI.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Debug.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/SubCommand.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Rate.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConfigurationNode.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Claim.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Auto.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Merge.java" />
@@ -294,21 +198,28 @@
         <option value="$PROJECT_DIR$/PlotSquared/src/plugin.yml" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotWorld.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/AbstractFlag.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotSettings.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlayerFunctions.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/PlotMeConverter.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Info.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" />
-        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/MoveListener.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Settings.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlotListener.java" />
         <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Comment.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotTrustedEvent.java" />
+        <option value="$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerTeleportToPlotEvent.java" />
       </list>
     </option>
   </component>
@@ -349,6 +260,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -451,7 +363,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="listeners" />
+              <option name="myItemId" value="events" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -480,7 +392,6 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -553,7 +464,22 @@
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
             <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Plot.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotSelection.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/SchematicHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Auto.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Claim.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Clear.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Command.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Copy.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Delete.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Kick.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/MainCommand.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Paste.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Unlink.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/PlotMeConverter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/plugin.yml</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
@@ -562,6 +488,8 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="CREATED" />
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/BlockWrapper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Swap.java</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Deleted" />
@@ -815,7 +743,9 @@
       <workItem from="1413125251335" duration="4054000" />
       <workItem from="1413221404445" duration="25670000" />
       <workItem from="1413814049095" duration="226000" />
-      <workItem from="1413867684355" duration="6007000" />
+      <workItem from="1413867684355" duration="7963000" />
+      <workItem from="1413998668219" duration="821000" />
+      <workItem from="1414069303931" duration="655000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -1037,11 +967,23 @@
       <created>1413910432736</created>
       <updated>1413910432736</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="* Added Fly Flag&#10;* Moved stuff away from the actual listener class&#10;* Ability to delete plot on player ban">
+      <created>1413910894932</created>
+      <updated>1413910894932</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Remove le line">
+      <created>1413957695395</created>
+      <updated>1413957695395</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Only display flags which the user is permitted to use.">
+      <created>1413998882732</created>
+      <updated>1413998882732</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="110925000" />
+    <option name="totallyTimeSpent" value="114357000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1064,13 +1006,12 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="-6" width="1378" height="750" extended-state="0" />
-    <editor active="false" />
+    <frame x="-6" y="-6" width="1378" height="750" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32882884" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1091,6 +1032,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32882884" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1139,8 +1081,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Yes, I am really stupid... -_-" />
-    <MESSAGE value="You can't divide by 0, stupid..." />
     <MESSAGE value="Pfft." />
     <MESSAGE value="Yer, forgot that :P" />
     <MESSAGE value="Copy and paste, doesn't work for mega plots." />
@@ -1164,7 +1104,9 @@
     <MESSAGE value="Fixed set command -&gt; not allowing unclaimed plots" />
     <MESSAGE value="Will now clear stuff :3" />
     <MESSAGE value="* Added Fly Flag&#10;* Moved stuff away from the actual listener class&#10;* Ability to delete plot on player ban" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Added Fly Flag&#10;* Moved stuff away from the actual listener class&#10;* Ability to delete plot on player ban" />
+    <MESSAGE value="Remove le line" />
+    <MESSAGE value="Only display flags which the user is permitted to use." />
+    <option name="LAST_COMMIT_MESSAGE" value="Only display flags which the user is permitted to use." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1176,83 +1118,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Schematic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="1292">
-          <caret line="56" column="12" selection-start-line="56" selection-start-column="12" selection-end-line="56" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Camera.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/generator/DefaultPlotWorld.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2424" max-vertical-offset="3026">
-          <caret line="178" column="0" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/plugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1095" max-vertical-offset="1496">
-          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/ConsoleColors.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1003" max-vertical-offset="1717">
-          <caret line="87" column="18" selection-start-line="87" selection-start-column="18" selection-end-line="87" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotId.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="986">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHomePosition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-          <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
-          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/generator/DefaultPlotManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="860" max-vertical-offset="10030">
-          <caret line="100" column="22" selection-start-line="100" selection-start-column="22" selection-end-line="100" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotSquaredException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/TP.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="1360">
-          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/generator/WorldGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="9333">
@@ -1386,13 +1251,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="290" max-vertical-offset="2244">
-          <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotSettings.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1629" max-vertical-offset="2244">
@@ -1411,7 +1269,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2044" max-vertical-offset="3043">
           <caret line="156" column="66" selection-start-line="156" selection-start-column="66" selection-end-line="156" selection-end-column="66" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1427,7 +1284,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="133" max-vertical-offset="748">
           <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1438,19 +1294,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="6613">
-          <caret line="31" column="82" selection-start-line="31" selection-start-column="82" selection-end-line="31" selection-end-column="82" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/UUIDHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="578" max-vertical-offset="3094">
           <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1458,7 +1305,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="320" max-vertical-offset="935">
           <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1466,106 +1312,28 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3716" max-vertical-offset="4352">
           <caret line="281" column="22" selection-start-line="281" selection-start-column="22" selection-end-line="281" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/C.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5722" max-vertical-offset="6426">
-          <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5790" max-vertical-offset="6494">
+          <caret line="348" column="0" selection-start-line="348" selection-start-column="0" selection-end-line="348" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="10663" max-vertical-offset="15759">
-          <caret line="667" column="71" selection-start-line="667" selection-start-column="71" selection-end-line="667" selection-end-column="71" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="11538" max-vertical-offset="16082">
+          <caret line="678" column="9" selection-start-line="678" selection-start-column="9" selection-end-line="678" selection-end-column="9" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="294" max-vertical-offset="16677">
-          <caret line="277" column="5" selection-start-line="277" selection-start-column="5" selection-end-line="277" selection-end-column="5" />
-          <folding>
-            <element signature="e#14615#14632#0" expanded="true" />
-            <element signature="e#16691#16705#0" expanded="true" />
-            <marker date="1413868860914" expanded="true" signature="1542:1613" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="2285:2343" placeholder="SELECT `id`,..plot..." />
-            <marker date="1413868860914" expanded="true" signature="5643:5724" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="6319:6695" placeholder="CREATE TABLE..plot..." />
-            <marker date="1413868860914" expanded="true" signature="6717:6879" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1413868860914" expanded="true" signature="6901:7064" placeholder="CREATE TABLE..plot_helpers..." />
-            <marker date="1413868860914" expanded="true" signature="7086:7249" placeholder="CREATE TABLE..plot_trusted..." />
-            <marker date="1413868860914" expanded="true" signature="7271:7877" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1413868860914" expanded="true" signature="7899:8096" placeholder="CREATE TABLE..plot_ratings..." />
-            <marker date="1413868860914" expanded="true" signature="8144:8266" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1413868860914" expanded="true" signature="8322:8614" placeholder="CREATE TABLE..plot..." />
-            <marker date="1413868860914" expanded="true" signature="8636:8763" placeholder="CREATE TABLE..plot_denied..." />
-            <marker date="1413868860914" expanded="true" signature="8785:8913" placeholder="CREATE TABLE..plot_helpers..." />
-            <marker date="1413868860914" expanded="true" signature="8885:8963" placeholder="CREATE TABLE..plot_helpers..." />
-            <marker date="1413868860914" expanded="true" signature="9035:9113" placeholder="CREATE TABLE..plot_trusted..." />
-            <marker date="1413868860914" expanded="true" signature="9188:9713" placeholder="CREATE TABLE..plot_settings..." />
-            <marker date="1413868860914" expanded="true" signature="9813:9974" placeholder="CREATE TABLE..plot_ratings..." />
-            <marker date="1413868860914" expanded="true" signature="10209:10261" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10306:10358" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10377:10428" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10473:10524" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10544:10595" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10640:10691" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10711:10744" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="10789:10822" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="11262:11320" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="11390:11448" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="11611:11715" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413868860914" expanded="true" signature="11877:11981" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413868860914" expanded="true" signature="13143:13505" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="13533:13816" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="13533:13551" placeholder="ALTER TABLE `plot`..." />
-            <marker date="1413868860914" expanded="true" signature="13752:13770" placeholder="ALTER TABLE `plot`..." />
-            <marker date="1413868860914" expanded="true" signature="13893:13954" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1413868860914" expanded="true" signature="14044:14105" placeholder="ALTER TABLE `plot_settings`..." />
-            <marker date="1413868860914" expanded="true" signature="14454:14521" placeholder="SELECT `id`,..plot..." />
-            <marker date="1413868860914" expanded="true" signature="14672:14739" placeholder="SELECT `id`,..plot..." />
-            <marker date="1413868860914" expanded="true" signature="17821:17885" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="18641:18704" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="19319:19383" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="20222:20303" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413868860914" expanded="true" signature="21408:21458" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="21640:21689" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="21871:21922" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="22104:22154" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="22336:22372" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="22336:22378" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="23243:23284" placeholder="SELECT `id` ..plot..." />
-            <marker date="1413868860914" expanded="true" signature="23948:23998" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="24120:24169" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="24291:24342" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="24524:24574" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="24726:24762" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="25490:25557" placeholder="UPDATE `plot..." />
-            <marker date="1413868860914" expanded="true" signature="26086:26140" placeholder="SELECT * FRO..plot_settings..." />
-            <marker date="1413868860914" expanded="true" signature="27356:27418" placeholder="SELECT `user..plot_denied..." />
-            <marker date="1413868860914" expanded="true" signature="27992:28054" placeholder="SELECT `user..plot_helpers..." />
-            <marker date="1413868860914" expanded="true" signature="28577:28639" placeholder="SELECT `user..plot_trusted..." />
-            <marker date="1413868860914" expanded="true" signature="29212:29283" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="29907:29978" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="30604:30672" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="31290:31358" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="31984:32054" placeholder="DELETE FROM ..." />
-            <marker date="1413868860914" expanded="true" signature="32674:32741" placeholder="INSERT INTO ..." />
-            <marker date="1413868860914" expanded="true" signature="33200:33277" placeholder="SELECT AVG(`..plot_ratings..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="254" max-vertical-offset="1241">
-          <caret line="32" column="28" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="288" max-vertical-offset="1275">
+          <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -1588,67 +1356,161 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/PlotMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.821429" vertical-offset="16950" max-vertical-offset="23103">
-          <caret line="1079" column="43" selection-start-line="1079" selection-start-column="43" selection-end-line="1079" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#42042#0" expanded="true" />
-            <element signature="e#3567#3599#0" expanded="true" />
-            <element signature="e#3752#3845#0" expanded="true" />
-            <element signature="e#3840#3841#0" expanded="true" />
-            <element signature="e#13692#13724#0" expanded="true" />
-            <element signature="e#20416#20443#0" expanded="true" />
-            <element signature="e#22651#22678#0" expanded="true" />
-            <element signature="e#23966#23998#0" expanded="true" />
-            <element signature="e#27693#27725#0" expanded="true" />
-            <element signature="e#38323#38324#0" expanded="true" />
-            <element signature="e#38424#38425#0" expanded="true" />
-            <element signature="e#39170#39171#0" expanded="true" />
-            <element signature="e#39260#39261#0" expanded="true" />
-            <element signature="e#41313#41314#0" expanded="true" />
-            <element signature="e#41404#41405#0" expanded="true" />
-            <element signature="e#41884#41885#0" expanded="true" />
-            <element signature="e#41912#41913#0" expanded="true" />
-            <element signature="e#41999#42000#0" expanded="true" />
-            <element signature="e#42037#42038#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="18445" max-vertical-offset="24463">
+          <caret line="1085" column="43" selection-start-line="1085" selection-start-column="43" selection-end-line="1085" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlotListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.192983" vertical-offset="2417" max-vertical-offset="3043">
-          <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#740#741#0" expanded="true" />
-            <element signature="e#795#796#0" expanded="true" />
-            <element signature="e#844#845#0" expanded="true" />
-            <element signature="e#905#906#0" expanded="true" />
-            <element signature="e#959#960#0" expanded="true" />
-            <element signature="e#1009#1010#0" expanded="true" />
-            <element signature="e#1066#1067#0" expanded="true" />
-            <element signature="e#1121#1122#0" expanded="true" />
-            <element signature="e#1168#1169#0" expanded="true" />
-            <element signature="e#1216#1217#0" expanded="true" />
-            <element signature="e#1263#1264#0" expanded="true" />
-            <element signature="e#1311#1312#0" expanded="true" />
-            <element signature="e#2365#2366#0" expanded="true" />
-            <element signature="e#2422#2423#0" expanded="true" />
-            <element signature="e#2474#2475#0" expanded="true" />
-            <element signature="e#2524#2525#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="2519" max-vertical-offset="3145">
+          <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/bukkit-1.7.9-R0.2.jar!/org/bukkit/permissions/Permissible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2881356" vertical-offset="0" max-vertical-offset="590">
+          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/listeners/PlayerEvents.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.50830567" vertical-offset="493" max-vertical-offset="12784">
-          <caret line="78" column="4" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1377" max-vertical-offset="13328">
+          <caret line="81" column="27" selection-start-line="81" selection-start-column="27" selection-end-line="81" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Comment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="280" max-vertical-offset="918">
+          <caret line="47" column="18" selection-start-line="47" selection-start-column="18" selection-end-line="47" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/FlagManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="645" max-vertical-offset="2448">
+          <caret line="72" column="27" selection-start-line="72" selection-start-column="27" selection-end-line="72" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/Set.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2711" max-vertical-offset="6647">
+          <caret line="81" column="58" selection-start-line="81" selection-start-column="58" selection-end-line="81" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/commands/CommandPermission.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7417722" vertical-offset="234" max-vertical-offset="629">
+          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/database/DBFunc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3213">
+          <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
           <folding>
-            <element signature="e#1478#1505#0" expanded="true" />
-            <element signature="e#1685#1686#0" expanded="true" />
-            <element signature="e#1728#1729#0" expanded="true" />
+            <marker date="1414069739244" expanded="true" signature="1052:1174" placeholder="ALTER TABLE `plot_settings`..." />
+            <marker date="1414069739244" expanded="true" signature="1227:1254" placeholder="DELETE FROM ..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotMergeEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="335" max-vertical-offset="986">
+          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="71" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerEnterPlotEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="31" max-vertical-offset="765">
+          <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
+          <folding>
+            <element signature="e#705#706#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerLeavePlotEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="14" max-vertical-offset="731">
+          <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+          <folding>
+            <element signature="e#681#682#0" expanded="true" />
+            <element signature="e#704#705#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotDeniedEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="539" max-vertical-offset="1224">
+          <caret line="79" column="5" selection-start-line="79" selection-start-column="5" selection-end-line="79" selection-end-column="5" />
+          <folding>
+            <element signature="e#1264#1265#0" expanded="true" />
+            <element signature="e#1292#1293#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotHelperEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="524" max-vertical-offset="1207">
+          <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+          <folding>
+            <element signature="e#1247#1248#0" expanded="true" />
+            <element signature="e#1275#1276#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerPlotTrustedEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="524" max-vertical-offset="1207">
+          <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+          <folding>
+            <element signature="e#1256#1257#0" expanded="true" />
+            <element signature="e#1284#1285#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerTeleportToPlotEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="422" max-vertical-offset="1037">
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlotClearEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="371" max-vertical-offset="986">
+          <caret line="49" column="7" selection-start-line="49" selection-start-column="7" selection-end-line="49" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/events/PlayerClaimPlotEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6406504" vertical-offset="235" max-vertical-offset="850">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

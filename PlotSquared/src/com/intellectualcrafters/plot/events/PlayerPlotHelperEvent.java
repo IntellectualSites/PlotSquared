@@ -1,12 +1,11 @@
 package com.intellectualcrafters.plot.events;
 
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.intellectualcrafters.plot.Plot;
+import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-08-16.
@@ -70,8 +69,12 @@ public class PlayerPlotHelperEvent extends Event {
 		return this.initiator;
 	}
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 }
