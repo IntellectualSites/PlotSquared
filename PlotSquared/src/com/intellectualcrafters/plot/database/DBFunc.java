@@ -8,33 +8,14 @@
 
 package com.intellectualcrafters.plot.database;
 
-import static com.intellectualcrafters.plot.PlotMain.connection;
-
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
-
-import sun.security.pkcs11.Secmod.DbMode;
-
 import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.Logger;
-import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHomePosition;
 import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
 
 /**
  * @author Citymonstret
