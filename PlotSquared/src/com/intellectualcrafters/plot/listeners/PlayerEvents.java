@@ -11,6 +11,7 @@ package com.intellectualcrafters.plot.listeners;
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.database.DBFunc;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -82,7 +83,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 if (enteredPlot(from, to)) {
                     Plot plot = getCurrentPlot(event.getTo());
-                    boolean admin = player.hasPermission("plots.admin");
+                    boolean admin = PlotMain.hasPermission(player,"plots.admin");
                     if (plot.deny_entry(player) && !admin) {
                         event.setCancelled(true);
                         return;
@@ -139,7 +140,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (!isPlotWorld(world)) {
 			return;
 		}
-		if (event.getPlayer().hasPermission("plots.admin")) {
+		if (PlotMain.hasPermission(event.getPlayer(),"plots.admin")) {
 			return;
 		}
 		if (isInPlot(event.getBlock().getLocation())) {
@@ -160,7 +161,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (!isPlotWorld(world)) {
 			return;
 		}
-		if (event.getPlayer().hasPermission("plots.admin")) {
+		if (PlotMain.hasPermission(event.getPlayer(),"plots.admin")) {
 			return;
 		}
 		if (isInPlot(event.getBlock().getLocation())) {
@@ -201,20 +202,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			Block b = event.getBlock();
 			Player p = (Player) e;
 			if (!isInPlot(b.getLocation())) {
-				if (!p.hasPermission("plots.admin")) {
+				if (!PlotMain.hasPermission(p,"plots.admin")) {
 					event.setCancelled(true);
 				}
 			}
 			else {
 				Plot plot = getCurrentPlot(b.getLocation());
 				if (plot == null) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						event.setCancelled(true);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							event.setCancelled(true);
 						}
 					}
@@ -398,7 +399,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (!isPlotWorld(world)) {
 			return;
 		}
-		if (event.getPlayer().hasPermission("plots.admin")) {
+		if (PlotMain.hasPermission(event.getPlayer(),"plots.admin")) {
 			return;
 		}
 		if (isInPlot(event.getClickedBlock().getLocation())) {
@@ -468,20 +469,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			if (e.getPlayer() != null) {
 				Player p = e.getPlayer();
 				if (!isInPlot(b.getLocation())) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						e.setCancelled(true);
 					}
 				}
 				else {
 					Plot plot = getCurrentPlot(b.getLocation());
 					if (plot == null) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							e.setCancelled(true);
 						}
 					}
 					else
 						if (!plot.hasRights(p)) {
-							if (!p.hasPermission("plots.admin")) {
+							if (!PlotMain.hasPermission(p,"plots.admin")) {
 								e.setCancelled(true);
 							}
 						}
@@ -529,7 +530,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
 	public static void onBucketEmpty(PlayerBucketEmptyEvent e) {
-		if (!e.getPlayer().hasPermission("plots.admin")) {
+		if (!PlotMain.hasPermission(e.getPlayer(),"plots.admin")) {
 			BlockFace bf = e.getBlockFace();
 			Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
 			if (isPlotWorld(b.getLocation())) {
@@ -583,7 +584,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 	@EventHandler(
 			priority = EventPriority.HIGH, ignoreCancelled = true)
 	public static void onBucketFill(PlayerBucketFillEvent e) {
-		if (!e.getPlayer().hasPermission("plots.admin")) {
+		if (!PlotMain.hasPermission(e.getPlayer(),"plots.admin")) {
 			Block b = e.getBlockClicked();
 			if (isPlotWorld(b.getLocation())) {
 				if (!isInPlot(b.getLocation())) {
@@ -613,7 +614,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (isPlotWorld(b.getLocation())) {
 			Player p = e.getPlayer();
 			if (!isInPlot(b.getLocation())) {
-				if (!p.hasPermission("plots.admin")) {
+				if (!PlotMain.hasPermission(p,"plots.admin")) {
 					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
@@ -621,14 +622,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			else {
 				Plot plot = getCurrentPlot(b.getLocation());
 				if (plot == null) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
@@ -646,7 +647,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			Location l = e.getEntity().getLocation();
 			if (isPlotWorld(l)) {
 				if (!isInPlot(l)) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
@@ -654,14 +655,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 				else {
 					Plot plot = getCurrentPlot(l);
 					if (plot == null) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
 					else
 						if (!plot.hasRights(p)) {
-							if (!p.hasPermission("plots.admin")) {
+							if (!PlotMain.hasPermission(p,"plots.admin")) {
 								PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 								e.setCancelled(true);
 							}
@@ -678,7 +679,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (isPlotWorld(l)) {
 			Player p = e.getPlayer();
 			if (!isInPlot(l)) {
-				if (!p.hasPermission("plots.admin")) {
+				if (!PlotMain.hasPermission(p,"plots.admin")) {
 					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setCancelled(true);
 				}
@@ -686,14 +687,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			else {
 				Plot plot = getCurrentPlot(l);
 				if (plot == null) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
@@ -719,7 +720,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
 				if (!isInPlot(l)) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setCancelled(true);
 					}
@@ -727,14 +728,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 				else {
 					Plot plot = getCurrentPlot(l);
 					if (plot == null) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
 						}
 					}
 					else
 						if (!plot.hasRights(p)) {
-							if (!p.hasPermission("plots.admin")) {
+							if (!PlotMain.hasPermission(p,"plots.admin")) {
 								PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 								e.setCancelled(true);
 							}
@@ -751,7 +752,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (isPlotWorld(l)) {
 			Player p = e.getPlayer();
 			if (!isInPlot(l)) {
-				if (!p.hasPermission("plots.admin")) {
+				if (!PlotMain.hasPermission(p,"plots.admin")) {
 					PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 					e.setHatching(false);
 				}
@@ -759,14 +760,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 			else {
 				Plot plot = getCurrentPlot(l);
 				if (plot == null) {
-					if (!p.hasPermission("plots.admin")) {
+					if (!PlotMain.hasPermission(p,"plots.admin")) {
 						PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 						e.setHatching(false);
 					}
 				}
 				else
 					if (!plot.hasRights(p)) {
-						if (!p.hasPermission("plots.admin")) {
+						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setHatching(false);
 						}
