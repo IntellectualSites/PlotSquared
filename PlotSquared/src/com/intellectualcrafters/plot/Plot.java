@@ -152,7 +152,7 @@ public class Plot implements Cloneable {
 	 * @return true if the player is added as a helper or is the owner
 	 */
 	public boolean hasRights(Player player) {
-		return player.hasPermission("plots.admin")
+		return PlotMain.hasPermission(player, "plots.admin")
 				|| ((this.helpers != null) && this.helpers.contains(DBFunc.everyone))
 				|| ((this.helpers != null) && this.helpers.contains(player.getUniqueId()))
 				|| ((this.owner != null) && this.owner.equals(player.getUniqueId()))

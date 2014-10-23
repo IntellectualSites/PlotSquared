@@ -70,7 +70,7 @@ public class Claim extends SubCommand {
 					sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
 					return true;
 				}
-				if (!plr.hasPermission("plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+				if (!PlotMain.hasPermission(plr,"plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
 					PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
 					return true;
 				}

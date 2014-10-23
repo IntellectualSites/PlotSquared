@@ -50,7 +50,7 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-		if (!plot.hasRights(plr) && !plr.hasPermission("plots.admin")) {
+		if (!plot.hasRights(plr) && !PlotMain.hasPermission(plr,"plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
 		}
@@ -70,7 +70,7 @@ public class Set extends SubCommand {
 		/* TODO: Implement option */
 		boolean advanced_permissions = true;
 		if (advanced_permissions) {
-			if (!plr.hasPermission("plots.set." + args[0].toLowerCase())) {
+			if (!PlotMain.hasPermission(plr,"plots.set." + args[0].toLowerCase())) {
 				PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set."+args[0].toLowerCase());
 				return false;
 			}

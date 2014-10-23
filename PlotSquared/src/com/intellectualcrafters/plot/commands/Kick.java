@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotMain;
 
 /**
  * Created by Citymonstret on 2014-08-01.
@@ -32,7 +33,7 @@ public class Kick extends SubCommand {
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
 		if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))
-				&& !plr.hasPermission("plots.admin")) {
+				&& !PlotMain.hasPermission(plr,"plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return false;
 		}

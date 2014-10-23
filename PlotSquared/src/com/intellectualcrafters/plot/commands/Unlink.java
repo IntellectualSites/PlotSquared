@@ -43,7 +43,7 @@ public class Unlink extends SubCommand {
 		}
 		Plot plot = PlayerFunctions.getCurrentPlot(plr);
 		if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))
-				&& !plr.hasPermission("plots.admin")) {
+				&& !PlotMain.hasPermission(plr,"plots.admin")) {
 			PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
 			return true;
 		}
