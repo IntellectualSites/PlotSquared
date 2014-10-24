@@ -147,12 +147,29 @@ public class Configuration {
 			return ((PlotBlock) object).id + ":" + ((PlotBlock) object).data;
 		}
 	};
+	
+	public static int gcd(int a, int b) {
+	    if (b==0) return a;
+	    return gcd(b,a%b);
+	}
+	private static int gcd(int[] a)
+	{
+	    int result = a[0];
+	    for(int i = 1; i < a.length; i++)
+	        result = gcd(result, a[i]);
+	    return result;
+	}
 
 	public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
 		@Override
 		public boolean validateValue(String string) {
 			try {
 				for (String block : string.split(",")) {
+				    if (block.contains("%")) {
+				        String[] split = block.split("%");
+				        Integer.parseInt(split[0]);
+				        block = split[1];
+				    }
 					if (block.contains(":")) {
 						String[] split = block.split(":");
 						Short.parseShort(split[0]);
@@ -172,8 +189,28 @@ public class Configuration {
 		@Override
 		public Object parseString(String string) {
 			String[] blocks = string.split(",");
+			ArrayList<PlotBlock> parsedvalues = new ArrayList<PlotBlock>();
+			
+			
 			PlotBlock[] values = new PlotBlock[blocks.length];
+			int[] counts = new int[blocks.length];
+			int min = 100;
 			for (int i = 0; i < blocks.length; i++) {
+			    if (blocks[i].contains("%")) {
+			        String[] split = blocks[i].split("%");
+			        blocks[i] = split[1];
+			        int value = Integer.parseInt(split[0]);
+			        counts[i] = value;
+                    if (value<min) {
+                        min = value;
+                    }
+			    }
+			    else {
+			        counts[i] = 1;
+			        if (1<min) {
+			            min = 1;
+			        }
+			    }
 				if (blocks[i].contains(":")) {
 					String[] split = blocks[i].split(":");
 					values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
@@ -182,7 +219,15 @@ public class Configuration {
 					values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
 				}
 			}
-			return values;
+			int gcd = gcd(counts);
+			for (int i = 0; i < counts.length; i++) {
+			    int num = counts[i];
+			    for (int j = 0; j<num/gcd; j++) {
+			        parsedvalues.add(values[i]);
+			    }
+			}
+			
+			return parsedvalues.toArray(new PlotBlock[0]);
 		}
 
 		@Override
