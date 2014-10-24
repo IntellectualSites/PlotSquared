@@ -97,7 +97,7 @@ public class Info extends SubCommand {
 
 		// Unclaimed?
 		if (!hasOwner && !containsEveryone && !trustedEveryone) {
-			PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.id.x + ";" + plot.id.y);
+			PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
 			return true;
 		}
 
@@ -162,7 +162,7 @@ public class Info extends SubCommand {
         String trusted = getPlayerList(plot.trusted);
         String denied = getPlayerList(plot.denied);
         String rating = String.format("%.1f", DBFunc.getRatings(plot));
-        String flags = StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), ",") : "none";
+        String flags = "&3"+ (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &3") : "none");
         boolean build = player==null ? true : plot.hasRights(player);
         
         String owner = "none";

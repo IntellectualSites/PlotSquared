@@ -435,7 +435,12 @@ public class SQLManager extends AbstractDB {
 				for (int i = 0; i < flags.length; i++) {
 					if (flags_string[i].contains(":")) {
 						String[] split = flags_string[i].split(":");
-						flags[i] = new Flag(FlagManager.getFlag(split[0], true), split[1]);
+						try {
+						    flags[i] = new Flag(FlagManager.getFlag(split[0], true), split[1]);
+						}
+						catch (Exception e) {
+						    // invalid flag... ignoring it for now.
+						}
 					}
 					else {
 						flags[i] = new Flag(FlagManager.getFlag(flags_string[i], true), "");
