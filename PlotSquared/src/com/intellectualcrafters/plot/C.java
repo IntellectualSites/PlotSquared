@@ -207,7 +207,19 @@ public enum C {
      * Info
      */
     PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-    PLOT_INFO("ID: &6%id%&c, Alias: &6%alias%&c, Owner: &6%owner%&c, Biome: &6%biome%&c, Helpers:&6%helpers%&c, Trusted:&6%trusted%&c, Denied:&6%denied%&c, Rating: &6%rating%&c, Flags: &6%flags%"),
+    PLOT_INFO("&6ID&7: &a%id%&7\n&6Alias&7: &a%alias%\n&6Owner&7: &a%owner%\n&6Description&7: &a%desc%\n&6Rating&7: &a%rating%&7/&a10\n&6Can build&7: &a%build%"),
+    
+    PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),
+    PLOT_INFO_TRUSTED("&6Trusted&7: %trusted%"),
+    PLOT_INFO_DENIED("&6DENIED&7: %denied%"),
+    PLOT_INFO_FLAGS("&6Flags&7: %flags%"),
+    PLOT_INFO_BIOME("&6Biome&7: %biome%"),
+    PLOT_INFO_RATING("&6Rating&7: %rating%"),
+    PLOT_INFO_OWNER("&6Owner&7: %owner%"),
+    PLOT_INFO_ID("&6ID&7: %id%"),
+    PLOT_INFO_ALIAS("&6Alias&7: %alias%"),
+    PLOT_INFO_SIZE("&6Size&7: %size%"),
+    
     PLOT_USER_LIST(" &6%user%&c,"),
     INFO_SYNTAX_CONSOLE("/plot info <world> X;Y"),
     /*
