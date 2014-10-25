@@ -143,6 +143,7 @@ public class Schematic extends SubCommand {
                 public void run() {
                     if (counter>=plots.length) {
                         PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                        running = false;
                         Bukkit.getScheduler().cancelTask(task);
                         return;
                     }
@@ -178,8 +179,12 @@ public class Schematic extends SubCommand {
 		        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
 		        return false;
 		    }
-		    final PlotId i;
+		    if (running) {
+                PlayerFunctions.sendMessage(plr, "&cTask is already running.");
+                return false; 
+            }
 		    final String world;
+		    final Plot p2;
 		    if (plr!=null) {
     		    if(!PlayerFunctions.isInPlot(plr)) {
     	            sendMessage(plr, C.NOT_IN_PLOT);
@@ -190,7 +195,7 @@ public class Schematic extends SubCommand {
     	            sendMessage(plr, C.NO_PLOT_PERMS);
     	            return false;
     	        }
-    	        i = myplot.id;
+    	        p2 = myplot;
     	        world = plr.getWorld().getName();
 		    }
 		    else {
@@ -198,12 +203,12 @@ public class Schematic extends SubCommand {
 		            try {
 		                world = args[0];
 		                String[] split = args[2].split(";");
-		                i = new PlotId(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+		                PlotId i = new PlotId(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
 		                if (PlotMain.getPlots(world)==null || PlotMain.getPlots(world).get(i) == null) {
 		                    PlayerFunctions.sendMessage(plr, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
 	                        return false;
 		                }
-		                
+		                p2 = PlotMain.getPlots(world).get(i);
 		            }
 		            catch (Exception e) {
 		                PlayerFunctions.sendMessage(plr, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
@@ -216,25 +221,47 @@ public class Schematic extends SubCommand {
 		        }
 		    }
 		    
-	        
-	        
-	        Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
-	            @Override
-	            public void run() {
-	                CompoundTag schematic = SchematicHandler.getCompoundTag(Bukkit.getWorld(world), i);
-	                if (schematic==null) {
-	                    PlayerFunctions.sendMessage(plr, "&cInvalid plot");
-	                    return;
-	                }
-	                boolean result = SchematicHandler.save(schematic, Settings.Web.PATH+"/"+i.x+","+i.y+","+world+".schematic");
-	                
-	                if (!result) {
-	                    PlayerFunctions.sendMessage(plr, "&cFailed to save schematic");
-	                    return;
-	                }
-	                PlayerFunctions.sendMessage(plr, "&aSuccessfully saved schematic!");
-	            }
-	        });
+            final Plugin plugin2 = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
+            
+            
+            this.plots = new Plot[] {p2} ;
+            this.running = true;
+            this.counter = 0;
+            
+            task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin2, new Runnable() {
+                @Override
+                public void run() {
+                    if (counter>=plots.length) {
+                        PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                        running = false;
+                        Bukkit.getScheduler().cancelTask(task);
+                        return;
+                    }
+                    final Plot plot = plots[counter];
+                    final CompoundTag sch = SchematicHandler.getCompoundTag(Bukkit.getWorld(world), plot.id);
+                    if (sch==null) {
+                        PlayerFunctions.sendMessage(plr, "&7 - Skipped plot &c"+plot.id);
+                    }
+                    else {
+                        Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+                            @Override
+                            public void run() {
+                                counter++;
+                                PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
+                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+".schematic");
+                                    
+                                    if (!result) {
+                                        PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
+                                    }
+                                    else {
+                                        PlayerFunctions.sendMessage(plr, "&7 - &aExport success: "+plot.id);
+                                    }
+                            }
+                        });
+                    }
+                    counter++;
+                }
+            }, 20, 60);
 	        break;
 		default:
 			sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
