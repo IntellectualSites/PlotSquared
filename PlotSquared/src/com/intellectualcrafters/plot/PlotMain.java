@@ -9,16 +9,10 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
-import com.intellectualcrafters.plot.Settings.Web;
 import com.intellectualcrafters.plot.commands.Camera;
 import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.MySQL;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
@@ -31,10 +25,8 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -718,10 +710,6 @@ public class PlotMain extends JavaPlugin {
 		useEconomy = (economy != null);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
 
-		if (Web.ENABLED) {
-			sendConsoleSenderMessage(C.PREFIX.s() + "Web Is not implemented yet. Please bear with us.");
-		}
-
 		try {
 			new SetBlockFast();
 			PlotHelper.canSetFast = true;
@@ -945,8 +933,6 @@ public class PlotMain extends JavaPlugin {
 			settings.put("Use Metrics", "" + Settings.METRICS);
             settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
 			settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
-			settings.put("Web Enabled", "" + Web.ENABLED);
-			settings.put("Web Port", "" + Web.PORT);
 			settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
 			settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
 			settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
@@ -1077,9 +1063,6 @@ public class PlotMain extends JavaPlugin {
 		options.put("worldguard.enabled", Settings.WORLDGUARD);
 		options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
 		options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
-		options.put("web.enabled", Web.ENABLED);
-		options.put("web.directory", "/var/www");
-		options.put("web.port", Web.PORT);
 		options.put("metrics", true);
 		options.put("debug", true);
 		options.put("clear.auto.enabled", false);
@@ -1096,9 +1079,6 @@ public class PlotMain extends JavaPlugin {
 		if (Settings.DEBUG) {
 			sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
 		}
-		Web.ENABLED = config.getBoolean("web.enabled");
-		Web.PORT = config.getInt("web.port");
-		Web.PATH = config.getString("web.directory");
 		Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
 		Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
 		Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");

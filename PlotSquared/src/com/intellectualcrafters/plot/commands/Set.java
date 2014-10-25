@@ -366,13 +366,13 @@ public class Set extends SubCommand {
             }
             catch (Exception e) {
             }
-            if (FlagManager.getFlags().contains(af) || ((PlotMain.worldGuardListener != null) && PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
+            if (FlagManager.getFlags().contains(af)) {
                 StringBuilder a = new StringBuilder();
                 if(args.length > 1) {
                     for(int x = 1; x < args.length; x++)
-                        a.append(" " + args[x]);
+                        a.append(" ").append(args[x]);
                 }
-                plr.performCommand("plot set flag " + args[0] + args);
+                plr.performCommand("plot set flag " + args[0] + a.toString());
                 return true;
             }
         }

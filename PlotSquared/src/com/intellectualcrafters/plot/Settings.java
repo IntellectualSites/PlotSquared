@@ -70,12 +70,6 @@ public class Settings {
 		public static boolean AUTO_UPDATE = false;
 	}
 
-	public static class Web {
-		public static boolean ENABLED = false;
-		public static int PORT = 9000;
-		public static String PATH = "/var/www";
-	}
-
 	/**
 	 * Database settings
 	 * 
