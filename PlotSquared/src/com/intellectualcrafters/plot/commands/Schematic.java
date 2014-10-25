@@ -1,5 +1,8 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,6 +17,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.SchematicHandler;
 import com.intellectualcrafters.plot.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.sun.org.apache.xerces.internal.impl.xs.identity.ValueStore;
 
 public class Schematic extends SubCommand {
 
@@ -34,6 +38,10 @@ public class Schematic extends SubCommand {
 		SchematicHandler.Schematic schematic;
 		switch (arg) {
 		case "paste":
+		    if (!PlotMain.hasPermission(plr, "plots.schematic.save")) {
+                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
+                return false;
+            }
 			if (args.length < 2) {
 				sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
 				break;
@@ -53,6 +61,10 @@ public class Schematic extends SubCommand {
 			}
 			break;
 		case "test":
+		    if (!PlotMain.hasPermission(plr, "plots.schematic.save")) {
+                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
+                return false;
+            }
 			if (args.length < 2) {
 				sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
 				break;
@@ -76,7 +88,52 @@ public class Schematic extends SubCommand {
 			}
 			sendMessage(plr, C.SCHEMATIC_VALID);
 			break;
+		case "saveall":
+		case "exportall":
+		    if (plr!=null) {
+                PlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
+                return false;
+            }
+		    if (args.length!=2) {
+		        PlayerFunctions.sendMessage(plr, "&cNeed world arg. Use &7/plots schem exportall <world>");
+                return false; 
+		    }
+		    HashMap<PlotId, Plot> plotmap = PlotMain.getPlots(args[1]);
+		    if (plotmap==null || plotmap.size()==0) {
+		        PlayerFunctions.sendMessage(plr, "&cInvalid world. Use &7/plots schem exportall <world>");
+                return false; 
+		    }
+		    
+		    PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
+		    PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Found &c"+plotmap.size()+"&7 plots...");
+		    final Collection<Plot> plots = plotmap.values();
+		    final World worldname = Bukkit.getWorld(args[1]);
+		    Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+                @Override
+                public void run() {
+                    
+                    for (Plot plot:plots) {
+                        CompoundTag schematic = SchematicHandler.getCompoundTag(worldname, plot.id);
+                        if (schematic==null) {
+                            PlayerFunctions.sendMessage(plr, "&7 - Skipped plot &c"+plot.id);
+                            return;
+                        }
+                        boolean result = SchematicHandler.save(schematic, Settings.Web.PATH+"/"+plot.id.x+"-"+plot.id.y+"-"+worldname+".schematic");
+                        
+                        if (!result) {
+                            PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
+                            return;
+                        }
+                        PlayerFunctions.sendMessage(plr, "&7 - &aExport success: "+plot.id);
+                    }
+                }
+            });
+		case "export":
 		case "save":
+		    if (!PlotMain.hasPermission(plr, "plots.schematic.save")) {
+		        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
+		        return false;
+		    }
 		    final PlotId i;
 		    final String world;
 		    if (plr!=null) {
