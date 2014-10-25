@@ -8,14 +8,14 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotId;
-import org.bukkit.OfflinePlayer;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+import com.intellectualcrafters.plot.Flag;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotId;
 
 /**
  * @author Citymonstret

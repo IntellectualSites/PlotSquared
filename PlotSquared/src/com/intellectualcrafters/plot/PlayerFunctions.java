@@ -182,7 +182,14 @@ public class PlayerFunctions {
 	 * @return
 	 */
 	public static int getPlayerPlotCount(World world, Player plr) {
-		return getPlayerPlots(world, plr).size();
+	    UUID uuid = plr.getUniqueId();
+	    int count = 0;
+	    for (Plot plot: PlotMain.getPlots(world).values()) {
+	        if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
+	            count++;
+	        }
+	    }
+		return count;
 	}
 
 	/**

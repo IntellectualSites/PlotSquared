@@ -51,6 +51,11 @@ public class SetOwner extends SubCommand {
 		PlotMain.updatePlot(plot);
 		DBFunc.setOwner(plot, plot.owner);
 		PlayerFunctions.sendMessage(plr, C.SET_OWNER);
+		
+		if (PlotMain.worldGuardListener!=null) {
+		    PlotMain.worldGuardListener.changeOwner(plr, plot.owner, plr.getWorld(), plot);
+		}
+		
 		return true;
 	}
 }

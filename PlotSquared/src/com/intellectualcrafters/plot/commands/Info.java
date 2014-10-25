@@ -10,7 +10,9 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.database.DBFunc;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -31,9 +33,10 @@ public class Info extends SubCommand {
 
 	@Override
 	public boolean execute(Player player, String... args) {
-		
+		World world;
 		Plot plot;
 		if (player!=null) {
+		    world = player.getWorld();
 			if (!PlayerFunctions.isInPlot(player)) {
 				PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
 				return false;
@@ -41,7 +44,7 @@ public class Info extends SubCommand {
 			plot = PlayerFunctions.getCurrentPlot(player);
 		}
 		else {
-			if (args.length!=2) {
+			if (args.length<2) {
 				PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
 				return false;
 			}
@@ -56,6 +59,14 @@ public class Info extends SubCommand {
 				plot = PlotHelper.getPlot(Bukkit.getWorld(plotworld.worldname), id);
 				if (plot==null) {
 					PlayerFunctions.sendMessage(player, C.NOT_VALID_PLOT_ID);
+					return false;
+				}
+				world = Bukkit.getWorld(args[0]);
+				if (args.length==3) {
+				    args = new String[] {args[2]};
+				}
+				else {
+				    args = new String[0];
 				}
 			}
 			catch (Exception e) {
@@ -86,11 +97,9 @@ public class Info extends SubCommand {
 
 		// Unclaimed?
 		if (!hasOwner && !containsEveryone && !trustedEveryone) {
-			PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.id.x + ";" + plot.id.y);
+			PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
 			return true;
 		}
-
-		new StringBuilder();
 
 		String owner = "none";
 		if (plot.owner != null) {
@@ -99,26 +108,87 @@ public class Info extends SubCommand {
 		if (owner == null) {
 			owner = plot.owner.toString();
 		}
-
 		String info = C.PLOT_INFO.s();
-		info = info.replaceAll("%alias%", plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none");
-		info = info.replaceAll("%id%", plot.id.toString());
-		info = info.replaceAll("%biome%", getBiomeAt(plot).toString());
-		info = info.replaceAll("%owner%", owner);
-		info = info.replaceAll("%helpers%", getPlayerList(plot.helpers));
-		info = info.replaceAll("%trusted%", getPlayerList(plot.trusted));
-		info = info.replaceAll("%denied%", getPlayerList(plot.denied));
-		info = info.replaceAll("%rating%", "" + DBFunc.getRatings(plot));
-		info =
-				info.replaceAll("%flags%", StringUtils.join(plot.settings.getFlags(), "").length() > 0
-						? StringUtils.join(plot.settings.getFlags(), ",") : "none");
-		// PlayerFunctions.sendMessage(player,
-		// PlayerFunctions.getTopPlot(player.getWorld(), plot).id.toString());
-		// PlayerFunctions.sendMessage(player,
-		// PlayerFunctions.getBottomPlot(player.getWorld(),
-		// plot).id.toString());
+		
+		if (args.length==1) {
+		    info = getCaption(args[0].toLowerCase());
+		    if (info==null) {
+		        PlayerFunctions.sendMessage(player, "&6Categories&7: &ahelpers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
+		        return false;
+		    }
+		}
+		
+		info = format(info, world, plot, player);
+
 		PlayerFunctions.sendMessage(player, info);
 		return true;
+	}
+	
+	private String getCaption(String string) {
+        switch (string) {
+        case "helpers":
+            return C.PLOT_INFO_HELPERS.s();
+        case "alias":
+            return C.PLOT_INFO_ALIAS.s();
+        case "biome":
+            return C.PLOT_INFO_BIOME.s();
+        case "denied":
+            return C.PLOT_INFO_DENIED.s();
+        case "flags":
+            return C.PLOT_INFO_FLAGS.s();
+        case "id":
+            return C.PLOT_INFO_ID.s();
+        case "size":
+            return C.PLOT_INFO_SIZE.s();
+        case "trusted":
+            return C.PLOT_INFO_TRUSTED.s();
+        case "owner":
+            return C.PLOT_INFO_OWNER.s();
+        case "rating":
+            return C.PLOT_INFO_RATING.s();
+        default:
+            return null;
+        }
+	}
+	
+	private String format(String info, World world, Plot plot, Player player) {
+	    
+	    PlotId id = plot.id;
+        PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
+        int num = PlayerFunctions.getPlotSelectionIds(world, id, id2).size();
+        String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
+        String biome = getBiomeAt(plot).toString();
+        String helpers = getPlayerList(plot.helpers);
+        String trusted = getPlayerList(plot.trusted);
+        String denied = getPlayerList(plot.denied);
+        String rating = String.format("%.1f", DBFunc.getRatings(plot));
+        String flags = "&3"+ (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &3") : "none");
+        boolean build = player==null ? true : plot.hasRights(player);
+        
+        String owner = "none";
+        if (plot.owner != null) {
+            owner = Bukkit.getOfflinePlayer(plot.owner).getName();
+        }
+        if (owner == null) {
+            owner = plot.owner.toString();
+        }
+        
+        info = info.replaceAll("%alias%", alias);
+        info = info.replaceAll("%id%", id.toString());
+        info = info.replaceAll("%id2%", id2.toString());
+        info = info.replaceAll("%num%", num+"");
+        info = info.replaceAll("%biome%", biome);
+        info = info.replaceAll("%owner%", owner);
+        info = info.replaceAll("%helpers%", helpers);
+        info = info.replaceAll("%trusted%", trusted);
+        info = info.replaceAll("%denied%", denied);
+        info = info.replaceAll("%rating%", rating);
+        info = info.replaceAll("%flags%", flags);
+        info = info.replaceAll("%build%", build+"");
+        info = info.replaceAll("%desc%", "No description set.");
+
+        
+        return info;
 	}
 
 	private String getPlayerList(ArrayList<UUID> l) {

@@ -65,6 +65,7 @@ public class Plot implements Cloneable {
 	 * Has the plot changed since the last save cycle?
 	 */
 	public boolean hasChanged = false;
+    public boolean countsTowardsMax = true  ;
 
 	/**
 	 * Primary constructor

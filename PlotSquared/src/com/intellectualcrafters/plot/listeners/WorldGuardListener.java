@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.UUIDHandler;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -41,6 +43,22 @@ public class WorldGuardListener implements Listener {
 			this.flags.add(flag);
 		}
 	}
+	public void changeOwner(Player requester, UUID owner, World world, Plot plot) {
+	    boolean op = requester.isOp();
+        requester.setOp(true);
+        try {
+            RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            manager.getRegion(plot.id.x + "-" + plot.id.y);
+            requester.performCommand("region setowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(owner));
+            requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
+        }
+        catch (Exception e) {
+            requester.setOp(op);
+        }
+        finally {
+            requester.setOp(op);
+        }
+	}
 
 	public void removeFlag(Player requester, World world, Plot plot, String key) {
 		boolean op = requester.isOp();
@@ -48,7 +66,7 @@ public class WorldGuardListener implements Listener {
 		try {
 			RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
 			manager.getRegion(plot.id.x + "-" + plot.id.y);
-			for (Flag flag : this.flags) {
+			for (Flag<?> flag : this.flags) {
 				if (flag.getName().equalsIgnoreCase(key)) {
 					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
 				}
@@ -68,7 +86,7 @@ public class WorldGuardListener implements Listener {
 		try {
 			RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
 			manager.getRegion(plot.id.x + "-" + plot.id.y);
-			for (Flag flag : this.flags) {
+			for (Flag<?> flag : this.flags) {
 				if (flag.getName().equalsIgnoreCase(key)) {
 					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
 				}

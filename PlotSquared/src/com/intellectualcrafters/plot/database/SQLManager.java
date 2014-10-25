@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
@@ -431,16 +432,28 @@ public class SQLManager extends AbstractDB {
 				else {
 					flags_string = ((String) settings.get("flags")).split(",");
 				}
-				Flag[] flags = new Flag[flags_string.length];
-				for (int i = 0; i < flags.length; i++) {
+				ArrayList<Flag> flags = new ArrayList<Flag>();
+				boolean exception = false;
+				for (int i = 0; i < flags_string.length; i++) {
 					if (flags_string[i].contains(":")) {
 						String[] split = flags_string[i].split(":");
-						flags[i] = new Flag(FlagManager.getFlag(split[0], true), split[1]);
+						try {
+						    flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1]));
+						}
+						catch (Exception e) {
+						    exception = true;
+						    // invalid flag... ignoring it for now.
+						}
 					}
 					else {
-						flags[i] = new Flag(FlagManager.getFlag(flags_string[i], true), "");
+						flags.add(new Flag(FlagManager.getFlag(flags_string[i], true), ""));
 					}
 				}
+				
+				if (exception) {
+				    setFlags(worldname, id, flags.toArray(new Flag[0]));
+				}
+				
 				ArrayList<UUID> helpers = plotHelpers(id);
 				ArrayList<UUID> trusted = plotTrusted(id);
 				ArrayList<UUID> denied = plotDenied(id);
@@ -468,8 +481,7 @@ public class SQLManager extends AbstractDB {
 				for (int i = 0; i < 4; i++) {
 					merged[3 - i] = (merged_int & (1 << i)) != 0;
 				}
-				p =
-						new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, alias, position, flags, worldname, merged);
+				p = new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, alias, position, flags.toArray(new Flag[0]), worldname, merged);
 				if (plots.containsKey(worldname)) {
 					plots.get(worldname).put((plot_id), p);
 				}
@@ -556,6 +568,33 @@ public class SQLManager extends AbstractDB {
 			}
 		});
 	}
+	
+    public void setFlags(final String world, final int id, final Flag[] flags) {
+        ArrayList<Flag> newflags = new ArrayList<Flag>();
+        for (Flag flag : flags) {
+            if (flag!=null && flag.getKey()!=null && !flag.getKey().equals("")) {
+                newflags.add(flag);
+            }
+        }
+        final String flag_string = StringUtils.join(newflags,",");
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement stmt =
+                            connection.prepareStatement("UPDATE `plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                    stmt.setString(1, flag_string);
+                    stmt.setInt(2, id);
+                    stmt.execute();
+                    stmt.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "Could not set flag for plot " + id);
+                }
+            }
+        });
+    }
 
 	/**
 	 * @param plot

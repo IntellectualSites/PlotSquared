@@ -10,6 +10,8 @@ package com.intellectualcrafters.plot;
 
 import org.bukkit.block.Biome;
 
+import com.intellectualcrafters.plot.database.DBFunc;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

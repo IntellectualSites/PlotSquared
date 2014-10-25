@@ -451,7 +451,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 		if (event.getEntity() instanceof Player) {
 			return;
 		}
-		System.out.print(event.getEntityType().getName());
 		if (!isInPlot(event.getLocation())) {
 			event.setCancelled(true);
 		}

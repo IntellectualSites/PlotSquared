@@ -3,9 +3,12 @@ package com.intellectualcrafters.plot.listeners;
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +47,21 @@ public class PlotListener {
 
     public static UUID getUUID(String name) {
         return UUIDHandler.getUUID(name);
+    }
+    
+    // unused
+    public static void blockChange(Block block, Cancellable event) {
+        Location loc = block.getLocation();
+        String world = loc.getWorld().getName();
+        PlotManager manager = PlotMain.getPlotManager(world);
+        if (manager!=null) {
+            PlotWorld plotworld = PlotMain.getWorldSettings(world);
+            PlotId id = manager.getPlotId(plotworld, loc);
+            if (id==null) {
+                event.setCancelled(true);
+            }
+        }
+        return;
     }
 
     public static boolean enteredPlot(Location l1, Location l2) {

@@ -72,7 +72,7 @@ public class list extends SubCommand {
 								+ "\n");
 					}
 				}
-				string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotMain.getPlots().size()
+				string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotMain.getPlots().size()
 						+ "").replaceAll("%plot%", PlotMain.getPlots().size() == 1 ? "plot" : "plots"));
 				PlayerFunctions.sendMessage(plr, string.toString());
 				return true;

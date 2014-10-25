@@ -73,6 +73,7 @@ public class Settings {
 	public static class Web {
 		public static boolean ENABLED = false;
 		public static int PORT = 9000;
+		public static String PATH = "/var/www";
 	}
 
 	/**

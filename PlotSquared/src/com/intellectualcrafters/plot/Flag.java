@@ -21,14 +21,17 @@ public class Flag {
 	 *             if you provide inadequate inputs
 	 */
 	public Flag(AbstractFlag key, String value) {
-		if (!StringUtils.isAlphanumericSpace(ChatColor.stripColor(value))) {
+		if (!StringUtils.isAlphanumericSpace(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', value)))) {
 			throw new IllegalArgumentException("Flag must be alphanumerical");
 		}
 		if (value.length() > 48) {
 			throw new IllegalArgumentException("Value must be <= 48 characters");
 		}
 		this.key = key;
-		this.value = value;
+		this.value = key.parseValue(value);
+		if (this.value==null) {
+		    throw new IllegalArgumentException(key.getValueDesc()); 
+		}
 	}
 
 	/**
