@@ -23,7 +23,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class SchematicHandler {
 
-	public boolean paste(Location location, Schematic schematic, Plot plot) {
+	public static boolean paste(Location location, Schematic schematic, Plot plot) {
 		if (schematic == null) {
 			PlotMain.sendConsoleSenderMessage("Schematic == null :|");
 			return false;
@@ -71,7 +71,7 @@ public class SchematicHandler {
 		return true;
 	}
 
-	public Schematic getSchematic(String name) {
+	public static Schematic getSchematic(String name) {
 		{
 			File parent =
 					new File(JavaPlugin.getPlugin(PlotMain.class).getDataFolder() + File.separator + "schematics");
@@ -163,7 +163,7 @@ public class SchematicHandler {
 		}
 	}
 
-	public class Dimension {
+	public static class Dimension {
 		private int x;
 		private int y;
 		private int z;
@@ -193,7 +193,7 @@ public class SchematicHandler {
 	 * @param path
 	 * @return
 	 */
-	public boolean save(CompoundTag tag, String path) {
+	public static boolean save(CompoundTag tag, String path) {
 	    
 	    if (tag==null) {
 	        PlotMain.sendConsoleSenderMessage("&cCannot save empty tag");
@@ -219,16 +219,16 @@ public class SchematicHandler {
 	 * @param plot
 	 * @return
 	 */
-	public CompoundTag getCompoundTag(World world, Plot plot) {
+	public static CompoundTag getCompoundTag(World world, PlotId id) {
 
-	    if (!PlotMain.getPlots(world).containsKey(plot.id)) {
+	    if (!PlotMain.getPlots(world).containsKey(id)) {
 	        return null;
 	        // Plot is empty
 	    }
 	    
 	    // loading chunks
-	    final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+	    final Location pos1 = PlotHelper.getPlotBottomLoc(world, id).add(1, 0, 1);
+        final Location pos2 = PlotHelper.getPlotTopLoc(world, id);
         for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
             for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
                 Chunk chunk = world.getChunkAt(i, j);
@@ -268,19 +268,19 @@ public class SchematicHandler {
                     
                     Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, 0 + y, pos1.getBlockZ() + z));
                     
-                    int id = block.getTypeId(); 
+                    int id2 = block.getTypeId(); 
                     
-                    if (id > 255) {
+                    if (id2 > 255) {
                         if (addBlocks == null) {
                             addBlocks = new byte[(blocks.length >> 1) + 1];
                         }
 
                         addBlocks[index >> 1] = (byte) (((index & 1) == 0) ?
-                                addBlocks[index >> 1] & 0xF0 | (id >> 8) & 0xF
-                                : addBlocks[index >> 1] & 0xF | ((id >> 8) & 0xF) << 4);
+                                addBlocks[index >> 1] & 0xF0 | (id2 >> 8) & 0xF
+                                : addBlocks[index >> 1] & 0xF | ((id2 >> 8) & 0xF) << 4);
                     }
 
-                    blocks[index] = (byte) id;
+                    blocks[index] = (byte) id2;
                     blockData[index] = (byte) block.getData();
                     
                     
@@ -300,7 +300,7 @@ public class SchematicHandler {
         return schematicTag;
     }
 
-	public class DataCollection {
+	public static class DataCollection {
 		private short block;
 		private byte data;
 

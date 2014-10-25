@@ -1078,6 +1078,7 @@ public class PlotMain extends JavaPlugin {
 		options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
 		options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
 		options.put("web.enabled", Web.ENABLED);
+		options.put("web.directory", "/var/www");
 		options.put("web.port", Web.PORT);
 		options.put("metrics", true);
 		options.put("debug", true);
@@ -1097,6 +1098,7 @@ public class PlotMain extends JavaPlugin {
 		}
 		Web.ENABLED = config.getBoolean("web.enabled");
 		Web.PORT = config.getInt("web.port");
+		Web.PATH = config.getString("web.directory");
 		Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
 		Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
 		Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");

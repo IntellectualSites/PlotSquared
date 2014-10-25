@@ -1,12 +1,19 @@
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.SchematicHandler;
+import com.intellectualcrafters.plot.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 public class Schematic extends SubCommand {
 
@@ -17,12 +24,12 @@ public class Schematic extends SubCommand {
 	}
 
 	@Override
-	public boolean execute(Player plr, String... args) {
+	public boolean execute(final Player plr, String... args) {
 		if (args.length < 1) {
 			sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
 			return true;
 		}
-		String arg = args[0];
+		String arg = args[0].toLowerCase();
 		String file;
 		SchematicHandler.Schematic schematic;
 		switch (arg) {
@@ -69,6 +76,66 @@ public class Schematic extends SubCommand {
 			}
 			sendMessage(plr, C.SCHEMATIC_VALID);
 			break;
+		case "save":
+		    final PlotId i;
+		    final String world;
+		    if (plr!=null) {
+    		    if(!PlayerFunctions.isInPlot(plr)) {
+    	            sendMessage(plr, C.NOT_IN_PLOT);
+    	            return false;
+    	        }
+    	        Plot myplot = PlayerFunctions.getCurrentPlot(plr);
+    	        if(!myplot.hasRights(plr)) {
+    	            sendMessage(plr, C.NO_PLOT_PERMS);
+    	            return false;
+    	        }
+    	        i = myplot.id;
+    	        world = plr.getWorld().getName();
+		    }
+		    else {
+		        if (args.length==3) {
+		            try {
+		                world = args[0];
+		                String[] split = args[2].split(";");
+		                i = new PlotId(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+		                if (PlotMain.getPlots(world)==null || PlotMain.getPlots(world).get(i) == null) {
+		                    PlayerFunctions.sendMessage(plr, "&cInvalid world or id. Use &7/plots schem save <world> <id>");
+	                        return false;
+		                }
+		                
+		            }
+		            catch (Exception e) {
+		                PlayerFunctions.sendMessage(plr, "&cInvalid world or id. Use &7/plots schem save <world> <id>");
+		                return false;
+		            }
+		        }
+		        else {
+		            PlayerFunctions.sendMessage(plr, "&cInvalid world or id. Use &7/plots schem save <world> <id>");
+		            return false;
+		        }
+		    }
+		    
+	        
+	        
+	        Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+	            @Override
+	            public void run() {
+	                CompoundTag schematic = SchematicHandler.getCompoundTag(Bukkit.getWorld(world), i);
+	                if (schematic==null) {
+	                    PlayerFunctions.sendMessage(plr, "&cInvalid plot");
+	                    return;
+	                }
+	                boolean result = SchematicHandler.save(schematic, Settings.Web.PATH+"/"+i.x+"-"+i.y+"-"+world+".schematic");
+	                
+	                if (!result) {
+	                    PlayerFunctions.sendMessage(plr, "&cFailed to save schematic");
+	                    return;
+	                }
+	                PlayerFunctions.sendMessage(plr, "&aSuccessfully saved schematic!");
+	            }
+	        });
+	        
+	        break;
 		default:
 			sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
 			break;
