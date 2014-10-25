@@ -97,8 +97,8 @@
       <file leaf-file-name="Flag.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Flag.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.08736842" vertical-offset="36" max-vertical-offset="1598">
-              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.44526315" vertical-offset="36" max-vertical-offset="1598">
+              <caret line="27" column="33" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -538,7 +538,7 @@
       <workItem from="1413998668219" duration="821000" />
       <workItem from="1414069303931" duration="1255000" />
       <workItem from="1414240828250" duration="1959000" />
-      <workItem from="1414246269225" duration="1147000" />
+      <workItem from="1414246269225" duration="1384000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1411382351159</created>
@@ -792,11 +792,15 @@
       <created>1414246513646</created>
       <updated>1414246513646</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="Even better colour (+ character support). You evil person who force stringutil-check-thingies">
+      <created>1414247437259</created>
+      <updated>1414247437259</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="118063000" />
+    <option name="totallyTimeSpent" value="118300000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -894,7 +898,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Fixed some translations." />
     <MESSAGE value="Started working on functions that will allow for a saved UUID cache (i.e mysql, sqlite, txt file etc...) for faster reading and in-caching.&#10;" />
     <MESSAGE value="Fixed the uuid saving functions, added ability to change caching methods.&#10;" />
     <MESSAGE value="Some global settings :D" />
@@ -919,7 +922,8 @@
     <MESSAGE value="Removed web and fixed the flag sutff" />
     <MESSAGE value="Added schematic save path setting" />
     <MESSAGE value="Support for colour codes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Support for colour codes" />
+    <MESSAGE value="Even better colour (+ character support). You evil person who force stringutil-check-thingies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Even better colour (+ character support). You evil person who force stringutil-check-thingies" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1294,8 +1298,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlotSquared/src/com/intellectualcrafters/plot/Flag.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.08736842" vertical-offset="36" max-vertical-offset="1598">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.44526315" vertical-offset="36" max-vertical-offset="1598">
+          <caret line="27" column="33" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="33" />
           <folding />
         </state>
       </provider>

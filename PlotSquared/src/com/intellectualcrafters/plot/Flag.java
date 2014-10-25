@@ -25,7 +25,7 @@ public class Flag {
         };
         String tempValue = value;
         for(char c : allowedCharacters)
-            tempValue = value.replace(c, 'c');
+            tempValue = tempValue.replace(c, 'c');
 		if (!StringUtils.isAlphanumericSpace(tempValue)) {
 			throw new IllegalArgumentException("Flag must be alphanumerical (colours and some special characters are allowed)");
 		}
