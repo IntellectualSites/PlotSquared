@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.SchematicHandler;
 import com.intellectualcrafters.plot.Settings;
+import com.intellectualcrafters.plot.UUIDHandler;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.sun.org.apache.xerces.internal.impl.xs.identity.ValueStore;
 
@@ -149,6 +150,8 @@ public class Schematic extends SubCommand {
                     }
                     final Plot plot = plots[counter];
                     final CompoundTag sch = SchematicHandler.getCompoundTag(worldObj, plot.id);
+                    String o = UUIDHandler.getName(plot.owner);
+                    final String owner = o==null ? "unknown" : o ;
                     if (sch==null) {
                         PlayerFunctions.sendMessage(plr, "&7 - Skipped plot &c"+plot.id);
                     }
@@ -158,7 +161,7 @@ public class Schematic extends SubCommand {
                             public void run() {
                                 counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+","+owner+".schematic");
                                     
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
@@ -239,6 +242,8 @@ public class Schematic extends SubCommand {
                     }
                     final Plot plot = plots[counter];
                     final CompoundTag sch = SchematicHandler.getCompoundTag(Bukkit.getWorld(world), plot.id);
+                    String o = UUIDHandler.getName(plot.owner);
+                    final String owner = o==null ? "unknown" : o ;
                     if (sch==null) {
                         PlayerFunctions.sendMessage(plr, "&7 - Skipped plot &c"+plot.id);
                     }
@@ -248,7 +253,7 @@ public class Schematic extends SubCommand {
                             public void run() {
                                 counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+world+","+owner+".schematic");
                                     
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
