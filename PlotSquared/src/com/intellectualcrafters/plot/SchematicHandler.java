@@ -229,8 +229,11 @@ public class SchematicHandler {
 	    // loading chunks
 	    final Location pos1 = PlotHelper.getPlotBottomLoc(world, id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLoc(world, id);
-        for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
+        int i = 0;
+        int j = 0;
+        try {
+        for (i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
+            for (j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
                 Chunk chunk = world.getChunkAt(i, j);
                 boolean result = chunk.load(false);
                 if (!result) {
@@ -240,6 +243,11 @@ public class SchematicHandler {
                     return null;
                 }
             }
+        }
+        }
+        catch (Exception e) {
+            PlotMain.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at "+(i/16)+", "+(j/16));
+            return null;
         }
         int width = pos2.getBlockX()-pos1.getBlockX();
         int height = 256;

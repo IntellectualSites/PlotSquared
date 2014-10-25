@@ -68,8 +68,7 @@ public enum C {
     /*
      * Schematic Stuff
      */
-    SCHEMATIC_MISSING_ARG("&cYou need to specify an argument. Possible values: &6test <name>"),
-    SCHEMATIC_MISSING_ARG2("&cYou need to specify an argument. Possible values: &6save"),
+    SCHEMATIC_MISSING_ARG("&cYou need to specify an argument. Possible values: &6test <name>&7 , &6save&7 , &6paste &7, &6exportall"),
     SCHEMATIC_INVALID("&cThat is not a valid schematic. Reason: &c%s"),
     SCHEMATIC_VALID("&cThat is a valid schematic"),
     SCHEMATIC_PASTE_FAILED("&cFailed to paste the schematic"),
