@@ -157,6 +157,7 @@ public class PlotListener {
     }
 
     public static void plotExit(Player player, Plot plot) {
+        player.setAllowFlight(false);
         {
             PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
             Bukkit.getPluginManager().callEvent(callEvent);
