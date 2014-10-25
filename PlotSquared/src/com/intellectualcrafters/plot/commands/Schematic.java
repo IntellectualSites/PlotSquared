@@ -1,26 +1,13 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.plot.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.SchematicHandler;
-import com.intellectualcrafters.plot.Settings;
-import com.intellectualcrafters.plot.UUIDHandler;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.sun.org.apache.xerces.internal.impl.xs.identity.ValueStore;
+import java.util.HashMap;
 
 public class Schematic extends SubCommand {
 
@@ -161,7 +148,7 @@ public class Schematic extends SubCommand {
                             public void run() {
                                 counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+","+owner+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+","+owner+".schematic");
                                     
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
@@ -253,7 +240,7 @@ public class Schematic extends SubCommand {
                             public void run() {
                                 counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+world+","+owner+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+","+plot.id.y+","+world+","+owner+".schematic");
                                     
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);

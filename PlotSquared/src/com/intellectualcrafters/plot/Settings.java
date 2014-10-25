@@ -15,6 +15,7 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    public static String SCHEMATIC_SAVE_PATH = "/var/www/schematics";
 	public static int MAX_PLOTS = 20;
 	/**
 	 * WorldGuard region on claimed plots

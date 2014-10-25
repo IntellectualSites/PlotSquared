@@ -926,6 +926,7 @@ public class PlotMain extends JavaPlugin {
 			Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
 			Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
+            Settings.SCHEMATIC_SAVE_PATH = config.getString("schematic.save_path");
 		}
 		if (Settings.DEBUG) {
 			Map<String, String> settings = new HashMap<>();
@@ -937,6 +938,7 @@ public class PlotMain extends JavaPlugin {
 			settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
 			settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
 			settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
+            settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
 			for (Entry<String, String> setting : settings.entrySet()) {
 				sendConsoleSenderMessage(C.PREFIX.s()
 						+ String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
@@ -1086,6 +1088,7 @@ public class PlotMain extends JavaPlugin {
 		Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
 		Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
 		Settings.MAX_PLOTS = config.getInt("max_plots");
+        Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 	}
 
 	public static void createConfiguration(PlotWorld plotworld) {
