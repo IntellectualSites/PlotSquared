@@ -21,8 +21,9 @@ public class Flag {
 	 *             if you provide inadequate inputs
 	 */
 	public Flag(AbstractFlag key, String value) {
-		if (!StringUtils.isAlphanumericSpace(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', value)))) {
-			throw new IllegalArgumentException("Flag must be alphanumerical");
+        String tempValue = ChatColor.stripColor(value.replaceAll("&", "").replaceAll("§", "").replaceAll("-", "").replaceAll("_", ""));
+		if (!StringUtils.isAlphanumericSpace(tempValue)) {
+			throw new IllegalArgumentException("Flag must be alphanumerical (colours, - and _ are allowed)");
 		}
 		if (value.length() > 48) {
 			throw new IllegalArgumentException("Value must be <= 48 characters");
