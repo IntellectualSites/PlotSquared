@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 
 public class Flag {
 	private AbstractFlag key;
@@ -21,9 +20,14 @@ public class Flag {
 	 *             if you provide inadequate inputs
 	 */
 	public Flag(AbstractFlag key, String value) {
-        String tempValue = ChatColor.stripColor(value.replaceAll("&", "").replaceAll("§", "").replaceAll("-", "").replaceAll("_", ""));
+        char[] allowedCharacters = new char[] {
+                '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', '§'
+        };
+        String tempValue = value;
+        for(char c : allowedCharacters)
+            tempValue = value.replace(c, 'c');
 		if (!StringUtils.isAlphanumericSpace(tempValue)) {
-			throw new IllegalArgumentException("Flag must be alphanumerical (colours, - and _ are allowed)");
+			throw new IllegalArgumentException("Flag must be alphanumerical (colours and some special characters are allowed)");
 		}
 		if (value.length() > 48) {
 			throw new IllegalArgumentException("Value must be <= 48 characters");
