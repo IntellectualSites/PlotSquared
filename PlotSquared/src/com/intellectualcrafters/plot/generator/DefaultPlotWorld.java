@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.Configuration;
 import com.intellectualcrafters.plot.ConfigurationNode;
 import com.intellectualcrafters.plot.PlotBlock;
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
 
 public class DefaultPlotWorld extends PlotWorld {
@@ -160,6 +161,11 @@ public class DefaultPlotWorld extends PlotWorld {
 	@Override
 	public void loadConfiguration(ConfigurationSection config) {
 		this.PLOT_HEIGHT = config.getInt("plot.height");
+		
+		if (!config.contains("plot.height")) {
+		    PlotMain.sendConsoleSenderMessage(" - &Configuration is null? ("+config.getCurrentPath()+")");
+		}
+		
 		this.PLOT_WIDTH = config.getInt("plot.size");
 		this.MAIN_BLOCK =
 				(PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));

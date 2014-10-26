@@ -1136,8 +1136,9 @@ public class PlotMain extends JavaPlugin {
 			if (!config.contains("worlds." + world)) {
 				config.createSection("worlds." + world);
 			}
+			
+			
 			plotworld.saveConfiguration(config.getConfigurationSection("worlds." + world));
-
 			plotworld.loadDefaultConfiguration(config.getConfigurationSection("worlds." + world));
 
 			try {

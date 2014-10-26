@@ -78,10 +78,18 @@ public class PlayerFunctions {
 
 	public static Plot getBottomPlot(World world, Plot plot) {
 		if (plot.settings.getMerged(0)) {
-			return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1)));
+		    Plot p = PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
+		    if (p==null) {
+		        return plot;
+		    }
+			return getBottomPlot(world, p);
 		}
 		if (plot.settings.getMerged(3)) {
-			return getBottomPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y)));
+		    Plot p = PlotMain.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y));
+		    if (p==null) {
+                return plot;
+            }
+			return getBottomPlot(world, p);
 		}
 		return plot;
 	}

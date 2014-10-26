@@ -52,7 +52,9 @@ public class UUIDHandler {
 	}
 
 	public static void add(StringWrapper name, UUID uuid) {
-		uuidMap.put(name, uuid);
+	    if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
+	        uuidMap.put(name, uuid);
+	    }
 	}
 
 	/**

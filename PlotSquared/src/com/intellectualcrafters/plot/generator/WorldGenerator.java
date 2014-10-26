@@ -7,11 +7,14 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.ConfigurationNode;
 import com.intellectualcrafters.plot.PlotBlock;
 import com.intellectualcrafters.plot.PlotGenerator;
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotManager;
 import com.intellectualcrafters.plot.PlotWorld;
 
@@ -147,6 +150,19 @@ public class WorldGenerator extends PlotGenerator {
 	 */
 	public WorldGenerator(String world) {
 		super(world);
+		
+		if (this.plotworld == null) {
+		    this.plotworld = new DefaultPlotWorld(world);
+		    if (!PlotMain.config.contains("worlds."+world)) {
+		        PlotMain.config = YamlConfiguration.loadConfiguration(PlotMain.configFile);
+		        PlotMain.config.createSection("worlds."+world);
+		    }
+		    ConfigurationSection section = PlotMain.config.getConfigurationSection("worlds."+world);
+		    this.plotworld.saveConfiguration(section);
+		    this.plotworld.loadDefaultConfiguration(section);
+		    this.plotworld.loadConfiguration(section);
+		    PlotMain.sendConsoleSenderMessage("&cFailed to load the plotworld settings from the configuration. Attempting to reload it");
+		}
 		
 		this.plotsize = this.plotworld.PLOT_WIDTH;
 
