@@ -175,10 +175,12 @@ public class PlotListener {
     }
 
     public static void plotExit(Player player, Plot plot) {
-        player.setAllowFlight(false);
         {
             PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
             Bukkit.getPluginManager().callEvent(callEvent);
+        }
+        if(plot.settings.getFlag("fly") != null) {
+            player.setAllowFlight(Bukkit.getAllowFlight());
         }
         if(plot.settings.getFlag("gamemode") != null) {
             player.setGameMode(Bukkit.getDefaultGameMode());
