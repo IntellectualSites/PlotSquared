@@ -159,9 +159,8 @@ public class Schematic extends SubCommand {
                         Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
                             @Override
                             public void run() {
-                                counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+","+owner+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+",  "+owner+".schematic");
                                     
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
@@ -251,7 +250,6 @@ public class Schematic extends SubCommand {
                         Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
                             @Override
                             public void run() {
-                                counter++;
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
                                     boolean result = SchematicHandler.save(sch, Settings.Web.PATH+"/"+plot.id.x+","+plot.id.y+","+world+","+owner+".schematic");
                                     

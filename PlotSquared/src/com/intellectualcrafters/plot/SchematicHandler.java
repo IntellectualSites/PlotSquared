@@ -14,9 +14,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by Citymonstret on 2014-09-15.
@@ -202,7 +204,7 @@ public class SchematicHandler {
 	    
         try {
             OutputStream stream = new FileOutputStream(path);
-            NBTOutputStream output = new NBTOutputStream(stream);
+            NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream));
             output.writeTag(tag);
             output.close();
             stream.close();
@@ -265,20 +267,27 @@ public class SchematicHandler {
         schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
         schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
 
+        System.out.print("WHL "+width+" | "+height+ " | "+length);
+        
         byte[] blocks = new byte[width * height * length];
         byte[] addBlocks = null;
         byte[] blockData = new byte[width * height * length];
 
+        int count = 0;
+        
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
                 for (int y = 0; y < height; y++) {
                     int index = y * width * length + z * width + x;
+                    
+                    count++;
                     
                     Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, 0 + y, pos1.getBlockZ() + z));
                     
                     int id2 = block.getTypeId(); 
                     
                     if (id2 > 255) {
+                        System.out.print("GREATER "+id2);
                         if (addBlocks == null) {
                             addBlocks = new byte[(blocks.length >> 1) + 1];
                         }
@@ -297,9 +306,14 @@ public class SchematicHandler {
                 }
             }
         }
+        
+        System.out.print("COUNT "+count);
+        
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
         schematic.put("Data", new ByteArrayTag("Data", blockData));
-
+        schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
+        schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
+        
         if (addBlocks != null) {
             schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
         }

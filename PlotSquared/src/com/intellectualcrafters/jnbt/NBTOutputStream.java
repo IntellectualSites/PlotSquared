@@ -7,12 +7,19 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
+ * <p>
  * This class writes <strong>NBT</strong>, or <strong>Named Binary Tag</strong>
- * {@code Tag} objects to an underlying {@code OutputStream}.
+ * <code>Tag</code> objects to an underlying <code>OutputStream</code>.
+ * </p>
  * 
- * <p>The NBT format was created by Markus Persson, and the specification may be
+ * <p>
+ * The NBT format was created by Markus Persson, and the specification may be
  * found at <a href="http://www.minecraft.net/docs/NBT.txt">
- * http://www.minecraft.net/docs/NBT.txt</a>.</p>
+ * http://www.minecraft.net/docs/NBT.txt</a>.
+ * </p>
+ * 
+ * @author Graham Edgecombe
+ * 
  */
 public final class NBTOutputStream implements Closeable {
 
@@ -22,7 +29,7 @@ public final class NBTOutputStream implements Closeable {
     private final DataOutputStream os;
 
     /**
-     * Creates a new {@code NBTOutputStream}, which will write data to the
+     * Creates a new <code>NBTOutputStream</code>, which will write data to the
      * specified underlying output stream.
      * 
      * @param os
@@ -111,7 +118,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Byte} tag.
+     * Writes a <code>TAG_Byte</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -123,7 +130,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Byte_Array} tag.
+     * Writes a <code>TAG_Byte_Array</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -137,7 +144,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Compound} tag.
+     * Writes a <code>TAG_Compound</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -152,7 +159,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_List} tag.
+     * Writes a <code>TAG_List</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -166,13 +173,13 @@ public final class NBTOutputStream implements Closeable {
 
         os.writeByte(NBTUtils.getTypeCode(clazz));
         os.writeInt(size);
-        for (Tag tag1 : tags) {
-            writeTagPayload(tag1);
+        for (int i = 0; i < size; ++i) {
+            writeTagPayload(tags.get(i));
         }
     }
 
     /**
-     * Writes a {@code TAG_String} tag.
+     * Writes a <code>TAG_String</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -186,7 +193,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Double} tag.
+     * Writes a <code>TAG_Double</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -198,7 +205,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Float} tag.
+     * Writes a <code>TAG_Float</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -210,7 +217,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Long} tag.
+     * Writes a <code>TAG_Long</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -222,7 +229,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Int} tag.
+     * Writes a <code>TAG_Int</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -234,7 +241,7 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Short} tag.
+     * Writes a <code>TAG_Short</code> tag.
      * 
      * @param tag
      *            The tag.
@@ -246,9 +253,12 @@ public final class NBTOutputStream implements Closeable {
     }
 
     /**
-     * Writes a {@code TAG_Empty} tag.
+     * Writes a <code>TAG_Empty</code> tag.
      * 
-     * @param tag the tag
+     * @param tag
+     *            The tag.
+     * @throws IOException
+     *             if an I/O error occurs.
      */
     private void writeEndTagPayload(EndTag tag) {
         /* empty */
@@ -257,12 +267,11 @@ public final class NBTOutputStream implements Closeable {
     private void writeIntArrayTagPayload(IntArrayTag tag) throws IOException {
         int[] data = tag.getValue();
         os.writeInt(data.length);
-        for (int aData : data) {
-            os.writeInt(aData);
+        for (int i = 0; i < data.length; i++) {
+            os.writeInt(data[i]);
         } 
     }
 
-    @Override
     public void close() throws IOException {
         os.close();
     }
