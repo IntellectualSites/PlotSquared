@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot;
 
 import ca.mera.CameraAPI;
+
 import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.commands.Camera;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -25,8 +26,10 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -1070,7 +1073,8 @@ public class PlotMain extends JavaPlugin {
 		options.put("clear.auto.enabled", false);
 		options.put("clear.auto.days", 365);
         options.put("clear.on.ban", false);
-		options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
 
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!config.contains(node.getKey())) {
