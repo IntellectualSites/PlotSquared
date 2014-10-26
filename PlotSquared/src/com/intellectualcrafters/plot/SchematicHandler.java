@@ -266,9 +266,6 @@ public class SchematicHandler {
         schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
         schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
         schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
-
-        System.out.print("WHL "+width+" | "+height+ " | "+length);
-        
         byte[] blocks = new byte[width * height * length];
         byte[] addBlocks = null;
         byte[] blockData = new byte[width * height * length];
@@ -287,7 +284,6 @@ public class SchematicHandler {
                     int id2 = block.getTypeId(); 
                     
                     if (id2 > 255) {
-                        System.out.print("GREATER "+id2);
                         if (addBlocks == null) {
                             addBlocks = new byte[(blocks.length >> 1) + 1];
                         }
@@ -306,9 +302,6 @@ public class SchematicHandler {
                 }
             }
         }
-        
-        System.out.print("COUNT "+count);
-        
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
         schematic.put("Data", new ByteArrayTag("Data", blockData));
         schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));

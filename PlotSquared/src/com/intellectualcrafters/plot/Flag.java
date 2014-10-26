@@ -21,7 +21,7 @@ public class Flag {
 	 */
 	public Flag(AbstractFlag key, String value) {
         char[] allowedCharacters = new char[] {
-                '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', 'ยง'
+                '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', 'ง'
         };
         String tempValue = value;
         for(char c : allowedCharacters)
