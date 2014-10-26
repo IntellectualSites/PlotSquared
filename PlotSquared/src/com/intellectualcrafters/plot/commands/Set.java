@@ -359,10 +359,24 @@ public class Set extends SubCommand {
 			PlotHelper.adjustWallFilling(plr, plot, new PlotBlock((short) material.getId(), data));
 			return true;
 		}
-		StringBuilder builder = new StringBuilder();
-		builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-		builder.append(getArgumentList(values));
-		PlayerFunctions.sendMessage(plr, builder.toString());
+        {
+            AbstractFlag af = new AbstractFlag("");
+            try {
+                af = new AbstractFlag(args[0].toLowerCase());
+            }
+            catch (Exception e) {
+            }
+            if (FlagManager.getFlags().contains(af)) {
+                StringBuilder a = new StringBuilder();
+                if(args.length > 1) {
+                    for(int x = 1; x < args.length; x++)
+                        a.append(" ").append(args[x]);
+                }
+                plr.performCommand("plot set flag " + args[0] + a.toString());
+                return true;
+            }
+        }
+        PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
 		return false;
 	}
 

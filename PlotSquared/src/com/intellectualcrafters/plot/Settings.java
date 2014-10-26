@@ -15,6 +15,7 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    public static String SCHEMATIC_SAVE_PATH = "/var/www/schematics";
 	public static int MAX_PLOTS = 20;
 	/**
 	 * WorldGuard region on claimed plots
@@ -68,12 +69,6 @@ public class Settings {
 		 */
 		@Deprecated
 		public static boolean AUTO_UPDATE = false;
-	}
-
-	public static class Web {
-		public static boolean ENABLED = false;
-		public static int PORT = 9000;
-		public static String PATH = "/var/www";
 	}
 
 	/**
