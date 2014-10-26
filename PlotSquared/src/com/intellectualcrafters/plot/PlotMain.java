@@ -929,7 +929,6 @@ public class PlotMain extends JavaPlugin {
 			Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
 			Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-            Settings.SCHEMATIC_SAVE_PATH = config.getString("schematic.save_path");
 		}
 		if (Settings.DEBUG) {
 			Map<String, String> settings = new HashMap<>();

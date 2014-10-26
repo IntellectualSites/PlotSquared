@@ -147,7 +147,7 @@ public class Schematic extends SubCommand {
                             @Override
                             public void run() {
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+","+plot.id.y+","+worldname+","+owner+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+";"+plot.id.y+","+worldname+","+owner+".schematic");
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
                                     }
@@ -237,7 +237,7 @@ public class Schematic extends SubCommand {
                             @Override
                             public void run() {
                                 PlayerFunctions.sendMessage(plr, "&6ID: "+plot.id);
-                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+","+plot.id.y+","+world+","+owner.trim()+".schematic");
+                                    boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH+"/"+plot.id.x+";"+plot.id.y+","+world+","+owner.trim()+".schematic");
                                     if (!result) {
                                         PlayerFunctions.sendMessage(plr, "&7 - Failed to save &c"+plot.id);
                                     }
