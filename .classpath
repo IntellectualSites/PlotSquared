@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="PlotSquared/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/BarAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/CameraAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/simple-5.1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/simple-xml.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/bukkit-1.7.9-R0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/PlotMe.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/PlotSquared.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/Vault-1.4.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jesse Boyd/Desktop/plugins/plot_lib/lib/WorldGuard.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
