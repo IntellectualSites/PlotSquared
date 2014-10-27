@@ -1208,7 +1208,7 @@ public class PlotMain extends JavaPlugin {
 		options.put("mysql.user", "root");
 		options.put("mysql.password", "password");
 		options.put("mysql.database", "plot_db");
-        options.put("prefix", "plotsquared");
+        options.put("prefix", "plotsquared_");
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!storage.contains(node.getKey())) {
 				storage.set(node.getKey(), node.getValue());
