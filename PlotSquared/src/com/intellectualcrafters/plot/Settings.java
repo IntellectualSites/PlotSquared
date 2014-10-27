@@ -90,5 +90,6 @@ public class Settings {
 		public static String DATABASE = "plot_db";
 		public static String USER = "root";
 		public static String PASSWORD = "password";
+        public static String PREFIX = "";
 	}
 }
