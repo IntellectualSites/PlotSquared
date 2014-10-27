@@ -61,6 +61,7 @@ public class Settings {
 	public static boolean AUTO_CLEAR = false;
 	public static int AUTO_CLEAR_DAYS = 365;
     public static String API_URL = "http://www.intellectualsites.com/minecraft.php";
+    public static boolean CUSTOM_API = true;
 
 	public static class Update {
 		/**

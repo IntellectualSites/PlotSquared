@@ -73,19 +73,29 @@ public class UUIDHandler {
 		}
 		UUID uuid;
 		if (online) {
-		    if ((uuid = getUuidOnlinePlayer(nameWrap)) != null) {
-	            return uuid;
-	        }
-            try {
-                return PlotMain.getUUIDSaver().mojangUUID(name);
-            }
-            catch(Exception e) {
+            if(Settings.CUSTOM_API) {
+                if ((uuid = getUuidOnlinePlayer(nameWrap)) != null) {
+                    return uuid;
+                }
+                try {
+                    return PlotMain.getUUIDSaver().mojangUUID(name);
+                }
+                catch(Exception e) {
+                    try {
+                        UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
+                        uuid = fetcher.call().get(name);
+                        add(nameWrap, uuid);
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } else {
                 try {
                     UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
                     uuid = fetcher.call().get(name);
                     add(nameWrap, uuid);
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -120,6 +130,29 @@ public class UUIDHandler {
 			return name;
 		}
 		if (online) {
+            if(!Settings.CUSTOM_API) {
+                try {
+                    NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
+                    name = fetcher.call().get(uuid);
+                    add(new StringWrapper(name), uuid);
+                    return name;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                try {
+                    return PlotMain.getUUIDSaver().mojangName(uuid);
+                } catch(Exception e) {
+                    try {
+                        NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
+                        name = fetcher.call().get(uuid);
+                        add(new StringWrapper(name), uuid);
+                        return name;
+                    } catch (Exception ex) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             try {
                 return PlotMain.getUUIDSaver().mojangName(uuid);
             } catch(Exception e) {
@@ -129,7 +162,7 @@ public class UUIDHandler {
                     add(new StringWrapper(name), uuid);
                     return name;
                 } catch (Exception ex) {
-                    e.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
 		}

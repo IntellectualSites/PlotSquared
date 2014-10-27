@@ -940,6 +940,7 @@ public class PlotMain extends JavaPlugin {
 			Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
             Settings.API_URL = config.getString("api.location");
+            Settings.CUSTOM_API = config.getBoolean("api.custom");
 		}
 		if (Settings.DEBUG) {
 			Map<String, String> settings = new HashMap<>();
@@ -1087,6 +1088,7 @@ public class PlotMain extends JavaPlugin {
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         options.put("api.location", Settings.API_URL);
+        options.put("api.custom", Settings.CUSTOM_API);
 
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!config.contains(node.getKey())) {
