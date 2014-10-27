@@ -621,17 +621,17 @@ public class PlotMain extends JavaPlugin {
 						connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
 						{
 							DatabaseMetaData meta = connection.getMetaData();
-							ResultSet res = meta.getTables(null, null, "plot", null);
+							ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
 							if (!res.next()) {
 								DBFunc.createTables("sqlite", true);
 							}
 							else {
-								res = meta.getTables(null, null, "plot_trusted", null);
+								res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_trusted", null);
 								if (!res.next()) {
 									DBFunc.createTables("sqlite", false);
 								}
 								else {
-									res = meta.getTables(null, null, "plot_ratings", null);
+									res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_ratings", null);
 									if (!res.next()) {
 										DBFunc.createTables("sqlite", false);
 									}
@@ -1208,7 +1208,7 @@ public class PlotMain extends JavaPlugin {
 		options.put("mysql.user", "root");
 		options.put("mysql.password", "password");
 		options.put("mysql.database", "plot_db");
-        options.put("prefix", "");
+        options.put("prefix", "plotsquared");
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!storage.contains(node.getKey())) {
 				storage.set(node.getKey(), node.getValue());
