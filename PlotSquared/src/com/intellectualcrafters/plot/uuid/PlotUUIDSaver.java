@@ -63,25 +63,13 @@ public class PlotUUIDSaver extends UUIDSaver {
 
     }
 
-    private static String insertDashUUID(String uuid) {
-        StringBuffer sb = new StringBuffer(uuid);
-        sb.insert(8, "-");
-        sb = new StringBuffer(sb.toString());
-        sb.insert(13, "-");
-        sb = new StringBuffer(sb.toString());
-        sb.insert(18, "-");
-        sb = new StringBuffer(sb.toString());
-        sb.insert(23, "-");
-        return sb.toString();
-    }
-
     public UUID mojangUUID(String name) throws Exception {
         URLConnection connection = new URL(Settings.API_URL + "?user=" + name).openConnection();
         connection.addRequestProperty("User-Agent", "Mozilla/4.0");
         JSONTokener tokener = new JSONTokener(connection.getInputStream());
         JSONObject root = new JSONObject(tokener);
-        String uuid = root.getJSONObject(name).getString("uuid");
-        return UUID.fromString(insertDashUUID(uuid));
+        String uuid = root.getJSONObject(name).getString("dashed");
+        return UUID.fromString(uuid);
     }
 
     public String mojangName(UUID uuid) throws Exception {
