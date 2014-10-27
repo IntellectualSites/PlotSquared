@@ -62,18 +62,27 @@ public class PlotMain extends JavaPlugin {
 	 * settings.properties
 	 */
 	public static File configFile;
+    /**
+     * The main configuration file
+     */
 	public static YamlConfiguration config;
 	private static int config_ver = 1;
 	/**
 	 * storage.properties
 	 */
 	public static File storageFile;
+    /**
+     * Contains storage options
+     */
 	public static YamlConfiguration storage;
 	public static int storage_ver = 1;
 	/**
 	 * translations.properties
 	 */
 	public static File translationsFile;
+    /**
+     * Contains all translations
+     */
 	public static YamlConfiguration translations;
 	public static int translations_ver = 1;
 	/**

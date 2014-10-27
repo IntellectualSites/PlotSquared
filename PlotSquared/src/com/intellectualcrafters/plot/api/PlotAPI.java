@@ -8,28 +8,18 @@
 
 package com.intellectualcrafters.plot.api;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.AbstractFlag;
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotManager;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SchematicHandler;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.SubCommand;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * The plotMain api class.
@@ -47,16 +37,10 @@ public class PlotAPI {
 
 	// Methods/fields in PlotMain class
 
-	// PlotMain.config;
-	// PlotMain.storage
-	// PlotMain.translations
-	// PlotMain.addPlotWorld(world, plotworld, manager);
-	//
-	// PlotMain.checkForExpiredPlots();
-	// PlotMain.killAllEntities();
+	// PlotMain.checkForExpiredPlots(); #Ignore
+	// PlotMain.killAllEntities(); #Ignore
 	//
 	// PlotMain.createConfiguration(plotworld);
-	// PlotMain.getPlots()
 	// PlotMain.getPlots(player)
 	// PlotMain.getPlots(world)
 	// PlotMain.getPlots(world, player)
@@ -69,13 +53,69 @@ public class PlotAPI {
 
 	// To access plotMain stuff.
 	private PlotMain plotMain;
+
 	// Reference
+    /**
+     * Admin Permission
+     */
 	public static final String ADMIN_PERMISSION = "plots.admin";
+
+    /**
+     * Get all plots
+     * @return all plots
+     */
+    public Set<Plot> getAllPlots() {
+        return PlotMain.getPlots();
+    }
+
+    /**
+     * Return all plots for a player
+     * @param player
+     * @return all plots that a player owns
+     */
+    public Set<Plot> getPlayerPlots(Player player) {
+        return PlotMain.getPlots(player);
+    }
+
+    /**
+     * Add a plotoworld
+     * @see com.intellectualcrafters.plot.PlotMain#addPlotWorld(String, com.intellectualcrafters.plot.PlotWorld, com.intellectualcrafters.plot.PlotManager)
+     * @param world World Name
+     * @param plotWorld Plot World Object
+     * @param manager World Manager
+     */
+    public void addPlotWorld(String world, PlotWorld plotWorld, PlotManager manager) {
+        PlotMain.addPlotWorld(world, plotWorld, manager);
+    }
+
+    /**
+     * @see com.intellectualcrafters.plot.PlotMain#config
+     * @return main configuration
+     */
+    public YamlConfiguration getConfig() {
+        return PlotMain.config;
+    }
+
+    /**
+     * @see com.intellectualcrafters.plot.PlotMain#translations
+     * @return translation configuration
+     */
+    public YamlConfiguration getTranslations() {
+        return PlotMain.translations;
+    }
+
+    /**
+     * @see com.intellectualcrafters.plot.PlotMain#storage
+     * @return storage configuration
+     */
+    public YamlConfiguration getStorage() {
+        return PlotMain.storage;
+    }
 
 	/**
 	 * Constructor. Insert any Plugin.
-	 * 
-	 * @param plugin
+	 * (Optimally the plugin that is accessing the method)
+	 * @param plugin Plugin used to access this method
 	 */
 	public PlotAPI(JavaPlugin plugin) {
 		this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
@@ -84,8 +124,9 @@ public class PlotAPI {
 	/**
 	 * Get the main class for this plugin <br>
 	 * - Contains a lot of fields and methods - not very well organized
-	 * 
-	 * @return
+     * <br>
+	 * Only use this if you really need it
+	 * @return PlotMain PlotSquared Main Class
 	 */
 	public PlotMain getMain() {
 		return plotMain;
@@ -94,7 +135,7 @@ public class PlotAPI {
 	/**
 	 * PlotHelper class contains useful methods relating to plots.
 	 * 
-	 * @return
+	 * @return PlotHelper
 	 */
 	public PlotHelper getPlotHelper() {
 		return plotHelper;
@@ -104,7 +145,7 @@ public class PlotAPI {
 	 * PlayerFunctions class contains useful methods relating to players - Some
 	 * player/plot methods are here as well
 	 * 
-	 * @return
+	 * @return PlayerFunctions
 	 */
 	public PlayerFunctions getPlayerFunctions() {
 		return playerFunctions;
@@ -113,7 +154,7 @@ public class PlotAPI {
 	/**
 	 * FlagManager class contains methods relating to plot flags
 	 * 
-	 * @return
+	 * @return FlagManager
 	 */
 	public FlagManager getFlagManager() {
 		return flagManager;
@@ -122,7 +163,7 @@ public class PlotAPI {
 	/**
 	 * SchematicHandler class contains methods related to pasting schematics
 	 * 
-	 * @return
+	 * @return SchematicHandler
 	 */
 	public SchematicHandler getSchematicHandler() {
 		return schematicHandler;
@@ -131,7 +172,7 @@ public class PlotAPI {
 	/**
 	 * C class contains all the captions from the translations.yml file.
 	 * 
-	 * @return
+	 * @return C
 	 */
 	public C getCaptions() {
 		return c;
@@ -142,7 +183,7 @@ public class PlotAPI {
 	 * through the PlotHelper
 	 * 
 	 * @param world
-	 * @return
+	 * @return PlotManager
 	 */
 	public PlotManager getPlotManager(World world) {
 		return PlotMain.getPlotManager(world);
@@ -153,7 +194,7 @@ public class PlotAPI {
 	 * plot merging, clearing, and tessellation
 	 * 
 	 * @param world
-	 * @return
+	 * @return PlotManager
 	 */
 	public PlotManager getPlotManager(String world) {
 		return PlotMain.getPlotManager(world);
