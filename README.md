@@ -1,8 +1,18 @@
-PlotSquared New Repo...
+PlotSquared Official Repo
 ==========================================================
-I (Citymonstret) managed to screw everything up, but it should be working now.
+This is the official PlotSquared repo, if you didn't understand that by the title... 
 
-We removed maven support (yey!)
+## Links: ##
+
+- [Spigot Page](http://www.spigotmc.org/resources/plotsquared.1177/ "SpigotMc")
+- [Bukkit Page](http://dev.bukkit.org/bukkit-plugins/plotsquared/ "Bukkit")
+- [IntellectualSites Page](http://plotsquared.intellectualsites.com/ "IntellectualSites")
+
+## Addons ##
+- [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/ "Plot2Dynmap")
+- [Plot+](http://www.spigotmc.org/resources/plotplus-plotweb.1595/ "Plot+")
+- [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/ "AdvPlots")
+- [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/ "PlotRankup")
 
 Dependencies:
 [http://intellectualsites.com/download.php?key=a12f1474-6bbc-4017-ba43-d26f8de36a7c](http://intellectualsites.com/download.php?key=a12f1474-6bbc-4017-ba43-d26f8de36a7c "Dependencies (/lib)")
