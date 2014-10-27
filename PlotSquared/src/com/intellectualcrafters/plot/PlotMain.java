@@ -939,6 +939,7 @@ public class PlotMain extends JavaPlugin {
 			Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
 			Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
+            Settings.API_URL = config.getString("api.location");
 		}
 		if (Settings.DEBUG) {
 			Map<String, String> settings = new HashMap<>();
@@ -951,6 +952,7 @@ public class PlotMain extends JavaPlugin {
 			settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
 			settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
             settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
+            settings.put("API Location", "" + Settings.API_URL);
 			for (Entry<String, String> setting : settings.entrySet()) {
 				sendConsoleSenderMessage(C.PREFIX.s()
 						+ String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
@@ -1084,6 +1086,7 @@ public class PlotMain extends JavaPlugin {
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
+        options.put("api.location", Settings.API_URL);
 
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!config.contains(node.getKey())) {

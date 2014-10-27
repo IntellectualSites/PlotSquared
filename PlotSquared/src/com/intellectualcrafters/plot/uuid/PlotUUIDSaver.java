@@ -1,14 +1,18 @@
 package com.intellectualcrafters.plot.uuid;
 
 import com.google.common.collect.BiMap;
+import com.intellectualcrafters.json.JSONObject;
+import com.intellectualcrafters.json.JSONTokener;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.Settings;
 import com.intellectualcrafters.plot.StringWrapper;
 import com.intellectualcrafters.plot.UUIDHandler;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.UUID;
 
 /**
@@ -57,6 +61,37 @@ public class PlotUUIDSaver extends UUIDSaver {
 
     public void save(UUIDSet set) {
 
+    }
+
+    private static String insertDashUUID(String uuid) {
+        StringBuffer sb = new StringBuffer(uuid);
+        sb.insert(8, "-");
+        sb = new StringBuffer(sb.toString());
+        sb.insert(13, "-");
+        sb = new StringBuffer(sb.toString());
+        sb.insert(18, "-");
+        sb = new StringBuffer(sb.toString());
+        sb.insert(23, "-");
+        return sb.toString();
+    }
+
+    public UUID mojangUUID(String name) throws Exception {
+        URLConnection connection = new URL(Settings.API_URL + "?user=" + name).openConnection();
+        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+        JSONTokener tokener = new JSONTokener(connection.getInputStream());
+        JSONObject root = new JSONObject(tokener);
+        String uuid = root.getJSONObject(name).getString("uuid");
+        return UUID.fromString(insertDashUUID(uuid));
+    }
+
+    public String mojangName(UUID uuid) throws Exception {
+        URLConnection connection = new URL(
+                Settings.API_URL + "?user="
+                        + uuid.toString().replace("-", "")).openConnection();
+        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+        JSONTokener tokener = new JSONTokener(connection.getInputStream());
+        JSONObject root = new JSONObject(tokener);
+        return root.getJSONObject(uuid.toString().replace("-", "")).getString("username");
     }
 
     public UUIDSet get(String name) {

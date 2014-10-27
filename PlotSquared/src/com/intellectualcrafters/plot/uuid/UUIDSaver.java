@@ -14,4 +14,6 @@ public abstract class UUIDSaver {
     public abstract void save(UUIDSet set);
     public abstract UUIDSet get(String name);
     public abstract UUIDSet get(UUID uuid);
+    public abstract UUID mojangUUID(String name) throws Exception;
+    public abstract String mojangName(UUID uuid) throws Exception;
 }

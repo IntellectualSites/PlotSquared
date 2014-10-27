@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -77,19 +76,24 @@ public class UUIDHandler {
 		    if ((uuid = getUuidOnlinePlayer(nameWrap)) != null) {
 	            return uuid;
 	        }
-			try {
-				UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
-				uuid = fetcher.call().get(name);
-				add(nameWrap, uuid);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+            try {
+                return PlotMain.getUUIDSaver().mojangUUID(name);
+            }
+            catch(Exception e) {
+                try {
+                    UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
+                    uuid = fetcher.call().get(name);
+                    add(nameWrap, uuid);
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
 		}
 		else {
 			return getUuidOfflineMode(nameWrap);
 		}
-		return null;
+        return null;
 	}
 
 	/**
@@ -116,20 +120,23 @@ public class UUIDHandler {
 			return name;
 		}
 		if (online) {
-			try {
-				NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
-				name = fetcher.call().get(uuid);
-				add(new StringWrapper(name), uuid);
-				return name;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+            try {
+                return PlotMain.getUUIDSaver().mojangName(uuid);
+            } catch(Exception e) {
+                try {
+                    NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
+                    name = fetcher.call().get(uuid);
+                    add(new StringWrapper(name), uuid);
+                    return name;
+                } catch (Exception ex) {
+                    e.printStackTrace();
+                }
+            }
 		}
 		else {
 			return "unknown";
 		}
-		return "";
+        return "";
 	}
 
 	/**
