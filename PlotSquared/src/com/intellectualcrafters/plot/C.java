@@ -164,7 +164,7 @@ public enum C {
     /*
      * Biome
      */
-    NEED_BIOME("&cYou've got to specify a biome"),
+    NEED_BIOME("&cYou have got to specify a biome"),
     BIOME_SET_TO("&cPlot biome set to &c"),
     /*
      * Teleport / Entry
