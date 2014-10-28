@@ -15,7 +15,13 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    /**
+     * Schematic Save Path
+     */
     public static String SCHEMATIC_SAVE_PATH = "/var/www/schematics";
+    /**
+     * Max allowed plots
+     */
 	public static int MAX_PLOTS = 20;
 	/**
 	 * WorldGuard region on claimed plots
@@ -49,29 +55,27 @@ public class Settings {
      * Delete plots on ban?
      */
     public static boolean DELETE_PLOTS_ON_BAN = false;
-	/**
-	 * Update settings
-	 * 
-	 * @author Citymonstret
-	 */
-	public static String URL = "http://dev.bukkit.org/bukkit-plugins/plotsquared/";
-
+    /**
+     * Verbose?
+     */
 	public static boolean DEBUG = true;
-
+    /**
+     * Auto clear enabled
+     */
 	public static boolean AUTO_CLEAR = false;
+    /**
+     * Days until a plot gets cleared
+     */
 	public static int AUTO_CLEAR_DAYS = 365;
+    /**
+     * API Location
+     */
     public static String API_URL = "http://www.intellectualsites.com/minecraft.php";
+    /**
+     * Use the custom API
+     */
     public static boolean CUSTOM_API = true;
 
-	public static class Update {
-		/**
-		 * Update plugin?
-		 * 
-		 * @deprecated
-		 */
-		@Deprecated
-		public static boolean AUTO_UPDATE = false;
-	}
 
 	/**
 	 * Database settings
@@ -79,19 +83,49 @@ public class Settings {
 	 * @author Citymonstret
 	 */
 	public static class DB {
+        /**
+         * MongoDB enabled?
+         */
 		public static boolean USE_MONGO = false; /*
 												 * TODO: Implement Mongo
 												 * 
 												 * @Brandon
-												 */;
+												 */
+        /**
+         * SQLite enabled?
+         */
 		public static boolean USE_SQLITE = false;
+        /**
+         * MySQL Enabled?
+         */
 		public static boolean USE_MYSQL = true; /* NOTE: Fixed connector */
+        /**
+         * SQLite Database name
+         */
 		public static String SQLITE_DB = "storage";
+        /**
+         * MySQL Host name
+         */
 		public static String HOST_NAME = "localhost";
+        /**
+         * MySQL Port
+         */
 		public static String PORT = "3306";
+        /**
+         * MySQL DB
+         */
 		public static String DATABASE = "plot_db";
+        /**
+         * MySQL User
+         */
 		public static String USER = "root";
+        /**
+         * MySQL Password
+         */
 		public static String PASSWORD = "password";
+        /**
+         * MySQL Prefix
+         */
         public static String PREFIX = "";
 	}
 }

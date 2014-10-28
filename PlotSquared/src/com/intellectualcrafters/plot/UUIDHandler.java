@@ -34,22 +34,48 @@ import java.util.UUID;
  */
 public class UUIDHandler {
 
+    /**
+     * Online mode
+     * @see org.bukkit.Server#getOnlineMode()
+     */
 	private static boolean online = Bukkit.getServer().getOnlineMode();
 
+    /**
+     * Map containing names and UUID's
+     */
 	private static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
+    /**
+     * Get the map containing all names/uuids
+     * @return map with names + uuids
+     */
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return uuidMap;
     }
 
+    /**
+     * Check if a uuid is cached
+     * @param uuid to check
+     * @return true of the uuid is cached
+     */
 	public static boolean uuidExists(UUID uuid) {
 		return uuidMap.containsValue(uuid);
 	}
 
+    /**
+     * Check if a name is cached
+     * @param name to check
+     * @return true of the name is cached
+     */
 	public static boolean nameExists(StringWrapper name) {
 		return uuidMap.containsKey(name);
 	}
 
+    /**
+     * Add a set to the cache
+     * @param name to cache
+     * @param uuid to cache
+     */
 	public static void add(StringWrapper name, UUID uuid) {
 	    if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
 	        uuidMap.put(name, uuid);
@@ -57,7 +83,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param name
+	 * @param name to use as key
 	 * @return uuid
 	 */
 	public static UUID getUUID(String name) {
@@ -65,6 +91,7 @@ public class UUIDHandler {
 		if (uuidMap.containsKey(nameWrap)) {
 			return uuidMap.get(nameWrap);
 		}
+        @SuppressWarnings("deprecation")
 		Player player = Bukkit.getPlayer(name);
 		if (player!=null) {
 		    UUID uuid = player.getUniqueId();
@@ -107,7 +134,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param uuid
+	 * @param uuid to use as key
 	 * @return name (cache)
 	 */
 	private static StringWrapper loopSearch(UUID uuid) {
@@ -115,7 +142,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param uuid
+	 * @param uuid to use as key
 	 * @return Name
 	 */
 	public static String getName(UUID uuid) {
@@ -173,7 +200,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param name
+	 * @param name to use as key
 	 * @return UUID (name hash)
 	 */
 	private static UUID getUuidOfflineMode(StringWrapper name) {
@@ -183,7 +210,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param uuid
+	 * @param uuid to use as key
 	 * @return String - name
 	 */
 	private static String getNameOnlinePlayer(UUID uuid) {
@@ -197,7 +224,7 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param uuid
+	 * @param uuid to use as key
 	 * @return String - name
 	 */
 	private static String getNameOfflinePlayer(UUID uuid) {
@@ -211,10 +238,11 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param name
+	 * @param name to use as key
 	 * @return UUID
 	 */
 	private static UUID getUuidOnlinePlayer(StringWrapper name) {
+        @SuppressWarnings("deprecation")
 		Player player = Bukkit.getPlayer(name.value);
 		if (player == null) {
 			return null;
@@ -225,9 +253,10 @@ public class UUIDHandler {
 	}
 
 	/**
-	 * @param name
+	 * @param name to use as key
 	 * @return UUID (username hash)
 	 */
+    @SuppressWarnings("unused")
 	private static UUID getUuidOfflinePlayer(StringWrapper name) {
 		UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
 		add(name, uuid);
@@ -235,7 +264,11 @@ public class UUIDHandler {
 	}
 
 
-    /* Save UUIDS */
+    /**
+     * Handle saving of uuids
+     * @see com.intellectualcrafters.plot.uuid.UUIDSaver#globalSave(com.google.common.collect.BiMap)
+     */
+    @SuppressWarnings("unused")
     public static void handleSaving() {
         UUIDSaver saver = PlotMain.getUUIDSaver();
         // Should it save per UUIDSet or all of them? TODO: Let Jesse decide xD

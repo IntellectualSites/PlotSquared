@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * The plotMain api class.
  *
- * @author Citymonstret
+ * @author Citymonstret, Empire92
  */
 @SuppressWarnings({ "unused", "javadoc" })
 public class PlotAPI {

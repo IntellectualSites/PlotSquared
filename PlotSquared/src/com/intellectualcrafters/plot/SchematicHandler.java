@@ -21,10 +21,20 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Created by Citymonstret on 2014-09-15.
+ * Schematic Handler
+ * @author Citymonstret
+ * @author Empire92
  */
+@SuppressWarnings({"all"})
 public class SchematicHandler {
 
+    /**
+     * Paste a schematic
+     * @param location origin
+     * @param schematic schematic to paste
+     * @param plot plot to paste in
+     * @return true if succeeded
+     */
 	public static boolean paste(Location location, Schematic schematic, Plot plot) {
 		if (schematic == null) {
 			PlotMain.sendConsoleSenderMessage("Schematic == null :|");
@@ -73,6 +83,11 @@ public class SchematicHandler {
 		return true;
 	}
 
+    /**
+     * Get a schematic
+     * @param name to check
+     * @return schematic if found, else null
+     */
 	public static Schematic getSchematic(String name) {
 		{
 			File parent =
@@ -89,7 +104,7 @@ public class SchematicHandler {
 			return null;
 		}
 
-		Schematic schematic = null;
+		Schematic schematic;
 		try {
 			InputStream iStream = new FileInputStream(file);
 			NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
@@ -141,6 +156,10 @@ public class SchematicHandler {
 		return schematic;
 	}
 
+    /**
+     * Schematic Class
+     * @author Citymonstret
+     */
 	public static class Schematic {
 		private DataCollection[] blockCollection;
 		private Dimension schematicDimension;
@@ -165,6 +184,10 @@ public class SchematicHandler {
 		}
 	}
 
+    /**
+     * Schematic Dimensions
+     * @author Citymonstret
+     */
 	public static class Dimension {
 		private int x;
 		private int y;
@@ -191,9 +214,9 @@ public class SchematicHandler {
 	
 	/**
 	 * Saves a schematic to a file path
-	 * @param tag
-	 * @param path
-	 * @return
+	 * @param tag to save
+	 * @param path to save in
+	 * @return true if succeeded
 	 */
 	public static boolean save(CompoundTag tag, String path) {
 	    
@@ -217,9 +240,9 @@ public class SchematicHandler {
 	
 	/**
 	 * Gets the schematic of a plot
-	 * @param world
-	 * @param plot
-	 * @return
+	 * @param world to check
+	 * @param id plot
+	 * @return tag
 	 */
 	public static CompoundTag getCompoundTag(World world, PlotId id) {
 
@@ -255,7 +278,7 @@ public class SchematicHandler {
         int height = 256;
         int length = pos2.getBlockZ()-pos1.getBlockZ();
 
-        HashMap<String, Tag> schematic = new HashMap<String, Tag>();
+        HashMap<String, Tag> schematic = new HashMap<>();
         schematic.put("Width", new ShortTag("Width", (short) width));
         schematic.put("Length", new ShortTag("Length", (short) length));
         schematic.put("Height", new ShortTag("Height", (short) height));
@@ -269,17 +292,13 @@ public class SchematicHandler {
         byte[] blocks = new byte[width * height * length];
         byte[] addBlocks = null;
         byte[] blockData = new byte[width * height * length];
-
-        int count = 0;
         
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
                 for (int y = 0; y < height; y++) {
                     int index = y * width * length + z * width + x;
-                    
-                    count++;
-                    
-                    Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, 0 + y, pos1.getBlockZ() + z));
+
+                    Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, y, pos1.getBlockZ() + z));
                     
                     int id2 = block.getTypeId(); 
                     
@@ -294,7 +313,7 @@ public class SchematicHandler {
                     }
 
                     blocks[index] = (byte) id2;
-                    blockData[index] = (byte) block.getData();
+                    blockData[index] = block.getData();
                     
                     
                     // We need worldedit to save tileentity data or entities
@@ -311,10 +330,13 @@ public class SchematicHandler {
             schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
         }
 
-        CompoundTag schematicTag = new CompoundTag("Schematic", schematic);
-        return schematicTag;
+        return new CompoundTag("Schematic", schematic);
     }
 
+    /**
+     * Schematic Data Collection
+     * @author Citymonstret
+     */
 	public static class DataCollection {
 		private short block;
 		private byte data;

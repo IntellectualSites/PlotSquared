@@ -52,7 +52,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @awesome @author Citymonstret, Empire92 PlotMain class.
+ * PlotMain class.
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlotMain extends JavaPlugin {
 
@@ -66,8 +68,7 @@ public class PlotMain extends JavaPlugin {
      * The main configuration file
      */
 	public static YamlConfiguration config;
-	private static int config_ver = 1;
-	/**
+    /**
 	 * storage.properties
 	 */
 	public static File storageFile;
@@ -135,10 +136,10 @@ public class PlotMain extends JavaPlugin {
 	 * Check a range of permissions e.g. 'plots.plot.<0-100>'<br>
 	 * Returns highest integer in range.
 	 * 
-	 * @param player
-	 * @param stub
-	 * @param range
-	 * @return
+	 * @param player to check
+	 * @param stub to check
+	 * @param range tp check
+	 * @return permitted range
 	 */
 	public static int hasPermissionRange(Player player, String stub, int range) {
 		if (player==null || player.isOp()) {
@@ -160,10 +161,11 @@ public class PlotMain extends JavaPlugin {
 	 * - Op has all permissions <br>
 	 * - checks for '*' nodes
 	 * 
-	 * @param player
-	 * @param perms
-	 * @return
+	 * @param player to check
+	 * @param perms to check
+	 * @return true of player has permissions
 	 */
+    @SuppressWarnings("unused")
 	public static boolean hasPermissions(Player player, String[] perms) {
 		// Assumes null player is console.
 		if (player==null || player.isOp()) {
@@ -178,7 +180,7 @@ public class PlotMain extends JavaPlugin {
 				String[] nodes = perm.split("\\.");
 				StringBuilder n = new StringBuilder();
 				for (int i = 0; i < (nodes.length - 1); i++) {
-					n.append(nodes[i] + ".");
+					n.append(nodes[i]).append(".");
 					if (player.hasPermission(n + "*")) {
 						hasperm = true;
 						break;
@@ -206,9 +208,9 @@ public class PlotMain extends JavaPlugin {
 	 * - Op has all permissions <br>
 	 * - checks for '*' nodes
 	 * 
-	 * @param player
-	 * @param perm
-	 * @return
+	 * @param player to check
+	 * @param perm to check
+	 * @return true if player has the permission
 	 */
 	public static boolean hasPermission(Player player, String perm) {
 		if (player==null || player.isOp()) {
@@ -220,7 +222,7 @@ public class PlotMain extends JavaPlugin {
 		String[] nodes = perm.split("\\.");
 		StringBuilder n = new StringBuilder();
 		for (int i = 0; i < (nodes.length - 1); i++) {
-			n.append(nodes[i] + ".");
+			n.append(nodes[i]).append(".");
 			if (player.hasPermission(n + "*")) {
 				return true;
 			}
@@ -237,8 +239,8 @@ public class PlotMain extends JavaPlugin {
 	/**
 	 * All loaded plot worlds
 	 */
-	private static HashMap<String, PlotWorld> worlds = new HashMap<String, PlotWorld>();
-	private static HashMap<String, PlotManager> managers = new HashMap<String, PlotManager>();
+	private static HashMap<String, PlotWorld> worlds = new HashMap<>();
+	private static HashMap<String, PlotManager> managers = new HashMap<>();
 
 	/**
 	 * Get all plots
@@ -246,20 +248,20 @@ public class PlotMain extends JavaPlugin {
 	 * @return HashMap containing the plot ID and the plot object.
 	 */
 	public static Set<Plot> getPlots() {
-		ArrayList<Plot> myplots = new ArrayList<Plot>();
+		ArrayList<Plot> myplots = new ArrayList<>();
 		for (HashMap<PlotId, Plot> world : plots.values()) {
 			myplots.addAll(world.values());
 		}
-		return new HashSet<Plot>(myplots);
+		return new HashSet<>(myplots);
 	}
 
 	/**
-	 * @param player
-	 * @return
+	 * @param player player
+	 * @return Set Containing the players plots
 	 */
 	public static Set<Plot> getPlots(Player player) {
 		UUID uuid = player.getUniqueId();
-		ArrayList<Plot> myplots = new ArrayList<Plot>();
+		ArrayList<Plot> myplots = new ArrayList<>();
 		for (HashMap<PlotId, Plot> world : plots.values()) {
 			for (Plot plot : world.values()) {
 				if (plot.hasOwner()) {
@@ -269,13 +271,13 @@ public class PlotMain extends JavaPlugin {
 				}
 			}
 		}
-		return new HashSet<Plot>(myplots);
+		return new HashSet<>(myplots);
 	}
 
 	/**
-	 * @param world
-	 * @param player
-	 * @return
+	 * @param world plot world
+	 * @param player plot owner
+	 * @return players plots
 	 */
 	public static Set<Plot> getPlots(World world, Player player) {
 		UUID uuid = player.getUniqueId();
@@ -298,8 +300,8 @@ public class PlotMain extends JavaPlugin {
     }
 
 	/**
-	 * @param world
-	 * @return
+	 * @param world plot world
+	 * @return plots in world
 	 */
 	public static HashMap<PlotId, Plot> getPlots(World world) {
 		if (plots.containsKey(world.getName())) {
@@ -316,31 +318,31 @@ public class PlotMain extends JavaPlugin {
 	}
 
 	/**
-	 * @return
+	 * @return plots worlds
 	 */
 	public static String[] getPlotWorldsString() {
 		return plots.keySet().toArray(new String[0]);
 	}
 
 	/**
-     * @param world
-     * @return
+     * @param world plotworld(?)
+     * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(World world) {
         return (worlds.containsKey(world.getName()));
     }
     
     /**
-     * @param world
-     * @return
+     * @param world plotworld(?)
+     * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(String world) {
         return (worlds.containsKey(world));
     }
 
 	/**
-	 * @param world
-	 * @return
+	 * @param world World to get manager for
+	 * @return manager for world
 	 */
 	public static PlotManager getPlotManager(World world) {
 		if (managers.containsKey(world.getName())) {
@@ -1074,7 +1076,8 @@ public class PlotMain extends JavaPlugin {
 	 * SETUP: settings.yml
 	 */
 	private static void setupConfig() {
-		config.set("version", config_ver);
+        int config_ver = 1;
+        config.set("version", config_ver);
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("auto_update", false);
 		options.put("worldguard.enabled", Settings.WORLDGUARD);
@@ -1426,7 +1429,8 @@ public class PlotMain extends JavaPlugin {
 	    managers.remove(world);
 	    worlds.remove(world);
 	}
-	
+
+    @SuppressWarnings("unused")
 	public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
