@@ -17,6 +17,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  */
 public class PWE {
 
+    @SuppressWarnings("deprecation")
 	public static void setMask(Player p, Location l) {
 		try {
 			LocalSession s;
@@ -75,24 +76,26 @@ public class PWE {
 		}
 	}
 
+    @SuppressWarnings("unused")
 	public static boolean noMask(LocalSession s) {
-		try {
-			com.sk89q.worldedit.masks.Mask mask = s.getMask();
-			return mask == null;
-		}
-		catch (Throwable e) {
-			return true;
-		}
+//		try {
+//			com.sk89q.worldedit.masks.Mask mask = s.getMask();
+//			return mask == null;
+//		}
+//		catch (Throwable e) {
+//			return true;
+//		}
+        return true;
 	}
 
 	public static void removeMask(Player p, LocalSession s) {
-		try {
-			s.setMask(null);
-		}
-		catch (Throwable e) {
-			com.sk89q.worldedit.masks.Mask mask = null;
-			s.setMask(mask);
-		}
+//		try {
+//			s.setMask(null);
+//		}
+//		catch (Throwable e) {
+//			com.sk89q.worldedit.masks.Mask mask = null;
+//			s.setMask(mask);
+//		}
 	}
 
 	public static void removeMask(Player p) {
