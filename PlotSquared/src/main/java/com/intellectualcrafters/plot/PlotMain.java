@@ -8,10 +8,7 @@
 
 package com.intellectualcrafters.plot;
 
-import ca.mera.CameraAPI;
-
 import com.intellectualcrafters.plot.Logger.LogLevel;
-import com.intellectualcrafters.plot.commands.Camera;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
@@ -102,10 +99,6 @@ public class PlotMain extends JavaPlugin {
 	 * BarAPI object
 	 */
 	public static BarAPI barAPI = null;
-	/**
-	 * CameraAPI object
-	 */
-	public static CameraAPI cameraAPI;
 
 	public static WorldGuardPlugin worldGuard = null;
 	public static WorldGuardListener worldGuardListener = null;
@@ -690,12 +683,7 @@ public class PlotMain extends JavaPlugin {
 
         defaultFlags();
 
-		if (getServer().getPluginManager().getPlugin("CameraAPI") != null) {
-			cameraAPI = CameraAPI.getInstance();
-			Camera camera = new Camera();
-			MainCommand.subCommands.add(camera);
-			getServer().getPluginManager().registerEvents(camera, this);
-		}
+
 		if (getServer().getPluginManager().getPlugin("BarAPI") != null) {
 			barAPI = (BarAPI) getServer().getPluginManager().getPlugin("BarAPI");
 		}
