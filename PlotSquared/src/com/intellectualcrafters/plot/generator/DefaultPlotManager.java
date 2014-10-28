@@ -221,6 +221,10 @@ public class DefaultPlotManager extends PlotManager {
 	 */
 	@Override
 	public boolean clearPlot(World world, Plot plot) {
+	    
+	    // TODO LOAD CHUNKS TO CLEAR IT PROPERLY
+	    
+	    
 		DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain.getWorldSettings(world));
 
 		final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
