@@ -143,11 +143,11 @@ public class PlotMain extends JavaPlugin {
 	 */
 	public static int hasPermissionRange(Player player, String stub, int range) {
 		if (player==null || player.isOp()) {
-			return range;
-		}
-		if (player.hasPermission(stub + ".*")) {
-			return range;
-		}
+            return Integer.MAX_VALUE;
+        }
+        if (player.hasPermission(stub + ".*")) {
+            return Integer.MAX_VALUE;
+        }
 		for (int i = range; i > 0; i--) {
 			if (player.hasPermission(stub + "." + i)) {
 				return i;

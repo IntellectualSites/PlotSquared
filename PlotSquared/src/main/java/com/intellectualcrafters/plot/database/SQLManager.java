@@ -64,6 +64,7 @@ public class SQLManager extends AbstractDB {
 
 	@Override
 	public void createAllSettingsAndHelpers(ArrayList<Plot> plots) {
+	    // TODO SEVERE [ More than 5000 plots will fail in a single SQLite query.
 		HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<String, HashMap<PlotId, Integer>>();
 		HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<Integer, ArrayList<UUID>>();
 		try {
@@ -160,7 +161,7 @@ public class SQLManager extends AbstractDB {
 	@Override
 	public void createPlots(ArrayList<Plot> plots) {
 		
-		// TODO collect list of plots to check if plot exists.
+		// TODO SEVERE [ More than 5000 plots will fail in a single SQLite query.
 		
 		if (plots.size() == 0) {
 			return;
@@ -169,9 +170,9 @@ public class SQLManager extends AbstractDB {
 				new StringBuilder(CREATE_PLOTS);
 
 		for (int i = 0; i < (plots.size() - 1); i++) {
-			statement.append("(?, ?, ?, ?),");
+			statement.append("(?,?,?,?),");
 		}
-		statement.append("(?, ?, ?, ?)");
+		statement.append("(?,?,?,?)");
 
 		PreparedStatement stmt = null;
 		try {
@@ -246,7 +247,7 @@ public class SQLManager extends AbstractDB {
 					+ "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_ratings` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 			if (add_constraint) {
-				stmt.addBatch("ALTER TABLE `" + PREFIX + "plot_settings` ADD CONSTRAINT `"+ PREFIX + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `plot` (`id`) ON DELETE CASCADE");
+				stmt.addBatch("ALTER TABLE `" + PREFIX + "plot_settings` ADD CONSTRAINT `"+ PREFIX + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `"+PREFIX+"plot` (`id`) ON DELETE CASCADE");
 			}
 
 		}
@@ -366,15 +367,16 @@ public class SQLManager extends AbstractDB {
 	 */
 	@Override
 	public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
+	    HashMap<String, HashMap<PlotId, Plot>> newplots = new HashMap<String, HashMap<PlotId, Plot>>();
 		try {
 			DatabaseMetaData data = connection.getMetaData();
-			ResultSet rs = data.getColumns(null, null, "plot", "plot_id");
+			ResultSet rs = data.getColumns(null, null, PREFIX+"plot", "plot_id");
 			boolean execute = rs.next();
 			if (execute) {
 				Statement statement = connection.createStatement();
 				statement.addBatch("ALTER IGNORE TABLE `" + PREFIX + "plot` ADD `plot_id_x` int(11) DEFAULT 0");
 				statement.addBatch("ALTER IGNORE TABLE `" + PREFIX +"plot` ADD `plot_id_z` int(11) DEFAULT 0");
-				statement.addBatch("UPDATE `plot` SET\n" + "    `plot_id_x` = IF("
+				statement.addBatch("UPDATE `"+PREFIX+"plot` SET\n" + "    `plot_id_x` = IF("
 						+ "        LOCATE(';', `plot_id`) > 0,"
 						+ "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," + "        `plot_id`"
 						+ "    )," + "    `plot_id_z` = IF(" + "        LOCATE(';', `plot_id`) > 0,"
@@ -384,7 +386,7 @@ public class SQLManager extends AbstractDB {
 				statement.executeBatch();
 				statement.close();
 			}
-			rs = data.getColumns(null, null, "plot_settings", "merged");
+			rs = data.getColumns(null, null, PREFIX + "plot_settings", "merged");
 			if (!rs.next()) {
 				Statement statement = connection.createStatement();
 				statement.addBatch("ALTER TABLE `" + PREFIX + "plot_settings` ADD `merged` int(11) DEFAULT NULL");
@@ -395,7 +397,9 @@ public class SQLManager extends AbstractDB {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<String, HashMap<PlotId, Plot>>();
+		HashMap<Integer, Plot> plots = new HashMap<Integer, Plot>(); 
+		
+		
 		Statement stmt = null;
 		try {
 
@@ -403,104 +407,216 @@ public class SQLManager extends AbstractDB {
 			if (PlotMain.config.contains("worlds")) {
 				worlds = PlotMain.config.getConfigurationSection("worlds").getKeys(false);
 			}
-
+			
+			HashMap<String, UUID> uuids = new HashMap<String, UUID>();
+			HashMap<String, Integer> noExist = new HashMap<String, Integer>();
+			
+			/*
+             * Getting plots
+             */
 			stmt = connection.createStatement();
 			ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world` FROM `" + PREFIX +"plot`");
 			PlotId plot_id;
 			int id;
 			Plot p;
-			HashMap<String, Integer> noExist = new HashMap<String, Integer>();
+			String o;
+			UUID user;
 			while (r.next()) {
 				plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
 				id = r.getInt("id");
 				String worldname = r.getString("world");
-				HashMap<String, Object> settings = getSettings(id);
-				UUID owner = UUID.fromString(r.getString("owner"));
-				Biome plotBiome = Biome.FOREST;
-				String[] flags_string;
-				if (settings.get("flags") == null) {
-					flags_string = new String[] {};
+				if (!worlds.contains(worldname)) {
+				    if (noExist.containsKey(worldname)) {
+				        noExist.put(worldname,noExist.get(worldname)+1);
+				    }
+				    else {
+				        noExist.put(worldname,1);
+				    }
 				}
-				else {
-					flags_string = ((String) settings.get("flags")).split(",");
+				o = r.getString("owner");
+				user = uuids.get(o);
+				if (user==null) {
+				    user = UUID.fromString(o);
+				    uuids.put(o, user);
 				}
-				ArrayList<Flag> flags = new ArrayList<Flag>();
-				boolean exception = false;
-				for (int i = 0; i < flags_string.length; i++) {
-					if (flags_string[i].contains(":")) {
-						String[] split = flags_string[i].split(":");
-						try {
-						    flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1]));
-						}
-						catch (Exception e) {
-						    exception = true;
-						    // invalid flag... ignoring it for now.
-						}
-					}
-					else {
-						flags.add(new Flag(FlagManager.getFlag(flags_string[i], true), ""));
-					}
-				}
-				
-				if (exception) {
-				    setFlags(worldname, id, flags.toArray(new Flag[0]));
-				}
-				
-				ArrayList<UUID> helpers = plotHelpers(id);
-				ArrayList<UUID> trusted = plotTrusted(id);
-				ArrayList<UUID> denied = plotDenied(id);
-
-				String alias = (String) settings.get("alias");
-				if ((alias == null) || alias.equalsIgnoreCase("NEW")) {
-					alias = "";
-				}
-				PlotHomePosition position = null;
-				for (PlotHomePosition plotHomePosition : PlotHomePosition.values()) {
-					if (settings.get("position") == null) {
-						position = PlotHomePosition.DEFAULT;
-						break;
-					}
-					if (plotHomePosition.isMatching((String) settings.get("position"))) {
-						position = plotHomePosition;
-					}
-				}
-				if (position == null) {
-					position = PlotHomePosition.DEFAULT;
-				}
-				int merged_int = settings.get("merged") == null ? 0 : (int) settings.get("merged");
-
-				boolean[] merged = new boolean[4];
-				for (int i = 0; i < 4; i++) {
-					merged[3 - i] = (merged_int & (1 << i)) != 0;
-				}
-				p = new Plot(plot_id, owner, plotBiome, helpers, trusted, denied, alias, position, flags.toArray(new Flag[0]), worldname, merged);
-				if (plots.containsKey(worldname)) {
-					plots.get(worldname).put((plot_id), p);
-				}
-				else {
-				    HashMap<PlotId, Plot> map = new HashMap<PlotId, Plot>();
-                    map.put((plot_id), p);
-                    plots.put(worldname, map);
-					if (!worlds.contains(p.world)) {
-						if (noExist.containsKey(worldname)) {
-							noExist.put(worldname,noExist.get(worldname)+1);
-						}
-						else {
-							noExist.put(worldname,1);
-						}
-					}
-				}
+				p = new Plot(plot_id, user, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[0]);
+				plots.put(id, p);
 			}
+			stmt.close();
+			
+			/*
+			 * Getting helpers
+			 */
+			stmt = connection.createStatement();
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_helpers`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                o = r.getString("user_uuid");
+                user = uuids.get(o);
+                if (user==null) {
+                    user = UUID.fromString(o);
+                    uuids.put(o, user);
+                }
+                Plot plot = plots.get(id);
+                if (plot!=null) {
+                    plot.addHelper(user);
+                }
+                else {
+                    PlotMain.sendConsoleSenderMessage("&cPLOT "+id+" in plot_helpers does not exist. Please create the plot or remove this entry.");
+                }
+            }
+            stmt.close();
+            
+            /*
+             * Getting trusted
+             */
+            stmt = connection.createStatement();
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_trusted`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                o = r.getString("user_uuid");
+                user = uuids.get(o);
+                if (user==null) {
+                    user = UUID.fromString(o);
+                    uuids.put(o, user);
+                }
+                Plot plot = plots.get(id);
+                if (plot!=null) {
+                    plot.addTrusted(user);
+                }
+                else {
+                    PlotMain.sendConsoleSenderMessage("&cPLOT "+id+" in plot_trusted does not exist. Please create the plot or remove this entry.");
+                }
+            }
+            stmt.close();
+            
+            /*
+             * Getting denied
+             */
+            stmt = connection.createStatement();
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_denied`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                o = r.getString("user_uuid");
+                user = uuids.get(o);
+                if (user==null) {
+                    user = UUID.fromString(o);
+                    uuids.put(o, user);
+                }
+                Plot plot = plots.get(id);
+                if (plot!=null) {
+                    plot.addDenied(user);
+                }
+                else {
+                    PlotMain.sendConsoleSenderMessage("&cPLOT "+id+" in plot_denied does not exist. Please create the plot or remove this entry.");
+                }
+            }
+            stmt.close();
+			
+            stmt = connection.createStatement();
+            r = stmt.executeQuery("SELECT * FROM `" + PREFIX + "plot_settings`");
+            String var;
+            Object val;
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                Plot plot = plots.get(id);
+                if (plot!=null) {
+                    
+                    String b = r.getString("biome");
+                    Biome biome = null;
+                    if (b!=null) {
+                        for (Biome mybiome : Biome.values()) {
+                            if (mybiome.toString().equalsIgnoreCase(b)) {
+                                biome = mybiome;
+                                break;
+                            }
+                        }
+                    }
+                    if (biome==null) {
+                        biome = Biome.FOREST;
+                    }
+                    plot.settings.setBiome(biome);
+                    
+                    String alias = r.getString("alias");
+                    if (alias!=null) {
+                        plot.settings.setAlias(alias);
+                    }
+                    
+                    PlotHomePosition position = null;
+                    String pos = r.getString("position");
+                    if (pos!=null) {
+                        for (PlotHomePosition plotHomePosition : PlotHomePosition.values()) {
+                            if (plotHomePosition.isMatching(pos)) {
+                                if (plotHomePosition!=PlotHomePosition.DEFAULT) {
+                                    plot.settings.setPosition(plotHomePosition);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    Integer m = r.getInt("merged");
+                    if (m!=null) {
+                        boolean[] merged = new boolean[4];
+                        for (int i = 0; i < 4; i++) {
+                            merged[3 - i] = (((int) m) & (1 << i)) != 0;
+                        }
+                        plot.settings.setMerged(merged);
+                    }
+                    else {
+                        plot.settings.setMerged(new boolean[] {false, false, false, false});
+                    }
+                    
+                    String[] flags_string;
+                    String myflags = r.getString("flags");
+                    if (myflags == null) {
+                        flags_string = new String[] {};
+                    }
+                    else {
+                        flags_string = myflags.split(",");
+                    }
+                    ArrayList<Flag> flags = new ArrayList<Flag>();
+                    boolean exception = false;
+                    for (int i = 0; i < flags_string.length; i++) {
+                        if (flags_string[i].contains(":")) {
+                            String[] split = flags_string[i].split(":");
+                            try {
+                                flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1]));
+                            }
+                            catch (Exception e) {
+                                exception = true;
+                            }
+                        }
+                        else {
+                            flags.add(new Flag(FlagManager.getFlag(flags_string[i], true), ""));
+                        }
+                    }
+                    if (exception) {
+                        PlotMain.sendConsoleSenderMessage("&cPlot "+id+" had an invalid flag. A fix has been attempted.");
+                        setFlags(id, flags.toArray(new Flag[0]));
+                    }
+                    plot.settings.setFlags(flags.toArray(new Flag[0]));
+                }
+                else {
+                    PlotMain.sendConsoleSenderMessage("&cPLOT "+id+" in plot_settings does not exist. Please create the plot or remove this entry.");
+                }
+            }
+            stmt.close();
+            for (Plot plot:plots.values()) {
+                String world = plot.world;
+                if (!newplots.containsKey(world)) {
+                    newplots.put(world, new HashMap<PlotId, Plot>());
+                }
+                newplots.get(world).put(plot.id, plot);
+            }
 			for (String worldname: noExist.keySet()) {
 				PlotMain.sendConsoleSenderMessage("&c[WARNING] Found "+noExist.get(worldname)+" plots in DB for non existant world; '"+worldname+"'!!!\n&c - Please create this world, or remove the plots from the DB using the purge command!");
 			}
-			stmt.close();
 		}
 		catch (SQLException e) {
 			Logger.add(LogLevel.WARNING, "Failed to load plots.");
 			e.printStackTrace();
 		}
-		return plots;
+		return newplots;
 	}
 
 
@@ -561,7 +677,7 @@ public class SQLManager extends AbstractDB {
 		});
 	}
 	
-    public void setFlags(final String world, final int id, final Flag[] flags) {
+    public void setFlags(final int id, final Flag[] flags) {
         ArrayList<Flag> newflags = new ArrayList<Flag>();
         for (Flag flag : flags) {
             if (flag!=null && flag.getKey()!=null && !flag.getKey().equals("")) {
@@ -918,7 +1034,7 @@ public class SQLManager extends AbstractDB {
 			public void run() {
 				try {
 					PreparedStatement statement =
-							connection.prepareStatement("DELETE FROM `plot_helpers` WHERE `" + PREFIX + "plot_plot_id` = ? AND `user_uuid` = ?");
+							connection.prepareStatement("DELETE FROM `"+PREFIX+"+plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
 					statement.setInt(1, getId(world, plot.id));
 					statement.setString(2, player.getUniqueId().toString());
 					statement.executeUpdate();
@@ -943,7 +1059,7 @@ public class SQLManager extends AbstractDB {
 			public void run() {
 				try {
 					PreparedStatement statement =
-							connection.prepareStatement("DELETE FROM `plot_trusted` WHERE `" + PREFIX + "plot_plot_id` = ? AND `user_uuid` = ?");
+							connection.prepareStatement("DELETE FROM `"+PREFIX+"plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
 					statement.setInt(1, getId(world, plot.id));
 					statement.setString(2, player.getUniqueId().toString());
 					statement.executeUpdate();
