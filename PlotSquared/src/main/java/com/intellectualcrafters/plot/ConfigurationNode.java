@@ -1,10 +1,9 @@
 package com.intellectualcrafters.plot;
 
-import java.util.Arrays;
-
+import com.intellectualcrafters.plot.Configuration.SettingValue;
 import org.apache.commons.lang.StringUtils;
 
-import com.intellectualcrafters.plot.Configuration.SettingValue;
+import java.util.Arrays;
 
 public class ConfigurationNode {
 	private String constant;
