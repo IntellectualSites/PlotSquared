@@ -82,9 +82,16 @@ public class PWE {
 //			com.sk89q.worldedit.masks.Mask mask = s.getMask();
 //			return mask == null;
 //		}
+
+
+
 //		catch (Throwable e) {
-//			return true;
-//		}
+//
+//
+// 	return true;
+//
+//
+// 		}
         return true;
 	}
 
