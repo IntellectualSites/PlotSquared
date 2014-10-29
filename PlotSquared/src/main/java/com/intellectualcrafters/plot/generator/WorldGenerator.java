@@ -71,7 +71,7 @@ public class WorldGenerator extends PlotGenerator {
 		return manager;
 	}
 	/**
-	 * Allow spawning everywhere (up to server owners to keep it safe)
+	 * Allow spawning everywhere
 	 */
 	@Override
     public boolean canSpawn(World world, int x, int z) {

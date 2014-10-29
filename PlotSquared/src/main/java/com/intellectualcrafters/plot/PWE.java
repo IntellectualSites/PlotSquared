@@ -10,6 +10,8 @@ import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.function.mask.RegionMask;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
 /**
@@ -55,8 +57,7 @@ public class PWE {
 						LocalWorld lw = PlotMain.worldEdit.wrapPlayer(p).getWorld();
 
 						CuboidRegion region = new CuboidRegion(lw, bvec, tvec);
-						com.sk89q.worldedit.masks.RegionMask mask = new com.sk89q.worldedit.masks.RegionMask(region);
-
+						RegionMask mask = new RegionMask(region);
 						s.setMask(mask);
 						return;
 					}
@@ -65,8 +66,7 @@ public class PWE {
 			if (noMask(s)) {
 				BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
 				Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
-
-				s.setMask(new com.sk89q.worldedit.masks.RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
+				s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
 			}
 		}
 		catch (Exception e) {
@@ -76,33 +76,13 @@ public class PWE {
 		}
 	}
 
-    @SuppressWarnings("unused")
 	public static boolean noMask(LocalSession s) {
-//		try {
-//			com.sk89q.worldedit.masks.Mask mask = s.getMask();
-//			return mask == null;
-//		}
-
-
-
-//		catch (Throwable e) {
-//
-//
-// 	return true;
-//
-//
-// 		}
-        return true;
+		return s.getMask() == null;
 	}
 
 	public static void removeMask(Player p, LocalSession s) {
-//		try {
-//			s.setMask(null);
-//		}
-//		catch (Throwable e) {
-//			com.sk89q.worldedit.masks.Mask mask = null;
-//			s.setMask(mask);
-//		}
+	    Mask mask = null;
+	    s.setMask(mask);
 	}
 
 	public static void removeMask(Player p) {
