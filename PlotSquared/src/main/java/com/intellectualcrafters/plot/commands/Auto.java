@@ -27,7 +27,9 @@ public class Auto extends SubCommand {
 		super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
 	}
 
-	// TODO auto claim a mega plot!!!!!!!!!!!!
+	public static PlotId lastPlot = new PlotId(0,0);
+	
+	// TODO auto claim a mega plot with schematic
 	@Override
 	public boolean execute(Player plr, String... args) {
 		World world;
@@ -109,6 +111,15 @@ public class Auto extends SubCommand {
 		int x = 0, z = 0, q = 100;
 		PlotId id;
 		if ((size_x == 1) && (size_z == 1)) {
+		    while (!br) {
+		        Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
+                if (plot==null || plot.owner == null) {
+                    plot = PlotHelper.getPlot(world, Auto.lastPlot);
+                    boolean result = Claim.claimPlot(plr, plot, true);
+                    br = !result;
+                }
+                Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
+		    }
 			while (!br) {
 				id = new PlotId(x, z);
 				if (PlotHelper.getPlot(world, id).owner == null) {
@@ -133,39 +144,69 @@ public class Auto extends SubCommand {
 			}
 		}
 		else {
-			while (!br) {
-				PlotId start = new PlotId(x, z);
-				PlotId end = new PlotId((x + size_x) - 1, (z + size_z) - 1);
-				if (isUnowned(world, start, end)) {
-					for (int i = start.x; i <= end.x; i++) {
-						for (int j = start.y; j <= end.y; j++) {
-							Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
-							boolean teleport = ((i == end.x) && (j == end.y));
-							Claim.claimPlot(plr, plot, teleport);
-						}
-					}
-					if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {
-						return false;
-					}
-					br = true;
-				}
-				if ((z < q) && ((z - x) < q)) {
-					z += size_z;
-				}
-				else
-					if (x < q) {
-						x += size_x;
-						z = q - 100;
-					}
-					else {
-						q += 100;
-						x = q;
-						z = q;
-					}
-			}
+		    boolean claimed = true;
+		    while (!br) {
+		        PlotId start = getNextPlot(Auto.lastPlot, 1);
+		        
+		        if (claimed) {
+		            if (PlotMain.getPlots(world).get(start) == null || PlotMain.getPlots(world).get(start).owner == null) {
+		                Auto.lastPlot = start;
+		                continue;
+		            }
+		        }
+		        
+                PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
+                if (isUnowned(world, start, end)) {
+                    for (int i = start.x; i <= end.x; i++) {
+                        for (int j = start.y; j <= end.y; j++) {
+                            Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
+                            boolean teleport = ((i == end.x) && (j == end.y));
+                            Claim.claimPlot(plr, plot, teleport);
+                        }
+                    }
+                    if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {
+                        return false;
+                    }
+                    br = true;
+                }
+		    }
 		}
 		return true;
 	}
+	
+	public static PlotId getNextPlot(PlotId id, int step) {
+        int absX = Math.abs(id.x);
+        int absY = Math.abs(id.y);
+        if (absX > absY) {
+            if (id.x > 0) {
+                return new PlotId(id.x, id.y + 1);
+            }
+            else {
+                return new PlotId(id.x, id.y - 1);
+            }
+        }
+        else if (absY > absX ){
+            if (id.y > 0) {
+                return new PlotId(id.x - 1, id.y);
+            }
+            else {
+                return new PlotId(id.x + 1, id.y);
+            }
+        }
+        else {
+            if (id.x==id.y && id.x > 0) {
+                return new PlotId(id.x, id.y + step);
+            }
+            if (id.x==absX) {
+                return new PlotId(id.x, id.y + 1);
+            }
+            if (id.y == absY) {
+                return new PlotId(id.x, id.y - 1);
+            }
+            return new PlotId(id.x + 1, id.y);
+        }
+    }
+	
 
 	public boolean isUnowned(World world, PlotId pos1, PlotId pos2) {
 		for (int x = pos1.x; x <= pos2.x; x++) {

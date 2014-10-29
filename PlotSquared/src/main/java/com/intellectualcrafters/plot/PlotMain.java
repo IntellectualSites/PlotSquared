@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.Logger.LogLevel;
+import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
@@ -475,6 +476,9 @@ public class PlotMain extends JavaPlugin {
 							    PlotHelper.removeSign(worldobj, plot);
                                 DBFunc.delete(world, plot);
                                 removePlot(world, plot.id, true);
+                                if (Math.abs(plot.id.x)<Math.abs(Auto.lastPlot.x) && Math.abs(plot.id.y)<Math.abs(Auto.lastPlot.y)) {
+                                    Auto.lastPlot = plot.id;
+                                }
                             }
 						}
 					}

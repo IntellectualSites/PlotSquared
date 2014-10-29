@@ -58,6 +58,9 @@ public class Delete extends SubCommand {
 		if (result) {
 			plot.clear(plr);
 			DBFunc.delete(plr.getWorld().getName(), plot);
+			if (Math.abs(plot.id.x)<=Math.abs(Auto.lastPlot.x) && Math.abs(plot.id.y)<=Math.abs(Auto.lastPlot.y)) {
+                Auto.lastPlot = plot.id;
+            }
 		}
 		else {
 			PlayerFunctions.sendMessage(plr, "Plot clearing has been denied.");

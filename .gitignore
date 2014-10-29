@@ -95,3 +95,5 @@ local.properties
 hs_err_pid*
 .classpath
 .project
+/target
+/plotsquared/target
