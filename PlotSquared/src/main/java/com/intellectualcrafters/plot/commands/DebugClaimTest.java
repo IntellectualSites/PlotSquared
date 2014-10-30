@@ -43,7 +43,7 @@ import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 public class DebugClaimTest extends SubCommand {
 
 	public DebugClaimTest() {
-		super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "claim", CommandCategory.INFO, false);
+		super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "claim", CommandCategory.DEBUG, false);
 	}
 
 	@Override

@@ -120,7 +120,8 @@ public abstract class SubCommand {
 		CLAIMING("Claiming"),
 		TELEPORT("Teleportation"),
 		ACTIONS("Actions"),
-		INFO("Information");
+		INFO("Information"),
+		DEBUG("Debug");
 		private String name;
 
 		CommandCategory(String name) {

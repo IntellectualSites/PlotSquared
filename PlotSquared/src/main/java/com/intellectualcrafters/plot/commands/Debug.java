@@ -34,7 +34,7 @@ public class Debug extends SubCommand {
 	// private extends SubCommand^Implements {Command, Information} from
 	// >>\\S.txt6\\
 	public Debug() {
-		super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.INFO, false);
+		super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.DEBUG, false);
 		{
 			/**
 			 * This.
