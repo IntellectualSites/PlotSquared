@@ -211,7 +211,7 @@ public enum C {
     
     PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),
     PLOT_INFO_TRUSTED("&6Trusted&7: %trusted%"),
-    PLOT_INFO_DENIED("&6DENIED&7: %denied%"),
+    PLOT_INFO_DENIED("&6Denied&7: %denied%"),
     PLOT_INFO_FLAGS("&6Flags&7: %flags%"),
     PLOT_INFO_BIOME("&6Biome&7: %biome%"),
     PLOT_INFO_RATING("&6Rating&7: %rating%"),
