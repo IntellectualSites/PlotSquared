@@ -123,6 +123,27 @@ public class PlotListener {
         }
     }
 
+    public static boolean booleanFlag(Plot plot, String flag) {
+        return plot.settings.getFlag(flag) != null && getBooleanFlag(plot.settings.getFlag(flag).getValue()).equals("true");
+    }
+
+    private static String getBooleanFlag(String value) {
+        switch(value) {
+            case "on":
+            case "1":
+            case "true":
+            case "enabled":
+                return "true";
+            case "off":
+            case "0":
+            case "false":
+            case "disabled":
+                return "false";
+            default:
+                return null;
+        }
+    }
+
     private static GameMode getGameMode(String str) {
         switch (str) {
             case "creative":
