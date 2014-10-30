@@ -16,9 +16,7 @@ import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
-import com.intellectualcrafters.plot.listeners.PlayerEvents;
-import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.listeners.WorldGuardListener;
+import com.intellectualcrafters.plot.listeners.*;
 import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -680,7 +678,9 @@ public class PlotMain extends JavaPlugin {
 		});
 
 		getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-
+        PlotPlusListener.startRunnable(this);
+        getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
+        getServer().getPluginManager().registerEvents(new ForceFieldListener(this), this);
         defaultFlags();
 
 
@@ -1282,7 +1282,98 @@ public class PlotMain extends JavaPlugin {
         booleanFlags.put(Material.DROPPER, "dropper");
     }
 
+    private static void addPlusFlags() {
+        List<String> booleanFlags = Arrays.asList(
+                "notify-enter",
+                "notify-leave",
+                "item-drop",
+                "invincible",
+                "instabreak",
+                "drop-protection",
+                "forcefield"
+        );
+        List<String> intervalFlags = Arrays.asList(
+                "feed",
+                "heal"
+        );
+        List<String> stringFlags = Arrays.asList(
+                "greeting",
+                "farewell"
+        );
+        for(String flag : stringFlags) {
+            FlagManager.addFlag(new AbstractFlag(flag) {
+                @Override
+                public String parseValue(String value) {
+                    return value;
+                }
+
+                @Override
+                public String getValueDesc() {
+                    return "Value must be a string, supports color codes (&)";
+                }
+            });
+        }
+        for(String flag : intervalFlags) {
+            FlagManager.addFlag(new AbstractFlag(flag) {
+                @Override
+                public String parseValue(String value) {
+                    int seconds;
+                    int amount;
+                    String[] values = value.split(" ");
+                    if (values.length < 2) {
+                        seconds = 1;
+                        try {
+                            amount = Integer.parseInt(values[0]);
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    } else {
+                        try {
+                            amount = Integer.parseInt(values[0]);
+                            seconds = Integer.parseInt(values[1]);
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    }
+                    return amount + " " + seconds;
+                }
+
+                @Override
+                public String getValueDesc() {
+                    return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
+                }
+            });
+        }
+        for(String flag : booleanFlags) {
+            FlagManager.addFlag(new AbstractFlag(flag) {
+                @Override
+                public String parseValue(String value) {
+                    switch (value) {
+                        case "on":
+                        case "1":
+                        case "true":
+                        case "enabled":
+                            return "true";
+                        case "off":
+                        case "0":
+                        case "false":
+                        case "disabled":
+                            return "false";
+                        default:
+                            return null;
+                    }
+                }
+
+                @Override
+                public String getValueDesc() {
+                    return "Value must be true/false, 1/0, on/off, enabled/disabled";
+                }
+            });
+        }
+    }
+
     private static void defaultFlags() {
+        addPlusFlags();
         FlagManager.addFlag(new AbstractFlag("fly") {
             @Override
             public String parseValue(String value) {

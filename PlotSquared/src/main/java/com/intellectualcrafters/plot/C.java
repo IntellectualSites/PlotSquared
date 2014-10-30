@@ -17,6 +17,12 @@ import org.bukkit.ChatColor;
  */
 public enum C {
     /*
+     * Records
+     */
+    RECORD_PLAY("&c%player &cstarted playing record &6%name"),
+    NOTIFY_ENTER("&c%player &centered your plot (&6%plot&c)"),
+    NOTIFY_LEAVE("&c%player &left your plot (&6%plot&c)"),
+    /*
      * Swap
      */
     SWAP_SYNTAX("&c/plots swap <plot id>"),
