@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,6 +26,7 @@ import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 
 /**
  * @author Citymonstret
@@ -36,6 +38,28 @@ public class WorldEditListener implements Listener {
 
 	private boolean isPlotWorld(Location l) {
 		return (PlotMain.isPlotWorld(l.getWorld()));
+	}
+	
+	@EventHandler(
+            priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onDelete(PlotDeleteEvent e) {
+	    String world = e.getWorld();
+	    PlotId id = e.getPlotId();
+	    Plot plot = PlotMain.getPlots(world).get(id);
+	    if (plot==null || plot.owner == null) {
+	        return;
+	    }
+	    Player player = Bukkit.getPlayer(plot.owner);
+	    if (player == null) {
+	        return;
+	    }
+	    if (!world.equals(player.getWorld().getName())) {
+	        return;
+	    }
+	    if (PlotMain.hasPermission(player, "plots.worldedit.bypass")) {
+            return;
+        }
+	    PWE.setNoMask(player);
 	}
 
 	@EventHandler(

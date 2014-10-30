@@ -1034,7 +1034,7 @@ public class SQLManager extends AbstractDB {
 			public void run() {
 				try {
 					PreparedStatement statement =
-							connection.prepareStatement("DELETE FROM `"+PREFIX+"+plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
+							connection.prepareStatement("DELETE FROM `"+PREFIX+"plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
 					statement.setInt(1, getId(world, plot.id));
 					statement.setString(2, player.getUniqueId().toString());
 					statement.executeUpdate();

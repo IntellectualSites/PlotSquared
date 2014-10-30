@@ -9,6 +9,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.Logger.LogLevel;
+import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
@@ -112,10 +113,9 @@ public class PlotMain extends JavaPlugin {
 		return new WorldGenerator(worldname);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void checkForExpiredPlots() {
 		final JavaPlugin plugin = PlotMain.getMain();
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run() {
 				checkExpired(plugin, true);
@@ -473,6 +473,9 @@ public class PlotMain extends JavaPlugin {
 							    PlotHelper.removeSign(worldobj, plot);
                                 DBFunc.delete(world, plot);
                                 removePlot(world, plot.id, true);
+                                if (Math.abs(plot.id.x)<Math.abs(Auto.lastPlot.x) && Math.abs(plot.id.y)<Math.abs(Auto.lastPlot.y)) {
+                                    Auto.lastPlot = plot.id;
+                                }
                             }
 						}
 					}
@@ -1213,7 +1216,7 @@ public class PlotMain extends JavaPlugin {
 		options.put("mysql.user", "root");
 		options.put("mysql.password", "password");
 		options.put("mysql.database", "plot_db");
-        options.put("prefix", "plotsquared_");
+        options.put("prefix", "");
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!storage.contains(node.getKey())) {
 				storage.set(node.getKey(), node.getValue());

@@ -175,21 +175,6 @@ public class DebugClaimTest extends SubCommand {
 			if (teleport) {
 				PlotMain.teleportPlayer(player, player.getLocation(), plot);
 			}
-			PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
-			if (world.SCHEMATIC_ON_CLAIM) {
-				SchematicHandler handler = new SchematicHandler();
-				SchematicHandler.Schematic sch;
-				if (schematic.equals("")) {
-					sch = handler.getSchematic(world.SCHEMATIC_FILE);
-				}
-				else {
-					sch = handler.getSchematic(schematic);
-					if (sch == null) {
-						sch = handler.getSchematic(world.SCHEMATIC_FILE);
-					}
-				}
-				handler.paste(player.getLocation(), sch, plot);
-			}
 			plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));
 		}
 		return event.isCancelled();

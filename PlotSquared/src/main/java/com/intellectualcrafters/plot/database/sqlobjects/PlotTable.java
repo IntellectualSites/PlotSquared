@@ -6,8 +6,12 @@ package com.intellectualcrafters.plot.database.sqlobjects;
 public class PlotTable extends SQLTable {
 
     public PlotTable() {
-        super("plots");
+        super("plots", name, fields);
     }
 
-    public
+    @Override
+    public void create() {
+        // TODO Auto-generated method stub
+        
+    }
 }

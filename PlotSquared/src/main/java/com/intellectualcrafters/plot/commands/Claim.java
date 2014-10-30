@@ -110,7 +110,7 @@ public class Claim extends SubCommand {
 						sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
 					}
 				}
-				SchematicHandler.paste(player.getLocation(), sch, plot);
+				SchematicHandler.paste(player.getLocation(), sch, plot, 0, 0);
 			}
 			if (world.DEFAULT_FLAGS != null && world.DEFAULT_FLAGS.size() > 0) {
 			    plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));

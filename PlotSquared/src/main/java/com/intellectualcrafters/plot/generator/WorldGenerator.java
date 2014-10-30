@@ -70,7 +70,13 @@ public class WorldGenerator extends PlotGenerator {
 		}
 		return manager;
 	}
-
+	/**
+	 * Allow spawning everywhere
+	 */
+	@Override
+    public boolean canSpawn(World world, int x, int z) {
+        return true;
+    }
 	/**
 	 * Get a new plotworld class For square plots you can use the
 	 * DefaultPlotWorld class which comes with PlotSquared

@@ -266,18 +266,19 @@ public class PlotHelper {
 	 * @param block
 	 * @param plotblock
 	 */
-	public static void setBlock(Block block, PlotBlock plotblock) {
+	public static boolean setBlock(Block block, PlotBlock plotblock) {
 
 		if (canSetFast) {
-			if (block.getTypeId() != plotblock.id && plotblock.data != block.getData()) {
+			if (block.getTypeId() != plotblock.id || plotblock.data != block.getData()) {
 				try {
 					SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
-					return;
+					return true;
 				}
 				catch (NoSuchMethodException e) {
 					canSetFast = false;
 				}
 			}
+			return false;
 		}
 		if (block.getData() == plotblock.data) {
 			if (block.getTypeId() != plotblock.id) {
@@ -292,6 +293,7 @@ public class PlotHelper {
 				block.setTypeIdAndData(plotblock.id, plotblock.data, false);
 			}
 		}
+		return false;
 	}
 
 	/**
