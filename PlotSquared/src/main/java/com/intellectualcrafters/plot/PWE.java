@@ -80,6 +80,24 @@ public class PWE {
 		return s.getMask() == null;
 	}
 
+	public static void setNoMask(Player p) {
+	    try {
+    	    LocalSession s;
+            if (PlotMain.worldEdit == null) {
+                s = WorldEdit.getInstance().getSession(p.getName());
+            }
+            else {
+                s = PlotMain.worldEdit.getSession(p);
+            }
+    	    BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
+            Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
+            s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
+	    }
+	    catch (Exception e) {
+	        
+	    }
+    }
+	
 	public static void removeMask(Player p, LocalSession s) {
 	    Mask mask = null;
 	    s.setMask(mask);

@@ -207,7 +207,7 @@ public enum C {
      * Info
      */
     PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-    PLOT_INFO("&6ID&7: &a%id%&7\n&6Alias&7: &a%alias%\n&6Owner&7: &a%owner%\n&6Description&7: &a%desc%\n&6Rating&7: &a%rating%&7/&a10\n&6Can build&7: &a%build%"),
+    PLOT_INFO("&6ID&7: &a%id%&7\n&6Alias&7: &a%alias%\n&6Owner&7: &a%owner%\n&6Helpers&7: &a%helpers%\n&6Trusted&7: &a%trusted%\n&Denied&7: &a%denied%\n&6Denied&7: &a%denied%\n&6Flags&7: &a%flags%\n&6Biome&7: &a%biome%\n&6Rating&7: &a%rating%&7/&a10\n&6Can build&7: &a%build%"),
     
     PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),
     PLOT_INFO_TRUSTED("&6Trusted&7: %trusted%"),

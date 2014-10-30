@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.jnbt.*;
+import com.intellectualcrafters.plot.SchematicHandler.DataCollection;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +28,6 @@ import java.util.zip.GZIPOutputStream;
  */
 @SuppressWarnings({"all"})
 public class SchematicHandler {
-
     /**
      * Paste a schematic
      * @param location origin
@@ -35,13 +35,12 @@ public class SchematicHandler {
      * @param plot plot to paste in
      * @return true if succeeded
      */
-	public static boolean paste(Location location, Schematic schematic, Plot plot) {
+	public static boolean paste(Location location, Schematic schematic, Plot plot, int x_offset, int z_offset) {
 		if (schematic == null) {
 			PlotMain.sendConsoleSenderMessage("Schematic == null :|");
 			return false;
 		}
 		try {
-		    
 		    Dimension demensions = schematic.getSchematicDimension();
 	        
 		    int WIDTH = demensions.getX();
@@ -68,7 +67,7 @@ public class SchematicHandler {
 	                    short id = blocks[index].getBlock();
 	                    byte data = blocks[index].getData();
 	                    
-	                    Block block = world.getBlockAt(l1.getBlockX()+x, l1.getBlockY()+y, l1.getBlockZ()+z);
+	                    Block block = world.getBlockAt(l1.getBlockX()+x+x_offset, l1.getBlockY()+y, l1.getBlockZ()+z+z_offset);
 	                    
 	                    PlotBlock plotblock = new PlotBlock(id, data);
 	                    
@@ -274,9 +273,9 @@ public class SchematicHandler {
             PlotMain.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at "+(i/16)+", "+(j/16));
             return null;
         }
-        int width = pos2.getBlockX()-pos1.getBlockX();
+        int width = pos2.getBlockX()-pos1.getBlockX()+1;
         int height = 256;
-        int length = pos2.getBlockZ()-pos1.getBlockZ();
+        int length = pos2.getBlockZ()-pos1.getBlockZ()+1;
 
         HashMap<String, Tag> schematic = new HashMap<>();
         schematic.put("Width", new ShortTag("Width", (short) width));
@@ -354,4 +353,36 @@ public class SchematicHandler {
 			return this.data;
 		}
 	}
+
+    public static boolean pastePart(World world, DataCollection[] blocks, Location l1, int x_offset, int z_offset, int i1, int i2, int WIDTH, int LENGTH) {
+        boolean result = false;
+        for (int i = i1; i<=i2 ;i++) {
+            short id = blocks[i].getBlock();
+            byte data = blocks[i].getData();
+                if (id==0) {
+                    continue;
+                }
+            
+            int area = WIDTH*LENGTH;
+            int r = i%(area);
+
+            int x = r%WIDTH;
+            int y = i/area;
+            int z = r/WIDTH;
+            
+            if (y>256) {
+                break;
+            }
+            
+            Block block = world.getBlockAt(l1.getBlockX()+x+x_offset, l1.getBlockY()+y, l1.getBlockZ()+z+z_offset);
+            
+            PlotBlock plotblock = new PlotBlock(id, data);
+            
+            boolean set = PlotHelper.setBlock(block, plotblock);
+            if (!result && set) {
+                result = true;
+            }
+        }
+        return result;
+    }
 }
