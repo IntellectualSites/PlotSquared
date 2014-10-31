@@ -439,7 +439,7 @@ public class SQLManager extends AbstractDB {
 				    user = UUID.fromString(o);
 				    uuids.put(o, user);
 				}
-				p = new Plot(plot_id, user, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[0]);
+				p = new Plot(plot_id, user, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[] {false, false, false, false});
 				plots.put(id, p);
 			}
 			stmt.close();

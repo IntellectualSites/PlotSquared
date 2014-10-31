@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.FlagManager;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotHelper;
@@ -108,40 +109,21 @@ public class Auto extends SubCommand {
 			}
 		}
 		boolean br = false;
-		int x = 0, z = 0, q = 100;
-		PlotId id;
 		if ((size_x == 1) && (size_z == 1)) {
 		    while (!br) {
 		        Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
                 if (plot==null || plot.owner == null) {
                     plot = PlotHelper.getPlot(world, Auto.lastPlot);
-                    boolean result = Claim.claimPlot(plr, plot, true);
-                    br = !result;
+                    Claim.claimPlot(plr, plot, true);
+                    br = true;
+                    PlotWorld pw = PlotMain.getWorldSettings(world);
+                    Plot plot2 = PlotMain.getPlots(world).get(plot.id);
+                    if (pw.DEFAULT_FLAGS != null && pw.DEFAULT_FLAGS.size() > 0) {
+                        plot2.settings.setFlags(FlagManager.parseFlags(pw.DEFAULT_FLAGS));
+                    }
                 }
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
 		    }
-			while (!br) {
-				id = new PlotId(x, z);
-				if (PlotHelper.getPlot(world, id).owner == null) {
-					Plot plot = PlotHelper.getPlot(world, id);
-					boolean result = Claim.claimPlot(plr, plot, true);
-					br = !result;
-				}
-				if ((z < q) && ((z - x) < q)) {
-					z++;
-				}
-				else {
-					if (x < q) {
-						x++;
-						z = q - 100;
-					}
-					else {
-						q += 100;
-						x = q;
-						z = q;
-					}
-				}
-			}
 		}
 		else {
 		    boolean claimed = true;
@@ -168,6 +150,11 @@ public class Auto extends SubCommand {
                         return false;
                     }
                     br = true;
+                    PlotWorld pw = PlotMain.getWorldSettings(world);
+                    Plot plot2 = PlotMain.getPlots(world).get(start);
+                    if (pw.DEFAULT_FLAGS != null && pw.DEFAULT_FLAGS.size() > 0) {
+                        plot2.settings.setFlags(FlagManager.parseFlags(pw.DEFAULT_FLAGS));
+                    }
                 }
 		    }
 		}

@@ -274,7 +274,7 @@ public class PlotHelper {
 					SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
 					return true;
 				}
-				catch (NoSuchMethodException e) {
+				catch (Throwable e) {
 					canSetFast = false;
 				}
 			}

@@ -15,6 +15,7 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    public static boolean TITLES = true;
     /**
      * Schematic Save Path
      */

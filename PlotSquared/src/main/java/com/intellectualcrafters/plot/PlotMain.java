@@ -733,10 +733,8 @@ public class PlotMain extends JavaPlugin {
 
 	/**
 	 * Get MySQL Connection
-	 * 
 	 * @return connection MySQL Connection.
 	 */
-	@SuppressWarnings("unused")
 	public static Connection getConnection() {
 		return connection;
 	}
@@ -959,7 +957,7 @@ public class PlotMain extends JavaPlugin {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void killAllEntities() {
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(getMain(), new Runnable() {
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(getMain(), new Runnable() {
 			Location location;
 			long ticked = 0l;
 			long error = 0l;
@@ -986,73 +984,72 @@ public class PlotMain extends JavaPlugin {
 							Entity[] entities = chunk.getEntities();
 							for (int i = entities.length - 1; i >= 0; i--) {
 								Entity entity = entities[i];
-
 								if ((entity instanceof Player) || PlayerEvents.isInPlot(entity.getLocation())) {
 									continue;
 								}
-
-								boolean tamed = false;
-								if (Settings.MOB_PATHFINDING) {
-									if (entity instanceof Tameable) {
-										Tameable tameable = (Tameable) entity;
-										if (tameable.isTamed()) {
-											tamed = true;
-										}
-									}
-									else
-										if (entity instanceof LivingEntity) {
-											LivingEntity livingEntity = ((LivingEntity) entity);
-											if (livingEntity.getCustomName() != null) {
-												tamed = true;
-											}
-										}
-									if (!tamed) {
-										entity.remove();
-										continue;
-									}
-									boolean found = false;
-									int radius = 1;
-									int dir = 0;
-									int x = this.location.getBlockX();
-									int y = this.location.getBlockY();
-									int z = this.location.getBlockZ();
-									while (!found && (radius < 4)) {
-										Location pos;
-										switch (dir) {
-										case 0:
-											pos = new Location(world, x + radius, y, z);
-											dir++;
-											break;
-										case 1:
-											pos = new Location(world, x, y, z + radius);
-											dir++;
-											break;
-										case 2:
-											pos = new Location(world, x - radius, y, z);
-											dir++;
-											break;
-										case 3:
-											pos = new Location(world, x, y, z - radius);
-											dir = 0;
-											radius++;
-											break;
-										default:
-											pos = this.location;
-											break;
-
-										}
-										if (PlayerEvents.isInPlot(pos)) {
-											entity.teleport(pos.add(0.5, 0, 0.5));
-											found = true;
-											break;
-										}
-									}
-									entity.teleport(this.location.subtract(this.location.getDirection().normalize().multiply(2)));
-								}
+								entity.remove();
+//								boolean tamed = false;
+//								if (Settings.MOB_PATHFINDING) {
+//									if (entity instanceof Tameable) {
+//										Tameable tameable = (Tameable) entity;
+//										if (tameable.isTamed()) {
+//											tamed = true;
+//										}
+//									}
+//									else
+//										if (entity instanceof LivingEntity) {
+//											LivingEntity livingEntity = ((LivingEntity) entity);
+//											if (livingEntity.getCustomName() != null) {
+//												tamed = true;
+//											}
+//										}
+//									if (!tamed) {
+//										entity.remove();
+//										continue;
+//									}
+//									boolean found = false;
+//									int radius = 1;
+//									int dir = 0;
+//									int x = this.location.getBlockX();
+//									int y = this.location.getBlockY();
+//									int z = this.location.getBlockZ();
+//									while (!found && (radius < 4)) {
+//										Location pos;
+//										switch (dir) {
+//										case 0:
+//											pos = new Location(world, x + radius, y, z);
+//											dir++;
+//											break;
+//										case 1:
+//											pos = new Location(world, x, y, z + radius);
+//											dir++;
+//											break;
+//										case 2:
+//											pos = new Location(world, x - radius, y, z);
+//											dir++;
+//											break;
+//										case 3:
+//											pos = new Location(world, x, y, z - radius);
+//											dir = 0;
+//											radius++;
+//											break;
+//										default:
+//											pos = this.location;
+//											break;
+//
+//										}
+//										if (PlayerEvents.isInPlot(pos)) {
+//											entity.teleport(pos.add(0.5, 0, 0.5));
+//											found = true;
+//											break;
+//										}
+//									}
+//									entity.teleport(this.location.subtract(this.location.getDirection().normalize().multiply(2)));
+//								}
 							}
 						}
 					}
-					catch (Exception e) {
+					catch (Throwable e) {
 						++this.error;
 					}
 					finally {
@@ -1060,7 +1057,7 @@ public class PlotMain extends JavaPlugin {
 					}
 				}
 			}
-		}, 0l, 2l);
+		}, 2L, 2L);
 	}
 
 	/**
@@ -1083,6 +1080,7 @@ public class PlotMain extends JavaPlugin {
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         options.put("api.location", Settings.API_URL);
         options.put("api.custom", Settings.CUSTOM_API);
+        options.put("titles", Settings.TITLES);
 
 		for (Entry<String, Object> node : options.entrySet()) {
 			if (!config.contains(node.getKey())) {
@@ -1099,6 +1097,7 @@ public class PlotMain extends JavaPlugin {
 		Settings.METRICS = config.getBoolean("metrics");
 		Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
 		Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+		Settings.TITLES = config.getBoolean("titles");
 		Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 	}

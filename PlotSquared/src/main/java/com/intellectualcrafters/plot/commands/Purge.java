@@ -23,7 +23,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 public class Purge extends SubCommand {
 
 	public Purge() {
-		super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.ACTIONS, false);
+		super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
 	}
 
 	@Override

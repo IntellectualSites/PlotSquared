@@ -176,7 +176,7 @@ public class PlotListener {
             if(plot.settings.getFlag("weather") != null) {
                 player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
             }
-            if (C.TITLE_ENTERED_PLOT.s().length() > 2) {
+            if (Settings.TITLES && C.TITLE_ENTERED_PLOT.s().length() > 2) {
                 String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
                 String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());

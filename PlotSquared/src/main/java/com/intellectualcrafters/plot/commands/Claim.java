@@ -99,6 +99,9 @@ public class Claim extends SubCommand {
 				PlotMain.teleportPlayer(player, player.getLocation(), plot);
 			}
 			PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+			
+			Plot plot2 = PlotMain.getPlots(player.getWorld()).get(plot.id);
+			
 			if (world.SCHEMATIC_ON_CLAIM) {
 				SchematicHandler.Schematic sch;
 				if (schematic.equals("")) {
@@ -110,10 +113,10 @@ public class Claim extends SubCommand {
 						sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
 					}
 				}
-				SchematicHandler.paste(player.getLocation(), sch, plot, 0, 0);
+				SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
 			}
 			if (world.DEFAULT_FLAGS != null && world.DEFAULT_FLAGS.size() > 0) {
-			    plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));
+			    plot2.settings.setFlags(FlagManager.parseFlags(world.DEFAULT_FLAGS));
 			}
 		}
 		return event.isCancelled();

@@ -67,7 +67,7 @@ public class Visit extends SubCommand {
 			PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
 			return true;
 		}
-		if ((i < 0) || (i > plots.size())) {
+		if ((i < 0) || (i >= plots.size())) {
 			PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
 			return true;
 		}
