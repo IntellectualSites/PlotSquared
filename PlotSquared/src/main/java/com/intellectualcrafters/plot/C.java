@@ -137,7 +137,8 @@ public enum C {
     /*
      * Commands
      */
-    NOT_VALID_SUBCOMMAND("&cThat is not a valid subcommand."),
+    NOT_VALID_SUBCOMMAND("&cThat is not a valid subcommand"),
+    DID_YOU_MEAN("&cDid you mean: &6%s"),
     NO_COMMANDS("&cI'm sorry, but you're not permitted to use any subcommands."),
     SUBCOMMAND_SET_OPTIONS_HEADER("&cPossible Values: "),
     /*

@@ -670,7 +670,8 @@ public class PlotMain extends JavaPlugin {
 			}
 		}
 
-		getCommand("plots").setExecutor(new MainCommand());
+        MainCommand command = new MainCommand();
+		getCommand("plots").setExecutor(command);
 		getCommand("plots").setAliases(new ArrayList<String>() {
 			{
 				add("p");
@@ -679,7 +680,7 @@ public class PlotMain extends JavaPlugin {
 				add("plot");
 			}
 		});
-
+        getCommand("plots").setTabCompleter(command);
 		getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
@@ -958,36 +959,37 @@ public class PlotMain extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public static void killAllEntities() {
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(getMain(), new Runnable() {
-			Location location;
-			long ticked = 0l;
-			long error = 0l;
-			{
-				sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
-			}
+            Location location;
+            long ticked = 0l;
+            long error = 0l;
 
-			@Override
-			public void run() {
-				if (this.ticked > 36000l) {
-					this.ticked = 0l;
-					sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: "
-							+ this.error);
-					this.error = 0l;
-				}
-				for (String w : getPlotWorlds()) {
-					getWorldSettings(w);
-					World world = Bukkit.getServer().getWorld(w);
-					try {
-						if (world.getLoadedChunks().length < 1) {
-							continue;
-						}
-						for (Chunk chunk : world.getLoadedChunks()) {
-							Entity[] entities = chunk.getEntities();
-							for (int i = entities.length - 1; i >= 0; i--) {
-								Entity entity = entities[i];
-								if ((entity instanceof Player) || PlayerEvents.isInPlot(entity.getLocation())) {
-									continue;
-								}
-								entity.remove();
+            {
+                sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
+            }
+
+            @Override
+            public void run() {
+                if (this.ticked > 36000l) {
+                    this.ticked = 0l;
+                    sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: "
+                            + this.error);
+                    this.error = 0l;
+                }
+                for (String w : getPlotWorlds()) {
+                    getWorldSettings(w);
+                    World world = Bukkit.getServer().getWorld(w);
+                    try {
+                        if (world.getLoadedChunks().length < 1) {
+                            continue;
+                        }
+                        for (Chunk chunk : world.getLoadedChunks()) {
+                            Entity[] entities = chunk.getEntities();
+                            for (int i = entities.length - 1; i >= 0; i--) {
+                                Entity entity = entities[i];
+                                if ((entity instanceof Player) || PlayerEvents.isInPlot(entity.getLocation())) {
+                                    continue;
+                                }
+                                entity.remove();
 //								boolean tamed = false;
 //								if (Settings.MOB_PATHFINDING) {
 //									if (entity instanceof Tameable) {
@@ -1046,18 +1048,16 @@ public class PlotMain extends JavaPlugin {
 //									}
 //									entity.teleport(this.location.subtract(this.location.getDirection().normalize().multiply(2)));
 //								}
-							}
-						}
-					}
-					catch (Throwable e) {
-						++this.error;
-					}
-					finally {
-						++this.ticked;
-					}
-				}
-			}
-		}, 2L, 2L);
+                            }
+                        }
+                    } catch (Throwable e) {
+                        ++this.error;
+                    } finally {
+                        ++this.ticked;
+                    }
+                }
+            }
+        }, 2L, 2L);
 	}
 
 	/**

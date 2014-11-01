@@ -11,21 +11,24 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.StringComparsion;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotMain command class
  *
  * @author Citymonstret
  */
-public class MainCommand implements CommandExecutor {
+public class MainCommand implements CommandExecutor, TabCompleter {
 
 	private static SubCommand[] _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(),
 			new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(),
@@ -114,6 +117,12 @@ public class MainCommand implements CommandExecutor {
 				}
 			}
 			PlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
+
+            String[] commands = new String[subCommands.size()];
+            for(int x = 0; x < subCommands.size(); x++)
+                commands[x] = subCommands.get(x).cmd;
+
+            PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
 		}
 		return false;
 	}
@@ -145,4 +154,26 @@ public class MainCommand implements CommandExecutor {
 		return ChatColor.translateAlternateColorCodes('&', s);
 	}
 
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        if(!(commandSender instanceof Player)) return null;
+        Player player = (Player) commandSender;
+        ArrayList<SubCommand> subo = subCommands;
+        while(true) {
+            String sub = new StringComparsion(strings[0], subo.toArray()).getBestMatch();
+            if(subo.isEmpty())
+                break;
+            for (SubCommand subCommand : subo) {
+                if (subCommand.cmd.equals(sub)) {
+                    if(subCommand.permission.hasPermission(player))
+                        return Arrays.asList(sub);
+                    else {
+                        subo.remove(subCommand);
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
