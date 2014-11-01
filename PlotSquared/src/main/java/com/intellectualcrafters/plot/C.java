@@ -139,6 +139,7 @@ public enum C {
      */
     NOT_VALID_SUBCOMMAND("&cThat is not a valid subcommand"),
     DID_YOU_MEAN("&cDid you mean: &6%s"),
+    NAME_LITTLE("&c%s name is too short, &6%s&c<&6%s"),
     NO_COMMANDS("&cI'm sorry, but you're not permitted to use any subcommands."),
     SUBCOMMAND_SET_OPTIONS_HEADER("&cPossible Values: "),
     /*

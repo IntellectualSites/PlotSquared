@@ -159,6 +159,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         if(!(commandSender instanceof Player)) return null;
         Player player = (Player) commandSender;
         ArrayList<SubCommand> subo = subCommands;
+        if(strings.length < 1 || strings[0].length() < 2) return null;
         while(true) {
             String sub = new StringComparsion(strings[0], subo.toArray()).getBestMatch();
             if(subo.isEmpty())

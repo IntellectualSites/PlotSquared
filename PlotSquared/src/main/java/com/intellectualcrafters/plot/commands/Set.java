@@ -217,6 +217,10 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NEED_BIOME);
 				return true;
 			}
+            if(args[1].length() < 2) {
+                sendMessage(plr, C.NAME_LITTLE, "Biome", args[1].length() + "", "2");
+                return true;
+            }
 			Biome biome = Biome.valueOf(new StringComparsion(args[1], Biome.values()).getBestMatch());
 			/*for (Biome b : Biome.values()) {
 				if (b.toString().equalsIgnoreCase(args[1])) {
@@ -243,6 +247,10 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
 				return true;
 			}
+            if(args[1].length() < 2) {
+                sendMessage(plr, C.NAME_LITTLE, "Material", args[1].length() + "", "2");
+                return true;
+            }
 			Material material = getMaterial(args[1], PlotWorld.BLOCKS);
 			/*for (Material m : PlotWorld.BLOCKS) {
 				if (m.toString().equalsIgnoreCase(args[1])) {
@@ -297,6 +305,10 @@ public class Set extends SubCommand {
 				s = s.replaceAll(",", "");
 				String[] ss = s.split(";");
 				ss[0] = ss[0].replaceAll(";", "");
+                if(ss[0].length() < 2) {
+                    sendMessage(plr, C.NAME_LITTLE, "Material", ss[0].length() + "", "2");
+                    return true;
+                }
                 m = getMaterial(ss[0], materials);
                 /*for (Material ma : materials) {
 					if (ma.toString().equalsIgnoreCase(ss[0])) {
@@ -336,6 +348,10 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
 				return true;
 			}
+            if(args[1].length() < 2) {
+                sendMessage(plr, C.NAME_LITTLE, "Material", args[1].length() + "", "2");
+                return true;
+            }
 			Material material = getMaterial(args[1], PlotWorld.BLOCKS);
 			/*for (Material m : PlotWorld.BLOCKS) {
 				if (m.toString().equalsIgnoreCase(args[1])) {
