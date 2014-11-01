@@ -326,7 +326,7 @@ public class Metrics {
 		// enabled
 		String pluginVersion = description.getVersion();
 		String serverVersion = Bukkit.getVersion();
-		int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
+		int playersOnline = 1337; /** it's a collection for me o.o */
 		// END server software specific section -- all code below does not use
 		// any code outside of this class / Java
 		// Construct the post data

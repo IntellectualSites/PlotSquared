@@ -6,7 +6,7 @@ package com.intellectualcrafters.plot.database.sqlobjects;
 public class PlotTable extends SQLTable {
 
     public PlotTable() {
-        super("plots", name, fields);
+        super("plots", "hello", null);
     }
 
     @Override

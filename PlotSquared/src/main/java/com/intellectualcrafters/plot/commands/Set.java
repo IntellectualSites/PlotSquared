@@ -217,13 +217,14 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NEED_BIOME);
 				return true;
 			}
-			Biome biome = null;
-			for (Biome b : Biome.values()) {
+			Biome biome = Biome.valueOf(new StringComparsion(args[1], Biome.values()).getBestMatch());
+			/*for (Biome b : Biome.values()) {
 				if (b.toString().equalsIgnoreCase(args[1])) {
 					biome = b;
 					break;
 				}
-			}
+			}*/
+
 			if (biome == null) {
 				PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
 				return true;
@@ -242,13 +243,13 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
 				return true;
 			}
-			Material material = null;
-			for (Material m : PlotWorld.BLOCKS) {
+			Material material = getMaterial(args[1], PlotWorld.BLOCKS);
+			/*for (Material m : PlotWorld.BLOCKS) {
 				if (m.toString().equalsIgnoreCase(args[1])) {
 					material = m;
 					break;
 				}
-			}
+			}*/
 			if (material == null) {
 				PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
 				return true;
@@ -296,11 +297,12 @@ public class Set extends SubCommand {
 				s = s.replaceAll(",", "");
 				String[] ss = s.split(";");
 				ss[0] = ss[0].replaceAll(";", "");
-				for (Material ma : materials) {
+                m = getMaterial(ss[0], materials);
+                /*for (Material ma : materials) {
 					if (ma.toString().equalsIgnoreCase(ss[0])) {
 						m = ma;
 					}
-				}
+				}*/
 				if (m == null) {
 					PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
 					return true;
@@ -334,13 +336,14 @@ public class Set extends SubCommand {
 				PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
 				return true;
 			}
-			Material material = null;
-			for (Material m : PlotWorld.BLOCKS) {
+			Material material = getMaterial(args[1], PlotWorld.BLOCKS);
+			/*for (Material m : PlotWorld.BLOCKS) {
 				if (m.toString().equalsIgnoreCase(args[1])) {
 					material = m;
 					break;
 				}
-			}
+			}*/
+
 			if (material == null) {
 				PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
 				return true;
@@ -408,6 +411,10 @@ public class Set extends SubCommand {
 		}
 		return builder.toString().substring(1, builder.toString().length() - 1);
 	}
+
+    private Material getMaterial(String input, List<Material> blocks) {
+        return Material.valueOf(new StringComparsion(input, blocks.toArray()).getBestMatch());
+    }
 
 	private String getBlockList(List<Material> blocks) {
 		StringBuilder builder = new StringBuilder();
