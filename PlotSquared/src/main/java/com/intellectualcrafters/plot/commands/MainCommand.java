@@ -87,7 +87,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			StringBuilder help = new StringBuilder();
-			for (String string : helpMenu(player, cato)) {
+            int page = 0;
+            try {
+                page = Integer.parseInt(args[2]);
+                --page;
+                if(page < 0) page = 0;
+            } catch(Exception e) {}
+			for (String string : helpMenu(player, cato, page)) {
 				help.append(string).append("\n");
 			}
 			PlayerFunctions.sendMessage(player, help.toString());
@@ -123,23 +129,71 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
-	public static ArrayList<String> helpMenu(Player player, final SubCommand.CommandCategory category) {
-		ArrayList<String> help = new ArrayList<String>() {
-			{
-				add(t(C.HELP_HEADER.s()));
-				add(t(C.HELP_CATEGORY.s().replaceAll("%category%", category.toString())));
-			}
-		};
-		for (SubCommand cmd : subCommands) {
-			if (cmd.permission.hasPermission(player) && (cmd.category == category)) {
-				String s = t(C.HELP_PAGE.s());
-				s = s.replaceAll("%alias%", cmd.alias);
-				s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);
-				s = s.replaceAll("%cmd%", cmd.cmd);
-				s = s.replaceAll("%desc%", cmd.description);
-				help.add(s);
-			}
-		}
+
+    public static List<SubCommand> getCommands(SubCommand.CommandCategory category, Player player) {
+        List<SubCommand> cmds = new ArrayList<>();
+        for(SubCommand c : subCommands)
+            if(c.category == category && c.permission.hasPermission(player))
+                cmds.add(c);
+        return cmds;
+    }
+
+    /*
+    // Current page
+                    int page = 0;
+
+                    //is a page specified? else use 0
+                    if(args.length > 1) {
+                        try {
+                           page = Integer.parseInt(args[1]);
+                        } catch(Exception e) {
+                            page = 0;
+                        }
+                    }
+
+                    //Get the total pages
+                    int totalPages = ((int) Math.ceil(12 * (PlotMain.getPlotsSorted().size()) / 100));
+
+                    if(page > totalPages)
+                        page = totalPages;
+
+                    //Only display 12!
+                    int max = (page * 12) + 12;
+
+                    if(max > PlotMain.getPlotsSorted().size())
+                        max = PlotMain.getPlotsSorted().size();
+
+                    StringBuilder string = new StringBuilder();
+
+                    string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all") + "\n");
+					Plot p;
+
+                    //This might work xD
+                    for (int x = (page * 12); x < max; x++) {
+     */
+	public static ArrayList<String> helpMenu(Player player, final SubCommand.CommandCategory category, int page) {
+        List<SubCommand> commands = getCommands(category, player);
+        final int totalPages = ((int) Math.ceil(12 * (commands.size()) / 100));
+        if(page > totalPages)
+            page = totalPages;
+        int max = (page * 12) + 12;
+        if(max > commands.size())
+            max = commands.size();
+		ArrayList<String> help = new ArrayList<>(
+                Arrays.asList(
+                        t(C.HELP_HEADER.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "")),
+                        t(C.HELP_CATEGORY.s().replaceAll("%category%", category.toString()))
+                ));
+        SubCommand cmd;
+        for(int x = (page * 12); x < max; x++) {
+            cmd = subCommands.get(x);
+            String s = t(C.HELP_PAGE.s());
+            s = s.replaceAll("%alias%", cmd.alias);
+            s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);
+            s = s.replaceAll("%cmd%", cmd.cmd);
+            s = s.replaceAll("%desc%", cmd.description);
+            help.add(s);
+        }
 		if (help.size() < 2) {
 			help.add(t(C.NO_COMMANDS.s()));
 		}

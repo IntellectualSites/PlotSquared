@@ -328,7 +328,7 @@ public enum C {
     HELP_INFO("&6You need to specify a help category"),
     HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
     HELP_PAGE("&c>> &6%usage% &c[&6%alias%&c] &c- &6%desc%"),
-    HELP_HEADER("&6Help for Plots"),
+    HELP_HEADER("&c(Page &6%cur&c/&6%max&c) &6Help for Plots"),
     /*
      * Direction
      */

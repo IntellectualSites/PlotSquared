@@ -78,6 +78,8 @@ public class list extends SubCommand {
                     if(args.length > 1) {
                         try {
                            page = Integer.parseInt(args[1]);
+                            --page;
+                            if(page < 0) page = 0;
                         } catch(Exception e) {
                             page = 0;
                         }
