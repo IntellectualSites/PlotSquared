@@ -13,8 +13,10 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
+
 import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotComment;
 import com.intellectualcrafters.plot.PlotId;
 
 /**
@@ -159,6 +161,30 @@ public class DBFunc {
 	 */
 	public static UUID everyone = UUID.fromString("1-1-3-3-7");
 
+	/**
+     * @param plot
+     * @param comment
+     */
+    public static void removeComment(final String world, final Plot plot, final PlotComment comment) {
+        dbManager.removeComment(world, plot, comment);
+    }
+    
+    /**
+     * @param plot
+     * @param comment
+     */
+    public static void setComment(final String world, final Plot plot, final PlotComment comment) {
+        dbManager.setComment(world, plot, comment);
+    }
+    
+    /**
+     * @param plot
+     * @param comment
+     */
+    public static ArrayList<PlotComment> getCommenst(final String world, final Plot plot, final int tier) {
+        return dbManager.getComments(world, plot, tier);
+    }
+	
 	/**
 	 * @param plot
 	 * @param player

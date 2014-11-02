@@ -32,11 +32,13 @@ package com.intellectualcrafters.plot;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
@@ -326,7 +328,16 @@ public class Metrics {
 		// enabled
 		String pluginVersion = description.getVersion();
 		String serverVersion = Bukkit.getVersion();
-		int playersOnline = 1337; /** it's a collection for me o.o */
+		int playersOnline = 0;
+		try {
+		    if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+		        playersOnline = ((Collection<?>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).size();
+		    else
+		        playersOnline = ((Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).length;
+		}
+		catch (NoSuchMethodException ex){}
+		catch (InvocationTargetException ex){}
+		catch (IllegalAccessException ex){}
 		// END server software specific section -- all code below does not use
 		// any code outside of this class / Java
 		// Construct the post data

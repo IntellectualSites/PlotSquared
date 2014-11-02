@@ -9,6 +9,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
@@ -45,7 +47,7 @@ public class Comment extends SubCommand {
 		        PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));
 		        plot.settings.addComment(comment);
 		        
-		        //DBFunc.addComment(...) // Can you do this?
+		        DBFunc.setComment(plr.getWorld().getName(), plot, comment);
 		        
 		        
 		        return true;    

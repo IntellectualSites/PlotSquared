@@ -10,6 +10,7 @@ package com.intellectualcrafters.plot.database;
 
 import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.Logger.LogLevel;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -64,7 +65,9 @@ public class SQLManager extends AbstractDB {
 
 	@Override
 	public void createAllSettingsAndHelpers(ArrayList<Plot> plots) {
+	    
 	    // TODO SEVERE [ More than 5000 plots will fail in a single SQLite query.
+	    
 		HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<String, HashMap<PlotId, Integer>>();
 		HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<Integer, ArrayList<UUID>>();
 		try {
@@ -235,7 +238,11 @@ public class SQLManager extends AbstractDB {
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL,"
 					+ "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL,"
-					+ "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                    + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL,"
+			        + "`comment` VARCHAR(40) NOT NULL,"
+			        + "`tier` INT(11) NOT NULL,"
+                    + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL,"
 					+ "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL,"
@@ -262,6 +269,10 @@ public class SQLManager extends AbstractDB {
 					+ "`user_uuid` VARCHAR(40) NOT NULL" + ")");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL,"
 					+ "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL,"
+                    + "`comment` VARCHAR(40) NOT NULL,"
+                    + "`tier` INT(11) NOT NULL,"
+                    + "`sender` VARCHAR(40) NOT NULL" + ")");
 			stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL,"
 					+ "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0,"
 					+ "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000',"
@@ -515,8 +526,6 @@ public class SQLManager extends AbstractDB {
 			
             stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT * FROM `" + PREFIX + "plot_settings`");
-            String var;
-            Object val;
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 Plot plot = plots.get(id);
@@ -542,7 +551,6 @@ public class SQLManager extends AbstractDB {
                         plot.settings.setAlias(alias);
                     }
                     
-                    PlotHomePosition position = null;
                     String pos = r.getString("position");
                     if (pos!=null) {
                         for (PlotHomePosition plotHomePosition : PlotHomePosition.values()) {
@@ -950,79 +958,80 @@ public class SQLManager extends AbstractDB {
 		}
 		return h;
 	}
-	/**
-	 * @param id
-	 * @return
-	 */
-	private  ArrayList<UUID> plotDenied(int id) {
-		ArrayList<UUID> l = new ArrayList<UUID>();
-		PreparedStatement stmt = null;
-		try {
-			stmt = connection.prepareStatement("SELECT `user_uuid` FROM `" + PREFIX + "plot_denied` WHERE `plot_plot_id` = ?");
-			stmt.setInt(1, id);
-			ResultSet r = stmt.executeQuery();
-			UUID u;
-			while (r.next()) {
-				u = UUID.fromString(r.getString("user_uuid"));
-				l.add(u);
-			}
-			stmt.close();
-		}
-		catch (Exception e) {
-			Logger.add(LogLevel.DANGER, "Failed to load denied for plot: " + id);
-			e.printStackTrace();
-		}
-		return l;
-	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	private  ArrayList<UUID> plotHelpers(int id) {
-		ArrayList<UUID> l = new ArrayList<UUID>();
-		Statement stmt = null;
-		try {
-			stmt = connection.createStatement();
-			ResultSet r = stmt.executeQuery("SELECT `user_uuid` FROM `" + PREFIX + "plot_helpers` WHERE `plot_plot_id` = " + id);
-			UUID u;
-			while (r.next()) {
-				u = UUID.fromString(r.getString("user_uuid"));
-				l.add(u);
-			}
-			stmt.close();
-		}
-		catch (SQLException e) {
-			Logger.add(LogLevel.WARNING, "Failed to load helpers for plot: " + id);
-			e.printStackTrace();
-		}
-		return l;
-	}
+	@Override
+    public void removeComment(final String world, final Plot plot, final PlotComment comment) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement =
+                            connection.prepareStatement("DELETE FROM `"+PREFIX+"plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `tier` = ? AND `sender` = ?");
+                    statement.setInt(1, getId(world, plot.id));
+                    statement.setString(2, comment.comment);
+                    statement.setInt(3, comment.tier);
+                    statement.setString(4, comment.senderName);
+                    statement.executeUpdate();
+                    statement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
+                }
+            }
+        });
+    }
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	private  ArrayList<UUID> plotTrusted(int id) {
-		ArrayList<UUID> l = new ArrayList<UUID>();
-		Statement stmt = null;
-		try {
-			stmt = connection.createStatement();
-			ResultSet r = stmt.executeQuery("SELECT `user_uuid` FROM `" + PREFIX + "plot_trusted` WHERE `plot_plot_id` = " + id);
-			UUID u;
-			while (r.next()) {
-				u = UUID.fromString(r.getString("user_uuid"));
-				l.add(u);
-			}
-			stmt.close();
-		}
-		catch (SQLException e) {
-			Logger.add(LogLevel.WARNING, "Failed to load trusted users for plot: " + id);
-			e.printStackTrace();
-		}
-		return l;
-	}
 
+    @Override
+    public ArrayList<PlotComment> getComments(String world, Plot plot, int tier) {
+        ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT `*` FROM `" + PREFIX + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` = ?");
+            statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
+            statement.setInt(2, tier);
+            ResultSet set = statement.executeQuery();
+            PlotComment comment;
+            while (set.next()) {
+                String sender = set.getString("sender");
+                String msg = set.getString("comment");
+                comment = new PlotComment(msg, sender, tier);
+                comments.add(comment);
+            }
+            statement.close();
+        }
+        catch (SQLException e) {
+            Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
+            e.printStackTrace();
+        }
+        return comments;
+    }
+	
+    @Override
+    public void setComment(final String world, final Plot plot, final PlotComment comment) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement =
+                            connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_comments` (`plot_plot_id`, `comment`, `tier`, `sender`) VALUES(?,?,?,?)");
+                    statement.setInt(1, getId(world, plot.id));
+                    statement.setString(2, comment.comment);
+                    statement.setInt(3, comment.tier);
+                    statement.setString(4, comment.senderName);
+                    statement.executeUpdate();
+                    statement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
+                }
+            }
+        });
+        
+    }
+	
 	/**
 	 * @param plot
 	 * @param player
@@ -1193,4 +1202,5 @@ public class SQLManager extends AbstractDB {
 		}
 		return 0.0d;
 	}
+
 }

@@ -384,7 +384,9 @@ public class DefaultPlotManager extends PlotManager {
 	@Override
     public boolean setWallFilling(World w, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
         DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
-
+        if (dpw.ROAD_WIDTH==0) {
+            return false;
+        }
         Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
         Location top = PlotHelper.getPlotTopLoc(w, plotid);
 
@@ -428,7 +430,9 @@ public class DefaultPlotManager extends PlotManager {
 	@Override
 	public boolean setWall(World w, PlotWorld plotworld, PlotId plotid, PlotBlock plotblock) {
 		DefaultPlotWorld dpw = (DefaultPlotWorld) plotworld;
-
+		if (dpw.ROAD_WIDTH==0) {
+            return false;
+        }
 		Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
 		Location top = PlotHelper.getPlotTopLoc(w, plotid);
 

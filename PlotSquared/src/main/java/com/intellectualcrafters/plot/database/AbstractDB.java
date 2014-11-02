@@ -17,6 +17,7 @@ import org.bukkit.OfflinePlayer;
 
 import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotComment;
 import com.intellectualcrafters.plot.PlotId;
 
 /**
@@ -149,4 +150,10 @@ public abstract class AbstractDB {
     public abstract void setDenied(final String world, final Plot plot, final OfflinePlayer player);
 
     public abstract double getRatings(final Plot plot);
+
+    public abstract void removeComment(String world, Plot plot, PlotComment comment);
+
+    public abstract void setComment(String world, Plot plot, PlotComment comment);
+
+    public abstract ArrayList<PlotComment> getComments(String world, Plot plot, int tier);
 }

@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -24,16 +26,16 @@ import org.bukkit.entity.Player;
 public class Inbox extends SubCommand {
 
 	public Inbox() {
-		super(Command.INBOX, "Comment on a plot", "comment", CommandCategory.ACTIONS, true);
+		super(Command.INBOX, "Review a the comments for a plot", "comment", CommandCategory.ACTIONS, true);
 	}
 
 	@Override
-	public boolean execute(Player plr, String... args) {
+	public boolean execute(final Player plr, final String... args) {
 		if (!PlayerFunctions.isInPlot(plr)) {
 			PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
 			return false;
 		}
-		Plot plot = PlayerFunctions.getCurrentPlot(plr);
+		final Plot plot = PlayerFunctions.getCurrentPlot(plr);
 		if (!plot.hasOwner()) {
 		    PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
@@ -56,23 +58,114 @@ public class Inbox extends SubCommand {
 		else {
 		    tier = 4;
 		}
-		ArrayList<PlotComment> comments = plot.settings.getComments();
-		List<String> recipients = Arrays.asList(new String[] {"admin", "owner", "helper", "trusted", "everyone" });
 		
-		int counter = 0;
-		StringBuilder message = new StringBuilder();
-		String prefix = "";
-		for (PlotComment comment : comments) {
-		    if (comment.tier>=tier) {
-		        message.append(prefix + "&6[&c" + recipients.get(tier) + "&6] &7"+comment.senderName+"&f: "+comment.comment);
-		        prefix = "\n";
+		if (args.length > 0) {
+		    switch (args[0].toLowerCase()) {
+		        case "admin":
+		            if (tier<=0) {
+		                tier = 0;
+		            }
+		            else {
+		                PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
+		                return false;
+		            }
+		            break;
+                case "owner":
+                    if (tier<=1) {
+                          tier = 1;
+                      }
+                      else {
+                          PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
+                          return false;
+                      }
+                      break;
+                case "helper":
+                    if (tier<=2) {
+                          tier = 2;
+                      }
+                      else {
+                          PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
+                          return false;
+                      }
+                      break;
+                case "trusted":
+                    if (tier<=3) {
+                          tier = 3;
+                      }
+                      else {
+                          PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
+                          return false;
+                      }
+                      break;
+                case "everyone":
+                    if (tier<=4) {
+                          tier = 4;
+                      }
+                      else {
+                          PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
+                          return false;
+                      }
+                      break;
+                case "default":
+                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] {"admin", "owner", "helper", "trusted", "everyone" }, tier, 4));
+                    return false;
 		    }
 		}
-		if (counter==0) {
-		    PlayerFunctions.sendMessage(plr, "&cNo messages.");
-		    return false;
-		}
-		PlayerFunctions.sendMessage(plr, message.toString());
-        return true;
+		
+		final String world = plr.getWorld().getName();
+		final int tier2 = tier;
+
+		Bukkit.getScheduler().runTaskAsynchronously(PlotMain.getMain(), new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<PlotComment> comments = plot.settings.getComments(tier2);
+                if (comments == null) {
+                    comments = DBFunc.getCommenst(world, plot, tier2);
+                    plot.settings.setComments(comments);
+                }
+                
+                if (args.length == 2) {
+                    String[] split = args[1].toLowerCase().split(":");
+                    if (!split[0].equals("clear")) {
+                        PlayerFunctions.sendMessage(plr, "&c/plot inbox [tier] [clear][:#]");
+                        return;
+                    }
+                    if (split.length > 1) {
+                        try {
+                            int index = Integer.parseInt(split[1]);
+                            PlotComment comment = comments.get(index-1);
+                            DBFunc.removeComment(world, plot, comment);
+                            PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
+                            return;
+                        }
+                        catch (Exception e) {
+                            PlayerFunctions.sendMessage(plr, "&cInvalid index:\n/plot inbox [tier] [clear][:#]");
+                            return;
+                        }
+                    }
+                    for (PlotComment comment : comments) {
+                        DBFunc.removeComment(world, plot, comment);
+                    }
+                    PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
+                    return;
+                }
+                else {
+                    final List<String> recipients = Arrays.asList(new String[] {"A", "O", "H", "T", "E" });
+                    int count = 1;
+                    StringBuilder message = new StringBuilder();
+                    String prefix = "";
+                    for (PlotComment comment : comments) {
+                        message.append(prefix + "["+count+"]&6[&c" + recipients.get(tier2) + "&6] &7"+comment.senderName+"&f: "+comment.comment);
+                        prefix = "\n";
+                        count++;
+                    }
+                    if (comments.size()==0) {
+                        message.append("&cNo messages.");
+                    }
+                    PlayerFunctions.sendMessage(plr, message.toString());
+                }
+            }
+		});
+		return true;
 	}
 }

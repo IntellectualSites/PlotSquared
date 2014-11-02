@@ -36,7 +36,7 @@ public class PlotSettings {
 	 */
 	private Biome biome;
 
-	private ArrayList<PlotComment> comments;
+	private ArrayList<PlotComment> comments = null;
 	/**
 	 *
 	 */
@@ -169,12 +169,19 @@ public class PlotSettings {
 	public String getLeaveMessage() {
 		return "";
 	}
-	public ArrayList<PlotComment> getComments() {
-	    if (this.comments == null) {
-	        return new ArrayList<PlotComment>();
+	public ArrayList<PlotComment> getComments(int tier) {
+	    ArrayList<PlotComment> c = new ArrayList<PlotComment>();
+	    for (PlotComment comment : this.comments) {
+	        if (comment.tier == tier) {
+	            c.add(comment);
+	        }
 	    }
-	    return this.comments;
+	    return c;
 	}
+	
+	public void setComments(ArrayList<PlotComment> comments) {
+	    this.comments = comments;
+    }
 	
 	public void addComment(PlotComment comment) {
 	    if (this.comments == null) {

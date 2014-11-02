@@ -31,6 +31,9 @@ public enum C {
      * Comment
      */
     COMMENT_SYNTAX("&cUse /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
+    INVALID_INBOX("&cThat is not a valid inbox.\n&6Accepted values: %s"),
+    NO_PERM_INBOX("&cYou do not have permission to read that inbox."),
+    COMMENT_REMOVED("&aSuccessfully deleted %s."),
     /*
      * Console
      */
