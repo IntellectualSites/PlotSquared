@@ -1289,7 +1289,9 @@ public class PlotMain extends JavaPlugin {
                 "instabreak",
                 "drop-protection",
                 "forcefield",
-                "titles"
+                "titles",
+                "pve",
+                "pvp"
         );
         List<String> intervalFlags = Arrays.asList(
                 "feed",

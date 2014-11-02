@@ -730,10 +730,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 						if (!PlotMain.hasPermission(p,"plots.admin")) {
 							PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 							e.setCancelled(true);
+                            return;
 						}
 					}
 					else
-						if (!plot.hasRights(p)) {
+                            if(aPlr && !booleanFlag(plot, "pvp"))
+                                return;
+                            if(!aPlr && !booleanFlag(plot, "pve"))
+                                return;
+                            assert plot != null;
+                            if (!plot.hasRights(p)) {
 							if (!PlotMain.hasPermission(p,"plots.admin")) {
 								PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
 								e.setCancelled(true);
