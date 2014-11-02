@@ -8,20 +8,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SchematicHandler;
-import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 
 /**
  * @author Citymonstret
@@ -118,6 +110,12 @@ public class Claim extends SubCommand {
 			if (world.DEFAULT_FLAGS != null && world.DEFAULT_FLAGS.size() > 0) {
 			    plot2.settings.setFlags(FlagManager.parseFlags(world.DEFAULT_FLAGS));
 			}
+            if (world instanceof DefaultPlotWorld) {
+                DefaultPlotWorld pW = (DefaultPlotWorld) world;
+                if(pW.CLAIMED_WALL_BLOCK != pW.WALL_BLOCK) {
+                    PlotMain.getPlotManager(plot.getWorld()).setWall(plot.getWorld(), world, plot.getId(), pW.CLAIMED_WALL_BLOCK);
+                }
+            }
 		}
 		return event.isCancelled();
 	}

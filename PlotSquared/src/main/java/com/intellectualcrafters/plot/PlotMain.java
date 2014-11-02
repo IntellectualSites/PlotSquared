@@ -22,16 +22,12 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -680,7 +676,7 @@ public class PlotMain extends JavaPlugin {
 				add("plot");
 			}
 		});
-        getCommand("plots").setTabCompleter(command);
+        //getCommand("plots").setTabCompleter(command);
 		getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);

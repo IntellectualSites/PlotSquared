@@ -335,9 +335,8 @@ public class Metrics {
 		    else
 		        playersOnline = ((Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).length;
 		}
-		catch (NoSuchMethodException ex){}
-		catch (InvocationTargetException ex){}
-		catch (IllegalAccessException ex){}
+		catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex){}
+
 		// END server software specific section -- all code below does not use
 		// any code outside of this class / Java
 		// Construct the post data

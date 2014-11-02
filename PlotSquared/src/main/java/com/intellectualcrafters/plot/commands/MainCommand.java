@@ -64,8 +64,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				StringBuilder builder = new StringBuilder();
 				builder.append(C.HELP_INFO.s());
 				for (SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
-					builder.append("\n"
-							+ C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
+					builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
 				}
 				PlayerFunctions.sendMessage(player, builder.toString());
 				return true;
@@ -82,15 +81,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				StringBuilder builder = new StringBuilder();
 				builder.append(C.HELP_INFO.s());
 				for (SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
-					builder.append("\n"
-							+ C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
+					builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
 				}
 				PlayerFunctions.sendMessage(player, builder.toString());
 				return true;
 			}
 			StringBuilder help = new StringBuilder();
 			for (String string : helpMenu(player, cato)) {
-				help.append(string + "\n");
+				help.append(string).append("\n");
 			}
 			PlayerFunctions.sendMessage(player, help.toString());
 			return true;
@@ -99,15 +97,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			for (SubCommand command : subCommands) {
 				if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.equalsIgnoreCase(args[0])) {
 					String[] arguments = new String[args.length - 1];
-					for (int x = 1; x < args.length; x++) {
-						arguments[x - 1] = args[x];
-					}
+                    System.arraycopy(args, 1, arguments, 0, args.length - 1);
 					if (command.permission.hasPermission(player)) {
 						if (player!=null || !command.isPlayer ) {
 							return command.execute(player, arguments);
 						}
 						else {
-							PlayerFunctions.sendMessage(player, C.IS_CONSOLE);
+							PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
 							return false;
 						}
 					}

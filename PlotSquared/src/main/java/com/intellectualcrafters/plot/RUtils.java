@@ -36,8 +36,6 @@ public class RUtils {
 		double s = sec % 60;
 		String string = C.TIME_FORMAT.s();
 
-		@SuppressWarnings("unused")
-		// String s_d = (int) d + " " + (d != 1 ? "days" : "day");
 		String s_h = (int) h + " " + ((int) h != 1 ? "hours" : "hour");
 		String s_m = (int) m + " " + ((int) m != 1 ? "minutes" : "minute");
 		String s_s = (int) s + " " + ((int) s != 1 ? "seconds" : "second");
@@ -68,7 +66,6 @@ public class RUtils {
 		double d = ((l.getYaw() * 4.0F) / 360.0F) + 0.5D;
 		int i = (int) d;
 		int x = d < i ? i - 1 : i;
-
 		switch (x) {
 		case 0:
 			return Direction.SOUTH;

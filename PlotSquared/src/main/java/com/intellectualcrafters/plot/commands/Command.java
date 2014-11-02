@@ -86,6 +86,10 @@ public enum Command {
 	/**
 	 *
 	 */
+    INTERFACE("interface", "int", new CommandPermission("plots.interface")),
+    /**
+     *
+     */
 	HOME("home", "h"),
 	/**
 	 *

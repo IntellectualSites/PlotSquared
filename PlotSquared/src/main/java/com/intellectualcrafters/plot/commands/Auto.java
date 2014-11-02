@@ -129,7 +129,8 @@ public class Auto extends SubCommand {
 		    boolean claimed = true;
 		    while (!br) {
 		        PlotId start = getNextPlot(Auto.lastPlot, 1);
-		        
+
+                //FIXME: Wtf is going on here?
 		        if (claimed) {
 		            if (PlotMain.getPlots(world).get(start) == null || PlotMain.getPlots(world).get(start).owner == null) {
 		                Auto.lastPlot = start;
@@ -181,7 +182,7 @@ public class Auto extends SubCommand {
             }
         }
         else {
-            if (id.x==id.y && id.x > 0) {
+            if (id.x.equals(id.y) && id.x > 0) {
                 return new PlotId(id.x, id.y + step);
             }
             if (id.x==absX) {

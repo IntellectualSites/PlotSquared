@@ -88,6 +88,7 @@ public abstract class PlotWorld {
     public boolean SPAWN_BREEDING;
     public static boolean SPAWN_BREEDING_DEFAULT = false;
 
+
 	public PlotWorld(String worldname) {
 		this.worldname = worldname;
 	}

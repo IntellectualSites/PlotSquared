@@ -1,22 +1,13 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotBlock;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotManager;
-import com.intellectualcrafters.plot.PlotWorld;
+import java.util.ArrayList;
 
 public class DefaultPlotManager extends PlotManager {
 
@@ -233,8 +224,10 @@ public class DefaultPlotManager extends PlotManager {
 		PlotBlock[] plotfloor = dpw.TOP_BLOCK;
 		PlotBlock[] filling = dpw.MAIN_BLOCK;
 
-		PlotBlock wall = dpw.WALL_BLOCK;
-		PlotBlock wall_filling = dpw.WALL_FILLING;
+		//PlotBlock wall = dpw.WALL_BLOCK;
+		PlotBlock wall = plot.hasOwner() ? dpw.CLAIMED_WALL_BLOCK : dpw.WALL_BLOCK;
+
+        PlotBlock wall_filling = dpw.WALL_FILLING;
 		
 		Block block = world.getBlockAt(new Location(world, pos1.getBlockX()-1, 1, pos1.getBlockZ()));
         if (block.getTypeId()!=wall_filling.id || block.getData()!=wall_filling.data) {
