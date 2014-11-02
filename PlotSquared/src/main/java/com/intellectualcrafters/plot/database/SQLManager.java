@@ -377,8 +377,8 @@ public class SQLManager extends AbstractDB {
 	 * @return
 	 */
 	@Override
-	public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
-	    HashMap<String, HashMap<PlotId, Plot>> newplots = new HashMap<String, HashMap<PlotId, Plot>>();
+	public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
+	    LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
 		try {
 			DatabaseMetaData data = connection.getMetaData();
 			ResultSet rs = data.getColumns(null, null, PREFIX+"plot", "plot_id");

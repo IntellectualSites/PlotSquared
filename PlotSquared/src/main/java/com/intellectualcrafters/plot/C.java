@@ -254,8 +254,10 @@ public enum C {
     /*
      * List
      */
+    PLOT_LIST_HEADER_PAGED("&c(Page &6%cur&c/&6%max&c) &6List of %word% plots"),
     PLOT_LIST_HEADER("&6List of %word% plots"),
-    PLOT_LIST_ITEM("&c>> &6%id% &c- &6%owner%"),
+    PLOT_LIST_ITEM("&c>> &6%id&c:&6%world &c- &6%owner"),
+    PLOT_LIST_ITEM_ORDERED("&c[&6%in&c] >> &6%id&c:&6%world &c- &6%owner"),
     PLOT_LIST_FOOTER("&c>> &6%word% a total of &c%num% &6claimed %plot%."),
     /*
      * Left

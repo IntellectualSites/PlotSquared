@@ -146,7 +146,7 @@ public class DefaultPlotWorld extends PlotWorld {
 				new ConfigurationNode("plot.filling", DefaultPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true),
 				new ConfigurationNode("plot.floor", DefaultPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true),
 				new ConfigurationNode("wall.block", DefaultPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true),
-                new ConfigurationNode("wall.block.claimed", DefaultPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true),
+                new ConfigurationNode("wall.block_claimed", DefaultPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true),
 				new ConfigurationNode("road.width", DefaultPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
 				new ConfigurationNode("road.height", DefaultPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true),
 				new ConfigurationNode("road.enable_stripes", DefaultPlotWorld.ROAD_STRIPES_ENABLED_DEFAULT, "Enable road stripes", Configuration.BOOLEAN, true),
@@ -182,6 +182,6 @@ public class DefaultPlotWorld extends PlotWorld {
 		this.ROAD_STRIPES = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.stripes"));
 		this.WALL_FILLING = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.filling"));
 		this.WALL_HEIGHT = config.getInt("wall.height");
-        this.CLAIMED_WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block.claimed"));
+        this.CLAIMED_WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
 	}
 }

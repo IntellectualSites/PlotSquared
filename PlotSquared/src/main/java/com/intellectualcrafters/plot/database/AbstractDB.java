@@ -8,17 +8,17 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.OfflinePlayer;
-
 import com.intellectualcrafters.plot.Flag;
 import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotComment;
 import com.intellectualcrafters.plot.PlotId;
+import org.bukkit.OfflinePlayer;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -78,7 +78,7 @@ public abstract class AbstractDB {
     /**
      * @return
      */
-    public abstract HashMap<String, HashMap<PlotId, Plot>> getPlots();
+    public abstract LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots();
 
 
     public abstract void setMerged(final String world, final Plot plot, final boolean[] merged);

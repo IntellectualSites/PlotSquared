@@ -222,7 +222,7 @@ public class PlotMain extends JavaPlugin {
 	 * List of all plots
 	 * DO NOT USE EXCEPT FOR DATABASE PURPOSES
 	 */
-	private static HashMap<String, HashMap<PlotId, Plot>> plots;
+	private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
 	/**
 	 * All loaded plot worlds
 	 */
@@ -234,12 +234,20 @@ public class PlotMain extends JavaPlugin {
 	 * 
 	 * @return HashMap containing the plot ID and the plot object.
 	 */
-	public static Set<Plot> getPlots() {
+    public static Set<Plot> getPlots() {
+        ArrayList<Plot> myplots = new ArrayList<>();
+        for (HashMap<PlotId, Plot> world : plots.values()) {
+            myplots.addAll(world.values());
+        }
+        return new HashSet<>(myplots);
+    }
+
+	public static LinkedHashSet<Plot> getPlotsSorted() {
 		ArrayList<Plot> myplots = new ArrayList<>();
 		for (HashMap<PlotId, Plot> world : plots.values()) {
 			myplots.addAll(world.values());
 		}
-		return new HashSet<>(myplots);
+		return new LinkedHashSet<>(myplots);
 	}
 
 	/**
@@ -1515,8 +1523,12 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
-    public static void setAllPlotsRaw(HashMap<String, HashMap<PlotId, Plot>> plots) {
+    public static void setAllPlotsRaw(LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = plots;
     }
 
+    public static void setAllPlotsRaw(HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
+        PlotMain.plots.putAll(plots);
+    }
 }
