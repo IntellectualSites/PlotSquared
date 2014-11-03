@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.StringComparsion;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -208,22 +209,32 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         if(!(commandSender instanceof Player)) return null;
         Player player = (Player) commandSender;
-        ArrayList<SubCommand> subo = subCommands;
-        if(strings.length < 1 || strings[0].length() < 2) return null;
-        while(true) {
-            String sub = new StringComparsion(strings[0], subo.toArray()).getBestMatch();
-            if(subo.isEmpty())
-                break;
-            for (SubCommand subCommand : subo) {
-                if (subCommand.cmd.equals(sub)) {
-                    if(subCommand.permission.hasPermission(player))
-                        return Arrays.asList(sub);
-                    else {
-                        subo.remove(subCommand);
-                        break;
-                    }
+        
+        if(strings.length < 1) {
+            if (strings.length==0 || "plots".startsWith(s)) {
+                return Arrays.asList(new String[] {"plots"});
+            }
+        }
+        if (strings.length > 1) {
+            return null;
+        }
+        if (!command.getLabel().equalsIgnoreCase("plots")) {
+            return null;
+        }
+        List<String> tabOptions = new ArrayList<String>();
+        String arg = strings[0].toLowerCase();
+        for (SubCommand cmd : subCommands) {
+            if (cmd.permission.hasPermission(player)) {
+                if (cmd.cmd.startsWith(arg)) {
+                    tabOptions.add(cmd.cmd);
+                }
+                else if (cmd.alias.startsWith(arg)) {
+                    tabOptions.add(cmd.alias);
                 }
             }
+        }
+        if(tabOptions.size()>0) {
+            return tabOptions;
         }
         return null;
     }
