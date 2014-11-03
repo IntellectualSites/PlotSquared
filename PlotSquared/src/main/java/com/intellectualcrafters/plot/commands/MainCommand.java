@@ -174,7 +174,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
      */
 	public static ArrayList<String> helpMenu(Player player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands = getCommands(category, player);
-        final int totalPages = ((int) Math.ceil(12 * (commands.size()) / 100));
+        //final int totalPages = ((int) Math.ceil(12 * (commands.size()) / 100));
+        int totalPages = (int) Math.ceil(commands.size() / 12);
         if(page > totalPages)
             page = totalPages;
         int max = (page * 12) + 12;

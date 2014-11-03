@@ -86,7 +86,8 @@ public class list extends SubCommand {
                     }
 
                     //Get the total pages
-                    int totalPages = ((int) Math.ceil(12 * (PlotMain.getPlotsSorted().size()) / 100));
+                    //int totalPages = ((int) Math.ceil(12 * (PlotMain.getPlotsSorted().size()) / 100));
+                    int totalPages = (int) Math.ceil(PlotMain.getPlotsSorted().size() / 12);
 
                     if(page > totalPages)
                         page = totalPages;
