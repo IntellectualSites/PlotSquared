@@ -697,7 +697,14 @@ public class PlotMain extends JavaPlugin {
 		}
 		if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
 			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-			getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
+			
+			String version = worldEdit.getDescription().getVersion();
+			if (version!=null && version.startsWith("5")) {
+			    PlotMain.sendConsoleSenderMessage("&cPlease update to WorldEdit 6 for improved stability and additional features:\nhttp://builds.enginehub.org/job/worldedit");
+			}
+			else {
+			    getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
+			}
 		}
 		if (Settings.WORLDGUARD) {
 			if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
