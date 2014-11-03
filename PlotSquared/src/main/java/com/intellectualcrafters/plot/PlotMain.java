@@ -699,7 +699,7 @@ public class PlotMain extends JavaPlugin {
 			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
 			
 			String version = worldEdit.getDescription().getVersion();
-			if (version!=null && version.startsWith("5")) {
+			if (version!=null && version.startsWith("5.")) {
 			    PlotMain.sendConsoleSenderMessage("&cPlease update to WorldEdit 6 for improved stability and additional features:\nhttp://builds.enginehub.org/job/worldedit");
 			}
 			else {
