@@ -1,22 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -28,6 +12,18 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.permissions.PermissionAttachment;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-09-24.
@@ -43,9 +39,18 @@ public class WorldGuardListener implements Listener {
 			this.flags.add(flag);
 		}
 	}
+
 	public void changeOwner(Player requester, UUID owner, World world, Plot plot) {
-	    boolean op = requester.isOp();
-        requester.setOp(true);
+	    //boolean op = requester.isOp();
+        //requester.setOp(true);
+
+        //10 ticks should be enough
+        PermissionAttachment add = requester.addAttachment(PlotMain.getPlugin(PlotMain.class), 10);
+        add.setPermission("worldguard.region.addowner.own.*", true);
+
+        PermissionAttachment remove = requester.addAttachment(PlotMain.getPlugin(PlotMain.class), 10);
+        remove.setPermission("worldguard.region.removeowner.own.*", true);
+
         try {
             RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.getRegion(plot.id.x + "-" + plot.id.y);
@@ -53,10 +58,12 @@ public class WorldGuardListener implements Listener {
             requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
         }
         catch (Exception e) {
-            requester.setOp(op);
+            //requester.setOp(op);
+
         }
         finally {
-            requester.setOp(op);
+            add.remove();
+            remove.remove();
         }
 	}
 

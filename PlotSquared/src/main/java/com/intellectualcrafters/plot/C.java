@@ -327,7 +327,11 @@ public enum C {
     HELP_CATEGORY("&6Current Category&c: &l%category%"),
     HELP_INFO("&6You need to specify a help category"),
     HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
-    HELP_PAGE("&c>> &6%usage% &c[&6%alias%&c] &c- &6%desc%"),
+    HELP_PAGE(
+            "&c>> &6%usage% &c[&6%alias%&c]\n" +
+            "&c>> &6%desc%\n"
+    ),
+    HELP_ITEM_SEPARATOR("&c%lines"),
     HELP_HEADER("&c(Page &6%cur&c/&6%max&c) &6Help for Plots"),
     /*
      * Direction

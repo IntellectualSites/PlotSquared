@@ -19,6 +19,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,16 +50,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		Player player;
-		if (sender instanceof Player) {
-			player = (Player) sender;
-		}
-		else {
-			player = null;
-		}
-		if (!PlotMain.hasPermission(player, "plots.use")) {
+		Player player = (sender instanceof Player) ? (Player) sender : null;
+
+        if (!PlotMain.hasPermission(player, "plots.use"))
 			return no_permission(player, "plots.use");
-		}
+
 		if ((args.length < 1)
 				|| ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
 			if (args.length < 2) {
@@ -89,14 +85,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 			StringBuilder help = new StringBuilder();
             int page = 0;
-            try {
+
+            boolean digit = true;
+            for(char c : args[2].toCharArray())
+                if(!Character.isDigit(c)) {
+                    digit = false;
+                    break;
+                }
+            if(digit) {
                 page = Integer.parseInt(args[2]);
-                --page;
-                if(page < 0) page = 0;
-            } catch(Exception e) {}
-			for (String string : helpMenu(player, cato, page)) {
-				help.append(string).append("\n");
-			}
+                if(--page < 0) page = 0;
+            }
+
+            for(String string : helpMenu(player, cato, page))
+                help.append(string).append("\n");
+
 			PlayerFunctions.sendMessage(player, help.toString());
 			return true;
 		}
@@ -175,10 +178,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	public static ArrayList<String> helpMenu(Player player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands = getCommands(category, player);
         //final int totalPages = ((int) Math.ceil(12 * (commands.size()) / 100));
-        int totalPages = (int) Math.ceil(commands.size() / 12);
+        int perPage = 5;
+        int totalPages = (int) Math.ceil(commands.size() / perPage);
         if(page > totalPages)
             page = totalPages;
-        int max = (page * 12) + 12;
+        int max = (page * perPage) + perPage;
         if(max > commands.size())
             max = commands.size();
 		ArrayList<String> help = new ArrayList<>(
@@ -187,14 +191,27 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                         t(C.HELP_CATEGORY.s().replaceAll("%category%", category.toString()))
                 ));
         SubCommand cmd;
-        for(int x = (page * 12); x < max; x++) {
+
+        String lines = "";
+        for(int x = 0; x < ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH * 0.75; x++) {
+            lines += "-";
+        }
+
+        int start = page * perPage;
+        for(int x = start; x < max; x++) {
             cmd = subCommands.get(x);
             String s = t(C.HELP_PAGE.s());
             s = s.replaceAll("%alias%", cmd.alias);
             s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);
             s = s.replaceAll("%cmd%", cmd.cmd);
             s = s.replaceAll("%desc%", cmd.description);
+
             help.add(s);
+
+            if(x != start && x != max - 1) {
+                help.add(t(C.HELP_ITEM_SEPARATOR.s().replaceAll("%lines", lines)));
+            }
+
         }
 		if (help.size() < 2) {
 			help.add(t(C.NO_COMMANDS.s()));

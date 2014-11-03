@@ -1,15 +1,11 @@
-package PlotTesting;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.intellectualcrafters.plot.PlotHelper;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotManager;
 import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.SchematicHandler;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class Test1 {
     
