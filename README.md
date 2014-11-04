@@ -10,7 +10,6 @@ This is the official PlotSquared repo, if you didn't understand that by the titl
 
 ## Addons ##
 - [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/ "Plot2Dynmap")
-- [Plot+](http://www.spigotmc.org/resources/plotplus-plotweb.1595/ "Plot+")
 - [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/ "AdvPlots")
 - [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/ "PlotRankup")
 
