@@ -97,3 +97,4 @@ hs_err_pid*
 .project
 /target
 /plotsquared/target
+*.MF
