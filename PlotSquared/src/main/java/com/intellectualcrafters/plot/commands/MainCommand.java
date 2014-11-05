@@ -84,14 +84,23 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             int page = 0;
 
             boolean digit = true;
-            for (final char c : args[2].toCharArray()) {
+            
+            String arg2;
+            if (args.length>2) {
+                arg2 = args[2];
+            }
+            else {
+                arg2 = "1";
+            }
+            
+            for (final char c : arg2.toCharArray()) {
                 if (!Character.isDigit(c)) {
                     digit = false;
                     break;
                 }
             }
             if (digit) {
-                page = Integer.parseInt(args[2]);
+                page = Integer.parseInt(arg2);
                 if (--page < 0) {
                     page = 0;
                 }
