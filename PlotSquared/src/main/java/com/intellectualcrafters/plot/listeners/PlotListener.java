@@ -1,72 +1,87 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.WeatherType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.FlagManager;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotManager;
+import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.Settings;
+import com.intellectualcrafters.plot.Title;
+import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 
 /**
  * Created by Citymonstret on 2014-10-21.
  */
 public class PlotListener {
 
-    public static void textures(Player p) {
+    public static void textures(final Player p) {
         if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }
 
-    public static boolean isInPlot(Player player) {
+    public static boolean isInPlot(final Player player) {
         return PlayerFunctions.isInPlot(player);
     }
 
-    public static Plot getPlot(Player player) {
+    public static Plot getPlot(final Player player) {
         return PlayerFunctions.getCurrentPlot(player);
     }
 
-    public static boolean isPlotWorld(World world) {
+    public static boolean isPlotWorld(final World world) {
         return PlotMain.isPlotWorld(world);
     }
 
-    public static PlotWorld getPlotWorld(World world) {
+    public static PlotWorld getPlotWorld(final World world) {
         return PlotMain.getWorldSettings(world);
     }
 
-    public static String getName(UUID uuid) {
+    public static String getName(final UUID uuid) {
         return UUIDHandler.getName(uuid);
     }
 
-    public static UUID getUUID(String name) {
+    public static UUID getUUID(final String name) {
         return UUIDHandler.getUUID(name);
     }
-    
+
     // unused
-    public static void blockChange(Block block, Cancellable event) {
-        Location loc = block.getLocation();
-        String world = loc.getWorld().getName();
-        PlotManager manager = PlotMain.getPlotManager(world);
-        if (manager!=null) {
-            PlotWorld plotworld = PlotMain.getWorldSettings(world);
-            PlotId id = manager.getPlotId(plotworld, loc);
-            if (id==null) {
+    public static void blockChange(final Block block, final Cancellable event) {
+        final Location loc = block.getLocation();
+        final String world = loc.getWorld().getName();
+        final PlotManager manager = PlotMain.getPlotManager(world);
+        if (manager != null) {
+            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+            final PlotId id = manager.getPlotId(plotworld, loc);
+            if (id == null) {
                 event.setCancelled(true);
             }
         }
         return;
     }
 
-    public static boolean enteredPlot(Location l1, Location l2) {
-        PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-        PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
+    public static boolean enteredPlot(final Location l1, final Location l2) {
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
         if (p2 == null) {
             return false;
         }
@@ -79,9 +94,9 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean leftPlot(Location l1, Location l2) {
-        PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-        PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
+    public static boolean leftPlot(final Location l1, final Location l2) {
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
         if (p1 == null) {
             return false;
         }
@@ -94,20 +109,20 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean isPlotWorld(Location l) {
+    public static boolean isPlotWorld(final Location l) {
         return PlotMain.isPlotWorld(l.getWorld());
     }
 
-    public static boolean isInPlot(Location loc) {
+    public static boolean isInPlot(final Location loc) {
         return getCurrentPlot(loc) != null;
     }
 
-    public static Plot getCurrentPlot(Location loc) {
-        PlotId id = PlayerFunctions.getPlot(loc);
+    public static Plot getCurrentPlot(final Location loc) {
+        final PlotId id = PlayerFunctions.getPlot(loc);
         if (id == null) {
             return null;
         }
-        World world = loc.getWorld();
+        final World world = loc.getWorld();
         if (PlotMain.getPlots(world).containsKey(id)) {
             return PlotMain.getPlots(world).get(id);
         }
@@ -116,19 +131,20 @@ public class PlotListener {
 
     private static WeatherType getWeatherType(String str) {
         str = str.toLowerCase();
-        if(str.equals("rain")) {
+        if (str.equals("rain")) {
             return WeatherType.DOWNFALL;
-        } else {
+        }
+        else {
             return WeatherType.CLEAR;
         }
     }
 
-    public static boolean booleanFlag(Plot plot, String flag) {
-        return plot.settings.getFlag(flag) != null && getBooleanFlag(plot.settings.getFlag(flag).getValue()).equals("true");
+    public static boolean booleanFlag(final Plot plot, final String flag) {
+        return (plot.settings.getFlag(flag) != null) && getBooleanFlag(plot.settings.getFlag(flag).getValue()).equals("true");
     }
 
-    private static String getBooleanFlag(String value) {
-        switch(value) {
+    private static String getBooleanFlag(final String value) {
+        switch (value) {
             case "on":
             case "1":
             case "true":
@@ -144,7 +160,7 @@ public class PlotListener {
         }
     }
 
-    private static GameMode getGameMode(String str) {
+    private static GameMode getGameMode(final String str) {
         switch (str) {
             case "creative":
                 return GameMode.CREATIVE;
@@ -157,65 +173,66 @@ public class PlotListener {
         }
     }
 
-    public static void plotEntry(Player player, Plot plot) {
+    public static void plotEntry(final Player player, final Plot plot) {
         if (plot.hasOwner()) {
-            if(plot.settings.getFlag("gamemode") != null) {
+            if (plot.settings.getFlag("gamemode") != null) {
                 player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
             }
-            if(plot.settings.getFlag("fly") != null) {
+            if (plot.settings.getFlag("fly") != null) {
                 player.setAllowFlight(getFlagValue(plot.settings.getFlag("fly").getValue()));
             }
-            if(plot.settings.getFlag("time") != null) {
+            if (plot.settings.getFlag("time") != null) {
                 try {
-                    Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
+                    final Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
                     player.setPlayerTime(time, true);
-                } catch(Exception e) {
+                }
+                catch (final Exception e) {
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
             }
-            if(plot.settings.getFlag("weather") != null) {
+            if (plot.settings.getFlag("weather") != null) {
                 player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
             }
-            if (booleanFlag(plot, "titles") && Settings.TITLES && C.TITLE_ENTERED_PLOT.s().length() > 2) {
-                String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
-                String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
-                ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
-                ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
-                Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
+            if (booleanFlag(plot, "titles") && Settings.TITLES && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
+                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
+                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
+                final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
+                final ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
+                final Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
                 title.setTitleColor(sTitleMainColor);
                 title.setSubtitleColor(sTitleSubColor);
                 title.setTimingsToTicks();
                 title.send(player);
             }
             {
-                PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
+                final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
                 Bukkit.getPluginManager().callEvent(callEvent);
             }
             PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
         }
     }
 
-    public static void plotExit(Player player, Plot plot) {
+    public static void plotExit(final Player player, final Plot plot) {
         {
-            PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
+            final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
             Bukkit.getPluginManager().callEvent(callEvent);
         }
-        if(plot.settings.getFlag("fly") != null) {
+        if (plot.settings.getFlag("fly") != null) {
             player.setAllowFlight(Bukkit.getAllowFlight());
         }
-        if(plot.settings.getFlag("gamemode") != null) {
+        if (plot.settings.getFlag("gamemode") != null) {
             player.setGameMode(Bukkit.getDefaultGameMode());
         }
-        if(plot.settings.getFlag("time") != null) {
+        if (plot.settings.getFlag("time") != null) {
             player.resetPlayerTime();
         }
-        if(plot.settings.getFlag("weather") != null) {
+        if (plot.settings.getFlag("weather") != null) {
             player.resetPlayerWeather();
         }
         PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
     }
 
-    public static boolean getFlagValue(String value) {
+    public static boolean getFlagValue(final String value) {
         return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }
 }

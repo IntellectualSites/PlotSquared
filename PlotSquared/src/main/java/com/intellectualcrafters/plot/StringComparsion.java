@@ -5,6 +5,7 @@ import java.util.Collections;
 
 /**
  * String comparsion library
+ *
  * @author Citymonstret
  */
 public class StringComparsion {
@@ -12,12 +13,12 @@ public class StringComparsion {
     private String bestMatch;
     private double match;
 
-    public StringComparsion(String input, Object[] objects) {
+    public StringComparsion(final String input, final Object[] objects) {
         double c = 0;
-        for(Object o : objects) {
-            if((c = compare(input, o.toString())) > match) {
-                match = c;
-                bestMatch = o.toString();
+        for (final Object o : objects) {
+            if ((c = compare(input, o.toString())) > this.match) {
+                this.match = c;
+                this.bestMatch = o.toString();
             }
         }
     }
@@ -27,19 +28,16 @@ public class StringComparsion {
     }
 
     public Object[] getBestMatchAdvanced() {
-        return new Object[] {
-                match,
-                bestMatch
-        };
+        return new Object[] { this.match, this.bestMatch };
     }
 
-    public static double compare(String s1, String s2) {
-        ArrayList p1 = wLetterPair(s1.toUpperCase()),
-                p2 = wLetterPair(s2.toUpperCase());
-        int intersection = 0, union = p1.size() + p2.size();
-        for (Object aP1 : p1) {
-            for(Object aP2 : p2) {
-                if(aP1.equals(aP2)) {
+    public static double compare(final String s1, final String s2) {
+        final ArrayList p1 = wLetterPair(s1.toUpperCase()), p2 = wLetterPair(s2.toUpperCase());
+        int intersection = 0;
+        final int union = p1.size() + p2.size();
+        for (final Object aP1 : p1) {
+            for (final Object aP2 : p2) {
+                if (aP1.equals(aP2)) {
                     intersection++;
                     p2.remove(aP2);
                     break;
@@ -49,21 +47,22 @@ public class StringComparsion {
         return (2.0 * intersection) / union;
     }
 
-    public static ArrayList wLetterPair(String s) {
-        ArrayList<String> aPairs = new ArrayList<>();
-        String[] wo = s.split("\\s");
-        for (String aWo : wo) {
-            String[] po = sLetterPair(aWo);
+    public static ArrayList wLetterPair(final String s) {
+        final ArrayList<String> aPairs = new ArrayList<>();
+        final String[] wo = s.split("\\s");
+        for (final String aWo : wo) {
+            final String[] po = sLetterPair(aWo);
             Collections.addAll(aPairs, po);
         }
         return aPairs;
     }
 
-    public static String[] sLetterPair(String s) {
-        int numPair = s.length() - 1;
-        String[] p = new String[numPair];
-        for(int i = 0; i < numPair; i++)
+    public static String[] sLetterPair(final String s) {
+        final int numPair = s.length() - 1;
+        final String[] p = new String[numPair];
+        for (int i = 0; i < numPair; i++) {
             p[i] = s.substring(i, i + 2);
+        }
         return p;
     }
 

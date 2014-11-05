@@ -10,29 +10,29 @@ import com.intellectualcrafters.plot.Plot;
  * Created by Citymonstret on 2014-08-16.
  */
 public class PlayerLeavePlotEvent extends PlayerEvent {
-	private static HandlerList handlers = new HandlerList();
+    private static HandlerList handlers = new HandlerList();
 
-	private Plot plot;
+    private final Plot         plot;
 
-	/**
-	 * PlayerLeavePlotEvent: Called when a player leaves a plot
-	 * 
-	 * @param player
-	 * @param plot
-	 */
-	public PlayerLeavePlotEvent(Player player, Plot plot) {
-		super(player);
-		this.plot = plot;
-	}
+    /**
+     * PlayerLeavePlotEvent: Called when a player leaves a plot
+     *
+     * @param player
+     * @param plot
+     */
+    public PlayerLeavePlotEvent(final Player player, final Plot plot) {
+        super(player);
+        this.plot = plot;
+    }
 
-	/**
-	 * Get the plot involved
-	 * 
-	 * @return Plot
-	 */
-	public Plot getPlot() {
-		return this.plot;
-	}
+    /**
+     * Get the plot involved
+     *
+     * @return Plot
+     */
+    public Plot getPlot() {
+        return this.plot;
+    }
 
     public static HandlerList getHandlerList() {
         return handlers;

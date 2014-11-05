@@ -5,10 +5,10 @@ package com.intellectualcrafters.plot.database.sqlobjects;
  */
 public class SQLField {
 
-    private SQLType type;
-    private Object  value;
+    private final SQLType type;
+    private final Object  value;
 
-    public SQLField(SQLType type, Object value) {
+    public SQLField(final SQLType type, final Object value) {
         this.type = type;
         this.value = value;
     }

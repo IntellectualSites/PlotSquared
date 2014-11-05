@@ -8,19 +8,23 @@ public class StringWrapper {
 
     /**
      * Constructor
-     * @param value to wrap
+     *
+     * @param value
+     *            to wrap
      */
-    public StringWrapper(String value) {
+    public StringWrapper(final String value) {
         this.value = value;
     }
 
     /**
      * Check if a wrapped string equals another one
-     * @param obj to compare
+     *
+     * @param obj
+     *            to compare
      * @return true if obj equals the stored value
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -30,12 +34,13 @@ public class StringWrapper {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        StringWrapper other = (StringWrapper) obj;
+        final StringWrapper other = (StringWrapper) obj;
         return other.value.toLowerCase().equals(this.value.toLowerCase());
     }
 
     /**
      * Get the string value
+     *
      * @return string value
      */
     @Override
@@ -45,6 +50,7 @@ public class StringWrapper {
 
     /**
      * Get the hash value
+     *
      * @return has value
      */
     @Override

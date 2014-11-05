@@ -6,10 +6,10 @@ import java.util.UUID;
  * Created by Citymonstret on 2014-10-13.
  */
 public class UUIDSet {
-    private String name;
-    private UUID uuid;
+    private final String name;
+    private final UUID   uuid;
 
-    public UUIDSet(String name, UUID uuid) {
+    public UUIDSet(final String name, final UUID uuid) {
         this.name = name;
         this.uuid = uuid;
     }
@@ -20,10 +20,10 @@ public class UUIDSet {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public UUID getUUID() {
-        return uuid;
+        return this.uuid;
     }
 }

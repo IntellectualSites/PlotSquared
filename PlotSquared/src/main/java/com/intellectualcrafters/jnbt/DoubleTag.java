@@ -2,7 +2,7 @@ package com.intellectualcrafters.jnbt;
 
 /**
  * The {@code TAG_Double} tag.
- * 
+ *
  */
 public final class DoubleTag extends Tag {
 
@@ -11,9 +11,10 @@ public final class DoubleTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
-    public DoubleTag(double value) {
+    public DoubleTag(final double value) {
         super();
         this.value = value;
     }
@@ -21,27 +22,29 @@ public final class DoubleTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
-    public DoubleTag(String name, double value) {
+    public DoubleTag(final String name, final double value) {
         super(name);
         this.value = value;
     }
 
     @Override
     public Double getValue() {
-        return value;
+        return this.value;
     }
 
     @Override
     public String toString() {
-        String name = getName();
+        final String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if ((name != null) && !name.equals("")) {
             append = "(\"" + this.getName() + "\")";
         }
-        return "TAG_Double" + append + ": " + value;
+        return "TAG_Double" + append + ": " + this.value;
     }
 
 }

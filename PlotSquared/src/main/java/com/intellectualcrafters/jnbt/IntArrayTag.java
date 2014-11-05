@@ -12,9 +12,10 @@ public final class IntArrayTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
-    public IntArrayTag(int[] value) {
+    public IntArrayTag(final int[] value) {
         super();
         checkNotNull(value);
         this.value = value;
@@ -23,10 +24,12 @@ public final class IntArrayTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
-    public IntArrayTag(String name, int[] value) {
+    public IntArrayTag(final String name, final int[] value) {
         super(name);
         checkNotNull(value);
         this.value = value;
@@ -34,22 +37,22 @@ public final class IntArrayTag extends Tag {
 
     @Override
     public int[] getValue() {
-        return value;
+        return this.value;
     }
 
     @Override
     public String toString() {
-        StringBuilder hex = new StringBuilder();
-        for (int b : value) {
-            String hexDigits = Integer.toHexString(b).toUpperCase();
+        final StringBuilder hex = new StringBuilder();
+        for (final int b : this.value) {
+            final String hexDigits = Integer.toHexString(b).toUpperCase();
             if (hexDigits.length() == 1) {
                 hex.append("0");
             }
             hex.append(hexDigits).append(" ");
         }
-        String name = getName();
+        final String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if ((name != null) && !name.equals("")) {
             append = "(\"" + this.getName() + "\")";
         }
         return "TAG_Int_Array" + append + ": " + hex;

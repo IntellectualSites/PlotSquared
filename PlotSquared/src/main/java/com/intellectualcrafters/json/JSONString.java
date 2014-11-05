@@ -1,4 +1,5 @@
 package com.intellectualcrafters.json;
+
 /**
  * The <code>JSONString</code> interface allows a <code>toJSONString()</code>
  * method so that a class can change the behavior of
@@ -9,7 +10,8 @@ package com.intellectualcrafters.json;
  */
 public interface JSONString {
     /**
-     * The <code>toJSONString</code> method allows a class to produce its own JSON
+     * The <code>toJSONString</code> method allows a class to produce its own
+     * JSON
      * serialization.
      *
      * @return A strictly syntactically correct JSON text.

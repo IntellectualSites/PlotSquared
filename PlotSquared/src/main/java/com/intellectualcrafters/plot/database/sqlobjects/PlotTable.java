@@ -12,6 +12,6 @@ public class PlotTable extends SQLTable {
     @Override
     public void create() {
         // TODO Auto-generated method stub
-        
+
     }
 }

@@ -5,26 +5,26 @@ package com.intellectualcrafters.plot;
  */
 public class PlotSquaredException extends RuntimeException {
 
-	public PlotSquaredException(PlotError error, String details) {
-		super("PlotError >> " + error.getHeader() + ": " + details);
-		PlotMain.sendConsoleSenderMessage("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
-	}
+    public PlotSquaredException(final PlotError error, final String details) {
+        super("PlotError >> " + error.getHeader() + ": " + details);
+        PlotMain.sendConsoleSenderMessage("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
+    }
 
-	public static enum PlotError {
-		MISSING_DEPENDENCY("Missing Dependency");
-		private String errorHeader;
+    public static enum PlotError {
+        MISSING_DEPENDENCY("Missing Dependency");
+        private String errorHeader;
 
-		PlotError(String errorHeader) {
-			this.errorHeader = errorHeader;
-		}
+        PlotError(final String errorHeader) {
+            this.errorHeader = errorHeader;
+        }
 
-		public String getHeader() {
-			return this.errorHeader;
-		}
+        public String getHeader() {
+            return this.errorHeader;
+        }
 
-		@Override
-		public String toString() {
-			return this.getHeader();
-		}
-	}
+        @Override
+        public String toString() {
+            return this.getHeader();
+        }
+    }
 }

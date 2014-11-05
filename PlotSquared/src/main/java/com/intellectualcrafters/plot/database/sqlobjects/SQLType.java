@@ -11,10 +11,10 @@ public enum SQLType {
 
     private Object defaultValue;
     private String sqlName;
-    private Class javaClass;
-    private int length;
+    private Class  javaClass;
+    private int    length;
 
-    SQLType(Object defaultValue, String sqlName, Class javaClass, int length) {
+    SQLType(final Object defaultValue, final String sqlName, final Class javaClass, final int length) {
         this.defaultValue = defaultValue;
         this.sqlName = sqlName;
         this.javaClass = javaClass;
@@ -24,6 +24,7 @@ public enum SQLType {
     public int getLength() {
         return this.length;
     }
+
     @Override
     public String toString() {
         return this.sqlName;

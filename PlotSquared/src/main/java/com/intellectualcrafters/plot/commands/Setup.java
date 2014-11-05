@@ -27,203 +27,191 @@ import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
  */
 public class Setup extends SubCommand implements Listener {
 
-	public static Map<String, SetupObject> setupMap = new HashMap<>();
+    public static Map<String, SetupObject> setupMap = new HashMap<>();
 
-	private class SetupObject {
-		String world;
-		String plugin;
-		int current = 0;
+    private class SetupObject {
+        String              world;
+        String              plugin;
+        int                 current = 0;
 
-		ConfigurationNode[] step;
+        ConfigurationNode[] step;
 
-		public SetupObject(String world, PlotWorld plotworld, String plugin) {
-			this.world = world;
-			this.step = plotworld.getSettingNodes();
-			this.plugin = plugin;
-		}
+        public SetupObject(final String world, final PlotWorld plotworld, final String plugin) {
+            this.world = world;
+            this.step = plotworld.getSettingNodes();
+            this.plugin = plugin;
+        }
 
-		public String getPlugin() {
-			return this.plugin;
-		}
+        public int getCurrent() {
+            return this.current;
+        }
 
-		public int getCurrent() {
-			return this.current;
-		}
+        public int getMax() {
+            return this.step.length;
+        }
+    }
 
-		public int getMax() {
-			return this.step.length;
-		}
-	}
+    public Setup() {
+        super("setup", "plots.admin", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
+    }
 
-	public Setup() {
-		super("setup", "plots.admin", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
-	}
+    @Override
+    public boolean execute(final Player plr, final String... args) {
+        String plrname;
 
-	@Override
-	public boolean execute(Player plr, String... args) {
-		String plrname;
-		
-		if (plr==null) {
-			plrname = "";
-		}
-		else {
-			plrname = plr.getName();
-		}
-		
-		if (setupMap.containsKey(plrname)) {
-			SetupObject object = setupMap.get(plrname);
-			if (object.getCurrent() == object.getMax()) {
-				ConfigurationNode[] steps = object.step;
-				String world = object.world;
-				for (ConfigurationNode step : steps) {
-					PlotMain.config.set("worlds." + world + "." + step.getConstant(), step.getValue());
-				}
-				try {
-					PlotMain.config.save(PlotMain.configFile);
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
+        if (plr == null) {
+            plrname = "";
+        }
+        else {
+            plrname = plr.getName();
+        }
 
-				// Creating the worlds
-				if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
-					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world
-							+ " normal -g " + object.plugin);
-				}
-				else {
-					if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world
-								+ " plugin:" + object.plugin);
-					}
-					else {
-					    for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			                if (plugin.isEnabled()) {
-			                    if (plugin.getDefaultWorldGenerator("world", "") != null) {
-			                        String name = plugin.getDescription().getName();
-			                        if (object.plugin.equals(name)) {
-			                            ChunkGenerator generator = plugin.getDefaultWorldGenerator(world, "");
-			                            World myworld = WorldCreator.name(world).generator(generator).createWorld();
-			                            PlayerFunctions.sendMessage(plr, "&aLoaded world.");
-			                            plr.teleport(myworld.getSpawnLocation());
-			                            break;
-			                        }
-			                    }
+        if (setupMap.containsKey(plrname)) {
+            final SetupObject object = setupMap.get(plrname);
+            if (object.getCurrent() == object.getMax()) {
+                final ConfigurationNode[] steps = object.step;
+                final String world = object.world;
+                for (final ConfigurationNode step : steps) {
+                    PlotMain.config.set("worlds." + world + "." + step.getConstant(), step.getValue());
+                }
+                try {
+                    PlotMain.config.save(PlotMain.configFile);
+                }
+                catch (final IOException e) {
+                    e.printStackTrace();
+                }
 
-			                }
-			            }
-					}
-				}
-				sendMessage(plr, C.SETUP_FINISHED, object.world);
+                // Creating the worlds
+                if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.plugin);
+                }
+                else {
+                    if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.plugin);
+                    }
+                    else {
+                        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                            if (plugin.isEnabled()) {
+                                if (plugin.getDefaultWorldGenerator("world", "") != null) {
+                                    final String name = plugin.getDescription().getName();
+                                    if (object.plugin.equals(name)) {
+                                        final ChunkGenerator generator = plugin.getDefaultWorldGenerator(world, "");
+                                        final World myworld = WorldCreator.name(world).generator(generator).createWorld();
+                                        PlayerFunctions.sendMessage(plr, "&aLoaded world.");
+                                        plr.teleport(myworld.getSpawnLocation());
+                                        break;
+                                    }
+                                }
 
-				setupMap.remove(plrname);
+                            }
+                        }
+                    }
+                }
+                sendMessage(plr, C.SETUP_FINISHED, object.world);
 
-				return true;
-			}
-			ConfigurationNode step = object.step[object.current];
-			if (args.length < 1) {
-				sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-						+ "");
-				return true;
-			}
-			else {
-				if (args[0].equalsIgnoreCase("cancel")) {
-					setupMap.remove(plrname);
-					PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
-					return true;
-				}
-				if (args[0].equalsIgnoreCase("back")) {
-					if (object.current > 0) {
-						object.current--;
-						step = object.step[object.current];
-						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-								+ "");
-						return true;
-					}
-					else {
-						sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-								+ "");
-						return true;
-					}
-				}
-				boolean valid = step.isValid(args[0]);
-				if (valid) {
-					sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
-					step.setValue(args[0]);
-					object.current++;
-					if (object.getCurrent() == object.getMax()) {
-						execute(plr, args);
-						return true;
-					}
-					step = object.step[object.current];
-					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-							+ "");
-					return true;
-				}
-				else {
-					sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
-					sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-							+ "");
-					return true;
-				}
-			}
-		}
-		else {
-			if (args.length < 1) {
-				sendMessage(plr, C.SETUP_MISSING_WORLD);
-				return true;
-			}
-			if (args.length < 2) {
-				sendMessage(plr, C.SETUP_MISSING_GENERATOR);
-				return true;
-			}
-			String world = args[0];
-			if (StringUtils.isNumeric(args[0])) {
-				sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
-				return true;
-			}
+                setupMap.remove(plrname);
 
-			if (PlotMain.getWorldSettings(world) != null) {
-				sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
-				return true;
-			}
+                return true;
+            }
+            ConfigurationNode step = object.step[object.current];
+            if (args.length < 1) {
+                sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+                return true;
+            }
+            else {
+                if (args[0].equalsIgnoreCase("cancel")) {
+                    setupMap.remove(plrname);
+                    PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
+                    return true;
+                }
+                if (args[0].equalsIgnoreCase("back")) {
+                    if (object.current > 0) {
+                        object.current--;
+                        step = object.step[object.current];
+                        sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+                        return true;
+                    }
+                    else {
+                        sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+                        return true;
+                    }
+                }
+                final boolean valid = step.isValid(args[0]);
+                if (valid) {
+                    sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
+                    step.setValue(args[0]);
+                    object.current++;
+                    if (object.getCurrent() == object.getMax()) {
+                        execute(plr, args);
+                        return true;
+                    }
+                    step = object.step[object.current];
+                    sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+                    return true;
+                }
+                else {
+                    sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
+                    sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+                    return true;
+                }
+            }
+        }
+        else {
+            if (args.length < 1) {
+                sendMessage(plr, C.SETUP_MISSING_WORLD);
+                return true;
+            }
+            if (args.length < 2) {
+                sendMessage(plr, C.SETUP_MISSING_GENERATOR);
+                return true;
+            }
+            final String world = args[0];
+            if (StringUtils.isNumeric(args[0])) {
+                sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
+                return true;
+            }
 
-			ArrayList<String> generators = new ArrayList<String>();
+            if (PlotMain.getWorldSettings(world) != null) {
+                sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
+                return true;
+            }
 
-			ChunkGenerator generator = null;
+            final ArrayList<String> generators = new ArrayList<String>();
 
-			for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-				if (plugin.isEnabled()) {
-					if (plugin.getDefaultWorldGenerator("world", "") != null) {
-						String name = plugin.getDescription().getName();
-						generators.add(name);
-						if (args[1].equals(name)) {
-							generator = plugin.getDefaultWorldGenerator(world, "");
-							break;
-						}
-					}
+            ChunkGenerator generator = null;
 
-				}
-			}
-			if (generator == null) {
-				sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringUtils.join(generators, C.BLOCK_LIST_SEPARATER.s()));
-				return true;
-			}
-			PlotWorld plotworld;
-			if (generator instanceof PlotGenerator) {
-				plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
-			}
-			else {
-				plotworld = new DefaultPlotWorld(world);
-			}
+            for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                if (plugin.isEnabled()) {
+                    if (plugin.getDefaultWorldGenerator("world", "") != null) {
+                        final String name = plugin.getDescription().getName();
+                        generators.add(name);
+                        if (args[1].equals(name)) {
+                            generator = plugin.getDefaultWorldGenerator(world, "");
+                            break;
+                        }
+                    }
 
-			setupMap.put(plrname, new SetupObject(world, plotworld, args[1]));
-			sendMessage(plr, C.SETUP_INIT);
-			SetupObject object = setupMap.get(plrname);
-			ConfigurationNode step = object.step[object.current];
-			sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue()
-					+ "");
-			return true;
-		}
-	}
+                }
+            }
+            if (generator == null) {
+                sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringUtils.join(generators, C.BLOCK_LIST_SEPARATER.s()));
+                return true;
+            }
+            PlotWorld plotworld;
+            if (generator instanceof PlotGenerator) {
+                plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
+            }
+            else {
+                plotworld = new DefaultPlotWorld(world);
+            }
+
+            setupMap.put(plrname, new SetupObject(world, plotworld, args[1]));
+            sendMessage(plr, C.SETUP_INIT);
+            final SetupObject object = setupMap.get(plrname);
+            final ConfigurationNode step = object.step[object.current];
+            sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
+            return true;
+        }
+    }
 
 }

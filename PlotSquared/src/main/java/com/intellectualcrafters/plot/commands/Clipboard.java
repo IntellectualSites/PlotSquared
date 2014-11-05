@@ -1,12 +1,14 @@
 package com.intellectualcrafters.plot.commands;
 
+import static com.intellectualcrafters.plot.PlotSelection.currentSelection;
+
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotSelection;
-import org.bukkit.entity.Player;
 
-import static com.intellectualcrafters.plot.PlotSelection.currentSelection;
 /**
  * Created by Citymonstret on 2014-10-13.
  */
@@ -17,16 +19,16 @@ public class Clipboard extends SubCommand {
     }
 
     @Override
-    public boolean execute(Player plr, String... args) {
-        if(!currentSelection.containsKey(plr.getName())) {
+    public boolean execute(final Player plr, final String... args) {
+        if (!currentSelection.containsKey(plr.getName())) {
             sendMessage(plr, C.NO_CLIPBOARD);
             return true;
         }
-        PlotSelection selection = currentSelection.get(plr.getName());
+        final PlotSelection selection = currentSelection.get(plr.getName());
 
-        PlotId plotId = selection.getPlot().getId();
-        int width = selection.getWidth();
-        int total = selection.getBlocks().length;
+        final PlotId plotId = selection.getPlot().getId();
+        final int width = selection.getWidth();
+        final int total = selection.getBlocks().length;
 
         String message = C.CLIPBOARD_INFO.s();
 

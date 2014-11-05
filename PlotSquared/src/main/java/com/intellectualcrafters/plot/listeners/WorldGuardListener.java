@@ -1,6 +1,24 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotHelper;
+import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.UUIDHandler;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -12,213 +30,198 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.permissions.PermissionAttachment;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-09-24.
  */
 public class WorldGuardListener implements Listener {
-	public ArrayList<String> str_flags = new ArrayList<String>();
-	public ArrayList<Flag<?>> flags = new ArrayList<Flag<?>>();
+    public ArrayList<String>  str_flags = new ArrayList<String>();
+    public ArrayList<Flag<?>> flags     = new ArrayList<Flag<?>>();
 
-	public WorldGuardListener(PlotMain plugin) {
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		for (Flag<?> flag : DefaultFlag.getFlags()) {
-			this.str_flags.add(flag.getName());
-			this.flags.add(flag);
-		}
-	}
+    public WorldGuardListener(final PlotMain plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        for (final Flag<?> flag : DefaultFlag.getFlags()) {
+            this.str_flags.add(flag.getName());
+            this.flags.add(flag);
+        }
+    }
 
-	public void changeOwner(Player requester, UUID owner, World world, Plot plot) {
-	    //boolean op = requester.isOp();
-        //requester.setOp(true);
+    public void changeOwner(final Player requester, final UUID owner, final World world, final Plot plot) {
+        // boolean op = requester.isOp();
+        // requester.setOp(true);
 
-        //10 ticks should be enough
-        PermissionAttachment add = requester.addAttachment(PlotMain.getPlugin(PlotMain.class), 10);
+        // 10 ticks should be enough
+        final PermissionAttachment add = requester.addAttachment(JavaPlugin.getPlugin(PlotMain.class), 10);
         add.setPermission("worldguard.region.addowner.own.*", true);
 
-        PermissionAttachment remove = requester.addAttachment(PlotMain.getPlugin(PlotMain.class), 10);
+        final PermissionAttachment remove = requester.addAttachment(JavaPlugin.getPlugin(PlotMain.class), 10);
         remove.setPermission("worldguard.region.removeowner.own.*", true);
 
         try {
-            RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.getRegion(plot.id.x + "-" + plot.id.y);
             requester.performCommand("region setowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(owner));
             requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
         }
-        catch (Exception e) {
-            //requester.setOp(op);
+        catch (final Exception e) {
+            // requester.setOp(op);
 
         }
         finally {
             add.remove();
             remove.remove();
         }
-	}
+    }
 
-	public void removeFlag(Player requester, World world, Plot plot, String key) {
-		boolean op = requester.isOp();
-		requester.setOp(true);
-		try {
-			RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-			manager.getRegion(plot.id.x + "-" + plot.id.y);
-			for (Flag<?> flag : this.flags) {
-				if (flag.getName().equalsIgnoreCase(key)) {
-					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
-				}
-			}
-		}
-		catch (Exception e) {
-			requester.setOp(op);
-		}
-		finally {
-			requester.setOp(op);
-		}
-	}
+    public void removeFlag(final Player requester, final World world, final Plot plot, final String key) {
+        final boolean op = requester.isOp();
+        requester.setOp(true);
+        try {
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            manager.getRegion(plot.id.x + "-" + plot.id.y);
+            for (final Flag<?> flag : this.flags) {
+                if (flag.getName().equalsIgnoreCase(key)) {
+                    requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
+                }
+            }
+        }
+        catch (final Exception e) {
+            requester.setOp(op);
+        }
+        finally {
+            requester.setOp(op);
+        }
+    }
 
-	public void addFlag(Player requester, World world, Plot plot, String key, String value) {
-		boolean op = requester.isOp();
-		requester.setOp(true);
-		try {
-			RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-			manager.getRegion(plot.id.x + "-" + plot.id.y);
-			for (Flag<?> flag : this.flags) {
-				if (flag.getName().equalsIgnoreCase(key)) {
-					requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
-				}
-			}
-		}
-		catch (Exception e) {
-			requester.setOp(op);
-		}
-		finally {
-			requester.setOp(op);
-		}
-	}
+    public void addFlag(final Player requester, final World world, final Plot plot, final String key, final String value) {
+        final boolean op = requester.isOp();
+        requester.setOp(true);
+        try {
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            manager.getRegion(plot.id.x + "-" + plot.id.y);
+            for (final Flag<?> flag : this.flags) {
+                if (flag.getName().equalsIgnoreCase(key)) {
+                    requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
+                }
+            }
+        }
+        catch (final Exception e) {
+            requester.setOp(op);
+        }
+        finally {
+            requester.setOp(op);
+        }
+    }
 
-	@EventHandler(
-			priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onMerge(PlotMergeEvent event) {
-		Plot main = event.getPlot();
-		ArrayList<PlotId> plots = event.getPlots();
-		World world = event.getWorld();
-		RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-		for (PlotId plot : plots) {
-			if (!plot.equals(main)) {
-				manager.removeRegion(plot.x + "-" + plot.y);
-			}
-		}
-		ProtectedRegion region = manager.getRegion(main.id.x + "-" + main.id.y);
-		DefaultDomain owner = region.getOwners();
-		Map<Flag<?>, Object> flags = region.getFlags();
-		DefaultDomain members = region.getMembers();
-		manager.removeRegion(main.id.x + "-" + main.id.y);
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMerge(final PlotMergeEvent event) {
+        final Plot main = event.getPlot();
+        final ArrayList<PlotId> plots = event.getPlots();
+        final World world = event.getWorld();
+        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        for (final PlotId plot : plots) {
+            if (!plot.equals(main)) {
+                manager.removeRegion(plot.x + "-" + plot.y);
+            }
+        }
+        final ProtectedRegion region = manager.getRegion(main.id.x + "-" + main.id.y);
+        final DefaultDomain owner = region.getOwners();
+        final Map<Flag<?>, Object> flags = region.getFlags();
+        final DefaultDomain members = region.getMembers();
+        manager.removeRegion(main.id.x + "-" + main.id.y);
 
-		Location location1 = PlotHelper.getPlotBottomLocAbs(world, plots.get(0));
-		Location location2 = PlotHelper.getPlotTopLocAbs(world, plots.get(plots.size() - 1));
+        final Location location1 = PlotHelper.getPlotBottomLocAbs(world, plots.get(0));
+        final Location location2 = PlotHelper.getPlotTopLocAbs(world, plots.get(plots.size() - 1));
 
-		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
-		BlockVector vector2 = new BlockVector(location2.getBlockX(), world.getMaxHeight(), location2.getBlockZ());
-		ProtectedRegion rg = new ProtectedCuboidRegion(main.id.x + "-" + main.id.y, vector1, vector2);
+        final BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+        final BlockVector vector2 = new BlockVector(location2.getBlockX(), world.getMaxHeight(), location2.getBlockZ());
+        final ProtectedRegion rg = new ProtectedCuboidRegion(main.id.x + "-" + main.id.y, vector1, vector2);
 
-		rg.setFlags(flags);
+        rg.setFlags(flags);
 
-		rg.setOwners(owner);
+        rg.setOwners(owner);
 
-		rg.setMembers(members);
+        rg.setMembers(members);
 
-		manager.addRegion(rg);
-	}
+        manager.addRegion(rg);
+    }
 
-	@EventHandler(
-			priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onUnlink(PlotUnlinkEvent event) {
-	    try {
-    		World w = event.getWorld();
-    		ArrayList<PlotId> plots = event.getPlots();
-    		Plot main = PlotMain.getPlots(w).get(plots.get(0));
-    
-    		RegionManager manager = PlotMain.worldGuard.getRegionManager(w);
-    		ProtectedRegion region = manager.getRegion(main.id.x + "-" + main.id.y);
-    
-    		DefaultDomain owner = region.getOwners();
-    		Map<Flag<?>, Object> flags = region.getFlags();
-    		DefaultDomain members = region.getMembers();
-    
-    		manager.removeRegion(main.id.x + "-" + main.id.y);
-    		for (int i = 1; i < plots.size(); i++) {
-    			PlotId id = plots.get(i);
-    			Location location1 = PlotHelper.getPlotBottomLocAbs(w, id);
-    			Location location2 = PlotHelper.getPlotTopLocAbs(w, id);
-    
-    			BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
-    			BlockVector vector2 = new BlockVector(location2.getBlockX(), w.getMaxHeight(), location2.getBlockZ());
-    			ProtectedRegion rg = new ProtectedCuboidRegion(id.x + "-" + id.y, vector1, vector2);
-    
-    			rg.setFlags(flags);
-    
-    			rg.setOwners(owner);
-    
-    			rg.setMembers(members);
-    
-    			manager.addRegion(rg);
-    		}
-	    }
-	    catch (Exception e) {
-	        
-	    }
-	}
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onUnlink(final PlotUnlinkEvent event) {
+        try {
+            final World w = event.getWorld();
+            final ArrayList<PlotId> plots = event.getPlots();
+            final Plot main = PlotMain.getPlots(w).get(plots.get(0));
 
-	@EventHandler
-	public void onPlotClaim(PlayerClaimPlotEvent event) {
-	    try {
-    		Player player = event.getPlayer();
-    		Plot plot = event.getPlot();
-    		RegionManager manager = PlotMain.worldGuard.getRegionManager(plot.getWorld());
-    
-    		Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
-    		Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
-    
-    		BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
-    		BlockVector vector2 =
-    				new BlockVector(location2.getBlockX(), plot.getWorld().getMaxHeight(), location2.getBlockZ());
-    
-    		ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
-    
-    		DefaultDomain owner = new DefaultDomain();
-    		owner.addPlayer(PlotMain.worldGuard.wrapPlayer(player));
-    
-    		region.setOwners(owner);
-    
-    		manager.addRegion(region);
-	    }
-	    catch (Exception e) {
-	        
-	    }
-	}
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(w);
+            final ProtectedRegion region = manager.getRegion(main.id.x + "-" + main.id.y);
 
-	@EventHandler
-	public void onPlotDelete(PlotDeleteEvent event) {
-	    try {
-    		PlotId plot = event.getPlotId();
-    		World world = Bukkit.getWorld(event.getWorld());
-    
-    		RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-    		manager.removeRegion(plot.x + "-" + plot.y);
-	    }
-	    catch (Exception e) {
-	        
-	    }
-	}
+            final DefaultDomain owner = region.getOwners();
+            final Map<Flag<?>, Object> flags = region.getFlags();
+            final DefaultDomain members = region.getMembers();
+
+            manager.removeRegion(main.id.x + "-" + main.id.y);
+            for (int i = 1; i < plots.size(); i++) {
+                final PlotId id = plots.get(i);
+                final Location location1 = PlotHelper.getPlotBottomLocAbs(w, id);
+                final Location location2 = PlotHelper.getPlotTopLocAbs(w, id);
+
+                final BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+                final BlockVector vector2 = new BlockVector(location2.getBlockX(), w.getMaxHeight(), location2.getBlockZ());
+                final ProtectedRegion rg = new ProtectedCuboidRegion(id.x + "-" + id.y, vector1, vector2);
+
+                rg.setFlags(flags);
+
+                rg.setOwners(owner);
+
+                rg.setMembers(members);
+
+                manager.addRegion(rg);
+            }
+        }
+        catch (final Exception e) {
+
+        }
+    }
+
+    @EventHandler
+    public void onPlotClaim(final PlayerClaimPlotEvent event) {
+        try {
+            final Player player = event.getPlayer();
+            final Plot plot = event.getPlot();
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(plot.getWorld());
+
+            final Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
+            final Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
+
+            final BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
+            final BlockVector vector2 = new BlockVector(location2.getBlockX(), plot.getWorld().getMaxHeight(), location2.getBlockZ());
+
+            final ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
+
+            final DefaultDomain owner = new DefaultDomain();
+            owner.addPlayer(PlotMain.worldGuard.wrapPlayer(player));
+
+            region.setOwners(owner);
+
+            manager.addRegion(region);
+        }
+        catch (final Exception e) {
+
+        }
+    }
+
+    @EventHandler
+    public void onPlotDelete(final PlotDeleteEvent event) {
+        try {
+            final PlotId plot = event.getPlotId();
+            final World world = Bukkit.getWorld(event.getWorld());
+
+            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            manager.removeRegion(plot.x + "-" + plot.y);
+        }
+        catch (final Exception e) {
+
+        }
+    }
 }

@@ -11,29 +11,29 @@ import com.intellectualcrafters.plot.Plot;
  */
 public class PlayerEnterPlotEvent extends PlayerEvent {
 
-	private static HandlerList handlers = new HandlerList();
+    private static HandlerList handlers = new HandlerList();
 
-	private Plot plot;
+    private final Plot         plot;
 
-	/**
-	 * PlayerEnterPlotEvent: Called when a player leaves a plot
-	 * 
-	 * @param player
-	 * @param plot
-	 */
-	public PlayerEnterPlotEvent(Player player, Plot plot) {
-		super(player);
-		this.plot = plot;
-	}
+    /**
+     * PlayerEnterPlotEvent: Called when a player leaves a plot
+     *
+     * @param player
+     * @param plot
+     */
+    public PlayerEnterPlotEvent(final Player player, final Plot plot) {
+        super(player);
+        this.plot = plot;
+    }
 
-	/**
-	 * Get the plot involved
-	 * 
-	 * @return Plot
-	 */
-	public Plot getPlot() {
-		return this.plot;
-	}
+    /**
+     * Get the plot involved
+     *
+     * @return Plot
+     */
+    public Plot getPlot() {
+        return this.plot;
+    }
 
     public static HandlerList getHandlerList() {
         return handlers;

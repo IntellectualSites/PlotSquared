@@ -12,9 +12,10 @@ public final class StringTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
-    public StringTag(String value) {
+    public StringTag(final String value) {
         super();
         checkNotNull(value);
         this.value = value;
@@ -23,10 +24,12 @@ public final class StringTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
-    public StringTag(String name, String value) {
+    public StringTag(final String name, final String value) {
         super(name);
         checkNotNull(value);
         this.value = value;
@@ -34,17 +37,17 @@ public final class StringTag extends Tag {
 
     @Override
     public String getValue() {
-        return value;
+        return this.value;
     }
 
     @Override
     public String toString() {
-        String name = getName();
+        final String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if ((name != null) && !name.equals("")) {
             append = "(\"" + this.getName() + "\")";
         }
-        return "TAG_String" + append + ": " + value;
+        return "TAG_String" + append + ": " + this.value;
     }
 
 }

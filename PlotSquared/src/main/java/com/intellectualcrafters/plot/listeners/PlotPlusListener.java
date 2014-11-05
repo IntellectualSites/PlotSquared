@@ -1,11 +1,17 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +25,11 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 
 /**
  * Created by Citymonstret on 2014-10-30.
@@ -29,30 +39,30 @@ public class PlotPlusListener extends PlotListener implements Listener {
     private static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private static HashMap<String, Interval> healRunnable = new HashMap<>();
 
-    public static void startRunnable(JavaPlugin plugin) {
+    public static void startRunnable(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                for(Map.Entry<String, Interval> entry : feedRunnable.entrySet()) {
-                    Interval value = entry.getValue();
+                for (final Map.Entry<String, Interval> entry : feedRunnable.entrySet()) {
+                    final Interval value = entry.getValue();
                     ++value.count;
-                    if(value.count == value.interval) {
+                    if (value.count == value.interval) {
                         value.count = 0;
-                        Player player = Bukkit.getPlayer(entry.getKey());
-                        int level = player.getFoodLevel();
-                        if(level != value.max) {
+                        final Player player = Bukkit.getPlayer(entry.getKey());
+                        final int level = player.getFoodLevel();
+                        if (level != value.max) {
                             player.setFoodLevel(Math.min(level + value.amount, value.max));
                         }
                     }
                 }
-                for(Map.Entry<String, Interval> entry : healRunnable.entrySet()) {
-                    Interval value = entry.getValue();
+                for (final Map.Entry<String, Interval> entry : healRunnable.entrySet()) {
+                    final Interval value = entry.getValue();
                     ++value.count;
-                    if(value.count == value.interval) {
-                        value.count  = 0;
-                        Player player = Bukkit.getPlayer(entry.getKey());
-                        double level = player.getHealth();
-                        if(level != value.max) {
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        final Player player = Bukkit.getPlayer(entry.getKey());
+                        final double level = player.getHealth();
+                        if (level != value.max) {
                             player.setHealth(Math.min(level + value.amount, value.max));
                         }
                     }
@@ -62,35 +72,38 @@ public class PlotPlusListener extends PlotListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        if(!event.getInventory().getName().equals(ChatColor.RED + "Plot Jukebox"))
+    public void onInventoryClick(final InventoryClickEvent event) {
+        final Player player = (Player) event.getWhoClicked();
+        if (!event.getInventory().getName().equals(ChatColor.RED + "Plot Jukebox")) {
             return;
+        }
         event.setCancelled(true);
-        if(!isInPlot(player)) {
+        if (!isInPlot(player)) {
             PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return;
         }
-        Plot plot = getPlot(player);
-        if(!plot.hasRights(player)) {
+        final Plot plot = getPlot(player);
+        if (!plot.hasRights(player)) {
             PlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
             return;
         }
-        Set<Player> plotPlayers = new HashSet<>();
-        for(Player p : player.getWorld().getPlayers()) {
-            if(isInPlot(p) && getPlot(p).equals(plot))
+        final Set<Player> plotPlayers = new HashSet<>();
+        for (final Player p : player.getWorld().getPlayers()) {
+            if (isInPlot(p) && getPlot(p).equals(plot)) {
                 plotPlayers.add(p);
+            }
         }
         RecordMeta meta = null;
-        for(RecordMeta m : RecordMeta.metaList) {
-            if(m.getMaterial() == event.getCurrentItem().getType()) {
+        for (final RecordMeta m : RecordMeta.metaList) {
+            if (m.getMaterial() == event.getCurrentItem().getType()) {
                 meta = m;
                 break;
             }
         }
-        if(meta == null)
+        if (meta == null) {
             return;
-        for(Player p : plotPlayers) {
+        }
+        for (final Player p : plotPlayers) {
             p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
             PlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
@@ -98,85 +111,104 @@ public class PlotPlusListener extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onInteract(BlockDamageEvent event) {
-        Player player = event.getPlayer();
-        if(player.getGameMode() != GameMode.SURVIVAL) return;
-        if(!isInPlot(player)) return;
-        Plot plot = getPlot(player);
-        if(booleanFlag(plot, "instabreak"))
+    public void onInteract(final BlockDamageEvent event) {
+        final Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+        if (!isInPlot(player)) {
+            return;
+        }
+        final Plot plot = getPlot(player);
+        if (booleanFlag(plot, "instabreak")) {
             event.getBlock().breakNaturally();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageEvent event) {
-        if(event.getEntityType() != EntityType.PLAYER)
+    public void onDamage(final EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
             return;
-        Player player = (Player) event.getEntity();
-        if(!isInPlot(player)) return;
-        if(booleanFlag(getPlot(player), "invincible"))
+        }
+        final Player player = (Player) event.getEntity();
+        if (!isInPlot(player)) {
+            return;
+        }
+        if (booleanFlag(getPlot(player), "invincible")) {
             event.setCancelled(true);
+        }
     }
 
-    @EventHandler public void onItemPickup(PlayerPickupItemEvent event) { if(isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection")) event.setCancelled(true); }
-
-    @EventHandler public void onItemDrop(PlayerDropItemEvent event) { if(isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) &&  booleanFlag(getPlot(event.getPlayer()), "item-drop")) event.setCancelled(true);}
+    @EventHandler
+    public void onItemPickup(final PlayerPickupItemEvent event) {
+        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection")) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent event) {
-        Plot plot = event.getPlot();
-        if(plot.settings.getFlag("greeting") != null) {
+    public void onItemDrop(final PlayerDropItemEvent event) {
+        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlotEnter(final PlayerEnterPlotEvent event) {
+        final Plot plot = event.getPlot();
+        if (plot.settings.getFlag("greeting") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plot.settings.getFlag("greeting").getValue()));
         }
-        if(booleanFlag(plot, "notify-enter")) {
-            if(plot.hasOwner()) {
-                Player player = Bukkit.getPlayer(plot.getOwner());
-                if(player == null) return;
-                if(player.getUniqueId().equals(event.getPlayer().getUniqueId()))
+        if (booleanFlag(plot, "notify-enter")) {
+            if (plot.hasOwner()) {
+                final Player player = Bukkit.getPlayer(plot.getOwner());
+                if (player == null) {
                     return;
-                if(player.isOnline()) {
-                    PlayerFunctions.sendMessage(player,
-                            C.NOTIFY_ENTER
-                                    .s()
-                                    .replace("%player", event.getPlayer().getName())
-                                    .replace("%plot", plot.getId().toString()));
+                }
+                if (player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                    return;
+                }
+                if (player.isOnline()) {
+                    PlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", event.getPlayer().getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
     }
+
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        if (feedRunnable.containsKey(event.getPlayer().getName()) ) {
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());
         }
-        if (healRunnable.containsKey(event.getPlayer().getName()) ) {
+        if (healRunnable.containsKey(event.getPlayer().getName())) {
             healRunnable.remove(event.getPlayer().getName());
         }
     }
+
     @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent event) {
+    public void onPlotLeave(final PlayerLeavePlotEvent event) {
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
-        Plot plot = event.getPlot();
-        if(plot.settings.getFlag("farewell") != null) {
+        final Plot plot = event.getPlot();
+        if (plot.settings.getFlag("farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plot.settings.getFlag("farewell").getValue()));
         }
-        if (feedRunnable.containsKey(event.getPlayer().getName()) ) {
+        if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());
         }
-        if (healRunnable.containsKey(event.getPlayer().getName()) ) {
+        if (healRunnable.containsKey(event.getPlayer().getName())) {
             healRunnable.remove(event.getPlayer().getName());
         }
-        if(booleanFlag(plot, "notify-leave")) {
-            if(plot.hasOwner()) {
-                Player player = Bukkit.getPlayer(plot.getOwner());
-                if(player == null) return;
-                if(player.getUniqueId().equals(event.getPlayer().getUniqueId()))
+        if (booleanFlag(plot, "notify-leave")) {
+            if (plot.hasOwner()) {
+                final Player player = Bukkit.getPlayer(plot.getOwner());
+                if (player == null) {
                     return;
-                if(player.isOnline()) {
-                    PlayerFunctions.sendMessage(player,
-                            C.NOTIFY_LEAVE
-                                    .s()
-                                    .replace("%player", event.getPlayer().getName())
-                                    .replace("%plot", plot.getId().toString()));
+                }
+                if (player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                    return;
+                }
+                if (player.isOnline()) {
+                    PlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", event.getPlayer().getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
@@ -187,7 +219,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
         public int amount;
         public int count = 0;
         public int max;
-        public Interval(int interval, int amount, int max) {
+
+        public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
             this.amount = amount;
             this.max = max;
@@ -200,25 +233,23 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public static class RecordMeta {
         public static List<RecordMeta> metaList = new ArrayList<>();
         static {
-            for(int x = 3; x < 12; x++) {
-                metaList.add(
-                        new RecordMeta(
-                                x + "",
-                                Material.valueOf("RECORD_" + x)
-                        )
-                );
+            for (int x = 3; x < 12; x++) {
+                metaList.add(new RecordMeta(x + "", Material.valueOf("RECORD_" + x)));
             }
         }
-        private String name;
-        private Material material;
-        public RecordMeta(String name, Material material) {
+        private final String           name;
+        private final Material         material;
+
+        public RecordMeta(final String name, final Material material) {
             this.name = name;
             this.material = material;
         }
+
         @Override
         public String toString() {
             return this.name;
         }
+
         public Material getMaterial() {
             return this.material;
         }

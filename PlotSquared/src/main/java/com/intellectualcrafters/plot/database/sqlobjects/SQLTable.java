@@ -7,14 +7,12 @@ import com.intellectualcrafters.plot.Settings;
  */
 public abstract class SQLTable {
 
-    private String name;
-    private SQLField[] fields;
-    private String primaryKey;
-
-    public SQLTable(String name, String primaryKey, SQLField ... fields) {
+    private final String     name;
+    private final SQLField[] fields;
+    
+    public SQLTable(final String name, final String primaryKey, final SQLField... fields) {
         this.name = Settings.DB.PREFIX + name;
         this.fields = fields;
-        this.primaryKey = primaryKey;
     }
 
     @Override
@@ -24,23 +22,6 @@ public abstract class SQLTable {
 
     public SQLField[] getFields() {
         return this.fields;
-    }
-
-    private void createFromFields() {
-        StringBuilder statement = new StringBuilder();
-        statement.append("CREATE TABLE `" + name + "` IF NOT EXISTS (");
-        for(SQLField field : fields) {
-            switch(field.getType()) {
-                case INTEGER:
-                    break;
-                case VARCHAR:
-                    break;
-                case BOOL:
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     public abstract void create();
