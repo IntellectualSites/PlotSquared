@@ -196,7 +196,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         final int start = page * perPage;
         for (int x = start; x < max; x++) {
-            cmd = subCommands.get(x);
+            cmd = commands.get(x);
             String s = t(C.HELP_PAGE.s());
             s = s.replaceAll("%alias%", cmd.alias);
             s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);

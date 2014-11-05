@@ -29,6 +29,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.listeners.PlotListener;
 
 /**
  * plot functions
@@ -655,7 +656,9 @@ public class PlotHelper {
                     final PlotId id = PlayerFunctions.getPlot(entity.getLocation());
                     if ((id != null) && id.equals(plot.id)) {
                         if (entity instanceof Player) {
-                            PlotMain.teleportPlayer((Player) entity, entity.getLocation(), plot);
+                            Player player = (Player) entity;
+                            PlotMain.teleportPlayer(player, entity.getLocation(), plot);
+                            PlotListener.plotExit(player, plot);
                         }
                         else {
                             entity.remove();
