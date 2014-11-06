@@ -277,6 +277,15 @@ public class Plot implements Cloneable {
         PlotHelper.clear(plr, this);
     }
 
+    /**
+     * Get the plot hashcode
+     *
+     * @return integer. You can easily make this a character array <br>
+     * xI = c[0]
+     * x = c[1 -> xI...]
+     * yI = c[xI ... + 1]
+     * y = c[xI ... + 2 -> yI ...]
+     */
     @Override
     public int hashCode() {
         final int

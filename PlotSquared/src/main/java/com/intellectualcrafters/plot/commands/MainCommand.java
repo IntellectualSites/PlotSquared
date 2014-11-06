@@ -8,10 +8,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.StringComparsion;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,10 +20,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.StringComparsion;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotMain command class
@@ -139,7 +138,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 commands[x] = subCommands.get(x).cmd;
             }
 
-            PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
+            /* Let's try to get a proper usage string */
+            SubCommand command = (SubCommand) new StringComparsion(args[0], commands).getMatchObject();
+            PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, command.usage.contains("plot") ? command.usage : "/plot " + command.usage);
+            //PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
         }
         return false;
     }
@@ -154,34 +156,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         return cmds;
     }
 
-    /*
-     * // Current page
-     * int page = 0;
-     * //is a page specified? else use 0
-     * if(args.length > 1) {
-     * try {
-     * page = Integer.parseInt(args[1]);
-     * } catch(Exception e) {
-     * page = 0;
-     * }
-     * }
-     * //Get the total pages
-     * int totalPages = ((int) Math.ceil(12 * (PlotMain.getPlotsSorted().size())
-     * / 100));
-     * if(page > totalPages)
-     * page = totalPages;
-     * //Only display 12!
-     * int max = (page * 12) + 12;
-     * if(max > PlotMain.getPlotsSorted().size())
-     * max = PlotMain.getPlotsSorted().size();
-     * StringBuilder string = new StringBuilder();
-     * string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 +
-     * "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all") +
-     * "\n");
-     * Plot p;
-     * //This might work xD
-     * for (int x = (page * 12); x < max; x++) {
-     */
     public static ArrayList<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
         final List<SubCommand> commands = getCommands(category, player);
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /

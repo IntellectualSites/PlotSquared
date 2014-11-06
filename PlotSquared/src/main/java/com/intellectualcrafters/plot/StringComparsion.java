@@ -11,6 +11,7 @@ import java.util.Collections;
 public class StringComparsion {
 
     private String bestMatch;
+    private Object bestMatchObject;
     private double match;
 
     public StringComparsion(final String input, final Object[] objects) {
@@ -19,10 +20,14 @@ public class StringComparsion {
             if ((c = compare(input, o.toString())) > this.match) {
                 this.match = c;
                 this.bestMatch = o.toString();
+                this.bestMatchObject = o;
             }
         }
     }
 
+    public Object getMatchObject() {
+        return this.bestMatchObject;
+    }
     public String getBestMatch() {
         return this.bestMatch;
     }
