@@ -274,12 +274,6 @@ public class PlayerFunctions {
      *            Caption to send
      */
     public static void sendMessage(final Player plr, final C c, final String... args) {
-
-        if (plr == null) {
-            PlotMain.sendConsoleSenderMessage(c);
-            return;
-        }
-
         if (c.s().length() < 1) {
             return;
         }
@@ -288,6 +282,10 @@ public class PlayerFunctions {
             for (final String str : args) {
                 msg = msg.replaceFirst("%s", str);
             }
+        }
+        if (plr == null) {
+            PlotMain.sendConsoleSenderMessage(c);
+            return;
         }
         sendMessage(plr, msg);
     }

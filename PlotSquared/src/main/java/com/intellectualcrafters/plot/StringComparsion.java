@@ -11,7 +11,7 @@ import java.util.Collections;
 public class StringComparsion {
 
     private String bestMatch;
-    private double match;
+    private double match = 0;
 
     public StringComparsion(final String input, final Object[] objects) {
         double c = 0;
