@@ -178,7 +178,19 @@ public class PlotSettings {
     public void setComments(final ArrayList<PlotComment> comments) {
         this.comments = comments;
     }
+    
+    public void removeComment(PlotComment comment) {
+        if (this.comments.contains(comment)) {
+            this.comments.remove(comment);
+        }
+    }
 
+    public void removeComments(ArrayList<PlotComment> comments) {
+        for (PlotComment comment : comments) {
+            removeComment(comment);
+        }
+    }
+    
     public void addComment(final PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<PlotComment>();

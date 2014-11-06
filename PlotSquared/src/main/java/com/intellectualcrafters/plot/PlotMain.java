@@ -1179,10 +1179,13 @@ public class PlotMain extends JavaPlugin {
             worlds = new HashSet<String>();
         }
         if ((generator != null) && (generator instanceof PlotGenerator)) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'.");
+            sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
             final PlotGenerator plotgen = (PlotGenerator) generator;
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + generator.getClass().getName());
             final PlotWorld plotworld = plotgen.getNewPlotWorld(world);
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotworld.getClass().getName());
             final PlotManager manager = plotgen.getPlotManager();
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + manager.getClass().getName());
 
             if (!config.contains("worlds." + world)) {
                 config.createSection("worlds." + world);

@@ -138,6 +138,7 @@ public class Inbox extends SubCommand {
                             final int index = Integer.parseInt(split[1]);
                             final PlotComment comment = comments.get(index - 1);
                             DBFunc.removeComment(world, plot, comment);
+                            plot.settings.removeComment(comment);        
                             PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
                             return;
                         }
@@ -149,6 +150,7 @@ public class Inbox extends SubCommand {
                     for (final PlotComment comment : comments) {
                         DBFunc.removeComment(world, plot, comment);
                     }
+                    plot.settings.removeComments(comments);
                     PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
                     return;
                 }

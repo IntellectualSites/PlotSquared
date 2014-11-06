@@ -297,6 +297,9 @@ public class SQLManager extends AbstractDB {
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
+                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_comments` WHERE `plot_plot_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
                     stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot` WHERE `id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
@@ -596,8 +599,13 @@ public class SQLManager extends AbstractDB {
                 }
                 newplots.get(world).put(plot.id, plot);
             }
+            boolean invalidPlot = false;
             for (final String worldname : noExist.keySet()) {
-                PlotMain.sendConsoleSenderMessage("&c[WARNING] Found " + noExist.get(worldname) + " plots in DB for non existant world; '" + worldname + "'!!!\n&c - Please create this world, or remove the plots from the DB using the purge command!");
+                invalidPlot = true;
+                PlotMain.sendConsoleSenderMessage("&c[WARNING] Found " + noExist.get(worldname) + " plots in DB for non existant world; '" + worldname + "'.");
+            }
+            if (invalidPlot) {
+                PlotMain.sendConsoleSenderMessage("&c[WARNING] - Please create the world/s or remove the plots using the purge command");
             }
         }
         catch (final SQLException e) {

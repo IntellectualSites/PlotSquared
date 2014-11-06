@@ -28,14 +28,13 @@ public class Visit extends SubCommand {
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
         for (final Plot p : PlotMain.getPlots()) {
-            if (p.owner.equals(uuid)) {
+            if (p.hasOwner() && p.owner.equals(uuid)) {
                 plots.add(p);
             }
         }
         return plots;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {

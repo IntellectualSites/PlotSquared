@@ -59,13 +59,8 @@ public class Purge extends SubCommand {
             return false;
         }
         if (args[1].equals("-o")) {
-            final PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);
-            if (plotworld == null) {
+            if (PlotMain.getPlots(args[0])==null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
-                return false;
-            }
-            if (plr != null) {
-                PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
                 return false;
             }
             PlotMain.removePlotWorld(args[0]);
