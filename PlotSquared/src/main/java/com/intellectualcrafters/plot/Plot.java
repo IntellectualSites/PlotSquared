@@ -277,4 +277,14 @@ public class Plot implements Cloneable {
         PlotHelper.clear(plr, this);
     }
 
+    @Override
+    public int hashCode() {
+        final int
+                x = getId().x,
+                z = getId().y;
+        String
+                xL = (x + "").length() + "",
+                zL = (z + "").length() + "";
+        return Integer.parseInt(xL + x + zL + z);
+    }
 }
