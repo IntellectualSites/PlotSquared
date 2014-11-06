@@ -12,6 +12,7 @@ public class StringComparsion {
 
     private String bestMatch;
     private double match = 0;
+    private Object bestMatchObject;
 
     public StringComparsion(final String input, final Object[] objects) {
         double c = 0;
@@ -19,10 +20,14 @@ public class StringComparsion {
             if ((c = compare(input, o.toString())) > this.match) {
                 this.match = c;
                 this.bestMatch = o.toString();
+                this.bestMatchObject = o;
             }
         }
     }
 
+    public Object getMatchObject() {
+        return this.bestMatchObject;
+    }
     public String getBestMatch() {
         return this.bestMatch;
     }

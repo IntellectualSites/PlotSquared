@@ -8,10 +8,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.StringComparsion;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,10 +20,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.StringComparsion;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotMain command class
@@ -31,6 +30,9 @@ import com.intellectualcrafters.plot.StringComparsion;
  * @author Citymonstret
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
+
+    public static final String
+            MAIN_PERMISSION = "plots.use";
 
     private static SubCommand[]         _subCommands = new SubCommand[] { new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Setup(), new DebugClaimTest(), new Inbox(), new Comment(), new Swap(), new MusicSubcommand() };
 
@@ -49,9 +51,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(final CommandSender sender, final Command cmd, final String commandLabel, final String[] args) {
         final Player player = (sender instanceof Player) ? (Player) sender : null;
 
-        if (!PlotMain.hasPermission(player, "plots.use")) {
-            return no_permission(player, "plots.use");
-        }
+        if (!PlotMain.hasPermission(player, MAIN_PERMISSION))
+            return no_permission(player, MAIN_PERMISSION);
 
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
             if (args.length < 2) {
@@ -60,8 +61,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                PlayerFunctions.sendMessage(player, builder.toString());
-                return true;
+                return PlayerFunctions.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
             SubCommand.CommandCategory cato = null;
@@ -77,8 +77,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                PlayerFunctions.sendMessage(player, builder.toString());
-                return true;
+                return PlayerFunctions.sendMessage(player, builder.toString());
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
@@ -110,8 +109,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 help.append(string).append("\n");
             }
 
-            PlayerFunctions.sendMessage(player, help.toString());
-            return true;
+            return PlayerFunctions.sendMessage(player, help.toString());
         }
         else {
             for (final SubCommand command : subCommands) {
@@ -123,8 +121,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                             return command.execute(player, arguments);
                         }
                         else {
-                            PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
-                            return false;
+                            return !PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
                         }
                     }
                     else {
@@ -139,9 +136,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 commands[x] = subCommands.get(x).cmd;
             }
 
-            PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
+            /* Let's try to get a proper usage string */
+            SubCommand command = (SubCommand) new StringComparsion(args[0], commands).getMatchObject();
+            return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, command.usage.contains("plot") ? command.usage : "/plot " + command.usage);
+            //PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
         }
-        return false;
     }
 
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
@@ -154,34 +153,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         return cmds;
     }
 
-    /*
-     * // Current page
-     * int page = 0;
-     * //is a page specified? else use 0
-     * if(args.length > 1) {
-     * try {
-     * page = Integer.parseInt(args[1]);
-     * } catch(Exception e) {
-     * page = 0;
-     * }
-     * }
-     * //Get the total pages
-     * int totalPages = ((int) Math.ceil(12 * (PlotMain.getPlotsSorted().size())
-     * / 100));
-     * if(page > totalPages)
-     * page = totalPages;
-     * //Only display 12!
-     * int max = (page * 12) + 12;
-     * if(max > PlotMain.getPlotsSorted().size())
-     * max = PlotMain.getPlotsSorted().size();
-     * StringBuilder string = new StringBuilder();
-     * string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 +
-     * "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all") +
-     * "\n");
-     * Plot p;
-     * //This might work xD
-     * for (int x = (page * 12); x < max; x++) {
-     */
     public static ArrayList<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
         final List<SubCommand> commands = getCommands(category, player);
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
@@ -238,7 +209,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         if (strings.length < 1) {
             if ((strings.length == 0) || "plots".startsWith(s)) {
-                return Arrays.asList(new String[] { "plots" });
+                return Arrays.asList("plots");
             }
         }
         if (strings.length > 1) {
@@ -247,7 +218,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         if (!command.getLabel().equalsIgnoreCase("plots")) {
             return null;
         }
-        final List<String> tabOptions = new ArrayList<String>();
+        final List<String> tabOptions = new ArrayList<>();
         final String arg = strings[0].toLowerCase();
         for (final SubCommand cmd : subCommands) {
             if (cmd.permission.hasPermission(player)) {
