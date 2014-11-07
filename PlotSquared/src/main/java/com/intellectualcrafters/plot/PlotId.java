@@ -45,10 +45,24 @@ public class PlotId {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + this.x;
-        result = (prime * result) + this.y;
-        return result;
+        if (x >= 0) {
+            if (y >= 0) {
+                return x*x + 3*x + 2*x*y + y + y*y;
+            }
+            else {
+                int y1 = -y;
+                return x*x + 3*x + 2*x*y1 + y1 + y1*y1 + 1;
+            }
+        }
+        else {
+            int x1 = -x;
+            if (y >= 0) {
+                return -(x1*x1 + 3*x1 + 2*x1*y + y + y*y);
+            }
+            else {
+                int y1 = -y;
+                return -(x1*x1 + 3*x1 + 2*x1*y1 + y1 + y1*y1 + 1);
+            }
+        }
     }
 }

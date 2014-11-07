@@ -288,12 +288,26 @@ public class Plot implements Cloneable {
      */
     @Override
     public int hashCode() {
-        final int
-                x = getId().x,
-                z = getId().y;
-        String
-                xL = (x + "").length() + "",
-                zL = (z + "").length() + "";
-        return Integer.parseInt(xL + x + zL + z);
+        int x = id.x;
+        int y = id.y;
+        if (x >= 0) {
+            if (y >= 0) {
+                return x*x + 3*x + 2*x*y + y + y*y;
+            }
+            else {
+                int y1 = -y;
+                return x*x + 3*x + 2*x*y1 + y1 + y1*y1 + 1;
+            }
+        }
+        else {
+            int x1 = -x;
+            if (y >= 0) {
+                return -(x1*x1 + 3*x1 + 2*x1*y + y + y*y);
+            }
+            else {
+                int y1 = -y;
+                return -(x1*x1 + 3*x1 + 2*x1*y1 + y1 + y1*y1 + 1);
+            }
+        }
     }
 }
