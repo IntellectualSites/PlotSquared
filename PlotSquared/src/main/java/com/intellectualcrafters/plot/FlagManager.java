@@ -71,7 +71,7 @@ public class FlagManager {
     public static List<AbstractFlag> getFlags(final Player player) {
         final List<AbstractFlag> returnFlags = new ArrayList<>();
         for (final AbstractFlag flag : flags) {
-            if (player.hasPermission("plots.set." + flag.getKey().toLowerCase())) {
+            if (player.hasPermission("plots.set.flag." + flag.getKey().toLowerCase())) {
                 returnFlags.add(flag);
             }
         }

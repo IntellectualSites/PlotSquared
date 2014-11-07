@@ -262,7 +262,13 @@ public class Set extends SubCommand {
                 sendMessage(plr, C.NAME_LITTLE, "Material", args[1].length() + "", "2");
                 return true;
             }
-            final Material material = getMaterial(args[1], PlotWorld.BLOCKS);
+            Material material;
+            try {
+                material = getMaterial(args[1], PlotWorld.BLOCKS);
+            }
+            catch (NullPointerException e) {
+                material = null;
+            }
             /*
              * for (Material m : PlotWorld.BLOCKS) {
              * if (m.toString().equalsIgnoreCase(args[1])) {
