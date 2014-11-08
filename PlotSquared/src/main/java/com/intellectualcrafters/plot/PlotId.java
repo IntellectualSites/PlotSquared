@@ -22,6 +22,27 @@
 package com.intellectualcrafters.plot;
 
 public class PlotId {
+
+    /**
+     * Get a Plot Id based on a string
+     *
+     * @param string to create id from
+     * @return null if the string is invalid
+     */
+    public static PlotId fromString(final String string) {
+        int x, y;
+        String[] parts = string.split(";");
+        if (parts.length < 2)
+            return null;
+        try {
+            x = Integer.parseInt(parts[0]);
+            y = Integer.parseInt(parts[1]);
+        } catch (Exception e) {
+            return null;
+        }
+        return new PlotId(x, y);
+    }
+
     /**
      * x value
      */

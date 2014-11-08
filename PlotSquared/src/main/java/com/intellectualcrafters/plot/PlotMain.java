@@ -763,13 +763,11 @@ public class PlotMain extends JavaPlugin {
             PlotHelper.canSetFast = false;
         }
 
-        // Setup version + downloads, will not be updated... maybe setup
-        // runnable? TODO Let jesse decide...
         com.intellectualcrafters.plot.commands.plugin.setup(this);
 
         setUUIDSaver(new PlotUUIDSaver());
+        // Looks really cool xD
         getUUIDSaver().globalPopulate();
-        // UUIDHandler.startFetch(this);
     }
 
     /**
@@ -1154,7 +1152,7 @@ public class PlotMain extends JavaPlugin {
 
         for (final ConfigurationNode setting : plotworld.getSettingNodes()) {
             options.put(setting.getConstant(), setting.getValue());
-            //TODO: Make jesse expalain wth was going on here
+            //TODO: Make jesse explain wth was going on here
         }
 
         for (final Entry<String, Object> node : options.entrySet()) {

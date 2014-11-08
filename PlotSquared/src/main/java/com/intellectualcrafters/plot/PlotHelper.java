@@ -706,6 +706,12 @@ public class PlotHelper {
      * @param plot
      */
     public static void clear(final Player requester, final Plot plot) {
+        if (requester == null) {
+            clearAllEntities(plot.getWorld(), plot, false);
+            clear(plot.getWorld(), plot);
+            removeSign(plot.getWorld(), plot);
+            return;
+        }
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
             return;
@@ -716,11 +722,7 @@ public class PlotHelper {
         final long start = System.nanoTime();
 
         final World world;
-        if (requester != null) {
-            world = requester.getWorld();
-        } else {
-            world = Bukkit.getWorld(plot.world);
-        }
+        world = requester.getWorld();
 
         /*
          * keep
@@ -730,7 +732,6 @@ public class PlotHelper {
         removeSign(world, plot);
         PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
 
-        return;
     }
 
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {

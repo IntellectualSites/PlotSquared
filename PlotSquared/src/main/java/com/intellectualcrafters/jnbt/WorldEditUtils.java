@@ -15,7 +15,6 @@ public class WorldEditUtils {
 //            bukkitWorld.setBlock(vector, block);
 //        }
 //        catch (final WorldEditException e) {
-//            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }
     }

@@ -21,16 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class Clear extends SubCommand {
 
     public Clear() {
-        super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, true);
+        super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
 
         // TODO console clear plot at location
 
@@ -38,6 +36,32 @@ public class Clear extends SubCommand {
 
     @Override
     public boolean execute(final Player plr, final String... args) {
+        if (plr == null) {
+            // Is console
+            if (args.length < 2) {
+                PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+            } else {
+                PlotId id = PlotId.fromString(args[0]);
+                String world = args[1];
+                if (id == null) {
+                    PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                } else {
+                    if (!PlotMain.isPlotWorld(world)) {
+                        PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
+                    } else {
+                        Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                        if (plot == null) {
+                            PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                        } else {
+                            plot.clear(null);
+                            PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         if (!PlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
