@@ -25,7 +25,7 @@ import com.intellectualcrafters.plot.UUIDHandler;
 public class Schematic extends SubCommand {
 
     public Schematic() {
-        super("schematic", "plots.admin", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
+        super("schematic", "plots.schematic", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
 
         // TODO command to fetch schematic from worldedit directory
     }
