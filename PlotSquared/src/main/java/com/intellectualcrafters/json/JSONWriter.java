@@ -1,24 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 import java.io.IOException;
@@ -59,13 +38,10 @@ import java.io.Writer;
  */
 public class JSONWriter {
     private static final int maxdepth = 200;
-
     /**
-     * The comma flag determines if a comma should be output before the next
-     * value.
+     * The object/array stack.
      */
-    private boolean comma;
-
+    private final JSONObject stack[];
     /**
      * The current mode. Values:
      * 'a' (array),
@@ -75,21 +51,19 @@ public class JSONWriter {
      * 'o' (object).
      */
     protected char mode;
-
-    /**
-     * The object/array stack.
-     */
-    private final JSONObject stack[];
-
-    /**
-     * The stack top index. A value of 0 indicates that the stack is empty.
-     */
-    private int top;
-
     /**
      * The writer that will receive the output.
      */
     protected Writer writer;
+    /**
+     * The comma flag determines if a comma should be output before the next
+     * value.
+     */
+    private boolean comma;
+    /**
+     * The stack top index. A value of 0 indicates that the stack is empty.
+     */
+    private int top;
 
     /**
      * Make a fresh JSONWriter. It can be used to build one JSON text.

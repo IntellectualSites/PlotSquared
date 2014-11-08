@@ -1,24 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 import java.io.*;
@@ -33,12 +12,12 @@ import java.io.*;
  */
 public class JSONTokener {
 
+    private final Reader reader;
     private long character;
     private boolean eof;
     private long index;
     private long line;
     private char previous;
-    private final Reader reader;
     private boolean usePrevious;
 
     /**
@@ -75,21 +54,6 @@ public class JSONTokener {
     }
 
     /**
-     * Back up one character. This provides a sort of lookahead capability,
-     * so that you can test for a digit or letter before attempting to parse
-     * the next number or identifier.
-     */
-    public void back() throws JSONException {
-        if (this.usePrevious || (this.index <= 0)) {
-            throw new JSONException("Stepping back two steps is not supported");
-        }
-        this.index -= 1;
-        this.character -= 1;
-        this.usePrevious = true;
-        this.eof = false;
-    }
-
-    /**
      * Get the hex value of a character (base16).
      *
      * @param c A character between '0' and '9' or between 'A' and 'F' or
@@ -107,6 +71,21 @@ public class JSONTokener {
             return c - ('a' - 10);
         }
         return -1;
+    }
+
+    /**
+     * Back up one character. This provides a sort of lookahead capability,
+     * so that you can test for a digit or letter before attempting to parse
+     * the next number or identifier.
+     */
+    public void back() throws JSONException {
+        if (this.usePrevious || (this.index <= 0)) {
+            throw new JSONException("Stepping back two steps is not supported");
+        }
+        this.index -= 1;
+        this.character -= 1;
+        this.usePrevious = true;
+        this.eof = false;
     }
 
     public boolean end() {

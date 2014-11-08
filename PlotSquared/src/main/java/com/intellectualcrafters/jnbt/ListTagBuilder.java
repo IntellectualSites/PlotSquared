@@ -1,24 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.jnbt;
 
 import java.util.ArrayList;
@@ -45,6 +24,39 @@ public class ListTagBuilder {
         checkNotNull(type);
         this.type = type;
         this.entries = new ArrayList<Tag>();
+    }
+
+    /**
+     * Create a new builder instance.
+     *
+     * @return a new builder
+     */
+    public static ListTagBuilder create(final Class<? extends Tag> type) {
+        return new ListTagBuilder(type);
+    }
+
+    /**
+     * Create a new builder instance.
+     *
+     * @return a new builder
+     */
+    public static <T extends Tag> ListTagBuilder createWith(final T... entries) {
+        checkNotNull(entries);
+
+        if (entries.length == 0) {
+            throw new IllegalArgumentException("This method needs an array of at least one entry");
+        }
+
+        final Class<? extends Tag> type = entries[0].getClass();
+        for (int i = 1; i < entries.length; i++) {
+            if (!type.isInstance(entries[i])) {
+                throw new IllegalArgumentException("An array of different tag types was provided");
+            }
+        }
+
+        final ListTagBuilder builder = new ListTagBuilder(type);
+        builder.addAll(Arrays.asList(entries));
+        return builder;
     }
 
     /**
@@ -93,39 +105,6 @@ public class ListTagBuilder {
      */
     public ListTag build(final String name) {
         return new ListTag(name, this.type, new ArrayList<Tag>(this.entries));
-    }
-
-    /**
-     * Create a new builder instance.
-     *
-     * @return a new builder
-     */
-    public static ListTagBuilder create(final Class<? extends Tag> type) {
-        return new ListTagBuilder(type);
-    }
-
-    /**
-     * Create a new builder instance.
-     *
-     * @return a new builder
-     */
-    public static <T extends Tag> ListTagBuilder createWith(final T... entries) {
-        checkNotNull(entries);
-
-        if (entries.length == 0) {
-            throw new IllegalArgumentException("This method needs an array of at least one entry");
-        }
-
-        final Class<? extends Tag> type = entries[0].getClass();
-        for (int i = 1; i < entries.length; i++) {
-            if (!type.isInstance(entries[i])) {
-                throw new IllegalArgumentException("An array of different tag types was provided");
-            }
-        }
-
-        final ListTagBuilder builder = new ListTagBuilder(type);
-        builder.addAll(Arrays.asList(entries));
-        return builder;
     }
 
 }

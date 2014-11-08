@@ -1,24 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 /**
@@ -60,21 +39,18 @@ package com.intellectualcrafters.json;
 public class Kim {
 
     /**
-     * The byte array containing the kim's content.
-     */
-    private byte[] bytes = null;
-
-    /**
-     * The kim's hashcode, conforming to Java's hashcode conventions.
-     */
-    private int hashcode = 0;
-
-    /**
      * The number of bytes in the kim. The number of bytes can be as much as
      * three times the number of characters.
      */
     public int length = 0;
-
+    /**
+     * The byte array containing the kim's content.
+     */
+    private byte[] bytes = null;
+    /**
+     * The kim's hashcode, conforming to Java's hashcode conventions.
+     */
+    private int hashcode = 0;
     /**
      * The memoization of toString().
      */
@@ -217,6 +193,21 @@ public class Kim {
     }
 
     /**
+     * Returns the number of bytes needed to contain the character in Kim
+     * format.
+     *
+     * @param character a Unicode character between 0 and 0x10FFFF.
+     * @return 1, 2, or 3
+     * @throws JSONException if the character is not representable in a kim.
+     */
+    public static int characterSize(final int character) throws JSONException {
+        if ((character < 0) || (character > 0x10FFFF)) {
+            throw new JSONException("Bad character " + character);
+        }
+        return character <= 0x7F ? 1 : character <= 0x3FFF ? 2 : 3;
+    }
+
+    /**
      * Returns the character at the specified index. The index refers to byte
      * values and ranges from 0 to length - 1. The index of the next character
      * is at index + Kim.characterSize(kim.characterAt(index)).
@@ -245,21 +236,6 @@ public class Kim {
             }
         }
         throw new JSONException("Bad character at " + at);
-    }
-
-    /**
-     * Returns the number of bytes needed to contain the character in Kim
-     * format.
-     *
-     * @param character a Unicode character between 0 and 0x10FFFF.
-     * @return 1, 2, or 3
-     * @throws JSONException if the character is not representable in a kim.
-     */
-    public static int characterSize(final int character) throws JSONException {
-        if ((character < 0) || (character > 0x10FFFF)) {
-            throw new JSONException("Bad character " + character);
-        }
-        return character <= 0x7F ? 1 : character <= 0x3FFF ? 2 : 3;
     }
 
     /**
