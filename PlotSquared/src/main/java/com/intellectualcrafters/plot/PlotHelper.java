@@ -319,6 +319,9 @@ public class PlotHelper {
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
         manager.setWall(world, plotworld, plot.id, block);
+        if (canSetFast) {
+            SetBlockFast.update(player);
+        }
     }
 
     public static void autoMerge(final World world, final Plot plot, final Player player) {
