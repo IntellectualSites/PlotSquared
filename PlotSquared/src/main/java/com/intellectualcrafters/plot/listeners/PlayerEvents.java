@@ -176,6 +176,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (isInPlot(event.getBlock().getLocation())) {
+            if (event.getBlock().getY()==0) {
+                event.setCancelled(true);
+                return;
+            }
             final Plot plot = getCurrentPlot(event.getBlock().getLocation());
             if (!plot.hasRights(event.getPlayer())) {
                 event.setCancelled(true);
@@ -408,7 +412,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (event.getClickedBlock() == null) {
             return;
         }
-        final World world = event.getPlayer().getWorld();
+        final World world = event.getPlayer().getWorld();   
         if (!isPlotWorld(world)) {
             return;
         }

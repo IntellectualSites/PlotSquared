@@ -49,7 +49,7 @@ public class PWE {
                         final Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
                         final Location tloc = PlotHelper.getPlotTopLoc(w, plot.id);
 
-                        final Vector bvec = new Vector(bloc.getBlockX() + 1, bloc.getBlockY() + 1, bloc.getBlockZ() + 1);
+                        final Vector bvec = new Vector(bloc.getBlockX() + 1, bloc.getBlockY(), bloc.getBlockZ() + 1);
                         final Vector tvec = new Vector(tloc.getBlockX(), tloc.getBlockY(), tloc.getBlockZ());
 
                         final LocalWorld lw = PlotMain.worldEdit.wrapPlayer(p).getWorld();

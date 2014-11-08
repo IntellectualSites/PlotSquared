@@ -1,6 +1,6 @@
 name: PlotSquared
 main: com.intellectualcrafters.plot.PlotMain
-version: 2.2.1
+version: 2.2.2
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
