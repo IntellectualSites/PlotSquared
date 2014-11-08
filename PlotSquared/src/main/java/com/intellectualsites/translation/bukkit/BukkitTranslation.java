@@ -23,7 +23,7 @@ public class BukkitTranslation {
     public static String convert(TranslationAsset asset) {
         // In some cases newline can screw stuff up, so I added a new character thing
         // &- = new line
-        return asset.getTranslated().replace("&-", "\n").replace('&', 'ยง');
+        return asset.getTranslated().replace("&-", "\n").replace('&', 'ง');
     }
 
     /**

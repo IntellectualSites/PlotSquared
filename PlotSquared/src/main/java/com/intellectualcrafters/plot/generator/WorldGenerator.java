@@ -179,16 +179,7 @@ public class WorldGenerator extends PlotGenerator {
         super(world);
 
         if (this.plotworld == null) {
-            this.plotworld = new DefaultPlotWorld(world);
-            if (!PlotMain.config.contains("worlds." + world)) {
-                PlotMain.config = YamlConfiguration.loadConfiguration(PlotMain.configFile);
-                PlotMain.config.createSection("worlds." + world);
-            }
-            final ConfigurationSection section = PlotMain.config.getConfigurationSection("worlds." + world);
-            this.plotworld.saveConfiguration(section);
-            this.plotworld.loadDefaultConfiguration(section);
-            this.plotworld.loadConfiguration(section);
-            PlotMain.sendConsoleSenderMessage("&cFailed to load the plotworld settings from the configuration. Attempting to reload it");
+            this.plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
         }
 
         this.plotsize = this.plotworld.PLOT_WIDTH;

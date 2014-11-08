@@ -21,7 +21,7 @@ public class TranslationObject {
             creationDescription = "";
         }
         for (char c : key.toCharArray()) {
-            if (!Character.isDigit(c) && !Character.isAlphabetic(c) && c != '_' && c != '&' && c != '§' && c != ':') {
+            if (!Character.isDigit(c) && !Character.isAlphabetic(c) && c != '_' && c != '&' && c != '�' && c != ':') {
                 throw new RuntimeException(
                         String.format("Translation: '%s' is invalid (Character: '%s') - Only alphanumeric + (\\, _, &, §, :) charcters are allowed",
                                 key, c + ""
