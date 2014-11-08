@@ -29,9 +29,6 @@ public class Clear extends SubCommand {
 
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
-
-        // TODO console clear plot at location
-
     }
 
     @Override

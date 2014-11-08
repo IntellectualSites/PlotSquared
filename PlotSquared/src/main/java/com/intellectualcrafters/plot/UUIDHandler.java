@@ -57,6 +57,7 @@ import java.util.UUID;
  * @author Empire92
  *         for PlotSquared.
  */
+@SuppressWarnings("unused")
 public class UUIDHandler {
 
     /**
@@ -286,7 +287,6 @@ public class UUIDHandler {
     @SuppressWarnings("unused")
     public static void handleSaving() {
         final UUIDSaver saver = PlotMain.getUUIDSaver();
-        // Should it save per UUIDSet or all of them? TODO: Let Jesse decide xD
         saver.globalSave(getUuidMap());
     }
 }

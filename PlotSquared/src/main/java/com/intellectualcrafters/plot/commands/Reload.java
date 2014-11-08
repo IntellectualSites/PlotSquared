@@ -34,9 +34,6 @@ public class Reload extends SubCommand {
 
     public Reload() {
         super("reload", "plots.admin", "Reload configurations", "", "reload", CommandCategory.INFO, false);
-
-        // TODO reload worlds as well
-
     }
 
     @Override
