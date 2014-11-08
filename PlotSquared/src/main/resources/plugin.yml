@@ -1,6 +1,6 @@
-name: PlotSquared
+name: ${project.name}
 main: com.intellectualcrafters.plot.PlotMain
-version: 2.2.3
+version: ${project.version}
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
