@@ -249,7 +249,6 @@ public class PlotMeConverter {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname + " plugin:PlotSquared");
                     }
                     else {
-                        System.out.print("LOADED WORLD");
                         Bukkit.getServer().unloadWorld(world, true);
                         final World myworld = WorldCreator.name(worldname).generator(new WorldGenerator(worldname)).createWorld();
                         myworld.save();

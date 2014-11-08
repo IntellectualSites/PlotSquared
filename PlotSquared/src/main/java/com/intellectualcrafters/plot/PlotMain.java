@@ -59,6 +59,7 @@ import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.listeners.EntityListener;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlotListener;
@@ -611,7 +612,7 @@ public class PlotMain extends JavaPlugin {
         if (Settings.KILL_ROAD_MOBS) {
             killAllEntities();
         }
-
+        
         // Enabled<3
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
@@ -723,6 +724,9 @@ public class PlotMain extends JavaPlugin {
             }
         });
         // getCommand("plots").setTabCompleter(command);
+        if (Settings.MOB_CAP_ENABLED) {
+            getServer().getPluginManager().registerEvents(new EntityListener(), this);
+        }
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
@@ -1124,6 +1128,9 @@ public class PlotMain extends JavaPlugin {
         options.put("api.location", Settings.API_URL);
         options.put("api.custom", Settings.CUSTOM_API);
         options.put("titles", Settings.TITLES);
+        
+        options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
+        options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
 
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -1141,6 +1148,8 @@ public class PlotMain extends JavaPlugin {
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.TITLES = config.getBoolean("titles");
+        Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");
+        Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
     }

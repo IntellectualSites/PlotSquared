@@ -15,6 +15,10 @@ package com.intellectualcrafters.plot;
  * @author Empire92
  */
 public class Settings {
+    
+    public static boolean MOB_CAP_ENABLED = false;
+    public static int MOB_CAP = 20;
+    
     public static boolean TITLES                      = true;
     /**
      * Schematic Save Path
