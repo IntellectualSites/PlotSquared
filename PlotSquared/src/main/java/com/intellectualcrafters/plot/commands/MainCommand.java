@@ -194,7 +194,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
             help.add(s);
 
-            if ((x != start) && (x != (max - 1))) {
+            if ((x != start)) {
                 help.add(t(C.HELP_ITEM_SEPARATOR.s().replaceAll("%lines", lines)));
             }
 

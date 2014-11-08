@@ -228,6 +228,7 @@ public class Set extends SubCommand {
                 sendMessage(plr, C.NAME_LITTLE, "Biome", args[1].length() + "", "2");
                 return true;
             }
+
             final Biome biome = Biome.valueOf(new StringComparsion(args[1], Biome.values()).getBestMatch());
             /*
              * for (Biome b : Biome.values()) {
