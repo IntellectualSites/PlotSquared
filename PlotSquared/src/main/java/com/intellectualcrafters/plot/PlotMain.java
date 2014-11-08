@@ -84,15 +84,6 @@ public class PlotMain extends JavaPlugin {
     public static YamlConfiguration  storage;
     public static int                storage_ver        = 1;
     /**
-     * translations.properties
-     */
-    public static File               translationsFile;
-    /**
-     * Contains all translations
-     */
-    public static YamlConfiguration  translations;
-    public static int                translations_ver   = 1;
-    /**
      * MySQL Object
      */
     private static MySQL             mySQL;
@@ -581,6 +572,7 @@ public class PlotMain extends JavaPlugin {
             return;
         }
 
+        C.setupTranslations();
         // Setup configurations
         configs();
 
@@ -875,7 +867,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     public static void reloadTranslations() throws IOException {
-        translations = YamlConfiguration.loadConfiguration(translationsFile);
+        C.setupTranslations();
     }
 
     public static long getLastPlayed(final UUID uuid) {
@@ -927,24 +919,8 @@ public class PlotMain extends JavaPlugin {
             System.out.println("Failed to save storage.yml");
         }
         try {
-            translationsFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "translations.yml");
-            if (!translationsFile.exists()) {
-                if (!translationsFile.createNewFile()) {
-                    sendConsoleSenderMessage("Could not create the translations file, please create \"translations.yml\" manually.");
-                }
-            }
-            translations = YamlConfiguration.loadConfiguration(translationsFile);
-            setupTranslations();
-        }
-        catch (final Exception err_trans) {
-            Logger.add(LogLevel.DANGER, "Failed to save translations.yml");
-            System.out.println("Failed to save translations.yml");
-        }
-
-        try {
             config.save(configFile);
             storage.save(storageFile);
-            translations.save(translationsFile);
         }
         catch (final IOException e) {
             Logger.add(LogLevel.DANGER, "Configuration file saving failed");
@@ -1271,23 +1247,11 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * SETUP: translations.properties
-     */
-    public static void setupTranslations() {
-        translations.set("version", translations_ver);
-        for (final C c : C.values()) {
-            if (!translations.contains(c.toString())) {
-                translations.set(c.toString(), c.s());
-            }
-
-        }
-    }
-
-    /**
      * On unload
      */
     @Override
     public void onDisable() {
+        C.saveTranslations();
         Logger.add(LogLevel.GENERAL, "Logger disabled");
         try {
             Logger.write();

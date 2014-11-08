@@ -21,6 +21,8 @@
 
 package com.intellectualcrafters.plot;
 
+import com.intellectualsites.translation.*;
+import com.intellectualsites.translation.bukkit.BukkitTranslation;
 import org.bukkit.ChatColor;
 
 /**
@@ -231,8 +233,30 @@ public enum C {
      * Info
      */
     PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-    PLOT_INFO("&6ID&7: &a%id%&7\n&6Alias&7: &a%alias%\n&6Owner&7: &a%owner%\n&6Helpers&7: &a%helpers%\n&6Trusted&7: &a%trusted%\n&Denied&7: &a%denied%\n&6Denied&7: &a%denied%\n&6Flags&7: &a%flags%\n&6Biome&7: &a%biome%\n&6Rating&7: &a%rating%&7/&a10\n&6Can build&7: &a%build%"),
-
+    /*PLOT_INFO("" +
+            "&6ID&7: &a%id%&7\n" +
+            "&6Alias&7: &a%alias%\n" +
+            "&6Owner&7: &a%owner%\n" +
+            "&6Helpers&7: &a%helpers%\n" +
+            "&6Trusted&7: &a%trusted%\n" +
+            "&6Denied&7: &a%denied%\n" +
+            "&6Flags&7: &a%flags%\n" +
+            "&6Biome&7: &a%biome%\n" +
+            "&6Rating&7: &a%rating%&7/&a10\n" +
+            "&6Can build&7: &a%build%"
+    ),*/
+    PLOT_INFO(
+            "&cID: &6%id%&c, " +
+                    "&cAlias: &6%alias%&c, " +
+                    "&cOwner: &6%owner%&c, " +
+                    "&cBiome: &6%biome%&c, " +
+                    "&cCan Build: &6%build%&c, " +
+                    "&cRating: &6%rating%&c/&610&c, " +
+                    "&cHelpers:&6%helpers%&c, " +
+                    "&cTrusted:&6%trusted%&c, " +
+                    "&cDenied:&6%denied%&c, " +
+                    "&cFlags: &6%flags%"
+    ),
     PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),
     PLOT_INFO_TRUSTED("&6Trusted&7: %trusted%"),
     PLOT_INFO_DENIED("&6Denied&7: %denied%"),
@@ -377,18 +401,9 @@ public enum C {
      */
     C(final String d) {
         this.d = d;
-        if (PlotMain.translations == null) {
-            this.s = d;
-        } else {
-            this.s = PlotMain.translations.getString(this.toString());
-        }
         if (this.s == null) {
             this.s = "";
         }
-    }
-
-    public static class Potato {
-
     }
 
     /**
@@ -407,6 +422,8 @@ public enum C {
      * @return translated if exists else default
      */
     public String s() {
+        return manager.getTranslated(toString(), TranslationLanguage.englishAmerican).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        /*
         if (PlotMain.translations != null) {
             final String t = PlotMain.translations.getString(this.toString());
             if (t != null) {
@@ -416,7 +433,7 @@ public enum C {
         if (this.s.length() < 1) {
             return "";
         }
-        return this.s.replace("\\n", "\n");
+        return this.s.replace("\\n", "\n");*/
     }
 
     /**
@@ -426,4 +443,26 @@ public enum C {
         return ChatColor.translateAlternateColorCodes('&', this.s());
     }
 
+    private static TranslationManager manager;
+    private static TranslationFile defaultFile;
+
+    public static void setupTranslations() {
+        if (manager == null) {
+            manager = new TranslationManager();
+        }
+        if (defaultFile == null) {
+            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), TranslationLanguage.englishAmerican, "PlotSquared", manager)
+                    .read();
+        }
+        // register everything in this class
+        for (C c : values()) {
+            manager.addTranslationObject(
+                    new TranslationObject(c.toString(), c.d, "", "")
+            );
+        }
+    }
+
+    public static void saveTranslations() {
+        manager.saveAll(defaultFile).saveFile(defaultFile);
+    }
 }

@@ -115,14 +115,6 @@ public class PlotAPI {
     }
 
     /**
-     * @return translation configuration
-     * @see com.intellectualcrafters.plot.PlotMain#translations
-     */
-    public YamlConfiguration getTranslations() {
-        return PlotMain.translations;
-    }
-
-    /**
      * @return storage configuration
      * @see com.intellectualcrafters.plot.PlotMain#storage
      */

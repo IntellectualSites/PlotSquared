@@ -67,7 +67,7 @@ public class Debug extends SubCommand {
             //PlotHelper.getWorldFolderSize() + "MB"));
             for (final String worldname : PlotMain.getPlotWorlds()) {
                 final World world = Bukkit.getWorld(worldname);
-                information.append(getLine(line, "World: " + world + " size", PlotHelper.getWorldFolderSize(world)));
+                information.append(getLine(line, "World: " + world.getName() + " size", PlotHelper.getWorldFolderSize(world)));
                 information.append(getLine(line, " - Entities", PlotHelper.getEntities(world)));
                 information.append(getLine(line, " - Loaded Tile Entities", PlotHelper.getTileEntities(world)));
                 information.append(getLine(line, " - Loaded Chunks", PlotHelper.getLoadedChunks(world)));
