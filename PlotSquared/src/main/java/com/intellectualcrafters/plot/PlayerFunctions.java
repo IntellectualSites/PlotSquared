@@ -246,9 +246,12 @@ public class PlayerFunctions {
             String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
             StringBuilder b = new StringBuilder();
             for (String p : ss) {
-                b.append(p).append("\n ");
+                b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
             }
             msg = b.toString();
+        }
+        if (msg.endsWith("\n")) {
+            msg = msg.substring(0, msg.length() - 2);
         }
         plr.sendMessage(msg);
     }

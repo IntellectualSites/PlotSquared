@@ -38,7 +38,7 @@ public class Flag {
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
     public Flag(final AbstractFlag key, final String value) {
-        final char[] allowedCharacters = new char[]{'[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', ':', '§'};
+        final char[] allowedCharacters = new char[]{'[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', ':', '\u00A7'};
         String tempValue = value;
         for (final char c : allowedCharacters) {
             tempValue = tempValue.replace(c, 'c');

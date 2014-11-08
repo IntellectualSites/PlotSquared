@@ -146,8 +146,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
 
             /* Let's try to get a proper usage string */
-            SubCommand command = (SubCommand) new StringComparsion(args[0], commands).getMatchObject();
-            return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, command.usage.contains("plot") ? command.usage : "/plot " + command.usage);
+            String command = new StringComparsion(args[0], commands).getBestMatch();
+            return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             //PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
         }
     }
