@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.jnbt;
 
 import java.io.Closeable;
@@ -13,7 +34,7 @@ import java.util.Map;
  * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong>
  * streams, and produces an object graph of subclasses of the {@code Tag}
  * object.
- *
+ * <p/>
  * <p>
  * The NBT format was created by Markus Persson, and the specification may be
  * found at <a href="http://www.minecraft.net/docs/NBT.txt">
@@ -28,10 +49,8 @@ public final class NBTInputStream implements Closeable {
      * Creates a new {@code NBTInputStream}, which will source its data
      * from the specified input stream.
      *
-     * @param is
-     *            the input stream
-     * @throws IOException
-     *             if an I/O error occurs
+     * @param is the input stream
+     * @throws IOException if an I/O error occurs
      */
     public NBTInputStream(final InputStream is) throws IOException {
         this.is = new DataInputStream(is);
@@ -41,8 +60,7 @@ public final class NBTInputStream implements Closeable {
      * Reads an NBT tag from the stream.
      *
      * @return The tag that was read.
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     public Tag readTag() throws IOException {
         return readTag(0);
@@ -51,11 +69,9 @@ public final class NBTInputStream implements Closeable {
     /**
      * Reads an NBT from the stream.
      *
-     * @param depth
-     *            the depth of this tag
+     * @param depth the depth of this tag
      * @return The tag that was read.
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     private Tag readTag(final int depth) throws IOException {
         final int type = this.is.readByte() & 0xFF;
@@ -66,8 +82,7 @@ public final class NBTInputStream implements Closeable {
             final byte[] nameBytes = new byte[nameLength];
             this.is.readFully(nameBytes);
             name = new String(nameBytes, NBTConstants.CHARSET);
-        }
-        else {
+        } else {
             name = "";
         }
 
@@ -77,23 +92,18 @@ public final class NBTInputStream implements Closeable {
     /**
      * Reads the payload of a tag, given the name and type.
      *
-     * @param type
-     *            the type
-     * @param name
-     *            the name
-     * @param depth
-     *            the depth
+     * @param type  the type
+     * @param name  the name
+     * @param depth the depth
      * @return the tag
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     private Tag readTagPayload(final int type, final String name, final int depth) throws IOException {
         switch (type) {
             case NBTConstants.TYPE_END:
                 if (depth == 0) {
                     throw new IOException("TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
-                }
-                else {
+                } else {
                     return new EndTag();
                 }
             case NBTConstants.TYPE_BYTE:
@@ -138,8 +148,7 @@ public final class NBTInputStream implements Closeable {
                     final Tag tag = readTag(depth + 1);
                     if (tag instanceof EndTag) {
                         break;
-                    }
-                    else {
+                    } else {
                         tagMap.put(tag.getName(), tag);
                     }
                 }

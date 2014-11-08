@@ -1,12 +1,33 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot;
+
+import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.block.Biome;
-
 public class Configuration {
-    public static final SettingValue STRING     = new SettingValue("STRING") {
+    public static final SettingValue STRING = new SettingValue("STRING") {
         @Override
         public boolean validateValue(final String string) {
             return true;
@@ -30,14 +51,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue INTEGER    = new SettingValue("INTEGER") {
+    public static final SettingValue INTEGER = new SettingValue("INTEGER") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Integer.parseInt(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -48,14 +68,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BOOLEAN    = new SettingValue("BOOLEAN") {
+    public static final SettingValue BOOLEAN = new SettingValue("BOOLEAN") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Boolean.parseBoolean(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -66,14 +85,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue DOUBLE     = new SettingValue("DOUBLE") {
+    public static final SettingValue DOUBLE = new SettingValue("DOUBLE") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Double.parseDouble(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -84,14 +102,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BIOME      = new SettingValue("BIOME") {
+    public static final SettingValue BIOME = new SettingValue("BIOME") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Biome.valueOf(string.toUpperCase());
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -112,7 +129,7 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BLOCK      = new SettingValue("BLOCK") {
+    public static final SettingValue BLOCK = new SettingValue("BLOCK") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -120,13 +137,11 @@ public class Configuration {
                     final String[] split = string.split(":");
                     Short.parseShort(split[0]);
                     Short.parseShort(split[1]);
-                }
-                else {
+                } else {
                     Short.parseShort(string);
                 }
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -136,8 +151,7 @@ public class Configuration {
             if (string.contains(":")) {
                 final String[] split = string.split(":");
                 return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-            }
-            else {
+            } else {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
         }
@@ -177,14 +191,12 @@ public class Configuration {
                         final String[] split = block.split(":");
                         Short.parseShort(split[0]);
                         Short.parseShort(split[1]);
-                    }
-                    else {
+                    } else {
                         Short.parseShort(block);
                     }
                 }
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -206,8 +218,7 @@ public class Configuration {
                     if (value < min) {
                         min = value;
                     }
-                }
-                else {
+                } else {
                     counts[i] = 1;
                     if (1 < min) {
                         min = 1;
@@ -216,8 +227,7 @@ public class Configuration {
                 if (blocks[i].contains(":")) {
                     final String[] split = blocks[i].split(":");
                     values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-                }
-                else {
+                } else {
                     values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
                 }
             }

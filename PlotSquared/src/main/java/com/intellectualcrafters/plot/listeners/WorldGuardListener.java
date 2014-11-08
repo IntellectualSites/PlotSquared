@@ -1,24 +1,27 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.*;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -30,13 +33,26 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-09-24.
  */
 public class WorldGuardListener implements Listener {
-    public ArrayList<String>  str_flags = new ArrayList<String>();
-    public ArrayList<Flag<?>> flags     = new ArrayList<Flag<?>>();
+    public ArrayList<String> str_flags = new ArrayList<String>();
+    public ArrayList<Flag<?>> flags = new ArrayList<Flag<?>>();
 
     public WorldGuardListener(final PlotMain plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -62,12 +78,10 @@ public class WorldGuardListener implements Listener {
             manager.getRegion(plot.id.x + "-" + plot.id.y);
             requester.performCommand("region setowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(owner));
             requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             // requester.setOp(op);
 
-        }
-        finally {
+        } finally {
             add.remove();
             remove.remove();
         }
@@ -84,11 +98,9 @@ public class WorldGuardListener implements Listener {
                     requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             requester.setOp(op);
-        }
-        finally {
+        } finally {
             requester.setOp(op);
         }
     }
@@ -104,11 +116,9 @@ public class WorldGuardListener implements Listener {
                     requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             requester.setOp(op);
-        }
-        finally {
+        } finally {
             requester.setOp(op);
         }
     }
@@ -178,8 +188,7 @@ public class WorldGuardListener implements Listener {
 
                 manager.addRegion(rg);
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
 
         }
     }
@@ -205,8 +214,7 @@ public class WorldGuardListener implements Listener {
             region.setOwners(owner);
 
             manager.addRegion(region);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
 
         }
     }
@@ -219,8 +227,7 @@ public class WorldGuardListener implements Listener {
 
             final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.removeRegion(plot.x + "-" + plot.y);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
 
         }
     }

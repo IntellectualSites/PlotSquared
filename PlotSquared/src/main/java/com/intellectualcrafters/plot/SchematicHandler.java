@@ -1,32 +1,39 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
+import com.intellectualcrafters.jnbt.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Schematic Handler
@@ -34,17 +41,14 @@ import com.intellectualcrafters.jnbt.Tag;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings({ "all" })
+@SuppressWarnings({"all"})
 public class SchematicHandler {
     /**
      * Paste a schematic
      *
-     * @param location
-     *            origin
-     * @param schematic
-     *            schematic to paste
-     * @param plot
-     *            plot to paste in
+     * @param location  origin
+     * @param schematic schematic to paste
+     * @param plot      plot to paste in
      * @return true if succeeded
      */
     public static boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
@@ -72,8 +76,7 @@ public class SchematicHandler {
             int y_offset;
             if (HEIGHT == location.getWorld().getMaxHeight()) {
                 y_offset = 0;
-            }
-            else {
+            } else {
                 y_offset = l1.getBlockY();
             }
 
@@ -102,8 +105,7 @@ public class SchematicHandler {
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return false;
         }
         return true;
@@ -112,8 +114,7 @@ public class SchematicHandler {
     /**
      * Get a schematic
      *
-     * @param name
-     *            to check
+     * @param name to check
      * @return schematic if found, else null
      */
     public static Schematic getSchematic(final String name) {
@@ -155,12 +156,10 @@ public class SchematicHandler {
                 if ((index >> 1) >= addId.length) { // No corresponding
                     // AddBlocks index
                     blocks[index] = (short) (b[index] & 0xFF);
-                }
-                else {
+                } else {
                     if ((index & 1) == 0) {
                         blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
-                    }
-                    else {
+                    } else {
                         blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
                     }
                 }
@@ -208,8 +207,7 @@ public class SchematicHandler {
             // }
             // }
             schematic = new Schematic(collection, dimension, file);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -223,8 +221,8 @@ public class SchematicHandler {
      */
     public static class Schematic {
         private final DataCollection[] blockCollection;
-        private final Dimension        schematicDimension;
-        private final File             file;
+        private final Dimension schematicDimension;
+        private final File file;
 
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
             this.blockCollection = blockCollection;
@@ -277,10 +275,8 @@ public class SchematicHandler {
     /**
      * Saves a schematic to a file path
      *
-     * @param tag
-     *            to save
-     * @param path
-     *            to save in
+     * @param tag  to save
+     * @param path to save in
      * @return true if succeeded
      */
     public static boolean save(final CompoundTag tag, final String path) {
@@ -296,8 +292,7 @@ public class SchematicHandler {
             output.writeTag(tag);
             output.close();
             stream.close();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -307,10 +302,8 @@ public class SchematicHandler {
     /**
      * Gets the schematic of a plot
      *
-     * @param world
-     *            to check
-     * @param id
-     *            plot
+     * @param world to check
+     * @param id    plot
      * @return tag
      */
     public static CompoundTag getCompoundTag(final World world, final PlotId id) {
@@ -338,8 +331,7 @@ public class SchematicHandler {
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             PlotMain.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
@@ -407,7 +399,7 @@ public class SchematicHandler {
      */
     public static class DataCollection {
         private final short block;
-        private final byte  data;
+        private final byte data;
 
         // public CompoundTag tag;
 

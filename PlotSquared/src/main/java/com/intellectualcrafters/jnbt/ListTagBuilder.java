@@ -1,11 +1,32 @@
-package com.intellectualcrafters.jnbt;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-import static com.google.common.base.Preconditions.checkNotNull;
+package com.intellectualcrafters.jnbt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helps create list tags.
@@ -13,13 +34,12 @@ import java.util.List;
 public class ListTagBuilder {
 
     private final Class<? extends Tag> type;
-    private final List<Tag>            entries;
+    private final List<Tag> entries;
 
     /**
      * Create a new instance.
      *
-     * @param type
-     *            of tag contained in this list
+     * @param type of tag contained in this list
      */
     ListTagBuilder(final Class<? extends Tag> type) {
         checkNotNull(type);
@@ -30,8 +50,7 @@ public class ListTagBuilder {
     /**
      * Add the given tag.
      *
-     * @param value
-     *            the tag
+     * @param value the tag
      * @return this object
      */
     public ListTagBuilder add(final Tag value) {
@@ -46,8 +65,7 @@ public class ListTagBuilder {
     /**
      * Add all the tags in the given list.
      *
-     * @param value
-     *            a list of tags
+     * @param value a list of tags
      * @return this object
      */
     public ListTagBuilder addAll(final Collection<? extends Tag> value) {
@@ -70,8 +88,7 @@ public class ListTagBuilder {
     /**
      * Build a new list tag with this builder's entries.
      *
-     * @param name
-     *            the name of the tag
+     * @param name the name of the tag
      * @return the created list tag
      */
     public ListTag build(final String name) {

@@ -1,16 +1,36 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot;
+
+import com.intellectualcrafters.plot.Configuration.SettingValue;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.intellectualcrafters.plot.Configuration.SettingValue;
-
 public class ConfigurationNode {
-    private final String       constant;
-    private final Object       default_value;
-    private final String       description;
-    private Object             value;
+    private final String constant;
+    private final Object default_value;
+    private final String description;
+    private Object value;
     private final SettingValue type;
 
     public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
@@ -32,8 +52,7 @@ public class ConfigurationNode {
                 return false;
             }
             return true;
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }

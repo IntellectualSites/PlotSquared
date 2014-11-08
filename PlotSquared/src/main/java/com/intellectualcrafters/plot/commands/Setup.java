@@ -1,10 +1,28 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -14,13 +32,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.ConfigurationNode;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.PlotGenerator;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Citymonstret on 2014-09-26.
@@ -30,9 +45,9 @@ public class Setup extends SubCommand implements Listener {
     public static Map<String, SetupObject> setupMap = new HashMap<>();
 
     private class SetupObject {
-        String              world;
-        String              plugin;
-        int                 current = 0;
+        String world;
+        String plugin;
+        int current = 0;
 
         ConfigurationNode[] step;
 
@@ -61,8 +76,7 @@ public class Setup extends SubCommand implements Listener {
 
         if (plr == null) {
             plrname = "";
-        }
-        else {
+        } else {
             plrname = plr.getName();
         }
 
@@ -76,20 +90,17 @@ public class Setup extends SubCommand implements Listener {
                 }
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                 }
 
                 // Creating the worlds
                 if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.plugin);
-                }
-                else {
+                } else {
                     if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.plugin);
-                    }
-                    else {
+                    } else {
                         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                             if (plugin.isEnabled()) {
                                 if (plugin.getDefaultWorldGenerator("world", "") != null) {
@@ -117,8 +128,7 @@ public class Setup extends SubCommand implements Listener {
             if (args.length < 1) {
                 sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 return true;
-            }
-            else {
+            } else {
                 if (args[0].equalsIgnoreCase("cancel")) {
                     setupMap.remove(plrname);
                     PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
@@ -130,8 +140,7 @@ public class Setup extends SubCommand implements Listener {
                         step = object.step[object.current];
                         sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                         return true;
-                    }
-                    else {
+                    } else {
                         sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                         return true;
                     }
@@ -148,15 +157,13 @@ public class Setup extends SubCommand implements Listener {
                     step = object.step[object.current];
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                     return true;
-                }
-                else {
+                } else {
                     sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                     return true;
                 }
             }
-        }
-        else {
+        } else {
             if (args.length < 1) {
                 sendMessage(plr, C.SETUP_MISSING_WORLD);
                 return true;
@@ -200,8 +207,7 @@ public class Setup extends SubCommand implements Listener {
             PlotWorld plotworld;
             if (generator instanceof PlotGenerator) {
                 plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
-            }
-            else {
+            } else {
                 plotworld = new DefaultPlotWorld(world);
             }
 

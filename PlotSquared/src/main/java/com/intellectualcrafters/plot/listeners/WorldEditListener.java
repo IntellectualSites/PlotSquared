@@ -1,9 +1,29 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,28 +32,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 
-import com.intellectualcrafters.plot.PWE;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Citymonstret
  */
 public class WorldEditListener implements Listener {
 
-    public final Set<String> blockedcmds    = new HashSet<String>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
+    public final Set<String> blockedcmds = new HashSet<String>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
     public final Set<String> restrictedcmds = new HashSet<String>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
     private boolean isPlotWorld(final Location l) {
@@ -100,8 +110,7 @@ public class WorldEditListener implements Listener {
             if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                 e.setCancelled(true);
             }
-        }
-        else if (this.blockedcmds.contains(cmd)) {
+        } else if (this.blockedcmds.contains(cmd)) {
             e.setCancelled(true);
         }
     }
@@ -115,8 +124,7 @@ public class WorldEditListener implements Listener {
         final Location l = p.getLocation();
         if (isPlotWorld(l)) {
             PWE.setMask(p, l);
-        }
-        else {
+        } else {
             PWE.removeMask(p);
         }
     }
@@ -175,8 +183,7 @@ public class WorldEditListener implements Listener {
         if (!isPlotWorld(t)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
-            }
-            else {
+            } else {
                 return;
             }
         }

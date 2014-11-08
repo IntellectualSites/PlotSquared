@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.database;
 
 import java.io.IOException;
@@ -26,7 +47,9 @@ import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
 /**
- * Created by Citymonstret on 2014-08-17.
+ * Created 2014-08-17 for ${PROJECT_NAME}
+ *
+ * @author Citymonstret
  */
 public class PlotMeConverter {
 
@@ -71,10 +94,10 @@ public class PlotMeConverter {
                             PlotMain.config.set("worlds." + world.getName() + ".wall.block", wallblock);
 
                             final String floor = plotConfig.getString("worlds." + world.getName() + ".PlotFloorBlockId"); //
-                            PlotMain.config.set("worlds." + world.getName() + ".plot.floor", Arrays.asList(new String[] { floor }));
+                            PlotMain.config.set("worlds." + world.getName() + ".plot.floor", Arrays.asList(new String[]{floor}));
 
                             final String filling = plotConfig.getString("worlds." + world.getName() + ".PlotFillingBlockId"); //
-                            PlotMain.config.set("worlds." + world.getName() + ".plot.filling", Arrays.asList(new String[] { filling }));
+                            PlotMain.config.set("worlds." + world.getName() + ".plot.filling", Arrays.asList(new String[]{filling}));
 
                             final String road = plotConfig.getString("worlds." + world.getName() + ".RoadMainBlockId");
                             PlotMain.config.set("worlds." + world.getName() + ".road.block", road);
@@ -88,8 +111,7 @@ public class PlotMeConverter {
                             final Boolean auto_link = plotConfig.getBoolean("worlds." + world.getName() + ".AutoLinkPlots"); //
                             PlotMain.config.set("worlds." + world.getName() + ".plot.auto_merge", auto_link);
 
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             PlotMain.sendConsoleSenderMessage(" - Failed to save configuration for world '" + world.getName() + "'. This will need to be done using the setup command or manually.");
                         }
 
@@ -134,13 +156,11 @@ public class PlotMeConverter {
                                             psDenied.add(set.getValue());
                                         }
                                     }
-                                }
-                                else {
+                                } else {
                                     for (final String user : plot.getAllowed().split(",")) {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
-                                        }
-                                        else {
+                                        } else {
                                             final UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
                                             psAdded.add(uuid);
                                         }
@@ -149,42 +169,36 @@ public class PlotMeConverter {
                                         for (final String user : plot.getDenied().split(",")) {
                                             if (user.equals("*")) {
                                                 psDenied.add(DBFunc.everyone);
-                                            }
-                                            else {
+                                            } else {
                                                 final UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
                                                 psDenied.add(uuid);
                                             }
                                         }
-                                    }
-                                    catch (final Throwable e) {
+                                    } catch (final Throwable e) {
 
                                     }
                                 }
-                            }
-                            catch (final Throwable e) {
+                            } catch (final Throwable e) {
                                 e.printStackTrace();
-                            }
-                            finally {
+                            } finally {
                             }
                             final PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
                             com.intellectualcrafters.plot.Plot pl = null;
                             if (online) {
                                 pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied,
 
-                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
-                            }
-                            else {
+                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
+                            } else {
                                 final String owner = plot.getOwner();
                                 pl = new com.intellectualcrafters.plot.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied,
 
-                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             }
 
                             if (pl != null) {
                                 if (!PlotMain.getPlots(world).containsKey(id)) {
                                     createdPlots.add(pl);
-                                }
-                                else {
+                                } else {
                                     duplicate++;
                                 }
                             }
@@ -203,8 +217,7 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Saving configuration...");
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     PlotMain.sendConsoleSenderMessage(" - &cFailed to save configuration.");
                 }
 
@@ -213,8 +226,7 @@ public class PlotMeConverter {
 
                 if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                     MV = true;
-                }
-                else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                } else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                     MW = true;
                 }
 
@@ -229,26 +241,22 @@ public class PlotMeConverter {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + worldname);
                         try {
                             Thread.sleep(1000);
-                        }
-                        catch (final InterruptedException ex) {
+                        } catch (final InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
                         // load
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + worldname + " normal -g PlotSquared");
-                    }
-                    else if (MW) {
+                    } else if (MW) {
                         // unload
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + worldname);
                         try {
                             Thread.sleep(1000);
-                        }
-                        catch (final InterruptedException ex) {
+                        } catch (final InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
                         // load
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname + " plugin:PlotSquared");
-                    }
-                    else {
+                    } else {
                         Bukkit.getServer().unloadWorld(world, true);
                         final World myworld = WorldCreator.name(worldname).generator(new WorldGenerator(worldname)).createWorld();
                         myworld.save();

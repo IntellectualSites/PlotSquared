@@ -1,10 +1,30 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.jnbt;
 
 import java.util.Map;
 
 /**
  * A class which contains NBT-related utility methods.
- *
  */
 public final class NBTUtils {
 
@@ -17,48 +37,35 @@ public final class NBTUtils {
     /**
      * Gets the type name of a tag.
      *
-     * @param clazz
-     *            the tag class
+     * @param clazz the tag class
      * @return The type name.
      */
     public static String getTypeName(final Class<? extends Tag> clazz) {
         if (clazz.equals(ByteArrayTag.class)) {
             return "TAG_Byte_Array";
-        }
-        else if (clazz.equals(ByteTag.class)) {
+        } else if (clazz.equals(ByteTag.class)) {
             return "TAG_Byte";
-        }
-        else if (clazz.equals(CompoundTag.class)) {
+        } else if (clazz.equals(CompoundTag.class)) {
             return "TAG_Compound";
-        }
-        else if (clazz.equals(DoubleTag.class)) {
+        } else if (clazz.equals(DoubleTag.class)) {
             return "TAG_Double";
-        }
-        else if (clazz.equals(EndTag.class)) {
+        } else if (clazz.equals(EndTag.class)) {
             return "TAG_End";
-        }
-        else if (clazz.equals(FloatTag.class)) {
+        } else if (clazz.equals(FloatTag.class)) {
             return "TAG_Float";
-        }
-        else if (clazz.equals(IntTag.class)) {
+        } else if (clazz.equals(IntTag.class)) {
             return "TAG_Int";
-        }
-        else if (clazz.equals(ListTag.class)) {
+        } else if (clazz.equals(ListTag.class)) {
             return "TAG_List";
-        }
-        else if (clazz.equals(LongTag.class)) {
+        } else if (clazz.equals(LongTag.class)) {
             return "TAG_Long";
-        }
-        else if (clazz.equals(ShortTag.class)) {
+        } else if (clazz.equals(ShortTag.class)) {
             return "TAG_Short";
-        }
-        else if (clazz.equals(StringTag.class)) {
+        } else if (clazz.equals(StringTag.class)) {
             return "TAG_String";
-        }
-        else if (clazz.equals(IntArrayTag.class)) {
+        } else if (clazz.equals(IntArrayTag.class)) {
             return "TAG_Int_Array";
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
         }
     }
@@ -66,50 +73,36 @@ public final class NBTUtils {
     /**
      * Gets the type code of a tag class.
      *
-     * @param clazz
-     *            the tag class
+     * @param clazz the tag class
      * @return The type code.
-     * @throws IllegalArgumentException
-     *             if the tag class is invalid.
+     * @throws IllegalArgumentException if the tag class is invalid.
      */
     public static int getTypeCode(final Class<? extends Tag> clazz) {
         if (clazz.equals(ByteArrayTag.class)) {
             return NBTConstants.TYPE_BYTE_ARRAY;
-        }
-        else if (clazz.equals(ByteTag.class)) {
+        } else if (clazz.equals(ByteTag.class)) {
             return NBTConstants.TYPE_BYTE;
-        }
-        else if (clazz.equals(CompoundTag.class)) {
+        } else if (clazz.equals(CompoundTag.class)) {
             return NBTConstants.TYPE_COMPOUND;
-        }
-        else if (clazz.equals(DoubleTag.class)) {
+        } else if (clazz.equals(DoubleTag.class)) {
             return NBTConstants.TYPE_DOUBLE;
-        }
-        else if (clazz.equals(EndTag.class)) {
+        } else if (clazz.equals(EndTag.class)) {
             return NBTConstants.TYPE_END;
-        }
-        else if (clazz.equals(FloatTag.class)) {
+        } else if (clazz.equals(FloatTag.class)) {
             return NBTConstants.TYPE_FLOAT;
-        }
-        else if (clazz.equals(IntTag.class)) {
+        } else if (clazz.equals(IntTag.class)) {
             return NBTConstants.TYPE_INT;
-        }
-        else if (clazz.equals(ListTag.class)) {
+        } else if (clazz.equals(ListTag.class)) {
             return NBTConstants.TYPE_LIST;
-        }
-        else if (clazz.equals(LongTag.class)) {
+        } else if (clazz.equals(LongTag.class)) {
             return NBTConstants.TYPE_LONG;
-        }
-        else if (clazz.equals(ShortTag.class)) {
+        } else if (clazz.equals(ShortTag.class)) {
             return NBTConstants.TYPE_SHORT;
-        }
-        else if (clazz.equals(StringTag.class)) {
+        } else if (clazz.equals(StringTag.class)) {
             return NBTConstants.TYPE_STRING;
-        }
-        else if (clazz.equals(IntArrayTag.class)) {
+        } else if (clazz.equals(IntArrayTag.class)) {
             return NBTConstants.TYPE_INT_ARRAY;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
         }
     }
@@ -117,11 +110,9 @@ public final class NBTUtils {
     /**
      * Gets the class of a type of tag.
      *
-     * @param type
-     *            the type
+     * @param type the type
      * @return The class.
-     * @throws IllegalArgumentException
-     *             if the tag type is invalid.
+     * @throws IllegalArgumentException if the tag type is invalid.
      */
     public static Class<? extends Tag> getTypeClass(final int type) {
         switch (type) {
@@ -157,12 +148,9 @@ public final class NBTUtils {
     /**
      * Get child tag of a NBT structure.
      *
-     * @param items
-     *            the map to read from
-     * @param key
-     *            the key to look for
-     * @param expected
-     *            the expected NBT class type
+     * @param items    the map to read from
+     * @param key      the key to look for
+     * @param expected the expected NBT class type
      * @return child tag
      * @throws InvalidFormatException
      */

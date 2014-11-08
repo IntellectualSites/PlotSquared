@@ -1,33 +1,38 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotManager;
-import com.intellectualcrafters.plot.PlotWorld;
-import com.intellectualcrafters.plot.Settings;
-import com.intellectualcrafters.plot.Title;
-import com.intellectualcrafters.plot.UUIDHandler;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * Created by Citymonstret on 2014-10-21.
@@ -133,8 +138,7 @@ public class PlotListener {
         str = str.toLowerCase();
         if (str.equals("rain")) {
             return WeatherType.DOWNFALL;
-        }
-        else {
+        } else {
             return WeatherType.CLEAR;
         }
     }
@@ -185,8 +189,7 @@ public class PlotListener {
                 try {
                     final Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
                     player.setPlayerTime(time, true);
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
             }

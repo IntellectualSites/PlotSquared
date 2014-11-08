@@ -1,26 +1,44 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot;
 
 import org.apache.commons.lang.StringUtils;
 
 public class Flag {
     private final AbstractFlag key;
-    private final String       value;
+    private final String value;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a
      * key/value pair. For a flag to be usable by a player, you need to register
      * it with PlotSquared.
      *
-     * @param key
-     *            AbstractFlag
-     * @param value
-     *            Value must be alphanumerical (can have spaces) and be <= 48
-     *            characters
-     * @throws IllegalArgumentException
-     *             if you provide inadequate inputs
+     * @param key   AbstractFlag
+     * @param value Value must be alphanumerical (can have spaces) and be <= 48
+     *              characters
+     * @throws IllegalArgumentException if you provide inadequate inputs
      */
     public Flag(final AbstractFlag key, final String value) {
-        final char[] allowedCharacters = new char[] { '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', '§' };
+        final char[] allowedCharacters = new char[]{'[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', 'ï¿½'};
         String tempValue = value;
         for (final char c : allowedCharacters) {
             tempValue = tempValue.replace(c, 'c');

@@ -1,28 +1,25 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.json;
-
-/*
- Copyright (c) 2002 JSON.org
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- The Software shall be used for Good, not Evil.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
 
 import java.util.Iterator;
 
@@ -35,36 +32,54 @@ import java.util.Iterator;
  */
 public class XML {
 
-    /** The Character '&amp;'. */
-    public static final Character AMP   = '&';
+    /**
+     * The Character '&amp;'.
+     */
+    public static final Character AMP = '&';
 
-    /** The Character '''. */
-    public static final Character APOS  = '\'';
+    /**
+     * The Character '''.
+     */
+    public static final Character APOS = '\'';
 
-    /** The Character '!'. */
-    public static final Character BANG  = '!';
+    /**
+     * The Character '!'.
+     */
+    public static final Character BANG = '!';
 
-    /** The Character '='. */
-    public static final Character EQ    = '=';
+    /**
+     * The Character '='.
+     */
+    public static final Character EQ = '=';
 
-    /** The Character '>'. */
-    public static final Character GT    = '>';
+    /**
+     * The Character '>'.
+     */
+    public static final Character GT = '>';
 
-    /** The Character '&lt;'. */
-    public static final Character LT    = '<';
+    /**
+     * The Character '&lt;'.
+     */
+    public static final Character LT = '<';
 
-    /** The Character '?'. */
+    /**
+     * The Character '?'.
+     */
     public static final Character QUEST = '?';
 
-    /** The Character '"'. */
-    public static final Character QUOT  = '"';
+    /**
+     * The Character '"'.
+     */
+    public static final Character QUOT = '"';
 
-    /** The Character '/'. */
+    /**
+     * The Character '/'.
+     */
     public static final Character SLASH = '/';
 
     /**
      * Replace special characters with XML escapes:
-     *
+     * <p/>
      * <pre>
      * &amp; <small>(ampersand)</small> is replaced by &amp;amp;
      * &lt; <small>(less than)</small> is replaced by &amp;lt;
@@ -72,8 +87,7 @@ public class XML {
      * &quot; <small>(double quote)</small> is replaced by &amp;quot;
      * </pre>
      *
-     * @param string
-     *            The string to be escaped.
+     * @param string The string to be escaped.
      * @return The escaped string.
      */
     public static String escape(final String string) {
@@ -107,8 +121,7 @@ public class XML {
      * Throw an exception if the string contains whitespace.
      * Whitespace is not allowed in tagNames and attributes.
      *
-     * @param string
-     *            A string.
+     * @param string A string.
      * @throws JSONException
      */
     public static void noSpace(final String string) throws JSONException {
@@ -127,12 +140,9 @@ public class XML {
     /**
      * Scan the content following the named tag, attaching it to the context.
      *
-     * @param x
-     *            The XMLTokener containing the source string.
-     * @param context
-     *            The JSONObject that will include the new material.
-     * @param name
-     *            The tag name.
+     * @param x       The XMLTokener containing the source string.
+     * @param context The JSONObject that will include the new material.
+     * @param name    The tag name.
      * @return true if the close tag is processed.
      * @throws JSONException
      */
@@ -166,8 +176,7 @@ public class XML {
                     return false;
                 }
                 x.back();
-            }
-            else if (c == '[') {
+            } else if (c == '[') {
                 token = x.nextToken();
                 if ("CDATA".equals(token)) {
                     if (x.next() == '[') {
@@ -185,25 +194,21 @@ public class XML {
                 token = x.nextMeta();
                 if (token == null) {
                     throw x.syntaxError("Missing '>' after '<!'.");
-                }
-                else if (token == LT) {
+                } else if (token == LT) {
                     i += 1;
-                }
-                else if (token == GT) {
+                } else if (token == GT) {
                     i -= 1;
                 }
             }
             while (i > 0);
             return false;
-        }
-        else if (token == QUEST) {
+        } else if (token == QUEST) {
 
             // <?
 
             x.skipPast("?>");
             return false;
-        }
-        else if (token == SLASH) {
+        } else if (token == SLASH) {
 
             // Close tag </
 
@@ -219,18 +224,16 @@ public class XML {
             }
             return true;
 
-        }
-        else if (token instanceof Character) {
+        } else if (token instanceof Character) {
             throw x.syntaxError("Misshaped tag");
 
             // Open tag <
 
-        }
-        else {
+        } else {
             tagName = (String) token;
             token = null;
             jsonobject = new JSONObject();
-            for (;;) {
+            for (; ; ) {
                 if (token == null) {
                     token = x.nextToken();
                 }
@@ -247,39 +250,34 @@ public class XML {
                         }
                         jsonobject.accumulate(string, XML.stringToValue((String) token));
                         token = null;
-                    }
-                    else {
+                    } else {
                         jsonobject.accumulate(string, "");
                     }
 
                     // Empty tag <.../>
 
-                }
-                else if (token == SLASH) {
+                } else if (token == SLASH) {
                     if (x.nextToken() != GT) {
                         throw x.syntaxError("Misshaped tag");
                     }
                     if (jsonobject.length() > 0) {
                         context.accumulate(tagName, jsonobject);
-                    }
-                    else {
+                    } else {
                         context.accumulate(tagName, "");
                     }
                     return false;
 
                     // Content, between <...> and </...>
 
-                }
-                else if (token == GT) {
-                    for (;;) {
+                } else if (token == GT) {
+                    for (; ; ) {
                         token = x.nextContent();
                         if (token == null) {
                             if (tagName != null) {
                                 throw x.syntaxError("Unclosed tag " + tagName);
                             }
                             return false;
-                        }
-                        else if (token instanceof String) {
+                        } else if (token instanceof String) {
                             string = (String) token;
                             if (string.length() > 0) {
                                 jsonobject.accumulate("content", XML.stringToValue(string));
@@ -287,24 +285,20 @@ public class XML {
 
                             // Nested element
 
-                        }
-                        else if (token == LT) {
+                        } else if (token == LT) {
                             if (parse(x, jsonobject, tagName)) {
                                 if (jsonobject.length() == 0) {
                                     context.accumulate(tagName, "");
-                                }
-                                else if ((jsonobject.length() == 1) && (jsonobject.opt("content") != null)) {
+                                } else if ((jsonobject.length() == 1) && (jsonobject.opt("content") != null)) {
                                     context.accumulate(tagName, jsonobject.opt("content"));
-                                }
-                                else {
+                                } else {
                                     context.accumulate(tagName, jsonobject);
                                 }
                                 return false;
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     throw x.syntaxError("Misshaped tag");
                 }
             }
@@ -318,8 +312,7 @@ public class XML {
      * convert plus forms, octal forms, hex forms, or E forms lacking decimal
      * points.
      *
-     * @param string
-     *            A String.
+     * @param string A String.
      * @return A simple JSON value.
      */
     public static Object stringToValue(final String string) {
@@ -345,15 +338,13 @@ public class XML {
                     return value;
                 }
             }
-        }
-        catch (final Exception ignore) {
+        } catch (final Exception ignore) {
             try {
                 final Double value = new Double(string);
                 if (value.toString().equals(string)) {
                     return value;
                 }
-            }
-            catch (final Exception ignoreAlso) {
+            } catch (final Exception ignoreAlso) {
             }
         }
         return string;
@@ -370,8 +361,7 @@ public class XML {
      * text may be placed in a "content" member. Comments, prologs, DTDs, and
      * <code>&lt;[ [ ]]></code> are ignored.
      *
-     * @param string
-     *            The source string.
+     * @param string The source string.
      * @return A JSONObject containing the structured data from the XML string.
      * @throws JSONException
      */
@@ -387,8 +377,7 @@ public class XML {
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *
-     * @param object
-     *            A JSONObject.
+     * @param object A JSONObject.
      * @return A string.
      * @throws JSONException
      */
@@ -399,10 +388,8 @@ public class XML {
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *
-     * @param object
-     *            A JSONObject.
-     * @param tagName
-     *            The optional name of the enclosing tag.
+     * @param object  A JSONObject.
+     * @param tagName The optional name of the enclosing tag.
      * @return A string.
      * @throws JSONException
      */
@@ -450,15 +437,13 @@ public class XML {
                             }
                             sb.append(escape(ja.get(i).toString()));
                         }
-                    }
-                    else {
+                    } else {
                         sb.append(escape(value.toString()));
                     }
 
                     // Emit an array of similar keys
 
-                }
-                else if (value instanceof JSONArray) {
+                } else if (value instanceof JSONArray) {
                     ja = (JSONArray) value;
                     length = ja.length();
                     for (i = 0; i < length; i += 1) {
@@ -471,21 +456,18 @@ public class XML {
                             sb.append("</");
                             sb.append(key);
                             sb.append('>');
-                        }
-                        else {
+                        } else {
                             sb.append(toString(value, key));
                         }
                     }
-                }
-                else if ("".equals(value)) {
+                } else if ("".equals(value)) {
                     sb.append('<');
                     sb.append(key);
                     sb.append("/>");
 
                     // Emit a new tag <k>
 
-                }
-                else {
+                } else {
                     sb.append(toString(value, key));
                 }
             }
@@ -503,8 +485,7 @@ public class XML {
             // a place
             // where XML is lacking, synthesize an <array> element.
 
-        }
-        else {
+        } else {
             if (object.getClass().isArray()) {
                 object = new JSONArray(object);
             }
@@ -515,8 +496,7 @@ public class XML {
                     sb.append(toString(ja.opt(i), tagName == null ? "array" : tagName));
                 }
                 return sb.toString();
-            }
-            else {
+            } else {
                 string = (object == null) ? "null" : escape(object.toString());
                 return (tagName == null) ? "\"" + string + "\"" : (string.length() == 0) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
             }

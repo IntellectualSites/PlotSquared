@@ -1,21 +1,34 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotBlock;
-import com.intellectualcrafters.plot.PlotHelper;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotManager;
-import com.intellectualcrafters.plot.PlotWorld;
+import java.util.ArrayList;
 
 public class DefaultPlotManager extends PlotManager {
 
@@ -45,8 +58,7 @@ public class DefaultPlotManager extends PlotManager {
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
             pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        }
-        else {
+        } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
 
@@ -95,8 +107,7 @@ public class DefaultPlotManager extends PlotManager {
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
             pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        }
-        else {
+        } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
 
@@ -290,8 +301,7 @@ public class DefaultPlotManager extends PlotManager {
                 if (min == null) {
                     min = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
                     max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                }
-                else if ((max.getBlockZ() < (j + 15)) || (max.getBlockX() < (i + 15))) {
+                } else if ((max.getBlockZ() < (j + 15)) || (max.getBlockX() < (i + 15))) {
                     max = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
                 }
                 world.regenerateChunk(i / 16, j / 16);
@@ -303,8 +313,7 @@ public class DefaultPlotManager extends PlotManager {
             PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
             PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling);
             PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloor);
-        }
-        else {
+        } else {
 
             if (min.getBlockX() < plotMinX) {
                 min.setX(plotMinX);

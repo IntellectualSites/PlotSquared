@@ -1,11 +1,32 @@
-package com.intellectualcrafters.plot;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-import java.util.HashMap;
+package com.intellectualcrafters.plot;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+
+import java.util.HashMap;
 
 /**
  * Created by Citymonstret on 2014-10-12.
@@ -14,13 +35,13 @@ public class PlotSelection {
 
     public static HashMap<String, PlotSelection> currentSelection = new HashMap<>();
 
-    private final PlotBlock[]                    plotBlocks;
+    private final PlotBlock[] plotBlocks;
 
-    private final int                            width;
+    private final int width;
 
-    private final Plot                           plot;
+    private final Plot plot;
 
-    private final Biome                          biome;
+    private final Biome biome;
 
     public PlotSelection(final int width, final World world, final Plot plot) {
         this.width = width;
@@ -86,21 +107,17 @@ public class PlotSelection {
                             try {
                                 SetBlockFast.set(world, b1.x, b1.y, b1.z, b2.id, b2.data);
                                 SetBlockFast.set(world, b2.x, b2.y, b2.z, b1.id, b1.data);
-                            }
-                            catch (final NoSuchMethodException e) {
+                            } catch (final NoSuchMethodException e) {
                                 PlotHelper.canSetFast = false;
                             }
-                        }
-                        else {
+                        } else {
                             if ((b1.id != b2.id) && (b1.data != b2.data)) {
                                 block1.setTypeIdAndData(b2.id, b2.data, false);
                                 block2.setTypeIdAndData(b1.id, b1.data, false);
-                            }
-                            else if (b1.id != b2.id) {
+                            } else if (b1.id != b2.id) {
                                 block1.setTypeId(b2.id);
                                 block2.setTypeId(b1.id);
-                            }
-                            else {
+                            } else {
                                 block1.setData(b2.data);
                                 block2.setData(b1.data);
                             }

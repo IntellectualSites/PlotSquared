@@ -1,10 +1,31 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.plot;
+
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.bukkit.entity.Player;
 
 public class FlagManager {
 
@@ -64,8 +85,7 @@ public class FlagManager {
     /**
      * Get a list of registerd AbstragFlag objects based on player permissions
      *
-     * @param player
-     *            with permissions
+     * @param player with permissions
      * @return List (AbstractFlag)
      */
     public static List<AbstractFlag> getFlags(final Player player) {
@@ -97,8 +117,7 @@ public class FlagManager {
      * Get an AbstractFlag by a string
      *
      * @param string
-     * @param create
-     *            If to create the flag if it does not exist
+     * @param create If to create the flag if it does not exist
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(final String string, final boolean create) {
@@ -126,8 +145,7 @@ public class FlagManager {
             final String[] split = flagstrings.get(i).split(";");
             if (split.length == 1) {
                 flags[i] = new Flag(getFlag(split[0], true), "");
-            }
-            else {
+            } else {
                 flags[i] = new Flag(getFlag(split[0], true), split[1]);
             }
         }

@@ -1,38 +1,35 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// PlotSquared - A plot manager and world generator for the Bukkit API                             /
+// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
+//                                                                                                 /
+// This program is free software; you can redistribute it and/or modify                            /
+// it under the terms of the GNU General Public License as published by                            /
+// the Free Software Foundation; either version 3 of the License, or                               /
+// (at your option) any later version.                                                             /
+//                                                                                                 /
+// This program is distributed in the hope that it will be useful,                                 /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
+// GNU General Public License for more details.                                                    /
+//                                                                                                 /
+// You should have received a copy of the GNU General Public License                               /
+// along with this program; if not, write to the Free Software Foundation,                         /
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
+//                                                                                                 /
+// You can contact us via: support@intellectualsites.com                                           /
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 package com.intellectualcrafters.json;
 
 import java.io.IOException;
 import java.io.Writer;
-
-/*
- Copyright (c) 2006 JSON.org
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- The Software shall be used for Good, not Evil.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
 
 /**
  * JSONWriter provides a quick and convenient way of producing JSON text.
  * The texts produced strictly conform to JSON syntax rules. No whitespace is
  * added, so the results are ready for transmission or storage. Each instance of
  * JSONWriter can produce one JSON text.
- * <p>
+ * <p/>
  * A JSONWriter instance provides a <code>value</code> method for appending
  * values to the text, and a <code>key</code> method for adding keys before
  * values in objects. There are <code>array</code> and <code>endArray</code>
@@ -40,21 +37,21 @@ import java.io.Writer;
  * <code>endObject</code> methods which make and bound object values. All of
  * these methods return the JSONWriter instance, permitting a cascade style. For
  * example,
- *
+ * <p/>
  * <pre>
  * new JSONWriter(myWriter).object().key(&quot;JSON&quot;).value(&quot;Hello, World!&quot;).endObject();
  * </pre>
- *
+ * <p/>
  * which writes
- *
+ * <p/>
  * <pre>
  * {"JSON":"Hello, World!"}
  * </pre>
- * <p>
+ * <p/>
  * The first method called must be <code>array</code> or <code>object</code>.
  * There are no methods for adding commas or colons. JSONWriter adds them for
  * you. Objects and arrays can be nested up to 20 levels deep.
- * <p>
+ * <p/>
  * This can sometimes be easier than using a JSONObject to build a string.
  *
  * @author JSON.org
@@ -67,7 +64,7 @@ public class JSONWriter {
      * The comma flag determines if a comma should be output before the next
      * value.
      */
-    private boolean          comma;
+    private boolean comma;
 
     /**
      * The current mode. Values:
@@ -77,7 +74,7 @@ public class JSONWriter {
      * 'k' (key),
      * 'o' (object).
      */
-    protected char           mode;
+    protected char mode;
 
     /**
      * The object/array stack.
@@ -87,12 +84,12 @@ public class JSONWriter {
     /**
      * The stack top index. A value of 0 indicates that the stack is empty.
      */
-    private int              top;
+    private int top;
 
     /**
      * The writer that will receive the output.
      */
-    protected Writer         writer;
+    protected Writer writer;
 
     /**
      * Make a fresh JSONWriter. It can be used to build one JSON text.
@@ -108,11 +105,9 @@ public class JSONWriter {
     /**
      * Append a value.
      *
-     * @param string
-     *            A string value.
+     * @param string A string value.
      * @return this
-     * @throws JSONException
-     *             If the value is out of sequence.
+     * @throws JSONException If the value is out of sequence.
      */
     private JSONWriter append(final String string) throws JSONException {
         if (string == null) {
@@ -124,8 +119,7 @@ public class JSONWriter {
                     this.writer.write(',');
                 }
                 this.writer.write(string);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new JSONException(e);
             }
             if (this.mode == 'o') {
@@ -143,11 +137,10 @@ public class JSONWriter {
      * <code>endArray</code> method must be called to mark the array's end.
      *
      * @return this
-     * @throws JSONException
-     *             If the nesting is too deep, or if the object is
-     *             started in the wrong place (for example as a key or after the
-     *             end of the
-     *             outermost array or object).
+     * @throws JSONException If the nesting is too deep, or if the object is
+     *                       started in the wrong place (for example as a key or after the
+     *                       end of the
+     *                       outermost array or object).
      */
     public JSONWriter array() throws JSONException {
         if ((this.mode == 'i') || (this.mode == 'o') || (this.mode == 'a')) {
@@ -162,13 +155,10 @@ public class JSONWriter {
     /**
      * End something.
      *
-     * @param mode
-     *            Mode
-     * @param c
-     *            Closing character
+     * @param mode Mode
+     * @param c    Closing character
      * @return this
-     * @throws JSONException
-     *             If unbalanced.
+     * @throws JSONException If unbalanced.
      */
     private JSONWriter end(final char mode, final char c) throws JSONException {
         if (this.mode != mode) {
@@ -177,8 +167,7 @@ public class JSONWriter {
         this.pop(mode);
         try {
             this.writer.write(c);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             throw new JSONException(e);
         }
         this.comma = true;
@@ -190,8 +179,7 @@ public class JSONWriter {
      * <code>array</code>.
      *
      * @return this
-     * @throws JSONException
-     *             If incorrectly nested.
+     * @throws JSONException If incorrectly nested.
      */
     public JSONWriter endArray() throws JSONException {
         return this.end('a', ']');
@@ -202,8 +190,7 @@ public class JSONWriter {
      * <code>object</code>.
      *
      * @return this
-     * @throws JSONException
-     *             If incorrectly nested.
+     * @throws JSONException If incorrectly nested.
      */
     public JSONWriter endObject() throws JSONException {
         return this.end('k', '}');
@@ -213,12 +200,10 @@ public class JSONWriter {
      * Append a key. The key will be associated with the next value. In an
      * object, every value must be preceded by a key.
      *
-     * @param string
-     *            A key string.
+     * @param string A key string.
      * @return this
-     * @throws JSONException
-     *             If the key is out of place. For example, keys
-     *             do not belong in arrays or if the key is null.
+     * @throws JSONException If the key is out of place. For example, keys
+     *                       do not belong in arrays or if the key is null.
      */
     public JSONWriter key(final String string) throws JSONException {
         if (string == null) {
@@ -235,8 +220,7 @@ public class JSONWriter {
                 this.comma = false;
                 this.mode = 'o';
                 return this;
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new JSONException(e);
             }
         }
@@ -249,11 +233,10 @@ public class JSONWriter {
      * <code>endObject</code> method must be called to mark the object's end.
      *
      * @return this
-     * @throws JSONException
-     *             If the nesting is too deep, or if the object is
-     *             started in the wrong place (for example as a key or after the
-     *             end of the
-     *             outermost array or object).
+     * @throws JSONException If the nesting is too deep, or if the object is
+     *                       started in the wrong place (for example as a key or after the
+     *                       end of the
+     *                       outermost array or object).
      */
     public JSONWriter object() throws JSONException {
         if (this.mode == 'i') {
@@ -272,10 +255,8 @@ public class JSONWriter {
     /**
      * Pop an array or object scope.
      *
-     * @param c
-     *            The scope to close.
-     * @throws JSONException
-     *             If nesting is wrong.
+     * @param c The scope to close.
+     * @throws JSONException If nesting is wrong.
      */
     private void pop(final char c) throws JSONException {
         if (this.top <= 0) {
@@ -292,10 +273,8 @@ public class JSONWriter {
     /**
      * Push an array or object scope.
      *
-     * @param jo
-     *            The scope to open.
-     * @throws JSONException
-     *             If nesting is too deep.
+     * @param jo The scope to open.
+     * @throws JSONException If nesting is too deep.
      */
     private void push(final JSONObject jo) throws JSONException {
         if (this.top >= maxdepth) {
@@ -310,8 +289,7 @@ public class JSONWriter {
      * Append either the value <code>true</code> or the value <code>false</code>
      * .
      *
-     * @param b
-     *            A boolean.
+     * @param b A boolean.
      * @return this
      * @throws JSONException
      */
@@ -322,11 +300,9 @@ public class JSONWriter {
     /**
      * Append a double value.
      *
-     * @param d
-     *            A double.
+     * @param d A double.
      * @return this
-     * @throws JSONException
-     *             If the number is not finite.
+     * @throws JSONException If the number is not finite.
      */
     public JSONWriter value(final double d) throws JSONException {
         return this.value(new Double(d));
@@ -335,8 +311,7 @@ public class JSONWriter {
     /**
      * Append a long value.
      *
-     * @param l
-     *            A long.
+     * @param l A long.
      * @return this
      * @throws JSONException
      */
@@ -347,13 +322,11 @@ public class JSONWriter {
     /**
      * Append an object value.
      *
-     * @param object
-     *            The object to append. It can be null, or a Boolean, Number,
-     *            String, JSONObject, or JSONArray, or an object that implements
-     *            JSONString.
+     * @param object The object to append. It can be null, or a Boolean, Number,
+     *               String, JSONObject, or JSONArray, or an object that implements
+     *               JSONString.
      * @return this
-     * @throws JSONException
-     *             If the value is out of sequence.
+     * @throws JSONException If the value is out of sequence.
      */
     public JSONWriter value(final Object object) throws JSONException {
         return this.append(JSONObject.valueToString(object));
