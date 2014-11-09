@@ -148,15 +148,6 @@ public class Plot implements Cloneable {
     }
 
     /**
-     * Set the owner
-     *
-     * @param player
-     */
-    public void setOwner(final Player player) {
-        this.owner = player.getUniqueId();
-    }
-
-    /**
      * Check if the player is either the owner or on the helpers list
      *
      * @param player
@@ -184,6 +175,15 @@ public class Plot implements Cloneable {
     }
 
     /**
+     * Set the owner
+     *
+     * @param player
+     */
+    public void setOwner(final Player player) {
+        this.owner = player.getUniqueId();
+    }
+
+    /**
      * Get the plot ID
      */
     public PlotId getId() {
@@ -204,11 +204,11 @@ public class Plot implements Cloneable {
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        try {
-            return super.clone();
-        } catch (final CloneNotSupportedException e) {
-            return null;
+        Plot p = (Plot) super.clone();
+        if (!p.equals(this) || p != this) {
+            return new Plot(id, owner, settings.getBiome(), helpers, trusted, denied, settings.getAlias(), settings.getPosition(), settings.getFlags().toArray(new Flag[settings.getFlags().size()]), getWorld().getName(), settings.getMerged());
         }
+        return p;
     }
 
     /**
