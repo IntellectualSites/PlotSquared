@@ -34,108 +34,100 @@ public class DefaultPlotWorld extends PlotWorld {
      */
 
     /**
-     * Road Height
-     */
-    public int ROAD_HEIGHT;
-    /**
      * Default Road Height: 64
      */
     public static int ROAD_HEIGHT_DEFAULT = 64;
-
-    /**
-     * plot height
-     */
-    public int PLOT_HEIGHT;
     /**
      * Default plot height: 64
      */
     public static int PLOT_HEIGHT_DEFAULT = 64;
-
-    /**
-     * Wall height
-     */
-    public int WALL_HEIGHT;
     /**
      * Default Wall Height: 64
      */
     public static int WALL_HEIGHT_DEFAULT = 64;
-
-    /**
-     * plot width
-     */
-    public int PLOT_WIDTH;
     /**
      * Default plot width: 32
      */
     public static int PLOT_WIDTH_DEFAULT = 32;
-
-    /**
-     * Road width
-     */
-    public int ROAD_WIDTH;
     /**
      * Default road width: 7
      */
     public static int ROAD_WIDTH_DEFAULT = 7;
-
-    /**
-     * Plot main block
-     */
-    public PlotBlock[] MAIN_BLOCK;
     /**
      * Default main block: 1
      */
     public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 1, (byte) 0)};
     /**
-     * Top blocks
-     */
-    public PlotBlock[] TOP_BLOCK;
-    /**
      * Default top blocks: {"2"}
      */
     public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 2, (byte) 0)};
-
-    /**
-     * Wall block
-     */
-    public PlotBlock WALL_BLOCK;
     /**
      * Default wall block: 44
      */
     public static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
-    public PlotBlock CLAIMED_WALL_BLOCK;
     public static PlotBlock CLAIMED_WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 1);
-
+    /**
+     * Default wall filling: 1
+     */
+    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
+    /**
+     * Default road stripes: 35
+     */
+    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
+    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
+    /**
+     * Default road block: 155
+     */
+    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
+    /**
+     * Road Height
+     */
+    public int ROAD_HEIGHT;
+    /**
+     * plot height
+     */
+    public int PLOT_HEIGHT;
+    /**
+     * Wall height
+     */
+    public int WALL_HEIGHT;
+    /**
+     * plot width
+     */
+    public int PLOT_WIDTH;
+    /**
+     * Road width
+     */
+    public int ROAD_WIDTH;
+    /**
+     * Plot main block
+     */
+    public PlotBlock[] MAIN_BLOCK;
+    /**
+     * Top blocks
+     */
+    public PlotBlock[] TOP_BLOCK;
+    /**
+     * Wall block
+     */
+    public PlotBlock WALL_BLOCK;
+    public PlotBlock CLAIMED_WALL_BLOCK;
     /**
      * Wall filling
      */
     public PlotBlock WALL_FILLING;
     /**
-     * Default wall filling: 1
-     */
-    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
-
-    /**
      * Road stripes
      */
     public PlotBlock ROAD_STRIPES;
     /**
-     * Default road stripes: 35
-     */
-    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
-    /**
      * enable road stripes
      */
     public boolean ROAD_STRIPES_ENABLED;
-    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
     /**
      * Road block
      */
     public PlotBlock ROAD_BLOCK;
-    /**
-     * Default road block: 155
-     */
-    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
 
     /*
      * Here we are just calling the super method, nothing special
@@ -170,7 +162,7 @@ public class DefaultPlotWorld extends PlotWorld {
         this.PLOT_HEIGHT = config.getInt("plot.height");
 
         if (!config.contains("plot.height")) {
-            PlotMain.sendConsoleSenderMessage(" - &Configuration is null? (" + config.getCurrentPath() + ")");
+            PlotMain.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
 
         this.PLOT_WIDTH = config.getInt("plot.size");

@@ -127,6 +127,8 @@ public enum Command {
     /**
      *
      */
+    BAN("ban", "block"),
+    UNBAN("unban", "unblock"),
     TP("tp", "tp");
     /**
      *

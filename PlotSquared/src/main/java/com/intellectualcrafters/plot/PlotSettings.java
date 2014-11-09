@@ -55,6 +55,7 @@ public class PlotSettings {
 
     private PlotHomePosition position;
 
+    private Plot plot;
     /**
      * Constructor
      *
@@ -62,6 +63,7 @@ public class PlotSettings {
      */
     public PlotSettings(final Plot plot) {
         this.alias = "";
+        this.plot = plot;
     }
 
     /**
@@ -98,26 +100,18 @@ public class PlotSettings {
     }
 
     /**
+     * @return
+     * @deprecated
+     */
+    public Biome getBiome() {
+        return PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId()).add(1, 0, 1).getBlock().getBiome();
+    }
+
+    /**
      * @param b
      */
     public void setBiome(final Biome b) {
         this.biome = b;
-    }
-
-    /**
-     * @return
-     * @deprecated
-     */
-    @Deprecated
-    public Biome getBiome() {
-        return this.biome;
-    }
-
-    /**
-     * @param alias
-     */
-    public void setAlias(final String alias) {
-        this.alias = alias;
     }
 
     /**
@@ -132,17 +126,17 @@ public class PlotSettings {
     }
 
     /**
-     * @param flags
-     */
-    public void setFlags(final Flag[] flags) {
-        this.flags = new HashSet<Flag>(Arrays.asList(flags));
-    }
-
-    /**
      * @return
      */
     public Set<Flag> getFlags() {
         return this.flags;
+    }
+
+    /**
+     * @param flags
+     */
+    public void setFlags(final Flag[] flags) {
+        this.flags = new HashSet<Flag>(Arrays.asList(flags));
     }
 
     /**
@@ -168,6 +162,13 @@ public class PlotSettings {
 
     public String getAlias() {
         return this.alias;
+    }
+
+    /**
+     * @param alias
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
     }
 
     public String getJoinMessage() {
