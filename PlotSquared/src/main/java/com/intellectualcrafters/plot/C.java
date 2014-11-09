@@ -246,15 +246,15 @@ public enum C {
             "&6Can build&7: &a%build%"
     ),*/
     PLOT_INFO(
-            "&cID: &6%id%&c, " +
-                    "&cAlias: &6%alias%&c, " +
-                    "&cOwner: &6%owner%&c, " +
-                    "&cBiome: &6%biome%&c, " +
-                    "&cCan Build: &6%build%&c, " +
-                    "&cRating: &6%rating%&c/&610&c, " +
-                    "&cHelpers:&6%helpers%&c, " +
-                    "&cTrusted:&6%trusted%&c, " +
-                    "&cDenied:&6%denied%&c, " +
+            "&cID: &6%id%&c\n" +
+                    "&cAlias: &6%alias%&c\n" +
+                    "&cOwner: &6%owner%&c\n" +
+                    "&cBiome: &6%biome%&c\n" +
+                    "&cCan Build: &6%build%&c\n" +
+                    "&cRating: &6%rating%&c/&610&c\n" +
+                    "&cHelpers: &6%helpers%&c\n" +
+                    "&cTrusted: &6%trusted%&c\n" +
+                    "&cDenied: &6%denied%&c\n" +
                     "&cFlags: &6%flags%"
     ),
     PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),

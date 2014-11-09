@@ -169,7 +169,7 @@ public class Info extends SubCommand {
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
-        final String flags = "&3" + (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &3") : "none");
+        final String flags = "&6" + (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &6") : "none");
         final boolean build = player == null ? true : plot.hasRights(player);
 
         String owner = "none";
