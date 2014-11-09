@@ -100,8 +100,7 @@ public class PlotSettings {
     }
 
     /**
-     * @return
-     * @deprecated
+     * @return biome at plot loc
      */
     public Biome getBiome() {
         return PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId()).add(1, 0, 1).getBlock().getBiome();

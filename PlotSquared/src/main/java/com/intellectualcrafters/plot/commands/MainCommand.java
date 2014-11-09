@@ -46,7 +46,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static final String
             MAIN_PERMISSION = "plots.use";
 
-    private static SubCommand[] _subCommands = new SubCommand[]{new Ban(), new Unban(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Setup(), new DebugClaimTest(), new Inbox(), new Comment(), new Swap(), new MusicSubcommand()};
+    private static SubCommand[] _subCommands = new SubCommand[]{new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Setup(), new DebugClaimTest(), new Inbox(), new Comment(), new Swap(), new MusicSubcommand()};
 
     public static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {

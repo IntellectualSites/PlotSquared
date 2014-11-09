@@ -127,6 +127,8 @@ public enum Command {
     /**
      *
      */
+    OP("op", "admin"),
+    DEOP("deop", "deadmin"),
     BAN("ban", "block"),
     UNBAN("unban", "unblock"),
     TP("tp", "tp");
