@@ -38,6 +38,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -62,10 +63,11 @@ import java.util.concurrent.TimeUnit;
  * @author Citymonstret
  * @author Empire92
  */
+@SuppressWarnings("unused")
 public class PlotMain extends JavaPlugin {
 
-    private static UUIDSaver         uuidSaver;
-
+    public static final String ADMIN_PERMISSION =
+            "plots.admin";
     /**
      * settings.properties
      */
@@ -73,55 +75,82 @@ public class PlotMain extends JavaPlugin {
     /**
      * The main configuration file
      */
-    public static YamlConfiguration  config;
+    public static YamlConfiguration config;
     /**
      * storage.properties
      */
-    public static File               storageFile;
+    public static File storageFile;
     /**
      * Contains storage options
      */
-    public static YamlConfiguration  storage;
-    public static int                storage_ver        = 1;
-    /**
-     * MySQL Object
-     */
-    private static MySQL             mySQL;
+    public static YamlConfiguration storage;
+    public static int storage_ver = 1;
     /**
      * MySQL Connection
      */
-    public static Connection         connection;
+    public static Connection connection;
     /**
      * WorldEdit object
      */
-    public static WorldEditPlugin    worldEdit          = null;
+    public static WorldEditPlugin worldEdit = null;
     /**
      * BarAPI object
      */
-    public static BarAPI             barAPI             = null;
-
+    public static BarAPI barAPI = null;
+    /**
+     * World Guard
+     */
     public static WorldGuardPlugin   worldGuard         = null;
     public static WorldGuardListener worldGuardListener = null;
-
     public static Economy            economy;
     public static boolean            useEconomy         = false;
+    public static HashMap<Material, String> booleanFlags = new HashMap<>();
 
-    /**
-     * !!WorldGeneration!!
-     */
-    @Override
-    public ChunkGenerator getDefaultWorldGenerator(final String worldname, final String id) {
-        return new WorldGenerator(worldname);
+    static {
+        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
+        booleanFlags.put(Material.IRON_DOOR, "iron_door");
+        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
+        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
+        booleanFlags.put(Material.LEVER, "lever");
+        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
+        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
+        booleanFlags.put(Material.CHEST, "chest");
+        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
+        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
+        booleanFlags.put(Material.DISPENSER, "dispenser");
+        booleanFlags.put(Material.DROPPER, "dropper");
     }
+    /**
+     * The UUID Saver
+     */
+    private static UUIDSaver uuidSaver;
+    /**
+     * MySQL Object
+     */
+    private static MySQL mySQL;
+    /**
+     * List of all plots
+     * DO NOT USE EXCEPT FOR DATABASE PURPOSES
+     */
+    private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
+    /**
+     * All loaded plot worlds
+     */
+    private static HashMap<String, PlotWorld> worlds = new HashMap<>();
+    private static HashMap<String, PlotManager> managers = new HashMap<>();
 
     public static void checkForExpiredPlots() {
         final JavaPlugin plugin = PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                checkExpired(plugin, true);
+                try {
+                    checkExpired(plugin, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }, 0l, 12 * 60 * 60 * 20l);
+        }, 0l, /*12 * 60 * 60 * 20l*/ 86_40_00L);
     }
 
     /**
@@ -137,11 +166,11 @@ public class PlotMain extends JavaPlugin {
      * @return permitted range
      */
     public static int hasPermissionRange(final Player player, final String stub, final int range) {
-        if ((player == null) || player.isOp()) {
-            return Integer.MAX_VALUE;
+        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
+            return Byte.MAX_VALUE;
         }
         if (player.hasPermission(stub + ".*")) {
-            return Integer.MAX_VALUE;
+            return Byte.MAX_VALUE;
         }
         for (int i = range; i > 0; i--) {
             if (player.hasPermission(stub + "." + i)) {
@@ -162,29 +191,27 @@ public class PlotMain extends JavaPlugin {
      *            to check
      * @return true of player has permissions
      */
-    @SuppressWarnings("unused")
     public static boolean hasPermissions(final Player player, final String[] perms) {
         // Assumes null player is console.
-        if ((player == null) || player.isOp()) {
+        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
             return true;
         }
         for (final String perm : perms) {
-            boolean hasperm = false;
-            if (player.hasPermission(perm)) {
-                hasperm = true;
-            }
+            boolean permitted = false;
+            if (player.hasPermission(perm))
+                permitted = true;
             else {
                 final String[] nodes = perm.split("\\.");
                 final StringBuilder n = new StringBuilder();
                 for (int i = 0; i < (nodes.length - 1); i++) {
                     n.append(nodes[i]).append(".");
                     if (player.hasPermission(n + "*")) {
-                        hasperm = true;
+                        permitted = true;
                         break;
                     }
                 }
             }
-            if (!hasperm) {
+            if (!permitted) {
                 return false;
             }
         }
@@ -192,12 +219,22 @@ public class PlotMain extends JavaPlugin {
         return true;
     }
 
-    public static void setUUIDSaver(final UUIDSaver saver) {
-        uuidSaver = saver;
-    }
-
+    /**
+     * Get the uuid saver
+     * @return uuid saver
+     * @see com.intellectualcrafters.plot.uuid.UUIDSaver;
+     */
     public static UUIDSaver getUUIDSaver() {
         return uuidSaver;
+    }
+
+    /**
+     * Set the uuid saver
+     *
+     * @param saver new saver
+     */
+    public static void setUUIDSaver(final UUIDSaver saver) {
+        uuidSaver = saver;
     }
 
     /**
@@ -231,35 +268,28 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * List of all plots
-     * DO NOT USE EXCEPT FOR DATABASE PURPOSES
-     */
-    private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    /**
-     * All loaded plot worlds
-     */
-    private static HashMap<String, PlotWorld>                   worlds   = new HashMap<>();
-    private static HashMap<String, PlotManager>                 managers = new HashMap<>();
-
-    /**
      * Get all plots
      *
      * @return HashMap containing the plot ID and the plot object.
      */
     public static Set<Plot> getPlots() {
-        final ArrayList<Plot> myplots = new ArrayList<>();
+        final ArrayList<Plot> _plots = new ArrayList<>();
         for (final HashMap<PlotId, Plot> world : plots.values()) {
-            myplots.addAll(world.values());
+            _plots.addAll(world.values());
         }
-        return new HashSet<>(myplots);
+        return new LinkedHashSet<>(_plots);
     }
 
+    /**
+     * Get a sorted list of plots
+     * @return sorted list
+     */
     public static LinkedHashSet<Plot> getPlotsSorted() {
-        final ArrayList<Plot> myplots = new ArrayList<>();
+        final ArrayList<Plot> _plots = new ArrayList<>();
         for (final HashMap<PlotId, Plot> world : plots.values()) {
-            myplots.addAll(world.values());
+            _plots.addAll(world.values());
         }
-        return new LinkedHashSet<>(myplots);
+        return new LinkedHashSet<>(_plots);
     }
 
     /**
@@ -283,10 +313,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world
-     *            plot world
-     * @param player
-     *            plot owner
+     * @param world  plot world
+     * @param player plot owner
      * @return players plots
      */
     public static Set<Plot> getPlots(final World world, final Player player) {
@@ -487,8 +515,7 @@ public class PlotMain extends JavaPlugin {
                                     Bukkit.getServer().getPluginManager().callEvent(event);
                                     if (event.isCancelled()) {
                                         event.setCancelled(true);
-                                    }
-                                    else {
+                                    } else {
                                         toDeletePlot.add(plot);
                                     }
                                 }
@@ -507,8 +534,7 @@ public class PlotMain extends JavaPlugin {
                     }
                 }
             });
-        }
-        else {
+        } else {
             for (final String world : getPlotWorldsString()) {
                 if (PlotMain.plots.containsKey(world)) {
                     for (final Plot plot : PlotMain.plots.get(world).values()) {
@@ -517,8 +543,7 @@ public class PlotMain extends JavaPlugin {
                             Bukkit.getServer().getPluginManager().callEvent(event);
                             if (event.isCancelled()) {
                                 event.setCancelled(true);
-                            }
-                            else {
+                            } else {
                                 DBFunc.delete(world, plot);
                             }
                         }
@@ -528,247 +553,8 @@ public class PlotMain extends JavaPlugin {
         }
     }
 
-    private void setupLogger() {
-        final File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
-        if (!log.exists()) {
-            try {
-                if (!new File(getMain().getDataFolder() + File.separator + "logs").mkdirs()) {
-                    sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create logs folder. Do it manually.");
-                }
-                if (log.createNewFile()) {
-                    final FileWriter writer = new FileWriter(log);
-                    writer.write("Created at: " + new Date().toString() + "\n\n\n");
-                    writer.close();
-                }
-            }
-            catch (final IOException e) {
-
-                e.printStackTrace();
-            }
-        }
-        Logger.setup(log);
-        Logger.add(LogLevel.GENERAL, "Logger enabled");
-    }
-
     private static double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
-    }
-
-    /**
-     * On Load.
-     */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onEnable() {
-        // Init the logger
-        setupLogger();
-
-        // Check for outdated java version.
-        if (getJavaVersion() < 1.7) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-            // Didn't know of any other link :D
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        C.setupTranslations();
-        // Setup configurations
-        configs();
-
-        // Setup metrics
-        if (Settings.METRICS) {
-            try {
-                final Metrics metrics = new Metrics(this);
-                metrics.start();
-                sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
-            }
-            catch (final Exception e) {
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
-            }
-        }
-
-        // Kill mobs on roads?
-        if (Settings.KILL_ROAD_MOBS) {
-            killAllEntities();
-        }
-        
-        // Enabled<3
-        if (C.ENABLED.s().length() > 0) {
-            Broadcast(C.ENABLED);
-        }
-
-        // Use mysql?
-        if (Settings.DB.USE_MYSQL) {
-            
-            if (DBFunc.dbManager == null) {
-                DBFunc.dbManager = new SQLManager();
-            }
-            try {
-                mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                connection = mySQL.openConnection();
-                {
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("mysql", true);
-                    }
-                    else {
-                        res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_trusted", null);
-                        if (!res.next()) {
-                            DBFunc.createTables("mysql", false);
-                        }
-                        else {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_ratings", null);
-                            if (!res.next()) {
-                                DBFunc.createTables("mysql", false);
-                            }
-                            else {
-                                res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_comments", null);
-                                if (!res.next()) {
-                                    DBFunc.createTables("mysql", false);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (final Exception e) {
-                Logger.add(LogLevel.DANGER, "MySQL connection failed.");
-                sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
-                if ((config == null) || config.getBoolean("debug")) {
-                    sendConsoleSenderMessage("&d==== Here is an ugly stacktrace if you are interested in those things ====");
-                    e.printStackTrace();
-                    sendConsoleSenderMessage("&d==== End of stacktrace ====");
-                    sendConsoleSenderMessage("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
-                }
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            plots = DBFunc.getPlots();
-
-        }
-        // TODO: Implement mongo
-        else if (Settings.DB.USE_MONGO) {
-            // DBFunc.dbManager = new MongoManager();
-            sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
-        }
-        else if (Settings.DB.USE_SQLITE) {
-            DBFunc.dbManager = new SQLManager();
-            try {
-                connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
-                {
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("sqlite", true);
-                    }
-                    else {
-                        res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_trusted", null);
-                        if (!res.next()) {
-                            DBFunc.createTables("sqlite", false);
-                        }
-                        else {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_ratings", null);
-                            if (!res.next()) {
-                                DBFunc.createTables("sqlite", false);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (final Exception e) {
-                Logger.add(LogLevel.DANGER, "SQLite connection failed");
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
-                sendConsoleSenderMessage("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
-                e.printStackTrace();
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            plots = DBFunc.getPlots();
-        }
-        else {
-            Logger.add(LogLevel.DANGER, "No storage type is set.");
-            sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
-            try {
-                new PlotMeConverter(this).runAsync();
-            }
-            catch (final Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        final MainCommand command = new MainCommand();
-        getCommand("plots").setExecutor(command);
-        getCommand("plots").setAliases(new ArrayList<String>() {
-            {
-                add("p");
-                add("ps");
-                add("plotme");
-                add("plot");
-            }
-        });
-        // getCommand("plots").setTabCompleter(command);
-        if (Settings.MOB_CAP_ENABLED) {
-            getServer().getPluginManager().registerEvents(new EntityListener(), this);
-        }
-        getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-        PlotPlusListener.startRunnable(this);
-        getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
-        getServer().getPluginManager().registerEvents(new ForceFieldListener(this), this);
-        defaultFlags();
-
-        if (getServer().getPluginManager().getPlugin("BarAPI") != null) {
-            barAPI = (BarAPI) getServer().getPluginManager().getPlugin("BarAPI");
-        }
-        if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-
-            final String version = worldEdit.getDescription().getVersion();
-            if ((version != null) && version.startsWith("5.")) {
-                PlotMain.sendConsoleSenderMessage("&cPlease update to WorldEdit 6 for improved stability and additional features:\nhttp://builds.enginehub.org/job/worldedit");
-            }
-            else {
-                getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
-            }
-        }
-        if (Settings.WORLDGUARD) {
-            if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-                worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
-                worldGuardListener = new WorldGuardListener(this);
-                getServer().getPluginManager().registerEvents(worldGuardListener, this);
-            }
-        }
-        if (Settings.AUTO_CLEAR) {
-            checkExpired(PlotMain.getMain(), true);
-            checkForExpiredPlots();
-        }
-        if ((getServer().getPluginManager().getPlugin("Vault") != null) && getServer().getPluginManager().getPlugin("Vault").isEnabled()) {
-            final RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-            if (economyProvider != null) {
-                economy = economyProvider.getProvider();
-            }
-        }
-        useEconomy = (economy != null);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
-
-        try {
-            new SetBlockFast();
-            PlotHelper.canSetFast = true;
-        }
-        catch (final Exception e) {
-            PlotHelper.canSetFast = false;
-        }
-
-        com.intellectualcrafters.plot.commands.plugin.setup(this);
-
-        setUUIDSaver(new PlotUUIDSaver());
-        // Looks really cool xD
-        getUUIDSaver().globalPopulate();
     }
 
     /**
@@ -780,7 +566,23 @@ public class PlotMain extends JavaPlugin {
         return connection;
     }
 
-    /** .. */
+    /**
+     * Send a message to the console.
+     *
+     * @param string
+     *            message
+     */
+    public static void sendConsoleSenderMessage(final String string) {
+        if (getMain().getServer().getConsoleSender() == null) {
+            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
+        } else {
+            getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
+        }
+    }
+
+    /**
+     * ..
+     */
 
     // Old Stuff
     /*
@@ -799,21 +601,6 @@ public class PlotMain extends JavaPlugin {
      * "&c&l, Current Update: &6&l" +
      * getPlotMain().getDescription().getVersion()); }
      */
-
-    /**
-     * Send a message to the console.
-     *
-     * @param string
-     *            message
-     */
-    public static void sendConsoleSenderMessage(final String string) {
-        if (getMain().getServer().getConsoleSender() == null) {
-            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
-        }
-        else {
-            getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
-        }
-    }
 
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
@@ -868,7 +655,7 @@ public class PlotMain extends JavaPlugin {
      */
     public static void BroadcastWithPerms(final C c) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("plots.admin")) {
+            if (player.hasPermission(ADMIN_PERMISSION)) {
                 PlayerFunctions.sendMessage(player, c);
             }
         }
@@ -908,8 +695,7 @@ public class PlotMain extends JavaPlugin {
             }
             config = YamlConfiguration.loadConfiguration(configFile);
             setupConfig();
-        }
-        catch (final Exception err_trans) {
+        } catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save settings.yml");
             System.out.println("Failed to save settings.yml");
         }
@@ -922,16 +708,14 @@ public class PlotMain extends JavaPlugin {
             }
             storage = YamlConfiguration.loadConfiguration(storageFile);
             setupStorage();
-        }
-        catch (final Exception err_trans) {
+        } catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save storage.yml");
             System.out.println("Failed to save storage.yml");
         }
         try {
             config.save(configFile);
             storage.save(storageFile);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             Logger.add(LogLevel.DANGER, "Configuration file saving failed");
             e.printStackTrace();
         }
@@ -945,13 +729,7 @@ public class PlotMain extends JavaPlugin {
             Settings.DB.USE_SQLITE = storage.getBoolean("sqlite.use");
             Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
             Settings.DB.PREFIX = storage.getString("prefix");
-        }
-        {
             Settings.METRICS = config.getBoolean("metrics");
-            // Web
-            // Web.ENABLED = config.getBoolean("web.enabled");
-            // Web.PORT = config.getInt("web.port");
-
             Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
             Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
@@ -983,7 +761,7 @@ public class PlotMain extends JavaPlugin {
     public static void killAllEntities() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getMain(), new Runnable() {
             long ticked = 0l;
-            long error  = 0l;
+            long error = 0l;
 
             {
                 sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
@@ -991,7 +769,7 @@ public class PlotMain extends JavaPlugin {
 
             @Override
             public void run() {
-                if (this.ticked > 36000l) {
+                if (this.ticked > 36_000L) {
                     this.ticked = 0l;
                     sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + this.error);
                     this.error = 0l;
@@ -1072,11 +850,9 @@ public class PlotMain extends JavaPlugin {
                                 // }
                             }
                         }
-                    }
-                    catch (final Throwable e) {
+                    } catch (final Throwable e) {
                         ++this.error;
-                    }
-                    finally {
+                    } finally {
                         ++this.ticked;
                     }
                 }
@@ -1105,7 +881,7 @@ public class PlotMain extends JavaPlugin {
         options.put("api.location", Settings.API_URL);
         options.put("api.custom", Settings.CUSTOM_API);
         options.put("titles", Settings.TITLES);
-        
+
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
         options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
 
@@ -1148,8 +924,7 @@ public class PlotMain extends JavaPlugin {
 
         try {
             config.save(PlotMain.configFile);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
     }
@@ -1158,61 +933,68 @@ public class PlotMain extends JavaPlugin {
         if (getWorldSettings(world) != null) {
             return;
         }
-        Set<String> worlds;
-        if (config.contains("worlds")) {
-            worlds = config.getConfigurationSection("worlds").getKeys(false);
-        }
-        else {
-            worlds = new HashSet<>();
-        }
-        if ((generator != null) && (generator instanceof PlotGenerator)) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-            final PlotGenerator plotgen = (PlotGenerator) generator;
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + generator.getClass().getName());
-            final PlotWorld plotworld = plotgen.getNewPlotWorld(world);
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotworld.getClass().getName());
-            final PlotManager manager = plotgen.getPlotManager();
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + manager.getClass().getName());
 
-            if (!config.contains("worlds." + world)) {
-                config.createSection("worlds." + world);
+        Set<String> worlds = (config.contains("worlds") ?
+                config.getConfigurationSection("worlds").getKeys(false) :
+                new HashSet<String>());
+
+        // Let's create these here instead
+        final PlotWorld plotWorld;
+        final PlotGenerator plotGenerator;
+        final PlotManager plotManager;
+        final String path = "worlds." + world;
+
+        if ((generator != null) && (generator instanceof PlotGenerator)) {
+            plotGenerator =
+                    (PlotGenerator) generator;
+            plotWorld =
+                    plotGenerator.getNewPlotWorld(world);
+            plotManager =
+                    plotGenerator.getPlotManager();
+            sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
+            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+
+            if (!config.contains(path)) {
+                config.createSection(path);
             }
 
-            plotworld.saveConfiguration(config.getConfigurationSection("worlds." + world));
-            plotworld.loadDefaultConfiguration(config.getConfigurationSection("worlds." + world));
+            plotWorld.saveConfiguration(config.getConfigurationSection(path));
+            plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
 
             try {
                 config.save(configFile);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
 
-            addPlotWorld(world, plotworld, manager);
-
-        }
-        else {
+            //Now add it
+            addPlotWorld(world, plotWorld, plotManager);
+        } else {
             if (worlds.contains(world)) {
                 sendConsoleSenderMessage("&cWorld '" + world + "' in settings.yml is not using PlotSquared generator!");
 
-                final PlotWorld plotworld = new DefaultPlotWorld(world);
-                final PlotManager manager = new DefaultPlotManager();
+                plotWorld =
+                        new DefaultPlotWorld(world);
+                plotManager =
+                        new DefaultPlotManager();
 
-                if (!config.contains("worlds." + world)) {
-                    config.createSection("worlds." + world);
+                if (!config.contains(path)) {
+                    config.createSection(path);
                 }
-                plotworld.saveConfiguration(config.getConfigurationSection("worlds." + world));
 
-                plotworld.loadConfiguration(config.getConfigurationSection("worlds." + world));
+                plotWorld.saveConfiguration(config.getConfigurationSection(path));
+                plotWorld.loadConfiguration(config.getConfigurationSection(path));
 
                 try {
                     config.save(configFile);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                 }
 
-                addPlotWorld(world, plotworld, manager);
+                // Now add it :p
+                addPlotWorld(world, plotWorld, plotManager);
             }
         }
     }
@@ -1255,55 +1037,6 @@ public class PlotMain extends JavaPlugin {
         }
     }
 
-    /**
-     * On unload
-     */
-    @Override
-    public void onDisable() {
-        C.saveTranslations();
-        Logger.add(LogLevel.GENERAL, "Logger disabled");
-        try {
-            Logger.write();
-        }
-        catch (final IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            connection.close();
-            mySQL.closeConnection();
-        }
-        catch (NullPointerException | SQLException e) {
-            if (connection != null) {
-                Logger.add(LogLevel.DANGER, "Could not close mysql connection");
-            }
-        }
-        /*
-         * if(PlotWeb.PLOTWEB != null) { try { PlotWeb.PLOTWEB.stop(); } catch
-         * (Exception e) { e.printStackTrace(); } }
-         */
-    }
-
-    // Material.STONE_BUTTON, Material.WOOD_BUTTON,
-    // Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE,
-    // Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
-    // Material.WOOD_DOOR, Material.WOODEN_DOOR,
-    // Material.DISPENSER, Material.DROPPER
-    public static HashMap<Material, String> booleanFlags = new HashMap<>();
-    static {
-        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
-        booleanFlags.put(Material.IRON_DOOR, "iron_door");
-        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
-        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
-        booleanFlags.put(Material.LEVER, "lever");
-        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
-        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
-        booleanFlags.put(Material.CHEST, "chest");
-        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
-        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
-        booleanFlags.put(Material.DISPENSER, "dispenser");
-        booleanFlags.put(Material.DROPPER, "dropper");
-    }
-
     private static void addPlusFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
@@ -1332,17 +1065,14 @@ public class PlotMain extends JavaPlugin {
                         seconds = 1;
                         try {
                             amount = Integer.parseInt(values[0]);
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             return null;
                         }
-                    }
-                    else {
+                    } else {
                         try {
                             amount = Integer.parseInt(values[0]);
                             seconds = Integer.parseInt(values[1]);
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             return null;
                         }
                     }
@@ -1469,8 +1199,7 @@ public class PlotMain extends JavaPlugin {
             public String parseValue(final String value) {
                 try {
                     return Long.parseLong(value) + "";
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     return null;
                 }
             }
@@ -1519,18 +1248,291 @@ public class PlotMain extends JavaPlugin {
         worlds.remove(world);
     }
 
-    @SuppressWarnings("unused")
     public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
+    }
+
+    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = new LinkedHashMap<>(plots);
+        // PlotMain.plots.putAll(plots);
     }
 
     public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = plots;
     }
 
-    @SuppressWarnings("unused")
-    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = new LinkedHashMap<>();
-        PlotMain.plots.putAll(plots);
+    /**
+     * !!WorldGeneration!!
+     */
+    @Override
+    public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+        return new WorldGenerator(world);
+    }
+
+    private void setupLogger() {
+        final File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
+        if (!log.exists()) {
+            try {
+                if (!new File(getMain().getDataFolder() + File.separator + "logs").mkdirs()) {
+                    sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create logs folder. Do it manually.");
+                }
+                if (log.createNewFile()) {
+                    final FileWriter writer = new FileWriter(log);
+                    writer.write("Created at: " + new Date().toString() + "\n\n\n");
+                    writer.close();
+                }
+            } catch (final IOException e) {
+
+                e.printStackTrace();
+            }
+        }
+        Logger.setup(log);
+        Logger.add(LogLevel.GENERAL, "Logger enabled");
+    }
+
+    /**
+     * On Load.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onEnable() {
+        // Pre-Steps
+        {
+            // Init the logger
+            setupLogger();
+
+            // Check for outdated java version.
+            if (getJavaVersion() < 1.7) {
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+                // Didn't know of any other link :D
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
+
+        // Setup configurations
+        C.setupTranslations();
+        // Setup configuration
+        configs();
+
+        // Setup metrics
+        if (Settings.METRICS) {
+            try {
+                final Metrics metrics = new Metrics(this);
+                metrics.start();
+                sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
+            } catch (final Exception e) {
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
+            }
+        }
+
+        // Kill mobs on roads?
+        if (Settings.KILL_ROAD_MOBS) {
+            killAllEntities();
+        }
+
+        // Enabled<3
+        if (C.ENABLED.s().length() > 0) {
+            Broadcast(C.ENABLED);
+        }
+
+        final String[] tables = new String[]{
+                "plot_trusted", "plot_ratings", "plot_comments"
+        };
+
+        // Use mysql?
+        if (Settings.DB.USE_MYSQL) {
+            // TODO: Remake SQLManager
+            if (DBFunc.dbManager == null) {
+                DBFunc.dbManager = new SQLManager();
+            }
+            try {
+                mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                connection = mySQL.openConnection();
+                {
+                    final DatabaseMetaData meta = connection.getMetaData();
+                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
+                    if (!res.next()) {
+                        DBFunc.createTables("mysql", true);
+                    } else {
+                        for (String table : tables) {
+                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
+                            if (!res.next()) {
+                                DBFunc.createTables("mysql", false);
+                            }
+                        }
+                        // We should not repeat our self :P
+                    }
+                }
+            } catch (final Exception e) {
+                Logger.add(LogLevel.DANGER, "MySQL connection failed.");
+                sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
+                if ((config == null) || config.getBoolean("debug")) {
+                    sendConsoleSenderMessage("&d==== Here is an ugly stacktrace if you are interested in those things ====");
+                    e.printStackTrace();
+                    sendConsoleSenderMessage("&d==== End of stacktrace ====");
+                    sendConsoleSenderMessage("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
+                }
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+            plots = DBFunc.getPlots();
+
+        }
+        // TODO: Implement mongo
+        else if (Settings.DB.USE_MONGO) {
+            // DBFunc.dbManager = new MongoManager();
+            sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
+        } else if (Settings.DB.USE_SQLITE) {
+            DBFunc.dbManager = new SQLManager();
+            try {
+                connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
+                {
+                    final DatabaseMetaData meta = connection.getMetaData();
+                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
+                    if (!res.next()) {
+                        DBFunc.createTables("sqlite", true);
+                    } else {
+                        for (String table : tables) {
+                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
+                            if (!res.next()) {
+                                DBFunc.createTables("sqlite", false);
+                            }
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                Logger.add(LogLevel.DANGER, "SQLite connection failed");
+                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
+                sendConsoleSenderMessage("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
+                e.printStackTrace();
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+            plots = DBFunc.getPlots();
+        } else {
+            Logger.add(LogLevel.DANGER, "No storage type is set.");
+            sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
+            try {
+                new PlotMeConverter(this).runAsync();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // Setup the command handler
+        {
+            final MainCommand command = new MainCommand();
+            final PluginCommand plotCommand = getCommand("plots");
+            plotCommand.setExecutor(command);
+            plotCommand.setAliases(
+                    Arrays.asList("p", "ps", "plotme", "plot")
+            );
+            plotCommand.setTabCompleter(command);
+        }
+        if (Settings.MOB_CAP_ENABLED) {
+            getServer().getPluginManager().registerEvents(new EntityListener(), this);
+        }
+
+        // Main event handler
+        getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        // Flag runnable
+        PlotPlusListener.startRunnable(this);
+        // Flag+ listener
+        getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
+        // Forcefield listener
+        getServer().getPluginManager().registerEvents(new ForceFieldListener(this), this);
+        // Default flags
+        defaultFlags();
+
+        if (getServer().getPluginManager().getPlugin("BarAPI") != null) {
+            barAPI = (BarAPI) getServer().getPluginManager().getPlugin("BarAPI");
+        }
+        if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
+            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+
+            final String version = worldEdit.getDescription().getVersion();
+            if ((version != null) && version.startsWith("5.")) {
+                PlotMain.sendConsoleSenderMessage("&cPlease update to WorldEdit 6 for improved stability and additional features:\nhttp://builds.enginehub.org/job/worldedit");
+            } else {
+                getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
+            }
+        }
+        if (Settings.WORLDGUARD) {
+            if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+                worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+                worldGuardListener = new WorldGuardListener(this);
+                getServer().getPluginManager().registerEvents(worldGuardListener, this);
+            }
+        }
+        if (Settings.AUTO_CLEAR) {
+            checkExpired(PlotMain.getMain(), true);
+            checkForExpiredPlots();
+        }
+        // Economy setup
+        {
+            if ((getServer().getPluginManager().getPlugin("Vault") != null) && getServer().getPluginManager().getPlugin("Vault").isEnabled()) {
+                final RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+                if (economyProvider != null) {
+                    economy = economyProvider.getProvider();
+                }
+            }
+            useEconomy = (economy != null);
+        }
+        // TPS Measurement
+        {
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new Lag(), 100L, 1L);
+        }
+        // Test for SetBlockFast
+        {
+            try {
+                new SetBlockFast();
+                PlotHelper.canSetFast = true;
+            } catch (final Exception e) {
+                PlotHelper.canSetFast = false;
+            }
+        }
+        // Setup the setup command
+        {
+            com.intellectualcrafters.plot.commands.plugin.setup(this);
+        }
+        // Handle UUIDS
+        {
+            setUUIDSaver(new PlotUUIDSaver());
+            // Looks really cool xD
+            getUUIDSaver().globalPopulate();
+        }
+    }
+
+    /**
+     * On unload
+     */
+    @Override
+    public void onDisable() {
+        try {
+            C.saveTranslations();
+        } catch (Exception e) {
+            sendConsoleSenderMessage("Failed to save translations");
+            Logger.add(LogLevel.DANGER, "Failed to save translations");
+            e.printStackTrace();
+        }
+        Logger.add(LogLevel.GENERAL, "Logger disabled");
+        try {
+            Logger.write();
+        } catch (final IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            connection.close();
+            mySQL.closeConnection();
+        } catch (NullPointerException | SQLException e) {
+            if (connection != null) {
+                Logger.add(LogLevel.DANGER, "Could not close mysql connection");
+            }
+        }
     }
 }
