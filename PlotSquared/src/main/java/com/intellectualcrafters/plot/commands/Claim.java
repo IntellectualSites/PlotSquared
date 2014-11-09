@@ -116,6 +116,9 @@ public class Claim extends SubCommand {
                 final DefaultPlotWorld pW = (DefaultPlotWorld) world;
                 if (pW.CLAIMED_WALL_BLOCK != pW.WALL_BLOCK) {
                     PlotMain.getPlotManager(plot.getWorld()).setWall(plot.getWorld(), world, plot.getId(), pW.CLAIMED_WALL_BLOCK);
+                    if (PlotHelper.canSetFast) {
+                        SetBlockFast.update(player);
+                    }
                 }
             }
         }

@@ -600,7 +600,10 @@ public class PlotMain extends JavaPlugin {
 
         // Use mysql?
         if (Settings.DB.USE_MYSQL) {
-            DBFunc.dbManager = new SQLManager();
+            
+            if (DBFunc.dbManager == null) {
+                DBFunc.dbManager = new SQLManager();
+            }
             try {
                 mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = mySQL.openConnection();
@@ -619,6 +622,12 @@ public class PlotMain extends JavaPlugin {
                             res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_ratings", null);
                             if (!res.next()) {
                                 DBFunc.createTables("mysql", false);
+                            }
+                            else {
+                                res = meta.getTables(null, null, Settings.DB.PREFIX + "plot_comments", null);
+                                if (!res.next()) {
+                                    DBFunc.createTables("mysql", false);
+                                }
                             }
                         }
                     }
