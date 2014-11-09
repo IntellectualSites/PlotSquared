@@ -361,12 +361,18 @@ public enum C {
     /*
      * Help
      */
+    HELP_HEADER("&c----------[ &6PlotSquared Help &c]----------"),
+    HELP_CATEGORY("&cCategory: &6%category%&c, Page: &6%current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
+    HELP_INFO("&6You have to specify a category"),
+    HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
+    HELP_ITEM("&6%usage% [%alias%]\n   &c%desc%\n"),
+    /*
     HELP_CATEGORY("&6Current Category&c: &l%category%"),
     HELP_INFO("&6You need to specify a help category"),
     HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
     HELP_PAGE("&c>> &6%usage% &c[&6%alias%&c]\n" + "&c>> &6%desc%\n"),
     HELP_ITEM_SEPARATOR("&c%lines"),
-    HELP_HEADER("&c(Page &6%cur&c/&6%max&c) &6Help for Plots"),
+    HELP_HEADER("&c(Page &6%cur&c/&6%max&c) &6Help for Plots"),*/
     /*
      * Direction
      */
@@ -375,6 +381,8 @@ public enum C {
      * Custom
      */
     CUSTOM_STRING("-");
+    private static TranslationManager manager;
+    private static TranslationFile defaultFile;
     /**
      * Default
      */
@@ -404,6 +412,26 @@ public enum C {
         if (this.s == null) {
             this.s = "";
         }
+    }
+
+    public static void setupTranslations() {
+        if (manager == null) {
+            manager = new TranslationManager();
+        }
+        if (defaultFile == null) {
+            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), TranslationLanguage.englishAmerican, "PlotSquared", manager)
+                    .read();
+        }
+        // register everything in this class
+        for (C c : values()) {
+            manager.addTranslationObject(
+                    new TranslationObject(c.toString(), c.d, "", "")
+            );
+        }
+    }
+
+    public static void saveTranslations() {
+        manager.saveAll(defaultFile).saveFile(defaultFile);
     }
 
     /**
@@ -441,28 +469,5 @@ public enum C {
      */
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());
-    }
-
-    private static TranslationManager manager;
-    private static TranslationFile defaultFile;
-
-    public static void setupTranslations() {
-        if (manager == null) {
-            manager = new TranslationManager();
-        }
-        if (defaultFile == null) {
-            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), TranslationLanguage.englishAmerican, "PlotSquared", manager)
-                    .read();
-        }
-        // register everything in this class
-        for (C c : values()) {
-            manager.addTranslationObject(
-                    new TranslationObject(c.toString(), c.d, "", "")
-            );
-        }
-    }
-
-    public static void saveTranslations() {
-        manager.saveAll(defaultFile).saveFile(defaultFile);
     }
 }

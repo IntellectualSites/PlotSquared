@@ -31,7 +31,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +57,66 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static boolean no_permission(final Player player, final String permission) {
         PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
+    }
+
+    public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
+        final List<SubCommand> cmds = new ArrayList<>();
+        for (final SubCommand c : subCommands) {
+            if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
+                cmds.add(c);
+            }
+        }
+        return cmds;
+    }
+
+    public static List<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
+        final List<SubCommand> commands = getCommands(category, player);
+        // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
+        // 100));
+        final int perPage = 5;
+        final int totalPages = (int) Math.ceil(commands.size() / perPage);
+        if (page > totalPages) {
+            page = totalPages;
+        }
+        int max = (page * perPage) + perPage;
+        if (max > commands.size()) {
+            max = commands.size();
+        }
+
+        final List<String> help = new ArrayList<>();
+
+        help.add(C.HELP_HEADER.s());
+        // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
+        help.add(C.HELP_CATEGORY.s()
+                        .replace("%category%", category.toString())
+                        .replace("%current%", "" + (page + 1))
+                        .replace("%max%", "" + (totalPages + 1))
+                        .replace("%dis%", "" + perPage)
+                        .replace("%total%", "" + commands.size())
+        );
+
+        SubCommand cmd;
+
+        final int start = page * perPage;
+        for (int x = start; x < max; x++) {
+            cmd = commands.get(x);
+            String s = t(C.HELP_ITEM.s());
+            s = s
+                    .replace("%alias%", cmd.alias)
+                    .replace("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage)
+                    .replace("%cmd%", cmd.cmd)
+                    .replace("%desc%", cmd.description)
+            ;
+            help.add(s);
+        }
+        if (help.size() < 2) {
+            help.add(t(C.NO_COMMANDS.s()));
+        }
+        return help;
+    }
+
+    private static String t(final String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
     }
 
     @Override
@@ -120,8 +179,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-
-            return PlayerFunctions.sendMessage(player, help.toString());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
+            //return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {
                 if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.equalsIgnoreCase(args[0])) {
@@ -150,63 +209,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             //PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
         }
-    }
-
-    public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
-        final List<SubCommand> cmds = new ArrayList<>();
-        for (final SubCommand c : subCommands) {
-            if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
-                cmds.add(c);
-            }
-        }
-        return cmds;
-    }
-
-    public static ArrayList<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
-        final List<SubCommand> commands = getCommands(category, player);
-        // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
-        // 100));
-        final int perPage = 5;
-        final int totalPages = (int) Math.ceil(commands.size() / perPage);
-        if (page > totalPages) {
-            page = totalPages;
-        }
-        int max = (page * perPage) + perPage;
-        if (max > commands.size()) {
-            max = commands.size();
-        }
-        final ArrayList<String> help = new ArrayList<>(Arrays.asList(t(C.HELP_HEADER.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "")), t(C.HELP_CATEGORY.s().replaceAll("%category%", category.toString()))));
-        SubCommand cmd;
-
-        String lines = "";
-        for (int x = 0; x < (ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH * 0.75); x++) {
-            lines += "-";
-        }
-
-        final int start = page * perPage;
-        for (int x = start; x < max; x++) {
-            cmd = commands.get(x);
-            String s = t(C.HELP_PAGE.s());
-            s = s.replaceAll("%alias%", cmd.alias);
-            s = s.replaceAll("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage);
-            s = s.replaceAll("%cmd%", cmd.cmd);
-            s = s.replaceAll("%desc%", cmd.description);
-
-            help.add(s);
-
-            if ((x != start)) {
-                help.add(t(C.HELP_ITEM_SEPARATOR.s().replaceAll("%lines", lines)));
-            }
-
-        }
-        if (help.size() < 2) {
-            help.add(t(C.NO_COMMANDS.s()));
-        }
-        return help;
-    }
-
-    private static String t(final String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return true;
     }
 
     @Override

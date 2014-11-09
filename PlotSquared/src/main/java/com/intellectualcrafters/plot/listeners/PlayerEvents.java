@@ -72,19 +72,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler
-    public void onChangeWorld(final PlayerChangedWorldEvent event) {
-        /*
-         * if (isPlotWorld(event.getFrom()) &&
-         * (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
-         * event.getPlayer().setResourcePack("");
-         * }
-         * else {
-         * textures(event.getPlayer());
-         * }
-         */
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void PlayerMove(final PlayerMoveEvent event) {
         try {
@@ -163,26 +150,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
         if (PlayerFunctions.getPlot(event.getBlock().getLocation()) == null) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void BlockCreate(final BlockPlaceEvent event) {
-        final World world = event.getPlayer().getWorld();
-        if (!isPlotWorld(world)) {
-            return;
-        }
-        if (PlotMain.hasPermission(event.getPlayer(), "plots.admin")) {
-            return;
-        }
-        if (isInPlot(event.getBlock().getLocation())) {
-            final Plot plot = getCurrentPlot(event.getBlockPlaced().getLocation());
-            if (!plot.hasRights(event.getPlayer())) {
-                event.setCancelled(true);
-            }
-        }
-        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation()) == null) {
             event.setCancelled(true);
         }
     }
@@ -304,6 +271,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBlockPistonExtend(final BlockPistonExtendEvent e) {
         if (isInPlot(e.getBlock().getLocation())) {
+            for (Block block : e.getBlocks()) {
+                if (!isInPlot(block.getLocation())) {
+                    e.setCancelled(true);
+                }
+            }
+        }
+        /*if (isInPlot(e.getBlock().getLocation())) {
 
             e.getDirection();
             final int modifier = e.getBlocks().size();
@@ -348,7 +322,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
-        }
+        }*/
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -728,6 +702,39 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onChangeWorld(final PlayerChangedWorldEvent event) {
+        /*
+         * if (isPlotWorld(event.getFrom()) &&
+         * (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
+         * event.getPlayer().setResourcePack("");
+         * }
+         * else {
+         * textures(event.getPlayer());
+         * }
+         */
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void BlockCreate(final BlockPlaceEvent event) {
+        final World world = event.getPlayer().getWorld();
+        if (!isPlotWorld(world)) {
+            return;
+        }
+        if (PlotMain.hasPermission(event.getPlayer(), "plots.admin")) {
+            return;
+        }
+        if (isInPlot(event.getBlock().getLocation())) {
+            final Plot plot = getCurrentPlot(event.getBlockPlaced().getLocation());
+            if (!plot.hasRights(event.getPlayer())) {
+                event.setCancelled(true);
+            }
+        }
+        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation()) == null) {
+            event.setCancelled(true);
         }
     }
 }
