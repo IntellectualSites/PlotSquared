@@ -38,33 +38,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Citymonstret on 2014-09-26.
+ * Created 2014-09-26 for PlotSquared
+ *
+ * @author Citymonstret, Empire92
  */
 public class Setup extends SubCommand implements Listener {
 
     public static Map<String, SetupObject> setupMap = new HashMap<>();
-
-    private class SetupObject {
-        String world;
-        String plugin;
-        int current = 0;
-
-        ConfigurationNode[] step;
-
-        public SetupObject(final String world, final PlotWorld plotworld, final String plugin) {
-            this.world = world;
-            this.step = plotworld.getSettingNodes();
-            this.plugin = plugin;
-        }
-
-        public int getCurrent() {
-            return this.current;
-        }
-
-        public int getMax() {
-            return this.step.length;
-        }
-    }
 
     public Setup() {
         super("setup", "plots.admin", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
@@ -109,7 +89,9 @@ public class Setup extends SubCommand implements Listener {
                                         final ChunkGenerator generator = plugin.getDefaultWorldGenerator(world, "");
                                         final World myworld = WorldCreator.name(world).generator(generator).createWorld();
                                         PlayerFunctions.sendMessage(plr, "&aLoaded world.");
-                                        plr.teleport(myworld.getSpawnLocation());
+                                        if (plr != null) {
+                                            plr.teleport(myworld.getSpawnLocation());
+                                        }
                                         break;
                                     }
                                 }
@@ -183,7 +165,7 @@ public class Setup extends SubCommand implements Listener {
                 return true;
             }
 
-            final ArrayList<String> generators = new ArrayList<String>();
+            final ArrayList<String> generators = new ArrayList<>();
 
             ChunkGenerator generator = null;
 
@@ -217,6 +199,28 @@ public class Setup extends SubCommand implements Listener {
             final ConfigurationNode step = object.step[object.current];
             sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
             return true;
+        }
+    }
+
+    private class SetupObject {
+        String world;
+        String plugin;
+        int current = 0;
+
+        ConfigurationNode[] step;
+
+        public SetupObject(final String world, final PlotWorld plotworld, final String plugin) {
+            this.world = world;
+            this.step = plotworld.getSettingNodes();
+            this.plugin = plugin;
+        }
+
+        public int getCurrent() {
+            return this.current;
+        }
+
+        public int getMax() {
+            return this.step.length;
         }
     }
 

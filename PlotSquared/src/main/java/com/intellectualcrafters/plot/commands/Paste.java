@@ -24,9 +24,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.*;
 import org.bukkit.entity.Player;
 
-/**
- * Created by Citymonstret on 2014-10-12.
- */
 public class Paste extends SubCommand {
 
     public Paste() {

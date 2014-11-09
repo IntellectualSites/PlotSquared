@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+
 /**
  * @author Citymonstret
  */
@@ -79,9 +80,13 @@ public class TP extends SubCommand {
             }
             a = split[0];
         }
+        @SuppressWarnings("deprecation")
         final Player player = Bukkit.getPlayer(a);
         if (player != null) {
-            final Plot[] plots = PlotMain.getPlots(world, player).toArray(new Plot[0]);
+            final java.util.Set<Plot> plotMainPlots =
+                    PlotMain.getPlots(world, player);
+            final Plot[] plots =
+                    plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
             if (plots.length > index) {
                 return plots[index];
             }

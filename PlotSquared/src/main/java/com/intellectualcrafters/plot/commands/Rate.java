@@ -26,9 +26,7 @@ import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
 import org.bukkit.entity.Player;
 
-/**
- * Created by Citymonstret on 2014-10-02.
- */
+@SuppressWarnings({"unused", "deprecated", "javadoc"})
 public class Rate extends SubCommand {
 
     /*

@@ -28,9 +28,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-/**
- * Created by Citymonstret on 2014-08-01.
- */
+@SuppressWarnings({"unused", "deprecation", "javadoc"})
 public class Kick extends SubCommand {
 
     public Kick() {

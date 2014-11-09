@@ -44,18 +44,16 @@ public class Unlink extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, "You're not in a plot.");
-            return true;
+            return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return true;
+            return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
-            PlayerFunctions.sendMessage(plr, C.UNLINK_IMPOSSIBLE);
-            return true;
+            return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
+
         final World world = plr.getWorld();
         final PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
@@ -117,7 +115,13 @@ public class Unlink extends SubCommand {
                 SetBlockFast.update(plr);
             }
         } catch (final Exception e) {
-
+            // execute(final Player plr, final String... args) {
+            try {
+                PlotMain.sendConsoleSenderMessage(
+                        "Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         manager.finishPlotUnlink(world, plotworld, ids);

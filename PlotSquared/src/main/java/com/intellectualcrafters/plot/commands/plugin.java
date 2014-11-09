@@ -35,11 +35,11 @@ import java.util.ArrayList;
 
 public class plugin extends SubCommand {
 
+    public static String downloads, version;
+
     public plugin() {
         super("plugin", "plots.use", "Show plugin information", "plugin", "pl", CommandCategory.INFO, false);
     }
-
-    public static String downloads, version;
 
     public static void setup(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
@@ -65,6 +65,30 @@ public class plugin extends SubCommand {
         }, 200l);
     }
 
+    private static String convertToNumericString(final String str, final boolean dividers) {
+        final StringBuilder builder = new StringBuilder();
+        for (final char c : str.toCharArray()) {
+            if (Character.isDigit(c)) {
+                builder.append(c);
+            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
+                builder.append(c);
+            }
+        }
+        return builder.toString();
+    }
+
+    private static String getInfo(final String link) throws Exception {
+        final URLConnection connection = new URL(link).openConnection();
+        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String document = "", line;
+        while ((line = reader.readLine()) != null) {
+            document += (line + "\n");
+        }
+        reader.close();
+        return document;
+    }
+
     @Override
     public boolean execute(final Player plr, final String... args) {
         Bukkit.getScheduler().runTaskAsynchronously(JavaPlugin.getPlugin(PlotMain.class), new Runnable() {
@@ -85,34 +109,6 @@ public class plugin extends SubCommand {
             }
         });
         return true;
-    }
-
-    private static String convertToNumericString(final String str, final boolean dividers) {
-        final StringBuilder builder = new StringBuilder();
-        for (final char c : str.toCharArray()) {
-            if (Character.isDigit(c)) {
-                builder.append(c);
-            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
-                builder.append(c);
-            }
-        }
-        return builder.toString();
-    }
-
-    /**
-     * @param link
-     * @return
-     */
-    private static String getInfo(final String link) throws Exception {
-        final URLConnection connection = new URL(link).openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String document = "", line;
-        while ((line = reader.readLine()) != null) {
-            document += (line + "\n");
-        }
-        reader.close();
-        return document;
     }
 
 }

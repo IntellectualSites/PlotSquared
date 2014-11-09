@@ -42,12 +42,12 @@ import java.util.List;
  */
 public class Set extends SubCommand {
 
+    public static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
+    public static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
+
     public Set() {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
     }
-
-    public static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
-    public static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
 
     @SuppressWarnings("deprecation")
     @Override
@@ -66,10 +66,7 @@ public class Set extends SubCommand {
             return false;
         }
         if (args.length < 1) {
-            final StringBuilder builder = new StringBuilder();
-            builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-            builder.append(getArgumentList(values));
-            PlayerFunctions.sendMessage(plr, builder.toString());
+            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
             return false;
         }
         for (int i = 0; i < aliases.length; i++) {
@@ -79,12 +76,10 @@ public class Set extends SubCommand {
             }
         }
         /* TODO: Implement option */
-        final boolean advanced_permissions = true;
-        if (advanced_permissions) {
-            if (!PlotMain.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
-                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
-                return false;
-            }
+        // final boolean advanced_permissions = true;
+        if (!PlotMain.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
+            PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
+            return false;
         }
 
         if (args[0].equalsIgnoreCase("flag")) {
@@ -141,8 +136,8 @@ public class Set extends SubCommand {
                 if (oldFlag != null) {
                     newflags.remove(oldFlag);
                 }
-                plot.settings.setFlags(newflags.toArray(new Flag[0]));
-                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[0]));
+                plot.settings.setFlags(newflags.toArray(new Flag[newflags.size()]));
+                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[newflags.size()]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
@@ -169,7 +164,8 @@ public class Set extends SubCommand {
                     return false;
                 }
                 plot.settings.addFlag(flag);
-                DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags().toArray(new Flag[0]));
+                java.util.Set<Flag> flags = plot.settings.getFlags();
+                DBFunc.setFlags(plr.getWorld().getName(), plot, flags.toArray(new Flag[flags.size()]));
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
@@ -312,8 +308,7 @@ public class Set extends SubCommand {
             //
             int index = 0;
             //
-            byte b = (byte) 0;
-            Material m = null;
+            Material m;
             //
             final PlotBlock[] blocks = new PlotBlock[strings.length];
 
@@ -341,6 +336,7 @@ public class Set extends SubCommand {
 
                     blocks[index] = new PlotBlock((short) m.getId(), (byte) 0);
                 } else {
+                    byte b;
                     try {
                         b = (byte) Integer.parseInt(ss[1]);
                     } catch (final Exception e) {
@@ -396,10 +392,11 @@ public class Set extends SubCommand {
             return true;
         }
         {
-            AbstractFlag af = new AbstractFlag("");
+            AbstractFlag af;
             try {
                 af = new AbstractFlag(args[0].toLowerCase());
             } catch (final Exception e) {
+                af = new AbstractFlag("");
             }
             if (FlagManager.getFlags().contains(af)) {
                 final StringBuilder a = new StringBuilder();

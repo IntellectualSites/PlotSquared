@@ -28,9 +28,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import org.bukkit.entity.Player;
 
-/**
- * @Deprecated
- */
+@SuppressWarnings({"unused", "deprecated", "javadoc"})
 public class Purge extends SubCommand {
 
     public Purge() {
@@ -54,12 +52,12 @@ public class Purge extends SubCommand {
                     }
 
                     if (!PlotMain.isPlotWorld(world)) {
-                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+                        PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
                         return false;
                     }
                     PlotMain.getPlots(world).remove(id);
                     DBFunc.purge(world, id);
-                    PlayerFunctions.sendMessage(plr, "&aPurge of '" + args[0] + "' was successful!");
+                    PlayerFunctions.sendMessage(null, "&aPurge of '" + args[0] + "' was successful!");
                     return true;
                 } catch (final Exception e) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);

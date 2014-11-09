@@ -36,6 +36,7 @@ import java.util.UUID;
 /**
  * @author Citymonstret
  */
+@SuppressWarnings({"unused", "deprecated", "javadoc"})
 public class Info extends SubCommand {
 
     public Info() {
@@ -55,7 +56,7 @@ public class Info extends SubCommand {
             plot = PlayerFunctions.getCurrentPlot(player);
         } else {
             if (args.length < 2) {
-                PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
+                PlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
             final PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);

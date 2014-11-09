@@ -37,6 +37,17 @@ public class list extends SubCommand {
         super(Command.LIST, "List all plots", "list {mine|shared|all|world}", CommandCategory.INFO, false);
     }
 
+    private static String getName(final UUID id) {
+        if (id == null) {
+            return "none";
+        }
+        /*
+         * String name = Bukkit.getOfflinePlayer(id).getName(); if (name ==
+         * null) { return "none"; } return name;
+         */
+        return UUIDHandler.getName(id);
+    }
+
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
@@ -52,7 +63,7 @@ public class list extends SubCommand {
         }
         if (args[0].equalsIgnoreCase("mine") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
-            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your") + "\n");
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your")).append("\n");
             int idx = 0;
             for (final Plot p : PlotMain.getPlots(plr)) {
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
@@ -67,7 +78,7 @@ public class list extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
-            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all") + "\n");
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
             for (final Plot p : PlotMain.getPlotsSorted()) {
                 if (p.helpers.contains(plr.getUniqueId())) {
                     string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
@@ -111,7 +122,7 @@ public class list extends SubCommand {
 
             final StringBuilder string = new StringBuilder();
 
-            string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all") + "\n");
+            string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
             Plot p;
 
             // This might work xD
@@ -125,7 +136,7 @@ public class list extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
-            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all") + "\n");
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
             final HashMap<PlotId, Plot> plots = PlotMain.getPlots(plr.getWorld());
             for (final Plot p : plots.values()) {
                 string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
@@ -138,17 +149,6 @@ public class list extends SubCommand {
             sendMessage(plr, C.DID_YOU_MEAN, new StringComparsion(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
         }
-    }
-
-    private static String getName(final UUID id) {
-        if (id == null) {
-            return "none";
-        }
-        /*
-         * String name = Bukkit.getOfflinePlayer(id).getName(); if (name ==
-         * null) { return "none"; } return name;
-         */
-        return UUIDHandler.getName(id);
     }
 
     private String getArgumentList(final String[] strings) {

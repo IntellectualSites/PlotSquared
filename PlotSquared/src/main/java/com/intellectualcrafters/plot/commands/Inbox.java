@@ -31,9 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by Citymonstret on 2014-08-01.
- */
 public class Inbox extends SubCommand {
 
     public Inbox() {

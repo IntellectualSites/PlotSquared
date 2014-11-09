@@ -42,11 +42,14 @@ import java.util.Set;
 @SuppressWarnings({"unused", "javadoc"})
 public class PlotAPI {
 
+    /**
+     * Admin Permission
+     */
+    public static final String ADMIN_PERMISSION = "plots.admin";
     private static PlotHelper plotHelper;
     private static PlayerFunctions playerFunctions;
     private static FlagManager flagManager;
     private static SchematicHandler schematicHandler;
-    private static C c;
 
     // Methods/fields in PlotMain class
 
@@ -63,15 +66,21 @@ public class PlotAPI {
     // PlotMain.removePlot(world, id, callEvent)
     // PlotMain.teleportPlayer(player, from, plot)
     // PlotMain.updatePlot(plot);
+    private static C c;
 
+    // Reference
     // To access plotMain stuff.
     private final PlotMain plotMain;
 
-    // Reference
     /**
-     * Admin Permission
+     * Constructor. Insert any Plugin.
+     * (Optimally the plugin that is accessing the method)
+     *
+     * @param plugin Plugin used to access this method
      */
-    public static final String ADMIN_PERMISSION = "plots.admin";
+    public PlotAPI(final JavaPlugin plugin) {
+        this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
+    }
 
     /**
      * Get all plots
@@ -120,16 +129,6 @@ public class PlotAPI {
      */
     public YamlConfiguration getStorage() {
         return PlotMain.storage;
-    }
-
-    /**
-     * Constructor. Insert any Plugin.
-     * (Optimally the plugin that is accessing the method)
-     *
-     * @param plugin Plugin used to access this method
-     */
-    public PlotAPI(final JavaPlugin plugin) {
-        this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
     }
 
     /**
@@ -288,7 +287,7 @@ public class PlotAPI {
      * @return array of Flag[]
      */
     public AbstractFlag[] getFlags() {
-        return FlagManager.getFlags().toArray(new AbstractFlag[0]);
+        return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
     }
 
     /**

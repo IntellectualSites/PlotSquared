@@ -27,9 +27,6 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.PlotWorld;
 import org.bukkit.entity.Player;
 
-/**
- * @Deprecated
- */
 public class Reload extends SubCommand {
 
     public Reload() {

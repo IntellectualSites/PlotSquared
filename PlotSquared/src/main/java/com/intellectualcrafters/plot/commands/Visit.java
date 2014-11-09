@@ -21,7 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.C;
+import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.UUIDHandler;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -46,38 +49,31 @@ public class Visit extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_USER);
-            return true;
+            return sendMessage(plr, C.NEED_USER);
         }
         final String username = args[0];
-
         final UUID uuid = UUIDHandler.getUUID(username);
         List<Plot> plots = null;
         if (uuid != null) {
             plots = getPlots(uuid);
         }
         if ((uuid == null) || plots.isEmpty()) {
-            PlayerFunctions.sendMessage(plr, C.FOUND_NO_PLOTS);
-            return true;
+            return sendMessage(plr, C.FOUND_NO_PLOTS);
         }
         if (args.length < 2) {
-            final Plot plot = plots.get(0);
-            PlotMain.teleportPlayer(plr, plr.getLocation(), plot);
+            PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
         }
         int i;
         try {
             i = Integer.parseInt(args[1]);
         } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
-            return true;
+            return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
         if ((i < 0) || (i >= plots.size())) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
-            return true;
+            return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        final Plot plot = plots.get(i);
-        PlotMain.teleportPlayer(plr, plr.getLocation(), plot);
+        PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(i));
         return true;
     }
 }

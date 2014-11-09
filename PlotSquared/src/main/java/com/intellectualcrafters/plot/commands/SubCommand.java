@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
  *
  * @author Citymonstret
  */
+@SuppressWarnings({"deprecation", "unused", "javadoc"})
 public abstract class SubCommand {
     public boolean isPlayer;
     /**
