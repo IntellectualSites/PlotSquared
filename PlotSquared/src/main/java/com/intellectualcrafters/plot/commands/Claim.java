@@ -22,9 +22,12 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -110,7 +113,9 @@ public class Claim extends SubCommand {
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
             if ((world.DEFAULT_FLAGS != null) && (world.DEFAULT_FLAGS.size() > 0)) {
-                plot2.settings.setFlags(FlagManager.parseFlags(world.DEFAULT_FLAGS));
+                Flag[] flags = FlagManager.parseFlags(world.DEFAULT_FLAGS);
+                plot2.settings.setFlags(flags);
+                DBFunc.setFlags(plot.world, plot2, flags);
             }
             if (world instanceof DefaultPlotWorld) {
                 final DefaultPlotWorld pW = (DefaultPlotWorld) world;

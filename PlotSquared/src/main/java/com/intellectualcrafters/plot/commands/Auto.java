@@ -22,7 +22,10 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -120,7 +123,9 @@ public class Auto extends SubCommand {
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(plot.id);
                     if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        plot2.settings.setFlags(FlagManager.parseFlags(pw.DEFAULT_FLAGS));
+                        Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
+                        plot2.settings.setFlags(flags);
+                        DBFunc.setFlags(plot2.world, plot2, flags);
                     }
                 }
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
@@ -157,7 +162,9 @@ public class Auto extends SubCommand {
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(start);
                     if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        plot2.settings.setFlags(FlagManager.parseFlags(pw.DEFAULT_FLAGS));
+                        Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
+                        plot2.settings.setFlags(flags);
+                        DBFunc.setFlags(plot2.world, plot2, flags);
                     }
                 }
             }
