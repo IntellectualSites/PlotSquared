@@ -418,6 +418,11 @@ public enum C {
         if (manager == null) {
             manager = new TranslationManager();
         }
+        
+        // FIXME: generating a blank file
+        // FIXME: translations aren't customizable
+        // FIXME: Some messages still have the %arg stuff in them
+        
         if (defaultFile == null) {
             defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), TranslationLanguage.englishAmerican, "PlotSquared", manager)
                     .read();

@@ -301,8 +301,12 @@ public class PlayerFunctions {
             else {
                 String msg = c.s();
                 if ((args != null) && (args.length > 0)) {
-                    for (final String str : args)
-                        msg = msg.replaceFirst("%s", str);
+                    for (final String str : args) {
+                        System.out.print(str);
+                        if (msg.contains("%s")) {
+                            msg = msg.replaceFirst("%s", str);
+                        }
+                    }
                 }
                 sendMessage(plr, msg);
             }

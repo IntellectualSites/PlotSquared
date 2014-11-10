@@ -126,7 +126,7 @@ public class UUIDHandler {
         final Player player = Bukkit.getPlayer(name);
         if (player != null) {
             final UUID uuid = player.getUniqueId();
-            uuidMap.put(nameWrap, uuid);
+            add(nameWrap, uuid);
             return uuid;
         }
         UUID uuid;

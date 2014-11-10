@@ -37,6 +37,8 @@ public class StringComparsion {
 
     public StringComparsion(final String input, final Object[] objects) {
         double c = 0;
+        this.bestMatch = objects[0].toString();
+        this.bestMatchObject = objects[0];
         for (final Object o : objects) {
             if ((c = compare(input, o.toString())) > this.match) {
                 this.match = c;

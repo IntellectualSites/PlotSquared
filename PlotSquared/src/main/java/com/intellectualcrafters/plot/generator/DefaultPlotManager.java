@@ -243,7 +243,7 @@ public class DefaultPlotManager extends PlotManager {
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
 
         // PlotBlock wall = dpw.WALL_BLOCK;
-        final PlotBlock wall = plot.hasOwner() ? dpw.CLAIMED_WALL_BLOCK : dpw.WALL_BLOCK;
+        final PlotBlock wall = dpw.WALL_BLOCK;
 
         final PlotBlock wall_filling = dpw.WALL_FILLING;
 

@@ -34,7 +34,7 @@ import java.lang.reflect.Field;
 public class DebugLoadTest extends SubCommand {
 
     public DebugLoadTest() {
-        super(Command.DEBUGCLAIMTEST, "This debug command will force the reload of all plots in the DB", "claim", CommandCategory.DEBUG, false);
+        super(Command.DEBUGCLAIMTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
     }
 
     @Override
