@@ -418,6 +418,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBlockIgnite(final BlockIgniteEvent e) {
+        final World world;
+        
+        if (e.getBlock() != null) {
+            world = e.getBlock().getWorld();
+        }
+        else if (e.getIgnitingEntity() != null) {
+            world = e.getIgnitingEntity().getWorld();
+        }
+        else if (e.getPlayer() != null) {
+            world = e.getPlayer().getWorld();
+        }
+        else {
+            return;
+        }
+        
+        if (!isPlotWorld(world)) {
+            return;
+        }
         if (e.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
             e.setCancelled(true);
             return;
