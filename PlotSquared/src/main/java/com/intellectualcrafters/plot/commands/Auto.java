@@ -131,14 +131,14 @@ public class Auto extends SubCommand {
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
         } else {
-            // FIXME: Not used
-            // TODO: Fix this!
-            // final boolean claimed = true;
+            
+            // Why does this need fixing, it should work fine for auto claiming mega plots 
+            
+            
             while (!br) {
                 final PlotId start = getNextPlot(Auto.lastPlot, 1);
 
-                // FIXME: Wtf is going on here?
-                /*if (claimed) */
+                // Checking if the current set of plots is a viable option.
                 {
                     if ((PlotMain.getPlots(world).get(start) == null) || (PlotMain.getPlots(world).get(start).owner == null)) {
                         Auto.lastPlot = start;
