@@ -75,7 +75,7 @@ public class PlotId {
             return false;
         }
         final PlotId other = (PlotId) obj;
-        return ((this.x == other.x) && (this.y == other.y));
+        return ((this.x.equals(other.x)) && (this.y.equals(other.y)));
     }
 
     @Override
