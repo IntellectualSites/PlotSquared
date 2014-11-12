@@ -437,12 +437,12 @@ public class SQLManager extends AbstractDB {
                 p = new Plot(plot_id, user, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
-            stmt.close();
+//            stmt.close();
 
             /*
              * Getting helpers
              */
-            stmt = connection.createStatement();
+//            stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_helpers`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -459,12 +459,12 @@ public class SQLManager extends AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
             }
-            stmt.close();
+//            stmt.close();
 
             /*
              * Getting trusted
              */
-            stmt = connection.createStatement();
+//            stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_trusted`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -481,12 +481,12 @@ public class SQLManager extends AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
             }
-            stmt.close();
+//            stmt.close();
 
             /*
              * Getting denied
              */
-            stmt = connection.createStatement();
+//            stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_denied`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -503,9 +503,9 @@ public class SQLManager extends AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
                 }
             }
-            stmt.close();
+//            stmt.close();
 
-            stmt = connection.createStatement();
+//            stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT * FROM `" + PREFIX + "plot_settings`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
