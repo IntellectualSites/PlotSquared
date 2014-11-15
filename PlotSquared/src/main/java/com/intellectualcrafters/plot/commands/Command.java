@@ -95,7 +95,7 @@ public enum Command {
     /**
      *
      */
-    DEBUG("debug", "database", new CommandPermission("plots.admin")),
+    DEBUG("debug", "debug", new CommandPermission("plots.admin")),
     /**
      *
      */
