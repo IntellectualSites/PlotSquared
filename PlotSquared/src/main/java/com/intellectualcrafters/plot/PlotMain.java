@@ -1252,13 +1252,13 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
+    }
+
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
-    }
-
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
     }
 
     /**
@@ -1347,6 +1347,9 @@ public class PlotMain extends JavaPlugin {
                 mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = mySQL.openConnection();
                 {
+                    if (DBFunc.dbManager == null) {
+                        DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
+                    }
                     final DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
                     if (!res.next()) {
@@ -1373,9 +1376,6 @@ public class PlotMain extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            if (DBFunc.dbManager == null) {
-                DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
-            }
             plots = DBFunc.getPlots();
         }
         // TODO: Implement mongo
@@ -1386,6 +1386,7 @@ public class PlotMain extends JavaPlugin {
             try {
                 connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
                 {
+                    DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
                     if (!res.next()) {
@@ -1407,7 +1408,6 @@ public class PlotMain extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
             plots = DBFunc.getPlots();
         } else {
             Logger.add(LogLevel.DANGER, "No storage type is set.");

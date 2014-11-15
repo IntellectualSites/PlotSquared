@@ -36,26 +36,24 @@ import java.util.*;
  */
 public class SQLManager extends AbstractDB {
 
-    private static Connection connection;
-    private static String PREFIX;
-    public static final String SET_OWNER =
-            "UPDATE `" + PREFIX + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
-
+    private Connection connection;
+    private String prefix;
+    public final String SET_OWNER =
+            "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
     // TODO MongoDB @Brandon
-    public static final String GET_ALL_PLOTS =
-            "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + PREFIX + "plot`";
-    public static final String CREATE_PLOTS =
-            "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
-    public static final String CREATE_SETTINGS =
-            "INSERT INTO `" + PREFIX + "plot_settings` (`plot_plot_id`) values ";
-    public static final String CREATE_HELPERS =
-            "INSERT INTO `" + PREFIX + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
-    public static final String CREATE_PLOT =
-            "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
-
+    public String GET_ALL_PLOTS =
+            "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + prefix + "plot`";
+    public String CREATE_PLOTS =
+            "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
+    public String CREATE_SETTINGS =
+            "INSERT INTO `" + prefix + "plot_settings` (`plot_plot_id`) values ";
+    public String CREATE_HELPERS =
+            "INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
+    public String CREATE_PLOT =
+            "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
     public SQLManager(Connection c, String p) {
         connection = c;
-        PREFIX = p;
+        prefix = p;
     }
 
     /**
@@ -90,8 +88,8 @@ public class SQLManager extends AbstractDB {
         // TODO SEVERE [ More than 5000 plots will fail in a single SQLite
         // query.
 
-        final HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<String, HashMap<PlotId, Integer>>();
-        final HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<Integer, ArrayList<UUID>>();
+        final HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<>();
+        final HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<>();
         try {
             final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
             final ResultSet result = stmt.executeQuery();
@@ -245,25 +243,25 @@ public class SQLManager extends AbstractDB {
         final boolean mysql = database.equals("mysql");
         final Statement stmt = connection.createStatement();
         if (mysql) {
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot` (" + "`id` INT(11) NOT NULL AUTO_INCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`tier` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)," + "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_ratings` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot` (" + "`id` INT(11) NOT NULL AUTO_INCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`tier` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)," + "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_ratings` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
             if (add_constraint) {
-                stmt.addBatch("ALTER TABLE `" + PREFIX + "plot_settings` ADD CONSTRAINT `" + PREFIX + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `" + PREFIX + "plot` (`id`) ON DELETE CASCADE");
+                stmt.addBatch("ALTER TABLE `" + prefix + "plot_settings` ADD CONSTRAINT `" + prefix + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `" + prefix + "plot` (`id`) ON DELETE CASCADE");
             }
 
         } else {
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`tier` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + PREFIX + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`tier` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + prefix + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
         }
         stmt.executeBatch();
         stmt.clearBatch();
@@ -284,22 +282,22 @@ public class SQLManager extends AbstractDB {
                 PreparedStatement stmt = null;
                 final int id = getId(world, plot.id);
                 try {
-                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_settings` WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_helpers` WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_trusted` WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_comments` WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
-                    stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot` WHERE `id` = ?");
+                    stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
@@ -324,7 +322,7 @@ public class SQLManager extends AbstractDB {
             public void run() {
                 PreparedStatement stmt = null;
                 try {
-                    stmt = connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
+                    stmt = connection.prepareStatement("INSERT INTO `" + prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
@@ -340,7 +338,7 @@ public class SQLManager extends AbstractDB {
     public int getId(final String world, final PlotId id2) {
         PreparedStatement stmt = null;
         try {
-            stmt = connection.prepareStatement("SELECT `id` FROM `" + PREFIX + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
+            stmt = connection.prepareStatement("SELECT `id` FROM `" + prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
             stmt.setInt(1, id2.x);
             stmt.setInt(2, id2.y);
             stmt.setString(3, world);
@@ -365,22 +363,22 @@ public class SQLManager extends AbstractDB {
         final LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
         try {
             final DatabaseMetaData data = connection.getMetaData();
-            ResultSet rs = data.getColumns(null, null, PREFIX + "plot", "plot_id");
+            ResultSet rs = data.getColumns(null, null, prefix + "plot", "plot_id");
             final boolean execute = rs.next();
             if (execute) {
                 final Statement statement = connection.createStatement();
-                statement.addBatch("ALTER IGNORE TABLE `" + PREFIX + "plot` ADD `plot_id_x` int(11) DEFAULT 0");
-                statement.addBatch("ALTER IGNORE TABLE `" + PREFIX + "plot` ADD `plot_id_z` int(11) DEFAULT 0");
-                statement.addBatch("UPDATE `" + PREFIX + "plot` SET\n" + "    `plot_id_x` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," + "        `plot_id`" + "    )," + "    `plot_id_z` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," + "        NULL" + "    )");
-                statement.addBatch("ALTER TABLE `" + PREFIX + "plot` DROP `plot_id`");
-                statement.addBatch("ALTER IGNORE TABLE `" + PREFIX + "plot_settings` ADD `flags` VARCHAR(512) DEFAULT NULL");
+                statement.addBatch("ALTER IGNORE TABLE `" + prefix + "plot` ADD `plot_id_x` int(11) DEFAULT 0");
+                statement.addBatch("ALTER IGNORE TABLE `" + prefix + "plot` ADD `plot_id_z` int(11) DEFAULT 0");
+                statement.addBatch("UPDATE `" + prefix + "plot` SET\n" + "    `plot_id_x` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," + "        `plot_id`" + "    )," + "    `plot_id_z` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," + "        NULL" + "    )");
+                statement.addBatch("ALTER TABLE `" + prefix + "plot` DROP `plot_id`");
+                statement.addBatch("ALTER IGNORE TABLE `" + prefix + "plot_settings` ADD `flags` VARCHAR(512) DEFAULT NULL");
                 statement.executeBatch();
                 statement.close();
             }
-            rs = data.getColumns(null, null, PREFIX + "plot_settings", "merged");
+            rs = data.getColumns(null, null, prefix + "plot_settings", "merged");
             if (!rs.next()) {
                 final Statement statement = connection.createStatement();
-                statement.addBatch("ALTER TABLE `" + PREFIX + "plot_settings` ADD `merged` int(11) DEFAULT NULL");
+                statement.addBatch("ALTER TABLE `" + prefix + "plot_settings` ADD `merged` int(11) DEFAULT NULL");
                 statement.executeBatch();
                 statement.close();
             }
@@ -404,7 +402,7 @@ public class SQLManager extends AbstractDB {
              * Getting plots
              */
             stmt = connection.createStatement();
-            ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world` FROM `" + PREFIX + "plot`");
+            ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world` FROM `" + prefix + "plot`");
             PlotId plot_id;
             int id;
             Plot p;
@@ -436,7 +434,7 @@ public class SQLManager extends AbstractDB {
              * Getting helpers
              */
 //            stmt = connection.createStatement();
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_helpers`");
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + prefix + "plot_helpers`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 o = r.getString("user_uuid");
@@ -458,7 +456,7 @@ public class SQLManager extends AbstractDB {
              * Getting trusted
              */
 //            stmt = connection.createStatement();
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_trusted`");
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + prefix + "plot_trusted`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 o = r.getString("user_uuid");
@@ -480,7 +478,7 @@ public class SQLManager extends AbstractDB {
              * Getting denied
              */
 //            stmt = connection.createStatement();
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + PREFIX + "plot_denied`");
+            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + prefix + "plot_denied`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 o = r.getString("user_uuid");
@@ -499,7 +497,7 @@ public class SQLManager extends AbstractDB {
 //            stmt.close();
 
 //            stmt = connection.createStatement();
-            r = stmt.executeQuery("SELECT * FROM `" + PREFIX + "plot_settings`");
+            r = stmt.executeQuery("SELECT * FROM `" + prefix + "plot_settings`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 final Plot plot = plots.get(id);
@@ -611,7 +609,7 @@ public class SQLManager extends AbstractDB {
                     for (int i = 0; i < 4; ++i) {
                         n = (n << 1) + (merged[i] ? 1 : 0);
                     }
-                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + PREFIX + "plot_settings` SET `merged` = ? WHERE `plot_plot_id` = ?");
+                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + prefix + "plot_settings` SET `merged` = ? WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, n);
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
@@ -640,7 +638,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + PREFIX + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string.toString());
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
@@ -665,7 +663,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + PREFIX + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                    final PreparedStatement stmt = connection.prepareStatement("UPDATE `" + prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string);
                     stmt.setInt(2, id);
                     stmt.execute();
@@ -690,7 +688,7 @@ public class SQLManager extends AbstractDB {
             public void run() {
                 PreparedStatement stmt = null;
                 try {
-                    stmt = connection.prepareStatement("UPDATE `" + PREFIX + "plot_settings` SET `alias` = ?  WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("UPDATE `" + prefix + "plot_settings` SET `alias` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, alias);
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
@@ -720,7 +718,7 @@ public class SQLManager extends AbstractDB {
 
                 // Fetching a list of plot IDs for a world
                 try {
-                    final PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `" + PREFIX + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?");
+                    final PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `" + prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?");
                     stmt.setString(1, world);
                     stmt.setInt(2, id.x);
                     stmt.setInt(3, id.y);
@@ -745,23 +743,23 @@ public class SQLManager extends AbstractDB {
                             prefix = " OR `plot_plot_id` = ";
                         }
 
-                        PreparedStatement stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
+                        PreparedStatement stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();
@@ -785,7 +783,7 @@ public class SQLManager extends AbstractDB {
 
                 // Fetching a list of plot IDs for a world
                 try {
-                    final PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `" + PREFIX + "plot` WHERE `world` = ?");
+                    final PreparedStatement stmt = connection.prepareStatement("SELECT `id` FROM `" + prefix + "plot` WHERE `world` = ?");
                     stmt.setString(1, world);
                     final ResultSet result = stmt.executeQuery();
                     while (result.next()) {
@@ -808,23 +806,23 @@ public class SQLManager extends AbstractDB {
                             prefix = " OR `plot_plot_id` = ";
                         }
 
-                        PreparedStatement stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
+                        PreparedStatement stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();
 
-                        stmt = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot` WHERE `world` = ?");
+                        stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `world` = ?");
                         stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();
@@ -851,7 +849,7 @@ public class SQLManager extends AbstractDB {
             public void run() {
                 PreparedStatement stmt = null;
                 try {
-                    stmt = connection.prepareStatement("UPDATE `" + PREFIX + "plot_settings` SET `position` = ?  WHERE `plot_plot_id` = ?");
+                    stmt = connection.prepareStatement("UPDATE `" + prefix + "plot_settings` SET `position` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, position);
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
@@ -873,7 +871,7 @@ public class SQLManager extends AbstractDB {
         final HashMap<String, Object> h = new HashMap<String, Object>();
         PreparedStatement stmt = null;
         try {
-            stmt = connection.prepareStatement("SELECT * FROM `" + PREFIX + "plot_settings` WHERE `plot_plot_id` = ?");
+            stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = ?");
             stmt.setInt(1, id);
             final ResultSet r = stmt.executeQuery();
             String var;
@@ -922,7 +920,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `tier` = ? AND `sender` = ?");
+                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `tier` = ? AND `sender` = ?");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, comment.comment);
                     statement.setInt(3, comment.tier);
@@ -941,7 +939,7 @@ public class SQLManager extends AbstractDB {
     public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
         final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
         try {
-            final PreparedStatement statement = connection.prepareStatement("SELECT `*` FROM `" + PREFIX + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` = ?");
+            final PreparedStatement statement = connection.prepareStatement("SELECT `*` FROM `" + prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` = ?");
             statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
             statement.setInt(2, tier);
             final ResultSet set = statement.executeQuery();
@@ -966,7 +964,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_comments` (`plot_plot_id`, `comment`, `tier`, `sender`) VALUES(?,?,?,?)");
+                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_comments` (`plot_plot_id`, `comment`, `tier`, `sender`) VALUES(?,?,?,?)");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, comment.comment);
                     statement.setInt(3, comment.tier);
@@ -992,7 +990,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
+                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1015,7 +1013,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
+                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1038,7 +1036,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
+                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1061,7 +1059,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
+                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1084,7 +1082,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + PREFIX + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
+                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1107,7 +1105,7 @@ public class SQLManager extends AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + PREFIX + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
+                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
                     statement.setString(2, player.getUniqueId().toString());
                     statement.executeUpdate();
@@ -1123,7 +1121,7 @@ public class SQLManager extends AbstractDB {
     @Override
     public double getRatings(final Plot plot) {
         try {
-            final PreparedStatement statement = connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + PREFIX + "plot_ratings` WHERE `plot_plot_id` = ? ");
+            final PreparedStatement statement = connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + prefix + "plot_ratings` WHERE `plot_plot_id` = ? ");
             statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
             final ResultSet set = statement.executeQuery();
             double rating = 0;

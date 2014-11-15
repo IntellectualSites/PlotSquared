@@ -78,7 +78,7 @@ public class Database extends SubCommand {
         }
         String type = new StringComparsion(args[0], new String[]{"mysql", "sqlite"}).getBestMatch().toLowerCase();
         switch (type) {
-            case "MYSQL":
+            case "mysql":
                 if (args.length < 6) {
                     return sendMessage(plr, "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
                 }
@@ -140,7 +140,7 @@ public class Database extends SubCommand {
                 }
                 insertPlots(manager, requester, n);
                 break;
-            case "SQLITE":
+            case "sqlite":
                 if (args.length < 2) {
                     return sendMessage(plr, "/plot database sqlite [file name]");
                 }
