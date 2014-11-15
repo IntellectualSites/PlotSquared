@@ -22,7 +22,6 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.database.DBFunc;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -114,8 +113,6 @@ public class Plot implements Cloneable {
      * @param plotBiome
      * @param helpers
      * @param denied
-     * @param changeTime
-     * @param time
      * @param merged
      */
     public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Flag[] flags, final String world, final boolean[] merged) {
@@ -286,7 +283,7 @@ public class Plot implements Cloneable {
     public void clear(final Player plr) {
         PlotHelper.clear(plr, this);
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

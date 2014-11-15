@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.C;
 import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.database.DBFunc;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecated", "javadoc"})
@@ -74,12 +75,17 @@ public class Rate extends SubCommand {
             return true;
         }
         // TODO implement check for already rated
-        final boolean rated = false;
+        boolean rated = true;
+        try {
+            DBFunc.getRatings(plot);
+        } catch (Exception e) {
+            rated = false;
+        }
+
         if (rated) {
             sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
         }
-        // TODO actually do something...
-        final boolean success = false;
+        boolean success = true;
         if (success) {
             sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
         } else {

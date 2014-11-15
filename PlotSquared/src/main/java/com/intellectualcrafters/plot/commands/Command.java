@@ -131,6 +131,7 @@ public enum Command {
     DEOP("deop", "deadmin"),
     BAN("ban", "block"),
     UNBAN("unban", "unblock"),
+    DATABASE("database", "convert"),
     TP("tp", "tp");
     /**
      *

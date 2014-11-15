@@ -1252,13 +1252,13 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
+    }
+
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
-    }
-
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
     }
 
     /**
@@ -1345,7 +1345,7 @@ public class PlotMain extends JavaPlugin {
         if (Settings.DB.USE_MYSQL) {
             // TODO: Remake SQLManager
             if (DBFunc.dbManager == null) {
-                DBFunc.dbManager = new SQLManager();
+                DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
             }
             try {
                 mySQL = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
@@ -1385,7 +1385,7 @@ public class PlotMain extends JavaPlugin {
             // DBFunc.dbManager = new MongoManager();
             sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
-            DBFunc.dbManager = new SQLManager();
+            DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
             try {
                 connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
                 {

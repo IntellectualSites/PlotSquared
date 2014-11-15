@@ -40,6 +40,10 @@ public class DBFunc {
     public static AbstractDB dbManager;
 
     // TODO MongoDB @Brandon
+    /**
+     *
+     */
+    public static UUID everyone = UUID.fromString("1-1-3-3-7");
 
     /**
      * Set Plot owner
@@ -101,10 +105,6 @@ public class DBFunc {
         dbManager.createPlotSettings(id, plot);
     }
 
-    public static int getId(final String world, final PlotId id2) {
-        return dbManager.getId(world, id2);
-    }
-
     /**
      * Get a plot id
      *
@@ -121,6 +121,9 @@ public class DBFunc {
      * catch(SQLException e) { e.printStackTrace(); } return Integer.MAX_VALUE;
      * }
      */
+    public static int getId(final String world, final PlotId id2) {
+        return dbManager.getId(world, id2);
+    }
 
     /**
      * @return
@@ -170,11 +173,6 @@ public class DBFunc {
     }
 
     /**
-     *
-     */
-    public static UUID everyone = UUID.fromString("1-1-3-3-7");
-
-    /**
      * @param plot
      * @param comment
      */
@@ -192,7 +190,6 @@ public class DBFunc {
 
     /**
      * @param plot
-     * @param comment
      */
     public static ArrayList<PlotComment> getCommenst(final String world, final Plot plot, final int tier) {
         return dbManager.getComments(world, plot, tier);

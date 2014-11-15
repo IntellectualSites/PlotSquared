@@ -21,49 +21,42 @@
 
 package com.intellectualcrafters.plot.database;
 
-import static com.intellectualcrafters.plot.PlotMain.connection;
-import static com.intellectualcrafters.plot.Settings.DB.PREFIX;
-
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.Logger.LogLevel;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
 
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.FlagManager;
-import com.intellectualcrafters.plot.Logger;
-import com.intellectualcrafters.plot.Logger.LogLevel;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotComment;
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotId;
-import com.intellectualcrafters.plot.PlotMain;
+import java.sql.*;
+import java.util.*;
 
 /**
  * @author Citymonstret
  */
 public class SQLManager extends AbstractDB {
 
-    // TODO MongoDB @Brandon
+    private static Connection connection;
+    private static String PREFIX;
+    public static final String SET_OWNER =
+            "UPDATE `" + PREFIX + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
 
-    public static final String SET_OWNER = "UPDATE `" + PREFIX + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
-    public static final String GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + PREFIX + "plot`";
-    public static final String CREATE_PLOTS = "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
-    public static final String CREATE_SETTINGS = "INSERT INTO `" + PREFIX + "plot_settings` (`plot_plot_id`) values ";
-    public static final String CREATE_HELPERS = "INSERT INTO `" + PREFIX + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
-    public static final String CREATE_PLOT = "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+    // TODO MongoDB @Brandon
+    public static final String GET_ALL_PLOTS =
+            "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + PREFIX + "plot`";
+    public static final String CREATE_PLOTS =
+            "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
+    public static final String CREATE_SETTINGS =
+            "INSERT INTO `" + PREFIX + "plot_settings` (`plot_plot_id`) values ";
+    public static final String CREATE_HELPERS =
+            "INSERT INTO `" + PREFIX + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
+    public static final String CREATE_PLOT =
+            "INSERT INTO `" + PREFIX + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+
+    public SQLManager(Connection c, String p) {
+        connection = c;
+        PREFIX = p;
+    }
 
     /**
      * Set Plot owner
@@ -567,7 +560,7 @@ public class SQLManager extends AbstractDB {
                         if (element.contains(":")) {
                             final String[] split = element.split(":");
                             try {
-                                flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("´", ",")));
+                                flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("ï¿½", ",")));
                             } catch (final Exception e) {
                                 exception = true;
                             }
