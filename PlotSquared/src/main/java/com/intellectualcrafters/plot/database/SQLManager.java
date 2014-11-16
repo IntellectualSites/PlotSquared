@@ -36,31 +36,47 @@ import java.util.*;
  */
 public class SQLManager extends AbstractDB {
 
-    private Connection connection;
-    private String prefix;
-    public final String SET_OWNER =
-            "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
-    // TODO MongoDB @Brandon
-    public String GET_ALL_PLOTS =
-            "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + prefix + "plot`";
-    public String CREATE_PLOTS =
-            "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
-    public String CREATE_SETTINGS =
-            "INSERT INTO `" + prefix + "plot_settings` (`plot_plot_id`) values ";
-    public String CREATE_HELPERS =
-            "INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
-    public String CREATE_PLOT =
-            "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+    // Public final
+    public final String SET_OWNER;
+    public final String GET_ALL_PLOTS;
+    public final String CREATE_PLOTS;
+    public final String CREATE_SETTINGS;
+    public final String CREATE_HELPERS;
+    public final String CREATE_PLOT;
+    // Private Final
+    private final Connection connection;
+    private final String prefix;
+
+    /**
+     * Constructor
+     *
+     * @param c connection
+     * @param p prefix
+     */
     public SQLManager(Connection c, String p) {
+        // Private final
         connection = c;
         prefix = p;
+        // Public final
+        SET_OWNER =
+                "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
+        GET_ALL_PLOTS =
+                "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + prefix + "plot`";
+        CREATE_PLOTS =
+                "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
+        CREATE_SETTINGS =
+                "INSERT INTO `" + prefix + "plot_settings` (`plot_plot_id`) values ";
+        CREATE_HELPERS =
+                "INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
+        CREATE_PLOT =
+                "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
     }
 
     /**
      * Set Plot owner
      *
-     * @param plot
-     * @param uuid
+     * @param plot Plot Object
+     * @param uuid Owner UUID
      */
     @Override
     public void setOwner(final Plot plot, final UUID uuid) {
@@ -123,7 +139,7 @@ public class SQLManager extends AbstractDB {
         }
 
         // add plot settings
-        final Integer[] ids = helpers.keySet().toArray(new Integer[0]);
+        final Integer[] ids = helpers.keySet().toArray(new Integer[helpers.keySet().size()]);
         StringBuilder statement = new StringBuilder(CREATE_SETTINGS);
         for (int i = 0; i < (ids.length - 1); i++) {
             statement.append("(?),");

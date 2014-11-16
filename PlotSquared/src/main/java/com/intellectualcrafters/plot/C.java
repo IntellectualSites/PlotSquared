@@ -381,6 +381,7 @@ public enum C {
      * Custom
      */
     CUSTOM_STRING("-");
+    static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
     private static TranslationManager manager;
     private static TranslationFile defaultFile;
     /**
@@ -422,9 +423,8 @@ public enum C {
         // FIXME: generating a blank file
         // FIXME: translations aren't customizable
         // FIXME: Some messages still have the %arg stuff in them
-        
         if (defaultFile == null) {
-            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), TranslationLanguage.englishAmerican, "PlotSquared", manager)
+            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), lang, "PlotSquared", manager)
                     .read();
         }
         // register everything in this class
@@ -455,7 +455,7 @@ public enum C {
      * @return translated if exists else default
      */
     public String s() {
-        return manager.getTranslated(toString(), TranslationLanguage.englishAmerican).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        return manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         /*
         if (PlotMain.translations != null) {
             final String t = PlotMain.translations.getString(this.toString());
