@@ -76,21 +76,23 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public static void PlayerMove(final PlayerMoveEvent event) {
         try {
             final Player player = event.getPlayer();
-            final Location from = event.getFrom();
-            final Location to = event.getTo();
-            if ((from.getBlockX() != to.getBlockX()) || (from.getBlockZ() != to.getBlockZ())) {
+            final Location f = event.getFrom();
+            final Location t = event.getTo();
+            final Location q = new Location(t.getWorld(), t.getBlockX(), 64, t.getZ());
+            
+            if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
                 if (!isPlotWorld(player.getWorld())) {
                     return;
                 }
-                if (enteredPlot(from, to)) {
-                    final Plot plot = getCurrentPlot(event.getTo());
+                if (enteredPlot(f, q)) {
+                    final Plot plot = getCurrentPlot(q);
                     final boolean admin = PlotMain.hasPermission(player, "plots.admin");
                     if (plot.deny_entry(player) && !admin) {
                         event.setCancelled(true);
                         return;
                     }
                     plotEntry(player, plot);
-                } else if (leftPlot(event.getFrom(), event.getTo())) {
+                } else if (leftPlot(f, q)) {
                     final Plot plot = getCurrentPlot(event.getFrom());
                     plotExit(player, plot);
                 }
@@ -474,7 +476,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
         if (isPlotWorld(q)) {
             if (isInPlot(q)) {
-                final Plot plot = getCurrentPlot(event.getTo());
+                final Plot plot = getCurrentPlot(q);
                 if (plot.deny_entry(event.getPlayer())) {
                     PlayerFunctions.sendMessage(event.getPlayer(), C.YOU_BE_DENIED);
                     event.setCancelled(true);
@@ -489,7 +491,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     plotExit(event.getPlayer(), plot);
                 }
             }
-            if ((event.getTo().getBlockX() >= 29999999) || (event.getTo().getBlockX() <= -29999999) || (event.getTo().getBlockZ() >= 29999999) || (event.getTo().getBlockZ() <= -29999999)) {
+            if ((q.getBlockX() >= 29999999) || (q.getBlockX() <= -29999999) || (q.getBlockZ() >= 29999999) || (q.getBlockZ() <= -29999999)) {
                 event.setCancelled(true);
             }
         }
