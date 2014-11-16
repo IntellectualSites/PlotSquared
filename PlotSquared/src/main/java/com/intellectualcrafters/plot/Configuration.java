@@ -26,7 +26,14 @@ import org.bukkit.block.Biome;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main Configuration Utility
+ *
+ * @author Empire92
+ */
+@SuppressWarnings("unused")
 public class Configuration {
+
     public static final SettingValue STRING = new SettingValue("STRING") {
         @Override
         public boolean validateValue(final String string) {
@@ -55,7 +62,7 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                Integer.parseInt(string);
+                int x = Integer.parseInt(string);
                 return true;
             } catch (final Exception e) {
                 return false;
@@ -72,7 +79,7 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                Boolean.parseBoolean(string);
+                boolean b = Boolean.parseBoolean(string);
                 return true;
             } catch (final Exception e) {
                 return false;
@@ -89,7 +96,7 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                Double.parseDouble(string);
+                double d = Double.parseDouble(string);
                 return true;
             } catch (final Exception e) {
                 return false;
@@ -125,7 +132,7 @@ public class Configuration {
 
         @Override
         public Object parseObject(final Object object) {
-            return ((Biome) object).toString();
+            return (((Biome) object)).toString();
         }
     };
 
@@ -135,10 +142,12 @@ public class Configuration {
             try {
                 if (string.contains(":")) {
                     final String[] split = string.split(":");
-                    Short.parseShort(split[0]);
-                    Short.parseShort(split[1]);
+                    short s =
+                            Short.parseShort(split[0]);
+                    short z =
+                            Short.parseShort(split[1]);
                 } else {
-                    Short.parseShort(string);
+                    short s = Short.parseShort(string);
                 }
                 return true;
             } catch (final Exception e) {
@@ -161,22 +170,6 @@ public class Configuration {
             return ((PlotBlock) object).id + ":" + ((PlotBlock) object).data;
         }
     };
-
-    public static int gcd(final int a, final int b) {
-        if (b == 0) {
-            return a;
-        }
-        return gcd(b, a % b);
-    }
-
-    private static int gcd(final int[] a) {
-        int result = a[0];
-        for (int i = 1; i < a.length; i++) {
-            result = gcd(result, a[i]);
-        }
-        return result;
-    }
-
     public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
         @Override
         public boolean validateValue(final String string) {
@@ -184,15 +177,15 @@ public class Configuration {
                 for (String block : string.split(",")) {
                     if (block.contains("%")) {
                         final String[] split = block.split("%");
-                        Integer.parseInt(split[0]);
+                        int i = Integer.parseInt(split[0]);
                         block = split[1];
                     }
                     if (block.contains(":")) {
                         final String[] split = block.split(":");
-                        Short.parseShort(split[0]);
-                        Short.parseShort(split[1]);
+                        short s = Short.parseShort(split[0]);
+                        short z = Short.parseShort(split[1]);
                     } else {
-                        Short.parseShort(block);
+                        short s = Short.parseShort(block);
                     }
                 }
                 return true;
@@ -204,7 +197,7 @@ public class Configuration {
         @Override
         public Object parseString(final String string) {
             final String[] blocks = string.split(",");
-            final ArrayList<PlotBlock> parsedvalues = new ArrayList<PlotBlock>();
+            final ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
 
             final PlotBlock[] values = new PlotBlock[blocks.length];
             final int[] counts = new int[blocks.length];
@@ -239,18 +232,33 @@ public class Configuration {
                 }
             }
 
-            return parsedvalues.toArray(new PlotBlock[0]);
+            return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
         }
 
         @Override
         public Object parseObject(final Object object) {
-            final List<String> list = new ArrayList<String>();
+            final List<String> list = new ArrayList<>();
             for (final PlotBlock block : (PlotBlock[]) object) {
                 list.add((block.id + ":" + (block.data)));
             }
             return list;
         }
     };
+
+    public static int gcd(final int a, final int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+
+    private static int gcd(final int[] a) {
+        int result = a[0];
+        for (int i = 1; i < a.length; i++) {
+            result = gcd(result, a[i]);
+        }
+        return result;
+    }
 
     /**
      * Create your own SettingValue object to make the management of plotworld

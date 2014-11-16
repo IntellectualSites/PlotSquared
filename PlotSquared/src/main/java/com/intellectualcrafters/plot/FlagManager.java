@@ -27,28 +27,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Flag Manager Utility
+ *
+ * @author Citymonstret
+ * @author Empire92
+ */
+@SuppressWarnings("unused")
 public class FlagManager {
 
     // TODO add some flags
     // - Plot clear interval
     // - Mob cap
     // - customized plot composition
-    // - greeting / leaving message
-    // OR in the flag command, allow users to set worldguard flags.
 
-    private static ArrayList<AbstractFlag> flags = new ArrayList<AbstractFlag>();
+    private static ArrayList<AbstractFlag> flags = new ArrayList<>();
 
     /**
      * Register an AbstractFlag with PlotSquared
      *
-     * @param flag
-     * @return
+     * @param flag Flag to register
+     * @return success?
      */
     public static boolean addFlag(final AbstractFlag flag) {
-        if (getFlag(flag.getKey()) != null) {
-            return false;
-        }
-        return flags.add(flag);
+        return getFlag(flag.getKey()) == null && flags.add(flag);
     }
 
     public static Flag[] removeFlag(final Flag[] flags, final String r) {
@@ -101,7 +103,7 @@ public class FlagManager {
     /**
      * Get an AbstractFlag by a string Returns null if flag does not exist
      *
-     * @param string
+     * @param string Flag Key
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(final String string) {
@@ -116,7 +118,7 @@ public class FlagManager {
     /**
      * Get an AbstractFlag by a string
      *
-     * @param string
+     * @param string Flag Key
      * @param create If to create the flag if it does not exist
      * @return AbstractFlag
      */
@@ -132,7 +134,7 @@ public class FlagManager {
     /**
      * Remove a registered AbstractFlag
      *
-     * @param flag
+     * @param flag Flag Key
      * @return boolean Result of operation
      */
     public static boolean removeFlag(final AbstractFlag flag) {
@@ -155,7 +157,7 @@ public class FlagManager {
     /**
      * Get the flags for a plot
      *
-     * @param plot
+     * @param plot Plot to search in
      * @return List (AbstractFlag)
      */
     public static List<AbstractFlag> getPlotFlags(final Plot plot) {

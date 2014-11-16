@@ -55,8 +55,8 @@ public class PlayerFunctions {
         return (lp - cu) > 30l;
     }
 
-    public static ArrayList<PlotId> getPlotSelectionIds(final World world, final PlotId pos1, final PlotId pos2) {
-        final ArrayList<PlotId> myplots = new ArrayList<PlotId>();
+    public static ArrayList<PlotId> getPlotSelectionIds(@SuppressWarnings("unused") final World world, final PlotId pos1, final PlotId pos2) {
+        final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 myplots.add(new PlotId(x, y));
@@ -78,7 +78,7 @@ public class PlayerFunctions {
             pos2 = getTopPlot(world, plot2).id;
         }
 
-        final ArrayList<PlotId> myplots = new ArrayList<PlotId>();
+        final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 myplots.add(new PlotId(x, y));
@@ -193,7 +193,7 @@ public class PlayerFunctions {
     public static Set<Plot> getPlayerPlots(final World world, final Player plr) {
         final Set<Plot> p = PlotMain.getPlots(world, plr);
         if (p == null) {
-            return new HashSet<Plot>();
+            return new HashSet<>();
         }
         return p;
     }

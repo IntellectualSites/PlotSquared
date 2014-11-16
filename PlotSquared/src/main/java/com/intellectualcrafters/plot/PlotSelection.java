@@ -29,8 +29,11 @@ import org.bukkit.block.Block;
 import java.util.HashMap;
 
 /**
- * Created by Citymonstret on 2014-10-12.
+ * Created 2014-10-12 for PlotSquared
+ *
+ * @author Citymonstret
  */
+@SuppressWarnings("deprecation")
 public class PlotSelection {
 
     public static HashMap<String, PlotSelection> currentSelection = new HashMap<>();
@@ -66,18 +69,6 @@ public class PlotSelection {
         }
 
         // Yay :D
-    }
-
-    public PlotBlock[] getBlocks() {
-        return this.plotBlocks;
-    }
-
-    public int getWidth() {
-        return this.width;
-    }
-
-    public Plot getPlot() {
-        return this.plot;
     }
 
     public static boolean swap(final World world, final PlotId id1, final PlotId id2) {
@@ -131,6 +122,18 @@ public class PlotSelection {
 
     private static BlockWrapper wrapBlock(final Block block) {
         return new BlockWrapper(block.getX(), block.getY(), block.getZ(), (short) block.getTypeId(), block.getData());
+    }
+
+    public PlotBlock[] getBlocks() {
+        return this.plotBlocks;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public Plot getPlot() {
+        return this.plot;
     }
 
     public void paste(final World world, final Plot plot) {

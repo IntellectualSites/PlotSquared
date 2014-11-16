@@ -24,7 +24,10 @@ package com.intellectualcrafters.plot;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Created by Citymonstret on 2014-09-23.
+ * Created 2014-09-23 for PlotSquared
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class AbstractFlag {
 

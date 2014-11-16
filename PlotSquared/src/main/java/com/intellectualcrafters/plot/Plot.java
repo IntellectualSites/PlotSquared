@@ -97,7 +97,7 @@ public class Plot implements Cloneable {
         this.deny_entry = this.owner == null;
         this.helpers = helpers;
         this.denied = denied;
-        this.trusted = new ArrayList<UUID>();
+        this.trusted = new ArrayList<>();
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;

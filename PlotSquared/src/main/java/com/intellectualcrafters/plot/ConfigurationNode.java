@@ -30,10 +30,10 @@ public class ConfigurationNode {
     private final String constant;
     private final Object default_value;
     private final String description;
-    private Object value;
     private final SettingValue type;
+    private Object value;
 
-    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
+    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, @SuppressWarnings("unused") final boolean required) {
         this.constant = constant;
         this.default_value = default_value;
         this.description = description;
@@ -48,10 +48,7 @@ public class ConfigurationNode {
     public boolean isValid(final String string) {
         try {
             final Object result = this.type.parseString(string);
-            if (result == null) {
-                return false;
-            }
-            return true;
+            return result != null;
         } catch (final Exception e) {
             return false;
         }
