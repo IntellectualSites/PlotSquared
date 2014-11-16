@@ -71,7 +71,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * settings.properties
      */
-    public static File               configFile;
+    public static File configFile;
     /**
      * The main configuration file
      */
@@ -84,7 +84,11 @@ public class PlotMain extends JavaPlugin {
      * Contains storage options
      */
     public static YamlConfiguration storage;
-    public static int storage_ver = 1;
+    /**
+     * Storage version
+     */
+    public static int storage_ver =
+            1;
     /**
      * MySQL Connection
      */
@@ -92,20 +96,42 @@ public class PlotMain extends JavaPlugin {
     /**
      * WorldEdit object
      */
-    public static WorldEditPlugin worldEdit = null;
+    public static WorldEditPlugin worldEdit =
+            null;
     /**
      * BarAPI object
      */
-    public static BarAPI barAPI = null;
+    public static BarAPI barAPI =
+            null;
     /**
-     * World Guard
+     * World Guard Object
      */
-    public static WorldGuardPlugin   worldGuard         = null;
-    public static WorldGuardListener worldGuardListener = null;
-    public static Economy            economy;
-    public static boolean            useEconomy         = false;
-    public static HashMap<Material, String> booleanFlags = new HashMap<>();
+    public static WorldGuardPlugin worldGuard =
+            null;
+    /**
+     * World Guard Listener
+     */
+    public static WorldGuardListener worldGuardListener =
+            null;
+    /**
+     * Economy Object (vault)
+     */
+    public static Economy
+            economy;
+    /**
+     * Use Economy?
+     */
+    public static boolean useEconomy =
+            false;
+    /**
+     * Boolean Flags (material)
+     */
+    public static HashMap<Material, String> booleanFlags =
+            new HashMap<>();
 
+    /**
+     * Initialize the material flags
+     */
     static {
         booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
         booleanFlags.put(Material.IRON_DOOR, "iron_door");
@@ -120,6 +146,7 @@ public class PlotMain extends JavaPlugin {
         booleanFlags.put(Material.DISPENSER, "dispenser");
         booleanFlags.put(Material.DROPPER, "dropper");
     }
+
     /**
      * The UUID Saver
      */
@@ -137,8 +164,14 @@ public class PlotMain extends JavaPlugin {
      * All loaded plot worlds
      */
     private static HashMap<String, PlotWorld> worlds = new HashMap<>();
+    /**
+     * All world managers
+     */
     private static HashMap<String, PlotManager> managers = new HashMap<>();
 
+    /**
+     * Check for expired plots
+     */
     public static void checkForExpiredPlots() {
         final JavaPlugin plugin = PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -1252,13 +1285,13 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
-    }
-
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
+    }
+
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
@@ -1325,6 +1358,9 @@ public class PlotMain extends JavaPlugin {
             } catch (final Exception e) {
                 sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
             }
+        } else {
+            // We should at least make them feel bad.
+            sendConsoleSenderMessage("Using metrics will allow us to improve the plugin\nPlease consider it :)");
         }
 
         // Kill mobs on roads?
@@ -1337,6 +1373,7 @@ public class PlotMain extends JavaPlugin {
             Broadcast(C.ENABLED);
         }
 
+        // Add tables to this one, if we create more :D
         final String[] tables = new String[]{
                 "plot_trusted", "plot_ratings", "plot_comments"
         };
@@ -1415,6 +1452,10 @@ public class PlotMain extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        // We should not start the plugin if
+        // plotme is present. Maybe do this
+        // earlier, and no register any commands
+        // nor listeners, just run the converter?
         if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
             try {
                 new PlotMeConverter(this).runAsync();
