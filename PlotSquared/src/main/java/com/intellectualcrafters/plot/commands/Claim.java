@@ -21,13 +21,20 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetBlockFast;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,48 +45,6 @@ public class Claim extends SubCommand {
 
     public Claim() {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
-    }
-
-    @Override
-    public boolean execute(final Player plr, final String... args) {
-        String schematic = "";
-        if (args.length >= 1) {
-            schematic = args[0];
-        }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            return sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (PlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= PlayerFunctions.getAllowedPlots(plr)) {
-            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
-        }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (plot.hasOwner()) {
-            return sendMessage(plr, C.PLOT_IS_CLAIMED);
-        }
-        final PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && world.USE_ECONOMY) {
-            final double cost = world.PLOT_PRICE;
-            if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
-                if (economy.getBalance(plr) < cost) {
-                    return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
-                }
-                economy.withdrawPlayer(plr, cost);
-                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
-            }
-        }
-        if (!schematic.equals("")) {
-            if (world.SCHEMATIC_CLAIM_SPECIFY) {
-                if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
-                    return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
-                }
-                if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
-                    return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
-                }
-            }
-        }
-
-        return !claimPlot(plr, plot, false, schematic) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
@@ -128,5 +93,47 @@ public class Claim extends SubCommand {
             }
         }
         return event.isCancelled();
+    }
+
+    @Override
+    public boolean execute(final Player plr, final String... args) {
+        String schematic = "";
+        if (args.length >= 1) {
+            schematic = args[0];
+        }
+        if (!PlayerFunctions.isInPlot(plr)) {
+            return sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if (PlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= PlayerFunctions.getAllowedPlots(plr)) {
+            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+        }
+        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        if (plot.hasOwner()) {
+            return sendMessage(plr, C.PLOT_IS_CLAIMED);
+        }
+        final PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+        if (PlotMain.useEconomy && world.USE_ECONOMY) {
+            final double cost = world.PLOT_PRICE;
+            if (cost > 0d) {
+                final Economy economy = PlotMain.economy;
+                if (economy.getBalance(plr) < cost) {
+                    return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                }
+                economy.withdrawPlayer(plr, cost);
+                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+        if (!schematic.equals("")) {
+            if (world.SCHEMATIC_CLAIM_SPECIFY) {
+                if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
+                    return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                }
+                if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                    return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                }
+            }
+        }
+
+        return !claimPlot(plr, plot, false, schematic) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

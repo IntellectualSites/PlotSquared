@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.7.9-R0.2" level="project" />
+    <orderEntry type="library" name="Maven: net.milkbowl.vault:Vault:1.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q:worldedit:6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.7R2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:10.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
+    <orderEntry type="library" name="Maven: me.confuser:BarAPI:2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q:worldguard:5.9" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: com.worldcretornica:PlotMe:0.13d-SNAPSHOT">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/plotme-0.13f.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Maven: junit:junit:4.11" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+  </component>
+</module>
+

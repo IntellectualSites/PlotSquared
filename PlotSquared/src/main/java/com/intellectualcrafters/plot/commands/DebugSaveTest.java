@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

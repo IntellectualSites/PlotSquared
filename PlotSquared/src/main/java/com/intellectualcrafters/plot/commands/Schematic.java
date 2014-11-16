@@ -22,9 +22,14 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.SchematicHandler.DataCollection;
-import com.intellectualcrafters.plot.SchematicHandler.Dimension;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
+import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

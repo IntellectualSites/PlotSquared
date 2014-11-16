@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -52,6 +52,10 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         this.plot = plot;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -73,10 +77,6 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
      */
     public Plot getPlot() {
         return this.plot;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

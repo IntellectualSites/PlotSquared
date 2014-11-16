@@ -21,9 +21,15 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -211,7 +217,6 @@ public class PlotListener {
                 final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
                 Bukkit.getPluginManager().callEvent(callEvent);
             }
-            PlayerFunctions.sendMessage(player, plot.settings.getJoinMessage());
         }
     }
 
@@ -232,7 +237,6 @@ public class PlotListener {
         if (plot.settings.getFlag("weather") != null) {
             player.resetPlayerWeather();
         }
-        PlayerFunctions.sendMessage(player, plot.settings.getLeaveMessage());
     }
 
     public static boolean getFlagValue(final String value) {

@@ -21,16 +21,23 @@
 
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.Logger.LogLevel;
 import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.*;
 import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -1285,13 +1292,13 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
+    }
+
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
-    }
-
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
     }
 
     /**

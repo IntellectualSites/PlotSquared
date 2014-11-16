@@ -21,7 +21,10 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -487,7 +490,6 @@ public class DefaultPlotManager extends PlotManager {
             }
         }
 
-        plot.settings.setBiome(biome);
         PlotMain.updatePlot(plot);
         PlotHelper.refreshPlotChunks(world, plot);
 

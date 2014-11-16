@@ -21,9 +21,19 @@
 
 package com.intellectualcrafters.plot.api;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -108,8 +118,8 @@ public class PlotAPI {
      * @param plotWorld Plot World Object
      * @param manager   World Manager
      * @see com.intellectualcrafters.plot.PlotMain#addPlotWorld(String,
-     * com.intellectualcrafters.plot.PlotWorld,
-     * com.intellectualcrafters.plot.PlotManager)
+     * com.intellectualcrafters.plot.object.PlotWorld,
+     * com.intellectualcrafters.plot.object.PlotManager)
      */
     public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
         PlotMain.addPlotWorld(world, plotWorld, manager);

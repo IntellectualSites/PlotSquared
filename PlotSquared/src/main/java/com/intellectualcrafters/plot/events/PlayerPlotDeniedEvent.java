@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -53,6 +53,10 @@ public class PlayerPlotDeniedEvent extends Event {
         this.plot = plot;
         this.added = added;
         this.player = player;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -89,10 +93,6 @@ public class PlayerPlotDeniedEvent extends Event {
      */
     public Player getInitiator() {
         return this.initiator;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

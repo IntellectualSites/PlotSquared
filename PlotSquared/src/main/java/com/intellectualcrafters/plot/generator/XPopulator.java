@@ -21,8 +21,8 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotBlock;
-import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -41,9 +41,53 @@ public class XPopulator extends BlockPopulator {
      * information about how a BlockPopulator works.
      */
 
+    private final DefaultPlotWorld plotworld;
+    int plotsize;
+    int pathsize;
+    PlotBlock wall;
+    PlotBlock wallfilling;
+    PlotBlock floor1;
+    PlotBlock floor2;
+    int size;
+    Biome biome;
+    int roadheight;
+    int wallheight;
+    int plotheight;
+    PlotBlock[] plotfloors;
+    PlotBlock[] filling;
     private int X;
     private int Z;
     private long state;
+    private double pathWidthLower;
+
+    public XPopulator(final PlotWorld pw) {
+        this.plotworld = (DefaultPlotWorld) pw;
+
+        // save configuration
+
+        this.plotsize = this.plotworld.PLOT_WIDTH;
+        this.pathsize = this.plotworld.ROAD_WIDTH;
+
+        this.floor1 = this.plotworld.ROAD_BLOCK;
+        this.floor2 = this.plotworld.ROAD_STRIPES;
+
+        this.wallfilling = this.plotworld.WALL_FILLING;
+        this.size = this.pathsize + this.plotsize;
+        this.wall = this.plotworld.WALL_BLOCK;
+
+        this.plotfloors = this.plotworld.TOP_BLOCK;
+        this.filling = this.plotworld.MAIN_BLOCK;
+
+        this.wallheight = this.plotworld.WALL_HEIGHT;
+        this.roadheight = this.plotworld.ROAD_HEIGHT;
+        this.plotheight = this.plotworld.PLOT_HEIGHT;
+
+        if ((this.pathsize % 2) == 0) {
+            this.pathWidthLower = Math.floor(this.pathsize / 2) - 1;
+        } else {
+            this.pathWidthLower = Math.floor(this.pathsize / 2);
+        }
+    }
 
     public final long nextLong() {
         final long a = this.state;
@@ -100,52 +144,6 @@ public class XPopulator extends BlockPopulator {
             return new short[]{Short.parseShort(split[0]), Short.parseShort(split[1])};
         }
         return new short[]{Short.parseShort(block), 0};
-    }
-
-    int plotsize;
-    int pathsize;
-    PlotBlock wall;
-    PlotBlock wallfilling;
-    PlotBlock floor1;
-    PlotBlock floor2;
-    int size;
-    Biome biome;
-    int roadheight;
-    int wallheight;
-    int plotheight;
-    PlotBlock[] plotfloors;
-    PlotBlock[] filling;
-
-    private double pathWidthLower;
-    private final DefaultPlotWorld plotworld;
-
-    public XPopulator(final PlotWorld pw) {
-        this.plotworld = (DefaultPlotWorld) pw;
-
-        // save configuration
-
-        this.plotsize = this.plotworld.PLOT_WIDTH;
-        this.pathsize = this.plotworld.ROAD_WIDTH;
-
-        this.floor1 = this.plotworld.ROAD_BLOCK;
-        this.floor2 = this.plotworld.ROAD_STRIPES;
-
-        this.wallfilling = this.plotworld.WALL_FILLING;
-        this.size = this.pathsize + this.plotsize;
-        this.wall = this.plotworld.WALL_BLOCK;
-
-        this.plotfloors = this.plotworld.TOP_BLOCK;
-        this.filling = this.plotworld.MAIN_BLOCK;
-
-        this.wallheight = this.plotworld.WALL_HEIGHT;
-        this.roadheight = this.plotworld.ROAD_HEIGHT;
-        this.plotheight = this.plotworld.PLOT_HEIGHT;
-
-        if ((this.pathsize % 2) == 0) {
-            this.pathWidthLower = Math.floor(this.pathsize / 2) - 1;
-        } else {
-            this.pathWidthLower = Math.floor(this.pathsize / 2);
-        }
     }
 
     @Override

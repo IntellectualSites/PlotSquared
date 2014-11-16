@@ -22,7 +22,7 @@
 package com.intellectualcrafters.plot.uuid;
 
 import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.StringWrapper;
+import com.intellectualcrafters.plot.object.StringWrapper;
 
 import java.util.UUID;
 

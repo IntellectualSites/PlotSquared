@@ -21,7 +21,11 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 

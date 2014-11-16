@@ -21,11 +21,22 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHomePosition;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.StringComparison;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -225,7 +236,7 @@ public class Set extends SubCommand {
                 return true;
             }
 
-            final Biome biome = Biome.valueOf(new StringComparsion(args[1], Biome.values()).getBestMatch());
+            final Biome biome = Biome.valueOf(new StringComparison(args[1], Biome.values()).getBestMatch());
             /*
              * for (Biome b : Biome.values()) {
              * if (b.toString().equalsIgnoreCase(args[1])) {
@@ -443,7 +454,7 @@ public class Set extends SubCommand {
     }
 
     private Material getMaterial(final String input, final List<Material> blocks) {
-        return Material.valueOf(new StringComparsion(input, blocks.toArray()).getBestMatch());
+        return Material.valueOf(new StringComparison(input, blocks.toArray()).getBestMatch());
     }
 
     private String getBlockList(final List<Material> blocks) {

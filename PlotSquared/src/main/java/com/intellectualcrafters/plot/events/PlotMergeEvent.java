@@ -21,8 +21,8 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -35,9 +35,8 @@ import java.util.ArrayList;
  */
 public class PlotMergeEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
-    private boolean cancelled;
-
     private final ArrayList<PlotId> plots;
+    private boolean cancelled;
     private Plot plot;
     private World world;
 
@@ -49,6 +48,10 @@ public class PlotMergeEvent extends Event implements Cancellable {
      */
     public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
         this.plots = plots;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -71,10 +74,6 @@ public class PlotMergeEvent extends Event implements Cancellable {
 
     public World getWorld() {
         return this.world;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

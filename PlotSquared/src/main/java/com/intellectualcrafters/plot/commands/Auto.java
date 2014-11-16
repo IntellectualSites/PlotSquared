@@ -21,22 +21,57 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
+    public static PlotId lastPlot = new PlotId(0, 0);
+
     public Auto() {
         super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
     }
 
-    public static PlotId lastPlot = new PlotId(0, 0);
+    public static PlotId getNextPlot(final PlotId id, final int step) {
+        final int absX = Math.abs(id.x);
+        final int absY = Math.abs(id.y);
+        if (absX > absY) {
+            if (id.x > 0) {
+                return new PlotId(id.x, id.y + 1);
+            } else {
+                return new PlotId(id.x, id.y - 1);
+            }
+        } else if (absY > absX) {
+            if (id.y > 0) {
+                return new PlotId(id.x - 1, id.y);
+            } else {
+                return new PlotId(id.x + 1, id.y);
+            }
+        } else {
+            if (id.x.equals(id.y) && (id.x > 0)) {
+                return new PlotId(id.x, id.y + step);
+            }
+            if (id.x == absX) {
+                return new PlotId(id.x, id.y + 1);
+            }
+            if (id.y == absY) {
+                return new PlotId(id.x, id.y - 1);
+            }
+            return new PlotId(id.x + 1, id.y);
+        }
+    }
 
     // TODO auto claim a mega plot with schematic
     @Override
@@ -131,10 +166,10 @@ public class Auto extends SubCommand {
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
         } else {
-            
-            // Why does this need fixing, it should work fine for auto claiming mega plots 
-            
-            
+
+            // Why does this need fixing, it should work fine for auto claiming mega plots
+
+
             while (!br) {
                 final PlotId start = getNextPlot(Auto.lastPlot, 1);
 
@@ -170,35 +205,6 @@ public class Auto extends SubCommand {
             }
         }
         return true;
-    }
-
-    public static PlotId getNextPlot(final PlotId id, final int step) {
-        final int absX = Math.abs(id.x);
-        final int absY = Math.abs(id.y);
-        if (absX > absY) {
-            if (id.x > 0) {
-                return new PlotId(id.x, id.y + 1);
-            } else {
-                return new PlotId(id.x, id.y - 1);
-            }
-        } else if (absY > absX) {
-            if (id.y > 0) {
-                return new PlotId(id.x - 1, id.y);
-            } else {
-                return new PlotId(id.x + 1, id.y);
-            }
-        } else {
-            if (id.x.equals(id.y) && (id.x > 0)) {
-                return new PlotId(id.x, id.y + step);
-            }
-            if (id.x == absX) {
-                return new PlotId(id.x, id.y + 1);
-            }
-            if (id.y == absY) {
-                return new PlotId(id.x, id.y - 1);
-            }
-            return new PlotId(id.x + 1, id.y);
-        }
     }
 
     public boolean isUnowned(final World world, final PlotId pos1, final PlotId pos2) {

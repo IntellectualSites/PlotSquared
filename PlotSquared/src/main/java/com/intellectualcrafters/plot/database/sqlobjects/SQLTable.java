@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.database.sqlobjects;
 
-import com.intellectualcrafters.plot.Settings;
+import com.intellectualcrafters.plot.config.Settings;
 
 /**
  * Created by Citymonstret on 2014-10-28.

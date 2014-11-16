@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotWorld;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.entity.Player;
 
 public class Reload extends SubCommand {

@@ -1,8 +1,8 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.entity.Player;
 
 /**

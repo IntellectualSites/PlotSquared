@@ -22,10 +22,10 @@
 package com.intellectualcrafters.plot.database;
 
 import com.google.common.base.Charsets;
-import com.intellectualcrafters.plot.PlotHomePosition;
-import com.intellectualcrafters.plot.PlotId;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.object.PlotHomePosition;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
@@ -73,7 +73,7 @@ public class PlotMeConverter {
             public void run() {
                 sendMessage("&7Conversion has started");
                 sendMessage("7Caching playerdata...");
-                final ArrayList<com.intellectualcrafters.plot.Plot> createdPlots =
+                final ArrayList<com.intellectualcrafters.plot.object.Plot> createdPlots =
                         new ArrayList<>();
                 // Online Mode
                 final boolean online =
@@ -193,14 +193,14 @@ public class PlotMeConverter {
                                 e.printStackTrace();
                             }
                             final PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
-                            com.intellectualcrafters.plot.Plot pl;
+                            com.intellectualcrafters.plot.object.Plot pl;
                             if (online) {
-                                pl = new com.intellectualcrafters.plot.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied,
+                                pl = new com.intellectualcrafters.plot.object.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied,
 
                                         "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             } else {
                                 final String owner = plot.getOwner();
-                                pl = new com.intellectualcrafters.plot.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied,
+                                pl = new com.intellectualcrafters.plot.object.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied,
 
                                         "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             }

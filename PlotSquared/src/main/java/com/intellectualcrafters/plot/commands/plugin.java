@@ -21,8 +21,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

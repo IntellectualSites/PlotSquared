@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.PlayerFunctions;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.StringComparsion;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -225,7 +225,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
 
             /* Let's try to get a proper usage string */
-            String command = new StringComparsion(args[0], commands).getBestMatch();
+            String command = new StringComparison(args[0], commands).getBestMatch();
             return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             //PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new StringComparsion(args[0], commands).getBestMatch());
         }

@@ -21,8 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 

@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.C;
-import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.UUIDHandler;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

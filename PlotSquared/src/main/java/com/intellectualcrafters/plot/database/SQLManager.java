@@ -21,8 +21,15 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.*;
-import com.intellectualcrafters.plot.Logger.LogLevel;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotHomePosition;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -529,10 +536,6 @@ public class SQLManager extends AbstractDB {
                             }
                         }
                     }
-                    if (biome == null) {
-                        biome = Biome.FOREST;
-                    }
-                    plot.settings.setBiome(biome);
 
                     final String alias = r.getString("alias");
                     if (alias != null) {

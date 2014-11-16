@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.Flag;
-import com.intellectualcrafters.plot.Plot;
-import com.intellectualcrafters.plot.PlotComment;
-import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;

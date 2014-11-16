@@ -21,22 +21,19 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotBlock;
-import com.intellectualcrafters.plot.PlotGenerator;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.PlotManager;
-import com.intellectualcrafters.plot.PlotWorld;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author Citymonstret The default generator is very messy, as we have decided
@@ -48,19 +45,9 @@ import com.intellectualcrafters.plot.PlotWorld;
  */
 public class WorldGenerator extends PlotGenerator {
     /**
-     * result object is returned for each generated chunk, do stuff to it
-     */
-    short[][] result;
-
-    /**
-     * plotworld object
-     */
-    DefaultPlotWorld plotworld = null;
-    /**
      * Set to static to re-use the same managet for all Default World Generators
      */
     private static PlotManager manager = null;
-
     /**
      * Some generator specific variables (implementation dependent)
      */
@@ -77,6 +64,48 @@ public class WorldGenerator extends PlotGenerator {
     final int plotheight;
     final PlotBlock[] plotfloors;
     final PlotBlock[] filling;
+    /**
+     * result object is returned for each generated chunk, do stuff to it
+     */
+    short[][] result;
+    /**
+     * plotworld object
+     */
+    DefaultPlotWorld plotworld = null;
+    /**
+     * Faster sudo-random number generator than java.util.random
+     */
+    private long state;
+
+    /**
+     * Initialize variables, and create plotworld object used in calculations
+     */
+    public WorldGenerator(final String world) {
+        super(world);
+
+        if (this.plotworld == null) {
+            this.plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
+        }
+
+        this.plotsize = this.plotworld.PLOT_WIDTH;
+
+        this.pathsize = this.plotworld.ROAD_WIDTH;
+
+        this.floor1 = this.plotworld.ROAD_BLOCK;
+        this.floor2 = this.plotworld.ROAD_STRIPES;
+
+        this.wallfilling = this.plotworld.WALL_FILLING;
+        this.size = this.pathsize + this.plotsize;
+        this.wall = this.plotworld.WALL_BLOCK;
+
+        this.plotfloors = this.plotworld.TOP_BLOCK;
+        this.filling = this.plotworld.MAIN_BLOCK;
+        this.wallheight = this.plotworld.WALL_HEIGHT;
+        this.roadheight = this.plotworld.ROAD_HEIGHT;
+        this.plotheight = this.plotworld.PLOT_HEIGHT;
+
+        this.biome = this.plotworld.PLOT_BIOME;
+    }
 
     /**
      * Return the plot manager for this type of generator, or create one For
@@ -108,11 +137,6 @@ public class WorldGenerator extends PlotGenerator {
         this.plotworld = new DefaultPlotWorld(world);
         return this.plotworld;
     }
-
-    /**
-     * Faster sudo-random number generator than java.util.random
-     */
-    private long state;
 
     public final long nextLong() {
         final long a = this.state;
@@ -170,36 +194,6 @@ public class WorldGenerator extends PlotGenerator {
             result[y >> 4] = new short[4096];
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
-    }
-
-    /**
-     * Initialize variables, and create plotworld object used in calculations
-     */
-    public WorldGenerator(final String world) {
-        super(world);
-
-        if (this.plotworld == null) {
-            this.plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
-        }
-
-        this.plotsize = this.plotworld.PLOT_WIDTH;
-
-        this.pathsize = this.plotworld.ROAD_WIDTH;
-
-        this.floor1 = this.plotworld.ROAD_BLOCK;
-        this.floor2 = this.plotworld.ROAD_STRIPES;
-
-        this.wallfilling = this.plotworld.WALL_FILLING;
-        this.size = this.pathsize + this.plotsize;
-        this.wall = this.plotworld.WALL_BLOCK;
-
-        this.plotfloors = this.plotworld.TOP_BLOCK;
-        this.filling = this.plotworld.MAIN_BLOCK;
-        this.wallheight = this.plotworld.WALL_HEIGHT;
-        this.roadheight = this.plotworld.ROAD_HEIGHT;
-        this.plotheight = this.plotworld.PLOT_HEIGHT;
-
-        this.biome = this.plotworld.PLOT_BIOME;
     }
 
     /**

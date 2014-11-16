@@ -21,8 +21,8 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

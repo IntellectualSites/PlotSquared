@@ -21,7 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -146,7 +152,7 @@ public class list extends SubCommand {
             return true;
         } else {
             // execute(plr);
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparsion(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
+            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
         }
     }

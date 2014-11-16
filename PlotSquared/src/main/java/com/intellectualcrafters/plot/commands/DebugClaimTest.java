@@ -22,9 +22,15 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -43,6 +49,26 @@ public class DebugClaimTest extends SubCommand {
 
     public DebugClaimTest() {
         super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "debugclaimtest", CommandCategory.DEBUG, false);
+    }
+
+    @SuppressWarnings("unused")
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
+        return claimPlot(player, plot, teleport, "");
+    }
+
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
+        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            PlotHelper.createPlot(player, plot);
+            PlotHelper.setSign(player, plot);
+            PlayerFunctions.sendMessage(player, C.CLAIMED);
+            if (teleport) {
+                PlotMain.teleportPlayer(player, player.getLocation(), plot);
+            }
+            plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));
+        }
+        return event.isCancelled();
     }
 
     @Override
@@ -149,25 +175,5 @@ public class DebugClaimTest extends SubCommand {
             PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;
-    }
-
-    @SuppressWarnings("unused")
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
-        return claimPlot(player, plot, teleport, "");
-    }
-
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            PlotHelper.createPlot(player, plot);
-            PlotHelper.setSign(player, plot);
-            PlayerFunctions.sendMessage(player, C.CLAIMED);
-            if (teleport) {
-                PlotMain.teleportPlayer(player, player.getLocation(), plot);
-            }
-            plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));
-        }
-        return event.isCancelled();
     }
 }

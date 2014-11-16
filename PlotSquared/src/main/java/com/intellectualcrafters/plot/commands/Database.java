@@ -1,11 +1,11 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlayerFunctions;
-import com.intellectualcrafters.plot.Plot;
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.StringComparsion;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -76,7 +76,7 @@ public class Database extends SubCommand {
         if (args.length < 1) {
             return sendMessage(plr, "/plot database [sqlite/mysql]");
         }
-        String type = new StringComparsion(args[0], new String[]{"mysql", "sqlite"}).getBestMatch().toLowerCase();
+        String type = new StringComparison(args[0], new String[]{"mysql", "sqlite"}).getBestMatch().toLowerCase();
         switch (type) {
             case "mysql":
                 if (args.length < 6) {

@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.PlotId;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -34,10 +34,9 @@ import java.util.ArrayList;
  */
 public class PlotUnlinkEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
-    private boolean cancelled;
-
     private final ArrayList<PlotId> plots;
     private final World world;
+    private boolean cancelled;
 
     /**
      * Called when a mega-plot is unlinked.
@@ -48,6 +47,10 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots) {
         this.plots = plots;
         this.world = world;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -61,10 +64,6 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
 
     public World getWorld() {
         return this.world;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

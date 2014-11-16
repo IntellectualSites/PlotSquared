@@ -21,9 +21,13 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.*;
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.Setup;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -79,7 +83,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Location f = event.getFrom();
             final Location t = event.getTo();
             final Location q = new Location(t.getWorld(), t.getBlockX(), 64, t.getZ());
-            
+
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
                 if (!isPlotWorld(player.getWorld())) {
                     return;
@@ -421,20 +425,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBlockIgnite(final BlockIgniteEvent e) {
         final World world;
-        
+
         if (e.getBlock() != null) {
             world = e.getBlock().getWorld();
-        }
-        else if (e.getIgnitingEntity() != null) {
+        } else if (e.getIgnitingEntity() != null) {
             world = e.getIgnitingEntity().getWorld();
-        }
-        else if (e.getPlayer() != null) {
+        } else if (e.getPlayer() != null) {
             world = e.getPlayer().getWorld();
-        }
-        else {
+        } else {
             return;
         }
-        
+
         if (!isPlotWorld(world)) {
             return;
         }
