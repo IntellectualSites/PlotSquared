@@ -32,6 +32,11 @@ import org.apache.commons.lang.StringUtils;
 public class AbstractFlag {
 
     private final String key;
+    private final FlagValue<?> value;
+
+    public AbstractFlag(final String key) {
+        this(key, new FlagValue.StringValue());
+    }
 
     /**
      * AbstractFlag is a parameter used in creating a new Flag
@@ -39,7 +44,7 @@ public class AbstractFlag {
      * @param key The key must be alphabetical characters and <= 16 characters
      *            in length
      */
-    public AbstractFlag(final String key) {
+    public AbstractFlag(final String key, final FlagValue<?> value) {
         if (!StringUtils.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
             throw new IllegalArgumentException("Flag must be alphabetic characters");
         }
@@ -47,14 +52,15 @@ public class AbstractFlag {
             throw new IllegalArgumentException("Key must be <= 16 characters");
         }
         this.key = key.toLowerCase();
+        this.value = new FlagValue.StringValue();
     }
 
     public String parseValue(final String value) {
-        return value;
+        return this.value.parse(value).toString();
     }
 
     public String getValueDesc() {
-        return "Flag value must be alphanumeric";
+        return this.value.getDescription();
     }
 
     /**
