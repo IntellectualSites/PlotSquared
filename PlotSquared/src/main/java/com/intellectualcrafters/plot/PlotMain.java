@@ -1292,13 +1292,13 @@ public class PlotMain extends JavaPlugin {
         return plots;
     }
 
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
-    }
-
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
+    }
+
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
@@ -1486,6 +1486,8 @@ public class PlotMain extends JavaPlugin {
 
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        // Info Inventory
+        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         // Flag runnable
         PlotPlusListener.startRunnable(this);
         // Flag+ listener
