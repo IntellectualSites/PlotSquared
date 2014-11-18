@@ -52,14 +52,19 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-09-24.
+ * Created 2014-09-24 for PlotSquared
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class WorldGuardListener implements Listener {
-    public ArrayList<String> str_flags = new ArrayList<String>();
-    public ArrayList<Flag<?>> flags = new ArrayList<Flag<?>>();
+    public final ArrayList<String> str_flags;
+    public final ArrayList<Flag<?>> flags;
 
     public WorldGuardListener(final PlotMain plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        str_flags = new ArrayList<>();
+        flags = new ArrayList<>();
         for (final Flag<?> flag : DefaultFlag.getFlags()) {
             this.str_flags.add(flag.getName());
             this.flags.add(flag);
@@ -127,6 +132,7 @@ public class WorldGuardListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMerge(final PlotMergeEvent event) {
         final Plot main = event.getPlot();
@@ -134,7 +140,7 @@ public class WorldGuardListener implements Listener {
         final World world = event.getWorld();
         final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
         for (final PlotId plot : plots) {
-            if (!plot.equals(main)) {
+            if (!plot.equals(main.getId())) {
                 manager.removeRegion(plot.x + "-" + plot.y);
             }
         }
@@ -160,6 +166,7 @@ public class WorldGuardListener implements Listener {
         manager.addRegion(rg);
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onUnlink(final PlotUnlinkEvent event) {
         try {
@@ -193,10 +200,11 @@ public class WorldGuardListener implements Listener {
                 manager.addRegion(rg);
             }
         } catch (final Exception e) {
-
+            //
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler
     public void onPlotClaim(final PlayerClaimPlotEvent event) {
         try {
@@ -219,10 +227,11 @@ public class WorldGuardListener implements Listener {
 
             manager.addRegion(region);
         } catch (final Exception e) {
-
+            //
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler
     public void onPlotDelete(final PlotDeleteEvent event) {
         try {
@@ -232,7 +241,7 @@ public class WorldGuardListener implements Listener {
             final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.removeRegion(plot.x + "-" + plot.y);
         } catch (final Exception e) {
-
+            //
         }
     }
 }

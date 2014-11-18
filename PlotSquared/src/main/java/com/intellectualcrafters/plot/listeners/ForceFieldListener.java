@@ -36,7 +36,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Citymonstret on 2014-10-24.
+ * @author Citymonstret
  */
 public class ForceFieldListener implements Listener {
 
@@ -46,7 +46,7 @@ public class ForceFieldListener implements Listener {
 
     private Set<Player> getNearbyPlayers(final Player player, final Plot plot) {
         final Set<Player> players = new HashSet<>();
-        Player oPlayer = null;
+        Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
@@ -59,7 +59,7 @@ public class ForceFieldListener implements Listener {
     }
 
     private Player hasNearbyPermitted(final Player player, final Plot plot) {
-        Player oPlayer = null;
+        Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
@@ -95,6 +95,7 @@ public class ForceFieldListener implements Listener {
     }
 
     @EventHandler
+    @SuppressWarnings("unused")
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
         if (!PlayerFunctions.isInPlot(player)) {

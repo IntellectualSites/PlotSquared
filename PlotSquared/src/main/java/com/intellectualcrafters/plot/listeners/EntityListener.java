@@ -27,9 +27,13 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * @author Empire92
+ */
+@SuppressWarnings({"unused", "deprecation"})
 public class EntityListener implements Listener {
 
-    public static HashMap<String, HashMap<Plot, HashSet<Integer>>> entityMap = new HashMap<String, HashMap<Plot, HashSet<Integer>>>();
+    public static HashMap<String, HashMap<Plot, HashSet<Integer>>> entityMap = new HashMap<>();
 
     public EntityListener() {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -169,9 +173,7 @@ public class EntityListener implements Listener {
                     entityMap.get(w).get(plot).remove(id);
                 }
             } else {
-                Iterator<Entry<Plot, HashSet<Integer>>> it = entityMap.get(w).entrySet().iterator();
-                while (it.hasNext()) {
-                    Entry<Plot, HashSet<Integer>> n = it.next();
+                for (Entry<Plot, HashSet<Integer>> n : entityMap.get(w).entrySet()) {
                     n.getValue().remove(id);
                 }
             }

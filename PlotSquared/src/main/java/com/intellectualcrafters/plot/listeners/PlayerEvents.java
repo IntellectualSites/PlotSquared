@@ -56,6 +56,7 @@ import java.util.Set;
  * Player Events involving plots
  *
  * @author Citymonstret
+ * @author Empire92
  */
 @SuppressWarnings("unused")
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {

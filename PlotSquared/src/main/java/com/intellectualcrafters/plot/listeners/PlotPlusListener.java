@@ -43,8 +43,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 /**
- * Created by Citymonstret on 2014-10-30.
+ * Created 2014-10-30 for PlotSquared
+ *
+ * @author Citymonstret
  */
+@SuppressWarnings({"deprecation", "unused"})
 public class PlotPlusListener extends PlotListener implements Listener {
 
     private static HashMap<String, Interval> feedRunnable = new HashMap<>();
@@ -239,7 +242,9 @@ public class PlotPlusListener extends PlotListener implements Listener {
     }
 
     /**
-     * Created by Citymonstret on 2014-10-22.
+     * Record Meta Class
+     *
+     * @author Citymonstret
      */
     public static class RecordMeta {
         public static List<RecordMeta> metaList = new ArrayList<>();
@@ -261,6 +266,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
         @Override
         public String toString() {
             return this.name;
+        }
+
+        @Override
+        public int hashCode() {
+            return this.name.hashCode();
         }
 
         public Material getMaterial() {

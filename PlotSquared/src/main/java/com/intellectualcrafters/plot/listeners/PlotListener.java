@@ -41,8 +41,10 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-21.
+ * @author Citymonstret
+ * @author Empire92
  */
+@SuppressWarnings({"unused", "deprecation"})
 public class PlotListener {
 
     public static void textures(final Player p) {
@@ -87,37 +89,19 @@ public class PlotListener {
                 event.setCancelled(true);
             }
         }
-        return;
     }
 
     public static boolean enteredPlot(final Location l1, final Location l2) {
         final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
         final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-        if (p2 == null) {
-            return false;
-        }
-        if (p1 == null) {
-            return true;
-        }
-        if (p1.equals(p2)) {
-            return false;
-        }
-        return true;
+        return p2 != null && (p1 == null || !p1.equals(p2));
+
     }
 
     public static boolean leftPlot(final Location l1, final Location l2) {
         final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
         final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-        if (p1 == null) {
-            return false;
-        }
-        if (p2 == null) {
-            return true;
-        }
-        if (p1.equals(p2)) {
-            return false;
-        }
-        return true;
+        return p1 != null && (p2 == null || !p1.equals(p2));
     }
 
     public static boolean isPlotWorld(final Location l) {

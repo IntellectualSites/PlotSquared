@@ -45,11 +45,13 @@ import java.util.Set;
 
 /**
  * @author Citymonstret
+ * @author Empire92
  */
+@SuppressWarnings("unused")
 public class WorldEditListener implements Listener {
 
-    public final Set<String> blockedcmds = new HashSet<String>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
-    public final Set<String> restrictedcmds = new HashSet<String>(Arrays.asList("/up", "//up", "/worldedit:up"));
+    public final Set<String> blockedcmds = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
+    public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
     private boolean isPlotWorld(final Location l) {
         return (PlotMain.isPlotWorld(l.getWorld()));
@@ -93,7 +95,7 @@ public class WorldEditListener implements Listener {
         }
         final Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
         if (plot != null) {
-            if ((plot != null) && plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+            if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                 PWE.setMask(p, l);
             }
         }
@@ -173,7 +175,6 @@ public class WorldEditListener implements Listener {
         }
         if ((f != null) && isPlotWorld(f)) {
             PWE.removeMask(p);
-            return;
         }
     }
 

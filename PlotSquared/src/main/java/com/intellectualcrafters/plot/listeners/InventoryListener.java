@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.object.InfoInventory;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,16 @@ public class InventoryListener implements Listener {
         final Player player = (Player) event.getWhoClicked();
         if (inventory.getHolder() instanceof InfoInventory) {
             // TODO: Do stuff
+            switch (event.getSlot()) {
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    PlayerFunctions.sendMessage(player, "This is not implemented yet");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
