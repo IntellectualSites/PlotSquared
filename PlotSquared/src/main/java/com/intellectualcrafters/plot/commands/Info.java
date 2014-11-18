@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.InfoInventory;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -89,6 +90,11 @@ public class Info extends SubCommand {
                 PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
+        }
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("inv")) {
+            new InfoInventory(plot, player).build().display();
+            return true;
         }
 
         final boolean hasOwner = plot.hasOwner();
