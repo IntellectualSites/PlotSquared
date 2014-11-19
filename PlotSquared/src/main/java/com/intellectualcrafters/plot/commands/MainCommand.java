@@ -111,7 +111,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                         .replace("%category%", category.toString())
                         .replace("%current%", "" + (page + 1))
                         .replace("%max%", "" + (totalPages + 1))
-                        .replace("%dis%", "" + perPage)
+                        .replace("%dis%", "" + (commands.size() % perPage))
                         .replace("%total%", "" + commands.size())
         );
 
