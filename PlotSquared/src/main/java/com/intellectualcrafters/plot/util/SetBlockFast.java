@@ -30,6 +30,8 @@ import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 /**
  * SetBlockFast class<br>
  * Used to do fast world editing
+ *
+ * @author Empire92
  */
 public class SetBlockFast {
 
@@ -43,6 +45,11 @@ public class SetBlockFast {
     private static RefMethod methodA;
     private static RefMethod methodGetById;
 
+    /**
+     * Constructor
+     *
+     * @throws NoSuchMethodException
+     */
     public SetBlockFast() throws NoSuchMethodException {
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
@@ -50,6 +57,17 @@ public class SetBlockFast {
         methodGetById = classBlock.getMethod("getById", int.class);
     }
 
+    /**
+     * Set the block at the location
+     * @param world World in which the block should be set
+     * @param x X Coordinate
+     * @param y Y Coordinate
+     * @param z Z Coordinate
+     * @param blockId Block ID
+     * @param data Block Data Value
+     * @return true
+     * @throws NoSuchMethodException
+     */
     public static boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) throws NoSuchMethodException {
 
         final Object w = methodGetHandle.of(world).call();
@@ -59,6 +77,10 @@ public class SetBlockFast {
         return true;
     }
 
+    /**
+     * Update chunks
+     * @param player Player whose chunks we're updating
+     */
     public static void update(final org.bukkit.entity.Player player) {
         final int distance = Bukkit.getViewDistance() + 1;
         for (int cx = -distance; cx < distance; cx++) {

@@ -26,6 +26,11 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 
+/**
+ * Configuration Node
+ *
+ * @author Empire92
+ */
 public class ConfigurationNode {
     private final String constant;
     private final Object default_value;

@@ -30,17 +30,57 @@ import java.util.UUID;
  * @author Citymonstret
  */
 public interface UUIDSaver {
+
+    /**
+     * Populate the default list
+     */
     public void globalPopulate();
 
+    /**
+     * Save the UUIDs
+     *
+     * @param biMap Map containing names and UUIDs
+     */
     public void globalSave(final BiMap<StringWrapper, UUID> biMap);
 
+    /**
+     * Save a single UUIDSet
+     *
+     * @param set Set to save
+     */
     public void save(final UUIDSet set);
 
+    /**
+     * Get a single UUIDSet
+     *
+     * @param name Username
+     * @return UUID Set
+     */
     public UUIDSet get(final String name);
 
+    /**
+     * Get a single UUIDSet
+     *
+     * @param uuid UUID
+     * @return UUID Set
+     */
     public UUIDSet get(final UUID uuid);
 
+    /**
+     * Fetch uuid from mojang servers
+     *
+     * @param name Username
+     * @return uuid
+     * @throws Exception
+     */
     public UUID mojangUUID(final String name) throws Exception;
 
+    /**
+     * Fetch username from mojang servers
+     *
+     * @param uuid UUID
+     * @return username
+     * @throws Exception
+     */
     public String mojangName(final UUID uuid) throws Exception;
 }

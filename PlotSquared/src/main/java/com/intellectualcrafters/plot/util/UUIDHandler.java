@@ -71,7 +71,8 @@ public class UUIDHandler {
     private static boolean online = Bukkit.getServer().getOnlineMode();
 
     /**
-     * Map containing names and UUID's
+     * Map containing names and UUIDs
+     * @see com.google.common.collect.BiMap
      */
     private static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
@@ -79,6 +80,7 @@ public class UUIDHandler {
      * Get the map containing all names/uuids
      *
      * @return map with names + uuids
+     * @see com.google.common.collect.BiMap
      */
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return uuidMap;
@@ -89,6 +91,7 @@ public class UUIDHandler {
      *
      * @param uuid to check
      * @return true of the uuid is cached
+     * @see com.google.common.collect.BiMap#containsValue(Object)
      */
     public static boolean uuidExists(final UUID uuid) {
         return uuidMap.containsValue(uuid);
@@ -99,6 +102,7 @@ public class UUIDHandler {
      *
      * @param name to check
      * @return true of the name is cached
+     * @see com.google.common.collect.BiMap#containsKey(Object)
      */
     public static boolean nameExists(final StringWrapper name) {
         return uuidMap.containsKey(name);

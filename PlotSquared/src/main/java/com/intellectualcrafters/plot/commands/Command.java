@@ -25,6 +25,7 @@ package com.intellectualcrafters.plot.commands;
  * Created by Citymonstret on 2014-08-03.
  *
  * @author Citymonstret
+ * @author Empire92
  */
 public enum Command {
 
@@ -37,6 +38,9 @@ public enum Command {
     // - /plot rate <number out of 10>
     // - /plot list <some parameter to list the most popular, and highest rated
     // plots>
+    /**
+     *
+     */
     SWAP("swap"),
     /**
      *
@@ -58,7 +62,13 @@ public enum Command {
      *
      */
     PASTE("paste"),
+    /**
+     *
+     */
     CLIPBOARD("clipboard", "cboard"),
+    /**
+     *
+     */
     COPY("copy"),
     /**
      *
@@ -128,26 +138,44 @@ public enum Command {
      *
      */
     OP("op", "admin"),
+    /**
+     *
+     */
     DEOP("deop", "deadmin"),
+    /**
+     *
+     */
     BAN("ban", "block"),
+    /**
+     *
+     */
     UNBAN("unban", "unblock"),
+    /**
+     *
+     */
     DATABASE("database", "convert"),
+    /**
+     *
+     */
     TP("tp", "tp");
-    /**
-     *
-     */
-    private String command;
-    /**
-     *
-     */
-    private String alias;
-    /**
-     *
-     */
-    private CommandPermission permission;
 
     /**
-     * @param command
+     * Command
+     */
+    private final String command;
+
+    /**
+     * Alias
+     */
+    private final String alias;
+
+    /**
+     * Permission Node
+     */
+    private final CommandPermission permission;
+
+    /**
+     * @param command Command "name" (/plot [cmd])
      */
     Command(final String command) {
         this.command = command;
@@ -156,8 +184,8 @@ public enum Command {
     }
 
     /**
-     * @param command
-     * @param permission
+     * @param command    Command "name" (/plot [cmd])
+     * @param permission Command Permission Node
      */
     Command(final String command, final CommandPermission permission) {
         this.command = command;
@@ -166,8 +194,8 @@ public enum Command {
     }
 
     /**
-     * @param command
-     * @param alias
+     * @param command Command "name" (/plot [cmd])
+     * @param alias   Command Alias
      */
     Command(final String command, final String alias) {
         this.command = command;
@@ -176,9 +204,9 @@ public enum Command {
     }
 
     /**
-     * @param Command
-     * @param alias
-     * @param permission
+     * @param command    Command "name" (/plot [cmd])
+     * @param alias      Command Alias
+     * @param permission Required Permission Node
      */
     Command(final String command, final String alias, final CommandPermission permission) {
         this.command = command;
@@ -187,21 +215,22 @@ public enum Command {
     }
 
     /**
-     * @return
+     * @return command
      */
     public String getCommand() {
         return this.command;
     }
 
     /**
-     * @return
+     * @return alias
      */
     public String getAlias() {
         return this.alias;
     }
 
     /**
-     * @return
+     * @return permission object
+     * @see com.intellectualcrafters.plot.commands.CommandPermission
      */
     public CommandPermission getPermission() {
         return this.permission;

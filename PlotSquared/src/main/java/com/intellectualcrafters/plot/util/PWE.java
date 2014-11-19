@@ -39,10 +39,11 @@ import org.bukkit.entity.Player;
 
 /**
  * @author Citymonstret
+ * @author Empire92
  */
+@SuppressWarnings("ALL")
 public class PWE {
 
-    @SuppressWarnings("deprecation")
     public static void setMask(final Player p, final Location l) {
         try {
             LocalSession s;

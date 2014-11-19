@@ -45,7 +45,6 @@ import java.util.zip.GZIPOutputStream;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings({"all"})
 public class SchematicHandler {
     /**
      * Paste a schematic
@@ -125,7 +124,9 @@ public class SchematicHandler {
         {
             final File parent = new File(JavaPlugin.getPlugin(PlotMain.class).getDataFolder() + File.separator + "schematics");
             if (!parent.exists()) {
-                parent.mkdir();
+                if (!parent.mkdir()) {
+                    throw new RuntimeException("Could not create schematic parent directory");
+                }
             }
         }
         final File file = new File(JavaPlugin.getPlugin(PlotMain.class).getDataFolder() + File.separator + "schematics" + File.separator + name + ".schematic");
@@ -252,6 +253,7 @@ public class SchematicHandler {
      * @param id    plot
      * @return tag
      */
+    @SuppressWarnings("deprecation")
     public static CompoundTag getCompoundTag(final World world, final PlotId id) {
 
         if (!PlotMain.getPlots(world).containsKey(id)) {
@@ -307,6 +309,7 @@ public class SchematicHandler {
 
                     final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, y, pos1.getBlockZ() + z));
 
+                    @SuppressWarnings("deprecation")
                     final int id2 = block.getTypeId();
 
                     if (id2 > 255) {

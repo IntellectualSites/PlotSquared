@@ -830,6 +830,13 @@ public class PlotHelper {
         return 64;
     }
 
+    /**
+     * Get plot home
+     *
+     * @param w      World in which the plot is located
+     * @param plotid Plot ID
+     * @return Home Location
+     */
     public static Location getPlotHome(final World w, final PlotId plotid) {
 
         if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
@@ -849,10 +856,22 @@ public class PlotHelper {
         }
     }
 
+    /**
+     * Get the plot home
+     * @param w World
+     * @param plot Plot Object
+     * @return Plot Home Location
+     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     */
     public static Location getPlotHome(final World w, final Plot plot) {
         return getPlotHome(w, plot.id);
     }
 
+    /**
+     * Refresh the plot chunks
+     * @param world World in which the plot is located
+     * @param plot Plot Object
+     */
     public static void refreshPlotChunks(final World world, final Plot plot) {
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
         final int topX = getPlotTopLoc(world, plot.id).getBlockX();
