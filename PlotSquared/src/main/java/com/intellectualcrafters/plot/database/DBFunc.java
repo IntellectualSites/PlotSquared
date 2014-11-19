@@ -40,17 +40,9 @@ public class DBFunc {
     public static AbstractDB dbManager;
 
     // TODO MongoDB @Brandon
-    /**
-     *
-     */
+
     public static UUID everyone = UUID.fromString("1-1-3-3-7");
 
-    /**
-     * Set Plot owner
-     *
-     * @param plot
-     * @param uuid
-     */
     public static void setOwner(final Plot plot, final UUID uuid) {
         dbManager.setOwner(plot, uuid);
     }
@@ -59,11 +51,6 @@ public class DBFunc {
         dbManager.createAllSettingsAndHelpers(plots);
     }
 
-    /**
-     * Create a plot
-     *
-     * @param plots
-     */
     public static void createPlots(final ArrayList<Plot> plots) {
         dbManager.createPlots(plots);
     }

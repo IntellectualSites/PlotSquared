@@ -35,136 +35,207 @@ import java.util.UUID;
 
 /**
  * @author Citymonstret
+ * @author Empire92
  */
-public abstract class AbstractDB {
+public interface AbstractDB {
 
     // TODO MongoDB @Brandon
 
     /**
-     *
+     * The UUID that will count as everyone
      */
     public UUID everyone = UUID.fromString("1-1-3-3-7");
 
     /**
      * Set Plot owner
      *
-     * @param plot
-     * @param uuid
+     * @param plot Plot in which the owner should be set
+     * @param uuid The uuid of the new owner
      */
-    public abstract void setOwner(final Plot plot, final UUID uuid);
+    public void setOwner(final Plot plot, final UUID uuid);
 
-    public abstract void createAllSettingsAndHelpers(final ArrayList<Plot> plots);
+    /**
+     * Create all settings, and create default helpers, trusted + denied lists
+     *
+     * @param plots Plots for which the default table entries should be created
+     */
+    public void createAllSettingsAndHelpers(final ArrayList<Plot> plots);
 
     /**
      * Create a plot
      *
-     * @param plots
+     * @param plots Plots that should be created
      */
-    public abstract void createPlots(final ArrayList<Plot> plots);
+    public void createPlots(final ArrayList<Plot> plots);
 
     /**
      * Create a plot
      *
-     * @param plot
+     * @param plot That should be created
      */
-    public abstract void createPlot(final Plot plot);
+    public void createPlot(final Plot plot);
 
     /**
      * Create tables
      *
-     * @throws SQLException
+     * @param database Database in which the tables will be created
+     *
+     * @throws SQLException If the database manager is unable to create the tables
      */
-    public abstract void createTables(final String database, final boolean add_constraint) throws Exception;
+    public void createTables(final String database, final boolean add_constraint) throws Exception;
 
     /**
      * Delete a plot
      *
-     * @param plot
+     * @param plot Plot that should be deleted
      */
-    public abstract void delete(final String world, final Plot plot);
+    public void delete(final String world, final Plot plot);
 
     /**
      * Create plot settings
      *
-     * @param id
-     * @param plot
+     * @param id Plot Entry ID
+     * @param plot Plot Object
      */
-    public abstract void createPlotSettings(final int id, final Plot plot);
-
-    public abstract int getId(final String world, final PlotId id2);
+    public void createPlotSettings(final int id, final Plot plot);
 
     /**
-     * @return
+     * Get the table entry ID
+     *
+     * @param world Which the plot is located in
+     * @param id2   Plot ID
+     * @return Integer = Plot Entry Id
      */
-    public abstract LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots();
-
-    public abstract void setMerged(final String world, final Plot plot, final boolean[] merged);
-
-    public abstract void setFlags(final String world, final Plot plot, final Flag[] flags);
+    public int getId(final String world, final PlotId id2);
 
     /**
-     * @param plot
-     * @param alias
+     * @return A linked hashmap containing all plots
      */
-    public abstract void setAlias(final String world, final Plot plot, final String alias);
-
-    public abstract void purge(final String world, final PlotId id);
-
-    public abstract void purge(final String world);
+    public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots();
 
     /**
-     * @param plot
-     * @param position
+     * Set the merged status for a plot
+     *
+     * @param world  World in which the plot is located
+     * @param plot   Plot Object
+     * @param merged boolean[]
      */
-    public abstract void setPosition(final String world, final Plot plot, final String position);
+    public void setMerged(final String world, final Plot plot, final boolean[] merged);
 
     /**
-     * @param id
-     * @return
+     * Set plot flags
+     *
+     * @param world World in which the plot is located
+     * @param plot  Plot Object
+     * @param flags flags to set (flag[])
      */
-    public abstract HashMap<String, Object> getSettings(final int id);
+    public void setFlags(final String world, final Plot plot, final Flag[] flags);
 
     /**
-     * @param plot
-     * @param player
+     * Set the plot alias
+     *
+     * @param plot Plot for which the alias should be set
+     * @param alias Plot Alias
      */
-    public abstract void removeHelper(final String world, final Plot plot, final OfflinePlayer player);
+    public void setAlias(final String world, final Plot plot, final String alias);
 
     /**
-     * @param plot
-     * @param player
+     * Purgle a plot
+     *
+     * @param world World in which the plot is located
+     * @param id    Plot ID
      */
-    public abstract void removeTrusted(final String world, final Plot plot, final OfflinePlayer player);
+    public void purge(final String world, final PlotId id);
 
     /**
-     * @param plot
-     * @param player
+     * Purge a whole world
+     *
+     * @param world World in which the plots should be purged
      */
-    public abstract void setHelper(final String world, final Plot plot, final OfflinePlayer player);
+    public void purge(final String world);
 
     /**
-     * @param plot
-     * @param player
+     * Set Plot Home Position
+     * @param plot Plot Object
+     * @param position Plot Home Position
      */
-    public abstract void setTrusted(final String world, final Plot plot, final OfflinePlayer player);
+    public void setPosition(final String world, final Plot plot, final String position);
 
     /**
-     * @param plot
-     * @param player
+     * @param id Plot Entry ID
+     * @return Plot Settings
      */
-    public abstract void removeDenied(final String world, final Plot plot, final OfflinePlayer player);
+    public HashMap<String, Object> getSettings(final int id);
 
     /**
-     * @param plot
-     * @param player
+     * @param plot Plot Object
+     * @param player Player that should be removed
      */
-    public abstract void setDenied(final String world, final Plot plot, final OfflinePlayer player);
+    public void removeHelper(final String world, final Plot plot, final OfflinePlayer player);
 
-    public abstract double getRatings(final Plot plot);
+    /**
+     * @param plot Plot Object
+     * @param player Player that should be removed
+     */
+    public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player);
 
-    public abstract void removeComment(final String world, final Plot plot, final PlotComment comment);
+    /**
+     * @param plot Plot Object
+     * @param player Player that should be removed
+     */
+    public void setHelper(final String world, final Plot plot, final OfflinePlayer player);
 
-    public abstract void setComment(final String world, final Plot plot, final PlotComment comment);
+    /**
+     * @param plot Plot Object
+     * @param player Player that should be added
+     */
+    public void setTrusted(final String world, final Plot plot, final OfflinePlayer player);
 
-    public abstract ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier);
+    /**
+     * @param plot Plot Object
+     * @param player Player that should be added
+     */
+    public void removeDenied(final String world, final Plot plot, final OfflinePlayer player);
+
+    /**
+     * @param plot Plot Object
+     * @param player Player that should be added
+     */
+    public void setDenied(final String world, final Plot plot, final OfflinePlayer player);
+
+    /**
+     * Get Plots ratings
+     *
+     * @param plot Plot Object
+     * @return Plot Ratings (pre-calculated)
+     */
+    public double getRatings(final Plot plot);
+
+    /**
+     * Remove a plot comment
+     *
+     * @param world   World in which the plot is located
+     * @param plot    Plot Object
+     * @param comment Comment to remove
+     */
+    public void removeComment(final String world, final Plot plot, final PlotComment comment);
+
+    /**
+     * Set a plot comment
+     *
+     * @param world   World in which the plot is located
+     * @param plot    Plot Object
+     * @param comment Comment to add
+     */
+    public void setComment(final String world, final Plot plot, final PlotComment comment);
+
+    /**
+     * Get Plot Comments
+     *
+     * @param world World in which the plot is located
+     * @param plot  Plot Object
+     * @param tier  Comment Tier
+     * @return Plot Comments within the specified tier
+     */
+    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier);
 }
