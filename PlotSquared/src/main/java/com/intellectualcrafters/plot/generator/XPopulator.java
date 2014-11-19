@@ -33,6 +33,7 @@ import java.util.Random;
 /**
  * @author Citymonstret
  */
+@SuppressWarnings("unused")
 public class XPopulator extends BlockPopulator {
 
     /*
@@ -237,7 +238,6 @@ public class XPopulator extends BlockPopulator {
                 setCuboidRegion(16 - value, (16 - value) + 1, this.roadheight, this.roadheight + 1, start, 16, this.floor2, w); //
             }
             if ((roadStartZ <= 16) && (roadStartZ > 1)) {
-                final int val = roadStartZ;
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
@@ -252,11 +252,10 @@ public class XPopulator extends BlockPopulator {
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
                     start = 0;
                 }
-                setCuboidRegion(0, end, this.roadheight, this.roadheight + 1, (16 - val) + 1, (16 - val) + 2, this.floor2, w);
-                setCuboidRegion(start, 16, this.roadheight, this.roadheight + 1, (16 - val) + 1, (16 - val) + 2, this.floor2, w);
+                setCuboidRegion(0, end, this.roadheight, this.roadheight + 1, (16 - roadStartZ) + 1, (16 - roadStartZ) + 2, this.floor2, w);
+                setCuboidRegion(start, 16, this.roadheight, this.roadheight + 1, (16 - roadStartZ) + 1, (16 - roadStartZ) + 2, this.floor2, w);
             }
             if ((roadStartX <= 16) && (roadStartX > 1)) {
-                final int val = roadStartX;
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
@@ -271,8 +270,8 @@ public class XPopulator extends BlockPopulator {
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
                     start = 0;
                 }
-                setCuboidRegion((16 - val) + 1, (16 - val) + 2, this.roadheight, this.roadheight + 1, 0, end, this.floor2, w); //
-                setCuboidRegion((16 - val) + 1, (16 - val) + 2, this.roadheight, this.roadheight + 1, start, 16, this.floor2, w); //
+                setCuboidRegion((16 - roadStartX) + 1, (16 - roadStartX) + 2, this.roadheight, this.roadheight + 1, 0, end, this.floor2, w); //
+                setCuboidRegion((16 - roadStartX) + 1, (16 - roadStartX) + 2, this.roadheight, this.roadheight + 1, start, 16, this.floor2, w); //
             }
         }
         // WALLS
@@ -460,6 +459,7 @@ public class XPopulator extends BlockPopulator {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void setBlock(final World w, final int x, final int y, final int z, final short id, final byte val) {
         w.getBlockAt(this.X + x, y, this.Z + z).setData(val, false);
     }

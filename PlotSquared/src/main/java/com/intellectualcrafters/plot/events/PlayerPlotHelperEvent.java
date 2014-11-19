@@ -29,7 +29,8 @@ import org.bukkit.event.HandlerList;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-08-16.
+ * @author Empire92
+ * @author Citymonstret
  */
 public class PlayerPlotHelperEvent extends Event {
     private static HandlerList handlers = new HandlerList();
@@ -42,10 +43,10 @@ public class PlayerPlotHelperEvent extends Event {
     /**
      * PlayerPlotHelperEvent: Called when a plot helper is added/removed
      *
-     * @param initiator
-     * @param plot
-     * @param player
-     * @param added
+     * @param initiator Player that initiated the event
+     * @param plot Plot in which the event occurred
+     * @param player Player that was added/removed from the helper list
+     * @param added true of the player was added, false if the player was removed
      */
     public PlayerPlotHelperEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
         this.initiator = initiator;

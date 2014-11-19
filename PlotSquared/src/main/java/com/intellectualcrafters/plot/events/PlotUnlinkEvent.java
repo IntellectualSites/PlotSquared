@@ -30,7 +30,7 @@ import org.bukkit.event.HandlerList;
 import java.util.ArrayList;
 
 /**
- * Created by Citymonstret on 2014-08-09.
+ * @author Empire92
  */
 public class PlotUnlinkEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -41,8 +41,8 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     /**
      * Called when a mega-plot is unlinked.
      *
-     * @param world
-     * @param plots
+     * @param world World in which the event occurred
+     * @param plots Plots that are involved in the event
      */
     public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots) {
         this.plots = plots;

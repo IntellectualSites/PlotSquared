@@ -29,7 +29,8 @@ import org.bukkit.event.HandlerList;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-08-16.
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlayerPlotDeniedEvent extends Event {
     private static HandlerList handlers = new HandlerList();
@@ -43,10 +44,10 @@ public class PlayerPlotDeniedEvent extends Event {
      * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a
      * plot
      *
-     * @param initiator
-     * @param plot
-     * @param player
-     * @param added
+     * @param initiator Player that initiated the event
+     * @param plot Plot in which the event occurred
+     * @param player Player that was denied/un-denied
+     * @param added true of add to deny list, false if removed
      */
     public PlayerPlotDeniedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
         this.initiator = initiator;

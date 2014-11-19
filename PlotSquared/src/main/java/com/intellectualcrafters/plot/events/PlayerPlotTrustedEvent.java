@@ -29,7 +29,8 @@ import org.bukkit.event.HandlerList;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-08-16.
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlayerPlotTrustedEvent extends Event {
     private static HandlerList handlers = new HandlerList();
@@ -42,10 +43,10 @@ public class PlayerPlotTrustedEvent extends Event {
     /**
      * PlayerPlotTrustedEvent: Called when a plot trusted user is added/removed
      *
-     * @param initiator
-     * @param plot
-     * @param player
-     * @param added
+     * @param initiator Player that initiated the event
+     * @param plot Plot in which the event occurred
+     * @param player Player that was added/removed from the trusted list
+     * @param added true of the player was added, false if the player was removed
      */
     public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
         this.initiator = initiator;

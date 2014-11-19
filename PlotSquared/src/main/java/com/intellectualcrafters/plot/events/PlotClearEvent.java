@@ -28,6 +28,9 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot is cleared
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlotClearEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -38,8 +41,8 @@ public class PlotClearEvent extends Event implements Cancellable {
     /**
      * PlotDeleteEvent: Called when a plot is cleared
      *
-     * @param world
-     * @param id
+     * @param world The world in which the plot was cleared
+     * @param id The plot that was cleared
      */
     public PlotClearEvent(final String world, final PlotId id) {
         this.id = id;

@@ -21,6 +21,10 @@
 
 package com.intellectualcrafters.plot.object;
 
+import com.sun.istack.internal.NotNull;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+
 /**
  * Wrapper class for blocks, using
  * pure data rather than the object.
@@ -28,16 +32,34 @@ package com.intellectualcrafters.plot.object;
  * Useful for NMS
  *
  * @author Empire92
+ * @author Citymonstret
  */
 public class BlockWrapper {
 
-    // Public Final //////////////////////////
-    public final int x;                     //
-    public final int y;                     //
-    public final int z;                     //
-    public final int id;                    //
-    public final byte data;                 //
-    //////////////////////////////////////////
+    /**
+     * X Coordinate
+     */
+    public final int x;
+
+    /**
+     * Y Coordinate
+     */
+    public final int y;
+
+    /**
+     * Z Coordinate
+     */
+    public final int z;
+
+    /**
+     * Block ID
+     */
+    public final int id;
+
+    /**
+     * Block Data Value
+     */
+    public final byte data;
 
     /**
      * Constructor
@@ -48,11 +70,39 @@ public class BlockWrapper {
      * @param id   Material ID
      * @param data Data Value
      */
-    public BlockWrapper(int x, int y, int z, short id, byte data) {
+    public BlockWrapper(final int x, final int y, final int z, final short id, final byte data) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.id = id;
         this.data = data;
+    }
+
+    /**
+     * Alternative Constructor
+     * Uses block data, rather than typed data
+     *
+     * @param block Block from which we get the data
+     */
+    @SuppressWarnings({"deprecation", "unused"})
+    public BlockWrapper(@NotNull final Block block) {
+        this.x = block.getX();
+        this.y = block.getY();
+        this.z = block.getZ();
+        this.id = block.getTypeId();
+        this.data = block.getData();
+    }
+
+    /**
+     * Get a block based on the block wrapper
+     *
+     * @param world World in which the block is/will be, located
+     * @return block created/fetched from settings
+     */
+    @SuppressWarnings({"unused", "deprecation"})
+    public Block toBlock(@NotNull final World world) {
+        Block block = world.getBlockAt(x, y, z);
+        block.setTypeIdAndData(id, data, true);
+        return block;
     }
 }

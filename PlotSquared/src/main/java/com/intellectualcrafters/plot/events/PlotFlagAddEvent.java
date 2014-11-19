@@ -29,6 +29,9 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a Flag is added to a plot
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlotFlagAddEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -39,8 +42,8 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot
      *
-     * @param flag
-     * @param plot
+     * @param flag Flag that was added
+     * @param plot Plot to which the flag was added
      */
     public PlotFlagAddEvent(final Flag flag, final Plot plot) {
         this.plot = plot;

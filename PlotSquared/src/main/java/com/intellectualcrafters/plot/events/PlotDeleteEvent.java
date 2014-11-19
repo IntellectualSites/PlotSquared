@@ -28,6 +28,9 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot is deleted
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlotDeleteEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -38,8 +41,8 @@ public class PlotDeleteEvent extends Event implements Cancellable {
     /**
      * PlotDeleteEvent: Called when a plot is deleted
      *
-     * @param world
-     * @param id
+     * @param world The world in which the plot was deleted
+     * @param id The ID of the plot that was deleted
      */
     public PlotDeleteEvent(final String world, final PlotId id) {
         this.id = id;

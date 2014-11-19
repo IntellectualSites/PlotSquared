@@ -27,7 +27,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
- * Created by Citymonstret on 2014-08-16.
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlayerLeavePlotEvent extends PlayerEvent {
     private static HandlerList handlers = new HandlerList();
@@ -37,8 +38,8 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
-     * @param player
-     * @param plot
+     * @param player Player that left the plot
+     * @param plot   Plot that was left
      */
     public PlayerLeavePlotEvent(final Player player, final Plot plot) {
         super(player);
