@@ -1,6 +1,14 @@
 PlotSquared Official Repo
 ==========================================================
-This is the official PlotSquared repo, if you didn't understand that by the title... 
+PlotSquared - Plot Plugin Extraordinaire.
+
+## Compile: ##
+Build the project using your favourite compiler (maven is the recommended way to build), then package the jar using `mvn package` **MAVEN IS REQUIRED TO BUILD AND PACKAGE THE JAR**
+
+To build the PlotMe converted, you need a PlotMe jar file (a release post-UUID), we won't like to this for obvious reasons.
+
+## API: ##
+The main API class can be found [here](https://github.com/IntellectualCrafters/PlotSquared/blob/master/PlotSquared/src/main/java/com/intellectualcrafters/plot/api/PlotAPI.java "API"). JavaDoc's can be found [here](http://git.plotworld.info/jdocs/ "JDOCS").
 
 ## Links: ##
 
@@ -13,5 +21,6 @@ This is the official PlotSquared repo, if you didn't understand that by the titl
 - [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/ "AdvPlots")
 - [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/ "PlotRankup")
 
-Dependencies:
-[http://intellectualsites.com/download.php?key=a12f1474-6bbc-4017-ba43-d26f8de36a7c](http://intellectualsites.com/download.php?key=a12f1474-6bbc-4017-ba43-d26f8de36a7c "Dependencies (/lib)")
+...
+Read [THIS](https://intellectualsites.com/?p=view_post&post=106) before saying that we've stolen code.
+
