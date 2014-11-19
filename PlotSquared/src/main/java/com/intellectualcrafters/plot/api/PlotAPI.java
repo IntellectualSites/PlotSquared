@@ -33,7 +33,9 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.PlotSquaredException;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -45,41 +47,70 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * The plotMain api class.
+ * PlotSquared API
  *
- * @author Citymonstret, Empire92
+ * @author Citymonstret
+ * @author Empire92
+ *
+ * @version API 2.0
  */
-@SuppressWarnings({"unused", "javadoc"})
+
+@SuppressWarnings("unused")
 public class PlotAPI {
 
     /**
-     * Admin Permission
+     * Permission that allows for admin access,
+     * this permission node will allow the player
+     * to use any part of the plugin, without limitations.
      */
     public static final String ADMIN_PERMISSION = "plots.admin";
+
+    /**
+     * Plot Helper Class
+     * <p/>
+     * General functions involving plots, and the management of them
+     *
+     * @see com.intellectualcrafters.plot.util.PlotHelper
+     */
     private static PlotHelper plotHelper;
+
+    /**
+     * Player Functions
+     *
+     * General functions involving players, and plot worlds
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions
+     */
     private static PlayerFunctions playerFunctions;
+
+    /**
+     * Flag Manager
+     *
+     * The manager which handles all flags
+     * @see com.intellectualcrafters.plot.flag.FlagManager
+     */
     private static FlagManager flagManager;
+
+    /**
+     * Schematic Handler
+     *
+     * The handler which is used to create, and paste, schematics
+     * @see com.intellectualcrafters.plot.util.SchematicHandler
+     */
     private static SchematicHandler schematicHandler;
 
-    // Methods/fields in PlotMain class
-
-    // PlotMain.checkForExpiredPlots(); #Ignore
-    // PlotMain.killAllEntities(); #Ignore
-    //
-    // PlotMain.createConfiguration(plotworld);
-    // PlotMain.getPlots(player)
-    // PlotMain.getPlots(world)
-    // PlotMain.getPlots(world, player)
-    // PlotMain.getWorldPlots(world)
-    // PlotMain.getPlotWorlds()
-    // PlotMain.isPlotWorld(world)
-    // PlotMain.removePlot(world, id, callEvent)
-    // PlotMain.teleportPlayer(player, from, plot)
-    // PlotMain.updatePlot(plot);
+    /**
+     * The translation class.
+     *
+     * @see com.intellectualcrafters.plot.config.C
+     */
     private static C c;
 
-    // Reference
-    // To access plotMain stuff.
+    /**
+     * PlotMain instance
+     *
+     * This is the instance that allows for most methods to be used.
+     * @see com.intellectualcrafters.plot.PlotMain
+     */
     private final PlotMain plotMain;
 
     /**
@@ -87,15 +118,21 @@ public class PlotAPI {
      * (Optimally the plugin that is accessing the method)
      *
      * @param plugin Plugin used to access this method
+     * @throws com.intellectualcrafters.plot.util.PlotSquaredException if the program fails to fetch the PlotMain instance
+     * @see com.intellectualcrafters.plot.PlotMain
      */
-    public PlotAPI(final JavaPlugin plugin) {
+    public PlotAPI(@NotNull final JavaPlugin plugin) {
         this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
+        if (plotMain == null) {
+            throw new PlotSquaredException(PlotSquaredException.PlotError.PLOTMAIN_NULL, "Failed to fetch the plotmain instance, Plot API for " + plugin.getName() + " will be disabled");
+        }
     }
 
     /**
      * Get all plots
      *
      * @return all plots
+     * @see com.intellectualcrafters.plot.PlotMain#getPlots()
      */
     public Set<Plot> getAllPlots() {
         return PlotMain.getPlots();
@@ -104,15 +141,15 @@ public class PlotAPI {
     /**
      * Return all plots for a player
      *
-     * @param player
+     * @param player Player, whose plots to search for
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(final Player player) {
+    public Set<Plot> getPlayerPlots(@NotNull final Player player) {
         return PlotMain.getPlots(player);
     }
 
     /**
-     * Add a plotoworld
+     * Add a plot world
      *
      * @param world     World Name
      * @param plotWorld Plot World Object
@@ -121,7 +158,7 @@ public class PlotAPI {
      * com.intellectualcrafters.plot.object.PlotWorld,
      * com.intellectualcrafters.plot.object.PlotManager)
      */
-    public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
+    public void addPlotWorld(@NotNull final String world, @NotNull final PlotWorld plotWorld, @NotNull final PlotManager manager) {
         PlotMain.addPlotWorld(world, plotWorld, manager);
     }
 
@@ -147,6 +184,7 @@ public class PlotAPI {
      * Only use this if you really need it
      *
      * @return PlotMain PlotSquared Main Class
+     * @see com.intellectualcrafters.plot.PlotMain
      */
     public PlotMain getMain() {
         return this.plotMain;
@@ -156,6 +194,7 @@ public class PlotAPI {
      * PlotHelper class contains useful methods relating to plots.
      *
      * @return PlotHelper
+     * @see com.intellectualcrafters.plot.util.PlotHelper
      */
     public PlotHelper getPlotHelper() {
         return plotHelper;
@@ -166,6 +205,7 @@ public class PlotAPI {
      * player/plot methods are here as well
      *
      * @return PlayerFunctions
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions
      */
     public PlayerFunctions getPlayerFunctions() {
         return playerFunctions;
@@ -175,6 +215,7 @@ public class PlotAPI {
      * FlagManager class contains methods relating to plot flags
      *
      * @return FlagManager
+     * @see com.intellectualcrafters.plot.flag.FlagManager
      */
     public FlagManager getFlagManager() {
         return flagManager;
@@ -184,6 +225,7 @@ public class PlotAPI {
      * SchematicHandler class contains methods related to pasting schematics
      *
      * @return SchematicHandler
+     * @see com.intellectualcrafters.plot.util.SchematicHandler
      */
     public SchematicHandler getSchematicHandler() {
         return schematicHandler;
@@ -193,6 +235,7 @@ public class PlotAPI {
      * C class contains all the captions from the translations.yml file.
      *
      * @return C
+     * @see com.intellectualcrafters.plot.config.C
      */
     public C getCaptions() {
         return c;
@@ -202,10 +245,12 @@ public class PlotAPI {
      * Get the plot manager for a world. - Most of these methods can be accessed
      * through the PlotHelper
      *
-     * @param world
+     * @param world Which manager to get
      * @return PlotManager
+     * @see com.intellectualcrafters.plot.object.PlotManager
+     * @see PlotMain#getPlotManager(org.bukkit.World)
      */
-    public PlotManager getPlotManager(final World world) {
+    public PlotManager getPlotManager(@NotNull final World world) {
         return PlotMain.getPlotManager(world);
     }
 
@@ -213,10 +258,12 @@ public class PlotAPI {
      * Get the plot manager for a world. - Contains useful low level methods for
      * plot merging, clearing, and tessellation
      *
-     * @param world
+     * @param world Plot World
      * @return PlotManager
+     * @see PlotMain#getPlotManager(String)
+     * @see com.intellectualcrafters.plot.object.PlotManager
      */
-    public PlotManager getPlotManager(final String world) {
+    public PlotManager getPlotManager(@NotNull final String world) {
         return PlotMain.getPlotManager(world);
     }
 
@@ -228,8 +275,10 @@ public class PlotAPI {
      * @param world (to get settings of)
      * @return PlotWorld class for that world ! will return null if not a plot
      * world world
+     * @see PlotMain#getWorldSettings(org.bukkit.World)
+     * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(final World world) {
+    public PlotWorld getWorldSettings(@NotNull final World world) {
         return PlotMain.getWorldSettings(world);
     }
 
@@ -239,37 +288,42 @@ public class PlotAPI {
      * @param world (to get settings of)
      * @return PlotWorld class for that world ! will return null if not a plot
      * world world
+     * @see PlotMain#getWorldSettings(String)
+     * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(final String world) {
+    public PlotWorld getWorldSettings(@NotNull final String world) {
         return PlotMain.getWorldSettings(world);
     }
 
     /**
      * Send a message to a player.
      *
-     * @param player
+     * @param player Player that will receive the message
      * @param c      (Caption)
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, com.intellectualcrafters.plot.config.C, String...)
      */
-    public void sendMessage(final Player player, final C c) {
+    public void sendMessage(@NotNull final Player player, @NotNull final C c) {
         PlayerFunctions.sendMessage(player, c);
     }
 
     /**
      * Send a message to a player. - Supports color codes
      *
-     * @param player
-     * @param string
+     * @param player Player that will receive the message
+     * @param string The message
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, String)
      */
-    public void sendMessage(final Player player, final String string) {
+    public void sendMessage(@NotNull final Player player, @NotNull final String string) {
         PlayerFunctions.sendMessage(player, string);
     }
 
     /**
      * Send a message to the console. - Supports color codes
      *
-     * @param msg
+     * @param msg Message that should be sent to the console
+     * @see PlotMain#sendConsoleSenderMessage(String)
      */
-    public void sendConsoleMessage(final String msg) {
+    public void sendConsoleMessage(@NotNull final String msg) {
         PlotMain.sendConsoleSenderMessage(msg);
     }
 
@@ -277,17 +331,19 @@ public class PlotAPI {
      * Send a message to the console
      *
      * @param c (Caption)
+     * @see #sendConsoleMessage(String)
      */
-    public void sendConsoleMessage(final C c) {
+    public void sendConsoleMessage(@NotNull final C c) {
         sendConsoleMessage(c.s());
     }
 
     /**
      * Register a flag for use in plots
      *
-     * @param flag
+     * @param flag Flag that should be registered
+     * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
      */
-    public void addFlag(final AbstractFlag flag) {
+    public void addFlag(@NotNull final AbstractFlag flag) {
         FlagManager.addFlag(flag);
     }
 
@@ -295,6 +351,8 @@ public class PlotAPI {
      * get all the currently registered flags
      *
      * @return array of Flag[]
+     * @see com.intellectualcrafters.plot.flag.FlagManager#getFlags()
+     * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
     public AbstractFlag[] getFlags() {
         return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
@@ -303,42 +361,49 @@ public class PlotAPI {
     /**
      * Get a plot based on the ID
      *
-     * @param world
-     * @param x
-     * @param z
+     * @param world World in which the plot is located
+     * @param x Plot Location X Co-ord
+     * @param z Plot Location Z Co-ord
      * @return plot, null if ID is wrong
+     * @see PlotHelper#getPlot(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final World world, final int x, final int z) {
+    public Plot getPlot(@NotNull final World world, final int x, final int z) {
         return PlotHelper.getPlot(world, new PlotId(x, z));
     }
 
     /**
      * Get a plot based on the location
      *
-     * @param l
+     * @param l The location that you want to to retrieve the plot from
      * @return plot if found, otherwise it creates a temporary plot-
+     * @see PlotHelper#getCurrentPlot(org.bukkit.Location)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final Location l) {
+    public Plot getPlot(@NotNull final Location l) {
         return PlotHelper.getCurrentPlot(l);
     }
 
     /**
      * Get a plot based on the player location
      *
-     * @param player
+     * @param player Get the current plot for the player location
      * @return plot if found, otherwise it creates a temporary plot
+     * @see #getPlot(org.bukkit.Location)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final Player player) {
+    public Plot getPlot(@NotNull final Player player) {
         return this.getPlot(player.getLocation());
     }
 
     /**
      * Check whether or not a player has a plot
      *
-     * @param player
+     * @param player Player that you want to check for
      * @return true if player has a plot, false if not.
+     * @see #getPlots(org.bukkit.World, org.bukkit.entity.Player, boolean)
      */
-    public boolean hasPlot(final World world, final Player player) {
+    public boolean hasPlot(@NotNull final World world, @NotNull final Player player) {
         return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
     }
 
@@ -347,8 +412,9 @@ public class PlotAPI {
      *
      * @param plr        to search for
      * @param just_owner should we just search for owner? Or with rights?
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
+    public Plot[] getPlots(@NotNull final World world, @NotNull final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
         for (final Plot plot : PlotMain.getPlots(world).values()) {
             if (just_owner) {
@@ -369,8 +435,10 @@ public class PlotAPI {
      *
      * @param world to get plots of
      * @return Plot[] - array of plot objects in world
+     * @see PlotMain#getWorldPlots(org.bukkit.World)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(final World world) {
+    public Plot[] getPlots(@NotNull final World world) {
         return PlotMain.getWorldPlots(world);
     }
 
@@ -378,6 +446,7 @@ public class PlotAPI {
      * Get all plot worlds
      *
      * @return World[] - array of plot worlds
+     * @see com.intellectualcrafters.plot.PlotMain#getPlotWorlds()
      */
     public String[] getPlotWorlds() {
         return PlotMain.getPlotWorlds();
@@ -388,18 +457,23 @@ public class PlotAPI {
      *
      * @param world (to check if plot world)
      * @return boolean (if plot world or not)
+     * @see com.intellectualcrafters.plot.PlotMain#isPlotWorld(org.bukkit.World)
      */
-    public boolean isPlotWorld(final World world) {
+    public boolean isPlotWorld(@NotNull final World world) {
         return PlotMain.isPlotWorld(world);
     }
 
     /**
      * Get plot locations
      *
-     * @param p
+     * @param p Plot that you want to get the locations for
      * @return [0] = bottomLc, [1] = topLoc, [2] = home
+     * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotBottomLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.Plot)
+     * @see com.intellectualcrafters.plot.object.PlotHomePosition
      */
-    public Location[] getLocations(final Plot p) {
+    public Location[] getLocations(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return new Location[]{PlotHelper.getPlotBottomLoc(world, p.id), PlotHelper.getPlotTopLoc(world, p.id), PlotHelper.getPlotHome(world, p.id)};
     }
@@ -407,31 +481,35 @@ public class PlotAPI {
     /**
      * Get home location
      *
-     * @param p
+     * @param p Plot that you want to get the location for
      * @return plot bottom location
+     * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.Plot)
+     * @see com.intellectualcrafters.plot.object.PlotHomePosition
      */
-    public Location getHomeLocation(final Plot p) {
+    public Location getHomeLocation(@NotNull final Plot p) {
         return PlotHelper.getPlotHome(p.getWorld(), p.id);
     }
 
     /**
-     * Get Bottom Location
+     * Get Bottom Location (min, min, min)
      *
-     * @param p
+     * @param p Plot that you want to get the location for
      * @return plot bottom location
+     * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotBottomLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      */
-    public Location getBottomLocation(final Plot p) {
+    public Location getBottomLocation(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return PlotHelper.getPlotBottomLoc(world, p.id);
     }
 
     /**
-     * Get Top Location
+     * Get Top Location (max, max, max)
      *
-     * @param p
+     * @param p Plot that you want to get the location for
      * @return plot top location
+     * @see PlotHelper#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      */
-    public Location getTopLocation(final Plot p) {
+    public Location getTopLocation(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return PlotHelper.getPlotTopLoc(world, p.id);
     }
@@ -439,19 +517,21 @@ public class PlotAPI {
     /**
      * Check whether or not a player is in a plot
      *
-     * @param player
+     * @param player who we're checking for
      * @return true if the player is in a plot, false if not-
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#isInPlot(org.bukkit.entity.Player)
      */
-    public boolean isInPlot(final Player player) {
+    public boolean isInPlot(@NotNull final Player player) {
         return PlayerFunctions.isInPlot(player);
     }
 
     /**
      * Register a subcommand
      *
-     * @param c
+     * @param c SubCommand, that we want to register
+     * @see com.intellectualcrafters.plot.commands.MainCommand#subCommands
      */
-    public void registerCommand(final SubCommand c) {
+    public void registerCommand(@NotNull final SubCommand c) {
         MainCommand.subCommands.add(c);
     }
 
@@ -459,6 +539,7 @@ public class PlotAPI {
      * Get the plotMain class
      *
      * @return PlotMain Class
+     * @see com.intellectualcrafters.plot.PlotMain
      */
     public PlotMain getPlotMain() {
         return this.plotMain;
@@ -467,30 +548,36 @@ public class PlotAPI {
     /**
      * Get the player plot count
      *
-     * @param player
-     * @return
+     * @param world Specify the world we want to select the plots from
+     * @param player Player, for whom we're getting the plot count
+     * @return the number of plots the player has
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getPlayerPlotCount(org.bukkit.World, org.bukkit.entity.Player)
      */
-    public int getPlayerPlotCount(final World world, final Player player) {
+    public int getPlayerPlotCount(@NotNull final World world, @NotNull final Player player) {
         return PlayerFunctions.getPlayerPlotCount(world, player);
     }
 
     /**
-     * Get a players plots
+     * Get a collection containing the players plots
      *
-     * @param player
+     * @param world Specify the world we want to select the plots from
+     * @param player Player, for whom we're getting the plots
      * @return a set containing the players plots
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getPlayerPlots(org.bukkit.World, org.bukkit.entity.Player)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Set<Plot> getPlayerPlots(final World world, final Player player) {
+    public Set<Plot> getPlayerPlots(@NotNull final World world, @NotNull final Player player) {
         return PlayerFunctions.getPlayerPlots(world, player);
     }
 
     /**
-     * Get the allowed plot count for a player
+     * Get the numbers of plots, which the player is able to build in
      *
-     * @param player
+     * @param player Player, for whom we're getting the plots (trusted, helper and owner)
      * @return the number of allowed plots
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getAllowedPlots(org.bukkit.entity.Player)
      */
-    public int getAllowedPlots(final Player player) {
+    public int getAllowedPlots(@NotNull final Player player) {
         return PlayerFunctions.getAllowedPlots(player);
     }
 }
