@@ -35,7 +35,8 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
- * @author
+ * Name Fetcher Class
+ * From Bukkit
  */
 public class NameFetcher implements Callable<Map<UUID, String>> {
     private static final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
@@ -48,7 +49,7 @@ public class NameFetcher implements Callable<Map<UUID, String>> {
 
     @Override
     public Map<UUID, String> call() throws Exception {
-        final Map<UUID, String> uuidStringMap = new HashMap<UUID, String>();
+        final Map<UUID, String> uuidStringMap = new HashMap<>();
         for (final UUID uuid : this.uuids) {
             if (uuidStringMap.containsKey(uuid)) {
                 continue;

@@ -21,6 +21,9 @@
 
 package com.intellectualcrafters.plot.object;
 
+/**
+ * @author Empire92
+ */
 public class PlotComment {
     public final String comment;
     public final int tier;

@@ -37,6 +37,7 @@ import java.util.UUID;
  * The plot class
  *
  * @author Citymonstret
+ * @author Empire92
  */
 @SuppressWarnings("javadoc")
 public class Plot implements Cloneable {
@@ -91,8 +92,35 @@ public class Plot implements Cloneable {
      * @param plotBiome
      * @param helpers
      * @param denied
+     *
+     * @deprecated
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
+        this.id = id;
+        this.settings = new PlotSettings(this);
+        this.owner = owner;
+        this.deny_entry = this.owner == null;
+        this.helpers = helpers;
+        this.denied = denied;
+        this.trusted = new ArrayList<>();
+        this.settings.setAlias("");
+        this.settings.setPosition(PlotHomePosition.DEFAULT);
+        this.delete = false;
+        this.settings.setFlags(new Flag[0]);
+        this.world = world;
+    }
+
+    /**
+     * Primary constructor
+     *
+     * @param id
+     * @param owner
+     * @param helpers
+     * @param denied
+     */
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -116,8 +144,41 @@ public class Plot implements Cloneable {
      * @param helpers
      * @param denied
      * @param merged
+     *
+     * @deprecated
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Flag[] flags, final String world, final boolean[] merged) {
+        this.id = id;
+        this.settings = new PlotSettings(this);
+        this.owner = owner;
+        this.deny_entry = this.owner != null;
+        this.trusted = trusted;
+        this.helpers = helpers;
+        this.denied = denied;
+        this.settings.setAlias(alias);
+        this.settings.setPosition(position);
+        this.settings.setMerged(merged);
+        this.delete = false;
+        if (flags != null) {
+            this.settings.setFlags(flags);
+        } else {
+            this.settings.setFlags(new Flag[0]);
+        }
+        this.world = world;
+    }
+
+    /**
+     * Constructor for saved plots
+     *
+     * @param id
+     * @param owner
+     * @param helpers
+     * @param denied
+     * @param merged
+     */
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Flag[] flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -205,7 +266,7 @@ public class Plot implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         Plot p = (Plot) super.clone();
         if (!p.equals(this) || p != this) {
-            return new Plot(id, owner, settings.getBiome(), helpers, trusted, denied, settings.getAlias(), settings.getPosition(), settings.getFlags().toArray(new Flag[settings.getFlags().size()]), getWorld().getName(), settings.getMerged());
+            return new Plot(id, owner, helpers, trusted, denied, settings.getAlias(), settings.getPosition(), settings.getFlags().toArray(new Flag[settings.getFlags().size()]), getWorld().getName(), settings.getMerged());
         }
         return p;
     }

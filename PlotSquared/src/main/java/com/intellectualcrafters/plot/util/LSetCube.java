@@ -28,6 +28,7 @@ import org.bukkit.Location;
  *
  * @author Citymonstret
  */
+@SuppressWarnings({"javadoc", "unused"})
 public class LSetCube {
 
     /**

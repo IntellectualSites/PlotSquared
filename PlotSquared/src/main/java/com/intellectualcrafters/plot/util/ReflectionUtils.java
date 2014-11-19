@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -232,8 +233,8 @@ public class ReflectionUtils {
                 if (methodTypes.length != classes.length) {
                     continue;
                 }
-                for (int i = 0; i < classes.length; i++) {
-                    if (!classes.equals(methodTypes)) {
+                for (Class aClass : classes) {
+                    if (!Arrays.equals(classes, methodTypes)) {
                         continue findMethod;
                     }
                     return new RefMethod(m);

@@ -98,6 +98,7 @@ public class PWE {
         return s.getMask() == null;
     }
 
+    @SuppressWarnings("deprecation")
     public static void setNoMask(final Player p) {
         try {
             LocalSession s;
@@ -110,7 +111,7 @@ public class PWE {
             final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
             s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
         } catch (final Exception e) {
-
+            //
         }
     }
 

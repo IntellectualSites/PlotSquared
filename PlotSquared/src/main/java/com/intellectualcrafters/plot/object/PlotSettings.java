@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.sun.istack.internal.NotNull;
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.Set;
  * @author Citymonstret
  * @author Empire92
  */
+@SuppressWarnings("unused")
 public class PlotSettings {
     /**
      * merged plots
@@ -133,15 +135,19 @@ public class PlotSettings {
     }
 
     /**
-     * @param flags
+     * Set multiple flags
+     *
+     * @param flags Flag Array
      */
-    public void setFlags(final Flag[] flags) {
-        this.flags = new HashSet<Flag>(Arrays.asList(flags));
+    public void setFlags(@NotNull final Flag[] flags) {
+        this.flags = new HashSet<>(Arrays.asList(flags));
     }
 
     /**
-     * @param flag
-     * @return
+     * Get a flag
+     *
+     * @param flag Flag to get
+     * @return flag
      */
     public Flag getFlag(final String flag) {
         for (final Flag myflag : this.flags) {

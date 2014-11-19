@@ -24,7 +24,7 @@ package com.intellectualcrafters.plot.uuid;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-13.
+ * @author Citymonstret
  */
 public class UUIDSet {
     private final String name;

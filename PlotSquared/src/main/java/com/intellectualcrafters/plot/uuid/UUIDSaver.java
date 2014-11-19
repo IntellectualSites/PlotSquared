@@ -27,20 +27,20 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-13.
+ * @author Citymonstret
  */
-public abstract class UUIDSaver {
-    public abstract void globalPopulate();
+public interface UUIDSaver {
+    public void globalPopulate();
 
-    public abstract void globalSave(final BiMap<StringWrapper, UUID> biMap);
+    public void globalSave(final BiMap<StringWrapper, UUID> biMap);
 
-    public abstract void save(final UUIDSet set);
+    public void save(final UUIDSet set);
 
-    public abstract UUIDSet get(final String name);
+    public UUIDSet get(final String name);
 
-    public abstract UUIDSet get(final UUID uuid);
+    public UUIDSet get(final UUID uuid);
 
-    public abstract UUID mojangUUID(final String name) throws Exception;
+    public UUID mojangUUID(final String name) throws Exception;
 
-    public abstract String mojangName(final UUID uuid) throws Exception;
+    public String mojangName(final UUID uuid) throws Exception;
 }
