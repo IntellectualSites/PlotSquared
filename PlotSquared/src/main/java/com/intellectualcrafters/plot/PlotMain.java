@@ -73,6 +73,9 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unused")
 public class PlotMain extends JavaPlugin {
 
+    /**
+     * Permission that allows for "everything"
+     */
     public static final String ADMIN_PERMISSION =
             "plots.admin";
     /**
@@ -190,7 +193,7 @@ public class PlotMain extends JavaPlugin {
                     e.printStackTrace();
                 }
             }
-        }, 0l, /*12 * 60 * 60 * 20l*/ 86_40_00L);
+        }, 0l, 86_40_00L);
     }
 
     /**
@@ -272,6 +275,7 @@ public class PlotMain extends JavaPlugin {
      * Set the uuid saver
      *
      * @param saver new saver
+     * @see com.intellectualcrafters.plot.uuid.UUIDSaver
      */
     public static void setUUIDSaver(final UUIDSaver saver) {
         uuidSaver = saver;
@@ -370,6 +374,12 @@ public class PlotMain extends JavaPlugin {
         return new HashSet<>(myplots);
     }
 
+    /**
+     * Get plots for the specified world
+     *
+     * @param world A world, in which you want to search for plots
+     * @return HashMap containing Plot IDs and Plot Objects
+     */
     public static HashMap<PlotId, Plot> getPlots(final String world) {
         if (plots.containsKey(world)) {
             return plots.get(world);
@@ -477,6 +487,13 @@ public class PlotMain extends JavaPlugin {
         return (values.toArray(new Plot[values.size()]));
     }
 
+    /**
+     * Remove a plot
+     * @param world The Plot World
+     * @param id The Plot ID
+     * @param callEvent Whether or not to call the PlotDeleteEvent
+     * @return true if successful, false if not
+     */
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         if (callEvent) {
             final PlotDeleteEvent event = new PlotDeleteEvent(world, id);
@@ -593,7 +610,12 @@ public class PlotMain extends JavaPlugin {
         }
     }
 
-    private static double getJavaVersion() {
+    /**
+     * Get the java version
+     *
+     * @return Java Version as a double
+     */
+    public static double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
@@ -621,27 +643,12 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * ..
+     * Teleport a player to a plot
+     * @param player Player to teleport
+     * @param from Previous Location
+     * @param plot Plot to teleport to
+     * @return true if successful
      */
-
-    // Old Stuff
-    /*
-     * private static boolean checkForUpdate() throws IOException { URL call =
-     * new URL(Settings.Update.VERSION_URL); InputStream stream =
-     * call.openStream(); BufferedReader reader = new BufferedReader(new
-     * InputStreamReader(stream)); String latest = reader.readLine();
-     * reader.close(); return
-     * !getPlotMain().getDescription().getVersion().equalsIgnoreCase(latest); }
-     * private static String getNextUpdateString() throws IOException { URL call
-     * = new URL(Settings.Update.VERSION_URL); InputStream stream =
-     * call.openStream(); BufferedReader reader = new BufferedReader(new
-     * InputStreamReader(stream)); return reader.readLine(); } private static
-     * void update() throws IOException { sendConsoleSenderMessage(C.PREFIX.s()
-     * + "&c&lThere is an update! New Update: &6&l" + getNextUpdateString() +
-     * "&c&l, Current Update: &6&l" +
-     * getPlotMain().getDescription().getVersion()); }
-     */
-
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -702,10 +709,19 @@ public class PlotMain extends JavaPlugin {
         System.out.println(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s())));
     }
 
+    /**
+     * Reload all translations
+     * @throws IOException
+     */
     public static void reloadTranslations() throws IOException {
         C.setupTranslations();
     }
 
+    /**
+     * Ge the last played time
+     * @param uuid UUID for the player
+     * @return last play time as a long
+     */
     public static long getLastPlayed(final UUID uuid) {
         if (uuid == null) {
             return 0;
@@ -921,7 +937,7 @@ public class PlotMain extends JavaPlugin {
         options.put("api.location", Settings.API_URL);
         options.put("api.custom", Settings.CUSTOM_API);
         options.put("titles", Settings.TITLES);
-
+        options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
         options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
 
@@ -934,6 +950,7 @@ public class PlotMain extends JavaPlugin {
         if (Settings.DEBUG) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
+        Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
@@ -947,6 +964,10 @@ public class PlotMain extends JavaPlugin {
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
     }
 
+    /**
+     * Create a plotworld config section
+     * @param plotworld World to create the section for
+     */
     @SuppressWarnings("unused")
     public static void createConfiguration(final PlotWorld plotworld) {
         final Map<String, Object> options = new HashMap<>();
@@ -1274,6 +1295,12 @@ public class PlotMain extends JavaPlugin {
         });
     }
 
+    /**
+     * Add a Plot world
+     * @param world World to add
+     * @param plotworld PlotWorld Object
+     * @param manager Plot Manager for the new world
+     */
     public static void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         worlds.put(world, plotworld);
         managers.put(world, manager);
@@ -1282,33 +1309,56 @@ public class PlotMain extends JavaPlugin {
         }
     }
 
+    /**
+     * Remove a plot world
+     * @param world World to remove
+     */
     public static void removePlotWorld(final String world) {
         plots.remove(world);
         managers.remove(world);
         worlds.remove(world);
     }
 
+    /**
+     * Get all plots
+     * @return All Plos in a hashmap (world, Hashmap contiang ids and objects))
+     */
     public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
 
-    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = new LinkedHashMap<>(plots);
-        // PlotMain.plots.putAll(plots);
-    }
-
+    /**
+     * Set all plots
+     *
+     * @param plots New Plot LinkedHashMap
+     */
     public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = plots;
     }
 
     /**
-     * !!WorldGeneration!!
+     * Set all plots
+     *
+     * @param plots New Plot HashMap
+     */
+    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = new LinkedHashMap<>(plots);
+        // PlotMain.plots.putAll(plots);
+    }
+
+    /**
+     * Get the PlotSquared World Generator
+     *
+     * @see com.intellectualcrafters.plot.generator.WorldGenerator
      */
     @Override
-    public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+    final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         return new WorldGenerator(world);
     }
 
+    /**
+     * Setup the logger mechanics
+     */
     private void setupLogger() {
         final File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
         if (!log.exists()) {
@@ -1335,7 +1385,7 @@ public class PlotMain extends JavaPlugin {
      */
     @Override
     @SuppressWarnings("deprecation")
-    public void onEnable() {
+    final public void onEnable() {
         // Pre-Steps
         {
             // Init the logger
@@ -1560,7 +1610,7 @@ public class PlotMain extends JavaPlugin {
      * On unload
      */
     @Override
-    public void onDisable() {
+    final public void onDisable() {
         try {
             C.saveTranslations();
         } catch (Exception e) {

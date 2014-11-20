@@ -197,6 +197,7 @@ public enum C {
      * Teleport / Entry
      */
     TELEPORTED_TO_PLOT("&6You have been teleported"),
+    TELEPORTED_TO_ROAD("&cYou got teleported to the road"),
     /*
      * Set Block
      */

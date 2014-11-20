@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -73,7 +74,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         // textures(event.getPlayer());
         if (isInPlot(event.getPlayer().getLocation())) {
-            plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
+            if (Settings.TELEPORT_ON_LOGIN) {
+                event.getPlayer().teleport(PlotHelper.getPlotHomeDefault(getPlot(event.getPlayer())));
+                PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
+            } else {
+                plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
+            }
         }
     }
 

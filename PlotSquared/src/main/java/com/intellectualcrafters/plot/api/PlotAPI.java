@@ -332,6 +332,7 @@ public class PlotAPI {
      *
      * @param c (Caption)
      * @see #sendConsoleMessage(String)
+     * @see com.intellectualcrafters.plot.config.C
      */
     public void sendConsoleMessage(@NotNull final C c) {
         sendConsoleMessage(c.s());
@@ -342,6 +343,7 @@ public class PlotAPI {
      *
      * @param flag Flag that should be registered
      * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
+     * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
     public void addFlag(@NotNull final AbstractFlag flag) {
         FlagManager.addFlag(flag);
@@ -472,6 +474,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.Plot)
      * @see com.intellectualcrafters.plot.object.PlotHomePosition
+     * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location[] getLocations(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
@@ -485,6 +488,7 @@ public class PlotAPI {
      * @return plot bottom location
      * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.Plot)
      * @see com.intellectualcrafters.plot.object.PlotHomePosition
+     * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getHomeLocation(@NotNull final Plot p) {
         return PlotHelper.getPlotHome(p.getWorld(), p.id);
@@ -496,6 +500,7 @@ public class PlotAPI {
      * @param p Plot that you want to get the location for
      * @return plot bottom location
      * @see com.intellectualcrafters.plot.util.PlotHelper#getPlotBottomLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getBottomLocation(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
@@ -508,6 +513,7 @@ public class PlotAPI {
      * @param p Plot that you want to get the location for
      * @return plot top location
      * @see PlotHelper#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getTopLocation(@NotNull final Plot p) {
         final World world = Bukkit.getWorld(p.world);
@@ -530,6 +536,7 @@ public class PlotAPI {
      *
      * @param c SubCommand, that we want to register
      * @see com.intellectualcrafters.plot.commands.MainCommand#subCommands
+     * @see com.intellectualcrafters.plot.commands.SubCommand
      */
     public void registerCommand(@NotNull final SubCommand c) {
         MainCommand.subCommands.add(c);

@@ -857,6 +857,17 @@ public class PlotHelper {
     }
 
     /**
+     * Retrieve the location of the default plot home position
+     * @param plot Plot
+     * @return the location
+     */
+    public static Location getPlotHomeDefault(final Plot plot) {
+        final Location l = getPlotBottomLoc(plot.getWorld(), plot.getId()).subtract(0, 0, 0);
+        l.setY(getHeighestBlock(plot.getWorld(), l.getBlockX(), l.getBlockZ()));
+        return l;
+    }
+
+    /**
      * Get the plot home
      * @param w World
      * @param plot Plot Object

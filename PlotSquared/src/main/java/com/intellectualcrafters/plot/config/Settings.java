@@ -30,6 +30,11 @@ package com.intellectualcrafters.plot.config;
 public class Settings {
 
     /**
+     * Teleport to path on login
+     */
+    public static boolean TELEPORT_ON_LOGIN = false;
+
+    /**
      * Mob Cap Enabled
      */
     public static boolean MOB_CAP_ENABLED = false;
