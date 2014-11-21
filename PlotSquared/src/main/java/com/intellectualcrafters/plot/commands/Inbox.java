@@ -38,7 +38,7 @@ import java.util.UUID;
 public class Inbox extends SubCommand {
 
     public Inbox() {
-        super(Command.INBOX, "Review a the comments for a plot", "comment", CommandCategory.ACTIONS, true);
+        super(Command.INBOX, "Review a the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
     }
 
     @Override
