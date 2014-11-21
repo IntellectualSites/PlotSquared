@@ -41,7 +41,7 @@ import java.util.*;
 /**
  * @author Citymonstret
  */
-public class SQLManager extends AbstractDB {
+public class SQLManager implements AbstractDB {
 
     // Public final
     public final String SET_OWNER;
@@ -452,7 +452,6 @@ public class SQLManager extends AbstractDB {
                 plots.put(id, p);
             }
 //            stmt.close();
-
             /*
              * Getting helpers
              */

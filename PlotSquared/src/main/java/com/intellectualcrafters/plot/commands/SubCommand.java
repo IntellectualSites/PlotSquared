@@ -30,32 +30,37 @@ import org.bukkit.entity.Player;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"deprecation", "unused", "javadoc"})
+@SuppressWarnings({"deprecation", "unused"})
 public abstract class SubCommand {
-    public boolean isPlayer;
+
     /**
      * Command
      */
-    public String cmd;
+    public final String cmd;
     /**
      * Permission node
      */
-    public CommandPermission permission;
+    public final CommandPermission permission;
     /**
      * Simple description
      */
-    public String description;
+    public final String description;
     /**
      * Alias
      */
-    public String alias;
-
+    public final String alias;
     /**
      * Command usage
      */
-    public String usage;
-
-    public CommandCategory category;
+    public final String usage;
+    /**
+     * The category
+     */
+    public final CommandCategory category;
+    /**
+     * Is this a player-online command?
+     */
+    public boolean isPlayer;
 
     /**
      * @param cmd         Command /plot {cmd} <-- That!
@@ -100,6 +105,11 @@ public abstract class SubCommand {
      */
     public abstract boolean execute(final Player plr, final String... args);
 
+    /**
+     * Execute the command as console
+     *
+     * @param args Arguments
+     */
     public void executeConsole(final String... args) {
         this.execute(null, args);
     }
@@ -107,23 +117,64 @@ public abstract class SubCommand {
     /**
      * Send a message
      *
-     * @param plr
-     * @param c
-     * @param args
+     * @param plr  Player who will receive the mssage
+     * @param c    Caption
+     * @param args Arguments (%s's)
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, com.intellectualcrafters.plot.config.C, String...)
      */
     public boolean sendMessage(final Player plr, final C c, final String... args) {
         PlayerFunctions.sendMessage(plr, c, args);
         return true;
     }
 
+    /**
+     * CommandCategory
+     *
+     * @author Citymonstret
+     * @author Empire92
+     */
     public enum CommandCategory {
+        /**
+         * Claiming Commands
+         * <p/>
+         * Such as: /plot claim
+         */
         CLAIMING("Claiming"),
+        /**
+         * Teleportation Commands
+         * <p/>
+         * Such as: /plot visit
+         */
         TELEPORT("Teleportation"),
+        /**
+         * Action Commands
+         * <p/>
+         * Such as: /plot clear
+         */
         ACTIONS("Actions"),
+        /**
+         * Information Commands
+         * <p/>
+         * Such as: /plot info
+         */
         INFO("Information"),
+        /**
+         * Debug Commands
+         * <p/>
+         * Such as: /plot debug
+         */
         DEBUG("Debug");
-        private String name;
 
+        /**
+         * The category name (Readable)
+         */
+        private final String name;
+
+        /**
+         * Constructor
+         *
+         * @param name readable name
+         */
         CommandCategory(final String name) {
             this.name = name;
         }

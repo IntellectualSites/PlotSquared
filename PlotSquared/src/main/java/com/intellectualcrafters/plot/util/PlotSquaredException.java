@@ -24,7 +24,9 @@ package com.intellectualcrafters.plot.util;
 import com.intellectualcrafters.plot.PlotMain;
 
 /**
- * Created by Citymonstret on 2014-09-29.
+ * Created 2014-09-29 for PlotSquared
+ *
+ * @author Citymonstret
  */
 public class PlotSquaredException extends RuntimeException {
 
@@ -34,6 +36,7 @@ public class PlotSquaredException extends RuntimeException {
     }
 
     public static enum PlotError {
+        PLOTMAIN_NULL("The PlotMain instance was null"),
         MISSING_DEPENDENCY("Missing Dependency");
         private String errorHeader;
 

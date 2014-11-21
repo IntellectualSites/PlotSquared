@@ -32,9 +32,9 @@ import org.bukkit.entity.Player;
 public class CommandPermission {
 
     /**
-     *
+     * Permission Node
      */
-    public String permission;
+    public final String permission;
 
     /**
      * @param permission Command Permission

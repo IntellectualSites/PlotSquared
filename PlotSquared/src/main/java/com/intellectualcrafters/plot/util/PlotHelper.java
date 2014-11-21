@@ -26,7 +26,9 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.*;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -45,11 +47,12 @@ import java.util.UUID;
  *
  * @author Citymonstret
  */
+@SuppressWarnings({"unused", "javadoc", "deprecation"})
 public class PlotHelper {
     public static boolean canSetFast = false;
     public static boolean canSendChunk = false;
-    public static ArrayList<String> runners_p = new ArrayList<String>();
-    public static HashMap<Plot, Integer> runners = new HashMap<Plot, Integer>();
+    public static ArrayList<String> runners_p = new ArrayList<>();
+    public static HashMap<Plot, Integer> runners = new HashMap<>();
     static long state = 1;
 
     /**
@@ -191,7 +194,7 @@ public class PlotHelper {
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
-        if (lesserPlot.id.x == greaterPlot.id.x) {
+        if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
             if (!lesserPlot.settings.getMerged(2)) {
                 lesserPlot.settings.setMerged(2, true);
                 greaterPlot.settings.setMerged(0, true);
@@ -209,7 +212,7 @@ public class PlotHelper {
     /*
      * Random number gen section
      */
-    public static final long nextLong() {
+    public static long nextLong() {
         final long a = state;
         state = xorShift64(a);
         return a;
@@ -219,14 +222,14 @@ public class PlotHelper {
      * End of random number gen section
      */
 
-    public static final long xorShift64(long a) {
+    public static long xorShift64(long a) {
         a ^= (a << 21);
         a ^= (a >>> 35);
         a ^= (a << 4);
         return a;
     }
 
-    public static final int random(final int n) {
+    public static int random(final int n) {
         if (n == 1) {
             return 0;
         }
@@ -353,7 +356,6 @@ public class PlotHelper {
             count++;
             final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
             final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-            merge = false;
             plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, player, 0)) {
                 final boolean result = mergePlots(world, plots);
@@ -765,6 +767,7 @@ public class PlotHelper {
                     }
                 }
             } catch (final Exception e) {
+                //
             }
         }
     }
@@ -794,7 +797,7 @@ public class PlotHelper {
                     }
                 }
             } catch (final Exception e) {
-
+                //
             }
         }
     }
@@ -829,6 +832,13 @@ public class PlotHelper {
         return 64;
     }
 
+    /**
+     * Get plot home
+     *
+     * @param w      World in which the plot is located
+     * @param plotid Plot ID
+     * @return Home Location
+     */
     public static Location getPlotHome(final World w, final PlotId plotid) {
 
         if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
@@ -848,10 +858,33 @@ public class PlotHelper {
         }
     }
 
+    /**
+     * Retrieve the location of the default plot home position
+     * @param plot Plot
+     * @return the location
+     */
+    public static Location getPlotHomeDefault(final Plot plot) {
+        final Location l = getPlotBottomLoc(plot.getWorld(), plot.getId()).subtract(0, 0, 0);
+        l.setY(getHeighestBlock(plot.getWorld(), l.getBlockX(), l.getBlockZ()));
+        return l;
+    }
+
+    /**
+     * Get the plot home
+     * @param w World
+     * @param plot Plot Object
+     * @return Plot Home Location
+     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     */
     public static Location getPlotHome(final World w, final Plot plot) {
         return getPlotHome(w, plot.id);
     }
 
+    /**
+     * Refresh the plot chunks
+     * @param world World in which the plot is located
+     * @param plot Plot Object
+     */
     public static void refreshPlotChunks(final World world, final Plot plot) {
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
         final int topX = getPlotTopLoc(world, plot.id).getBlockX();

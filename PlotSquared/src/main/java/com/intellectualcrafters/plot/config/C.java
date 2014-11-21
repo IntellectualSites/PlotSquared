@@ -197,6 +197,7 @@ public enum C {
      * Teleport / Entry
      */
     TELEPORTED_TO_PLOT("&6You have been teleported"),
+    TELEPORTED_TO_ROAD("&cYou got teleported to the road"),
     /*
      * Set Block
      */
@@ -368,13 +369,6 @@ public enum C {
     HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
     HELP_ITEM("&6%usage% [%alias%]\n   &c%desc%\n"),
     /*
-    HELP_CATEGORY("&6Current Category&c: &l%category%"),
-    HELP_INFO("&6You need to specify a help category"),
-    HELP_INFO_ITEM("&6/plots help %category% &c- &6%category_desc%"),
-    HELP_PAGE("&c>> &6%usage% &c[&6%alias%&c]\n" + "&c>> &6%desc%\n"),
-    HELP_ITEM_SEPARATOR("&c%lines"),
-    HELP_HEADER("&c(Page &6%cur&c/&6%max&c) &6Help for Plots"),*/
-    /*
      * Direction
      */
     DIRECTION("&6Current direction: %dir%"),
@@ -382,13 +376,33 @@ public enum C {
      * Custom
      */
     CUSTOM_STRING("-");
-    static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
+
+    /**
+     * Special Language
+     *
+     * @see com.intellectualsites.translation.TranslationLanguage
+     */
+    protected static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
+
+    /**
+     * The TranslationManager
+     *
+     * @see com.intellectualsites.translation.TranslationManager
+     */
     private static TranslationManager manager;
+
+    /**
+     * The default file
+     *
+     * @see com.intellectualsites.translation.TranslationFile
+     */
     private static TranslationFile defaultFile;
+
     /**
      * Default
      */
     private String d;
+
     /**
      * Translated
      */
@@ -472,6 +486,7 @@ public enum C {
 
     /**
      * @return translated and color decoded
+     * @see org.bukkit.ChatColor#translateAlternateColorCodes(char, String)
      */
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());

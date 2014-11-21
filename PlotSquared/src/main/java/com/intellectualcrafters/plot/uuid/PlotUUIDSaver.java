@@ -37,9 +37,12 @@ import java.net.URLConnection;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-13.
+ * Plot UUID Saver/Fetcher
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
-public class PlotUUIDSaver extends UUIDSaver {
+public class PlotUUIDSaver implements UUIDSaver {
 
     @Override
     public void globalPopulate() {

@@ -27,20 +27,60 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-13.
+ * @author Citymonstret
  */
-public abstract class UUIDSaver {
-    public abstract void globalPopulate();
+public interface UUIDSaver {
 
-    public abstract void globalSave(final BiMap<StringWrapper, UUID> biMap);
+    /**
+     * Populate the default list
+     */
+    public void globalPopulate();
 
-    public abstract void save(final UUIDSet set);
+    /**
+     * Save the UUIDs
+     *
+     * @param biMap Map containing names and UUIDs
+     */
+    public void globalSave(final BiMap<StringWrapper, UUID> biMap);
 
-    public abstract UUIDSet get(final String name);
+    /**
+     * Save a single UUIDSet
+     *
+     * @param set Set to save
+     */
+    public void save(final UUIDSet set);
 
-    public abstract UUIDSet get(final UUID uuid);
+    /**
+     * Get a single UUIDSet
+     *
+     * @param name Username
+     * @return UUID Set
+     */
+    public UUIDSet get(final String name);
 
-    public abstract UUID mojangUUID(final String name) throws Exception;
+    /**
+     * Get a single UUIDSet
+     *
+     * @param uuid UUID
+     * @return UUID Set
+     */
+    public UUIDSet get(final UUID uuid);
 
-    public abstract String mojangName(final UUID uuid) throws Exception;
+    /**
+     * Fetch uuid from mojang servers
+     *
+     * @param name Username
+     * @return uuid
+     * @throws Exception
+     */
+    public UUID mojangUUID(final String name) throws Exception;
+
+    /**
+     * Fetch username from mojang servers
+     *
+     * @param uuid UUID
+     * @return username
+     * @throws Exception
+     */
+    public String mojangName(final UUID uuid) throws Exception;
 }

@@ -47,12 +47,12 @@ public class Claim extends SubCommand {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
 
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
-        return claimPlot(player, plot, teleport, "");
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, boolean auto) {
+        return claimPlot(player, plot, teleport, "", auto);
     }
 
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic) {
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot);
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, boolean auto) {
+        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             PlotHelper.createPlot(player, plot);
@@ -134,6 +134,6 @@ public class Claim extends SubCommand {
             }
         }
 
-        return !claimPlot(plr, plot, false, schematic) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
+        return !claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

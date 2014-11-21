@@ -31,7 +31,7 @@ import org.bukkit.event.HandlerList;
 import java.util.ArrayList;
 
 /**
- * Created by Citymonstret on 2014-08-09.
+ * @author Empire92
  */
 public class PlotMergeEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -43,8 +43,9 @@ public class PlotMergeEvent extends Event implements Cancellable {
     /**
      * PlotMergeEvent: Called when plots are merged
      *
-     * @param player
-     * @param plot
+     * @param world World in which the event occurred
+     * @param plot Plot that was merged
+     * @param plots A list of plots involved in the event
      */
     public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
         this.plots = plots;

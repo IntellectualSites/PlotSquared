@@ -43,6 +43,9 @@ import java.util.List;
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
 
+    /**
+     * Main Permission Node
+     */
     public static final String
             MAIN_PERMISSION = "plots.use";
 

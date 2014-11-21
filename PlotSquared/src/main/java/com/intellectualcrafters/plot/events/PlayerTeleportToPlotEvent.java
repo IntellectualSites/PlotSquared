@@ -30,6 +30,9 @@ import org.bukkit.event.player.PlayerEvent;
 
 /**
  * Called when a player teleports to a plot
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -42,9 +45,9 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
-     * @param player
-     * @param from
-     * @param plot
+     * @param player That was teleported
+     * @param from Start location
+     * @param plot Plot to which the player was teleported
      */
     public PlayerTeleportToPlotEvent(final Player player, final Location from, final Plot plot) {
         super(player);

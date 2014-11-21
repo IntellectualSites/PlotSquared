@@ -153,7 +153,7 @@ public class Auto extends SubCommand {
                 Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
                 if ((plot == null) || (plot.owner == null)) {
                     plot = PlotHelper.getPlot(world, Auto.lastPlot);
-                    Claim.claimPlot(plr, plot, true);
+                    Claim.claimPlot(plr, plot, true, true);
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(plot.id);
@@ -187,7 +187,7 @@ public class Auto extends SubCommand {
                         for (int j = start.y; j <= end.y; j++) {
                             final Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
                             final boolean teleport = ((i == end.x) && (j == end.y));
-                            Claim.claimPlot(plr, plot, teleport);
+                            Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
                     if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {

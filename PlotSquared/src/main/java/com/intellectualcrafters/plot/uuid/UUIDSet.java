@@ -24,12 +24,26 @@ package com.intellectualcrafters.plot.uuid;
 import java.util.UUID;
 
 /**
- * Created by Citymonstret on 2014-10-13.
+ * @author Citymonstret
  */
 public class UUIDSet {
+
+    /**
+     * Player Name
+     */
     private final String name;
+
+    /**
+     * Player UUID
+     */
     private final UUID uuid;
 
+    /**
+     * Constructor
+     *
+     * @param name Username
+     * @param uuid UUID
+     */
     public UUIDSet(final String name, final UUID uuid) {
         this.name = name;
         this.uuid = uuid;
@@ -40,6 +54,11 @@ public class UUIDSet {
         return getName();
     }
 
+    /**
+     * Return the name
+     *
+     * @return Name
+     */
     public String getName() {
         return this.name;
     }

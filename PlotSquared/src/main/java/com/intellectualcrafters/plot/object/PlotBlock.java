@@ -21,6 +21,9 @@
 
 package com.intellectualcrafters.plot.object;
 
+/**
+ * @author Empire92
+ */
 public class PlotBlock {
     public short id;
     public byte data;

@@ -28,22 +28,26 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
- * Created by Citymonstret on 2014-08-09.
+ * @author Citymonstret
+ * @author Empire92
  */
+@SuppressWarnings("unused")
 public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
+    private final boolean auto;
     private boolean cancelled;
 
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed
      *
-     * @param player
-     * @param plot
+     * @param player Player that claimed the plot
+     * @param plot   Plot that was claimed
      */
-    public PlayerClaimPlotEvent(final Player player, final Plot plot) {
+    public PlayerClaimPlotEvent(final Player player, final Plot plot, boolean auto) {
         super(player);
         this.plot = plot;
+        this.auto = auto;
     }
 
     public static HandlerList getHandlerList() {
@@ -57,6 +61,13 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
      */
     public Plot getPlot() {
         return this.plot;
+    }
+
+    /**
+     * @return true if it was an automated claim, else false
+     */
+    public boolean wasAuto() {
+        return this.auto;
     }
 
     @Override

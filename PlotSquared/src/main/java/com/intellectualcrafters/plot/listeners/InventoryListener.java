@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
  *
  * @author Citymonstret
  */
+@SuppressWarnings("unused")
 public class InventoryListener implements Listener {
 
     @EventHandler

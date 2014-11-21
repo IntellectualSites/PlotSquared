@@ -27,7 +27,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
- * Created by Citymonstret on 2014-08-16.
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlayerEnterPlotEvent extends PlayerEvent {
 
@@ -38,8 +39,8 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
     /**
      * PlayerEnterPlotEvent: Called when a player leaves a plot
      *
-     * @param player
-     * @param plot
+     * @param player Player that entered the plot
+     * @param plot   Plot that was entered
      */
     public PlayerEnterPlotEvent(final Player player, final Plot plot) {
         super(player);

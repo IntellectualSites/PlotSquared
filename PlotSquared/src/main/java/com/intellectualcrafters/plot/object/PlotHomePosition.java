@@ -22,7 +22,7 @@
 package com.intellectualcrafters.plot.object;
 
 /**
- * Created by Citymonstret on 2014-08-05.
+ * @author Citymonstret
  */
 public enum PlotHomePosition {
     CENTER("Center", 'c'),
@@ -37,13 +37,7 @@ public enum PlotHomePosition {
     }
 
     public boolean isMatching(final String string) {
-        if ((string.length() < 2) && (string.charAt(0) == this.ch)) {
-            return true;
-        }
-        if (string.equalsIgnoreCase(this.string)) {
-            return true;
-        }
-        return false;
+        return (string.length() < 2) && (string.charAt(0) == this.ch) || string.equalsIgnoreCase(this.string);
     }
 
 }

@@ -43,6 +43,7 @@ public class Title {
     static {
         CORRESPONDING_TYPES = new HashMap<>();
     }
+
     /* Title packet */
     private Class<?> packetTitle;
     /* Title packet actions ENUM */
@@ -50,7 +51,7 @@ public class Title {
     /* Chat serializer */
     private Class<?> nmsChatSerializer;
     /* Title text and color */
-    private String title = "";
+    private String title;
     private ChatColor titleColor = ChatColor.WHITE;
     /* Subtitle text and color */
     private String subtitle = "";
@@ -78,6 +79,7 @@ public class Title {
      * @param subtitle Subtitle text
      */
     public Title(final String title, final String subtitle) {
+        this.title = "";
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
@@ -93,6 +95,7 @@ public class Title {
      * @param fadeOutTime Fade out time
      */
     public Title(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) {
+        this.title = "";
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;

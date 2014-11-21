@@ -52,11 +52,15 @@ public class AbstractFlag {
             throw new IllegalArgumentException("Key must be <= 16 characters");
         }
         this.key = key.toLowerCase();
-        this.value = new FlagValue.StringValue();
+        if (value == null) {
+            this.value = new FlagValue.StringValue();
+        } else {
+            this.value = value;
+        }
     }
 
     public String parseValue(final String value) {
-        return this.value.parse(value).toString();
+        return this.value.parse(value);
     }
 
     public String getValueDesc() {

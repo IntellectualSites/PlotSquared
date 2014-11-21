@@ -35,7 +35,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
- * @author
+ * UUID Fetcher
+ * From Bukkit
  */
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
     private static final double PROFILES_PER_REQUEST = 100;
@@ -51,29 +52,6 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 
     public UUIDFetcher(final List<String> names) {
         this(names, true);
-    }
-
-    @Override
-    public Map<String, UUID> call() throws Exception {
-        final Map<String, UUID> uuidMap = new HashMap<String, UUID>();
-        final int requests = (int) Math.ceil(this.names.size() / PROFILES_PER_REQUEST);
-        for (int i = 0; i < requests; i++) {
-            final HttpURLConnection connection = createConnection();
-            final String body = JSONArray.toJSONString(this.names.subList(i * 100, Math.min((i + 1) * 100, this.names.size())));
-            writeBody(connection, body);
-            final JSONArray array = (JSONArray) this.jsonParser.parse(new InputStreamReader(connection.getInputStream()));
-            for (final Object profile : array) {
-                final JSONObject jsonProfile = (JSONObject) profile;
-                final String id = (String) jsonProfile.get("id");
-                final String name = (String) jsonProfile.get("name");
-                final UUID uuid = UUIDFetcher.getUUID(id);
-                uuidMap.put(name, uuid);
-            }
-            if (this.rateLimiting && (i != (requests - 1))) {
-                Thread.sleep(100L);
-            }
-        }
-        return uuidMap;
     }
 
     private static void writeBody(final HttpURLConnection connection, final String body) throws Exception {
@@ -98,6 +76,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         return UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
     }
 
+    @SuppressWarnings("unused")
     public static byte[] toBytes(final UUID uuid) {
         final ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
         byteBuffer.putLong(uuid.getMostSignificantBits());
@@ -105,6 +84,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         return byteBuffer.array();
     }
 
+    @SuppressWarnings("unused")
     public static UUID fromBytes(final byte[] array) {
         if (array.length != 16) {
             throw new IllegalArgumentException("Illegal byte array length: " + array.length);
@@ -115,7 +95,31 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         return new UUID(mostSignificant, leastSignificant);
     }
 
+    @SuppressWarnings("unused")
     public static UUID getUUIDOf(final String name) throws Exception {
         return new UUIDFetcher(Arrays.asList(name)).call().get(name);
+    }
+
+    @Override
+    public Map<String, UUID> call() throws Exception {
+        final Map<String, UUID> uuidMap = new HashMap<>();
+        final int requests = (int) Math.ceil(this.names.size() / PROFILES_PER_REQUEST);
+        for (int i = 0; i < requests; i++) {
+            final HttpURLConnection connection = createConnection();
+            final String body = JSONArray.toJSONString(this.names.subList(i * 100, Math.min((i + 1) * 100, this.names.size())));
+            writeBody(connection, body);
+            final JSONArray array = (JSONArray) this.jsonParser.parse(new InputStreamReader(connection.getInputStream()));
+            for (final Object profile : array) {
+                final JSONObject jsonProfile = (JSONObject) profile;
+                final String id = (String) jsonProfile.get("id");
+                final String name = (String) jsonProfile.get("name");
+                final UUID uuid = UUIDFetcher.getUUID(id);
+                uuidMap.put(name, uuid);
+            }
+            if (this.rateLimiting && (i != (requests - 1))) {
+                Thread.sleep(100L);
+            }
+        }
+        return uuidMap;
     }
 }

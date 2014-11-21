@@ -57,7 +57,7 @@ public class DebugClaimTest extends SubCommand {
     }
 
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot);
+        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, true);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             PlotHelper.createPlot(player, plot);

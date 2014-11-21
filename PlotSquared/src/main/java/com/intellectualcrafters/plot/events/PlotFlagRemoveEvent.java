@@ -29,6 +29,9 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a flag is removed from a plot
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -39,8 +42,8 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
-     * @param flag
-     * @param plot
+     * @param flag Flag that was removed
+     * @param plot Plot from which the flag was removed
      */
     public PlotFlagRemoveEvent(final Flag flag, final Plot plot) {
         this.plot = plot;
