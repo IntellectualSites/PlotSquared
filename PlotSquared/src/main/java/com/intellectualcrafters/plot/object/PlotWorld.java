@@ -28,22 +28,14 @@ import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import static org.bukkit.Material.*;
 
 /**
  * @author Jesse Boyd
  */
 public abstract class PlotWorld {
 
-    // TODO make this configurable
-    // make non static and static_default_valu + add config option
-    @SuppressWarnings("deprecation")
-    public final static ArrayList<Material> BLOCKS = new ArrayList<>(Arrays.asList(new Material[]{ACACIA_STAIRS, BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK, NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE, QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND,
-            SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK, SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD, WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44), getMaterial(126)}));
     public final static boolean AUTO_MERGE_DEFAULT = false;
     public final static boolean MOB_SPAWNING_DEFAULT = false;
     public final static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
@@ -62,6 +54,64 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_EGGS_DEFAULT = false;
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
+    // TODO make this configurable
+    // make non static and static_default_valu + add config option
+    @SuppressWarnings("deprecation")
+    public static List<Material> BLOCKS; /*= new ArrayList<>(
+            Arrays.asList(
+                    new Material[]{
+                            ACACIA_STAIRS, BEACON,
+                            BEDROCK, BIRCH_WOOD_STAIRS,
+                            BOOKSHELF, BREWING_STAND,
+                            BRICK, BRICK_STAIRS,
+                            BURNING_FURNACE, CAKE_BLOCK,
+                            CAULDRON, CLAY_BRICK,
+                            CLAY, COAL_BLOCK,
+                            COAL_ORE, COBBLE_WALL,
+                            COBBLESTONE, COBBLESTONE_STAIRS,
+                            COMMAND, DARK_OAK_STAIRS,
+                            DAYLIGHT_DETECTOR, DIAMOND_ORE,
+                            DIAMOND_BLOCK, DIRT,
+                            DISPENSER, DROPPER,
+                            EMERALD_BLOCK, EMERALD_ORE,
+                            ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME,
+                            ENDER_STONE, FURNACE,
+                            GLOWSTONE, GOLD_ORE,
+                            GOLD_BLOCK, GRASS, GRAVEL, GLASS,
+                            HARD_CLAY, HAY_BLOCK,
+                            HUGE_MUSHROOM_1, HUGE_MUSHROOM_2,
+                            IRON_BLOCK, IRON_ORE,
+                            JACK_O_LANTERN, JUKEBOX,
+                            JUNGLE_WOOD_STAIRS, LAPIS_BLOCK,
+                            LAPIS_ORE, LEAVES,
+                            LEAVES_2, LOG, LOG_2,
+                            MELON_BLOCK, MOB_SPAWNER,
+                            MOSSY_COBBLESTONE, MYCEL,
+                            NETHER_BRICK, NETHER_BRICK_STAIRS,
+                            NETHERRACK, NOTE_BLOCK,
+                            OBSIDIAN, PACKED_ICE,
+                            PUMPKIN, QUARTZ_BLOCK,
+                            QUARTZ_ORE, QUARTZ_STAIRS,
+                            REDSTONE_BLOCK, SANDSTONE,
+                            SAND, SANDSTONE_STAIRS,
+                            SMOOTH_BRICK, SMOOTH_STAIRS,
+                            SNOW_BLOCK, SOUL_SAND,
+                            SPONGE, SPRUCE_WOOD_STAIRS,
+                            STONE, WOOD,
+                            WOOD_STAIRS, WORKBENCH,
+                            WOOL, getMaterial(44), getMaterial(126)
+                    }
+            )
+    );*/
+
+    static {
+        // TODO: Let jesse decide if this is stupid or not
+        BLOCKS = new ArrayList<>();
+        for (Material material : Material.values()) {
+            if (material.isBlock() && material.isSolid())
+                BLOCKS.add(material);
+        }
+    }
     public final String worldname;
     public boolean AUTO_MERGE;
     public boolean MOB_SPAWNING;

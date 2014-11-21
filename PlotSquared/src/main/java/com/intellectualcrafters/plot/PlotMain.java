@@ -110,11 +110,13 @@ public class PlotMain extends JavaPlugin {
     /**
      * All loaded plot worlds
      */
-    private final static HashMap<String, PlotWorld> worlds = new HashMap<>();
+    private final static HashMap<String, PlotWorld> worlds =
+            new HashMap<>();
     /**
      * All world managers
      */
-    private final static HashMap<String, PlotManager> managers = new HashMap<>();
+    private final static HashMap<String, PlotManager> managers =
+            new HashMap<>();
     /**
      * settings.properties
      */
@@ -962,7 +964,6 @@ public class PlotMain extends JavaPlugin {
 
         for (final ConfigurationNode setting : plotworld.getSettingNodes()) {
             options.put(setting.getConstant(), setting.getValue());
-            //TODO: Make jesse explain wth was going on here
         }
 
         for (final Entry<String, Object> node : options.entrySet()) {
@@ -1321,20 +1322,20 @@ public class PlotMain extends JavaPlugin {
     /**
      * Set all plots
      *
-     * @param plots New Plot HashMap
+     * @param plots New Plot LinkedHashMap
      */
-    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = new LinkedHashMap<>(plots);
-        // PlotMain.plots.putAll(plots);
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
      * Set all plots
      *
-     * @param plots New Plot LinkedHashMap
+     * @param plots New Plot HashMap
      */
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
+    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = new LinkedHashMap<>(plots);
+        // PlotMain.plots.putAll(plots);
     }
 
     /**
@@ -1377,26 +1378,22 @@ public class PlotMain extends JavaPlugin {
     @Override
     @SuppressWarnings("deprecation")
     final public void onEnable() {
-        // Pre-Steps
-        {
-            // Init the logger
-            setupLogger();
-
-            // Check for outdated java version.
-            if (getJavaVersion() < 1.7) {
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-                // Didn't know of any other link :D
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+        // Setup the logger mechanics
+        setupLogger();
+        // Check for outdated java version.
+        if (getJavaVersion() < 1.7) {
+            sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            // Didn't know of any other link :D
+            sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        } else if (getJavaVersion() < 1.8) {
+            sendConsoleSenderMessage(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
-
         // Setup configurations
         C.setupTranslations();
         // Setup configuration
         configs();
-
         // Setup metrics
         if (Settings.METRICS) {
             try {
@@ -1410,13 +1407,10 @@ public class PlotMain extends JavaPlugin {
             // We should at least make them feel bad.
             sendConsoleSenderMessage("Using metrics will allow us to improve the plugin\nPlease consider it :)");
         }
-
         // Kill mobs on roads?
         if (Settings.KILL_ROAD_MOBS) {
             killAllEntities();
         }
-
-        // Enabled<3
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
         }
@@ -1601,6 +1595,10 @@ public class PlotMain extends JavaPlugin {
             setUUIDSaver(new PlotUUIDSaver());
             // Looks really cool xD
             getUUIDSaver().globalPopulate();
+        }
+        // Now we're finished :D
+        if (C.ENABLED.s().length() > 0) {
+            Broadcast(C.ENABLED);
         }
     }
 
