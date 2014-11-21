@@ -21,9 +21,13 @@
 
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -60,11 +64,32 @@ public class SetBlockFast {
     }
 
     public static void update(final org.bukkit.entity.Player player) {
-        final int distance = Bukkit.getViewDistance() + 1;
+        if (!PlotHelper.canSendChunk) {
+            
+            final int distance = Bukkit.getViewDistance();
+            for (int cx = -distance; cx < distance; cx++) {
+                for (int cz = -distance; cz < distance; cz++) {
+                    player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
+                }
+            }
+            
+            return;
+        }
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        
+        final int distance = Bukkit.getViewDistance();
         for (int cx = -distance; cx < distance; cx++) {
             for (int cz = -distance; cz < distance; cz++) {
-                player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
+                Chunk chunk = player.getWorld().getChunkAt(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
+                chunks.add(chunk);
             }
+        }
+        
+        try {
+            SendChunk.sendChunk(chunks);
+        }
+        catch (Throwable e) {
+            PlotHelper.canSendChunk = false;
         }
     }
 }

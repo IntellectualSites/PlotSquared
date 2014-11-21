@@ -47,6 +47,7 @@ import java.util.UUID;
  */
 public class PlotHelper {
     public static boolean canSetFast = false;
+    public static boolean canSendChunk = false;
     public static ArrayList<String> runners_p = new ArrayList<String>();
     public static HashMap<Plot, Integer> runners = new HashMap<Plot, Integer>();
     static long state = 1;
@@ -697,7 +698,6 @@ public class PlotHelper {
 
         if (canSetFast) {
             refreshPlotChunks(world, plot);
-            // SetBlockFast.update(requester);
         }
     }
 
@@ -863,9 +863,28 @@ public class PlotHelper {
         final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
         final int maxChunkZ = (int) Math.floor((double) topZ / 16);
 
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                world.refreshChunk(x, z);
+                if (canSendChunk) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    chunks.add(chunk);
+                }
+                else {
+                    world.refreshChunk(x, z);
+                }
+            }
+        }
+        try {
+            SendChunk.sendChunk(chunks);
+        }
+        catch (Throwable e) {
+            canSendChunk = false;
+            for (int x = minChunkX; x <= maxChunkX; x++) {
+                for (int z = minChunkZ; z <= maxChunkZ; z++) {
+                    world.refreshChunk(x, z);
+                }
             }
         }
     }

@@ -42,8 +42,10 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1542,6 +1544,13 @@ public class PlotMain extends JavaPlugin {
                 PlotHelper.canSetFast = true;
             } catch (final Exception e) {
                 PlotHelper.canSetFast = false;
+            }
+            
+            try {
+                new SendChunk();
+                PlotHelper.canSendChunk = true;
+            } catch (final Exception e) {
+                PlotHelper.canSendChunk = false;
             }
         }
         // Setup the setup command
