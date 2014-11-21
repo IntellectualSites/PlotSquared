@@ -60,15 +60,9 @@ public class SendChunk {
                 diffx = Math.abs(x - (chunk.getX() << 4));
                 diffz = Math.abs(z - (chunk.getZ() << 4));
                 if (diffx <= view && diffz <= view) {
-                    System.out.print("PLAYER ");
                     Object pair = ChunkCoordIntPairCon.create(chunk.getX(), chunk.getZ());
                     Object pq = chunkCoordIntPairQueue.of(ep).get();
                     ((List) pq).add(pair);
-                }
-                else {
-                    System.out.print("NOT P "+diffx+ " | "+diffz+" | "+view);
-                    System.out.print("2 "+x+ " | "+z+" | ");
-                    System.out.print("3 "+(chunk.getX() << 4)+ " | "+(chunk.getZ() << 4)+" | ");
                 }
             }
         }
