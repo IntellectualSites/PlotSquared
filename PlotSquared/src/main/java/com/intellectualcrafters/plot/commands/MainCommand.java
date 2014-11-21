@@ -49,7 +49,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static final String
             MAIN_PERMISSION = "plots.use";
 
-    private static SubCommand[] _subCommands =
+    private final static SubCommand[] _subCommands =
             new SubCommand[]{
                     new Ban(), new Unban(),
                     new OP(), new DEOP(),
@@ -71,7 +71,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     new Comment(), new Database(),
                     new Swap(), new MusicSubcommand()};
 
-    public static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
+    public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {
             addAll(Arrays.asList(_subCommands));
         }

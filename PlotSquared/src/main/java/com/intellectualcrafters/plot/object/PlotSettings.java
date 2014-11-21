@@ -40,6 +40,10 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class PlotSettings {
     /**
+     * Plot
+     */
+    private final Plot plot;
+    /**
      * merged plots
      */
     private boolean[] merged = new boolean[]{false, false, false, false};
@@ -59,10 +63,6 @@ public class PlotSettings {
      * Home Position
      */
     private PlotHomePosition position;
-    /**
-     * Plot
-     */
-    private Plot plot;
 
     /**
      * Constructor

@@ -33,7 +33,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
- * Created by Citymonstret on 2014-08-01.
+ * Created 2014-08-01 for PlotSquared
+ *
+ * @author Empire92
  */
 public class Swap extends SubCommand {
 
@@ -76,6 +78,7 @@ public class Swap extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
+        assert plot != null;
         if (plot.id.equals(plotid)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);

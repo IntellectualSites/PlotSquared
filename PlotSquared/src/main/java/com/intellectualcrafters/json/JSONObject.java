@@ -164,9 +164,7 @@ public class JSONObject {
     public JSONObject(final Map<String, Object> map) {
         this.map = new HashMap<String, Object>();
         if (map != null) {
-            final Iterator<Entry<String, Object>> i = map.entrySet().iterator();
-            while (i.hasNext()) {
-                final Entry<String, Object> entry = i.next();
+            for (Entry<String, Object> entry : map.entrySet()) {
                 final Object value = entry.getValue();
                 if (value != null) {
                     this.map.put(entry.getKey(), wrap(value));
@@ -1319,9 +1317,7 @@ public class JSONObject {
             if (!set.equals(((JSONObject) other).keySet())) {
                 return false;
             }
-            final Iterator<String> iterator = set.iterator();
-            while (iterator.hasNext()) {
-                final String name = iterator.next();
+            for (String name : set) {
                 final Object valueThis = this.get(name);
                 final Object valueOther = ((JSONObject) other).get(name);
                 if (valueThis instanceof JSONObject) {
@@ -1485,7 +1481,11 @@ public class JSONObject {
          */
         @Override
         protected final Object clone() {
-            return this;
+            try {
+                return super.clone();
+            } catch (Exception e) {
+                return this;
+            }
         }
 
         /**

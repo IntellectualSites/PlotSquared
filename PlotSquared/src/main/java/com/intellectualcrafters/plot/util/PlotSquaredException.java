@@ -38,7 +38,7 @@ public class PlotSquaredException extends RuntimeException {
     public static enum PlotError {
         PLOTMAIN_NULL("The PlotMain instance was null"),
         MISSING_DEPENDENCY("Missing Dependency");
-        private String errorHeader;
+        private final String errorHeader;
 
         PlotError(final String errorHeader) {
             this.errorHeader = errorHeader;

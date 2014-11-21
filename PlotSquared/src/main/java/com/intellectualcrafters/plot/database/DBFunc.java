@@ -33,24 +33,43 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 /**
+ * DB Functions
+ *
+ * @author Empire92
  * @author Citymonstret
  */
 public class DBFunc {
 
+    /**
+     * The "global" uuid
+     */
+    public static final UUID everyone = UUID.fromString("1-1-3-3-7");
+    /**
+     * Abstract Database Manager
+     */
     public static AbstractDB dbManager;
 
-    // TODO MongoDB @Brandon
-
-    public static UUID everyone = UUID.fromString("1-1-3-3-7");
-
+    /**
+     * Set the owner of a plot
+     * @param plot Plot Object
+     * @param uuid New Owner
+     */
     public static void setOwner(final Plot plot, final UUID uuid) {
         dbManager.setOwner(plot, uuid);
     }
 
+    /**
+     * Create all settings + (helpers, denied, trusted)
+     * @param plots List containing all plot objects
+     */
     public static void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
         dbManager.createAllSettingsAndHelpers(plots);
     }
 
+    /**
+     * Create all plots
+     * @param plots A list containing plot objects
+     */
     public static void createPlots(final ArrayList<Plot> plots) {
         dbManager.createPlots(plots);
     }
@@ -58,7 +77,7 @@ public class DBFunc {
     /**
      * Create a plot
      *
-     * @param plot
+     * @param plot Plot to create
      */
     public static void createPlot(final Plot plot) {
         dbManager.createPlot(plot);
@@ -76,7 +95,7 @@ public class DBFunc {
     /**
      * Delete a plot
      *
-     * @param plot
+     * @param plot Plot to delete
      */
     public static void delete(final String world, final Plot plot) {
         dbManager.delete(world, plot);
@@ -85,8 +104,8 @@ public class DBFunc {
     /**
      * Create plot settings
      *
-     * @param id
-     * @param plot
+     * @param id Plot ID
+     * @param plot Plot Object
      */
     public static void createPlotSettings(final int id, final Plot plot) {
         dbManager.createPlotSettings(id, plot);
@@ -95,8 +114,9 @@ public class DBFunc {
     /**
      * Get a plot id
      *
-     * @param plot_id
-     * @return
+     * @param world World
+     * @param id2 Plot ID
+     * @return ID
      */
     /*
      * public static int getId(String world, PlotId id2) { Statement stmt =
@@ -113,7 +133,7 @@ public class DBFunc {
     }
 
     /**
-     * @return
+     * @return Plots
      */
     public static LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
         return dbManager.getPlots();

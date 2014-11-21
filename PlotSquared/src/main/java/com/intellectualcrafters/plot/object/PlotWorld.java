@@ -42,26 +42,27 @@ public abstract class PlotWorld {
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     @SuppressWarnings("deprecation")
-    public static ArrayList<Material> BLOCKS = new ArrayList<>(Arrays.asList(new Material[]{ACACIA_STAIRS, BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK, NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE, QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND,
+    public final static ArrayList<Material> BLOCKS = new ArrayList<>(Arrays.asList(new Material[]{ACACIA_STAIRS, BEACON, BEDROCK, BIRCH_WOOD_STAIRS, BOOKSHELF, BREWING_STAND, BRICK, BRICK_STAIRS, BURNING_FURNACE, CAKE_BLOCK, CAULDRON, CLAY_BRICK, CLAY, COAL_BLOCK, COAL_ORE, COBBLE_WALL, COBBLESTONE, COBBLESTONE_STAIRS, COMMAND, DARK_OAK_STAIRS, DAYLIGHT_DETECTOR, DIAMOND_ORE, DIAMOND_BLOCK, DIRT, DISPENSER, DROPPER, EMERALD_BLOCK, EMERALD_ORE, ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME, ENDER_STONE, FURNACE, GLOWSTONE, GOLD_ORE, GOLD_BLOCK, GRASS, GRAVEL, GLASS, HARD_CLAY, HAY_BLOCK, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, IRON_BLOCK, IRON_ORE, JACK_O_LANTERN, JUKEBOX, JUNGLE_WOOD_STAIRS, LAPIS_BLOCK, LAPIS_ORE, LEAVES, LEAVES_2, LOG, LOG_2, MELON_BLOCK, MOB_SPAWNER, MOSSY_COBBLESTONE, MYCEL, NETHER_BRICK, NETHER_BRICK_STAIRS, NETHERRACK, NOTE_BLOCK, OBSIDIAN, PACKED_ICE, PUMPKIN, QUARTZ_BLOCK, QUARTZ_ORE, QUARTZ_STAIRS, REDSTONE_BLOCK, SANDSTONE, SAND,
             SANDSTONE_STAIRS, SMOOTH_BRICK, SMOOTH_STAIRS, SNOW_BLOCK, SOUL_SAND, SPONGE, SPRUCE_WOOD_STAIRS, STONE, WOOD, WOOD_STAIRS, WORKBENCH, WOOL, getMaterial(44), getMaterial(126)}));
-    public static boolean AUTO_MERGE_DEFAULT = false;
-    public static boolean MOB_SPAWNING_DEFAULT = false;
-    public static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
-    public static boolean PLOT_CHAT_DEFAULT = false;
-    public static boolean SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
-    public static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
-    public static String SCHEMATIC_FILE_DEFAULT = "null";
-    public static List<String> SCHEMATICS_DEFAULT = null;
-    public static List<String> DEFAULT_FLAGS_DEFAULT = new ArrayList<>();
-    public static boolean USE_ECONOMY_DEFAULT = false;
-    public static double PLOT_PRICE_DEFAULT = 100;
-    public static double MERGE_PRICE_DEFAULT = 100;
-    public static double SELL_PRICE_DEFAULT = 75;
-    public static boolean PVP_DEFAULT = false;
-    public static boolean PVE_DEFAULT = false;
-    public static boolean SPAWN_EGGS_DEFAULT = false;
-    public static boolean SPAWN_CUSTOM_DEFAULT = true;
-    public static boolean SPAWN_BREEDING_DEFAULT = false;
+    public final static boolean AUTO_MERGE_DEFAULT = false;
+    public final static boolean MOB_SPAWNING_DEFAULT = false;
+    public final static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
+    public final static boolean PLOT_CHAT_DEFAULT = false;
+    public final static boolean SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
+    public final static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    public final static String SCHEMATIC_FILE_DEFAULT = "null";
+    public final static List<String> SCHEMATICS_DEFAULT = null;
+    public final static List<String> DEFAULT_FLAGS_DEFAULT = new ArrayList<>();
+    public final static boolean USE_ECONOMY_DEFAULT = false;
+    public final static double PLOT_PRICE_DEFAULT = 100;
+    public final static double MERGE_PRICE_DEFAULT = 100;
+    public final static double SELL_PRICE_DEFAULT = 75;
+    public final static boolean PVP_DEFAULT = false;
+    public final static boolean PVE_DEFAULT = false;
+    public final static boolean SPAWN_EGGS_DEFAULT = false;
+    public final static boolean SPAWN_CUSTOM_DEFAULT = true;
+    public final static boolean SPAWN_BREEDING_DEFAULT = false;
+    public final String worldname;
     public boolean AUTO_MERGE;
     public boolean MOB_SPAWNING;
     public Biome PLOT_BIOME;
@@ -80,7 +81,6 @@ public abstract class PlotWorld {
     public boolean SPAWN_EGGS;
     public boolean SPAWN_CUSTOM;
     public boolean SPAWN_BREEDING;
-    public String worldname;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;

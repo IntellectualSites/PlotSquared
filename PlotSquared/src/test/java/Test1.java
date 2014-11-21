@@ -125,8 +125,8 @@ public class Test1 {
         boolean passed = false;
         try {
             Object plot = new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false});
-            passed = plot != null;
-        } catch (Throwable e) {
+            passed = true;
+        } catch (Throwable ignored) {
 
         }
         return passed;
@@ -223,7 +223,6 @@ public class Test1 {
                     plots.get("testworld").put(id,
                             new Plot(id,
                                     DBFunc.everyone,
-                                    Biome.FOREST,
                                     new ArrayList<UUID>(),
                                     new ArrayList<UUID>(),
                                     new ArrayList<UUID>(),

@@ -43,8 +43,8 @@ import java.util.ArrayList;
  */
 public class Merge extends SubCommand {
 
-    public static String[] values = new String[]{"north", "east", "south", "west"};
-    public static String[] aliases = new String[]{"n", "e", "s", "w"};
+    public final static String[] values = new String[]{"north", "east", "south", "west"};
+    public final static String[] aliases = new String[]{"n", "e", "s", "w"};
 
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);

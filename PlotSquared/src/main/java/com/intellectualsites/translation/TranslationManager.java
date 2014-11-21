@@ -13,43 +13,19 @@ import java.util.*;
 public class TranslationManager {
 
     /**
-     * The instance
+     * Objects
      */
-    private TranslationManager instance;
+    private final LinkedList<TranslationObject> translationObjects;
+    /**
+     * The translations
+     */
+    private final LinkedHashMap<String, TranslationAsset> translatedObjects;
 
     /**
      * Constructor
      */
     public TranslationManager() {
         this(new TranslationObject[]{});
-    }
-
-    /**
-     * Don't use this!
-     *
-     * @return this
-     */
-    public TranslationManager instance() {
-        return this;
-    }
-
-    /**
-     * Objects
-     */
-    private LinkedList<TranslationObject> translationObjects;
-
-    /**
-     * The translations
-     */
-    private LinkedHashMap<String, TranslationAsset> translatedObjects;
-
-    /**
-     * Get the translation objects
-     *
-     * @return objects
-     */
-    public List<TranslationObject> translations() {
-        return translationObjects;
     }
 
     /**
@@ -62,7 +38,56 @@ public class TranslationManager {
                 = new LinkedList<TranslationObject>(Arrays.asList(translationObjects));
         this.translatedObjects
                 = new LinkedHashMap<String, TranslationAsset>();
-        instance = this;
+    }
+
+    public static List<TranslationObject> transformEnum(Object[] os) {
+        List<TranslationObject> eList = new ArrayList<TranslationObject>();
+        for (Object o : os) {
+            eList.add(
+                    new TranslationObject(o.toString(), o.toString().toLowerCase().replace("_", " "), "", "")
+            );
+        }
+        return eList;
+    }
+
+    public static void scan(Class c, TranslationManager manager) throws IllegalAccessException {
+        Field[] fields = c.getDeclaredFields();
+        Annotation annotation;
+        for (Field field : fields) {
+            if (field.getType() != String.class || (annotation = field.getAnnotation(Translation.class)) == null)
+                continue;
+            Translation t = (Translation) annotation;
+            String key = field.getName();
+            // Make sure we can get the value
+            field.setAccessible(true);
+            String defaultValue = (String) field.get(c);
+            manager.addTranslationObject(
+                    new TranslationObject(
+                            key,
+                            defaultValue,
+                            t.description(),
+                            t.creationDescription()
+                    )
+            );
+        }
+    }
+
+    /**
+     * Don't use this!
+     *
+     * @return this
+     */
+    public TranslationManager instance() {
+        return this;
+    }
+
+    /**
+     * Get the translation objects
+     *
+     * @return objects
+     */
+    public List<TranslationObject> translations() {
+        return translationObjects;
     }
 
     /**
@@ -147,38 +172,6 @@ public class TranslationManager {
             file.add(object.getKey(), o.getTranslated());
         }
         return instance();
-    }
-
-    public static List<TranslationObject> transformEnum(Object[] os) {
-        List<TranslationObject> eList = new ArrayList<TranslationObject>();
-        for (Object o : os) {
-            eList.add(
-                    new TranslationObject(o.toString(), o.toString().toLowerCase().replace("_", " "), "", "")
-            );
-        }
-        return eList;
-    }
-
-    public static void scan(Class c, TranslationManager manager) throws IllegalAccessException {
-        Field[] fields = c.getDeclaredFields();
-        Annotation annotation;
-        for (Field field : fields) {
-            if (field.getType() != String.class || (annotation = field.getAnnotation(Translation.class)) == null)
-                continue;
-            Translation t = (Translation) annotation;
-            String key = field.getName();
-            // Make sure we can get the value
-            field.setAccessible(true);
-            String defaultValue = (String) field.get(c);
-            manager.addTranslationObject(
-                    new TranslationObject(
-                            key,
-                            defaultValue,
-                            t.description(),
-                            t.creationDescription()
-                    )
-            );
-        }
     }
 
     public TranslationManager debug(PrintStream out) {

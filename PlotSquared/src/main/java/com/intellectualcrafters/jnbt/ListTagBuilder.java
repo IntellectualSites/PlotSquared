@@ -40,6 +40,7 @@ public class ListTagBuilder {
      *
      * @return a new builder
      */
+    @SafeVarargs
     public static <T extends Tag> ListTagBuilder createWith(final T... entries) {
         checkNotNull(entries);
 

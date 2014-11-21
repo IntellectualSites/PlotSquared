@@ -36,12 +36,14 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @author Citymonstret The default generator is very messy, as we have decided
+ * The default generator is very messy, as we have decided
  *         to try externalize all calculations from within the loop. - You will
  *         see a lot of slower implementations have a single for loop. - This is
  *         perfectly fine to do, it will just mean world generation may take
  *         somewhat longer
- * @auther Empire92
+ *
+ * @author Citymonstret
+ * @author Empire92
  */
 public class WorldGenerator extends PlotGenerator {
     /**
@@ -330,7 +332,6 @@ public class WorldGenerator extends PlotGenerator {
                 setCuboidRegion(16 - value, (16 - value) + 1, this.wallheight, this.wallheight + 1, start, 16, this.floor2); //
             }
             if ((roadStartZ <= 16) && (roadStartZ > 1)) {
-                final int val = roadStartZ;
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
@@ -345,11 +346,10 @@ public class WorldGenerator extends PlotGenerator {
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
                     start = 0;
                 }
-                setCuboidRegion(0, end, this.wallheight, this.wallheight + 1, (16 - val) + 1, (16 - val) + 2, this.floor2);
-                setCuboidRegion(start, 16, this.wallheight, this.wallheight + 1, (16 - val) + 1, (16 - val) + 2, this.floor2);
+                setCuboidRegion(0, end, this.wallheight, this.wallheight + 1, (16 - roadStartZ) + 1, (16 - roadStartZ) + 2, this.floor2);
+                setCuboidRegion(start, 16, this.wallheight, this.wallheight + 1, (16 - roadStartZ) + 1, (16 - roadStartZ) + 2, this.floor2);
             }
             if ((roadStartX <= 16) && (roadStartX > 1)) {
-                final int val = roadStartX;
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
@@ -364,8 +364,8 @@ public class WorldGenerator extends PlotGenerator {
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
                     start = 0;
                 }
-                setCuboidRegion((16 - val) + 1, (16 - val) + 2, this.wallheight, this.wallheight + 1, 0, end, this.floor2); //
-                setCuboidRegion((16 - val) + 1, (16 - val) + 2, this.wallheight, this.wallheight + 1, start, 16, this.floor2); //
+                setCuboidRegion((16 - roadStartX) + 1, (16 - roadStartX) + 2, this.wallheight, this.wallheight + 1, 0, end, this.floor2); //
+                setCuboidRegion((16 - roadStartX) + 1, (16 - roadStartX) + 2, this.wallheight, this.wallheight + 1, start, 16, this.floor2); //
             }
         }
 

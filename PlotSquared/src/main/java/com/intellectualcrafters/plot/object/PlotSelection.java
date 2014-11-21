@@ -38,7 +38,7 @@ import java.util.HashMap;
 @SuppressWarnings("deprecation")
 public class PlotSelection {
 
-    public static HashMap<String, PlotSelection> currentSelection = new HashMap<>();
+    public final static HashMap<String, PlotSelection> currentSelection = new HashMap<>();
 
     private final PlotBlock[] plotBlocks;
 

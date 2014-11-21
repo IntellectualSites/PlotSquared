@@ -39,7 +39,7 @@ public abstract class Database {
     /**
      * Plugin instance, use for plugin.getDataFolder()
      */
-    protected Plugin plugin;
+    protected final Plugin plugin;
 
     /**
      * Creates a new Database

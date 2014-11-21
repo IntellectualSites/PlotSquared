@@ -29,13 +29,13 @@ package com.intellectualcrafters.plot.util;
 public class Lag implements Runnable {
 
     /**
+     * Ticks
+     */
+    public final static long[] T = new long[600];
+    /**
      * Tick count
      */
     public static int TC = 0;
-    /**
-     * Ticks
-     */
-    public static long[] T = new long[600];
     /**
      * something :_:
      */

@@ -42,10 +42,8 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -81,6 +79,43 @@ public class PlotMain extends JavaPlugin {
     public static final String ADMIN_PERMISSION =
             "plots.admin";
     /**
+     * Storage version
+     */
+    public final static int storage_ver =
+            1;
+    /**
+     * Boolean Flags (material)
+     */
+    public final static HashMap<Material, String> booleanFlags =
+            new HashMap<>();
+
+    /**
+     * Initialize the material flags
+     */
+    static {
+        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
+        booleanFlags.put(Material.IRON_DOOR, "iron_door");
+        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
+        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
+        booleanFlags.put(Material.LEVER, "lever");
+        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
+        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
+        booleanFlags.put(Material.CHEST, "chest");
+        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
+        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
+        booleanFlags.put(Material.DISPENSER, "dispenser");
+        booleanFlags.put(Material.DROPPER, "dropper");
+    }
+
+    /**
+     * All loaded plot worlds
+     */
+    private final static HashMap<String, PlotWorld> worlds = new HashMap<>();
+    /**
+     * All world managers
+     */
+    private final static HashMap<String, PlotManager> managers = new HashMap<>();
+    /**
      * settings.properties
      */
     public static File configFile;
@@ -96,11 +131,6 @@ public class PlotMain extends JavaPlugin {
      * Contains storage options
      */
     public static YamlConfiguration storage;
-    /**
-     * Storage version
-     */
-    public static int storage_ver =
-            1;
     /**
      * MySQL Connection
      */
@@ -136,30 +166,6 @@ public class PlotMain extends JavaPlugin {
     public static boolean useEconomy =
             false;
     /**
-     * Boolean Flags (material)
-     */
-    public static HashMap<Material, String> booleanFlags =
-            new HashMap<>();
-
-    /**
-     * Initialize the material flags
-     */
-    static {
-        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
-        booleanFlags.put(Material.IRON_DOOR, "iron_door");
-        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
-        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
-        booleanFlags.put(Material.LEVER, "lever");
-        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
-        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
-        booleanFlags.put(Material.CHEST, "chest");
-        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
-        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
-        booleanFlags.put(Material.DISPENSER, "dispenser");
-        booleanFlags.put(Material.DROPPER, "dropper");
-    }
-
-    /**
      * The UUID Saver
      */
     private static UUIDSaver uuidSaver;
@@ -172,14 +178,6 @@ public class PlotMain extends JavaPlugin {
      * DO NOT USE EXCEPT FOR DATABASE PURPOSES
      */
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    /**
-     * All loaded plot worlds
-     */
-    private static HashMap<String, PlotWorld> worlds = new HashMap<>();
-    /**
-     * All world managers
-     */
-    private static HashMap<String, PlotManager> managers = new HashMap<>();
 
     /**
      * Check for expired plots
@@ -202,12 +200,9 @@ public class PlotMain extends JavaPlugin {
      * Check a range of permissions e.g. 'plots.plot.<0-100>'<br>
      * Returns highest integer in range.
      *
-     * @param player
-     *            to check
-     * @param stub
-     *            to check
-     * @param range
-     *            tp check
+     * @param player to check
+     * @param stub   to check
+     * @param range  tp check
      * @return permitted range
      */
     public static int hasPermissionRange(final Player player, final String stub, final int range) {
@@ -230,10 +225,8 @@ public class PlotMain extends JavaPlugin {
      * - Op has all permissions <br>
      * - checks for '*' nodes
      *
-     * @param player
-     *            to check
-     * @param perms
-     *            to check
+     * @param player to check
+     * @param perms  to check
      * @return true of player has permissions
      */
     public static boolean hasPermissions(final Player player, final String[] perms) {
@@ -266,6 +259,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Get the uuid saver
+     *
      * @return uuid saver
      * @see com.intellectualcrafters.plot.uuid.UUIDSaver;
      */
@@ -288,10 +282,8 @@ public class PlotMain extends JavaPlugin {
      * - Op has all permissions <br>
      * - checks for '*' nodes
      *
-     * @param player
-     *            to check
-     * @param perm
-     *            to check
+     * @param player to check
+     * @param perm   to check
      * @return true if player has the permission
      */
     public static boolean hasPermission(final Player player, final String perm) {
@@ -328,6 +320,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Get a sorted list of plots
+     *
      * @return sorted list
      */
     public static LinkedHashSet<Plot> getPlotsSorted() {
@@ -339,8 +332,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param player
-     *            player
+     * @param player player
      * @return Set Containing the players plots
      */
     public static Set<Plot> getPlots(final Player player) {
@@ -390,8 +382,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world
-     *            plot world
+     * @param world plot world
      * @return plots in world
      */
     public static HashMap<PlotId, Plot> getPlots(final World world) {
@@ -418,8 +409,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world
-     *            plotworld(?)
+     * @param world plotworld(?)
      * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(final World world) {
@@ -427,8 +417,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world
-     *            plotworld(?)
+     * @param world plotworld(?)
      * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(final String world) {
@@ -436,8 +425,7 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world
-     *            World to get manager for
+     * @param world World to get manager for
      * @return manager for world
      */
     public static PlotManager getPlotManager(final World world) {
@@ -491,8 +479,9 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Remove a plot
-     * @param world The Plot World
-     * @param id The Plot ID
+     *
+     * @param world     The Plot World
+     * @param id        The Plot ID
      * @param callEvent Whether or not to call the PlotDeleteEvent
      * @return true if successful, false if not
      */
@@ -512,8 +501,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Replace the plot object with an updated version
      *
-     * @param plot
-     *            plot object
+     * @param plot plot object
      */
     public static void updatePlot(final Plot plot) {
         final String world = plot.world;
@@ -545,10 +533,8 @@ public class PlotMain extends JavaPlugin {
      * - Add new plots to the end.<br>
      * - The task then only needs to go through the first few plots
      *
-     * @param plugin
-     *            Plugin
-     * @param async
-     *            Call async?
+     * @param plugin Plugin
+     * @param async  Call async?
      */
     private static void checkExpired(final JavaPlugin plugin, final boolean async) {
         if (async) {
@@ -633,8 +619,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Send a message to the console.
      *
-     * @param string
-     *            message
+     * @param string message
      */
     public static void sendConsoleSenderMessage(final String string) {
         if (getMain().getServer().getConsoleSender() == null) {
@@ -646,9 +631,10 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Teleport a player to a plot
+     *
      * @param player Player to teleport
-     * @param from Previous Location
-     * @param plot Plot to teleport to
+     * @param from   Previous Location
+     * @param plot   Plot to teleport to
      * @return true if successful
      */
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
@@ -669,8 +655,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Send a message to the console
      *
-     * @param c
-     *            message
+     * @param c message
      */
     @SuppressWarnings("unused")
     public static void sendConsoleSenderMessage(final C c) {
@@ -680,8 +665,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Broadcast publicly
      *
-     * @param c
-     *            message
+     * @param c message
      */
     public static void Broadcast(final C c) {
         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s()));
@@ -699,8 +683,7 @@ public class PlotMain extends JavaPlugin {
     /**
      * Broadcast a message to all admins
      *
-     * @param c
-     *            message
+     * @param c message
      */
     public static void BroadcastWithPerms(final C c) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
@@ -713,6 +696,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Reload all translations
+     *
      * @throws IOException
      */
     public static void reloadTranslations() throws IOException {
@@ -721,6 +705,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Ge the last played time
+     *
      * @param uuid UUID for the player
      * @return last play time as a long
      */
@@ -968,6 +953,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Create a plotworld config section
+     *
      * @param plotworld World to create the section for
      */
     @SuppressWarnings("unused")
@@ -1299,9 +1285,10 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Add a Plot world
-     * @param world World to add
+     *
+     * @param world     World to add
      * @param plotworld PlotWorld Object
-     * @param manager Plot Manager for the new world
+     * @param manager   Plot Manager for the new world
      */
     public static void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         worlds.put(world, plotworld);
@@ -1313,6 +1300,7 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Remove a plot world
+     *
      * @param world World to remove
      */
     public static void removePlotWorld(final String world) {
@@ -1323,19 +1311,11 @@ public class PlotMain extends JavaPlugin {
 
     /**
      * Get all plots
+     *
      * @return All Plos in a hashmap (world, Hashmap contiang ids and objects))
      */
     public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
-    }
-
-    /**
-     * Set all plots
-     *
-     * @param plots New Plot LinkedHashMap
-     */
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
     }
 
     /**
@@ -1346,6 +1326,15 @@ public class PlotMain extends JavaPlugin {
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
+    }
+
+    /**
+     * Set all plots
+     *
+     * @param plots New Plot LinkedHashMap
+     */
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
@@ -1595,7 +1584,7 @@ public class PlotMain extends JavaPlugin {
             } catch (final Exception e) {
                 PlotHelper.canSetFast = false;
             }
-            
+
             try {
                 new SendChunk();
                 PlotHelper.canSendChunk = true;

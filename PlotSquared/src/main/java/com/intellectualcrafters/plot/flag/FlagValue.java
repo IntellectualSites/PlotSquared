@@ -10,7 +10,7 @@ public abstract class FlagValue<T> {
     private Class<T> clazz;
 
     public FlagValue() {
-        this.clazz = (Class<T>) this.getClass();
+        this.clazz = (Class<T>) getClass();
     }
 
     public FlagValue(Class<T> clazz) {

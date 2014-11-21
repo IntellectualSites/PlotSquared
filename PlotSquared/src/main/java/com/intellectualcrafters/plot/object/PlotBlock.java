@@ -25,8 +25,8 @@ package com.intellectualcrafters.plot.object;
  * @author Empire92
  */
 public class PlotBlock {
-    public short id;
-    public byte data;
+    public final short id;
+    public final byte data;
 
     public PlotBlock(final short id, final byte data) {
         this.id = id;

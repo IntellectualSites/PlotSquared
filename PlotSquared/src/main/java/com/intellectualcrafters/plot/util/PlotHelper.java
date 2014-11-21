@@ -26,9 +26,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.*;
-
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -49,10 +47,10 @@ import java.util.UUID;
  */
 @SuppressWarnings({"unused", "javadoc", "deprecation"})
 public class PlotHelper {
+    public final static HashMap<Plot, Integer> runners = new HashMap<>();
     public static boolean canSetFast = false;
     public static boolean canSendChunk = false;
     public static ArrayList<String> runners_p = new ArrayList<>();
-    public static HashMap<Plot, Integer> runners = new HashMap<>();
     static long state = 1;
 
     /**
@@ -860,6 +858,7 @@ public class PlotHelper {
 
     /**
      * Retrieve the location of the default plot home position
+     *
      * @param plot Plot
      * @return the location
      */
@@ -871,7 +870,8 @@ public class PlotHelper {
 
     /**
      * Get the plot home
-     * @param w World
+     *
+     * @param w    World
      * @param plot Plot Object
      * @return Plot Home Location
      * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
@@ -882,8 +882,9 @@ public class PlotHelper {
 
     /**
      * Refresh the plot chunks
+     *
      * @param world World in which the plot is located
-     * @param plot Plot Object
+     * @param plot  Plot Object
      */
     public static void refreshPlotChunks(final World world, final Plot plot) {
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
@@ -897,22 +898,20 @@ public class PlotHelper {
         final int maxChunkZ = (int) Math.floor((double) topZ / 16);
 
         ArrayList<Chunk> chunks = new ArrayList<>();
-        
+
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 if (canSendChunk) {
                     Chunk chunk = world.getChunkAt(x, z);
                     chunks.add(chunk);
-                }
-                else {
+                } else {
                     world.refreshChunk(x, z);
                 }
             }
         }
         try {
             SendChunk.sendChunk(chunks);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             canSendChunk = false;
             for (int x = minChunkX; x <= maxChunkX; x++) {
                 for (int z = minChunkZ; z <= maxChunkZ; z++) {

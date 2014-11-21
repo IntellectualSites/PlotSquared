@@ -131,7 +131,6 @@ public final class NBTUtils {
      * @param key      the key to look for
      * @param expected the expected NBT class type
      * @return child tag
-     * @throws InvalidFormatException
      */
     public static <T extends Tag> T getChildTag(final Map<String, Tag> items, final String key, final Class<T> expected) throws IllegalArgumentException {
         if (!items.containsKey(key)) {

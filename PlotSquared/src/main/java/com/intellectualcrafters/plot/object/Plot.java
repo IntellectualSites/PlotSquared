@@ -45,11 +45,11 @@ public class Plot implements Cloneable {
     /**
      * plot ID
      */
-    public PlotId id;
+    public final PlotId id;
     /**
      * plot world
      */
-    public String world;
+    public final String world;
     /**
      * plot owner
      */
@@ -92,7 +92,6 @@ public class Plot implements Cloneable {
      * @param plotBiome
      * @param helpers
      * @param denied
-     *
      * @deprecated
      */
     @Deprecated
@@ -144,7 +143,6 @@ public class Plot implements Cloneable {
      * @param helpers
      * @param denied
      * @param merged
-     *
      * @deprecated
      */
     @Deprecated

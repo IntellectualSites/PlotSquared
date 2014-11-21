@@ -50,8 +50,8 @@ import java.util.*;
 @SuppressWarnings({"deprecation", "unused"})
 public class PlotPlusListener extends PlotListener implements Listener {
 
-    private static HashMap<String, Interval> feedRunnable = new HashMap<>();
-    private static HashMap<String, Interval> healRunnable = new HashMap<>();
+    private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
+    private final static HashMap<String, Interval> healRunnable = new HashMap<>();
 
     public static void startRunnable(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -229,10 +229,10 @@ public class PlotPlusListener extends PlotListener implements Listener {
     }
 
     public static class Interval {
-        public int interval;
-        public int amount;
+        public final int interval;
+        public final int amount;
+        public final int max;
         public int count = 0;
-        public int max;
 
         public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
@@ -247,7 +247,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
      * @author Citymonstret
      */
     public static class RecordMeta {
-        public static List<RecordMeta> metaList = new ArrayList<>();
+        public final static List<RecordMeta> metaList = new ArrayList<>();
 
         static {
             for (int x = 3; x < 12; x++) {

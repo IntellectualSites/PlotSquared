@@ -25,7 +25,7 @@ package com.intellectualcrafters.plot.object;
  * @author Empire92
  */
 public class StringWrapper {
-    public String value;
+    public final String value;
 
     /**
      * Constructor

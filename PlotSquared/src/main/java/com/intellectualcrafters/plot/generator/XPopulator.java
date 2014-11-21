@@ -42,24 +42,24 @@ public class XPopulator extends BlockPopulator {
      * information about how a BlockPopulator works.
      */
 
+    final int plotsize;
+    final int pathsize;
+    final PlotBlock wall;
+    final PlotBlock wallfilling;
+    final PlotBlock floor1;
+    final PlotBlock floor2;
+    final int size;
+    final int roadheight;
+    final int wallheight;
+    final int plotheight;
+    final PlotBlock[] plotfloors;
+    final PlotBlock[] filling;
     private final DefaultPlotWorld plotworld;
-    int plotsize;
-    int pathsize;
-    PlotBlock wall;
-    PlotBlock wallfilling;
-    PlotBlock floor1;
-    PlotBlock floor2;
-    int size;
+    final private double pathWidthLower;
     Biome biome;
-    int roadheight;
-    int wallheight;
-    int plotheight;
-    PlotBlock[] plotfloors;
-    PlotBlock[] filling;
     private int X;
     private int Z;
     private long state;
-    private double pathWidthLower;
 
     public XPopulator(final PlotWorld pw) {
         this.plotworld = (DefaultPlotWorld) pw;

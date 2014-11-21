@@ -474,9 +474,7 @@ public class Metrics {
                 json.append(':');
                 json.append('{');
                 boolean firstGraph = true;
-                final Iterator<Graph> iter = this.graphs.iterator();
-                while (iter.hasNext()) {
-                    final Graph graph = iter.next();
+                for (Graph graph : this.graphs) {
                     final StringBuilder graphJson = new StringBuilder();
                     graphJson.append('{');
                     for (final Plotter plotter : graph.getPlotters()) {
@@ -541,9 +539,7 @@ public class Metrics {
             // Is this the first update this hour?
             if (response.equals("1") || response.contains("This is your first update this hour")) {
                 synchronized (this.graphs) {
-                    final Iterator<Graph> iter = this.graphs.iterator();
-                    while (iter.hasNext()) {
-                        final Graph graph = iter.next();
+                    for (Graph graph : this.graphs) {
                         for (final Plotter plotter : graph.getPlotters()) {
                             plotter.reset();
                         }

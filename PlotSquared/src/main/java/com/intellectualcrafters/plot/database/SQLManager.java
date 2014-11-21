@@ -383,7 +383,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
-        final LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
+        final LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<>();
         try {
             final DatabaseMetaData data = connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, prefix + "plot", "plot_id");
@@ -408,12 +408,12 @@ public class SQLManager implements AbstractDB {
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        final HashMap<Integer, Plot> plots = new HashMap<Integer, Plot>();
+        final HashMap<Integer, Plot> plots = new HashMap<>();
 
         Statement stmt = null;
         try {
 
-            Set<String> worlds = new HashSet<String>();
+            Set<String> worlds = new HashSet<>();
             if (PlotMain.config.contains("worlds")) {
                 worlds = PlotMain.config.getConfigurationSection("worlds").getKeys(false);
             }
@@ -448,7 +448,7 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(o);
                     uuids.put(o, user);
                 }
-                p = new Plot(plot_id, user, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[]{false, false, false, false});
+                p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
 //            stmt.close();
@@ -924,7 +924,6 @@ public class SQLManager implements AbstractDB {
                 h.put(var, val);
             }
             stmt.close();
-            ;
         } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to load settings for plot: " + id);
             e.printStackTrace();

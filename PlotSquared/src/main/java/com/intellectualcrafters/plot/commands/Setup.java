@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class Setup extends SubCommand implements Listener {
 
-    public static Map<String, SetupObject> setupMap = new HashMap<>();
+    public final static Map<String, SetupObject> setupMap = new HashMap<>();
 
     public Setup() {
         super("setup", "plots.admin", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
@@ -208,11 +208,10 @@ public class Setup extends SubCommand implements Listener {
     }
 
     private class SetupObject {
-        String world;
-        String plugin;
+        final String world;
+        final String plugin;
+        final ConfigurationNode[] step;
         int current = 0;
-
-        ConfigurationNode[] step;
 
         public SetupObject(final String world, final PlotWorld plotworld, final String plugin) {
             this.world = world;

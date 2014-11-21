@@ -40,49 +40,49 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default Road Height: 64
      */
-    public static int ROAD_HEIGHT_DEFAULT = 64;
+    public final static int ROAD_HEIGHT_DEFAULT = 64;
     /**
      * Default plot height: 64
      */
-    public static int PLOT_HEIGHT_DEFAULT = 64;
+    public final static int PLOT_HEIGHT_DEFAULT = 64;
     /**
      * Default Wall Height: 64
      */
-    public static int WALL_HEIGHT_DEFAULT = 64;
+    public final static int WALL_HEIGHT_DEFAULT = 64;
     /**
      * Default plot width: 32
      */
-    public static int PLOT_WIDTH_DEFAULT = 32;
+    public final static int PLOT_WIDTH_DEFAULT = 32;
     /**
      * Default road width: 7
      */
-    public static int ROAD_WIDTH_DEFAULT = 7;
+    public final static int ROAD_WIDTH_DEFAULT = 7;
     /**
      * Default main block: 1
      */
-    public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 1, (byte) 0)};
+    public final static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 1, (byte) 0)};
     /**
      * Default top blocks: {"2"}
      */
-    public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 2, (byte) 0)};
+    public final static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 2, (byte) 0)};
     /**
      * Default wall block: 44
      */
-    public static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
-    public static PlotBlock CLAIMED_WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 1);
+    public final static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
+    public final static PlotBlock CLAIMED_WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 1);
     /**
      * Default wall filling: 1
      */
-    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
+    public final static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
     /**
      * Default road stripes: 35
      */
-    public static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
-    public static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
+    public final static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
+    public final static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
     /**
      * Default road block: 155
      */
-    public static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
+    public final static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
     /**
      * Road Height
      */

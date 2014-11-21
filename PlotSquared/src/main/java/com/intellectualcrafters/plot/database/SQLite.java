@@ -36,8 +36,8 @@ import java.util.logging.Level;
  */
 public class SQLite extends Database {
 
-    private Connection connection;
     private final String dbLocation;
+    private Connection connection;
 
     /**
      * Creates a new SQLite instance
@@ -98,9 +98,7 @@ public class SQLite extends Database {
 
         final Statement statement = this.connection.createStatement();
 
-        final ResultSet result = statement.executeQuery(query);
-
-        return result;
+        return statement.executeQuery(query);
     }
 
     @Override
@@ -111,8 +109,6 @@ public class SQLite extends Database {
 
         final Statement statement = this.connection.createStatement();
 
-        final int result = statement.executeUpdate(query);
-
-        return result;
+        return statement.executeUpdate(query);
     }
 }

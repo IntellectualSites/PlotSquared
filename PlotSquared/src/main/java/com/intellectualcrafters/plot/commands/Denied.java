@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 
-@SuppressWarnings("deprecated")
+@SuppressWarnings("deprecation")
 public class Denied extends SubCommand {
 
     public Denied() {

@@ -33,6 +33,7 @@ import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("deprecation")
 public class DefaultPlotManager extends PlotManager {
 
     /**
@@ -186,10 +187,7 @@ public class DefaultPlotManager extends PlotManager {
     @Override
     public boolean isInPlotAbs(final PlotWorld plotworld, final Location loc, final PlotId plotid) {
         final PlotId result = getPlotIdAbs(plotworld, loc);
-        if (result == null) {
-            return false;
-        }
-        return result == plotid;
+        return result != null && result == plotid;
     }
 
     /**

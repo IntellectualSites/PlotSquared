@@ -2,14 +2,30 @@ package com.intellectualsites.translation;
 
 public class TranslationLanguage {
 
-    private String countryCode;
-    private String languageCode;
-    private String friendlyName;
+    public static final TranslationLanguage englishAmerican
+            = (new TranslationLanguage("American English", "us", "en"));
+    public static final TranslationLanguage englishBritish
+            = (new TranslationLanguage("British English", "gb", "en"));
+    public static final TranslationLanguage swedishSwedish
+            = (new TranslationLanguage("Swedish", "sv", "se"));
+    public static final TranslationLanguage russianRussian
+            = (new TranslationLanguage("Russian", "ru", "ru"));
+    private final String countryCode;
+    private final String languageCode;
+    private final String friendlyName;
 
     public TranslationLanguage(String friendlyName, String countryCode, String languageCode) {
         this.friendlyName = friendlyName;
         this.countryCode = countryCode;
         this.languageCode = languageCode;
+    }
+
+    public static TranslationLanguage[] values() {
+        return new TranslationLanguage[]{
+                englishAmerican,
+                englishBritish,
+                swedishSwedish
+        };
     }
 
     public String getName() {
@@ -28,23 +44,5 @@ public class TranslationLanguage {
     public String toString() {
         /* en_US */
         return languageCode.toLowerCase() + "_" + countryCode.toUpperCase();
-    }
-
-    public static final TranslationLanguage englishAmerican
-            = (new TranslationLanguage("American English", "us", "en"));
-    public static final TranslationLanguage englishBritish
-            = (new TranslationLanguage("British English", "gb", "en"));
-    public static final TranslationLanguage swedishSwedish
-            = (new TranslationLanguage("Swedish", "sv", "se"));
-    public static final TranslationLanguage russianRussian
-            = (new TranslationLanguage("Russian", "ru", "ru"));
-
-
-    public static TranslationLanguage[] values() {
-        return new TranslationLanguage[]{
-                englishAmerican,
-                englishBritish,
-                swedishSwedish
-        };
     }
 }

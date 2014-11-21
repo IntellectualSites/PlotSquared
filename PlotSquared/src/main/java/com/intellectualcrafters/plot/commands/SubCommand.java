@@ -60,7 +60,7 @@ public abstract class SubCommand {
     /**
      * Is this a player-online command?
      */
-    public boolean isPlayer;
+    public final boolean isPlayer;
 
     /**
      * @param cmd         Command /plot {cmd} <-- That!

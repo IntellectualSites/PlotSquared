@@ -29,7 +29,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import org.bukkit.*;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
@@ -176,7 +175,7 @@ public class PlayerFunctions {
                 return plots.get(id);
             }
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
+        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
 
     }
 

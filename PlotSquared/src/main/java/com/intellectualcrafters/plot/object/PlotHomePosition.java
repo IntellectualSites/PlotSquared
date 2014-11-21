@@ -28,8 +28,8 @@ public enum PlotHomePosition {
     CENTER("Center", 'c'),
     DEFAULT("Default", 'd');
 
-    private String string;
-    private char ch;
+    private final String string;
+    private final char ch;
 
     PlotHomePosition(final String string, final char ch) {
         this.string = string;

@@ -426,7 +426,7 @@ public class ReflectionUtils {
         }
 
         public class RefExecutor {
-            Object e;
+            final Object e;
 
             public RefExecutor(final Object e) {
                 this.e = e;
@@ -530,7 +530,7 @@ public class ReflectionUtils {
         }
 
         public class RefExecutor {
-            Object e;
+            final Object e;
 
             public RefExecutor(final Object e) {
                 this.e = e;

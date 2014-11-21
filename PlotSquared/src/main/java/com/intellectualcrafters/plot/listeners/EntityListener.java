@@ -33,7 +33,7 @@ import java.util.Set;
 @SuppressWarnings({"unused", "deprecation"})
 public class EntityListener implements Listener {
 
-    public static HashMap<String, HashMap<Plot, HashSet<Integer>>> entityMap = new HashMap<>();
+    public final static HashMap<String, HashMap<Plot, HashSet<Integer>>> entityMap = new HashMap<>();
 
     public EntityListener() {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();

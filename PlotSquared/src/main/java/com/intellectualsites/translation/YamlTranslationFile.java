@@ -19,23 +19,18 @@ import java.util.Map;
  */
 public class YamlTranslationFile extends TranslationFile {
 
-    private File path;
-    private TranslationLanguage language;
-    private String name;
+    final private TranslationLanguage language;
+    final private String name;
+    final private TranslationManager manager;
     private File file;
     private HashMap<String, String> map;
     private String[] header;
     private boolean fancyHead = false;
     private YamlTranslationFile instance;
-    private TranslationManager manager;
-
     /**
-     * Reload
+     * YAML Object
      */
-    public void reload() {
-        this.map = new HashMap<String, String>();
-        this.read();
-    }
+    private Yaml yaml;
 
     /**
      * Constructor
@@ -45,7 +40,6 @@ public class YamlTranslationFile extends TranslationFile {
      * @param name     project name
      */
     public YamlTranslationFile(File path, TranslationLanguage language, String name, TranslationManager manager) {
-        this.path = path;
         this.language = language;
         this.name = name;
         this.manager = manager;
@@ -66,6 +60,14 @@ public class YamlTranslationFile extends TranslationFile {
         }
         instance = this;
         this.instance = this;
+    }
+
+    /**
+     * Reload
+     */
+    public void reload() {
+        this.map = new HashMap<String, String>();
+        this.read();
     }
 
     /**
@@ -163,11 +165,6 @@ public class YamlTranslationFile extends TranslationFile {
             e.printStackTrace();
         }
     }
-
-    /**
-     * YAML Object
-     */
-    private Yaml yaml;
 
     /**
      * Get the YAML object

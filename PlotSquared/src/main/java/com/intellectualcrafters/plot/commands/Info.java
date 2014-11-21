@@ -103,16 +103,8 @@ public class Info extends SubCommand {
 
         // Wildcard player {added}
         {
-            if (plot.helpers == null) {
-                containsEveryone = false;
-            } else {
-                containsEveryone = plot.helpers.contains(DBFunc.everyone);
-            }
-            if (plot.trusted == null) {
-                trustedEveryone = false;
-            } else {
-                trustedEveryone = plot.trusted.contains(DBFunc.everyone);
-            }
+            containsEveryone = plot.helpers != null && plot.helpers.contains(DBFunc.everyone);
+            trustedEveryone = plot.trusted != null && plot.trusted.contains(DBFunc.everyone);
         }
 
         // Unclaimed?
@@ -183,7 +175,7 @@ public class Info extends SubCommand {
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
         final String flags = "&6" + (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &6") : "none");
-        final boolean build = player == null ? true : plot.hasRights(player);
+        final boolean build = player == null || plot.hasRights(player);
 
         String owner = "none";
         if (plot.owner != null) {

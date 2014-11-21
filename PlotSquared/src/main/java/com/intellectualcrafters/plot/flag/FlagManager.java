@@ -42,7 +42,7 @@ public class FlagManager {
     // - Mob cap
     // - customized plot composition
 
-    private static ArrayList<AbstractFlag> flags = new ArrayList<>();
+    private final static ArrayList<AbstractFlag> flags = new ArrayList<>();
 
     /**
      * Register an AbstractFlag with PlotSquared

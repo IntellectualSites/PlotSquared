@@ -97,9 +97,7 @@ public class MySQL extends Database {
 
         final Statement statement = this.connection.createStatement();
 
-        final ResultSet result = statement.executeQuery(query);
-
-        return result;
+        return statement.executeQuery(query);
     }
 
     @Override
@@ -110,9 +108,7 @@ public class MySQL extends Database {
 
         final Statement statement = this.connection.createStatement();
 
-        final int result = statement.executeUpdate(query);
-
-        return result;
+        return statement.executeUpdate(query);
     }
 
 }

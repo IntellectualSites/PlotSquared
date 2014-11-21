@@ -382,7 +382,7 @@ public enum C {
      *
      * @see com.intellectualsites.translation.TranslationLanguage
      */
-    protected static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
+    protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
 
     /**
      * The TranslationManager

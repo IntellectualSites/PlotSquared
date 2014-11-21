@@ -26,11 +26,11 @@ public class PlotId {
     /**
      * x value
      */
-    public Integer x;
+    public final Integer x;
     /**
      * y value
      */
-    public Integer y;
+    public final Integer y;
 
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)

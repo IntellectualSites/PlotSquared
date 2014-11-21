@@ -7,9 +7,9 @@ package com.intellectualsites.translation;
  */
 public class TranslationAsset {
 
-    private TranslationObject trans;
-    private String translated;
-    private TranslationLanguage lang;
+    private final TranslationObject trans;
+    private final String translated;
+    private final TranslationLanguage lang;
 
     public TranslationAsset(TranslationObject trans, String translated, TranslationLanguage lang) {
         this.trans = trans;

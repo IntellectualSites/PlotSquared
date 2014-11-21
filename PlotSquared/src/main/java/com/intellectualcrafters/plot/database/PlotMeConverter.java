@@ -195,12 +195,12 @@ public class PlotMeConverter {
                             final PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
                             com.intellectualcrafters.plot.object.Plot pl;
                             if (online) {
-                                pl = new com.intellectualcrafters.plot.object.Plot(id, plot.getOwnerId(), plot.getBiome(), psAdded, psTrusted, psDenied,
+                                pl = new com.intellectualcrafters.plot.object.Plot(id, plot.getOwnerId(), psAdded, psTrusted, psDenied,
 
                                         "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             } else {
                                 final String owner = plot.getOwner();
-                                pl = new com.intellectualcrafters.plot.object.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), plot.getBiome(), psAdded, psTrusted, psDenied,
+                                pl = new com.intellectualcrafters.plot.object.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), psAdded, psTrusted, psDenied,
 
                                         "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             }

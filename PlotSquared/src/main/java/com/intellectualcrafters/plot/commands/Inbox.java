@@ -53,7 +53,7 @@ public class Inbox extends SubCommand {
             return false;
         }
 
-        Integer tier = null;
+        Integer tier;
         final UUID uuid = plr.getUniqueId();
         if (PlotMain.hasPermission(plr, "plots.admin")) {
             tier = 0;
@@ -151,14 +151,13 @@ public class Inbox extends SubCommand {
                     }
                     plot.settings.removeComments(comments);
                     PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
-                    return;
                 } else {
-                    final List<String> recipients = Arrays.asList(new String[]{"A", "O", "H", "T", "E"});
+                    final List<String> recipients = Arrays.asList("A", "O", "H", "T", "E");
                     int count = 1;
                     final StringBuilder message = new StringBuilder();
                     String prefix = "";
                     for (final PlotComment comment : comments) {
-                        message.append(prefix + "[" + count + "]&6[&c" + recipients.get(tier2) + "&6] &7" + comment.senderName + "&f: " + comment.comment);
+                        message.append(prefix).append("[").append(count).append("]&6[&c").append(recipients.get(tier2)).append("&6] &7").append(comment.senderName).append("&f: ").append(comment.comment);
                         prefix = "\n";
                         count++;
                     }

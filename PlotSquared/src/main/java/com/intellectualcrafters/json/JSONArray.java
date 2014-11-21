@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -145,9 +144,8 @@ public class JSONArray {
     public JSONArray(final Collection<Object> collection) {
         this.myArrayList = new ArrayList<Object>();
         if (collection != null) {
-            final Iterator<Object> iter = collection.iterator();
-            while (iter.hasNext()) {
-                this.myArrayList.add(JSONObject.wrap(iter.next()));
+            for (Object aCollection : collection) {
+                this.myArrayList.add(JSONObject.wrap(aCollection));
             }
         }
     }
@@ -548,7 +546,7 @@ public class JSONArray {
      * @throws JSONException if the value is not finite.
      */
     public JSONArray put(final double value) throws JSONException {
-        final Double d = new Double(value);
+        final Double d = value;
         JSONObject.testValidity(d);
         this.put(d);
         return this;

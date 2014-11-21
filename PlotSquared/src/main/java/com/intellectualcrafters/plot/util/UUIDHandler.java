@@ -68,13 +68,14 @@ public class UUIDHandler {
      *
      * @see org.bukkit.Server#getOnlineMode()
      */
-    private static boolean online = Bukkit.getServer().getOnlineMode();
+    private final static boolean online = Bukkit.getServer().getOnlineMode();
 
     /**
      * Map containing names and UUIDs
+     *
      * @see com.google.common.collect.BiMap
      */
-    private static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+    private final static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
     /**
      * Get the map containing all names/uuids

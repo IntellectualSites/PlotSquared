@@ -53,8 +53,8 @@ import java.util.List;
  */
 public class Set extends SubCommand {
 
-    public static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
-    public static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
+    public final static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
+    public final static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
 
     public Set() {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);

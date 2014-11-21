@@ -733,19 +733,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler
-    public void onChangeWorld(final PlayerChangedWorldEvent event) {
-        /*
-         * if (isPlotWorld(event.getFrom()) &&
-         * (Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1)) {
-         * event.getPlayer().setResourcePack("");
-         * }
-         * else {
-         * textures(event.getPlayer());
-         * }
-         */
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void BlockCreate(final BlockPlaceEvent event) {
         final World world = event.getPlayer().getWorld();

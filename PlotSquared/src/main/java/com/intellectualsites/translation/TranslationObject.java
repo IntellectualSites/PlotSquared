@@ -31,7 +31,6 @@ public class TranslationObject {
         }
         this.key = key.toLowerCase();
         this.defaultValue = defaultValue.replace("\n", "&-");
-        ;
         this.description = description;
         this.creationDescription = creationDescription;
     }
