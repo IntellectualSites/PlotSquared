@@ -312,7 +312,7 @@ public class Set extends SubCommand {
             }
             //
             @SuppressWarnings("unchecked")
-            final ArrayList<Material> materials = (ArrayList<Material>) PlotWorld.BLOCKS.clone();
+            final ArrayList<Material> materials = (ArrayList<Material>) ((ArrayList<Material>) PlotWorld.BLOCKS).clone();
             materials.add(Material.AIR);
             //
             final String[] strings = args[1].split(",");
