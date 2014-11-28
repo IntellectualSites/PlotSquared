@@ -1380,6 +1380,8 @@ public class PlotMain extends JavaPlugin {
     final public void onEnable() {
         // Setup the logger mechanics
         setupLogger();
+        // Setup translations
+        C.setupTranslations();
         // Check for outdated java version.
         if (getJavaVersion() < 1.7) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
@@ -1390,8 +1392,6 @@ public class PlotMain extends JavaPlugin {
         } else if (getJavaVersion() < 1.8) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
-        // Setup configurations
-        C.setupTranslations();
         // Setup configuration
         configs();
         // Setup metrics
