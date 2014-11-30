@@ -50,7 +50,7 @@ public class Helpers extends SubCommand {
             return true;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if ((plot.owner == null) || !plot.hasRights(plr)) {
+        if ((plot.owner == null) || !plot.getOwner().equals(plr)) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
