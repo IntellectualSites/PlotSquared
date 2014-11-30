@@ -26,7 +26,9 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.*;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -34,10 +36,13 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -655,33 +660,27 @@ public class PlotHelper {
     }
 
     public static void clearAllEntities(final World world, final Plot plot, final boolean tile) {
-        final Location pos1 = getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = getPlotTopLoc(world, plot.id);
-        for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
-            for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
-                final Chunk chunk = world.getChunkAt(i, j);
-                for (final Entity entity : chunk.getEntities()) {
-                    final PlotId id = PlayerFunctions.getPlot(entity.getLocation());
-                    if ((id != null) && id.equals(plot.id)) {
-                        if (entity instanceof Player) {
-                            Player player = (Player) entity;
-                            PlotMain.teleportPlayer(player, entity.getLocation(), plot);
-                            PlotListener.plotExit(player, plot);
-                        } else {
-                            entity.remove();
-                        }
-                    }
-                }
-                if (tile) {
-                    for (final BlockState entity : chunk.getTileEntities()) {
-                        entity.setRawData((byte) 0);
-                    }
+        
+        List<Entity> entities = world.getEntities();
+        for (Entity entity : entities) {
+            PlotId id = PlayerFunctions.getPlot(entity.getLocation());
+            if (plot.id.equals(id)) {
+                if (entity instanceof Player) {
+                    Player player = (Player) entity;
+                    PlotMain.teleportPlayer(player, entity.getLocation(), plot);
+                    PlotListener.plotExit(player, plot);
+                } else {
+                    entity.remove();
                 }
             }
         }
     }
 
     public static void clear(final World world, final Plot plot) {
+        if (runners.containsKey(plot)) {
+            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+            return;
+        }
         final PlotManager manager = PlotMain.getPlotManager(world);
 
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
@@ -692,12 +691,14 @@ public class PlotHelper {
         h = (prime * h) + pos1.getBlockZ();
         state = h;
 
-        PlotHelper.setBiome(world, plot, Biome.FOREST);
-
         manager.clearPlot(world, plot);
 
         if (canSetFast) {
-            refreshPlotChunks(world, plot);
+            final Plugin plugin = (Plugin) PlotMain.getMain();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
+                PlotHelper.setBiome(world, plot, Biome.FOREST);
+                refreshPlotChunks(world, plot);
+            } }, 90L);
         }
     }
 
@@ -721,18 +722,18 @@ public class PlotHelper {
 
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
 
-        final long start = System.nanoTime();
+        final long start = System.currentTimeMillis();
 
         final World world;
         world = requester.getWorld();
 
-        /*
-         * keep
-         */
         clearAllEntities(world, plot, false);
         clear(world, plot);
         removeSign(world, plot);
-        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.nanoTime() - start) / 1000000.0)));
+        final Plugin plugin = (Plugin) PlotMain.getMain();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
+            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start) / 1000.0)));
+        } }, 90L);
 
     }
 
@@ -801,19 +802,29 @@ public class PlotHelper {
     }
 
     public static void setBiome(final World world, final Plot plot, final Biome b) {
-        final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX() - 1;
+        final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
         final int topX = getPlotTopLoc(world, plot.id).getBlockX() + 1;
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
+        final int bottomZ = getPlotBottomLoc(world, plot.id).getBlockZ();
         final int topZ = getPlotTopLoc(world, plot.id).getBlockZ() + 1;
-
+        
+        Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
+        Biome biome = block.getBiome();
+        
+        if (biome.equals(b)) {
+            return;
+        }
+        
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                world.getBlockAt(x, 0, z).setBiome(b);
+                Block blk = world.getBlockAt(x, 0, z);
+                Biome c = blk.getBiome();
+                if (c.equals(b)) {
+                    x += 15;
+                    continue;
+                }
+                blk.setBiome(b);
             }
         }
-
-        PlotMain.updatePlot(plot);
-        refreshPlotChunks(world, plot);
     }
 
     public static int getHeighestBlock(final World world, final int x, final int z) {
