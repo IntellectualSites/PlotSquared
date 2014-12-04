@@ -33,6 +33,10 @@ import org.bukkit.ChatColor;
  */
 public enum C {
     /*
+     * WorldEdit masks
+     */
+    REQUIRE_SELECTION_IN_MASK("&c%s of your selection is not within your plot mask. You can only make edits within your plot."),
+    /*
      * Records
      */
     RECORD_PLAY("&c%player &cstarted playing record &6%name"),

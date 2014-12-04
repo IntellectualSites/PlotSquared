@@ -22,6 +22,8 @@
 package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
@@ -29,6 +31,13 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PWE;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.World;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +50,7 @@ import org.bukkit.event.player.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,6 +60,8 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class WorldEditListener implements Listener {
 
+    final List<String> monitored = Arrays.asList(new String[] { "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", "" });
+    
     public final Set<String> blockedcmds = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
     public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
@@ -104,7 +116,7 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
-        if (PlotMain.hasPermission(p, "plots.worldedit.bypass") || !PlotMain.isPlotWorld(p.getWorld())) {
+        if (!PlotMain.isPlotWorld(p.getWorld()) || PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
             return;
         }
         String cmd = e.getMessage().toLowerCase();
@@ -117,9 +129,40 @@ public class WorldEditListener implements Listener {
             if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
                 e.setCancelled(true);
             }
+            return;
         } else if (this.blockedcmds.contains(cmd)) {
             e.setCancelled(true);
+            return;
         }
+        if (!Settings.REQUIRE_SELECTION) {
+            return;
+        }
+        for (final String c : monitored) {
+            if (cmd.equals("//" + c) || cmd.equals("/" + c) || cmd.equals("/worldedit:/" + c)) {
+                final Selection selection = PlotMain.worldEdit.getSelection(p);
+                if (selection == null) {
+                    return;
+                }
+                final BlockVector pos1 = selection.getNativeMinimumPoint().toBlockVector();
+                final BlockVector pos2 = selection.getNativeMaximumPoint().toBlockVector();
+                
+                LocalSession session = PlotMain.worldEdit.getSession(p);
+                Mask mask = session.getMask();
+                if (mask == null) {
+                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
+                    return;
+                }
+                if (!mask.test(pos1)) {
+                    e.setCancelled(true);
+                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1"); 
+                }
+                if (!mask.test(pos2)) {
+                    e.setCancelled(true);
+                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 2");
+                }
+            }
+        }
+        
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

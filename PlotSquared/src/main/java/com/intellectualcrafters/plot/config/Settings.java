@@ -30,6 +30,10 @@ package com.intellectualcrafters.plot.config;
 public class Settings {
 
     /**
+     * Default worldedit-require-selection-in-mask: false
+     */
+    public static boolean REQUIRE_SELECTION = true;
+    /**
      * Default kill road mobs: true
      */
     public final static boolean KILL_ROAD_MOBS_DEFAULT = true;

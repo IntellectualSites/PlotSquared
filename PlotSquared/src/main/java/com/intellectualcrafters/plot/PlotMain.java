@@ -929,6 +929,7 @@ public class PlotMain extends JavaPlugin {
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
         options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
+        options.put("worldedit.require-selection-in-mask",Settings.REQUIRE_SELECTION);
 
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -951,6 +952,8 @@ public class PlotMain extends JavaPlugin {
         Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
 
     /**
@@ -1540,7 +1543,9 @@ public class PlotMain extends JavaPlugin {
 
             final String version = worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
-                PlotMain.sendConsoleSenderMessage("&cPlease update to WorldEdit 6 for improved stability and additional features:\nhttp://builds.enginehub.org/job/worldedit");
+                PlotMain.sendConsoleSenderMessage("&cThis version of WorldEdit does not support PlotSquared.");
+                PlotMain.sendConsoleSenderMessage("&cPlease use WorldEdit 6+");
+                PlotMain.sendConsoleSenderMessage("&c - http://builds.enginehub.org/job/worldedit");
             } else {
                 getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
             }
