@@ -21,12 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -50,7 +52,7 @@ public class Helpers extends SubCommand {
             return true;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if ((plot.owner == null) || !plot.getOwner().equals(plr)) {
+        if (((plot.owner == null) || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
