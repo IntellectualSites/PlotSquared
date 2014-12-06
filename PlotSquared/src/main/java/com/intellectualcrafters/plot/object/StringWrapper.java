@@ -74,6 +74,9 @@ public class StringWrapper {
      */
     @Override
     public int hashCode() {
+        if (this.value == null) {
+            return 0;
+        }
         return this.value.toLowerCase().hashCode();
     }
 }

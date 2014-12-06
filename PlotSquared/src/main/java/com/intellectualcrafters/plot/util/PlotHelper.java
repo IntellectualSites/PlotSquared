@@ -249,7 +249,7 @@ public class PlotHelper {
     }
 
     public static void setSign(final Player player, final Plot p) {
-        setSign(player.getWorld(), player.getName(), p);
+        setSign(Bukkit.getWorld(p.world), player.getName(), p);
     }
 
     @SuppressWarnings("deprecation")
@@ -737,7 +737,41 @@ public class PlotHelper {
 
     }
 
+    public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+        if (!canSetFast) {
+            for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                    for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                        final Block block = world.getBlockAt(x, y, z);
+                        if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+                            block.setTypeIdAndData(newblock.id, newblock.data, false);
+                        }
+                    }
+                }
+            }
+        } else {
+            try {
+                for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+                    for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
+                        for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
+                            final Block block = world.getBlockAt(x, y, z);
+                            if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+                                SetBlockFast.set(world, x, y, z, newblock.id, newblock.data);
+                            }
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                //
+            }
+        } 
+    }
+    
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
+        if (blocks.length == 1) {
+            setCuboid(world, pos1, pos2, blocks[0]);
+            return;
+        }
         if (!canSetFast) {
             for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                 for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {

@@ -23,11 +23,13 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public abstract class PlotWorld {
     public final static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
     public final static String SCHEMATIC_FILE_DEFAULT = "null";
     public final static List<String> SCHEMATICS_DEFAULT = null;
-    public final static List<String> DEFAULT_FLAGS_DEFAULT = new ArrayList<>();
+    public final static List<String> DEFAULT_FLAGS_DEFAULT = Arrays.asList();
     public final static boolean USE_ECONOMY_DEFAULT = false;
     public final static double PLOT_PRICE_DEFAULT = 100;
     public final static double MERGE_PRICE_DEFAULT = 100;
@@ -193,7 +195,6 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         final ConfigurationNode[] settings = getSettingNodes();
-
         /*
          * Saving generator specific settings
          */
