@@ -32,4 +32,9 @@ public class PlotBlock {
         this.id = id;
         this.data = data;
     }
+    
+    @Override
+    public String toString() {
+        return this.id+":"+this.data;
+    }
 }

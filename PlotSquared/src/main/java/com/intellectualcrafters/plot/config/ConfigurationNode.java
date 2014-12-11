@@ -38,7 +38,7 @@ public class ConfigurationNode {
     private final SettingValue type;
     private Object value;
 
-    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, @SuppressWarnings("unused") final boolean required) {
+    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
         this.constant = constant;
         this.default_value = default_value;
         this.description = description;
