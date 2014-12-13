@@ -152,7 +152,6 @@ public class Auto extends SubCommand {
             while (!br) {
                 Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
                 if ((plot == null) || (plot.owner == null)) {
-                    plot = PlotHelper.getPlot(world, Auto.lastPlot);
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
