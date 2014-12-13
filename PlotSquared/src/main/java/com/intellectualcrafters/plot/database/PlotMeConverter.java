@@ -23,12 +23,14 @@ package com.intellectualcrafters.plot.database;
 
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.WorldGenerator;
 import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -77,7 +79,7 @@ public class PlotMeConverter {
                         new ArrayList<>();
                 // Online Mode
                 final boolean online =
-                        Bukkit.getServer().getOnlineMode();
+                        Bukkit.getServer().getOnlineMode() && Settings.OFFLINE_MODE;
                 // PlotMe Plugin
                 final Plugin plotMePlugin =
                         Bukkit.getPluginManager().getPlugin("PlotMe");
