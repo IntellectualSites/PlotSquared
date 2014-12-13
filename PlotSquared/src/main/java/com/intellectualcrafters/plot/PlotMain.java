@@ -1589,14 +1589,14 @@ public class PlotMain extends JavaPlugin {
             try {
                 new SetBlockFast();
                 PlotHelper.canSetFast = true;
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 PlotHelper.canSetFast = false;
             }
 
             try {
                 new SendChunk();
                 PlotHelper.canSendChunk = true;
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 PlotHelper.canSendChunk = false;
             }
         }
