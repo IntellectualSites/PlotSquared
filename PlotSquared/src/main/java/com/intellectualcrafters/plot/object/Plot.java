@@ -25,6 +25,8 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -212,7 +214,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean hasRights(final Player player) {
-        return PlotMain.hasPermission(player, "plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(player.getUniqueId())) || ((this.owner != null) && this.owner.equals(player.getUniqueId())) || ((this.owner != null) && (this.trusted != null) && (Bukkit.getPlayer(this.owner) != null) && (this.trusted.contains(player.getUniqueId()) || this.trusted.contains(DBFunc.everyone)));
+        return PlotMain.hasPermission(player, "plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (Bukkit.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
     }
 
     /**
@@ -222,7 +224,7 @@ public class Plot implements Cloneable {
      * @return false if the player is allowed to enter
      */
     public boolean deny_entry(final Player player) {
-        return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.hasRights(player)) || (!this.hasRights(player) && this.denied.contains(player.getUniqueId())));
+        return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.hasRights(player)) || (!this.hasRights(player) && this.denied.contains(UUIDHandler.getUUID(player))));
     }
 
     /**
@@ -238,7 +240,7 @@ public class Plot implements Cloneable {
      * @param player
      */
     public void setOwner(final Player player) {
-        this.owner = player.getUniqueId();
+        this.owner = UUIDHandler.getUUID(player);
     }
 
     /**

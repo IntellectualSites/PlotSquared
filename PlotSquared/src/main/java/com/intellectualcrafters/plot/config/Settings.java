@@ -114,7 +114,11 @@ public class Settings {
      * Use the custom API
      */
     public static boolean CUSTOM_API = true;
-
+    
+    /**
+     * Use offline mode storage
+     */
+    public static boolean OFFLINE_MODE = false;
     /**
      * Database settings
      *

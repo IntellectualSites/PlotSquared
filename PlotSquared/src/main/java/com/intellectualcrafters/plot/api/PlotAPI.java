@@ -35,7 +35,9 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.PlotSquaredException;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.sun.istack.internal.NotNull;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -420,7 +422,7 @@ public class PlotAPI {
         final ArrayList<Plot> pPlots = new ArrayList<>();
         for (final Plot plot : PlotMain.getPlots(world).values()) {
             if (just_owner) {
-                if ((plot.owner != null) && (plot.owner == plr.getUniqueId())) {
+                if ((plot.owner != null) && (plot.owner == UUIDHandler.getUUID(plr))) {
                     pPlots.add(plot);
                 }
             } else {

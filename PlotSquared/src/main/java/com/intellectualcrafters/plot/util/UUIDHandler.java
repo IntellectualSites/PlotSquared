@@ -62,6 +62,8 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 public class UUIDHandler {
+    
+    public static UUIDWrapper uuidWrapper = null;
 
     /**
      * Online mode
@@ -133,7 +135,7 @@ public class UUIDHandler {
         @SuppressWarnings("deprecation")
         final Player player = Bukkit.getPlayer(name);
         if (player != null) {
-            final UUID uuid = player.getUniqueId();
+            final UUID uuid = getUUID(player);
             add(nameWrap, uuid);
             return uuid;
         }
@@ -282,7 +284,7 @@ public class UUIDHandler {
         if (player == null) {
             return null;
         }
-        final UUID uuid = player.getUniqueId();
+        final UUID uuid = getUUID(player);
         add(name, uuid);
         return uuid;
     }
@@ -296,5 +298,31 @@ public class UUIDHandler {
     public static void handleSaving() {
         final UUIDSaver saver = PlotMain.getUUIDSaver();
         saver.globalSave(getUuidMap());
+    }
+    
+    public static UUID getUUID(Player player) {
+        if (uuidWrapper == null) {
+            try {
+                getUUID(player);
+                uuidWrapper = new DefaultUUIDWrapper();
+            }
+            catch (Throwable e) {
+                uuidWrapper = new OfflineUUIDWrapper();
+            }
+        }
+        return uuidWrapper.getUUID(player);
+    }
+    
+    public static UUID getUUID(OfflinePlayer player) {
+        if (uuidWrapper == null) {
+            try {
+                getUUID(player);
+                uuidWrapper = new DefaultUUIDWrapper();
+            }
+            catch (Throwable e) {
+                uuidWrapper = new OfflineUUIDWrapper();
+            }
+        }
+        return uuidWrapper.getUUID(player);
     }
 }

@@ -56,7 +56,7 @@ public class PlotUUIDSaver implements UUIDSaver {
                 String name;
                 UUID uuid;
                 for (final OfflinePlayer player : offlinePlayers) {
-                    uuid = player.getUniqueId();
+                    uuid = UUIDHandler.getUUID(player);
                     if (!UUIDHandler.uuidExists(uuid)) {
                         name = player.getName();
                         if (name != null) {

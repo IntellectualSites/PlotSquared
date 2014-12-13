@@ -42,8 +42,10 @@ import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -338,7 +340,7 @@ public class PlotMain extends JavaPlugin {
      * @return Set Containing the players plots
      */
     public static Set<Plot> getPlots(final Player player) {
-        final UUID uuid = player.getUniqueId();
+        final UUID uuid = UUIDHandler.getUUID(player);
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final HashMap<PlotId, Plot> world : plots.values()) {
             for (final Plot plot : world.values()) {
@@ -358,7 +360,7 @@ public class PlotMain extends JavaPlugin {
      * @return players plots
      */
     public static Set<Plot> getPlots(final World world, final Player player) {
-        final UUID uuid = player.getUniqueId();
+        final UUID uuid = UUIDHandler.getUUID(player);
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
@@ -912,7 +914,10 @@ public class PlotMain extends JavaPlugin {
         final int config_ver = 1;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
+        
         options.put("auto_update", false);
+        
+        options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
@@ -952,6 +957,8 @@ public class PlotMain extends JavaPlugin {
         Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
         
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
@@ -1597,6 +1604,9 @@ public class PlotMain extends JavaPlugin {
         }
         // Handle UUIDS
         {
+            if (Settings.OFFLINE_MODE) {
+                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            }
             setUUIDSaver(new PlotUUIDSaver());
             // Looks really cool xD
             getUUIDSaver().globalPopulate();

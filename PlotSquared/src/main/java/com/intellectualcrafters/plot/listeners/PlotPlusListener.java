@@ -26,6 +26,8 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -179,7 +181,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                 if (player == null) {
                     return;
                 }
-                if (player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                if (UUIDHandler.getUUID(player).equals(event.getPlayer().getUniqueId())) {
                     return;
                 }
                 if (player.isOnline()) {
@@ -218,7 +220,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                 if (player == null) {
                     return;
                 }
-                if (player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                if (UUIDHandler.getUUID(player).equals(event.getPlayer().getUniqueId())) {
                     return;
                 }
                 if (player.isOnline()) {

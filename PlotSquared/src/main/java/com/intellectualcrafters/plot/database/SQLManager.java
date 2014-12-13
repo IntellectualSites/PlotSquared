@@ -30,6 +30,8 @@ import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -1009,7 +1011,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1032,7 +1034,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1055,7 +1057,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1078,7 +1080,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1101,7 +1103,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1124,7 +1126,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, player.getUniqueId().toString());
+                    statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {

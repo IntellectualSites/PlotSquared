@@ -41,7 +41,7 @@ public class SetOwner extends SubCommand {
     /*
      * private UUID getUUID(String string) { OfflinePlayer player =
      * Bukkit.getOfflinePlayer(string); return ((player != null) &&
-     * player.hasPlayedBefore()) ? player.getUniqueId() : null; }
+     * player.hasPlayedBefore()) ? UUIDHandler.getUUID(player) : null; }
      */
 
     private UUID getUUID(final String string) {

@@ -345,7 +345,7 @@ public class PlotHelper {
         if (plot.owner == null) {
             return;
         }
-        if (!plot.owner.equals(player.getUniqueId())) {
+        if (!plot.owner.equals(UUIDHandler.getUUID(player))) {
             return;
         }
 
@@ -403,7 +403,7 @@ public class PlotHelper {
         final PlotId id_max = plots.get(plots.size() - 1);
         for (final PlotId myid : plots) {
             final Plot myplot = PlotMain.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(player.getUniqueId()))) {
+            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(player)))) {
                 return false;
             }
             final PlotId top = PlayerFunctions.getTopPlot(world, myplot).id;
@@ -420,7 +420,7 @@ public class PlotHelper {
 
     public static boolean createPlot(final Player player, final Plot plot) {
         final World w = plot.getWorld();
-        final Plot p = new Plot(plot.id, player.getUniqueId(), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
+        final Plot p = new Plot(plot.id, UUIDHandler.getUUID(player), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotMain.updatePlot(p);
         DBFunc.createPlot(p);
         DBFunc.createPlotSettings(DBFunc.getId(w.getName(), plot.id), plot);
