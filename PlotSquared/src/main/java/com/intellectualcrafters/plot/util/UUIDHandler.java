@@ -70,7 +70,7 @@ public class UUIDHandler {
      *
      * @see org.bukkit.Server#getOnlineMode()
      */
-    private final static boolean online = Bukkit.getServer().getOnlineMode() && Settings.OFFLINE_MODE;
+    private final static boolean online = Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
 
     /**
      * Map containing names and UUIDs

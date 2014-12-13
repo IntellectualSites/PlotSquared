@@ -79,7 +79,7 @@ public class PlotMeConverter {
                         new ArrayList<>();
                 // Online Mode
                 final boolean online =
-                        Bukkit.getServer().getOnlineMode() && Settings.OFFLINE_MODE;
+                        Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
                 // PlotMe Plugin
                 final Plugin plotMePlugin =
                         Bukkit.getPluginManager().getPlugin("PlotMe");
