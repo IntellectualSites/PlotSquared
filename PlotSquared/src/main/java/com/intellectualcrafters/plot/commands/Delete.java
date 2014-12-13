@@ -66,7 +66,7 @@ public class Delete extends SubCommand {
                 Auto.lastPlot = plot.id;
             }
         } else {
-            PlayerFunctions.sendMessage(plr, "Plot clearing has been denied.");
+            PlayerFunctions.sendMessage(plr, "Plot deletion has been denied.");
         }
         return true;
     }

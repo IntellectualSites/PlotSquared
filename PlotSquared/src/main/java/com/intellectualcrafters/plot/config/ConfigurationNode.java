@@ -79,8 +79,8 @@ public class ConfigurationNode {
     }
 
     public Object getDefaultValue() {
-        if (this.default_value instanceof String[]) {
-            return StringUtils.join((String[]) this.default_value, ",");
+        if (this.default_value instanceof Object[]) {
+            return StringUtils.join((Object[]) this.default_value, ",");
         }
         return this.default_value;
     }

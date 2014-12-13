@@ -184,7 +184,6 @@ public class Setup extends SubCommand implements Listener {
                             break;
                         }
                     }
-
                 }
             }
             if (generator == null) {

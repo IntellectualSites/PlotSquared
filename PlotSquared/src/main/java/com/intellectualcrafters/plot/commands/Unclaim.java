@@ -23,55 +23,49 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import org.bukkit.Bukkit;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
 public class Unclaim extends SubCommand {
 
     public Unclaim() {
-        super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, false);
+        super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (plr == null) {
-            // Is console
-            if (args.length < 2) {
-                PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
-            } else {
-                PlotId id = PlotId.fromString(args[0]);
-                String world = args[1];
-                if (id == null) {
-                    PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
-                } else {
-                    if (!PlotMain.isPlotWorld(world)) {
-                        PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
-                    } else {
-                        Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
-                        if (plot == null) {
-                            PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
-                        } else {
-                            PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
         if (!PlayerFunctions.isInPlot(plr)) {
-            return sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
-            return sendMessage(plr, C.UNLINK_REQUIRED);
+            return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
-            return sendMessage(plr, C.NO_PLOT_PERMS);
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))) && !PlotMain.hasPermission(plr, "plots.admin")) {
+            return !sendMessage(plr, C.NO_PLOT_PERMS);
+        }
+        assert plot != null;
+        final PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
+        if (PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+            final double c = pWorld.SELL_PRICE;
+            if (c > 0d) {
+                final Economy economy = PlotMain.economy;
+                economy.depositPlayer(plr, c);
+                sendMessage(plr, C.ADDED_BALANCE, c + "");
+            }
+        }
+        final boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
+        if (result) {
+            DBFunc.delete(plr.getWorld().getName(), plot);
+            if ((Math.abs(plot.id.x) <= Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) <= Math.abs(Auto.lastPlot.y))) {
+                Auto.lastPlot = plot.id;
+            }
+        } else {
+            PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
         }
         return true;
     }
