@@ -177,7 +177,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         if (booleanFlag(plot, "notify-enter")) {
             if (plot.hasOwner()) {
-                final Player player = Bukkit.getPlayer(plot.getOwner());
+                
+                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
                 if (player == null) {
                     return;
                 }
@@ -216,7 +217,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         if (booleanFlag(plot, "notify-leave")) {
             if (plot.hasOwner()) {
-                final Player player = Bukkit.getPlayer(plot.getOwner());
+                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
                 if (player == null) {
                     return;
                 }

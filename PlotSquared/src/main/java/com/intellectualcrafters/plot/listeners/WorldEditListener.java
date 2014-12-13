@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PWE;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -77,7 +78,7 @@ public class WorldEditListener implements Listener {
         if ((plot == null) || (plot.owner == null)) {
             return;
         }
-        final Player player = Bukkit.getPlayer(plot.owner);
+        final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.owner);
         if (player == null) {
             return;
         }

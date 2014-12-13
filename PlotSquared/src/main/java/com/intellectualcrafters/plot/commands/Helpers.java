@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -68,13 +69,18 @@ public class Helpers extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
+                OfflinePlayer player = null;
                 if (plot.trusted.contains(uuid)) {
                     plot.trusted.remove(uuid);
-                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, player);
                 }
                 if (plot.denied.contains(uuid)) {
                     plot.denied.remove(uuid);
-                    DBFunc.removeDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    if (player == null) {
+                        player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    }
+                    DBFunc.removeDenied(plr.getWorld().getName(), plot, player);
                 }
                 plot.addHelper(uuid);
                 DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));

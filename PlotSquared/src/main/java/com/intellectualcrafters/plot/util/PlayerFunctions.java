@@ -55,7 +55,7 @@ public class PlayerFunctions {
      * @return
      */
     public static boolean hasExpired(final Plot plot) {
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(plot.owner);
+        final OfflinePlayer player = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner);
         final long lp = player.getLastPlayed();
         final long cu = System.currentTimeMillis();
         return (lp - cu) > 30l;

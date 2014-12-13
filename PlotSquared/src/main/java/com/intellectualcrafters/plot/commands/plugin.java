@@ -91,7 +91,7 @@ public class plugin extends SubCommand {
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        Bukkit.getScheduler().runTaskAsynchronously(JavaPlugin.getPlugin(PlotMain.class), new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(PlotMain.getMain(), new Runnable() {
             @Override
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {

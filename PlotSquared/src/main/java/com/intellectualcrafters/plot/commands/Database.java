@@ -6,6 +6,8 @@ import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -36,7 +38,7 @@ public class Database extends SubCommand {
         if (uuid == null) {
             PlotMain.sendConsoleSenderMessage(msg);
         } else {
-            Player p = Bukkit.getPlayer(uuid);
+            Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if (p != null && p.isOnline())
                 return PlayerFunctions.sendMessage(p, msg);
             else
@@ -46,7 +48,7 @@ public class Database extends SubCommand {
     }
 
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
-        Plugin p = PlotMain.getPlugin(PlotMain.class);
+        Plugin p = PlotMain.getMain();
         final java.util.Set<Plot> plots = PlotMain.getPlots();
         p.getServer().getScheduler().runTaskAsynchronously(p, new Runnable() {
             @Override
@@ -100,7 +102,7 @@ public class Database extends SubCommand {
                 Connection n;
                 try {
                     n = new MySQL(
-                            PlotMain.getPlugin(PlotMain.class),
+                            PlotMain.getMain(),
                             host,
                             port,
                             database,

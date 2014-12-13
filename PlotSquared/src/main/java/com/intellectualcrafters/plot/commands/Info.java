@@ -115,7 +115,7 @@ public class Info extends SubCommand {
 
         String owner = "none";
         if (plot.owner != null) {
-            owner = Bukkit.getOfflinePlayer(plot.owner).getName();
+            owner = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner).getName();
         }
         if (owner == null) {
             owner = plot.owner.toString();
@@ -179,7 +179,7 @@ public class Info extends SubCommand {
 
         String owner = "none";
         if (plot.owner != null) {
-            owner = Bukkit.getOfflinePlayer(plot.owner).getName();
+            owner = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner).getName();
         }
         if (owner == null) {
             owner = plot.owner.toString();

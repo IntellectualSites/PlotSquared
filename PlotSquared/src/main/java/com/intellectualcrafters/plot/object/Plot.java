@@ -214,7 +214,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean hasRights(final Player player) {
-        return PlotMain.hasPermission(player, "plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (Bukkit.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
+        return PlotMain.hasPermission(player, "plots.admin") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.uuidWrapper.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
     }
 
     /**

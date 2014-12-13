@@ -124,7 +124,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.PlotMain
      */
     public PlotAPI(@NotNull final JavaPlugin plugin) {
-        this.plotMain = JavaPlugin.getPlugin(PlotMain.class);
+        this.plotMain = PlotMain.getMain();
         if (plotMain == null) {
             throw new PlotSquaredException(PlotSquaredException.PlotError.PLOTMAIN_NULL, "Failed to fetch the plotmain instance, Plot API for " + plugin.getName() + " will be disabled");
         }

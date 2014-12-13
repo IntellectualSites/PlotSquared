@@ -194,7 +194,7 @@ public class UUIDHandler {
         if ((name = getNameOfflinePlayer(uuid)) != null) {
             return name;
         }
-        if (online) {
+        if (online && !Settings.OFFLINE_MODE) {
             if (!Settings.CUSTOM_API) {
                 try {
                     final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
@@ -251,7 +251,7 @@ public class UUIDHandler {
      * @return String - name
      */
     private static String getNameOnlinePlayer(final UUID uuid) {
-        final Player player = Bukkit.getPlayer(uuid);
+        final Player player = uuidWrapper.getPlayer(uuid);
         if ((player == null) || !player.isOnline()) {
             return null;
         }
@@ -259,13 +259,15 @@ public class UUIDHandler {
         add(new StringWrapper(name), uuid);
         return name;
     }
+    
+    
 
     /**
      * @param uuid to use as key
      * @return String - name
      */
     private static String getNameOfflinePlayer(final UUID uuid) {
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        final OfflinePlayer player = uuidWrapper.getOfflinePlayer(uuid);
         if ((player == null) || !player.hasPlayedBefore()) {
             return null;
         }

@@ -439,7 +439,7 @@ public enum C {
             manager = new TranslationManager();
         }
         if (defaultFile == null) {
-            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getPlugin(PlotMain.class)), lang, "PlotSquared", manager)
+            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager)
                     .read();
         }
         // register everything in this class

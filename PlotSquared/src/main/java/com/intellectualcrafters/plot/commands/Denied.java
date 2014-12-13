@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -70,13 +71,18 @@ public class Denied extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
+                OfflinePlayer player = null;
                 if (plot.trusted.contains(uuid)) {
                     plot.trusted.remove(uuid);
-                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, player);
                 }
                 if (plot.helpers.contains(uuid)) {
                     plot.helpers.remove(uuid);
-                    DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(uuid));
+                    if (player == null) {
+                        player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    }
+                    DBFunc.removeHelper(plr.getWorld().getName(), plot, player);
                 }
                 plot.addDenied(uuid);
                 DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
@@ -86,11 +92,12 @@ public class Denied extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            if (!uuid.equals(DBFunc.everyone) && (Bukkit.getPlayer(uuid) != null) && Bukkit.getPlayer(uuid).isOnline()) {
-                final Plot pl = PlayerFunctions.getCurrentPlot(Bukkit.getPlayer((uuid)));
+            Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
+                final Plot pl = PlayerFunctions.getCurrentPlot(player);
                 if ((pl != null) && pl.id.equals(plot.id)) {
-                    PlayerFunctions.sendMessage(Bukkit.getPlayer(uuid), C.YOU_BE_DENIED);
-                    Bukkit.getPlayer(uuid).teleport(Bukkit.getPlayer(uuid).getWorld().getSpawnLocation());
+                    PlayerFunctions.sendMessage(player, C.YOU_BE_DENIED);
+                    player.teleport(player.getWorld().getSpawnLocation());
                 }
             }
             PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);

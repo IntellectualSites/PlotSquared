@@ -46,7 +46,7 @@ public class PlotUUIDSaver implements UUIDSaver {
 
     @Override
     public void globalPopulate() {
-        JavaPlugin.getPlugin(PlotMain.class).getServer().getScheduler().runTaskAsynchronously(JavaPlugin.getPlugin(PlotMain.class), new Runnable() {
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), new Runnable() {
             @Override
             public void run() {
                 final OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();

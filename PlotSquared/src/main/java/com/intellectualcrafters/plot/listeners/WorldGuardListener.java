@@ -76,10 +76,10 @@ public class WorldGuardListener implements Listener {
         // requester.setOp(true);
 
         // 10 ticks should be enough
-        final PermissionAttachment add = requester.addAttachment(JavaPlugin.getPlugin(PlotMain.class), 10);
+        final PermissionAttachment add = requester.addAttachment(PlotMain.getMain(), 10);
         add.setPermission("worldguard.region.addowner.own.*", true);
 
-        final PermissionAttachment remove = requester.addAttachment(JavaPlugin.getPlugin(PlotMain.class), 10);
+        final PermissionAttachment remove = requester.addAttachment(PlotMain.getMain(), 10);
         remove.setPermission("worldguard.region.removeowner.own.*", true);
 
         try {

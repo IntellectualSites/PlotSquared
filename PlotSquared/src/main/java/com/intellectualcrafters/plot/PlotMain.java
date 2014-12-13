@@ -52,6 +52,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,7 +75,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("unused")
 public class PlotMain extends JavaPlugin {
-
+    private static PlotMain main = null;
     /**
      * Permission that allows for "everything"
      */
@@ -681,7 +682,7 @@ public class PlotMain extends JavaPlugin {
      * @return (this class)
      */
     public static PlotMain getMain() {
-        return JavaPlugin.getPlugin(PlotMain.class);
+        return PlotMain.main;
     }
 
     /**
@@ -718,7 +719,7 @@ public class PlotMain extends JavaPlugin {
             return 0;
         }
         OfflinePlayer player;
-        if (((player = Bukkit.getOfflinePlayer(uuid)) == null) || !player.hasPlayedBefore()) {
+        if (((player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid)) == null) || !player.hasPlayedBefore()) {
             return 0;
         }
         return player.getLastPlayed();
@@ -1388,6 +1389,7 @@ public class PlotMain extends JavaPlugin {
     @Override
     @SuppressWarnings("deprecation")
     final public void onEnable() {
+        PlotMain.main = this;
         // Setup the logger mechanics
         setupLogger();
         // Setup translations

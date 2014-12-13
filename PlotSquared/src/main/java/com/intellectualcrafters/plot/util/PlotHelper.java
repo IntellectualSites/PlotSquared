@@ -273,7 +273,7 @@ public class PlotHelper {
         if (uuid == null) {
             return "unknown";
         }
-        final OfflinePlayer plr = Bukkit.getOfflinePlayer(uuid);
+        final OfflinePlayer plr = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
         if (plr == null) {
             return "unknown";
         }
