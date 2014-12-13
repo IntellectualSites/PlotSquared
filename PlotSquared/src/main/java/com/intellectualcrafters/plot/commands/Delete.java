@@ -50,7 +50,7 @@ public class Delete extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && pWorld.USE_ECONOMY && plot!=null && plot.hasOwner()) {
+        if (PlotMain.useEconomy && pWorld.USE_ECONOMY && plot!=null && plot.hasOwner() && plot.getOwner().equals(plr.getUniqueId())) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 final Economy economy = PlotMain.economy;
