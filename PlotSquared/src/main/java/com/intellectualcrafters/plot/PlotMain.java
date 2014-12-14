@@ -185,6 +185,13 @@ public class PlotMain extends JavaPlugin {
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
 
     /**
+     * Return an instance of MySQL
+     */
+    public static MySQL getMySQL() {
+        return mySQL;
+    }
+    
+    /**
      * Check for expired plots
      */
     public static void checkForExpiredPlots() {

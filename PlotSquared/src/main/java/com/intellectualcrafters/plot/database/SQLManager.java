@@ -53,7 +53,7 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_HELPERS;
     public final String CREATE_PLOT;
     // Private Final
-    private final Connection connection;
+    private Connection connection;
     private final String prefix;
 
     /**
@@ -81,6 +81,19 @@ public class SQLManager implements AbstractDB {
                 "INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
         CREATE_PLOT =
                 "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+        
+        //schedule reconnect
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable(){
+            public void run(){
+                try {
+                    connection = PlotMain.getMySQL().openConnection();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 500000, 500000);
+        
     }
 
     public void setTimout() {
