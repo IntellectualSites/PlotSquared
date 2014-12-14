@@ -66,6 +66,8 @@ public class SQLManager implements AbstractDB {
         // Private final
         connection = c;
         prefix = p;
+        // Set timout
+        setTimout();
         // Public final
         SET_OWNER =
                 "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
@@ -81,6 +83,22 @@ public class SQLManager implements AbstractDB {
                 "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
     }
 
+    public void setTimout() {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = connection.prepareStatement("SET GLOBAL wait_timeout =28800;");
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                    Logger.add(LogLevel.DANGER, "Could not reset MySQL timout.");
+                }
+            }
+        });
+    }
+    
     /**
      * Set Plot owner
      *
@@ -265,6 +283,10 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createTables(final String database, final boolean add_constraint) throws SQLException {
+        
+        
+        
+        
         final boolean mysql = database.equals("mysql");
         final Statement stmt = connection.createStatement();
         if (mysql) {
