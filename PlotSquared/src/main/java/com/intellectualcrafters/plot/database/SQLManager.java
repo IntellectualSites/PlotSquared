@@ -86,13 +86,13 @@ public class SQLManager implements AbstractDB {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable(){
             public void run(){
                 try {
-                    connection = PlotMain.getMySQL().openConnection();
+                    connection = PlotMain.getMySQL().forceConnection();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 500000, 500000);
+        }, 11000, 11000);
         
     }
 
