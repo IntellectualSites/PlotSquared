@@ -21,6 +21,8 @@
 
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.config.Settings;
+
 /**
  * @author Empire92
  */
@@ -54,7 +56,10 @@ public class StringWrapper {
             return false;
         }
         final StringWrapper other = (StringWrapper) obj;
-        return other.value.equals(this.value);
+        if (Settings.OFFLINE_MODE) {
+            return other.value.equals(this.value);
+        }
+        return other.value.toLowerCase().equals(this.value.toLowerCase());
     }
 
     /**
@@ -77,6 +82,9 @@ public class StringWrapper {
         if (this.value == null) {
             return 0;
         }
-        return this.value.hashCode();
+        if (Settings.OFFLINE_MODE) {
+            return this.value.hashCode();
+        }
+        return this.value.toLowerCase().hashCode();
     }
 }
