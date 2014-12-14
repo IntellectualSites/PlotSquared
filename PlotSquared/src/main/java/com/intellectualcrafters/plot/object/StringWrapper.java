@@ -54,7 +54,7 @@ public class StringWrapper {
             return false;
         }
         final StringWrapper other = (StringWrapper) obj;
-        return other.value.toLowerCase().equals(this.value.toLowerCase());
+        return other.value.equals(this.value);
     }
 
     /**
@@ -77,6 +77,6 @@ public class StringWrapper {
         if (this.value == null) {
             return 0;
         }
-        return this.value.toLowerCase().hashCode();
+        return this.value.hashCode();
     }
 }

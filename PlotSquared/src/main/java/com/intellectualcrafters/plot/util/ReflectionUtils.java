@@ -94,7 +94,7 @@ public class ReflectionUtils {
      * @return RefClass object
      * @throws RuntimeException if no class found
      */
-    public static RefClass getRefClass(final String... classes) {
+    public static RefClass getRefClass(final String... classes) throws RuntimeException {
         for (String className : classes) {
             try {
                 className = className.replace("{cb}", preClassB).replace("{nms}", preClassM).replace("{nm}", "net.minecraft");
