@@ -67,7 +67,8 @@ public class SQLManager implements AbstractDB {
         connection = c;
         prefix = p;
         // Set timout
-        setTimout();
+//        setTimout();
+        
         // Public final
         SET_OWNER =
                 "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
@@ -81,36 +82,38 @@ public class SQLManager implements AbstractDB {
                 "INSERT INTO `" + prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
         CREATE_PLOT =
                 "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
-        
-        //schedule reconnect
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable(){
-            public void run(){
-                try {
-                    connection = PlotMain.getMySQL().forceConnection();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 11000, 11000);
-        
-    }
 
-    public void setTimout() {
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final PreparedStatement statement = connection.prepareStatement("SET GLOBAL wait_timeout =28800;");
-                    statement.executeUpdate();
-                    statement.close();
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                    Logger.add(LogLevel.DANGER, "Could not reset MySQL timout.");
+      //schedule reconnect
+        if (PlotMain.getMySQL() != null) {
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable(){
+                public void run(){
+                    try {
+                        connection = PlotMain.getMySQL().forceConnection();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            }, 11000, 11000);
+        }
+        
     }
+//
+//    public void setTimout() {
+//        runTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    final PreparedStatement statement = connection.prepareStatement("SET GLOBAL wait_timeout =28800;");
+//                    statement.executeQuery();
+//                    statement.close();
+//                } catch (final SQLException e) {
+//                    e.printStackTrace();
+//                    Logger.add(LogLevel.DANGER, "Could not reset MySQL timout.");
+//                }
+//            }
+//        });
+//    }
     
     /**
      * Set Plot owner

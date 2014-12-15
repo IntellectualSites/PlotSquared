@@ -151,6 +151,7 @@ public enum C {
     NO_PERMISSION("&cYou are lacking the permission node: &6%s"),
     NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"),
     CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."),
+    CANT_CLAIM_MORE_PLOTS_NUM("&cYou can't claim more than &6%s &cplots at once"),
     YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
 
     NO_PERM_MERGE("&cYou are not the owner of the plot: &6%plot%"),

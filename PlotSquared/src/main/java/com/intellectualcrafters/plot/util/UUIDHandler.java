@@ -325,6 +325,12 @@ public class UUIDHandler {
                 uuidWrapper = new OfflineUUIDWrapper();
             }
         }
-        return uuidWrapper.getUUID(player);
+        try {
+            return uuidWrapper.getUUID(player);
+        }
+        catch (Throwable e) {
+            uuidWrapper = new OfflineUUIDWrapper();
+            return uuidWrapper.getUUID(player);
+        }
     }
 }

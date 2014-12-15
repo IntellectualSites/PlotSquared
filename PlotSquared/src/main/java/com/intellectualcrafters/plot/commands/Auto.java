@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -31,7 +32,9 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -106,6 +109,8 @@ public class Auto extends SubCommand {
                         schematic = args[1];
                     }
                 } catch (final Exception e) {
+                    size_x = 1;
+                    size_z = 1;
                     schematic = args[0];
                     // PlayerFunctions.sendMessage(plr,
                     // "&cError: Invalid size (X,Y)");
@@ -117,8 +122,19 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        if (PlayerFunctions.getPlayerPlotCount(world, plr) >= PlayerFunctions.getAllowedPlots(plr)) {
-            PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+        
+        if (size_x * size_z > Settings.MAX_AUTO_SIZE) {
+            PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
+            return false;
+        }
+        int diff = PlayerFunctions.getPlayerPlotCount(world, plr) - PlayerFunctions.getAllowedPlots(plr);
+        if (diff  + (size_x * size_z) >= 0) {
+            if (diff < 0) {
+                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, - diff - 1 + "");
+            }
+            else {
+                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+            }
             return false;
         }
         final PlotWorld pWorld = PlotMain.getWorldSettings(world);
@@ -136,16 +152,16 @@ public class Auto extends SubCommand {
             }
         }
         if (!schematic.equals("")) {
-            if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
-                if (pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
-                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
-                    return true;
-                }
-                if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
-                    PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
-                    return true;
-                }
+//            if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
+            if (!pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
+                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                return true;
             }
+            if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin")) {
+                PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                return true;
+            }
+//            }
         }
         boolean br = false;
         if ((size_x == 1) && (size_z == 1)) {
@@ -165,23 +181,25 @@ public class Auto extends SubCommand {
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
         } else {
-
-            // Why does this need fixing, it should work fine for auto claiming mega plots
-
-
+            boolean lastPlot = true;
+            PlotId lastId = Auto.lastPlot;
             while (!br) {
                 final PlotId start = getNextPlot(Auto.lastPlot, 1);
-
                 // Checking if the current set of plots is a viable option.
-                {
-                    if ((PlotMain.getPlots(world).get(start) == null) || (PlotMain.getPlots(world).get(start).owner == null)) {
-                        Auto.lastPlot = start;
-                        continue;
-                    }
+                Auto.lastPlot = start;
+                if (lastPlot) {
+                    lastId = start;
                 }
-
+                if (PlotMain.getPlots(world).get(start) != null && PlotMain.getPlots(world).get(start).owner != null) {
+                    continue;
+                }
+                else {
+                    lastPlot = false;
+                }
+                System.out.print("UNOWNED: " + start);
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
                 if (isUnowned(world, start, end)) {
+                    System.out.print("LAST PLOT: " + start);
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             final Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));

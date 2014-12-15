@@ -924,7 +924,7 @@ public class PlotMain extends JavaPlugin {
         final Map<String, Object> options = new HashMap<>();
         
         options.put("auto_update", false);
-        
+        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
@@ -959,6 +959,7 @@ public class PlotMain extends JavaPlugin {
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         Settings.METRICS = config.getBoolean("metrics");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.TITLES = config.getBoolean("titles");
         Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");

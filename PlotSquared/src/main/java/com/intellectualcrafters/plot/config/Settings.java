@@ -28,7 +28,10 @@ package com.intellectualcrafters.plot.config;
  * @author Empire92
  */
 public class Settings {
-
+    /**
+     * 
+     */
+    public static int MAX_AUTO_SIZE = 4;
     /**
      * Default worldedit-require-selection-in-mask: false
      */
