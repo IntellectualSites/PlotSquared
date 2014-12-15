@@ -83,6 +83,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     new Unlink(),
                     new Kick(), 
                     new Setup(),
+                    new Rating(),
                     new DebugClaimTest(), 
                     new Inbox(),
                     new Comment(), 
