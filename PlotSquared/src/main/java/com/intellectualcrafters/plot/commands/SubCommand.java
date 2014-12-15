@@ -23,7 +23,11 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * SubCommand class
@@ -46,9 +50,9 @@ public abstract class SubCommand {
      */
     public final String description;
     /**
-     * Alias
+     * Aliases
      */
-    public final String alias;
+    public final ArrayList<String> alias;
     /**
      * Command usage
      */
@@ -68,13 +72,33 @@ public abstract class SubCommand {
      * @param description Simple description
      * @param usage       Usage description: /plot command {args...}
      * @param alias       Command alias
-     * @param category    CommandCategory. Pick whichever closests to what you want.
+     * @param category    CommandCategory. Pick whichever is closest to what you want.
      */
     public SubCommand(final String cmd, final String permission, final String description, final String usage, final String alias, final CommandCategory category, final boolean isPlayer) {
         this.cmd = cmd;
         this.permission = new CommandPermission(permission);
         this.description = description;
-        this.alias = alias;
+        this.alias = new ArrayList<String>();
+        this.alias.add(alias);
+        this.usage = usage;
+        this.category = category;
+        this.isPlayer = isPlayer;
+    }
+    
+    /**
+     * @param cmd         Command /plot {cmd} <-- That!
+     * @param permission  Permission Node
+     * @param description Simple description
+     * @param usage       Usage description: /plot command {args...}
+     * @param aliases     Command aliases
+     * @param category    CommandCategory. Pick whichever is closest to what you want.
+     */
+    public SubCommand(final String cmd, final String permission, final String description, final String usage, final CommandCategory category, final boolean isPlayer, final String... aliases) {
+        this.cmd = cmd;
+        this.permission = new CommandPermission(permission);
+        this.description = description;
+        this.alias = new ArrayList<String>();
+        this.alias.addAll(Arrays.asList(aliases));
         this.usage = usage;
         this.category = category;
         this.isPlayer = isPlayer;
@@ -89,7 +113,8 @@ public abstract class SubCommand {
     public SubCommand(final Command command, final String description, final String usage, final CommandCategory category, final boolean isPlayer) {
         this.cmd = command.getCommand();
         this.permission = command.getPermission();
-        this.alias = command.getAlias();
+        this.alias = new ArrayList<String>();
+        this.alias.add(command.getAlias());
         this.description = description;
         this.usage = usage;
         this.category = category;
