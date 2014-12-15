@@ -82,6 +82,8 @@ public class SetOwner extends SubCommand {
             }
         }
         
+        PlotHelper.setSign(world, args[0], plot);
+        
         PlayerFunctions.sendMessage(plr, C.SET_OWNER);
 
         return true;
