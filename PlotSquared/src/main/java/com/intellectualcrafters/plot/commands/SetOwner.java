@@ -25,10 +25,15 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @SuppressWarnings("deprecation")
@@ -59,14 +64,25 @@ public class SetOwner extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
             return true;
         }
-        plot.owner = getUUID(args[0]);
-        PlotMain.updatePlot(plot);
-        DBFunc.setOwner(plot, plot.owner);
-        PlayerFunctions.sendMessage(plr, C.SET_OWNER);
-
-        if (PlotMain.worldGuardListener != null) {
-            PlotMain.worldGuardListener.changeOwner(plr, plot.owner, plr.getWorld(), plot);
+        
+        World world = plr.getWorld();
+        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
+        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+        
+        ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(world, bot, top);
+        
+        for (PlotId id : plots) {
+            Plot current = PlotMain.getPlots(world).get(id);
+            current.owner = getUUID(args[0]);
+            PlotMain.updatePlot(current);
+            DBFunc.setOwner(current, current.owner);
+            
+            if (PlotMain.worldGuardListener != null) {
+                PlotMain.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
+            }
         }
+        
+        PlayerFunctions.sendMessage(plr, C.SET_OWNER);
 
         return true;
     }
