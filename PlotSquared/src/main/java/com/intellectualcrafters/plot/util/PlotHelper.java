@@ -141,9 +141,13 @@ public class PlotHelper {
                 final boolean ly = y < pos2.y;
 
                 final PlotId id = new PlotId(x, y);
+                
                 final Plot plot = PlotMain.getPlots(world).get(id);
+                
                 Plot plot2 = null;
 
+                removeSign(world, plot);
+                
                 if (lx) {
                     if (ly) {
                         if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
@@ -179,6 +183,7 @@ public class PlotHelper {
         }
 
         manager.finishPlotMerge(world, plotworld, plotIds);
+        
         return result;
     }
 
@@ -245,7 +250,9 @@ public class PlotHelper {
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final Location loc = manager.getSignLoc(world, plotworld, p);
         final Block bs = loc.getBlock();
-        bs.setType(Material.AIR);
+        if (bs.getType() != Material.WALL_SIGN) {
+            bs.setType(Material.AIR);
+        }
     }
 
     public static void setSign(final Player player, final Plot p) {

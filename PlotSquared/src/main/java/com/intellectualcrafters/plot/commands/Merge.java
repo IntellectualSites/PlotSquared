@@ -157,6 +157,9 @@ public class Merge extends SubCommand {
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
         PlotHelper.mergePlots(world, plots);
+        
+        PlotHelper.setSign(world, plr.getName(), plot);
+        
         if (PlotHelper.canSetFast) {
             SetBlockFast.update(plr);
         }
