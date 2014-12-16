@@ -83,7 +83,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     new Unlink(),
                     new Kick(), 
                     new Setup(),
-                    new Rating(),
+                    new Rate(),
                     new DebugClaimTest(), 
                     new Inbox(),
                     new Comment(), 
@@ -146,7 +146,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             cmd = commands.get(x);
             String s = t(C.HELP_ITEM.s());
             s = s
-                    .replace("%alias%", cmd.alias)
+                    .replace("%alias%", cmd.alias.get(0))
                     .replace("%usage%", cmd.usage.contains("plot") ? cmd.usage : "/plot " + cmd.usage)
                     .replace("%cmd%", cmd.cmd)
                     .replace("%desc%", cmd.description)
@@ -227,7 +227,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             //return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {
-                if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.equalsIgnoreCase(args[0])) {
+                if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.contains(args[0].toLowerCase())) {
                     final String[] arguments = new String[args.length - 1];
                     System.arraycopy(args, 1, arguments, 0, args.length - 1);
                     if (command.permission.hasPermission(player)) {
@@ -280,8 +280,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             if (cmd.permission.hasPermission(player)) {
                 if (cmd.cmd.startsWith(arg)) {
                     tabOptions.add(cmd.cmd);
-                } else if (cmd.alias.startsWith(arg)) {
-                    tabOptions.add(cmd.alias);
+                } else if (cmd.alias.get(0).startsWith(arg)) {
+                    tabOptions.add(cmd.alias.get(0));
                 }
             }
         }
