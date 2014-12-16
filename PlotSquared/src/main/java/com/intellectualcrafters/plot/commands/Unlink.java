@@ -32,6 +32,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -115,7 +117,7 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-
+                PlotHelper.setSign(plr.getWorld(), UUIDHandler.getName(plot.owner), plot);
             }
         }
         try {

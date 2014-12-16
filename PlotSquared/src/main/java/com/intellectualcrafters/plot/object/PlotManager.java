@@ -51,8 +51,8 @@ public abstract class PlotManager {
      * Plot clearing (return false if you do not support some method)
      */
 
-    public abstract boolean clearPlot(final World world, final Plot plot);
-
+    public abstract boolean clearPlot(final World world, final Plot plot, boolean isDelete);
+    
     public abstract Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot);
 
     /*

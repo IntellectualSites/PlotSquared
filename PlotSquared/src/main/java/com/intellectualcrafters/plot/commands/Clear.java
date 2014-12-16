@@ -57,7 +57,7 @@ public class Clear extends SubCommand {
                         if (plot == null) {
                             PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            plot.clear(null);
+                            plot.clear(null, false);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
                         }
                     }
@@ -78,6 +78,11 @@ public class Clear extends SubCommand {
         }
         assert plot != null;
         plot.clear(plr);
+        
+        // sign
+        
+        // wall
+        
         return true;
     }
 }

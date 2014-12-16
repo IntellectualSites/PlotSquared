@@ -342,8 +342,8 @@ public class Plot implements Cloneable {
      *
      * @param plr initiator
      */
-    public void clear(final Player plr) {
-        PlotHelper.clear(plr, this);
+    public void clear(final Player plr, boolean isDelete) {
+        PlotHelper.clear(plr, this, isDelete);
     }
 
     @Override

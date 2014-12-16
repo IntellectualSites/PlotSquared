@@ -683,7 +683,7 @@ public class PlotHelper {
         }
     }
 
-    public static void clear(final World world, final Plot plot) {
+    public static void clear(final World world, final Plot plot, final boolean isDelete) {
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return;
@@ -698,7 +698,7 @@ public class PlotHelper {
         h = (prime * h) + pos1.getBlockZ();
         state = h;
 
-        manager.clearPlot(world, plot);
+        manager.clearPlot(world, plot, isDelete);
 
         if (canSetFast) {
             final Plugin plugin = (Plugin) PlotMain.getMain();
@@ -715,10 +715,10 @@ public class PlotHelper {
      * @param requester
      * @param plot
      */
-    public static void clear(final Player requester, final Plot plot) {
+    public static void clear(final Player requester, final Plot plot, final boolean isDelete) {
         if (requester == null) {
             clearAllEntities(plot.getWorld(), plot, false);
-            clear(plot.getWorld(), plot);
+            clear(plot.getWorld(), plot, isDelete);
             removeSign(plot.getWorld(), plot);
             return;
         }
@@ -735,11 +735,11 @@ public class PlotHelper {
         world = requester.getWorld();
 
         clearAllEntities(world, plot, false);
-        clear(world, plot);
+        clear(world, plot, isDelete);
         removeSign(world, plot);
         final Plugin plugin = (Plugin) PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
-            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start) / 1000.0)));
+            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
         } }, 90L);
 
     }

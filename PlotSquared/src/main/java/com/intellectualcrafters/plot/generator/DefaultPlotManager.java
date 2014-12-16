@@ -223,56 +223,6 @@ public class DefaultPlotManager extends PlotManager {
 
         return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
     }
-
-    public void clearPlotAsync(final World world, final Plot plot) {
-        PlotHelper.runners.put(plot, 1);
-        final DefaultPlotWorld dpw = ((DefaultPlotWorld) PlotMain.getWorldSettings(world));
-
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
-
-        final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
-        final PlotBlock[] filling = dpw.MAIN_BLOCK;
-
-        // PlotBlock wall = dpw.WALL_BLOCK;
-        final PlotBlock wall = dpw.WALL_BLOCK;
-
-        final PlotBlock wall_filling = dpw.WALL_FILLING;
-
-        Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, 1, pos1.getBlockZ()));
-        if ((block.getTypeId() != wall_filling.id) || (block.getData() != wall_filling.data)) {
-            setWallFilling(world, dpw, plot.id, wall_filling);
-        }
-
-        block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, dpw.WALL_HEIGHT + 1, pos1.getBlockZ()));
-        if ((block.getTypeId() != wall.id) || (block.getData() != wall.data)) {
-            setWall(world, dpw, plot.id, wall);
-        }
-        int count = 10000;
-        
-        int s_x = pos1.getBlockX();
-        int s_y = 0;
-        int s_z = pos1.getBlockZ();
-        
-        int e_x = pos2.getBlockX();
-        int e_y = world.getMaxHeight();
-        int e_z = pos2.getBlockZ();
-        
-        Plugin plugin = (Plugin) PlotMain.getMain();
-        
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-            }
-        }, 1L);
-        
-        PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
-        PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT + 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, world.getMaxHeight() + 1, pos2.getBlockZ() + 1), new PlotBlock((short) 0, (byte) 0));
-        PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), 1, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT, pos2.getBlockZ() + 1), filling);
-        PlotHelper.setCuboid(world, new Location(world, pos1.getBlockX(), dpw.PLOT_HEIGHT, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getBlockZ() + 1), plotfloor);
-        
-    }
     
     /**
      * Clearing the plot needs to only consider removing the blocks - This
@@ -283,7 +233,7 @@ public class DefaultPlotManager extends PlotManager {
      * plots
      */
     @Override
-    public boolean clearPlot(final World world, final Plot plot) {
+    public boolean clearPlot(final World world, final Plot plot, boolean isDelete) {
         PlotHelper.runners.put(plot, 1);
         final Plugin plugin = (Plugin) PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
@@ -299,7 +249,14 @@ public class DefaultPlotManager extends PlotManager {
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
 
         // PlotBlock wall = dpw.WALL_BLOCK;
-        final PlotBlock wall = dpw.WALL_BLOCK;
+        final PlotBlock wall;
+        
+        if (isDelete) {
+            wall = dpw.WALL_BLOCK;
+        }
+        else {
+            wall = dpw.CLAIMED_WALL_BLOCK;
+        }
 
         final PlotBlock wall_filling = dpw.WALL_FILLING;
 

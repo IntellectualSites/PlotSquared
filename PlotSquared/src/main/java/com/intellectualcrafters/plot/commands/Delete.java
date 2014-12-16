@@ -60,7 +60,7 @@ public class Delete extends SubCommand {
         }
         final boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {
-            plot.clear(plr);
+            plot.clear(plr, true);
             DBFunc.delete(plr.getWorld().getName(), plot);
             if ((Math.abs(plot.id.x) <= Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) <= Math.abs(Auto.lastPlot.y))) {
                 Auto.lastPlot = plot.id;

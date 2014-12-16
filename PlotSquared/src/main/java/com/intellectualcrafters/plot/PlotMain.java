@@ -579,7 +579,7 @@ public class PlotMain extends JavaPlugin {
                             }
                             for (final Plot plot : toDeletePlot) {
                                 final World worldobj = Bukkit.getWorld(world);
-                                PlotHelper.clear(worldobj, plot);
+                                PlotHelper.clear(worldobj, plot, true);
                                 PlotHelper.removeSign(worldobj, plot);
                                 DBFunc.delete(world, plot);
                                 removePlot(world, plot.id, true);

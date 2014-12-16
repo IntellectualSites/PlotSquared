@@ -550,7 +550,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Set<Plot> plots = PlotMain.getPlots(event.getPlayer());
             for (final Plot plot : plots) {
                 final PlotManager manager = PlotMain.getPlotManager(plot.getWorld());
-                manager.clearPlot(null, plot);
+                manager.clearPlot(null, plot, true);
                 DBFunc.delete(plot.getWorld().getName(), plot);
                 PlotMain.sendConsoleSenderMessage(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
