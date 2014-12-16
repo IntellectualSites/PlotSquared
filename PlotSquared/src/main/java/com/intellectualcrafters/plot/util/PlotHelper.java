@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.uuid.UUIDHandler;
 
 import net.milkbowl.vault.economy.Economy;
 
