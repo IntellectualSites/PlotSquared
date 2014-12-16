@@ -315,14 +315,23 @@ public class UUIDHandler {
         return uuidWrapper.getUUID(player);
     }
     
+    /**
+     * Safely provide the correct UUID provider. Ignores user preference if not possible rather than break the plugin.
+     */
     public static UUID getUUID(OfflinePlayer player) {
         if (uuidWrapper == null) {
-            try {
-                getUUID(player);
-                uuidWrapper = new DefaultUUIDWrapper();
-            }
-            catch (Throwable e) {
+            
+            if (Settings.OFFLINE_MODE) {
                 uuidWrapper = new OfflineUUIDWrapper();
+            }
+            else {
+                try {
+                    getUUID(player);
+                    uuidWrapper = new DefaultUUIDWrapper();
+                }
+                catch (Throwable e) {
+                    uuidWrapper = new OfflineUUIDWrapper();
+                }
             }
         }
         try {
