@@ -6,7 +6,7 @@ import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -28,8 +28,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
-
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;

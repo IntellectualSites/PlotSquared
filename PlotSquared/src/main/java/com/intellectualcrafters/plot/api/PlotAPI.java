@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.PlotSquaredException;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.sun.istack.internal.NotNull;
 
 import org.bukkit.Bukkit;

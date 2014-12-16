@@ -24,8 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
-
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

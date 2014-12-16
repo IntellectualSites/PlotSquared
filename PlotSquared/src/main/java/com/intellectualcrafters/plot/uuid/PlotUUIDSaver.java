@@ -27,7 +27,7 @@ import com.intellectualcrafters.json.JSONTokener;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.StringWrapper;
-
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;

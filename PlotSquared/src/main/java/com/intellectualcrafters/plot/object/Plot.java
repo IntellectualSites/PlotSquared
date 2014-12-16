@@ -25,7 +25,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;

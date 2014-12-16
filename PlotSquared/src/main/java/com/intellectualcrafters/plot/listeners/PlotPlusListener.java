@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.uuid.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
