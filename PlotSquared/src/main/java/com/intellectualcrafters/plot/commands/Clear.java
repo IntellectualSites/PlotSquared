@@ -77,7 +77,7 @@ public class Clear extends SubCommand {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        plot.clear(plr);
+        plot.clear(plr, false);
         
         // sign
         
