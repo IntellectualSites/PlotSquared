@@ -27,9 +27,13 @@ import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.NameFetcher;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
