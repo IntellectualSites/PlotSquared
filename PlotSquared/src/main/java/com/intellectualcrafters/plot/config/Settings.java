@@ -29,99 +29,100 @@ package com.intellectualcrafters.plot.config;
  */
 public class Settings {
     /**
-     * 
+     *
      */
-    public static int MAX_AUTO_SIZE = 4;
+    public static int           MAX_AUTO_SIZE               = 4;
     /**
      * Default worldedit-require-selection-in-mask: false
      */
-    public static boolean REQUIRE_SELECTION = true;
+    public static boolean       REQUIRE_SELECTION           = true;
     /**
      * Default kill road mobs: true
      */
-    public final static boolean KILL_ROAD_MOBS_DEFAULT = true;
+    public final static boolean KILL_ROAD_MOBS_DEFAULT      = true;
     /**
      * Default mob pathfinding: true
      */
-    public final static boolean MOB_PATHFINDING_DEFAULT = true;
+    public final static boolean MOB_PATHFINDING_DEFAULT     = true;
     /**
      * Teleport to path on login
      */
-    public static boolean TELEPORT_ON_LOGIN = false;
+    public static boolean       TELEPORT_ON_LOGIN           = false;
     /**
      * Mob Cap Enabled
      */
-    public static boolean MOB_CAP_ENABLED = false;
+    public static boolean       MOB_CAP_ENABLED             = false;
     /**
      * The Mob Cap
      */
-    public static int MOB_CAP = 20;
+    public static int           MOB_CAP                     = 20;
     /**
      * Display titles
      */
-    public static boolean TITLES = true;
+    public static boolean       TITLES                      = true;
     /**
      * Schematic Save Path
      */
-    public static String SCHEMATIC_SAVE_PATH = "/var/www/schematics";
+    public static String        SCHEMATIC_SAVE_PATH         = "/var/www/schematics";
     /**
      * Max allowed plots
      */
-    public static int MAX_PLOTS = 20;
+    public static int           MAX_PLOTS                   = 20;
     /**
      * WorldGuard region on claimed plots
      */
-    public static boolean WORLDGUARD = false;
+    public static boolean       WORLDGUARD                  = false;
     /**
      * metrics
      */
-    public static boolean METRICS = true;
+    public static boolean       METRICS                     = true;
     /**
      * plot specific resource pack
      */
-    public static String PLOT_SPECIFIC_RESOURCE_PACK = "";
+    public static String        PLOT_SPECIFIC_RESOURCE_PACK = "";
     /**
      * Kill road mobs?
      */
-    public static boolean KILL_ROAD_MOBS;
+    public static boolean       KILL_ROAD_MOBS;
     /**
      * mob pathfinding?
      */
-    public static boolean MOB_PATHFINDING;
+    public static boolean       MOB_PATHFINDING;
     /**
      * Delete plots on ban?
      */
-    public static boolean DELETE_PLOTS_ON_BAN = false;
+    public static boolean       DELETE_PLOTS_ON_BAN         = false;
 
     /**
      * Verbose?
      */
-    public static boolean DEBUG = true;
+    public static boolean       DEBUG                       = true;
 
     /**
      * Auto clear enabled
      */
-    public static boolean AUTO_CLEAR = false;
+    public static boolean       AUTO_CLEAR                  = false;
 
     /**
      * Days until a plot gets cleared
      */
-    public static int AUTO_CLEAR_DAYS = 365;
+    public static int           AUTO_CLEAR_DAYS             = 365;
 
     /**
      * API Location
      */
-    public static String API_URL = "http://www.intellectualsites.com/minecraft.php";
+    public static String        API_URL                     = "http://www.intellectualsites.com/minecraft.php";
 
     /**
      * Use the custom API
      */
-    public static boolean CUSTOM_API = true;
-    
+    public static boolean       CUSTOM_API                  = true;
+
     /**
      * Use offline mode storage
      */
-    public static boolean OFFLINE_MODE = false;
+    public static boolean       OFFLINE_MODE                = false;
+
     /**
      * Database settings
      *
@@ -131,7 +132,7 @@ public class Settings {
         /**
          * MongoDB enabled?
          */
-        public static boolean USE_MONGO = false;      /*
+        public static boolean USE_MONGO  = false;      /*
          * TODO: Implement Mongo
          * @Brandon
          */
@@ -142,34 +143,34 @@ public class Settings {
         /**
          * MySQL Enabled?
          */
-        public static boolean USE_MYSQL = true;       /* NOTE: Fixed connector */
+        public static boolean USE_MYSQL  = true;       /* NOTE: Fixed connector */
         /**
          * SQLite Database name
          */
-        public static String SQLITE_DB = "storage";
+        public static String  SQLITE_DB  = "storage";
         /**
          * MySQL Host name
          */
-        public static String HOST_NAME = "localhost";
+        public static String  HOST_NAME  = "localhost";
         /**
          * MySQL Port
          */
-        public static String PORT = "3306";
+        public static String  PORT       = "3306";
         /**
          * MySQL DB
          */
-        public static String DATABASE = "plot_db";
+        public static String  DATABASE   = "plot_db";
         /**
          * MySQL User
          */
-        public static String USER = "root";
+        public static String  USER       = "root";
         /**
          * MySQL Password
          */
-        public static String PASSWORD = "password";
+        public static String  PASSWORD   = "password";
         /**
          * MySQL Prefix
          */
-        public static String PREFIX = "";
+        public static String  PREFIX     = "";
     }
 }

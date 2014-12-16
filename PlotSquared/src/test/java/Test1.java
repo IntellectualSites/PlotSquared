@@ -1,3 +1,13 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Biome;
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
@@ -5,18 +15,14 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotHomePosition;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
 
 public class Test1 {
 
@@ -24,14 +30,13 @@ public class Test1 {
 
     // I have no idea what I should actually test :p
 
-
     public boolean nextTest() {
         Test1.count++;
         switch (Test1.count) {
             case 1:
                 return test1_Square();
             case 2:
-                return true; //test2_InitMain(); // fails
+                return true; // test2_InitMain(); // fails
             case 3:
                 return test3_InitPlotId();
             case 4:
@@ -39,13 +44,13 @@ public class Test1 {
             case 5:
                 return test5_InitDBFunc();
             case 6:
-                return true; //test6_Plots(); // fails
+                return true; // test6_Plots(); // fails
             case 7:
-                return true; //test7_OnEnable(); // fails
+                return true; // test7_OnEnable(); // fails
             case 8:
-                return true; //test8_AddPlotWorld(); // fails
+                return true; // test8_AddPlotWorld(); // fails
             case 9:
-                return true; //test9_CanSetFast(); // fails
+                return true; // test9_CanSetFast(); // fails
         }
         return false;
     }
@@ -102,9 +107,10 @@ public class Test1 {
     public boolean test2_InitMain() {
         boolean passed = false;
         try {
-            PlotMain plugin = PlotMain.getMain();
+            final PlotMain plugin = PlotMain.getMain();
             passed = plugin != null;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
@@ -113,9 +119,10 @@ public class Test1 {
     public boolean test3_InitPlotId() {
         boolean passed = false;
         try {
-            Object id = new PlotId(0, 0);
+            final Object id = new PlotId(0, 0);
             passed = id != null;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
@@ -124,9 +131,10 @@ public class Test1 {
     public boolean test4_InitPlot() {
         boolean passed = false;
         try {
-            Object plot = new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false});
+            new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[] { false, false, false, false });
             passed = true;
-        } catch (Throwable ignored) {
+        }
+        catch (final Throwable ignored) {
 
         }
         return passed;
@@ -143,139 +151,129 @@ public class Test1 {
             DBFunc.dbManager = new AbstractDB() {
 
                 @Override
-                public void setTrusted(String world, Plot plot, OfflinePlayer player) {
+                public void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void setPosition(String world, Plot plot, String position) {
+                public void setPosition(final String world, final Plot plot, final String position) {
                 }
 
                 @Override
-                public void setOwner(Plot plot, UUID uuid) {
+                public void setOwner(final Plot plot, final UUID uuid) {
                 }
 
                 @Override
-                public void setMerged(String world, Plot plot, boolean[] merged) {
+                public void setMerged(final String world, final Plot plot, final boolean[] merged) {
                 }
 
                 @Override
-                public void setHelper(String world, Plot plot, OfflinePlayer player) {
+                public void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void setFlags(String world, Plot plot, Flag[] flags) {
+                public void setFlags(final String world, final Plot plot, final Flag[] flags) {
                 }
 
                 @Override
-                public void setDenied(String world, Plot plot, OfflinePlayer player) {
+                public void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void setComment(String world, Plot plot, PlotComment comment) {
+                public void setComment(final String world, final Plot plot, final PlotComment comment) {
                 }
 
                 @Override
-                public void setAlias(String world, Plot plot, String alias) {
+                public void setAlias(final String world, final Plot plot, final String alias) {
                 }
 
                 @Override
-                public void removeTrusted(String world, Plot plot, OfflinePlayer player) {
+                public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void removeHelper(String world, Plot plot, OfflinePlayer player) {
+                public void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void removeDenied(String world, Plot plot, OfflinePlayer player) {
+                public void removeDenied(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
                 @Override
-                public void removeComment(String world, Plot plot, PlotComment comment) {
+                public void removeComment(final String world, final Plot plot, final PlotComment comment) {
                 }
 
                 @Override
-                public void purge(String world) {
+                public void purge(final String world) {
                 }
 
                 @Override
-                public void purge(String world, PlotId id) {
+                public void purge(final String world, final PlotId id) {
                 }
 
                 @Override
-                public HashMap<String, Object> getSettings(int id) {
+                public HashMap<String, Object> getSettings(final int id) {
                     return null;
                 }
 
                 @Override
-                public double getRatings(Plot plot) {
+                public double getRatings(final Plot plot) {
                     return 0;
                 }
 
                 @Override
                 public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
-                    LinkedHashMap<String, HashMap<PlotId, Plot>> plots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
+                    final LinkedHashMap<String, HashMap<PlotId, Plot>> plots = new LinkedHashMap<String, HashMap<PlotId, Plot>>();
 
                     plots.put("testworld", new HashMap<PlotId, Plot>());
 
-                    PlotId id = new PlotId(0, 0);
+                    final PlotId id = new PlotId(0, 0);
 
-                    plots.get("testworld").put(id,
-                            new Plot(id,
-                                    DBFunc.everyone,
-                                    new ArrayList<UUID>(),
-                                    new ArrayList<UUID>(),
-                                    new ArrayList<UUID>(),
-                                    null,
-                                    PlotHomePosition.DEFAULT,
-                                    null,
-                                    "testworld",
-                                    new boolean[]{false, false, false, false}));
+                    plots.get("testworld").put(id, new Plot(id, DBFunc.everyone, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[] { false, false, false, false }));
 
                     return plots;
                 }
 
                 @Override
-                public int getId(String world, PlotId id2) {
+                public int getId(final String world, final PlotId id2) {
                     return 0;
                 }
 
                 @Override
-                public ArrayList<PlotComment> getComments(String world, Plot plot, int tier) {
+                public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
                     return null;
                 }
 
                 @Override
-                public void delete(String world, Plot plot) {
+                public void delete(final String world, final Plot plot) {
                 }
 
                 @Override
-                public void createTables(String database, boolean add_constraint) throws Exception {
+                public void createTables(final String database, final boolean add_constraint) throws Exception {
                 }
 
                 @Override
-                public void createPlots(ArrayList<Plot> plots) {
+                public void createPlots(final ArrayList<Plot> plots) {
                 }
 
                 @Override
-                public void createPlotSettings(int id, Plot plot) {
+                public void createPlotSettings(final int id, final Plot plot) {
                 }
 
                 @Override
-                public void createPlot(Plot plot) {
+                public void createPlot(final Plot plot) {
                 }
 
                 @Override
-                public void createAllSettingsAndHelpers(ArrayList<Plot> plots) {
+                public void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
                 }
             };
             passed = true;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
     }
-
 
     public boolean test6_Plots() {
         return PlotMain.getAllPlotsRaw() != null;
@@ -286,7 +284,8 @@ public class Test1 {
         try {
             PlotMain.getMain().onEnable();
             passed = true;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
@@ -299,23 +298,23 @@ public class Test1 {
             final PlotManager manager = new DefaultPlotManager();
             PlotMain.addPlotWorld("poop", plotworld, manager);
             passed = (PlotMain.getPlotManager("poop") != null) && (PlotMain.getWorldSettings("poop") != null);
-        } catch (final Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
     }
-
 
     public boolean test9_CanSetFast() {
         boolean passed = false;
         try {
             new SetBlockFast();
             passed = true;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
 
         }
         return passed;
     }
-
 
 }

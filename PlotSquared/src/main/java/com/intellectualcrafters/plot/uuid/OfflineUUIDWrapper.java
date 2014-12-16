@@ -14,24 +14,24 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class OfflineUUIDWrapper extends UUIDWrapper {
 
     @Override
-    public UUID getUUID(Player player) {
+    public UUID getUUID(final Player player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override
-    public UUID getUUID(OfflinePlayer player) {
+    public UUID getUUID(final OfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override
-    public OfflinePlayer getOfflinePlayer(UUID uuid) {
-        BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
-        String name = map.get(uuid).value;
+    public OfflinePlayer getOfflinePlayer(final UUID uuid) {
+        final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
+        final String name = map.get(uuid).value;
         if (name != null) {
             return Bukkit.getOfflinePlayer(name);
         }
         else {
-            for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                 if (getUUID(player).equals(uuid)) {
                     return player;
                 }
@@ -41,15 +41,13 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     }
 
     @Override
-    public Player getPlayer(UUID uuid) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
+    public Player getPlayer(final UUID uuid) {
+        for (final Player player : Bukkit.getOnlinePlayers()) {
             if (getUUID(player).equals(uuid)) {
                 return player;
             }
         }
         return null;
     }
-    
-    
-    
+
 }

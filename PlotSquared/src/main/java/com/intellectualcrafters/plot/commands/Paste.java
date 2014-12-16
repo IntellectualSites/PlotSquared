@@ -21,13 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotSelection;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import org.bukkit.entity.Player;
 
 public class Paste extends SubCommand {
 
@@ -61,7 +62,8 @@ public class Paste extends SubCommand {
             }
             selection.paste(plr.getWorld(), plot);
             sendMessage(plr, C.PASTED);
-        } else {
+        }
+        else {
             sendMessage(plr, C.NO_CLIPBOARD);
             return false;
         }

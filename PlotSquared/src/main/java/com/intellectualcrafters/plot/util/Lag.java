@@ -31,16 +31,16 @@ public class Lag implements Runnable {
     /**
      * Ticks
      */
-    public final static long[] T = new long[600];
+    public final static long[] T  = new long[600];
     /**
      * Tick count
      */
-    public static int TC = 0;
+    public static int          TC = 0;
     /**
      * something :_:
      */
     @SuppressWarnings("unused")
-    public static long LT = 0L;
+    public static long         LT = 0L;
 
     /**
      * Get the server TPS
@@ -54,7 +54,8 @@ public class Lag implements Runnable {
     /**
      * Return the tick per second (measured in $ticks)
      *
-     * @param ticks Ticks
+     * @param ticks
+     *            Ticks
      * @return ticks per second
      */
     public static double getTPS(final int ticks) {
@@ -69,7 +70,8 @@ public class Lag implements Runnable {
     /**
      * Get number of ticks since
      *
-     * @param tI Ticks <
+     * @param tI
+     *            Ticks <
      * @return number of ticks since $tI
      */
     @SuppressWarnings("unused")

@@ -21,12 +21,13 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.object.Plot;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * @author Citymonstret
@@ -35,19 +36,23 @@ import java.util.UUID;
 public class PlayerPlotDeniedEvent extends Event {
     private static HandlerList handlers = new HandlerList();
 
-    private final Plot plot;
-    private final Player initiator;
-    private final boolean added;
-    private final UUID player;
+    private final Plot         plot;
+    private final Player       initiator;
+    private final boolean      added;
+    private final UUID         player;
 
     /**
      * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a
      * plot
      *
-     * @param initiator Player that initiated the event
-     * @param plot Plot in which the event occurred
-     * @param player Player that was denied/un-denied
-     * @param added true of add to deny list, false if removed
+     * @param initiator
+     *            Player that initiated the event
+     * @param plot
+     *            Plot in which the event occurred
+     * @param player
+     *            Player that was denied/un-denied
+     * @param added
+     *            true of add to deny list, false if removed
      */
     public PlayerPlotDeniedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
         this.initiator = initiator;

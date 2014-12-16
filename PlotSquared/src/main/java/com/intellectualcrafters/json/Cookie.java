@@ -40,7 +40,8 @@ public class Cookie {
      * encoded values. We encode '=' and ';' because we must. We encode '%' and
      * '+' because they are meta characters in URL encoding.
      *
-     * @param string The source string.
+     * @param string
+     *            The source string.
      * @return The escaped result.
      */
     public static String escape(final String string) {
@@ -54,7 +55,8 @@ public class Cookie {
                 sb.append('%');
                 sb.append(Character.forDigit((char) ((c >>> 4) & 0x0f), 16));
                 sb.append(Character.forDigit((char) (c & 0x0f), 16));
-            } else {
+            }
+            else {
                 sb.append(c);
             }
         }
@@ -72,9 +74,10 @@ public class Cookie {
      * validation of the parameters. It only converts the cookie string into
      * a JSONObject.
      *
-     * @param string The cookie specification string.
+     * @param string
+     *            The cookie specification string.
      * @return A JSONObject containing "name", "value", and possibly other
-     * members.
+     *         members.
      * @throws JSONException
      */
     public static JSONObject toJSONObject(final String string) throws JSONException {
@@ -91,10 +94,12 @@ public class Cookie {
             if (x.next() != '=') {
                 if (name.equals("secure")) {
                     value = Boolean.TRUE;
-                } else {
+                }
+                else {
                     throw x.syntaxError("Missing '=' in cookie parameter.");
                 }
-            } else {
+            }
+            else {
                 value = unescape(x.nextTo(';'));
                 x.next();
             }
@@ -110,7 +115,8 @@ public class Cookie {
      * members, they will be appended to the cookie specification string.
      * All other members are ignored.
      *
-     * @param jo A JSONObject
+     * @param jo
+     *            A JSONObject
      * @return A cookie specification string
      * @throws JSONException
      */
@@ -142,9 +148,10 @@ public class Cookie {
      * Convert <code>%</code><i>hh</i> sequences to single characters, and
      * convert plus to space.
      *
-     * @param string A string that may contain <code>+</code>
-     *               &nbsp;<small>(plus)</small> and <code>%</code><i>hh</i>
-     *               sequences.
+     * @param string
+     *            A string that may contain <code>+</code>
+     *            &nbsp;<small>(plus)</small> and <code>%</code><i>hh</i>
+     *            sequences.
      * @return The unescaped string.
      */
     public static String unescape(final String string) {
@@ -154,7 +161,8 @@ public class Cookie {
             char c = string.charAt(i);
             if (c == '+') {
                 c = ' ';
-            } else if ((c == '%') && ((i + 2) < length)) {
+            }
+            else if ((c == '%') && ((i + 2) < length)) {
                 final int d = JSONTokener.dehexchar(string.charAt(i + 1));
                 final int e = JSONTokener.dehexchar(string.charAt(i + 2));
                 if ((d >= 0) && (e >= 0)) {

@@ -21,6 +21,19 @@
 
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -28,11 +41,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import org.bukkit.*;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
-
-import java.util.*;
 
 /**
  * Functions involving players, plots and locations.
@@ -43,7 +51,8 @@ import java.util.*;
 public class PlayerFunctions {
 
     /**
-     * @param player player
+     * @param player
+     *            player
      * @return
      */
     public static boolean isInPlot(final Player player) {
@@ -51,7 +60,8 @@ public class PlayerFunctions {
     }
 
     /**
-     * @param plot plot
+     * @param plot
+     *            plot
      * @return
      */
     public static boolean hasExpired(final Plot plot) {
@@ -245,13 +255,14 @@ public class PlayerFunctions {
      * \\previous\\
      *
      * @param plr
-     * @param msg Was used to wrap the chat client length (Packets out--)
+     * @param msg
+     *            Was used to wrap the chat client length (Packets out--)
      */
     public static void sendMessageWrapped(final Player plr, String msg) {
         if (msg.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
-            String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
-            StringBuilder b = new StringBuilder();
-            for (String p : ss) {
+            final String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
+            final StringBuilder b = new StringBuilder();
+            for (final String p : ss) {
                 b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
             }
             msg = b.toString();
@@ -265,45 +276,51 @@ public class PlayerFunctions {
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
-     * @param msg Message to send
+     * @param plr
+     *            Player to recieve message
+     * @param msg
+     *            Message to send
      * @return true
-     * Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
+     *         Can be used in things such as commands (return
+     *         PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(final Player plr, final String msg) {
-        if (msg.length() > 0 && !msg.equals("")) {
+        if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
                 PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
-            } else {
+            }
+            else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }
         }
         return true;
         /*
-        if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
-            return ;
-        }
-
-        if (plr == null) {
-            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
-            return;
-        }
-
-        sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
-        */
+         * if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
+         * return ;
+         * }
+         * if (plr == null) {
+         * PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
+         * return;
+         * }
+         * sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&',
+         * C.PREFIX.s() + msg));
+         */
     }
 
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
-     * @param c   Caption to send
+     * @param plr
+     *            Player to recieve message
+     * @param c
+     *            Caption to send
      * @return
      */
     public static boolean sendMessage(final Player plr, final C c, final String... args) {
         if (c.s().length() > 1) {
-            if (plr == null)
+            if (plr == null) {
                 PlotMain.sendConsoleSenderMessage(c);
+            }
             else {
                 String msg = c.s();
                 if ((args != null) && (args.length > 0)) {
@@ -318,26 +335,25 @@ public class PlayerFunctions {
         }
         return true;
         /*
-        if (plr == null) {
-            PlotMain.sendConsoleSenderMessage(c);
-            return;
-        }
-
->>>>>>> origin/master
-        if (c.s().length() < 1) {
-            return;
-        }
-        String msg = c.s();
-        if ((args != null) && (args.length > 0)) {
-            for (final String str : args) {
-                msg = msg.replaceFirst("%s", str);
-            }
-        }
-        if (plr == null) {
-            PlotMain.sendConsoleSenderMessage(c);
-            return;
-        }
-        sendMessage(plr, msg);
-        */
+         * if (plr == null) {
+         * PlotMain.sendConsoleSenderMessage(c);
+         * return;
+         * }
+         * >>>>>>> origin/master
+         * if (c.s().length() < 1) {
+         * return;
+         * }
+         * String msg = c.s();
+         * if ((args != null) && (args.length > 0)) {
+         * for (final String str : args) {
+         * msg = msg.replaceFirst("%s", str);
+         * }
+         * }
+         * if (plr == null) {
+         * PlotMain.sendConsoleSenderMessage(c);
+         * return;
+         * }
+         * sendMessage(plr, msg);
+         */
     }
 }

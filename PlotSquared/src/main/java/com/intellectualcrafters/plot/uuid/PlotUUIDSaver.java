@@ -21,6 +21,13 @@
 
 package com.intellectualcrafters.plot.uuid;
 
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.json.JSONTokener;
@@ -28,13 +35,6 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.UUID;
 
 /**
  * Plot UUID Saver/Fetcher
@@ -70,7 +70,8 @@ public class PlotUUIDSaver implements UUIDSaver {
                 double ups;
                 if ((time == 0l) || (size == 0)) {
                     ups = size;
-                } else {
+                }
+                else {
                     ups = size / time;
                 }
 

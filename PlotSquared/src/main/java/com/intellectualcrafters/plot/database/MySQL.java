@@ -21,9 +21,13 @@
 
 package com.intellectualcrafters.plot.database;
 
-import org.bukkit.plugin.Plugin;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import java.sql.*;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Connects to and uses a MySQL database
@@ -38,17 +42,23 @@ public class MySQL extends Database {
     private final String port;
     private final String hostname;
 
-    private Connection connection;
+    private Connection   connection;
 
     /**
      * Creates a new MySQL instance
      *
-     * @param plugin   Plugin instance
-     * @param hostname Name of the host
-     * @param port     Port number
-     * @param database Database name
-     * @param username Username
-     * @param password Password
+     * @param plugin
+     *            Plugin instance
+     * @param hostname
+     *            Name of the host
+     * @param port
+     *            Port number
+     * @param database
+     *            Database name
+     * @param username
+     *            Username
+     * @param password
+     *            Password
      */
     public MySQL(final Plugin plugin, final String hostname, final String port, final String database, final String username, final String password) {
         super(plugin);
@@ -65,7 +75,7 @@ public class MySQL extends Database {
         this.connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
         return this.connection;
     }
-    
+
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {

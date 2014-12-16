@@ -36,13 +36,15 @@ public class UUIDSet {
     /**
      * Player UUID
      */
-    private final UUID uuid;
+    private final UUID   uuid;
 
     /**
      * Constructor
      *
-     * @param name Username
-     * @param uuid UUID
+     * @param name
+     *            Username
+     * @param uuid
+     *            UUID
      */
     public UUIDSet(final String name, final UUID uuid) {
         this.name = name;

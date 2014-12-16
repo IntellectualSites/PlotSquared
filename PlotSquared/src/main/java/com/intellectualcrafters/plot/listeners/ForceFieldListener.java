@@ -21,8 +21,9 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -32,8 +33,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 /**
  * @author Citymonstret
@@ -78,17 +79,20 @@ public class ForceFieldListener implements Listener {
         double x = 0d, y = 0d, z = 0d;
         if (playerX < oPlayerX) {
             x = 1.0d;
-        } else if (playerX > oPlayerX) {
+        }
+        else if (playerX > oPlayerX) {
             x = -1.0d;
         }
         if (playerY < oPlayerY) {
             y = 0.5d;
-        } else if (playerY > oPlayerY) {
+        }
+        else if (playerY > oPlayerY) {
             y = -0.5d;
         }
         if (playerZ < oPlayerZ) {
             z = 1.0d;
-        } else if (playerZ > oPlayerZ) {
+        }
+        else if (playerZ > oPlayerZ) {
             z = -1.0d;
         }
         return new Vector(x, y, z);
@@ -109,7 +113,8 @@ public class ForceFieldListener implements Listener {
                     for (final Player oPlayer : players) {
                         oPlayer.setVelocity(calculateVelocity(player, oPlayer));
                     }
-                } else {
+                }
+                else {
                     final Player oPlayer = hasNearbyPermitted(player, plot);
                     if (oPlayer == null) {
                         return;

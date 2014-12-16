@@ -21,19 +21,19 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * The plot class
@@ -47,19 +47,19 @@ public class Plot implements Cloneable {
     /**
      * plot ID
      */
-    public final PlotId id;
+    public final PlotId    id;
     /**
      * plot world
      */
-    public final String world;
+    public final String    world;
     /**
      * plot owner
      */
-    public UUID owner;
+    public UUID            owner;
     /**
      * Deny Entry
      */
-    public boolean deny_entry;
+    public boolean         deny_entry;
     /**
      * List of helpers (with plot permissions)
      */
@@ -75,16 +75,16 @@ public class Plot implements Cloneable {
     /**
      * External settings class
      */
-    public PlotSettings settings;
+    public PlotSettings    settings;
     /**
      * Delete on next save cycle?
      */
-    public boolean delete;
+    public boolean         delete;
     /**
      * Has the plot changed since the last save cycle?
      */
-    public boolean hasChanged = false;
-    public boolean countsTowardsMax = true;
+    public boolean         hasChanged       = false;
+    public boolean         countsTowardsMax = true;
 
     /**
      * Primary constructor
@@ -163,7 +163,8 @@ public class Plot implements Cloneable {
         this.delete = false;
         if (flags != null) {
             this.settings.setFlags(flags);
-        } else {
+        }
+        else {
             this.settings.setFlags(new Flag[0]);
         }
         this.world = world;
@@ -192,7 +193,8 @@ public class Plot implements Cloneable {
         this.delete = false;
         if (flags != null) {
             this.settings.setFlags(flags);
-        } else {
+        }
+        else {
             this.settings.setFlags(new Flag[0]);
         }
         this.world = world;
@@ -264,9 +266,9 @@ public class Plot implements Cloneable {
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Plot p = (Plot) super.clone();
-        if (!p.equals(this) || p != this) {
-            return new Plot(id, owner, helpers, trusted, denied, settings.getAlias(), settings.getPosition(), settings.getFlags().toArray(new Flag[settings.getFlags().size()]), getWorld().getName(), settings.getMerged());
+        final Plot p = (Plot) super.clone();
+        if (!p.equals(this) || (p != this)) {
+            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.getFlags().toArray(new Flag[this.settings.getFlags().size()]), getWorld().getName(), this.settings.getMerged());
         }
         return p;
     }
@@ -340,9 +342,10 @@ public class Plot implements Cloneable {
     /**
      * Clear a plot
      *
-     * @param plr initiator
+     * @param plr
+     *            initiator
      */
-    public void clear(final Player plr, boolean isDelete) {
+    public void clear(final Player plr, final boolean isDelete) {
         PlotHelper.clear(plr, this, isDelete);
     }
 
@@ -365,29 +368,32 @@ public class Plot implements Cloneable {
      * Get the plot hashcode
      *
      * @return integer. You can easily make this a character array <br>
-     * xI = c[0]
-     * x = c[1 -> xI...]
-     * yI = c[xI ... + 1]
-     * y = c[xI ... + 2 -> yI ...]
+     *         xI = c[0]
+     *         x = c[1 -> xI...]
+     *         yI = c[xI ... + 1]
+     *         y = c[xI ... + 2 -> yI ...]
      */
     @Override
     public int hashCode() {
-        int x = id.x;
-        int y = id.y;
+        final int x = this.id.x;
+        final int y = this.id.y;
         if (x >= 0) {
             if (y >= 0) {
-                return x * x + 3 * x + 2 * x * y + y + y * y;
-            } else {
-                int y1 = -y;
-                return x * x + 3 * x + 2 * x * y1 + y1 + y1 * y1 + 1;
+                return (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
             }
-        } else {
-            int x1 = -x;
+            else {
+                final int y1 = -y;
+                return (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
+            }
+        }
+        else {
+            final int x1 = -x;
             if (y >= 0) {
-                return -(x1 * x1 + 3 * x1 + 2 * x1 * y + y + y * y);
-            } else {
-                int y1 = -y;
-                return -(x1 * x1 + 3 * x1 + 2 * x1 * y1 + y1 + y1 * y1 + 1);
+                return -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
+            }
+            else {
+                final int y1 = -y;
+                return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
             }
         }
     }

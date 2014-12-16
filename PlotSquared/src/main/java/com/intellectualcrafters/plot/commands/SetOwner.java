@@ -21,6 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -29,12 +35,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class SetOwner extends SubCommand {
@@ -64,25 +64,25 @@ public class SetOwner extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
             return true;
         }
-        
-        World world = plr.getWorld();
-        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-        
-        ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(world, bot, top);
-        
-        for (PlotId id : plots) {
-            Plot current = PlotMain.getPlots(world).get(id);
+
+        final World world = plr.getWorld();
+        final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
+        final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+
+        final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(world, bot, top);
+
+        for (final PlotId id : plots) {
+            final Plot current = PlotMain.getPlots(world).get(id);
             current.owner = getUUID(args[0]);
             PlotMain.updatePlot(current);
             DBFunc.setOwner(current, current.owner);
-            
+
             if (PlotMain.worldGuardListener != null) {
                 PlotMain.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
             }
         }
         PlotHelper.setSign(world, args[0], plot);
-        
+
         PlayerFunctions.sendMessage(plr, C.SET_OWNER);
 
         return true;

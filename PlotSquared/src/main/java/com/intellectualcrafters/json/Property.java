@@ -36,7 +36,8 @@ public class Property {
      * Converts a property file object into a JSONObject. The property file
      * object is a table of name value pairs.
      *
-     * @param properties java.util.Properties
+     * @param properties
+     *            java.util.Properties
      * @return JSONObject
      * @throws JSONException
      */
@@ -55,7 +56,8 @@ public class Property {
     /**
      * Converts the JSONObject into a property file object.
      *
-     * @param jo JSONObject
+     * @param jo
+     *            JSONObject
      * @return java.util.Properties
      * @throws JSONException
      */

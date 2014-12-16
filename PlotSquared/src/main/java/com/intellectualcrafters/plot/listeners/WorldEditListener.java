@@ -21,6 +21,25 @@
 
 package com.intellectualcrafters.plot.listeners;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -36,23 +55,6 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.function.mask.Mask;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.world.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Citymonstret
@@ -61,9 +63,9 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class WorldEditListener implements Listener {
 
-    final List<String> monitored = Arrays.asList(new String[] { "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", "" });
-    
-    public final Set<String> blockedcmds = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
+    final List<String>       monitored      = Arrays.asList(new String[] { "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", "" });
+
+    public final Set<String> blockedcmds    = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
     public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
     private boolean isPlotWorld(final Location l) {
@@ -131,14 +133,15 @@ public class WorldEditListener implements Listener {
                 e.setCancelled(true);
             }
             return;
-        } else if (this.blockedcmds.contains(cmd)) {
+        }
+        else if (this.blockedcmds.contains(cmd)) {
             e.setCancelled(true);
             return;
         }
         if (!Settings.REQUIRE_SELECTION) {
             return;
         }
-        for (final String c : monitored) {
+        for (final String c : this.monitored) {
             if (cmd.equals("//" + c) || cmd.equals("/" + c) || cmd.equals("/worldedit:/" + c)) {
                 final Selection selection = PlotMain.worldEdit.getSelection(p);
                 if (selection == null) {
@@ -146,16 +149,16 @@ public class WorldEditListener implements Listener {
                 }
                 final BlockVector pos1 = selection.getNativeMinimumPoint().toBlockVector();
                 final BlockVector pos2 = selection.getNativeMaximumPoint().toBlockVector();
-                
-                LocalSession session = PlotMain.worldEdit.getSession(p);
-                Mask mask = session.getMask();
+
+                final LocalSession session = PlotMain.worldEdit.getSession(p);
+                final Mask mask = session.getMask();
                 if (mask == null) {
                     PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
                     return;
                 }
                 if (!mask.test(pos1)) {
                     e.setCancelled(true);
-                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1"); 
+                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1");
                 }
                 if (!mask.test(pos2)) {
                     e.setCancelled(true);
@@ -163,7 +166,7 @@ public class WorldEditListener implements Listener {
                 }
             }
         }
-        
+
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -175,7 +178,8 @@ public class WorldEditListener implements Listener {
         final Location l = p.getLocation();
         if (isPlotWorld(l)) {
             PWE.setMask(p, l);
-        } else {
+        }
+        else {
             PWE.removeMask(p);
         }
     }
@@ -234,7 +238,8 @@ public class WorldEditListener implements Listener {
         if (!isPlotWorld(q)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
-            } else {
+            }
+            else {
                 return;
             }
         }

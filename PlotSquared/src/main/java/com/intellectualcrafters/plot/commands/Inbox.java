@@ -21,19 +21,20 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 public class Inbox extends SubCommand {
 
@@ -57,13 +58,17 @@ public class Inbox extends SubCommand {
         final UUID uuid = plr.getUniqueId();
         if (PlotMain.hasPermission(plr, "plots.admin")) {
             tier = 0;
-        } else if (plot.owner == uuid) {
+        }
+        else if (plot.owner == uuid) {
             tier = 1;
-        } else if (plot.helpers.contains(uuid)) {
+        }
+        else if (plot.helpers.contains(uuid)) {
             tier = 2;
-        } else if (plot.trusted.contains(uuid)) {
+        }
+        else if (plot.trusted.contains(uuid)) {
             tier = 3;
-        } else {
+        }
+        else {
             tier = 4;
         }
 
@@ -72,7 +77,8 @@ public class Inbox extends SubCommand {
                 case "admin":
                     if (tier <= 0) {
                         tier = 0;
-                    } else {
+                    }
+                    else {
                         PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
                         return false;
                     }
@@ -80,7 +86,8 @@ public class Inbox extends SubCommand {
                 case "owner":
                     if (tier <= 1) {
                         tier = 1;
-                    } else {
+                    }
+                    else {
                         PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
                         return false;
                     }
@@ -88,7 +95,8 @@ public class Inbox extends SubCommand {
                 case "helper":
                     if (tier <= 2) {
                         tier = 2;
-                    } else {
+                    }
+                    else {
                         PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
                         return false;
                     }
@@ -96,7 +104,8 @@ public class Inbox extends SubCommand {
                 case "trusted":
                     if (tier <= 3) {
                         tier = 3;
-                    } else {
+                    }
+                    else {
                         PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
                         return false;
                     }
@@ -104,13 +113,14 @@ public class Inbox extends SubCommand {
                 case "everyone":
                     if (tier <= 4) {
                         tier = 4;
-                    } else {
+                    }
+                    else {
                         PlayerFunctions.sendMessage(plr, C.NO_PERM_INBOX);
                         return false;
                     }
                     break;
                 case "default":
-                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[]{"admin", "owner", "helper", "trusted", "everyone"}, tier, 4));
+                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] { "admin", "owner", "helper", "trusted", "everyone" }, tier, 4));
                     return false;
             }
         }
@@ -141,7 +151,8 @@ public class Inbox extends SubCommand {
                             plot.settings.removeComment(comment);
                             PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
                             return;
-                        } catch (final Exception e) {
+                        }
+                        catch (final Exception e) {
                             PlayerFunctions.sendMessage(plr, "&cInvalid index:\n/plot inbox [tier] [clear][:#]");
                             return;
                         }
@@ -151,7 +162,8 @@ public class Inbox extends SubCommand {
                     }
                     plot.settings.removeComments(comments);
                     PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
-                } else {
+                }
+                else {
                     final List<String> recipients = Arrays.asList("A", "O", "H", "T", "E");
                     int count = 1;
                     final StringBuilder message = new StringBuilder();

@@ -21,17 +21,18 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 public class plugin extends SubCommand {
 
@@ -47,7 +48,8 @@ public class plugin extends SubCommand {
             public void run() {
                 try {
                     downloads = convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=downloads&url=http://www.spigotmc.org/resources/plotsquared.1177/"), false);
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     downloads = "unknown";
                 }
             }
@@ -57,7 +59,8 @@ public class plugin extends SubCommand {
             public void run() {
                 try {
                     version = convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=version&resource=1177"), true);
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     // Let's just ignore this, most likely error 500...
                     version = "unknown";
                 }
@@ -70,7 +73,8 @@ public class plugin extends SubCommand {
         for (final char c : str.toCharArray()) {
             if (Character.isDigit(c)) {
                 builder.append(c);
-            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
+            }
+            else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
                 builder.append(c);
             }
         }

@@ -21,30 +21,40 @@
 
 package com.intellectualcrafters.plot.listeners;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.WeatherType;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.Title;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import org.bukkit.*;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings({ "unused", "deprecation" })
 public class PlotListener {
 
     public static void textures(final Player p) {
@@ -94,14 +104,14 @@ public class PlotListener {
     public static boolean enteredPlot(final Location l1, final Location l2) {
         final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
         final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-        return p2 != null && (p1 == null || !p1.equals(p2));
+        return (p2 != null) && ((p1 == null) || !p1.equals(p2));
 
     }
 
     public static boolean leftPlot(final Location l1, final Location l2) {
         final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
         final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
-        return p1 != null && (p2 == null || !p1.equals(p2));
+        return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
 
     public static boolean isPlotWorld(final Location l) {
@@ -128,7 +138,8 @@ public class PlotListener {
         str = str.toLowerCase();
         if (str.equals("rain")) {
             return WeatherType.DOWNFALL;
-        } else {
+        }
+        else {
             return WeatherType.CLEAR;
         }
     }
@@ -179,7 +190,8 @@ public class PlotListener {
                 try {
                     final Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
                     player.setPlayerTime(time, true);
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
                 }
             }

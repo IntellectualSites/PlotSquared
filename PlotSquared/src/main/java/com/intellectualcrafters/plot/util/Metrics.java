@@ -21,6 +21,27 @@
 
 package com.intellectualcrafters.plot.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.zip.GZIPOutputStream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,41 +50,31 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.zip.GZIPOutputStream;
-
 public class Metrics {
     /**
      * The current revision number
      */
-    private final static int REVISION = 7;
+    private final static int        REVISION      = 7;
     /**
      * The base url of the metrics domain
      */
-    private static final String BASE_URL = "http://report.mcstats.org";
+    private static final String     BASE_URL      = "http://report.mcstats.org";
     /**
      * The url used to report a server's status
      */
-    private static final String REPORT_URL = "/plugin/%s";
+    private static final String     REPORT_URL    = "/plugin/%s";
     /**
      * Interval of time to ping (in minutes)
      */
-    private static final int PING_INTERVAL = 15;
+    private static final int        PING_INTERVAL = 15;
     /**
      * The plugin this metrics submits for
      */
-    private final Plugin plugin;
+    private final Plugin            plugin;
     /**
      * All of the custom graphs to submit to metrics
      */
-    private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
+    private final Set<Graph>        graphs        = Collections.synchronizedSet(new HashSet<Graph>());
     /**
      * The plugin configuration file
      */
@@ -71,23 +82,23 @@ public class Metrics {
     /**
      * The plugin configuration file
      */
-    private final File configurationFile;
+    private final File              configurationFile;
     /**
      * Unique server id
      */
-    private final String guid;
+    private final String            guid;
     /**
      * Debug mode
      */
-    private final boolean debug;
+    private final boolean           debug;
     /**
      * Lock for synchronization
      */
-    private final Object optOutLock = new Object();
+    private final Object            optOutLock    = new Object();
     /**
      * The scheduled task
      */
-    private volatile BukkitTask task = null;
+    private volatile BukkitTask     task          = null;
 
     public Metrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
@@ -123,13 +134,16 @@ public class Metrics {
         try {
             gzos = new GZIPOutputStream(baos);
             gzos.write(input.getBytes("UTF-8"));
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             if (gzos != null) {
                 try {
                     gzos.close();
-                } catch (final IOException ignore) {
+                }
+                catch (final IOException ignore) {
                 }
             }
         }
@@ -151,7 +165,8 @@ public class Metrics {
                 Double.parseDouble(value);
                 isValueNumeric = true;
             }
-        } catch (final NumberFormatException e) {
+        }
+        catch (final NumberFormatException e) {
             isValueNumeric = false;
         }
         if (json.charAt(json.length() - 1) != '{') {
@@ -161,7 +176,8 @@ public class Metrics {
         json.append(':');
         if (isValueNumeric) {
             json.append(value);
-        } else {
+        }
+        else {
             json.append(escapeJSON(value));
         }
     }
@@ -199,7 +215,8 @@ public class Metrics {
                     if (chr < ' ') {
                         final String t = "000" + Integer.toHexString(chr);
                         builder.append("\\u" + t.substring(t.length() - 4));
-                    } else {
+                    }
+                    else {
                         builder.append(chr);
                     }
                     break;
@@ -212,7 +229,8 @@ public class Metrics {
     /**
      * Encode text as UTF-8
      *
-     * @param text the text to encode
+     * @param text
+     *            the text to encode
      * @return the encoded text, as UTF-8
      */
     private static String urlEncode(final String text) throws UnsupportedEncodingException {
@@ -224,9 +242,10 @@ public class Metrics {
      * plotters to their own graphs on the metrics website. Plotters can be
      * added to the graph object returned.
      *
-     * @param name The name of the graph
+     * @param name
+     *            The name of the graph
      * @return Graph object created. Will never return NULL under normal
-     * circumstances unless bad parameters are given
+     *         circumstances unless bad parameters are given
      */
     public Graph createGraph(final String name) {
         if (name == null) {
@@ -244,7 +263,8 @@ public class Metrics {
      * Add a Graph object to BukkitMetrics that represents data for the plugin
      * that should be sent to the backend
      *
-     * @param graph The name of the graph
+     * @param graph
+     *            The name of the graph
      */
     public void addGraph(final Graph graph) {
         if (graph == null) {
@@ -308,7 +328,8 @@ public class Metrics {
                         // false
                         // Each post thereafter will be a ping
                         this.firstPost = false;
-                    } catch (final IOException e) {
+                    }
+                    catch (final IOException e) {
                         if (Metrics.this.debug) {
                             Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
                         }
@@ -329,12 +350,14 @@ public class Metrics {
             try {
                 // Reload the metrics file
                 this.configuration.load(getConfigFile());
-            } catch (final IOException ex) {
+            }
+            catch (final IOException ex) {
                 if (this.debug) {
                     Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
                 }
                 return true;
-            } catch (final InvalidConfigurationException ex) {
+            }
+            catch (final InvalidConfigurationException ex) {
                 if (this.debug) {
                     Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
                 }
@@ -428,10 +451,12 @@ public class Metrics {
         try {
             if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) {
                 playersOnline = ((Collection<?>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).size();
-            } else {
+            }
+            else {
                 playersOnline = ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).length;
             }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+        }
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
         }
 
         // END server software specific section -- all code below does not use
@@ -474,7 +499,7 @@ public class Metrics {
                 json.append(':');
                 json.append('{');
                 boolean firstGraph = true;
-                for (Graph graph : this.graphs) {
+                for (final Graph graph : this.graphs) {
                     final StringBuilder graphJson = new StringBuilder();
                     graphJson.append('{');
                     for (final Plotter plotter : graph.getPlotters()) {
@@ -502,7 +527,8 @@ public class Metrics {
         // It does not reroute POST requests so we need to go around it
         if (isMineshafterPresent()) {
             connection = url.openConnection(Proxy.NO_PROXY);
-        } else {
+        }
+        else {
             connection = url.openConnection();
         }
         final byte[] uncompressed = json.toString().getBytes();
@@ -531,15 +557,17 @@ public class Metrics {
         if ((response == null) || response.startsWith("ERR") || response.startsWith("7")) {
             if (response == null) {
                 response = "null";
-            } else if (response.startsWith("7")) {
+            }
+            else if (response.startsWith("7")) {
                 response = response.substring(response.startsWith("7,") ? 2 : 1);
             }
             throw new IOException(response);
-        } else {
+        }
+        else {
             // Is this the first update this hour?
             if (response.equals("1") || response.contains("This is your first update this hour")) {
                 synchronized (this.graphs) {
-                    for (Graph graph : this.graphs) {
+                    for (final Graph graph : this.graphs) {
                         for (final Plotter plotter : graph.getPlotters()) {
                             plotter.reset();
                         }
@@ -559,7 +587,8 @@ public class Metrics {
         try {
             Class.forName("mineshafter.MineServer");
             return true;
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             return false;
         }
     }
@@ -572,7 +601,7 @@ public class Metrics {
          * The graph's name, alphanumeric and spaces only :) If it does not
          * comply to the above when submitted, it is rejected
          */
-        private final String name;
+        private final String       name;
         /**
          * The set of plotters that are contained within this graph
          */
@@ -594,7 +623,8 @@ public class Metrics {
         /**
          * Add a plotter to the graph, which will be used to plot entries
          *
-         * @param plotter the plotter to add to the graph
+         * @param plotter
+         *            the plotter to add to the graph
          */
         public void addPlotter(final Plotter plotter) {
             this.plotters.add(plotter);
@@ -603,7 +633,8 @@ public class Metrics {
         /**
          * Remove a plotter from the graph
          *
-         * @param plotter the plotter to remove from the graph
+         * @param plotter
+         *            the plotter to remove from the graph
          */
         public void removePlotter(final Plotter plotter) {
             this.plotters.remove(plotter);
@@ -659,8 +690,9 @@ public class Metrics {
         /**
          * Construct a plotter with a specific plot name
          *
-         * @param name the name of the plotter to use, which will show up on the
-         *             website
+         * @param name
+         *            the name of the plotter to use, which will show up on the
+         *            website
          */
         public Plotter(final String name) {
             this.name = name;

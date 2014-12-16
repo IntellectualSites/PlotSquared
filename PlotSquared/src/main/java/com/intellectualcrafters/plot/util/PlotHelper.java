@@ -21,42 +21,50 @@
 
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.object.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHomePosition;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
 
 /**
  * plot functions
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"unused", "javadoc", "deprecation"})
+@SuppressWarnings({ "unused", "javadoc", "deprecation" })
 public class PlotHelper {
-    public final static HashMap<Plot, Integer> runners = new HashMap<>();
-    public static boolean canSetFast = false;
-    public static boolean canSendChunk = false;
-    public static ArrayList<String> runners_p = new ArrayList<>();
-    static long state = 1;
+    public final static HashMap<Plot, Integer> runners      = new HashMap<>();
+    public static boolean                      canSetFast   = false;
+    public static boolean                      canSendChunk = false;
+    public static ArrayList<String>            runners_p    = new ArrayList<>();
+    static long                                state        = 1;
 
     /**
      * direction 0 = north, 1 = south, etc:
@@ -141,13 +149,13 @@ public class PlotHelper {
                 final boolean ly = y < pos2.y;
 
                 final PlotId id = new PlotId(x, y);
-                
+
                 final Plot plot = PlotMain.getPlots(world).get(id);
-                
+
                 Plot plot2 = null;
 
                 removeSign(world, plot);
-                
+
                 if (lx) {
                     if (ly) {
                         if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
@@ -183,7 +191,7 @@ public class PlotHelper {
         }
 
         manager.finishPlotMerge(world, plotworld, plotIds);
-        
+
         return result;
     }
 
@@ -208,7 +216,8 @@ public class PlotHelper {
                 greaterPlot.settings.setMerged(0, true);
                 manager.removeRoadSouth(plotworld, lesserPlot);
             }
-        } else {
+        }
+        else {
             if (!lesserPlot.settings.getMerged(1)) {
                 lesserPlot.settings.setMerged(1, true);
                 greaterPlot.settings.setMerged(3, true);
@@ -242,7 +251,7 @@ public class PlotHelper {
             return 0;
         }
         final long r = ((nextLong() >>> 32) * n) >> 32;
-        return (int) r;
+            return (int) r;
     }
 
     public static void removeSign(final World world, final Plot p) {
@@ -307,7 +316,8 @@ public class PlotHelper {
                 try {
                     SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
                     return true;
-                } catch (final Throwable e) {
+                }
+                catch (final Throwable e) {
                     canSetFast = false;
                 }
             }
@@ -317,10 +327,12 @@ public class PlotHelper {
             if (block.getTypeId() != plotblock.id) {
                 block.setTypeId(plotblock.id);
             }
-        } else {
+        }
+        else {
             if (block.getTypeId() == plotblock.id) {
                 block.setData(plotblock.data);
-            } else {
+            }
+            else {
                 block.setTypeIdAndData(plotblock.id, plotblock.data, false);
             }
         }
@@ -661,22 +673,23 @@ public class PlotHelper {
     public static short[] getBlock(final String block) {
         if (block.contains(":")) {
             final String[] split = block.split(":");
-            return new short[]{Short.parseShort(split[0]), Short.parseShort(split[1])};
+            return new short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
         }
-        return new short[]{Short.parseShort(block), 0};
+        return new short[] { Short.parseShort(block), 0 };
     }
 
     public static void clearAllEntities(final World world, final Plot plot, final boolean tile) {
-        
-        List<Entity> entities = world.getEntities();
-        for (Entity entity : entities) {
-            PlotId id = PlayerFunctions.getPlot(entity.getLocation());
+
+        final List<Entity> entities = world.getEntities();
+        for (final Entity entity : entities) {
+            final PlotId id = PlayerFunctions.getPlot(entity.getLocation());
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
-                    Player player = (Player) entity;
+                    final Player player = (Player) entity;
                     PlotMain.teleportPlayer(player, entity.getLocation(), plot);
                     PlotListener.plotExit(player, plot);
-                } else {
+                }
+                else {
                     entity.remove();
                 }
             }
@@ -701,11 +714,14 @@ public class PlotHelper {
         manager.clearPlot(world, plot, isDelete);
 
         if (canSetFast) {
-            final Plugin plugin = (Plugin) PlotMain.getMain();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
-                PlotHelper.setBiome(world, plot, Biome.FOREST);
-                refreshPlotChunks(world, plot);
-            } }, 90L);
+            final Plugin plugin = PlotMain.getMain();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    PlotHelper.setBiome(world, plot, Biome.FOREST);
+                    refreshPlotChunks(world, plot);
+                }
+            }, 90L);
         }
     }
 
@@ -737,10 +753,13 @@ public class PlotHelper {
         clearAllEntities(world, plot, false);
         clear(world, plot, isDelete);
         removeSign(world, plot);
-        final Plugin plugin = (Plugin) PlotMain.getMain();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { @Override public void run() {
-            PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
-        } }, 90L);
+        final Plugin plugin = PlotMain.getMain();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
+            }
+        }, 90L);
 
     }
 
@@ -756,7 +775,8 @@ public class PlotHelper {
                     }
                 }
             }
-        } else {
+        }
+        else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -768,12 +788,13 @@ public class PlotHelper {
                         }
                     }
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 //
             }
-        } 
+        }
     }
-    
+
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
         if (blocks.length == 1) {
             setCuboid(world, pos1, pos2, blocks[0]);
@@ -792,7 +813,8 @@ public class PlotHelper {
                     }
                 }
             }
-        } else {
+        }
+        else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -806,7 +828,8 @@ public class PlotHelper {
                         }
                     }
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 //
             }
         }
@@ -824,7 +847,8 @@ public class PlotHelper {
                     }
                 }
             }
-        } else {
+        }
+        else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -836,7 +860,8 @@ public class PlotHelper {
                         }
                     }
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 //
             }
         }
@@ -847,18 +872,18 @@ public class PlotHelper {
         final int topX = getPlotTopLoc(world, plot.id).getBlockX() + 1;
         final int bottomZ = getPlotBottomLoc(world, plot.id).getBlockZ();
         final int topZ = getPlotTopLoc(world, plot.id).getBlockZ() + 1;
-        
-        Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
-        Biome biome = block.getBiome();
-        
+
+        final Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
+        final Biome biome = block.getBiome();
+
         if (biome.equals(b)) {
             return;
         }
-        
+
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                Block blk = world.getBlockAt(x, 0, z);
-                Biome c = blk.getBiome();
+                final Block blk = world.getBlockAt(x, 0, z);
+                final Biome c = blk.getBiome();
                 if (c.equals(b)) {
                     x += 15;
                     continue;
@@ -885,8 +910,10 @@ public class PlotHelper {
     /**
      * Get plot home
      *
-     * @param w      World in which the plot is located
-     * @param plotid Plot ID
+     * @param w
+     *            World in which the plot is located
+     * @param plotid
+     *            Plot ID
      * @return Home Location
      */
     public static Location getPlotHome(final World w, final PlotId plotid) {
@@ -899,7 +926,8 @@ public class PlotHelper {
             final int z = bot.getBlockZ() - 2;
             final int y = getHeighestBlock(w, x, z);
             return new Location(w, x, y, z);
-        } else {
+        }
+        else {
             final Location bot = getPlotBottomLoc(w, plotid), top = getPlotTopLoc(w, plotid);
             final int x = top.getBlockX() - bot.getBlockX();
             final int z = top.getBlockZ() - bot.getBlockZ();
@@ -911,7 +939,8 @@ public class PlotHelper {
     /**
      * Retrieve the location of the default plot home position
      *
-     * @param plot Plot
+     * @param plot
+     *            Plot
      * @return the location
      */
     public static Location getPlotHomeDefault(final Plot plot) {
@@ -923,10 +952,13 @@ public class PlotHelper {
     /**
      * Get the plot home
      *
-     * @param w    World
-     * @param plot Plot Object
+     * @param w
+     *            World
+     * @param plot
+     *            Plot Object
      * @return Plot Home Location
-     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see #getPlotHome(org.bukkit.World,
+     *      com.intellectualcrafters.plot.object.PlotId)
      */
     public static Location getPlotHome(final World w, final Plot plot) {
         return getPlotHome(w, plot.id);
@@ -935,8 +967,10 @@ public class PlotHelper {
     /**
      * Refresh the plot chunks
      *
-     * @param world World in which the plot is located
-     * @param plot  Plot Object
+     * @param world
+     *            World in which the plot is located
+     * @param plot
+     *            Plot Object
      */
     public static void refreshPlotChunks(final World world, final Plot plot) {
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
@@ -949,21 +983,23 @@ public class PlotHelper {
         final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
         final int maxChunkZ = (int) Math.floor((double) topZ / 16);
 
-        ArrayList<Chunk> chunks = new ArrayList<>();
+        final ArrayList<Chunk> chunks = new ArrayList<>();
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 if (canSendChunk) {
-                    Chunk chunk = world.getChunkAt(x, z);
+                    final Chunk chunk = world.getChunkAt(x, z);
                     chunks.add(chunk);
-                } else {
+                }
+                else {
                     world.refreshChunk(x, z);
                 }
             }
         }
         try {
             SendChunk.sendChunk(chunks);
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
             canSendChunk = false;
             for (int x = minChunkX; x <= maxChunkX; x++) {
                 for (int z = minChunkZ; z <= maxChunkZ; z++) {

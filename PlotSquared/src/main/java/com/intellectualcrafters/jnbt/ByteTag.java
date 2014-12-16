@@ -10,7 +10,8 @@ public final class ByteTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
     public ByteTag(final byte value) {
         super();
@@ -20,8 +21,10 @@ public final class ByteTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name  the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
     public ByteTag(final String name, final byte value) {
         super(name);

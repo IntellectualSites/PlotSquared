@@ -31,7 +31,8 @@ public final class ShortTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
     public ShortTag(final short value) {
         super();
@@ -41,8 +42,10 @@ public final class ShortTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name  the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
     public ShortTag(final String name, final short value) {
         super(name);

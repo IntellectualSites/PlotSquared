@@ -21,6 +21,14 @@
 
 package com.intellectualcrafters.plot.util;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -34,14 +42,6 @@ import com.intellectualcrafters.plot.uuid.UUIDFetcher;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
-
 /**
  * This class can be used to efficiently translate UUIDs and names back and
  * forth.
@@ -53,10 +53,8 @@ import java.util.UUID;
  * restarted.
  * <p/>
  * You can use getUuidMap() to save the uuids/names to a file (SQLite db for
- * example).
- * Primary methods: getUUID(String name) & getName(UUID uuid) <-- You should
- * ONLY use these.
- * Call startFetch(JavaPlugin plugin) in your onEnable().
+ * example). Primary methods: getUUID(String name) & getName(UUID uuid) <-- You
+ * should ONLY use these. Call startFetch(JavaPlugin plugin) in your onEnable().
  * <p/>
  * Originally created by:
  *
@@ -66,22 +64,22 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 public class UUIDHandler {
-    
-    public static UUIDWrapper uuidWrapper = null;
+
+    public static UUIDWrapper                       uuidWrapper = null;
 
     /**
      * Online mode
      *
      * @see org.bukkit.Server#getOnlineMode()
      */
-    private final static boolean online = Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
+    private final static boolean                    online      = Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
 
     /**
      * Map containing names and UUIDs
      *
      * @see com.google.common.collect.BiMap
      */
-    private final static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+    private final static BiMap<StringWrapper, UUID> uuidMap     = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
     /**
      * Get the map containing all names/uuids
@@ -96,7 +94,8 @@ public class UUIDHandler {
     /**
      * Check if a uuid is cached
      *
-     * @param uuid to check
+     * @param uuid
+     *            to check
      * @return true of the uuid is cached
      * @see com.google.common.collect.BiMap#containsValue(Object)
      */
@@ -107,7 +106,8 @@ public class UUIDHandler {
     /**
      * Check if a name is cached
      *
-     * @param name to check
+     * @param name
+     *            to check
      * @return true of the name is cached
      * @see com.google.common.collect.BiMap#containsKey(Object)
      */
@@ -118,8 +118,10 @@ public class UUIDHandler {
     /**
      * Add a set to the cache
      *
-     * @param name to cache
-     * @param uuid to cache
+     * @param name
+     *            to cache
+     * @param uuid
+     *            to cache
      */
     public static void add(final StringWrapper name, final UUID uuid) {
         if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
@@ -128,7 +130,8 @@ public class UUIDHandler {
     }
 
     /**
-     * @param name to use as key
+     * @param name
+     *            to use as key
      * @return uuid
      */
     public static UUID getUUID(final String name) {
@@ -151,32 +154,38 @@ public class UUIDHandler {
                 }
                 try {
                     return PlotMain.getUUIDSaver().mojangUUID(name);
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     try {
                         final UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
                         uuid = fetcher.call().get(name);
                         add(nameWrap, uuid);
-                    } catch (final Exception ex) {
+                    }
+                    catch (final Exception ex) {
                         ex.printStackTrace();
                     }
                 }
-            } else {
+            }
+            else {
                 try {
                     final UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
                     uuid = fetcher.call().get(name);
                     add(nameWrap, uuid);
-                } catch (final Exception ex) {
+                }
+                catch (final Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } else {
+        }
+        else {
             return getUuidOfflineMode(nameWrap);
         }
         return null;
     }
 
     /**
-     * @param uuid to use as key
+     * @param uuid
+     *            to use as key
      * @return name (cache)
      */
     private static StringWrapper loopSearch(final UUID uuid) {
@@ -184,7 +193,8 @@ public class UUIDHandler {
     }
 
     /**
-     * @param uuid to use as key
+     * @param uuid
+     *            to use as key
      * @return Name
      */
     public static String getName(final UUID uuid) {
@@ -205,43 +215,51 @@ public class UUIDHandler {
                     name = fetcher.call().get(uuid);
                     add(new StringWrapper(name), uuid);
                     return name;
-                } catch (final Exception ex) {
+                }
+                catch (final Exception ex) {
                     ex.printStackTrace();
                 }
-            } else {
+            }
+            else {
                 try {
                     return PlotMain.getUUIDSaver().mojangName(uuid);
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     try {
                         final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
                         name = fetcher.call().get(uuid);
                         add(new StringWrapper(name), uuid);
                         return name;
-                    } catch (final Exception ex) {
+                    }
+                    catch (final Exception ex) {
                         e.printStackTrace();
                     }
                 }
             }
             try {
                 return PlotMain.getUUIDSaver().mojangName(uuid);
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 try {
                     final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
                     name = fetcher.call().get(uuid);
                     add(new StringWrapper(name), uuid);
                     return name;
-                } catch (final Exception ex) {
+                }
+                catch (final Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } else {
+        }
+        else {
             return "unknown";
         }
         return "";
     }
 
     /**
-     * @param name to use as key
+     * @param name
+     *            to use as key
      * @return UUID (name hash)
      */
     private static UUID getUuidOfflineMode(final StringWrapper name) {
@@ -251,7 +269,8 @@ public class UUIDHandler {
     }
 
     /**
-     * @param uuid to use as key
+     * @param uuid
+     *            to use as key
      * @return String - name
      */
     private static String getNameOnlinePlayer(final UUID uuid) {
@@ -263,11 +282,10 @@ public class UUIDHandler {
         add(new StringWrapper(name), uuid);
         return name;
     }
-    
-    
 
     /**
-     * @param uuid to use as key
+     * @param uuid
+     *            to use as key
      * @return String - name
      */
     private static String getNameOfflinePlayer(final UUID uuid) {
@@ -281,7 +299,8 @@ public class UUIDHandler {
     }
 
     /**
-     * @param name to use as key
+     * @param name
+     *            to use as key
      * @return UUID
      */
     private static UUID getUuidOnlinePlayer(final StringWrapper name) {
@@ -305,26 +324,27 @@ public class UUIDHandler {
         final UUIDSaver saver = PlotMain.getUUIDSaver();
         saver.globalSave(getUuidMap());
     }
-    
-    public static UUID getUUID(Player player) {
+
+    public static UUID getUUID(final Player player) {
         if (uuidWrapper == null) {
             try {
                 getUUID(player);
                 uuidWrapper = new DefaultUUIDWrapper();
             }
-            catch (Throwable e) {
+            catch (final Throwable e) {
                 uuidWrapper = new OfflineUUIDWrapper();
             }
         }
         return uuidWrapper.getUUID(player);
     }
-    
+
     /**
-     * Safely provide the correct UUID provider. Ignores user preference if not possible rather than break the plugin.
+     * Safely provide the correct UUID provider. Ignores user preference if not
+     * possible rather than break the plugin.
      */
-    public static UUID getUUID(OfflinePlayer player) {
+    public static UUID getUUID(final OfflinePlayer player) {
         if (uuidWrapper == null) {
-            
+
             if (Settings.OFFLINE_MODE) {
                 uuidWrapper = new OfflineUUIDWrapper();
             }
@@ -333,7 +353,7 @@ public class UUIDHandler {
                     getUUID(player);
                     uuidWrapper = new DefaultUUIDWrapper();
                 }
-                catch (Throwable e) {
+                catch (final Throwable e) {
                     uuidWrapper = new OfflineUUIDWrapper();
                 }
             }
@@ -341,7 +361,7 @@ public class UUIDHandler {
         try {
             return uuidWrapper.getUUID(player);
         }
-        catch (Throwable e) {
+        catch (final Throwable e) {
             uuidWrapper = new OfflineUUIDWrapper();
             return uuidWrapper.getUUID(player);
         }

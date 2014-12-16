@@ -21,13 +21,14 @@
 
 package com.intellectualcrafters.plot.generator;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.ConfigurationSection;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class DefaultPlotWorld extends PlotWorld {
 
@@ -40,98 +41,98 @@ public class DefaultPlotWorld extends PlotWorld {
     /**
      * Default Road Height: 64
      */
-    public final static int ROAD_HEIGHT_DEFAULT = 64;
+    public final static int         ROAD_HEIGHT_DEFAULT          = 64;
     /**
      * Default plot height: 64
      */
-    public final static int PLOT_HEIGHT_DEFAULT = 64;
+    public final static int         PLOT_HEIGHT_DEFAULT          = 64;
     /**
      * Default Wall Height: 64
      */
-    public final static int WALL_HEIGHT_DEFAULT = 64;
+    public final static int         WALL_HEIGHT_DEFAULT          = 64;
     /**
      * Default plot width: 32
      */
-    public final static int PLOT_WIDTH_DEFAULT = 32;
+    public final static int         PLOT_WIDTH_DEFAULT           = 32;
     /**
      * Default road width: 7
      */
-    public final static int ROAD_WIDTH_DEFAULT = 7;
+    public final static int         ROAD_WIDTH_DEFAULT           = 7;
     /**
      * Default main block: 1
      */
-    public final static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 1, (byte) 0)};
+    public final static PlotBlock[] MAIN_BLOCK_DEFAULT           = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
     /**
      * Default top blocks: {"2"}
      */
-    public final static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 2, (byte) 0)};
+    public final static PlotBlock[] TOP_BLOCK_DEFAULT            = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
     /**
      * Default wall block: 44
      */
-    public final static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
-    public final static PlotBlock CLAIMED_WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 1);
+    public final static PlotBlock   WALL_BLOCK_DEFAULT           = new PlotBlock((short) 44, (byte) 0);
+    public final static PlotBlock   CLAIMED_WALL_BLOCK_DEFAULT   = new PlotBlock((short) 44, (byte) 1);
     /**
      * Default wall filling: 1
      */
-    public final static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
+    public final static PlotBlock   WALL_FILLING_DEFAULT         = new PlotBlock((short) 1, (byte) 0);
     /**
      * Default road stripes: 35
      */
-    public final static PlotBlock ROAD_STRIPES_DEFAULT = new PlotBlock((short) 98, (byte) 0);
-    public final static boolean ROAD_STRIPES_ENABLED_DEFAULT = false;
+    public final static PlotBlock   ROAD_STRIPES_DEFAULT         = new PlotBlock((short) 98, (byte) 0);
+    public final static boolean     ROAD_STRIPES_ENABLED_DEFAULT = false;
     /**
      * Default road block: 155
      */
-    public final static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
+    public final static PlotBlock   ROAD_BLOCK_DEFAULT           = new PlotBlock((short) 155, (byte) 0);
     /**
      * Road Height
      */
-    public int ROAD_HEIGHT;
+    public int                      ROAD_HEIGHT;
     /**
      * plot height
      */
-    public int PLOT_HEIGHT;
+    public int                      PLOT_HEIGHT;
     /**
      * Wall height
      */
-    public int WALL_HEIGHT;
+    public int                      WALL_HEIGHT;
     /**
      * plot width
      */
-    public int PLOT_WIDTH;
+    public int                      PLOT_WIDTH;
     /**
      * Road width
      */
-    public int ROAD_WIDTH;
+    public int                      ROAD_WIDTH;
     /**
      * Plot main block
      */
-    public PlotBlock[] MAIN_BLOCK;
+    public PlotBlock[]              MAIN_BLOCK;
     /**
      * Top blocks
      */
-    public PlotBlock[] TOP_BLOCK;
+    public PlotBlock[]              TOP_BLOCK;
     /**
      * Wall block
      */
-    public PlotBlock WALL_BLOCK;
-    public PlotBlock CLAIMED_WALL_BLOCK;
+    public PlotBlock                WALL_BLOCK;
+    public PlotBlock                CLAIMED_WALL_BLOCK;
     /**
      * Wall filling
      */
-    public PlotBlock WALL_FILLING;
+    public PlotBlock                WALL_FILLING;
     /**
      * Road stripes
      */
-    public PlotBlock ROAD_STRIPES;
+    public PlotBlock                ROAD_STRIPES;
     /**
      * enable road stripes
      */
-    public boolean ROAD_STRIPES_ENABLED;
+    public boolean                  ROAD_STRIPES_ENABLED;
     /**
      * Road block
      */
-    public PlotBlock ROAD_BLOCK;
+    public PlotBlock                ROAD_BLOCK;
 
     /*
      * Here we are just calling the super method, nothing special
@@ -152,8 +153,8 @@ public class DefaultPlotWorld extends PlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         // TODO return a set of configuration nodes (used for setup command)
-        return new ConfigurationNode[]{new ConfigurationNode("plot.height", DefaultPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", DefaultPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", DefaultPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", DefaultPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", DefaultPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", DefaultPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", DefaultPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
-                new ConfigurationNode("road.height", DefaultPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.enable_stripes", DefaultPlotWorld.ROAD_STRIPES_ENABLED_DEFAULT, "Enable road stripes", Configuration.BOOLEAN, true), new ConfigurationNode("road.block", DefaultPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("road.stripes", DefaultPlotWorld.ROAD_STRIPES_DEFAULT, "Road stripe block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", DefaultPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", DefaultPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true),};
+        return new ConfigurationNode[] { new ConfigurationNode("plot.height", DefaultPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", DefaultPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", DefaultPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", DefaultPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", DefaultPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", DefaultPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", DefaultPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
+                new ConfigurationNode("road.height", DefaultPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.enable_stripes", DefaultPlotWorld.ROAD_STRIPES_ENABLED_DEFAULT, "Enable road stripes", Configuration.BOOLEAN, true), new ConfigurationNode("road.block", DefaultPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("road.stripes", DefaultPlotWorld.ROAD_STRIPES_DEFAULT, "Road stripe block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", DefaultPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", DefaultPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), };
     }
 
     /**

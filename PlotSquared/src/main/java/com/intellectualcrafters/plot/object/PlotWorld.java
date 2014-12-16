@@ -21,119 +21,267 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
 
 /**
  * @author Jesse Boyd
  */
 public abstract class PlotWorld {
 
-    public final static boolean AUTO_MERGE_DEFAULT = false;
-    public final static boolean MOB_SPAWNING_DEFAULT = false;
-    public final static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
-    public final static boolean PLOT_CHAT_DEFAULT = false;
-    public final static boolean SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
-    public final static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
-    public final static String SCHEMATIC_FILE_DEFAULT = "null";
-    public final static List<String> SCHEMATICS_DEFAULT = null;
-    public final static List<String> DEFAULT_FLAGS_DEFAULT = Arrays.asList();
-    public final static boolean USE_ECONOMY_DEFAULT = false;
-    public final static double PLOT_PRICE_DEFAULT = 100;
-    public final static double MERGE_PRICE_DEFAULT = 100;
-    public final static double SELL_PRICE_DEFAULT = 75;
-    public final static boolean PVP_DEFAULT = false;
-    public final static boolean PVE_DEFAULT = false;
-    public final static boolean SPAWN_EGGS_DEFAULT = false;
-    public final static boolean SPAWN_CUSTOM_DEFAULT = true;
-    public final static boolean SPAWN_BREEDING_DEFAULT = false;
+    public final static boolean      AUTO_MERGE_DEFAULT              = false;
+    public final static boolean      MOB_SPAWNING_DEFAULT            = false;
+    public final static Biome        PLOT_BIOME_DEFAULT              = Biome.FOREST;
+    public final static boolean      PLOT_CHAT_DEFAULT               = false;
+    public final static boolean      SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
+    public final static boolean      SCHEMATIC_ON_CLAIM_DEFAULT      = false;
+    public final static String       SCHEMATIC_FILE_DEFAULT          = "null";
+    public final static List<String> SCHEMATICS_DEFAULT              = null;
+    public final static List<String> DEFAULT_FLAGS_DEFAULT           = Arrays.asList();
+    public final static boolean      USE_ECONOMY_DEFAULT             = false;
+    public final static double       PLOT_PRICE_DEFAULT              = 100;
+    public final static double       MERGE_PRICE_DEFAULT             = 100;
+    public final static double       SELL_PRICE_DEFAULT              = 75;
+    public final static boolean      PVP_DEFAULT                     = false;
+    public final static boolean      PVE_DEFAULT                     = false;
+    public final static boolean      SPAWN_EGGS_DEFAULT              = false;
+    public final static boolean      SPAWN_CUSTOM_DEFAULT            = true;
+    public final static boolean      SPAWN_BREEDING_DEFAULT          = false;
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     @SuppressWarnings("deprecation")
-    public static List<Material> BLOCKS; /*= new ArrayList<>(
-            Arrays.asList(
-                    new Material[]{
-                            ACACIA_STAIRS, BEACON,
-                            BEDROCK, BIRCH_WOOD_STAIRS,
-                            BOOKSHELF, BREWING_STAND,
-                            BRICK, BRICK_STAIRS,
-                            BURNING_FURNACE, CAKE_BLOCK,
-                            CAULDRON, CLAY_BRICK,
-                            CLAY, COAL_BLOCK,
-                            COAL_ORE, COBBLE_WALL,
-                            COBBLESTONE, COBBLESTONE_STAIRS,
-                            COMMAND, DARK_OAK_STAIRS,
-                            DAYLIGHT_DETECTOR, DIAMOND_ORE,
-                            DIAMOND_BLOCK, DIRT,
-                            DISPENSER, DROPPER,
-                            EMERALD_BLOCK, EMERALD_ORE,
-                            ENCHANTMENT_TABLE, ENDER_PORTAL_FRAME,
-                            ENDER_STONE, FURNACE,
-                            GLOWSTONE, GOLD_ORE,
-                            GOLD_BLOCK, GRASS, GRAVEL, GLASS,
-                            HARD_CLAY, HAY_BLOCK,
-                            HUGE_MUSHROOM_1, HUGE_MUSHROOM_2,
-                            IRON_BLOCK, IRON_ORE,
-                            JACK_O_LANTERN, JUKEBOX,
-                            JUNGLE_WOOD_STAIRS, LAPIS_BLOCK,
-                            LAPIS_ORE, LEAVES,
-                            LEAVES_2, LOG, LOG_2,
-                            MELON_BLOCK, MOB_SPAWNER,
-                            MOSSY_COBBLESTONE, MYCEL,
-                            NETHER_BRICK, NETHER_BRICK_STAIRS,
-                            NETHERRACK, NOTE_BLOCK,
-                            OBSIDIAN, PACKED_ICE,
-                            PUMPKIN, QUARTZ_BLOCK,
-                            QUARTZ_ORE, QUARTZ_STAIRS,
-                            REDSTONE_BLOCK, SANDSTONE,
-                            SAND, SANDSTONE_STAIRS,
-                            SMOOTH_BRICK, SMOOTH_STAIRS,
-                            SNOW_BLOCK, SOUL_SAND,
-                            SPONGE, SPRUCE_WOOD_STAIRS,
-                            STONE, WOOD,
-                            WOOD_STAIRS, WORKBENCH,
-                            WOOL, getMaterial(44), getMaterial(126)
-                    }
-            )
-    );*/
+    public static List<Material>     BLOCKS;                                           /*
+     * =
+     * new
+     * ArrayList
+     * <
+     * >
+     * (
+     * Arrays
+     * .
+     * asList
+     * (
+     * new
+     * Material
+     * [
+     * ]
+     * {
+     * ACACIA_STAIRS
+     * ,
+     * BEACON
+     * ,
+     * BEDROCK
+     * ,
+     * BIRCH_WOOD_STAIRS
+     * ,
+     * BOOKSHELF
+     * ,
+     * BREWING_STAND
+     * ,
+     * BRICK
+     * ,
+     * BRICK_STAIRS
+     * ,
+     * BURNING_FURNACE
+     * ,
+     * CAKE_BLOCK
+     * ,
+     * CAULDRON
+     * ,
+     * CLAY_BRICK
+     * ,
+     * CLAY
+     * ,
+     * COAL_BLOCK
+     * ,
+     * COAL_ORE
+     * ,
+     * COBBLE_WALL
+     * ,
+     * COBBLESTONE
+     * ,
+     * COBBLESTONE_STAIRS
+     * ,
+     * COMMAND
+     * ,
+     * DARK_OAK_STAIRS
+     * ,
+     * DAYLIGHT_DETECTOR
+     * ,
+     * DIAMOND_ORE
+     * ,
+     * DIAMOND_BLOCK
+     * ,
+     * DIRT
+     * ,
+     * DISPENSER
+     * ,
+     * DROPPER
+     * ,
+     * EMERALD_BLOCK
+     * ,
+     * EMERALD_ORE
+     * ,
+     * ENCHANTMENT_TABLE
+     * ,
+     * ENDER_PORTAL_FRAME
+     * ,
+     * ENDER_STONE
+     * ,
+     * FURNACE
+     * ,
+     * GLOWSTONE
+     * ,
+     * GOLD_ORE
+     * ,
+     * GOLD_BLOCK
+     * ,
+     * GRASS
+     * ,
+     * GRAVEL
+     * ,
+     * GLASS
+     * ,
+     * HARD_CLAY
+     * ,
+     * HAY_BLOCK
+     * ,
+     * HUGE_MUSHROOM_1
+     * ,
+     * HUGE_MUSHROOM_2
+     * ,
+     * IRON_BLOCK
+     * ,
+     * IRON_ORE
+     * ,
+     * JACK_O_LANTERN
+     * ,
+     * JUKEBOX
+     * ,
+     * JUNGLE_WOOD_STAIRS
+     * ,
+     * LAPIS_BLOCK
+     * ,
+     * LAPIS_ORE
+     * ,
+     * LEAVES
+     * ,
+     * LEAVES_2
+     * ,
+     * LOG
+     * ,
+     * LOG_2
+     * ,
+     * MELON_BLOCK
+     * ,
+     * MOB_SPAWNER
+     * ,
+     * MOSSY_COBBLESTONE
+     * ,
+     * MYCEL
+     * ,
+     * NETHER_BRICK
+     * ,
+     * NETHER_BRICK_STAIRS
+     * ,
+     * NETHERRACK
+     * ,
+     * NOTE_BLOCK
+     * ,
+     * OBSIDIAN
+     * ,
+     * PACKED_ICE
+     * ,
+     * PUMPKIN
+     * ,
+     * QUARTZ_BLOCK
+     * ,
+     * QUARTZ_ORE
+     * ,
+     * QUARTZ_STAIRS
+     * ,
+     * REDSTONE_BLOCK
+     * ,
+     * SANDSTONE
+     * ,
+     * SAND
+     * ,
+     * SANDSTONE_STAIRS
+     * ,
+     * SMOOTH_BRICK
+     * ,
+     * SMOOTH_STAIRS
+     * ,
+     * SNOW_BLOCK
+     * ,
+     * SOUL_SAND
+     * ,
+     * SPONGE
+     * ,
+     * SPRUCE_WOOD_STAIRS
+     * ,
+     * STONE
+     * ,
+     * WOOD
+     * ,
+     * WOOD_STAIRS
+     * ,
+     * WORKBENCH
+     * ,
+     * WOOL
+     * ,
+     * getMaterial
+     * (
+     * 44
+     * )
+     * ,
+     * getMaterial
+     * (
+     * 126
+     * )
+     * }
+     * )
+     * )
+     * ;
+     */
 
     static {
         // TODO: Let jesse decide if this is stupid or not
         BLOCKS = new ArrayList<>();
-        for (Material material : Material.values()) {
-            if (material.isBlock() && material.isSolid() && !material.hasGravity() && !material.isTransparent() && material.isOccluding() && material!=Material.DROPPER) {
+        for (final Material material : Material.values()) {
+            if (material.isBlock() && material.isSolid() && !material.hasGravity() && !material.isTransparent() && material.isOccluding() && (material != Material.DROPPER)) {
                 BLOCKS.add(material);
             }
         }
     }
-    public final String worldname;
-    public boolean AUTO_MERGE;
-    public boolean MOB_SPAWNING;
-    public Biome PLOT_BIOME;
-    public boolean PLOT_CHAT;
-    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
-    public boolean SCHEMATIC_ON_CLAIM;
-    public String SCHEMATIC_FILE;
-    public List<String> SCHEMATICS;
-    public List<String> DEFAULT_FLAGS;
-    public boolean USE_ECONOMY;
-    public double PLOT_PRICE;
-    public double MERGE_PRICE;
-    public double SELL_PRICE;
-    public boolean PVP;
-    public boolean PVE;
-    public boolean SPAWN_EGGS;
-    public boolean SPAWN_CUSTOM;
-    public boolean SPAWN_BREEDING;
+    public final String              worldname;
+    public boolean                   AUTO_MERGE;
+    public boolean                   MOB_SPAWNING;
+    public Biome                     PLOT_BIOME;
+    public boolean                   PLOT_CHAT;
+    public boolean                   SCHEMATIC_CLAIM_SPECIFY         = false;
+    public boolean                   SCHEMATIC_ON_CLAIM;
+    public String                    SCHEMATIC_FILE;
+    public List<String>              SCHEMATICS;
+    public List<String>              DEFAULT_FLAGS;
+    public boolean                   USE_ECONOMY;
+    public double                    PLOT_PRICE;
+    public double                    MERGE_PRICE;
+    public double                    SELL_PRICE;
+    public boolean                   PVP;
+    public boolean                   PVE;
+    public boolean                   SPAWN_EGGS;
+    public boolean                   SPAWN_CUSTOM;
+    public boolean                   SPAWN_BREEDING;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -142,7 +290,8 @@ public abstract class PlotWorld {
     /**
      * When a world is created, the following method will be called for each
      *
-     * @param config Configuration Section
+     * @param config
+     *            Configuration Section
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
@@ -171,7 +320,8 @@ public abstract class PlotWorld {
     /**
      * Saving core plotworld settings
      *
-     * @param config Configuration Section
+     * @param config
+     *            Configuration Section
      */
     public void saveConfiguration(final ConfigurationSection config) {
         final HashMap<String, Object> options = new HashMap<>();

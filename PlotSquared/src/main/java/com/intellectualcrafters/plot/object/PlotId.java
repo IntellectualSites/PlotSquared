@@ -35,8 +35,10 @@ public class PlotId {
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
      *
-     * @param x The plot x coordinate
-     * @param y The plot y coordinate
+     * @param x
+     *            The plot x coordinate
+     * @param y
+     *            The plot y coordinate
      */
     public PlotId(final int x, final int y) {
         this.x = x;
@@ -46,18 +48,21 @@ public class PlotId {
     /**
      * Get a Plot Id based on a string
      *
-     * @param string to create id from
+     * @param string
+     *            to create id from
      * @return null if the string is invalid
      */
     public static PlotId fromString(final String string) {
         int x, y;
-        String[] parts = string.split(";");
-        if (parts.length < 2)
+        final String[] parts = string.split(";");
+        if (parts.length < 2) {
             return null;
+        }
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        } catch (Exception e) {
+        }
+        catch (final Exception e) {
             return null;
         }
         return new PlotId(x, y);
@@ -85,20 +90,23 @@ public class PlotId {
 
     @Override
     public int hashCode() {
-        if (x >= 0) {
-            if (y >= 0) {
-                return x * x + 3 * x + 2 * x * y + y + y * y;
-            } else {
-                int y1 = -y;
-                return x * x + 3 * x + 2 * x * y1 + y1 + y1 * y1 + 1;
+        if (this.x >= 0) {
+            if (this.y >= 0) {
+                return (this.x * this.x) + (3 * this.x) + (2 * this.x * this.y) + this.y + (this.y * this.y);
             }
-        } else {
-            int x1 = -x;
-            if (y >= 0) {
-                return -(x1 * x1 + 3 * x1 + 2 * x1 * y + y + y * y);
-            } else {
-                int y1 = -y;
-                return -(x1 * x1 + 3 * x1 + 2 * x1 * y1 + y1 + y1 * y1 + 1);
+            else {
+                final int y1 = -this.y;
+                return (this.x * this.x) + (3 * this.x) + (2 * this.x * y1) + y1 + (y1 * y1) + 1;
+            }
+        }
+        else {
+            final int x1 = -this.x;
+            if (this.y >= 0) {
+                return -((x1 * x1) + (3 * x1) + (2 * x1 * this.y) + this.y + (this.y * this.y));
+            }
+            else {
+                final int y1 = -this.y;
+                return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
             }
         }
     }

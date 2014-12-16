@@ -21,10 +21,15 @@
 
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.*;
-import com.intellectualsites.translation.bukkit.BukkitTranslation;
 import org.bukkit.ChatColor;
+
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualsites.translation.TranslationFile;
+import com.intellectualsites.translation.TranslationLanguage;
+import com.intellectualsites.translation.TranslationManager;
+import com.intellectualsites.translation.TranslationObject;
+import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.bukkit.BukkitTranslation;
 
 /**
  * Captions class.
@@ -240,30 +245,21 @@ public enum C {
      * Info
      */
     PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
-    /*PLOT_INFO("" +
-            "&6ID&7: &a%id%&7\n" +
-            "&6Alias&7: &a%alias%\n" +
-            "&6Owner&7: &a%owner%\n" +
-            "&6Helpers&7: &a%helpers%\n" +
-            "&6Trusted&7: &a%trusted%\n" +
-            "&6Denied&7: &a%denied%\n" +
-            "&6Flags&7: &a%flags%\n" +
-            "&6Biome&7: &a%biome%\n" +
-            "&6Rating&7: &a%rating%&7/&a10\n" +
-            "&6Can build&7: &a%build%"
-    ),*/
-    PLOT_INFO(
-            "&cID: &6%id%&c\n" +
-                    "&cAlias: &6%alias%&c\n" +
-                    "&cOwner: &6%owner%&c\n" +
-                    "&cBiome: &6%biome%&c\n" +
-                    "&cCan Build: &6%build%&c\n" +
-                    "&cRating: &6%rating%&c/&610&c\n" +
-                    "&cHelpers: &6%helpers%&c\n" +
-                    "&cTrusted: &6%trusted%&c\n" +
-                    "&cDenied: &6%denied%&c\n" +
-                    "&cFlags: &6%flags%"
-    ),
+    /*
+     * PLOT_INFO("" +
+     * "&6ID&7: &a%id%&7\n" +
+     * "&6Alias&7: &a%alias%\n" +
+     * "&6Owner&7: &a%owner%\n" +
+     * "&6Helpers&7: &a%helpers%\n" +
+     * "&6Trusted&7: &a%trusted%\n" +
+     * "&6Denied&7: &a%denied%\n" +
+     * "&6Flags&7: &a%flags%\n" +
+     * "&6Biome&7: &a%biome%\n" +
+     * "&6Rating&7: &a%rating%&7/&a10\n" +
+     * "&6Can build&7: &a%build%"
+     * ),
+     */
+    PLOT_INFO("&cID: &6%id%&c\n" + "&cAlias: &6%alias%&c\n" + "&cOwner: &6%owner%&c\n" + "&cBiome: &6%biome%&c\n" + "&cCan Build: &6%build%&c\n" + "&cRating: &6%rating%&c/&610&c\n" + "&cHelpers: &6%helpers%&c\n" + "&cTrusted: &6%trusted%&c\n" + "&cDenied: &6%denied%&c\n" + "&cFlags: &6%flags%"),
     PLOT_INFO_HELPERS("&6Helpers&7: %helpers%"),
     PLOT_INFO_TRUSTED("&6Trusted&7: %trusted%"),
     PLOT_INFO_DENIED("&6Denied&7: %denied%"),
@@ -394,24 +390,24 @@ public enum C {
      *
      * @see com.intellectualsites.translation.TranslationManager
      */
-    private static TranslationManager manager;
+    private static TranslationManager          manager;
 
     /**
      * The default file
      *
      * @see com.intellectualsites.translation.TranslationFile
      */
-    private static TranslationFile defaultFile;
+    private static TranslationFile             defaultFile;
 
     /**
      * Default
      */
-    private String d;
+    private String                             d;
 
     /**
      * Translated
      */
-    private String s;
+    private String                             s;
 
     /**
      * Constructor for custom strings.
@@ -426,7 +422,8 @@ public enum C {
     /**
      * Constructor
      *
-     * @param d default
+     * @param d
+     *            default
      */
     C(final String d) {
         this.d = d;
@@ -440,14 +437,11 @@ public enum C {
             manager = new TranslationManager();
         }
         if (defaultFile == null) {
-            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager)
-                    .read();
+            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager).read();
         }
         // register everything in this class
-        for (C c : values()) {
-            manager.addTranslationObject(
-                    new TranslationObject(c.toString(), c.d, "", "")
-            );
+        for (final C c : values()) {
+            manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
         }
     }
 
@@ -473,16 +467,17 @@ public enum C {
     public String s() {
         return manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         /*
-        if (PlotMain.translations != null) {
-            final String t = PlotMain.translations.getString(this.toString());
-            if (t != null) {
-                this.s = t;
-            }
-        }
-        if (this.s.length() < 1) {
-            return "";
-        }
-        return this.s.replace("\\n", "\n");*/
+         * if (PlotMain.translations != null) {
+         * final String t = PlotMain.translations.getString(this.toString());
+         * if (t != null) {
+         * this.s = t;
+         * }
+         * }
+         * if (this.s.length() < 1) {
+         * return "";
+         * }
+         * return this.s.replace("\\n", "\n");
+         */
     }
 
     /**

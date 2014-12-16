@@ -21,26 +21,27 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
 
 /**
  * The default generator is very messy, as we have decided
- *         to try externalize all calculations from within the loop. - You will
- *         see a lot of slower implementations have a single for loop. - This is
- *         perfectly fine to do, it will just mean world generation may take
- *         somewhat longer
+ * to try externalize all calculations from within the loop. - You will
+ * see a lot of slower implementations have a single for loop. - This is
+ * perfectly fine to do, it will just mean world generation may take
+ * somewhat longer
  *
  * @author Citymonstret
  * @author Empire92
@@ -49,35 +50,35 @@ public class WorldGenerator extends PlotGenerator {
     /**
      * Set to static to re-use the same managet for all Default World Generators
      */
-    private static PlotManager manager = null;
+    private static PlotManager manager   = null;
     /**
      * Some generator specific variables (implementation dependent)
      */
-    final int plotsize;
-    final int pathsize;
-    final PlotBlock wall;
-    final PlotBlock wallfilling;
-    final PlotBlock floor1;
-    final PlotBlock floor2;
-    final int size;
-    final Biome biome;
-    final int roadheight;
-    final int wallheight;
-    final int plotheight;
-    final PlotBlock[] plotfloors;
-    final PlotBlock[] filling;
+    final int                  plotsize;
+    final int                  pathsize;
+    final PlotBlock            wall;
+    final PlotBlock            wallfilling;
+    final PlotBlock            floor1;
+    final PlotBlock            floor2;
+    final int                  size;
+    final Biome                biome;
+    final int                  roadheight;
+    final int                  wallheight;
+    final int                  plotheight;
+    final PlotBlock[]          plotfloors;
+    final PlotBlock[]          filling;
     /**
      * result object is returned for each generated chunk, do stuff to it
      */
-    short[][] result;
+    short[][]                  result;
     /**
      * plotworld object
      */
-    DefaultPlotWorld plotworld = null;
+    DefaultPlotWorld           plotworld = null;
     /**
      * Faster sudo-random number generator than java.util.random
      */
-    private long state;
+    private long               state;
 
     /**
      * Initialize variables, and create plotworld object used in calculations
@@ -176,7 +177,8 @@ public class WorldGenerator extends PlotGenerator {
     private void setCuboidRegion(final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
         if (blocks.length == 1) {
             setCuboidRegion(x1, x2, y1, y2, z1, z2, blocks[0]);
-        } else {
+        }
+        else {
             for (int x = x1; x < x2; x++) {
                 for (int z = z1; z < z2; z++) {
                     for (int y = y1; y < y2; y++) {
@@ -243,7 +245,8 @@ public class WorldGenerator extends PlotGenerator {
         double pathWidthLower;
         if ((this.pathsize % 2) == 0) {
             pathWidthLower = Math.floor(this.pathsize / 2) - 1;
-        } else {
+        }
+        else {
             pathWidthLower = Math.floor(this.pathsize / 2);
         }
         cx = (cx % this.size) + (8 * this.size);
@@ -298,12 +301,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -317,12 +322,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -335,12 +342,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -353,12 +362,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -380,7 +391,8 @@ public class WorldGenerator extends PlotGenerator {
                     setCuboidRegion(0, 16 - roadStartX, 1, this.plotheight, 16 - plotMinZ, 16, this.filling);
                     setCuboidRegion(0, 16 - roadStartX, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors);
                 }
-            } else {
+            }
+            else {
                 if (roadStartZ <= 16) {
                     if (plotMinX > 16) {
                         setCuboidRegion(0, 16, 1, this.plotheight, 0, 16 - roadStartZ, this.filling);
@@ -392,7 +404,8 @@ public class WorldGenerator extends PlotGenerator {
                 if (plotMinZ <= 16) {
                     setCuboidRegion(16 - plotMinX, 16, 1, this.plotheight, 16 - plotMinZ, 16, this.filling);
                     setCuboidRegion(16 - plotMinX, 16, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors);
-                } else {
+                }
+                else {
                     int z = 16 - roadStartZ;
                     if (z < 0) {
                         z = 16;
@@ -403,7 +416,8 @@ public class WorldGenerator extends PlotGenerator {
                 if (roadStartZ <= 16) {
                     setCuboidRegion(16 - plotMinX, 16, 1, this.plotheight, 0, 16 - roadStartZ, this.filling);
                     setCuboidRegion(16 - plotMinX, 16, this.plotheight, this.plotheight + 1, 0, 16 - roadStartZ, this.plotfloors);
-                } else {
+                }
+                else {
                     if (roadStartX <= 16) {
                         if (plotMinZ > 16) {
                             int x = 16 - roadStartX;
@@ -415,7 +429,8 @@ public class WorldGenerator extends PlotGenerator {
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 if (plotMinZ <= 16) {
                     if (roadStartX > 16) {
                         int x = 16 - roadStartX;
@@ -425,7 +440,8 @@ public class WorldGenerator extends PlotGenerator {
                         setCuboidRegion(0, x, 1, this.plotheight, 16 - plotMinZ, 16, this.filling);
                         setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors);
                     }
-                } else {
+                }
+                else {
                     if (roadStartZ > 16) {
                         int x = 16 - roadStartX;
                         if (x < 0) {
@@ -438,14 +454,16 @@ public class WorldGenerator extends PlotGenerator {
                         if (roadStartX > 16) {
                             setCuboidRegion(0, x, 1, this.plotheight, 0, z, this.filling);
                             setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 0, z, this.plotfloors);
-                        } else {
+                        }
+                        else {
                             setCuboidRegion(0, x, 1, this.plotheight, 0, z, this.filling);
                             setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 0, z, this.plotfloors);
                         }
                     }
                 }
             }
-        } else {
+        }
+        else {
             if (roadStartX <= 16) {
                 if (roadStartZ <= 16) {
                     setCuboidRegion(0, 16 - roadStartX, 1, this.plotheight, 0, 16 - roadStartZ, this.filling);
@@ -474,12 +492,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -494,12 +514,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -514,12 +536,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinX + 1) <= 16) {
                     start = 16 - plotMinX;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartX + 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinX + 1) <= 16) || (roadStartX <= 16))) {
@@ -534,12 +558,14 @@ public class WorldGenerator extends PlotGenerator {
                 int start, end;
                 if ((plotMinZ + 1) <= 16) {
                     start = 16 - plotMinZ;
-                } else {
+                }
+                else {
                     start = 16;
                 }
                 if ((roadStartZ + 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                } else {
+                }
+                else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 1) <= 16) || ((roadStartZ + 1) <= 16))) {

@@ -7,25 +7,25 @@ package com.intellectualsites.translation;
  */
 public class TranslationAsset {
 
-    private final TranslationObject trans;
-    private final String translated;
+    private final TranslationObject   trans;
+    private final String              translated;
     private final TranslationLanguage lang;
 
-    public TranslationAsset(TranslationObject trans, String translated, TranslationLanguage lang) {
+    public TranslationAsset(final TranslationObject trans, final String translated, final TranslationLanguage lang) {
         this.trans = trans;
         this.translated = translated;
         this.lang = lang;
     }
 
     public TranslationObject getObject() {
-        return trans;
+        return this.trans;
     }
 
     public String getTranslated() {
-        return translated.replace("\n", "&-");
+        return this.translated.replace("\n", "&-");
     }
 
     public TranslationLanguage getLang() {
-        return lang;
+        return this.lang;
     }
 }

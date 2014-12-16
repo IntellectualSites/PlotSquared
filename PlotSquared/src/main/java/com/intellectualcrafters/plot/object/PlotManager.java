@@ -21,11 +21,11 @@
 
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public abstract class PlotManager {
@@ -52,7 +52,7 @@ public abstract class PlotManager {
      */
 
     public abstract boolean clearPlot(final World world, final Plot plot, boolean isDelete);
-    
+
     public abstract Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot);
 
     /*

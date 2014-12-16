@@ -21,6 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -28,13 +34,6 @@ import com.intellectualcrafters.plot.events.PlayerPlotDeniedEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
-
 
 @SuppressWarnings("deprecation")
 public class Denied extends SubCommand {
@@ -63,7 +62,8 @@ public class Denied extends SubCommand {
             if (args[1].equalsIgnoreCase("*")) {
                 uuid = DBFunc.everyone;
 
-            } else {
+            }
+            else {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (!plot.denied.contains(uuid)) {
@@ -88,11 +88,12 @@ public class Denied extends SubCommand {
                 DBFunc.setDenied(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
                 final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
-            } else {
+            }
+            else {
                 PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
                 final Plot pl = PlayerFunctions.getCurrentPlot(player);
                 if ((pl != null) && pl.id.equals(plot.id)) {
@@ -102,7 +103,8 @@ public class Denied extends SubCommand {
             }
             PlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
             return true;
-        } else if (args[0].equalsIgnoreCase("remove")) {
+        }
+        else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.denied.contains(uuid)) {
@@ -132,7 +134,8 @@ public class Denied extends SubCommand {
             final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);
-        } else {
+        }
+        else {
             PlayerFunctions.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
             return true;
         }

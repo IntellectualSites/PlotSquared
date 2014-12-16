@@ -29,7 +29,7 @@ public enum PlotHomePosition {
     DEFAULT("Default", 'd');
 
     private final String string;
-    private final char ch;
+    private final char   ch;
 
     PlotHomePosition(final String string, final char ch) {
         this.string = string;
@@ -37,7 +37,7 @@ public enum PlotHomePosition {
     }
 
     public boolean isMatching(final String string) {
-        return (string.length() < 2) && (string.charAt(0) == this.ch) || string.equalsIgnoreCase(this.string);
+        return ((string.length() < 2) && (string.charAt(0) == this.ch)) || string.equalsIgnoreCase(this.string);
     }
 
 }

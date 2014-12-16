@@ -21,17 +21,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 
 /**
  * @author Citymonstret
@@ -70,7 +70,8 @@ public class TP extends SubCommand {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
             PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
             return true;
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
         }
         return false;
@@ -88,10 +89,8 @@ public class TP extends SubCommand {
         @SuppressWarnings("deprecation")
         final Player player = Bukkit.getPlayer(a);
         if (player != null) {
-            final java.util.Set<Plot> plotMainPlots =
-                    PlotMain.getPlots(world, player);
-            final Plot[] plots =
-                    plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
+            final java.util.Set<Plot> plotMainPlots = PlotMain.getPlots(world, player);
+            final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
             if (plots.length > index) {
                 return plots[index];
             }

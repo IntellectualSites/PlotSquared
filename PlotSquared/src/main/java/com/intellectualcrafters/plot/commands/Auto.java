@@ -21,6 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -32,12 +38,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 @SuppressWarnings("deprecation")
 public class Auto extends SubCommand {
@@ -53,16 +53,20 @@ public class Auto extends SubCommand {
         if (absX > absY) {
             if (id.x > 0) {
                 return new PlotId(id.x, id.y + 1);
-            } else {
+            }
+            else {
                 return new PlotId(id.x, id.y - 1);
             }
-        } else if (absY > absX) {
+        }
+        else if (absY > absX) {
             if (id.y > 0) {
                 return new PlotId(id.x - 1, id.y);
-            } else {
+            }
+            else {
                 return new PlotId(id.x + 1, id.y);
             }
-        } else {
+        }
+        else {
             if (id.x.equals(id.y) && (id.x > 0)) {
                 return new PlotId(id.x, id.y + step);
             }
@@ -85,10 +89,12 @@ public class Auto extends SubCommand {
         String schematic = "";
         if (PlotMain.getPlotWorlds().length == 1) {
             world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
-        } else {
+        }
+        else {
             if (PlotMain.isPlotWorld(plr.getWorld())) {
                 world = plr.getWorld();
-            } else {
+            }
+            else {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
@@ -108,7 +114,8 @@ public class Auto extends SubCommand {
                     if (args.length > 1) {
                         schematic = args[1];
                     }
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     size_x = 1;
                     size_z = 1;
                     schematic = args[0];
@@ -116,21 +123,22 @@ public class Auto extends SubCommand {
                     // "&cError: Invalid size (X,Y)");
                     // return false;
                 }
-            } else {
+            }
+            else {
                 schematic = args[0];
                 // PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 // return false;
             }
         }
-        
-        if (size_x * size_z > Settings.MAX_AUTO_SIZE) {
+
+        if ((size_x * size_z) > Settings.MAX_AUTO_SIZE) {
             PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        int diff = PlayerFunctions.getPlayerPlotCount(world, plr) - PlayerFunctions.getAllowedPlots(plr);
-        if (diff  + (size_x * size_z) >= 0) {
+        final int diff = PlayerFunctions.getPlayerPlotCount(world, plr) - PlayerFunctions.getAllowedPlots(plr);
+        if ((diff + (size_x * size_z)) >= 0) {
             if (diff < 0) {
-                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, - diff - 1 + "");
+                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff - 1) + "");
             }
             else {
                 PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
@@ -152,7 +160,7 @@ public class Auto extends SubCommand {
             }
         }
         if (!schematic.equals("")) {
-//            if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
+            // if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
             if (!pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
@@ -161,36 +169,35 @@ public class Auto extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
-//            }
+            // }
         }
         boolean br = false;
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
-                Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
+                final Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
                 if ((plot == null) || (plot.owner == null)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(plot.id);
                     if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
+                        final Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
                         plot2.settings.setFlags(flags);
                         DBFunc.setFlags(plot2.world, plot2, flags);
                     }
                 }
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
-        } else {
+        }
+        else {
             boolean lastPlot = true;
-            PlotId lastId = Auto.lastPlot;
             while (!br) {
                 final PlotId start = getNextPlot(Auto.lastPlot, 1);
                 // Checking if the current set of plots is a viable option.
                 Auto.lastPlot = start;
                 if (lastPlot) {
-                    lastId = start;
                 }
-                if (PlotMain.getPlots(world).get(start) != null && PlotMain.getPlots(world).get(start).owner != null) {
+                if ((PlotMain.getPlots(world).get(start) != null) && (PlotMain.getPlots(world).get(start).owner != null)) {
                     continue;
                 }
                 else {
@@ -214,7 +221,7 @@ public class Auto extends SubCommand {
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(start);
                     if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
+                        final Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
                         plot2.settings.setFlags(flags);
                         DBFunc.setFlags(plot2.world, plot2, flags);
                     }

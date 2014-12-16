@@ -1,8 +1,5 @@
 package com.intellectualsites.translation;
 
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * The YAML implementation of TranslationFile
@@ -20,26 +20,29 @@ import java.util.Map;
 public class YamlTranslationFile extends TranslationFile {
 
     final private TranslationLanguage language;
-    final private String name;
-    final private TranslationManager manager;
-    private File file;
-    private HashMap<String, String> map;
-    private String[] header;
-    private boolean fancyHead = false;
-    private YamlTranslationFile instance;
+    final private String              name;
+    final private TranslationManager  manager;
+    private final File                file;
+    private HashMap<String, String>   map;
+    private String[]                  header;
+    private boolean                   fancyHead = false;
+    private YamlTranslationFile       instance;
     /**
      * YAML Object
      */
-    private Yaml yaml;
+    private Yaml                      yaml;
 
     /**
      * Constructor
      *
-     * @param path     save path
-     * @param language translation language
-     * @param name     project name
+     * @param path
+     *            save path
+     * @param language
+     *            translation language
+     * @param name
+     *            project name
      */
-    public YamlTranslationFile(File path, TranslationLanguage language, String name, TranslationManager manager) {
+    public YamlTranslationFile(final File path, final TranslationLanguage language, final String name, final TranslationManager manager) {
         this.language = language;
         this.name = name;
         this.manager = manager;
@@ -49,16 +52,17 @@ public class YamlTranslationFile extends TranslationFile {
             }
         }
         this.file = new File(path + File.separator + name + "." + language.toString() + ".yml");
-        if (!file.exists()) {
+        if (!this.file.exists()) {
             try {
-                if (!file.createNewFile()) {
-                    throw new RuntimeException("Could not create: " + file.getName());
+                if (!this.file.createNewFile()) {
+                    throw new RuntimeException("Could not create: " + this.file.getName());
                 }
-            } catch (Exception e) {
+            }
+            catch (final Exception e) {
                 e.printStackTrace();
             }
         }
-        instance = this;
+        this.instance = this;
         this.instance = this;
     }
 
@@ -73,29 +77,31 @@ public class YamlTranslationFile extends TranslationFile {
     /**
      * Set the header
      *
-     * @param header Comment header
+     * @param header
+     *            Comment header
      * @return instance
      */
-    public YamlTranslationFile header(String... header) {
+    public YamlTranslationFile header(final String... header) {
         this.header = header;
         this.fancyHead = false;
-        return instance;
+        return this.instance;
     }
 
     /**
      * Set a fancy header
      *
-     * @param header Comment header
+     * @param header
+     *            Comment header
      * @return instance
      */
-    public YamlTranslationFile fancyHeader(String... header) {
+    public YamlTranslationFile fancyHeader(final String... header) {
         final String line = "################################################################################################";
         final int lineLength = line.length();
-        List<String> strings = new ArrayList<String>();
+        final List<String> strings = new ArrayList<String>();
         strings.add(line + "\n");
         for (String s : header) {
             s = "# " + s;
-            while (s.length() < lineLength - 1) {
+            while (s.length() < (lineLength - 1)) {
                 s = s + " ";
             }
             s = s + "#\n";
@@ -104,21 +110,23 @@ public class YamlTranslationFile extends TranslationFile {
         strings.add(line + "\n");
         this.header = strings.toArray(new String[strings.size()]);
         this.fancyHead = true;
-        return instance;
+        return this.instance;
     }
 
     /**
      * Add a translation
      *
-     * @param key   translation name
-     * @param value translation value
+     * @param key
+     *            translation name
+     * @param value
+     *            translation value
      */
-    public void add(String key, String value) {
-        if (map.containsKey(key))
+    @Override
+    public void add(final String key, final String value) {
+        if (this.map.containsKey(key)) {
             return;
-        map.put(
-                key, value
-        );
+        }
+        this.map.put(key, value);
     }
 
     /**
@@ -128,7 +136,7 @@ public class YamlTranslationFile extends TranslationFile {
      */
     @Override
     public TranslationLanguage getLanguage() {
-        return language;
+        return this.language;
     }
 
     /**
@@ -137,31 +145,35 @@ public class YamlTranslationFile extends TranslationFile {
     @Override
     public void saveFile() {
         try {
-            FileWriter writer = new FileWriter(file);
-            //String s = getYaml().dump(map);
-            if (header != null && !fancyHead) {
-                for (String head : header) {
+            final FileWriter writer = new FileWriter(this.file);
+            // String s = getYaml().dump(map);
+            if ((this.header != null) && !this.fancyHead) {
+                for (final String head : this.header) {
                     writer.write("# " + head + "\n");
                 }
-            } else if (header != null && fancyHead) {
-                for (String head : header) {
+            }
+            else if ((this.header != null) && this.fancyHead) {
+                for (final String head : this.header) {
                     writer.write(head);
                 }
             }
-            int length = map.size();
+            final int length = this.map.size();
             int current = 0;
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                String var = entry.getKey();
-                String val = entry.getValue();
-                String des = manager.getDescription(var);
-                if (des.equals(""))
-                    writer.write(var + ": \"" + val + "\"" + (current < length - 1 ? "\n" : ""));
-                else
-                    writer.write(des + "\n" + var + ": \"" + val + "\"" + (current < length - 1 ? "\n" : ""));
+            for (final Map.Entry<String, String> entry : this.map.entrySet()) {
+                final String var = entry.getKey();
+                final String val = entry.getValue();
+                final String des = this.manager.getDescription(var);
+                if (des.equals("")) {
+                    writer.write(var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
+                }
+                else {
+                    writer.write(des + "\n" + var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
+                }
                 ++current;
             }
             writer.close();
-        } catch (Exception e) {
+        }
+        catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -172,16 +184,16 @@ public class YamlTranslationFile extends TranslationFile {
      * @return yaml object with correct settings
      */
     public Yaml getYaml() {
-        if (yaml == null) {
-            DumperOptions options = new DumperOptions();
+        if (this.yaml == null) {
+            final DumperOptions options = new DumperOptions();
             options.setAllowUnicode(true);
             options.setPrettyFlow(true);
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-            yaml = new Yaml(options);
-            yaml.setName(name + "." + language.toString());
+            this.yaml = new Yaml(options);
+            this.yaml.setName(this.name + "." + this.language.toString());
         }
-        return yaml;
+        return this.yaml;
     }
 
     /**
@@ -192,22 +204,20 @@ public class YamlTranslationFile extends TranslationFile {
     @Override
     public YamlTranslationFile read() {
         try {
-            map = (HashMap<String, String>) getYaml().load(new FileReader(file));
-        } catch (Exception e) {
+            this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
+        }
+        catch (final Exception e) {
             e.printStackTrace();
         }
-        if (map == null) {
-            map = new HashMap<String, String>();
+        if (this.map == null) {
+            this.map = new HashMap<String, String>();
             System.out.println("Was null...");
         }
-        for (Map.Entry<String, String> objects : map.entrySet()) {
-            String key = objects.getKey();
-            String val = objects.getValue();
-            manager.addTranslation(
-                    key,
-                    new TranslationAsset(null, val, language)
-            );
+        for (final Map.Entry<String, String> objects : this.map.entrySet()) {
+            final String key = objects.getKey();
+            final String val = objects.getValue();
+            this.manager.addTranslation(key, new TranslationAsset(null, val, this.language));
         }
-        return instance;
+        return this.instance;
     }
 }

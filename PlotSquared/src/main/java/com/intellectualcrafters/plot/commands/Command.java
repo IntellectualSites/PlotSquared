@@ -37,7 +37,7 @@ public enum Command {
     // ratings)
     // - /plot rate <number out of 10>
     /**
-     * 
+     *
      */
     UNCLAIM("unclaim"),
     /**
@@ -164,12 +164,12 @@ public enum Command {
     /**
      * Command
      */
-    private final String command;
+    private final String            command;
 
     /**
      * Alias
      */
-    private final String alias;
+    private final String            alias;
 
     /**
      * Permission Node
@@ -177,7 +177,8 @@ public enum Command {
     private final CommandPermission permission;
 
     /**
-     * @param command Command "name" (/plot [cmd])
+     * @param command
+     *            Command "name" (/plot [cmd])
      */
     Command(final String command) {
         this.command = command;
@@ -186,8 +187,10 @@ public enum Command {
     }
 
     /**
-     * @param command    Command "name" (/plot [cmd])
-     * @param permission Command Permission Node
+     * @param command
+     *            Command "name" (/plot [cmd])
+     * @param permission
+     *            Command Permission Node
      */
     Command(final String command, final CommandPermission permission) {
         this.command = command;
@@ -196,8 +199,10 @@ public enum Command {
     }
 
     /**
-     * @param command Command "name" (/plot [cmd])
-     * @param alias   Command Alias
+     * @param command
+     *            Command "name" (/plot [cmd])
+     * @param alias
+     *            Command Alias
      */
     Command(final String command, final String alias) {
         this.command = command;
@@ -206,9 +211,12 @@ public enum Command {
     }
 
     /**
-     * @param command    Command "name" (/plot [cmd])
-     * @param alias      Command Alias
-     * @param permission Required Permission Node
+     * @param command
+     *            Command "name" (/plot [cmd])
+     * @param alias
+     *            Command Alias
+     * @param permission
+     *            Required Permission Node
      */
     Command(final String command, final String alias, final CommandPermission permission) {
         this.command = command;

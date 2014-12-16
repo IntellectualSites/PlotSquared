@@ -21,16 +21,17 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotId;
-import org.bukkit.OfflinePlayer;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * DB Functions
@@ -51,8 +52,11 @@ public class DBFunc {
 
     /**
      * Set the owner of a plot
-     * @param plot Plot Object
-     * @param uuid New Owner
+     *
+     * @param plot
+     *            Plot Object
+     * @param uuid
+     *            New Owner
      */
     public static void setOwner(final Plot plot, final UUID uuid) {
         dbManager.setOwner(plot, uuid);
@@ -60,7 +64,9 @@ public class DBFunc {
 
     /**
      * Create all settings + (helpers, denied, trusted)
-     * @param plots List containing all plot objects
+     *
+     * @param plots
+     *            List containing all plot objects
      */
     public static void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
         dbManager.createAllSettingsAndHelpers(plots);
@@ -68,7 +74,9 @@ public class DBFunc {
 
     /**
      * Create all plots
-     * @param plots A list containing plot objects
+     *
+     * @param plots
+     *            A list containing plot objects
      */
     public static void createPlots(final ArrayList<Plot> plots) {
         dbManager.createPlots(plots);
@@ -77,7 +85,8 @@ public class DBFunc {
     /**
      * Create a plot
      *
-     * @param plot Plot to create
+     * @param plot
+     *            Plot to create
      */
     public static void createPlot(final Plot plot) {
         dbManager.createPlot(plot);
@@ -95,7 +104,8 @@ public class DBFunc {
     /**
      * Delete a plot
      *
-     * @param plot Plot to delete
+     * @param plot
+     *            Plot to delete
      */
     public static void delete(final String world, final Plot plot) {
         dbManager.delete(world, plot);
@@ -104,8 +114,10 @@ public class DBFunc {
     /**
      * Create plot settings
      *
-     * @param id Plot ID
-     * @param plot Plot Object
+     * @param id
+     *            Plot ID
+     * @param plot
+     *            Plot Object
      */
     public static void createPlotSettings(final int id, final Plot plot) {
         dbManager.createPlotSettings(id, plot);
@@ -114,8 +126,10 @@ public class DBFunc {
     /**
      * Get a plot id
      *
-     * @param world World
-     * @param id2 Plot ID
+     * @param world
+     *            World
+     * @param id2
+     *            Plot ID
      * @return ID
      */
     /*

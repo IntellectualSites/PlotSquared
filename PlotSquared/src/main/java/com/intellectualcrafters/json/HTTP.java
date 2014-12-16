@@ -40,6 +40,7 @@ public class HTTP {
      * Convert an HTTP header string into a JSONObject. It can be a request
      * header or a response header. A request header will contain
      * <p/>
+     *
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -50,6 +51,7 @@ public class HTTP {
      * <p/>
      * A response header will contain
      * <p/>
+     *
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),
@@ -61,6 +63,7 @@ public class HTTP {
      * In addition, the other parameters in the header will be captured, using
      * the HTTP field names as JSON names, so that
      * <p/>
+     *
      * <pre>
      *    Date: Sun, 26 May 2002 18:06:04 GMT
      *    Cookie: Q=q2=PPEAsg--; B=677gi6ouf29bn&b=2&f=s
@@ -69,6 +72,7 @@ public class HTTP {
      * <p/>
      * become
      * <p/>
+     *
      * <pre>
      * {...
      *    Date: "Sun, 26 May 2002 18:06:04 GMT",
@@ -77,12 +81,13 @@ public class HTTP {
      * ...}
      * </pre>
      * <p/>
-     * It does no further checking or conversion. It does not parse dates.
-     * It does not do '%' transforms on URLs.
+     * It does no further checking or conversion. It does not parse dates. It
+     * does not do '%' transforms on URLs.
      *
-     * @param string An HTTP header string.
+     * @param string
+     *            An HTTP header string.
      * @return A JSONObject containing the elements and attributes
-     * of the XML string.
+     *         of the XML string.
      * @throws JSONException
      */
     public static JSONObject toJSONObject(final String string) throws JSONException {
@@ -100,7 +105,8 @@ public class HTTP {
             jo.put("Reason-Phrase", x.nextTo('\0'));
             x.next();
 
-        } else {
+        }
+        else {
 
             // Request
 
@@ -123,6 +129,7 @@ public class HTTP {
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
      * <p/>
+     *
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -133,6 +140,7 @@ public class HTTP {
      * <p/>
      * A response header must contain
      * <p/>
+     *
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),
@@ -141,13 +149,15 @@ public class HTTP {
      * }
      * </pre>
      * <p/>
-     * Any other members of the JSONObject will be output as HTTP fields.
-     * The result will end with two CRLF pairs.
+     * Any other members of the JSONObject will be output as HTTP fields. The
+     * result will end with two CRLF pairs.
      *
-     * @param jo A JSONObject
+     * @param jo
+     *            A JSONObject
      * @return An HTTP header string.
-     * @throws JSONException if the object does not contain enough
-     *                       information.
+     * @throws JSONException
+     *             if the object does not contain enough
+     *             information.
      */
     public static String toString(final JSONObject jo) throws JSONException {
         final Iterator<String> keys = jo.keys();
@@ -159,7 +169,8 @@ public class HTTP {
             sb.append(jo.getString("Status-Code"));
             sb.append(' ');
             sb.append(jo.getString("Reason-Phrase"));
-        } else if (jo.has("Method") && jo.has("Request-URI")) {
+        }
+        else if (jo.has("Method") && jo.has("Request-URI")) {
             sb.append(jo.getString("Method"));
             sb.append(' ');
             sb.append('"');
@@ -167,7 +178,8 @@ public class HTTP {
             sb.append('"');
             sb.append(' ');
             sb.append(jo.getString("HTTP-Version"));
-        } else {
+        }
+        else {
             throw new JSONException("Not enough material for an HTTP header.");
         }
         sb.append(CRLF);

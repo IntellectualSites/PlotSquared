@@ -21,16 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -39,8 +32,20 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import com.google.common.collect.BiMap;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -90,7 +95,8 @@ public class DebugClaimTest extends SubCommand {
 
                 min = new PlotId(Integer.parseInt(split1[0]), Integer.parseInt(split1[1]));
                 max = new PlotId(Integer.parseInt(split2[0]), Integer.parseInt(split2[1]));
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return !PlayerFunctions.sendMessage(null, "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X,Y are the plot coords\nThe conversion will only check the plots in the selected area.");
             }
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
@@ -148,7 +154,8 @@ public class DebugClaimTest extends SubCommand {
                                 plot.owner = uuid;
                                 plot.hasChanged = true;
                                 plots.add(plot);
-                            } else {
+                            }
+                            else {
                                 PlayerFunctions.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
                             }
                         }
@@ -167,11 +174,13 @@ public class DebugClaimTest extends SubCommand {
 
                 PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
 
-            } else {
+            }
+            else {
                 PlayerFunctions.sendMessage(null, "No plots were found for the given search.");
             }
 
-        } else {
+        }
+        else {
             PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;

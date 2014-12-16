@@ -21,6 +21,16 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -31,20 +41,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * @author Citymonstret
  */
-@SuppressWarnings({"unused", "deprecated", "javadoc"})
+@SuppressWarnings({ "unused", "deprecated", "javadoc" })
 public class Info extends SubCommand {
 
     public Info() {
@@ -62,7 +63,8 @@ public class Info extends SubCommand {
                 return false;
             }
             plot = PlayerFunctions.getCurrentPlot(player);
-        } else {
+        }
+        else {
             if (args.length < 2) {
                 PlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
@@ -82,17 +84,19 @@ public class Info extends SubCommand {
                 }
                 world = Bukkit.getWorld(args[0]);
                 if (args.length == 3) {
-                    args = new String[]{args[2]};
-                } else {
+                    args = new String[] { args[2] };
+                }
+                else {
                     args = new String[0];
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
         }
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("inv")) {
+        if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
             new InfoInventory(plot, player).build().display();
             return true;
         }
@@ -103,8 +107,8 @@ public class Info extends SubCommand {
 
         // Wildcard player {added}
         {
-            containsEveryone = plot.helpers != null && plot.helpers.contains(DBFunc.everyone);
-            trustedEveryone = plot.trusted != null && plot.trusted.contains(DBFunc.everyone);
+            containsEveryone = (plot.helpers != null) && plot.helpers.contains(DBFunc.everyone);
+            trustedEveryone = (plot.trusted != null) && plot.trusted.contains(DBFunc.everyone);
         }
 
         // Unclaimed?
@@ -175,7 +179,7 @@ public class Info extends SubCommand {
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
         final String flags = "&6" + (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &6") : "none");
-        final boolean build = player == null || plot.hasRights(player);
+        final boolean build = (player == null) || plot.hasRights(player);
 
         String owner = "none";
         if (plot.owner != null) {
@@ -211,7 +215,8 @@ public class Info extends SubCommand {
         for (int x = 0; x < l.size(); x++) {
             if ((x + 1) == l.size()) {
                 list.append(c.replace("%user%", getPlayerName(l.get(x))).replace(",", ""));
-            } else {
+            }
+            else {
                 list.append(c.replace("%user%", getPlayerName(l.get(x))));
             }
         }

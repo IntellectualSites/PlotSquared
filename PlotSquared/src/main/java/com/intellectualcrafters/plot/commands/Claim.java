@@ -21,6 +21,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -34,9 +39,6 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetBlockFast;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 /**
  * @author Citymonstret
@@ -47,11 +49,11 @@ public class Claim extends SubCommand {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
 
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, boolean auto) {
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final boolean auto) {
         return claimPlot(player, plot, teleport, "", auto);
     }
 
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, boolean auto) {
+    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
@@ -69,7 +71,8 @@ public class Claim extends SubCommand {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
                     sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
-                } else {
+                }
+                else {
                     sch = SchematicHandler.getSchematic(schematic);
                     if (sch == null) {
                         sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
@@ -78,7 +81,7 @@ public class Claim extends SubCommand {
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
             if ((world.DEFAULT_FLAGS != null) && (world.DEFAULT_FLAGS.size() > 0)) {
-                Flag[] flags = FlagManager.parseFlags(world.DEFAULT_FLAGS);
+                final Flag[] flags = FlagManager.parseFlags(world.DEFAULT_FLAGS);
                 plot2.settings.setFlags(flags);
                 DBFunc.setFlags(plot.world, plot2, flags);
             }

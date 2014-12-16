@@ -7,21 +7,21 @@ package com.intellectualcrafters.plot.flag;
  */
 public abstract class FlagValue<T> {
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     public FlagValue() {
         this.clazz = (Class<T>) getClass();
     }
 
-    public FlagValue(Class<T> clazz) {
+    public FlagValue(final Class<T> clazz) {
         if (clazz == null) {
             throw new NullPointerException();
         }
         this.clazz = clazz;
     }
 
-    public boolean validValue(Object value) {
-        return value != null && value.getClass() == clazz;
+    public boolean validValue(final Object value) {
+        return (value != null) && (value.getClass() == this.clazz);
     }
 
     public abstract T getValue(String t);
@@ -33,12 +33,12 @@ public abstract class FlagValue<T> {
     public static class BooleanValue extends FlagValue<Boolean> {
 
         @Override
-        public Boolean getValue(String t) {
+        public Boolean getValue(final String t) {
             return null;
         }
 
         @Override
-        public String parse(String t) {
+        public String parse(final String t) {
             return null;
         }
 
@@ -51,7 +51,7 @@ public abstract class FlagValue<T> {
     public static class StringValue extends FlagValue<String> {
 
         @Override
-        public String parse(String s) {
+        public String parse(final String s) {
             return s;
         }
 
@@ -61,7 +61,7 @@ public abstract class FlagValue<T> {
         }
 
         @Override
-        public String getValue(String t) {
+        public String getValue(final String t) {
             return t;
         }
     }

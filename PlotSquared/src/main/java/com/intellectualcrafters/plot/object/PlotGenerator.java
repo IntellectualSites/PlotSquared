@@ -21,8 +21,9 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PlotMain;
 import org.bukkit.generator.ChunkGenerator;
+
+import com.intellectualcrafters.plot.PlotMain;
 
 public abstract class PlotGenerator extends ChunkGenerator {
 

@@ -1,11 +1,11 @@
 package com.intellectualcrafters.jnbt;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helps create list tags.
@@ -13,12 +13,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ListTagBuilder {
 
     private final Class<? extends Tag> type;
-    private final List<Tag> entries;
+    private final List<Tag>            entries;
 
     /**
      * Create a new instance.
      *
-     * @param type of tag contained in this list
+     * @param type
+     *            of tag contained in this list
      */
     ListTagBuilder(final Class<? extends Tag> type) {
         checkNotNull(type);
@@ -63,7 +64,8 @@ public class ListTagBuilder {
     /**
      * Add the given tag.
      *
-     * @param value the tag
+     * @param value
+     *            the tag
      * @return this object
      */
     public ListTagBuilder add(final Tag value) {
@@ -78,7 +80,8 @@ public class ListTagBuilder {
     /**
      * Add all the tags in the given list.
      *
-     * @param value a list of tags
+     * @param value
+     *            a list of tags
      * @return this object
      */
     public ListTagBuilder addAll(final Collection<? extends Tag> value) {
@@ -101,7 +104,8 @@ public class ListTagBuilder {
     /**
      * Build a new list tag with this builder's entries.
      *
-     * @param name the name of the tag
+     * @param name
+     *            the name of the tag
      * @return the created list tag
      */
     public ListTag build(final String name) {

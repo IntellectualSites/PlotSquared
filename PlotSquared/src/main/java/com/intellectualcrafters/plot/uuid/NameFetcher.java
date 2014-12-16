@@ -21,10 +21,6 @@
 
 package com.intellectualcrafters.plot.uuid;
 
-import com.google.common.collect.ImmutableList;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,14 +30,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.google.common.collect.ImmutableList;
+
 /**
  * Name Fetcher Class
  * From Bukkit
  */
 public class NameFetcher implements Callable<Map<UUID, String>> {
     private static final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
-    private final JSONParser jsonParser = new JSONParser();
-    private final List<UUID> uuids;
+    private final JSONParser    jsonParser  = new JSONParser();
+    private final List<UUID>    uuids;
 
     public NameFetcher(final List<UUID> uuids) {
         this.uuids = ImmutableList.copyOf(uuids);

@@ -21,14 +21,15 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
+import java.util.HashMap;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-import java.util.HashMap;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SetBlockFast;
 
 /**
  * Created 2014-10-12 for PlotSquared
@@ -40,13 +41,13 @@ public class PlotSelection {
 
     public final static HashMap<String, PlotSelection> currentSelection = new HashMap<>();
 
-    private final PlotBlock[] plotBlocks;
+    private final PlotBlock[]                          plotBlocks;
 
-    private final int width;
+    private final int                                  width;
 
-    private final Plot plot;
+    private final Plot                                 plot;
 
-    private final Biome biome;
+    private final Biome                                biome;
 
     public PlotSelection(final int width, final World world, final Plot plot) {
         this.width = width;
@@ -100,17 +101,21 @@ public class PlotSelection {
                             try {
                                 SetBlockFast.set(world, b1.x, b1.y, b1.z, b2.id, b2.data);
                                 SetBlockFast.set(world, b2.x, b2.y, b2.z, b1.id, b1.data);
-                            } catch (final NoSuchMethodException e) {
+                            }
+                            catch (final NoSuchMethodException e) {
                                 PlotHelper.canSetFast = false;
                             }
-                        } else {
+                        }
+                        else {
                             if ((b1.id != b2.id) && (b1.data != b2.data)) {
                                 block1.setTypeIdAndData(b2.id, b2.data, false);
                                 block2.setTypeIdAndData(b1.id, b1.data, false);
-                            } else if (b1.id != b2.id) {
+                            }
+                            else if (b1.id != b2.id) {
                                 block1.setTypeId(b2.id);
                                 block2.setTypeId(b1.id);
-                            } else {
+                            }
+                            else {
                                 block1.setData(b2.data);
                                 block2.setData(b1.data);
                             }

@@ -21,26 +21,26 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 /**
  * SubCommand class
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings({ "deprecation", "unused" })
 public abstract class SubCommand {
 
     /**
      * Command
      */
-    public final String cmd;
+    public final String            cmd;
     /**
      * Permission node
      */
@@ -48,7 +48,7 @@ public abstract class SubCommand {
     /**
      * Simple description
      */
-    public final String description;
+    public final String            description;
     /**
      * Aliases
      */
@@ -56,23 +56,29 @@ public abstract class SubCommand {
     /**
      * Command usage
      */
-    public final String usage;
+    public final String            usage;
     /**
      * The category
      */
-    public final CommandCategory category;
+    public final CommandCategory   category;
     /**
      * Is this a player-online command?
      */
-    public final boolean isPlayer;
+    public final boolean           isPlayer;
 
     /**
-     * @param cmd         Command /plot {cmd} <-- That!
-     * @param permission  Permission Node
-     * @param description Simple description
-     * @param usage       Usage description: /plot command {args...}
-     * @param alias       Command alias
-     * @param category    CommandCategory. Pick whichever is closest to what you want.
+     * @param cmd
+     *            Command /plot {cmd} <-- That!
+     * @param permission
+     *            Permission Node
+     * @param description
+     *            Simple description
+     * @param usage
+     *            Usage description: /plot command {args...}
+     * @param alias
+     *            Command alias
+     * @param category
+     *            CommandCategory. Pick whichever is closest to what you want.
      */
     public SubCommand(final String cmd, final String permission, final String description, final String usage, final String alias, final CommandCategory category, final boolean isPlayer) {
         this.cmd = cmd;
@@ -84,14 +90,20 @@ public abstract class SubCommand {
         this.category = category;
         this.isPlayer = isPlayer;
     }
-    
+
     /**
-     * @param cmd         Command /plot {cmd} <-- That!
-     * @param permission  Permission Node
-     * @param description Simple description
-     * @param usage       Usage description: /plot command {args...}
-     * @param aliases     Command aliases
-     * @param category    CommandCategory. Pick whichever is closest to what you want.
+     * @param cmd
+     *            Command /plot {cmd} <-- That!
+     * @param permission
+     *            Permission Node
+     * @param description
+     *            Simple description
+     * @param usage
+     *            Usage description: /plot command {args...}
+     * @param aliases
+     *            Command aliases
+     * @param category
+     *            CommandCategory. Pick whichever is closest to what you want.
      */
     public SubCommand(final String cmd, final String permission, final String description, final String usage, final CommandCategory category, final boolean isPlayer, final String... aliases) {
         this.cmd = cmd;
@@ -105,10 +117,14 @@ public abstract class SubCommand {
     }
 
     /**
-     * @param command     Command /plot {cmd} <-- That!
-     * @param description Simple description
-     * @param usage       Usage description: /plot command {args...}
-     * @param category    CommandCategory. Pick whichever closests to what you want.
+     * @param command
+     *            Command /plot {cmd} <-- That!
+     * @param description
+     *            Simple description
+     * @param usage
+     *            Usage description: /plot command {args...}
+     * @param category
+     *            CommandCategory. Pick whichever closests to what you want.
      */
     public SubCommand(final Command command, final String description, final String usage, final CommandCategory category, final boolean isPlayer) {
         this.cmd = command.getCommand();
@@ -124,8 +140,10 @@ public abstract class SubCommand {
     /**
      * Execute.
      *
-     * @param plr  executor
-     * @param args arguments
+     * @param plr
+     *            executor
+     * @param args
+     *            arguments
      * @return true on success, false on failure
      */
     public abstract boolean execute(final Player plr, final String... args);
@@ -133,7 +151,8 @@ public abstract class SubCommand {
     /**
      * Execute the command as console
      *
-     * @param args Arguments
+     * @param args
+     *            Arguments
      */
     public void executeConsole(final String... args) {
         this.execute(null, args);
@@ -142,10 +161,14 @@ public abstract class SubCommand {
     /**
      * Send a message
      *
-     * @param plr  Player who will receive the mssage
-     * @param c    Caption
-     * @param args Arguments (%s's)
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, com.intellectualcrafters.plot.config.C, String...)
+     * @param plr
+     *            Player who will receive the mssage
+     * @param c
+     *            Caption
+     * @param args
+     *            Arguments (%s's)
+     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
+     *      com.intellectualcrafters.plot.config.C, String...)
      */
     public boolean sendMessage(final Player plr, final C c, final String... args) {
         PlayerFunctions.sendMessage(plr, c, args);
@@ -198,7 +221,8 @@ public abstract class SubCommand {
         /**
          * Constructor
          *
-         * @param name readable name
+         * @param name
+         *            readable name
          */
         CommandCategory(final String name) {
             this.name = name;

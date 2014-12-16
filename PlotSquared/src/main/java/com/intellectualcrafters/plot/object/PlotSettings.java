@@ -21,15 +21,16 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.sun.istack.internal.NotNull;
-import org.bukkit.block.Biome;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.bukkit.block.Biome;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.sun.istack.internal.NotNull;
 
 /**
  * plot settings
@@ -42,15 +43,15 @@ public class PlotSettings {
     /**
      * Plot
      */
-    private final Plot plot;
+    private final Plot             plot;
     /**
      * merged plots
      */
-    private boolean[] merged = new boolean[]{false, false, false, false};
+    private boolean[]              merged   = new boolean[] { false, false, false, false };
     /**
      * plot alias
      */
-    private String alias;
+    private String                 alias;
     /**
      * Comments
      */
@@ -58,16 +59,17 @@ public class PlotSettings {
     /**
      * Flags
      */
-    private Set<Flag> flags;
+    private Set<Flag>              flags;
     /**
      * Home Position
      */
-    private PlotHomePosition position;
+    private PlotHomePosition       position;
 
     /**
      * Constructor
      *
-     * @param plot object
+     * @param plot
+     *            object
      */
     public PlotSettings(final Plot plot) {
         this.alias = "";
@@ -81,7 +83,8 @@ public class PlotSettings {
      * 2 = South<br>
      * 3 = West<br>
      *
-     * @param direction Direction to check
+     * @param direction
+     *            Direction to check
      * @return boolean merged
      */
     public boolean getMerged(final int direction) {
@@ -111,11 +114,12 @@ public class PlotSettings {
      * @return biome at plot loc
      */
     public Biome getBiome() {
-        return PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId()).add(1, 0, 1).getBlock().getBiome();
+        return PlotHelper.getPlotBottomLoc(this.plot.getWorld(), this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
     }
 
     /**
-     * @param flag to add
+     * @param flag
+     *            to add
      */
     public void addFlag(final Flag flag) {
         final Flag hasFlag = getFlag(flag.getKey());
@@ -137,7 +141,8 @@ public class PlotSettings {
     /**
      * Set multiple flags
      *
-     * @param flags Flag Array
+     * @param flags
+     *            Flag Array
      */
     public void setFlags(@NotNull final Flag[] flags) {
         this.flags = new HashSet<>(Arrays.asList(flags));
@@ -146,7 +151,8 @@ public class PlotSettings {
     /**
      * Get a flag
      *
-     * @param flag Flag to get
+     * @param flag
+     *            Flag to get
      * @return flag
      */
     public Flag getFlag(final String flag) {
@@ -173,14 +179,15 @@ public class PlotSettings {
     /**
      * Set the plot alias
      *
-     * @param alias alias to be used
+     * @param alias
+     *            alias to be used
      */
     public void setAlias(final String alias) {
         this.alias = alias;
     }
 
     public String getJoinMessage() {
-        Flag greeting = getFlag("greeting");
+        final Flag greeting = getFlag("greeting");
         if (greeting != null) {
             return greeting.getValue();
         }
@@ -193,7 +200,7 @@ public class PlotSettings {
      * @return Farewell flag
      */
     public String getLeaveMessage() {
-        Flag farewell = getFlag("farewell");
+        final Flag farewell = getFlag("farewell");
         if (farewell != null) {
             return farewell.getValue();
         }
@@ -214,14 +221,14 @@ public class PlotSettings {
         this.comments = comments;
     }
 
-    public void removeComment(PlotComment comment) {
+    public void removeComment(final PlotComment comment) {
         if (this.comments.contains(comment)) {
             this.comments.remove(comment);
         }
     }
 
-    public void removeComments(ArrayList<PlotComment> comments) {
-        for (PlotComment comment : comments) {
+    public void removeComments(final ArrayList<PlotComment> comments) {
+        for (final PlotComment comment : comments) {
             removeComment(comment);
         }
     }

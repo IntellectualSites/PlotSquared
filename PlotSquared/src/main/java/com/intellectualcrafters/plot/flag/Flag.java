@@ -25,20 +25,23 @@ import org.apache.commons.lang.StringUtils;
 
 public class Flag {
     private final AbstractFlag key;
-    private final String value;
+    private final String       value;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a
      * key/value pair. For a flag to be usable by a player, you need to register
      * it with PlotSquared.
      *
-     * @param key   AbstractFlag
-     * @param value Value must be alphanumerical (can have spaces) and be <= 48
-     *              characters
-     * @throws IllegalArgumentException if you provide inadequate inputs
+     * @param key
+     *            AbstractFlag
+     * @param value
+     *            Value must be alphanumerical (can have spaces) and be <= 48
+     *            characters
+     * @throws IllegalArgumentException
+     *             if you provide inadequate inputs
      */
     public Flag(final AbstractFlag key, final String value) {
-        final char[] allowedCharacters = new char[]{'[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', ':', '\u00A7'};
+        final char[] allowedCharacters = new char[] { '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', ':', '\u00A7' };
         String tempValue = value;
         for (final char c : allowedCharacters) {
             tempValue = tempValue.replace(c, 'c');

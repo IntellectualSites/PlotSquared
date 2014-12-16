@@ -28,7 +28,7 @@ import org.bukkit.Location;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"javadoc", "unused"})
+@SuppressWarnings({ "javadoc", "unused" })
 public class LSetCube {
 
     /**
@@ -106,7 +106,7 @@ public class LSetCube {
         /**
          *
          */
-        private Location current;
+        private Location       current;
 
         /**
          * @param cube

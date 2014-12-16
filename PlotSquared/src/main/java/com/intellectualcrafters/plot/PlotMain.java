@@ -21,42 +21,6 @@
 
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.commands.Auto;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.generator.WorldGenerator;
-import com.intellectualcrafters.plot.listeners.*;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
-import com.intellectualcrafters.plot.uuid.UUIDSaver;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
-import me.confuser.barapi.BarAPI;
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.*;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,9 +28,84 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import me.confuser.barapi.BarAPI;
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.intellectualcrafters.plot.commands.Auto;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.DefaultPlotManager;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.listeners.EntityListener;
+import com.intellectualcrafters.plot.listeners.ForceFieldListener;
+import com.intellectualcrafters.plot.listeners.InventoryListener;
+import com.intellectualcrafters.plot.listeners.PlayerEvents;
+import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.listeners.WorldGuardListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.Lag;
+import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.Metrics;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SendChunk;
+import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
+import com.intellectualcrafters.plot.uuid.UUIDSaver;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 /**
  * PlotMain class.
@@ -76,22 +115,19 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("unused")
 public class PlotMain extends JavaPlugin {
-    private static PlotMain main = null;
+    private static PlotMain                                     main               = null;
     /**
      * Permission that allows for "everything"
      */
-    public static final String ADMIN_PERMISSION =
-            "plots.admin";
+    public static final String                                  ADMIN_PERMISSION   = "plots.admin";
     /**
      * Storage version
      */
-    public final static int storage_ver =
-            1;
+    public final static int                                     storage_ver        = 1;
     /**
      * Boolean Flags (material)
      */
-    public final static HashMap<Material, String> booleanFlags =
-            new HashMap<>();
+    public final static HashMap<Material, String>               booleanFlags       = new HashMap<>();
 
     /**
      * Initialize the material flags
@@ -114,71 +150,63 @@ public class PlotMain extends JavaPlugin {
     /**
      * All loaded plot worlds
      */
-    private final static HashMap<String, PlotWorld> worlds =
-            new HashMap<>();
+    private final static HashMap<String, PlotWorld>             worlds             = new HashMap<>();
     /**
      * All world managers
      */
-    private final static HashMap<String, PlotManager> managers =
-            new HashMap<>();
+    private final static HashMap<String, PlotManager>           managers           = new HashMap<>();
     /**
      * settings.properties
      */
-    public static File configFile;
+    public static File                                          configFile;
     /**
      * The main configuration file
      */
-    public static YamlConfiguration config;
+    public static YamlConfiguration                             config;
     /**
      * storage.properties
      */
-    public static File storageFile;
+    public static File                                          storageFile;
     /**
      * Contains storage options
      */
-    public static YamlConfiguration storage;
+    public static YamlConfiguration                             storage;
     /**
      * MySQL Connection
      */
-    public static Connection connection;
+    public static Connection                                    connection;
     /**
      * WorldEdit object
      */
-    public static WorldEditPlugin worldEdit =
-            null;
+    public static WorldEditPlugin                               worldEdit          = null;
     /**
      * BarAPI object
      */
-    public static BarAPI barAPI =
-            null;
+    public static BarAPI                                        barAPI             = null;
     /**
      * World Guard Object
      */
-    public static WorldGuardPlugin worldGuard =
-            null;
+    public static WorldGuardPlugin                              worldGuard         = null;
     /**
      * World Guard Listener
      */
-    public static WorldGuardListener worldGuardListener =
-            null;
+    public static WorldGuardListener                            worldGuardListener = null;
     /**
      * Economy Object (vault)
      */
-    public static Economy
-            economy;
+    public static Economy                                       economy;
     /**
      * Use Economy?
      */
-    public static boolean useEconomy =
-            false;
+    public static boolean                                       useEconomy         = false;
     /**
      * The UUID Saver
      */
-    private static UUIDSaver uuidSaver;
+    private static UUIDSaver                                    uuidSaver;
     /**
      * MySQL Object
      */
-    private static MySQL mySQL;
+    private static MySQL                                        mySQL;
     /**
      * List of all plots
      * DO NOT USE EXCEPT FOR DATABASE PURPOSES
@@ -191,7 +219,7 @@ public class PlotMain extends JavaPlugin {
     public static MySQL getMySQL() {
         return mySQL;
     }
-    
+
     /**
      * Check for expired plots
      */
@@ -202,7 +230,8 @@ public class PlotMain extends JavaPlugin {
             public void run() {
                 try {
                     checkExpired(plugin, true);
-                } catch (Exception e) {
+                }
+                catch (final Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -213,9 +242,12 @@ public class PlotMain extends JavaPlugin {
      * Check a range of permissions e.g. 'plots.plot.<0-100>'<br>
      * Returns highest integer in range.
      *
-     * @param player to check
-     * @param stub   to check
-     * @param range  tp check
+     * @param player
+     *            to check
+     * @param stub
+     *            to check
+     * @param range
+     *            tp check
      * @return permitted range
      */
     public static int hasPermissionRange(final Player player, final String stub, final int range) {
@@ -238,8 +270,10 @@ public class PlotMain extends JavaPlugin {
      * - Op has all permissions <br>
      * - checks for '*' nodes
      *
-     * @param player to check
-     * @param perms  to check
+     * @param player
+     *            to check
+     * @param perms
+     *            to check
      * @return true of player has permissions
      */
     public static boolean hasPermissions(final Player player, final String[] perms) {
@@ -249,8 +283,9 @@ public class PlotMain extends JavaPlugin {
         }
         for (final String perm : perms) {
             boolean permitted = false;
-            if (player.hasPermission(perm))
+            if (player.hasPermission(perm)) {
                 permitted = true;
+            }
             else {
                 final String[] nodes = perm.split("\\.");
                 final StringBuilder n = new StringBuilder();
@@ -283,7 +318,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Set the uuid saver
      *
-     * @param saver new saver
+     * @param saver
+     *            new saver
      * @see com.intellectualcrafters.plot.uuid.UUIDSaver
      */
     public static void setUUIDSaver(final UUIDSaver saver) {
@@ -295,8 +331,10 @@ public class PlotMain extends JavaPlugin {
      * - Op has all permissions <br>
      * - checks for '*' nodes
      *
-     * @param player to check
-     * @param perm   to check
+     * @param player
+     *            to check
+     * @param perm
+     *            to check
      * @return true if player has the permission
      */
     public static boolean hasPermission(final Player player, final String perm) {
@@ -345,7 +383,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param player player
+     * @param player
+     *            player
      * @return Set Containing the players plots
      */
     public static Set<Plot> getPlots(final Player player) {
@@ -364,8 +403,10 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world  plot world
-     * @param player plot owner
+     * @param world
+     *            plot world
+     * @param player
+     *            plot owner
      * @return players plots
      */
     public static Set<Plot> getPlots(final World world, final Player player) {
@@ -384,7 +425,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Get plots for the specified world
      *
-     * @param world A world, in which you want to search for plots
+     * @param world
+     *            A world, in which you want to search for plots
      * @return HashMap containing Plot IDs and Plot Objects
      */
     public static HashMap<PlotId, Plot> getPlots(final String world) {
@@ -395,7 +437,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world plot world
+     * @param world
+     *            plot world
      * @return plots in world
      */
     public static HashMap<PlotId, Plot> getPlots(final World world) {
@@ -409,7 +452,7 @@ public class PlotMain extends JavaPlugin {
      * get all plot worlds
      */
     public static String[] getPlotWorlds() {
-        Set<String> strings = worlds.keySet();
+        final Set<String> strings = worlds.keySet();
         return (strings.toArray(new String[strings.size()]));
     }
 
@@ -417,12 +460,13 @@ public class PlotMain extends JavaPlugin {
      * @return plots worlds
      */
     public static String[] getPlotWorldsString() {
-        Set<String> strings = plots.keySet();
+        final Set<String> strings = plots.keySet();
         return strings.toArray(new String[strings.size()]);
     }
 
     /**
-     * @param world plotworld(?)
+     * @param world
+     *            plotworld(?)
      * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(final World world) {
@@ -430,7 +474,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world plotworld(?)
+     * @param world
+     *            plotworld(?)
      * @return true if the world is a plotworld
      */
     public static boolean isPlotWorld(final String world) {
@@ -438,7 +483,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world World to get manager for
+     * @param world
+     *            World to get manager for
      * @return manager for world
      */
     public static PlotManager getPlotManager(final World world) {
@@ -449,7 +495,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world world
+     * @param world
+     *            world
      * @return PlotManager
      */
     public static PlotManager getPlotManager(final String world) {
@@ -460,7 +507,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world to search
+     * @param world
+     *            to search
      * @return PlotWorld object
      */
     public static PlotWorld getWorldSettings(final World world) {
@@ -471,7 +519,8 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world to search
+     * @param world
+     *            to search
      * @return PlotWorld object
      */
     public static PlotWorld getWorldSettings(final String world) {
@@ -482,20 +531,24 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
-     * @param world world to search
+     * @param world
+     *            world to search
      * @return set containing the plots for a world
      */
     public static Plot[] getWorldPlots(final World world) {
-        Collection<Plot> values = plots.get(world.getName()).values();
+        final Collection<Plot> values = plots.get(world.getName()).values();
         return (values.toArray(new Plot[values.size()]));
     }
 
     /**
      * Remove a plot
      *
-     * @param world     The Plot World
-     * @param id        The Plot ID
-     * @param callEvent Whether or not to call the PlotDeleteEvent
+     * @param world
+     *            The Plot World
+     * @param id
+     *            The Plot ID
+     * @param callEvent
+     *            Whether or not to call the PlotDeleteEvent
      * @return true if successful, false if not
      */
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
@@ -514,7 +567,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Replace the plot object with an updated version
      *
-     * @param plot plot object
+     * @param plot
+     *            plot object
      */
     public static void updatePlot(final Plot plot) {
         final String world = plot.world;
@@ -546,8 +600,10 @@ public class PlotMain extends JavaPlugin {
      * - Add new plots to the end.<br>
      * - The task then only needs to go through the first few plots
      *
-     * @param plugin Plugin
-     * @param async  Call async?
+     * @param plugin
+     *            Plugin
+     * @param async
+     *            Call async?
      */
     private static void checkExpired(final JavaPlugin plugin, final boolean async) {
         if (async) {
@@ -573,7 +629,8 @@ public class PlotMain extends JavaPlugin {
                                     Bukkit.getServer().getPluginManager().callEvent(event);
                                     if (event.isCancelled()) {
                                         event.setCancelled(true);
-                                    } else {
+                                    }
+                                    else {
                                         toDeletePlot.add(plot);
                                     }
                                 }
@@ -592,7 +649,8 @@ public class PlotMain extends JavaPlugin {
                     }
                 }
             });
-        } else {
+        }
+        else {
             for (final String world : getPlotWorldsString()) {
                 if (PlotMain.plots.containsKey(world)) {
                     for (final Plot plot : PlotMain.plots.get(world).values()) {
@@ -601,7 +659,8 @@ public class PlotMain extends JavaPlugin {
                             Bukkit.getServer().getPluginManager().callEvent(event);
                             if (event.isCancelled()) {
                                 event.setCancelled(true);
-                            } else {
+                            }
+                            else {
                                 DBFunc.delete(world, plot);
                             }
                         }
@@ -632,12 +691,14 @@ public class PlotMain extends JavaPlugin {
     /**
      * Send a message to the console.
      *
-     * @param string message
+     * @param string
+     *            message
      */
     public static void sendConsoleSenderMessage(final String string) {
         if (getMain().getServer().getConsoleSender() == null) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
-        } else {
+        }
+        else {
             getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
         }
     }
@@ -645,9 +706,12 @@ public class PlotMain extends JavaPlugin {
     /**
      * Teleport a player to a plot
      *
-     * @param player Player to teleport
-     * @param from   Previous Location
-     * @param plot   Plot to teleport to
+     * @param player
+     *            Player to teleport
+     * @param from
+     *            Previous Location
+     * @param plot
+     *            Plot to teleport to
      * @return true if successful
      */
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
@@ -668,7 +732,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Send a message to the console
      *
-     * @param c message
+     * @param c
+     *            message
      */
     @SuppressWarnings("unused")
     public static void sendConsoleSenderMessage(final C c) {
@@ -678,7 +743,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Broadcast publicly
      *
-     * @param c message
+     * @param c
+     *            message
      */
     public static void Broadcast(final C c) {
         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s()));
@@ -696,7 +762,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Broadcast a message to all admins
      *
-     * @param c message
+     * @param c
+     *            message
      */
     public static void BroadcastWithPerms(final C c) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
@@ -719,7 +786,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Ge the last played time
      *
-     * @param uuid UUID for the player
+     * @param uuid
+     *            UUID for the player
      * @return last play time as a long
      */
     public static long getLastPlayed(final UUID uuid) {
@@ -751,7 +819,8 @@ public class PlotMain extends JavaPlugin {
             }
             config = YamlConfiguration.loadConfiguration(configFile);
             setupConfig();
-        } catch (final Exception err_trans) {
+        }
+        catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save settings.yml");
             System.out.println("Failed to save settings.yml");
         }
@@ -764,14 +833,16 @@ public class PlotMain extends JavaPlugin {
             }
             storage = YamlConfiguration.loadConfiguration(storageFile);
             setupStorage();
-        } catch (final Exception err_trans) {
+        }
+        catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save storage.yml");
             System.out.println("Failed to save storage.yml");
         }
         try {
             config.save(configFile);
             storage.save(storageFile);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             Logger.add(LogLevel.DANGER, "Configuration file saving failed");
             e.printStackTrace();
         }
@@ -817,7 +888,7 @@ public class PlotMain extends JavaPlugin {
     public static void killAllEntities() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getMain(), new Runnable() {
             long ticked = 0l;
-            long error = 0l;
+            long error  = 0l;
 
             {
                 sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
@@ -906,9 +977,11 @@ public class PlotMain extends JavaPlugin {
                                 // }
                             }
                         }
-                    } catch (final Throwable e) {
+                    }
+                    catch (final Throwable e) {
                         ++this.error;
-                    } finally {
+                    }
+                    finally {
                         ++this.ticked;
                     }
                 }
@@ -923,7 +996,7 @@ public class PlotMain extends JavaPlugin {
         final int config_ver = 1;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
-        
+
         options.put("auto_update", false);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
@@ -943,7 +1016,7 @@ public class PlotMain extends JavaPlugin {
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
         options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
-        options.put("worldedit.require-selection-in-mask",Settings.REQUIRE_SELECTION);
+        options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
 
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -967,16 +1040,17 @@ public class PlotMain extends JavaPlugin {
         Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
-        
+
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
-        
+
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
 
     /**
      * Create a plotworld config section
      *
-     * @param plotworld World to create the section for
+     * @param plotworld
+     *            World to create the section for
      */
     @SuppressWarnings("unused")
     public static void createConfiguration(final PlotWorld plotworld) {
@@ -994,7 +1068,8 @@ public class PlotMain extends JavaPlugin {
 
         try {
             config.save(PlotMain.configFile);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
     }
@@ -1004,9 +1079,7 @@ public class PlotMain extends JavaPlugin {
             return;
         }
 
-        Set<String> worlds = (config.contains("worlds") ?
-                config.getConfigurationSection("worlds").getKeys(false) :
-                new HashSet<String>());
+        final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
 
         // Let's create these here instead
         final PlotWorld plotWorld;
@@ -1015,12 +1088,9 @@ public class PlotMain extends JavaPlugin {
         final String path = "worlds." + world;
 
         if ((generator != null) && (generator instanceof PlotGenerator)) {
-            plotGenerator =
-                    (PlotGenerator) generator;
-            plotWorld =
-                    plotGenerator.getNewPlotWorld(world);
-            plotManager =
-                    plotGenerator.getPlotManager();
+            plotGenerator = (PlotGenerator) generator;
+            plotWorld = plotGenerator.getNewPlotWorld(world);
+            plotManager = plotGenerator.getPlotManager();
             sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
             sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
             sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
@@ -1035,20 +1105,20 @@ public class PlotMain extends JavaPlugin {
 
             try {
                 config.save(configFile);
-            } catch (final IOException e) {
+            }
+            catch (final IOException e) {
                 e.printStackTrace();
             }
 
-            //Now add it
+            // Now add it
             addPlotWorld(world, plotWorld, plotManager);
-        } else {
+        }
+        else {
             if (worlds.contains(world)) {
                 sendConsoleSenderMessage("&cWorld '" + world + "' in settings.yml is not using PlotSquared generator!");
 
-                plotWorld =
-                        new DefaultPlotWorld(world);
-                plotManager =
-                        new DefaultPlotManager();
+                plotWorld = new DefaultPlotWorld(world);
+                plotManager = new DefaultPlotManager();
 
                 if (!config.contains(path)) {
                     config.createSection(path);
@@ -1059,7 +1129,8 @@ public class PlotMain extends JavaPlugin {
 
                 try {
                     config.save(configFile);
-                } catch (final IOException e) {
+                }
+                catch (final IOException e) {
                     e.printStackTrace();
                 }
 
@@ -1075,7 +1146,8 @@ public class PlotMain extends JavaPlugin {
      * use this method unless the required world is preconfigured in the
      * settings.yml
      *
-     * @param world to load
+     * @param world
+     *            to load
      */
     public static void loadWorld(final World world) {
         if (world == null) {
@@ -1135,14 +1207,17 @@ public class PlotMain extends JavaPlugin {
                         seconds = 1;
                         try {
                             amount = Integer.parseInt(values[0]);
-                        } catch (final Exception e) {
+                        }
+                        catch (final Exception e) {
                             return null;
                         }
-                    } else {
+                    }
+                    else {
                         try {
                             amount = Integer.parseInt(values[0]);
                             seconds = Integer.parseInt(values[1]);
-                        } catch (final Exception e) {
+                        }
+                        catch (final Exception e) {
                             return null;
                         }
                     }
@@ -1269,7 +1344,8 @@ public class PlotMain extends JavaPlugin {
             public String parseValue(final String value) {
                 try {
                     return Long.parseLong(value) + "";
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     return null;
                 }
             }
@@ -1307,9 +1383,12 @@ public class PlotMain extends JavaPlugin {
     /**
      * Add a Plot world
      *
-     * @param world     World to add
-     * @param plotworld PlotWorld Object
-     * @param manager   Plot Manager for the new world
+     * @param world
+     *            World to add
+     * @param plotworld
+     *            PlotWorld Object
+     * @param manager
+     *            Plot Manager for the new world
      */
     public static void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         worlds.put(world, plotworld);
@@ -1322,7 +1401,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Remove a plot world
      *
-     * @param world World to remove
+     * @param world
+     *            World to remove
      */
     public static void removePlotWorld(final String world) {
         plots.remove(world);
@@ -1342,7 +1422,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Set all plots
      *
-     * @param plots New Plot LinkedHashMap
+     * @param plots
+     *            New Plot LinkedHashMap
      */
     public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = plots;
@@ -1351,7 +1432,8 @@ public class PlotMain extends JavaPlugin {
     /**
      * Set all plots
      *
-     * @param plots New Plot HashMap
+     * @param plots
+     *            New Plot HashMap
      */
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
@@ -1383,7 +1465,8 @@ public class PlotMain extends JavaPlugin {
                     writer.write("Created at: " + new Date().toString() + "\n\n\n");
                     writer.close();
                 }
-            } catch (final IOException e) {
+            }
+            catch (final IOException e) {
 
                 e.printStackTrace();
             }
@@ -1410,7 +1493,8 @@ public class PlotMain extends JavaPlugin {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        } else if (getJavaVersion() < 1.8) {
+        }
+        else if (getJavaVersion() < 1.8) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
         // Setup configuration
@@ -1421,10 +1505,12 @@ public class PlotMain extends JavaPlugin {
                 final Metrics metrics = new Metrics(this);
                 metrics.start();
                 sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
             }
-        } else {
+        }
+        else {
             // We should at least make them feel bad.
             sendConsoleSenderMessage("Using metrics will allow us to improve the plugin\nPlease consider it :)");
         }
@@ -1437,9 +1523,7 @@ public class PlotMain extends JavaPlugin {
         }
 
         // Add tables to this one, if we create more :D
-        final String[] tables = new String[]{
-                "plot_trusted", "plot_ratings", "plot_comments"
-        };
+        final String[] tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
 
         // Use mysql?
         if (Settings.DB.USE_MYSQL) {
@@ -1454,8 +1538,9 @@ public class PlotMain extends JavaPlugin {
                     ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
                     if (!res.next()) {
                         DBFunc.createTables("mysql", true);
-                    } else {
-                        for (String table : tables) {
+                    }
+                    else {
+                        for (final String table : tables) {
                             res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
                             if (!res.next()) {
                                 DBFunc.createTables("mysql", false);
@@ -1464,7 +1549,8 @@ public class PlotMain extends JavaPlugin {
                         // We should not repeat our self :P
                     }
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 Logger.add(LogLevel.DANGER, "MySQL connection failed.");
                 sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
                 if ((config == null) || config.getBoolean("debug")) {
@@ -1482,7 +1568,8 @@ public class PlotMain extends JavaPlugin {
         else if (Settings.DB.USE_MONGO) {
             // DBFunc.dbManager = new MongoManager();
             sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
-        } else if (Settings.DB.USE_SQLITE) {
+        }
+        else if (Settings.DB.USE_SQLITE) {
             try {
                 connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
                 {
@@ -1491,8 +1578,9 @@ public class PlotMain extends JavaPlugin {
                     ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
                     if (!res.next()) {
                         DBFunc.createTables("sqlite", true);
-                    } else {
-                        for (String table : tables) {
+                    }
+                    else {
+                        for (final String table : tables) {
                             res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
                             if (!res.next()) {
                                 DBFunc.createTables("sqlite", false);
@@ -1500,7 +1588,8 @@ public class PlotMain extends JavaPlugin {
                         }
                     }
                 }
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 Logger.add(LogLevel.DANGER, "SQLite connection failed");
                 sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
                 sendConsoleSenderMessage("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
@@ -1509,7 +1598,8 @@ public class PlotMain extends JavaPlugin {
                 return;
             }
             plots = DBFunc.getPlots();
-        } else {
+        }
+        else {
             Logger.add(LogLevel.DANGER, "No storage type is set.");
             sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
             getServer().getPluginManager().disablePlugin(this);
@@ -1522,7 +1612,8 @@ public class PlotMain extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
             try {
                 new PlotMeConverter(this).runAsync();
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -1531,9 +1622,7 @@ public class PlotMain extends JavaPlugin {
             final MainCommand command = new MainCommand();
             final PluginCommand plotCommand = getCommand("plots");
             plotCommand.setExecutor(command);
-            plotCommand.setAliases(
-                    Arrays.asList("p", "ps", "plotme", "plot")
-            );
+            plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
             plotCommand.setTabCompleter(command);
         }
         if (Settings.MOB_CAP_ENABLED) {
@@ -1564,7 +1653,8 @@ public class PlotMain extends JavaPlugin {
                 PlotMain.sendConsoleSenderMessage("&cThis version of WorldEdit does not support PlotSquared.");
                 PlotMain.sendConsoleSenderMessage("&cPlease use WorldEdit 6+");
                 PlotMain.sendConsoleSenderMessage("&c - http://builds.enginehub.org/job/worldedit");
-            } else {
+            }
+            else {
                 getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
             }
         }
@@ -1598,14 +1688,16 @@ public class PlotMain extends JavaPlugin {
             try {
                 new SetBlockFast();
                 PlotHelper.canSetFast = true;
-            } catch (final Throwable e) {
+            }
+            catch (final Throwable e) {
                 PlotHelper.canSetFast = false;
             }
 
             try {
                 new SendChunk();
                 PlotHelper.canSendChunk = true;
-            } catch (final Throwable e) {
+            }
+            catch (final Throwable e) {
                 PlotHelper.canSendChunk = false;
             }
         }
@@ -1635,7 +1727,8 @@ public class PlotMain extends JavaPlugin {
     final public void onDisable() {
         try {
             C.saveTranslations();
-        } catch (Exception e) {
+        }
+        catch (final Exception e) {
             sendConsoleSenderMessage("Failed to save translations");
             Logger.add(LogLevel.DANGER, "Failed to save translations");
             e.printStackTrace();
@@ -1643,13 +1736,15 @@ public class PlotMain extends JavaPlugin {
         Logger.add(LogLevel.GENERAL, "Logger disabled");
         try {
             Logger.write();
-        } catch (final IOException e1) {
+        }
+        catch (final IOException e1) {
             e1.printStackTrace();
         }
         try {
             connection.close();
             mySQL.closeConnection();
-        } catch (NullPointerException | SQLException e) {
+        }
+        catch (NullPointerException | SQLException e) {
             if (connection != null) {
                 Logger.add(LogLevel.DANGER, "Could not close mysql connection");
             }

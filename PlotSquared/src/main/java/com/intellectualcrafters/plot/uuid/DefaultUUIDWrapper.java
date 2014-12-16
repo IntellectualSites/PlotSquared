@@ -9,23 +9,23 @@ import org.bukkit.entity.Player;
 public class DefaultUUIDWrapper extends UUIDWrapper {
 
     @Override
-    public UUID getUUID(Player player) {
-        return player.getUniqueId();
-    }
-    
-    @Override
-    public UUID getUUID(OfflinePlayer player) {
+    public UUID getUUID(final Player player) {
         return player.getUniqueId();
     }
 
     @Override
-    public OfflinePlayer getOfflinePlayer(UUID uuid) {
+    public UUID getUUID(final OfflinePlayer player) {
+        return player.getUniqueId();
+    }
+
+    @Override
+    public OfflinePlayer getOfflinePlayer(final UUID uuid) {
         return Bukkit.getOfflinePlayer(uuid);
     }
 
     @Override
-    public Player getPlayer(UUID uuid) {
+    public Player getPlayer(final UUID uuid) {
         return Bukkit.getPlayer(uuid);
     }
-    
+
 }

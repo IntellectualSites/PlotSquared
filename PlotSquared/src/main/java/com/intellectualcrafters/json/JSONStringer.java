@@ -16,12 +16,14 @@ import java.io.StringWriter;
  * these methods return the JSONWriter instance, permitting cascade style. For
  * example,
  * <p/>
+ *
  * <pre>
  * myString = new JSONStringer().object().key(&quot;JSON&quot;).value(&quot;Hello, World!&quot;).endObject().toString();
  * </pre>
  * <p/>
  * which produces the string
  * <p/>
+ *
  * <pre>
  * {"JSON":"Hello, World!"}
  * </pre>

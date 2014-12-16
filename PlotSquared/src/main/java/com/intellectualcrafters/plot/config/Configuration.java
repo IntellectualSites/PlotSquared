@@ -21,11 +21,12 @@
 
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.object.PlotBlock;
-import org.bukkit.block.Biome;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bukkit.block.Biome;
+
+import com.intellectualcrafters.plot.object.PlotBlock;
 
 /**
  * Main Configuration Utility
@@ -35,7 +36,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Configuration {
 
-    public static final SettingValue STRING = new SettingValue("STRING") {
+    public static final SettingValue STRING     = new SettingValue("STRING") {
         @Override
         public boolean validateValue(final String string) {
             return true;
@@ -59,13 +60,14 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue INTEGER = new SettingValue("INTEGER") {
+    public static final SettingValue INTEGER    = new SettingValue("INTEGER") {
         @Override
         public boolean validateValue(final String string) {
             try {
-                int x = Integer.parseInt(string);
+                Integer.parseInt(string);
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -76,13 +78,14 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BOOLEAN = new SettingValue("BOOLEAN") {
+    public static final SettingValue BOOLEAN    = new SettingValue("BOOLEAN") {
         @Override
         public boolean validateValue(final String string) {
             try {
-                boolean b = Boolean.parseBoolean(string);
+                Boolean.parseBoolean(string);
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -93,13 +96,14 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue DOUBLE = new SettingValue("DOUBLE") {
+    public static final SettingValue DOUBLE     = new SettingValue("DOUBLE") {
         @Override
         public boolean validateValue(final String string) {
             try {
-                double d = Double.parseDouble(string);
+                Double.parseDouble(string);
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -110,13 +114,14 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BIOME = new SettingValue("BIOME") {
+    public static final SettingValue BIOME      = new SettingValue("BIOME") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Biome.valueOf(string.toUpperCase());
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -137,21 +142,21 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BLOCK = new SettingValue("BLOCK") {
+    public static final SettingValue BLOCK      = new SettingValue("BLOCK") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 if (string.contains(":")) {
                     final String[] split = string.split(":");
-                    short s =
-                            Short.parseShort(split[0]);
-                    short z =
-                            Short.parseShort(split[1]);
-                } else {
-                    short s = Short.parseShort(string);
+                    Short.parseShort(split[0]);
+                    Short.parseShort(split[1]);
+                }
+                else {
+                    Short.parseShort(string);
                 }
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -161,7 +166,8 @@ public class Configuration {
             if (string.contains(":")) {
                 final String[] split = string.split(":");
                 return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-            } else {
+            }
+            else {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
         }
@@ -171,26 +177,28 @@ public class Configuration {
             return ((PlotBlock) object).id + ":" + ((PlotBlock) object).data;
         }
     };
-    public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
+    public static final SettingValue BLOCKLIST  = new SettingValue("BLOCKLIST") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 for (String block : string.split(",")) {
                     if (block.contains("%")) {
                         final String[] split = block.split("%");
-                        int i = Integer.parseInt(split[0]);
+                        Integer.parseInt(split[0]);
                         block = split[1];
                     }
                     if (block.contains(":")) {
                         final String[] split = block.split(":");
-                        short s = Short.parseShort(split[0]);
-                        short z = Short.parseShort(split[1]);
-                    } else {
-                        short s = Short.parseShort(block);
+                        Short.parseShort(split[0]);
+                        Short.parseShort(split[1]);
+                    }
+                    else {
+                        Short.parseShort(block);
                     }
                 }
                 return true;
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return false;
             }
         }
@@ -212,7 +220,8 @@ public class Configuration {
                     if (value < min) {
                         min = value;
                     }
-                } else {
+                }
+                else {
                     counts[i] = 1;
                     if (1 < min) {
                         min = 1;
@@ -221,7 +230,8 @@ public class Configuration {
                 if (blocks[i].contains(":")) {
                     final String[] split = blocks[i].split(":");
                     values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-                } else {
+                }
+                else {
                     values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
                 }
             }

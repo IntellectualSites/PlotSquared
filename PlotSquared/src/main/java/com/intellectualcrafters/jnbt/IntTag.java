@@ -10,7 +10,8 @@ public final class IntTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value the value of the tag
+     * @param value
+     *            the value of the tag
      */
     public IntTag(final int value) {
         super();
@@ -20,8 +21,10 @@ public final class IntTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name  the name of the tag
-     * @param value the value of the tag
+     * @param name
+     *            the name of the tag
+     * @param value
+     *            the value of the tag
      */
     public IntTag(final String name, final int value) {
         super(name);

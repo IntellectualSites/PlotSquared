@@ -21,10 +21,11 @@
 
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 
 /**
  * Random utilities
@@ -45,6 +46,7 @@ public class RUtils {
 
     /**
      * Get the total free ram
+     *
      * @return free ram
      */
     public static long getFreeRam() {
@@ -53,6 +55,7 @@ public class RUtils {
 
     /**
      * Percentage of used ram
+     *
      * @return percentage
      */
     public static long getRamPercentage() {
@@ -61,7 +64,9 @@ public class RUtils {
 
     /**
      * Get formatted time
-     * @param sec seconds
+     *
+     * @param sec
+     *            seconds
      * @return formatted time
      */
     public static String formatTime(final double sec) {
@@ -79,7 +84,8 @@ public class RUtils {
     /**
      * Force textures on the client
      *
-     * @param p texture to force
+     * @param p
+     *            texture to force
      */
     public void forceTexture(final Player p) {
         p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);

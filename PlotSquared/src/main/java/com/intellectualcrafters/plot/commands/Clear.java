@@ -21,6 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -28,9 +31,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public class Clear extends SubCommand {
 
@@ -44,19 +44,23 @@ public class Clear extends SubCommand {
             // Is console
             if (args.length < 2) {
                 PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
-            } else {
-                PlotId id = PlotId.fromString(args[0]);
-                String world = args[1];
+            }
+            else {
+                final PlotId id = PlotId.fromString(args[0]);
+                final String world = args[1];
                 if (id == null) {
                     PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
-                } else {
+                }
+                else {
                     if (!PlotMain.isPlotWorld(world)) {
                         PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
-                    } else {
-                        Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                    }
+                    else {
+                        final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
                             PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
-                        } else {
+                        }
+                        else {
                             plot.clear(null, false);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
                         }
@@ -78,11 +82,11 @@ public class Clear extends SubCommand {
         }
         assert plot != null;
         plot.clear(plr, false);
-        
+
         // sign
-        
+
         // wall
-        
+
         return true;
     }
 }

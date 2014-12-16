@@ -21,12 +21,13 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.object.Plot;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * @author Citymonstret
@@ -35,18 +36,22 @@ import java.util.UUID;
 public class PlayerPlotTrustedEvent extends Event {
     private static HandlerList handlers = new HandlerList();
 
-    private final Plot plot;
-    private final Player initiator;
-    private final boolean added;
-    private final UUID player;
+    private final Plot         plot;
+    private final Player       initiator;
+    private final boolean      added;
+    private final UUID         player;
 
     /**
      * PlayerPlotTrustedEvent: Called when a plot trusted user is added/removed
      *
-     * @param initiator Player that initiated the event
-     * @param plot Plot in which the event occurred
-     * @param player Player that was added/removed from the trusted list
-     * @param added true of the player was added, false if the player was removed
+     * @param initiator
+     *            Player that initiated the event
+     * @param plot
+     *            Plot in which the event occurred
+     * @param player
+     *            Player that was added/removed from the trusted list
+     * @param added
+     *            true of the player was added, false if the player was removed
      */
     public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
         this.initiator = initiator;

@@ -21,13 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 /**
  * @author Citymonstret
@@ -45,7 +46,8 @@ public class DebugSaveTest extends SubCommand {
             plots.addAll(PlotMain.getPlots());
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
-        } else {
+        }
+        else {
             PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;

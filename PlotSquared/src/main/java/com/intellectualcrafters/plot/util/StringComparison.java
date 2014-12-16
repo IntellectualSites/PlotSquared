@@ -52,8 +52,10 @@ public class StringComparison {
     /**
      * Constructor
      *
-     * @param input   Input Base Value
-     * @param objects Objects to compare
+     * @param input
+     *            Input Base Value
+     * @param objects
+     *            Objects to compare
      */
     public StringComparison(final String input, final Object[] objects) {
         double c;
@@ -71,8 +73,10 @@ public class StringComparison {
     /**
      * Compare two strings
      *
-     * @param s1 String Base
-     * @param s2 Object
+     * @param s1
+     *            String Base
+     * @param s2
+     *            Object
      * @return match
      */
     public static double compare(final String s1, final String s2) {
@@ -94,7 +98,8 @@ public class StringComparison {
     /**
      * Create an ArrayList containing pairs of letters
      *
-     * @param s string to split
+     * @param s
+     *            string to split
      * @return ArrayList
      */
     public static ArrayList wLetterPair(final String s) {
@@ -110,7 +115,8 @@ public class StringComparison {
     /**
      * Get an array containing letter pairs
      *
-     * @param s string to split
+     * @param s
+     *            string to split
      * @return Array
      */
     public static String[] sLetterPair(final String s) {
@@ -146,7 +152,7 @@ public class StringComparison {
      * @return object[] containing: double, String
      */
     public Object[] getBestMatchAdvanced() {
-        return new Object[]{this.match, this.bestMatch};
+        return new Object[] { this.match, this.bestMatch };
     }
 
 }

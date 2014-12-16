@@ -21,15 +21,15 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
 /**
  * SetBlockFast class<br>
@@ -39,15 +39,15 @@ import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
  */
 public class SetBlockFast {
 
-    private static final RefClass classBlock = getRefClass("{nms}.Block");
-    private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static final RefClass classWorld = getRefClass("{nms}.World");
+    private static final RefClass classBlock      = getRefClass("{nms}.Block");
+    private static final RefClass classChunk      = getRefClass("{nms}.Chunk");
+    private static final RefClass classWorld      = getRefClass("{nms}.World");
     private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
 
-    private static RefMethod methodGetHandle;
-    private static RefMethod methodGetChunkAt;
-    private static RefMethod methodA;
-    private static RefMethod methodGetById;
+    private static RefMethod      methodGetHandle;
+    private static RefMethod      methodGetChunkAt;
+    private static RefMethod      methodA;
+    private static RefMethod      methodGetById;
 
     /**
      * Constructor
@@ -63,12 +63,19 @@ public class SetBlockFast {
 
     /**
      * Set the block at the location
-     * @param world World in which the block should be set
-     * @param x X Coordinate
-     * @param y Y Coordinate
-     * @param z Z Coordinate
-     * @param blockId Block ID
-     * @param data Block Data Value
+     *
+     * @param world
+     *            World in which the block should be set
+     * @param x
+     *            X Coordinate
+     * @param y
+     *            Y Coordinate
+     * @param z
+     *            Z Coordinate
+     * @param blockId
+     *            Block ID
+     * @param data
+     *            Block Data Value
      * @return true
      * @throws NoSuchMethodException
      */
@@ -83,34 +90,36 @@ public class SetBlockFast {
 
     /**
      * Update chunks
-     * @param player Player whose chunks we're updating
+     *
+     * @param player
+     *            Player whose chunks we're updating
      */
     public static void update(final org.bukkit.entity.Player player) {
         if (!PlotHelper.canSendChunk) {
-            
+
             final int distance = Bukkit.getViewDistance();
             for (int cx = -distance; cx < distance; cx++) {
                 for (int cz = -distance; cz < distance; cz++) {
                     player.getWorld().refreshChunk(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
                 }
             }
-            
+
             return;
         }
-        ArrayList<Chunk> chunks = new ArrayList<>();
-        
+        final ArrayList<Chunk> chunks = new ArrayList<>();
+
         final int distance = Bukkit.getViewDistance();
         for (int cx = -distance; cx < distance; cx++) {
             for (int cz = -distance; cz < distance; cz++) {
-                Chunk chunk = player.getWorld().getChunkAt(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
+                final Chunk chunk = player.getWorld().getChunkAt(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
                 chunks.add(chunk);
             }
         }
-        
+
         try {
             SendChunk.sendChunk(chunks);
         }
-        catch (Throwable e) {
+        catch (final Throwable e) {
             PlotHelper.canSendChunk = false;
         }
     }
