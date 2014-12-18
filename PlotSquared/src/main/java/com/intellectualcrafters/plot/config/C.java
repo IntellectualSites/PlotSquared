@@ -38,6 +38,10 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  */
 public enum C {
     /*
+     * Unclaim
+     */
+    UNCLAIM_SUCCESS("&cYou successfully unclaimed the plot."),
+    /*
      * WorldEdit masks
      */
     REQUIRE_SELECTION_IN_MASK("&c%s of your selection is not within your plot mask. You can only make edits within your plot."),

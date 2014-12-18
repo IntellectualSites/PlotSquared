@@ -70,7 +70,7 @@ public class Unclaim extends SubCommand {
         else {
             PlayerFunctions.sendMessage(plr, "Plot unclaim has been denied.");
         }
-        PlayerFunctions.sendMessage(plr, C.);
+        PlayerFunctions.sendMessage(plr, C.UNCLAIM_SUCCESS);
         return true;
     }
 }
