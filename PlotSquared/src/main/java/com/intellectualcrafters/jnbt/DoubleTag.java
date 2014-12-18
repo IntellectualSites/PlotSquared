@@ -10,8 +10,7 @@ public final class DoubleTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value
-     *            the value of the tag
+     * @param value the value of the tag
      */
     public DoubleTag(final double value) {
         super();
@@ -21,10 +20,8 @@ public final class DoubleTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name
-     *            the name of the tag
-     * @param value
-     *            the value of the tag
+     * @param name  the name of the tag
+     * @param value the value of the tag
      */
     public DoubleTag(final String name, final double value) {
         super(name);

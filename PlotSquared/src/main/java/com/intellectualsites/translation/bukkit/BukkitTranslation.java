@@ -1,14 +1,13 @@
 package com.intellectualsites.translation.bukkit;
 
-import java.io.File;
-
-import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
 import com.intellectualsites.translation.TranslationObject;
+import org.bukkit.Material;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 /**
  * @author Citymonstret
@@ -18,8 +17,8 @@ public class BukkitTranslation {
     /**
      * Get the converted string
      *
-     * @param asset
-     *            asset
+     * @param asset asset
+     *
      * @return converted asset
      */
     public static String convert(final TranslationAsset asset) {
@@ -32,8 +31,8 @@ public class BukkitTranslation {
     /**
      * Get the universal parent based on the plugin data folder
      *
-     * @param plugin
-     *            to check
+     * @param plugin to check
+     *
      * @return parent folder
      */
     public static File getParent(final JavaPlugin plugin) {
@@ -50,8 +49,7 @@ public class BukkitTranslation {
     }
 
     /**
-     * Add material names to the translation list
-     * Will default to a somewhat friendly name
+     * Add material names to the translation list Will default to a somewhat friendly name
      */
     public static void addMaterials(final TranslationManager manager) {
         for (final Material material : Material.values()) {

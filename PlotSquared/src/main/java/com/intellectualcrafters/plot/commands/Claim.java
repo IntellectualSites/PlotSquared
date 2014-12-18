@@ -21,11 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -39,6 +34,9 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  * @author Citymonstret
@@ -71,8 +69,7 @@ public class Claim extends SubCommand {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
                     sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
-                }
-                else {
+                } else {
                     sch = SchematicHandler.getSchematic(schematic);
                     if (sch == null) {
                         sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);

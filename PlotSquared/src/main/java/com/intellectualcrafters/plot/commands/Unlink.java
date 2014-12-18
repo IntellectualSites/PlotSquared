@@ -21,12 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -39,6 +33,11 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -97,7 +96,7 @@ public class Unlink extends SubCommand {
                 myplot.denied = plot.denied;
             }
             myplot.deny_entry = plot.deny_entry;
-            myplot.settings.setMerged(new boolean[] { false, false, false, false });
+            myplot.settings.setMerged(new boolean[]{false, false, false, false});
             DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
         }
 
@@ -126,13 +125,11 @@ public class Unlink extends SubCommand {
             if (PlotHelper.canSetFast) {
                 SetBlockFast.update(plr);
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             // execute(final Player plr, final String... args) {
             try {
                 PlotMain.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
-            }
-            catch (final Exception ex) {
+            } catch (final Exception ex) {
                 ex.printStackTrace();
             }
         }

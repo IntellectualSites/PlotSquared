@@ -21,11 +21,10 @@
 
 package com.intellectualcrafters.plot.config;
 
-import java.util.Arrays;
-
+import com.intellectualcrafters.plot.config.Configuration.SettingValue;
 import org.apache.commons.lang.StringUtils;
 
-import com.intellectualcrafters.plot.config.Configuration.SettingValue;
+import java.util.Arrays;
 
 /**
  * Configuration Node
@@ -33,11 +32,11 @@ import com.intellectualcrafters.plot.config.Configuration.SettingValue;
  * @author Empire92
  */
 public class ConfigurationNode {
-    private final String       constant;
-    private final Object       default_value;
-    private final String       description;
+    private final String constant;
+    private final Object default_value;
+    private final String description;
     private final SettingValue type;
-    private Object             value;
+    private Object value;
 
     public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
         this.constant = constant;
@@ -55,8 +54,7 @@ public class ConfigurationNode {
         try {
             final Object result = this.type.parseString(string);
             return result != null;
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }

@@ -21,11 +21,10 @@
 
 package com.intellectualcrafters.plot.events;
 
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot is deleted
@@ -35,17 +34,15 @@ import com.intellectualcrafters.plot.object.PlotId;
  */
 public class PlotDeleteEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
-    private final PlotId       id;
-    private final String       world;
-    private boolean            cancelled;
+    private final PlotId id;
+    private final String world;
+    private boolean cancelled;
 
     /**
      * PlotDeleteEvent: Called when a plot is deleted
      *
-     * @param world
-     *            The world in which the plot was deleted
-     * @param id
-     *            The ID of the plot that was deleted
+     * @param world The world in which the plot was deleted
+     * @param id    The ID of the plot that was deleted
      */
     public PlotDeleteEvent(final String world, final PlotId id) {
         this.id = id;

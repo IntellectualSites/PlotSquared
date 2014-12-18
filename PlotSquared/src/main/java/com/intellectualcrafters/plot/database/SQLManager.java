@@ -21,24 +21,6 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -49,6 +31,13 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Biome;
+
+import java.sql.*;
+import java.util.*;
 
 /**
  * @author Citymonstret
@@ -56,23 +45,21 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class SQLManager implements AbstractDB {
 
     // Public final
-    public final String  SET_OWNER;
-    public final String  GET_ALL_PLOTS;
-    public final String  CREATE_PLOTS;
-    public final String  CREATE_SETTINGS;
-    public final String  CREATE_HELPERS;
-    public final String  CREATE_PLOT;
+    public final String SET_OWNER;
+    public final String GET_ALL_PLOTS;
+    public final String CREATE_PLOTS;
+    public final String CREATE_SETTINGS;
+    public final String CREATE_HELPERS;
+    public final String CREATE_PLOT;
     // Private Final
-    private Connection   connection;
+    private Connection connection;
     private final String prefix;
 
     /**
      * Constructor
      *
-     * @param c
-     *            connection
-     * @param p
-     *            prefix
+     * @param c connection
+     * @param p prefix
      */
     public SQLManager(final Connection c, final String p) {
         // Private final
@@ -96,8 +83,7 @@ public class SQLManager implements AbstractDB {
                 public void run() {
                     try {
                         SQLManager.this.connection = PlotMain.getMySQL().forceConnection();
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -127,10 +113,8 @@ public class SQLManager implements AbstractDB {
     /**
      * Set Plot owner
      *
-     * @param plot
-     *            Plot Object
-     * @param uuid
-     *            Owner UUID
+     * @param plot Plot Object
+     * @param uuid Owner UUID
      */
     @Override
     public void setOwner(final Plot plot, final UUID uuid) {
@@ -144,8 +128,7 @@ public class SQLManager implements AbstractDB {
                     statement.setInt(3, plot.id.y);
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.DANGER, "Could not set owner for plot " + plot.id);
                 }
@@ -175,8 +158,7 @@ public class SQLManager implements AbstractDB {
                 }
                 stored.get(world).put(new PlotId(idx, idz), id);
             }
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
 
@@ -209,8 +191,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.executeUpdate();
             stmt.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
 
@@ -239,8 +220,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.executeUpdate();
             stmt.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to set helper for plots");
             e.printStackTrace();
         }
@@ -279,8 +259,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.executeUpdate();
             stmt.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
             Logger.add(LogLevel.DANGER, "Failed to save plots!");
         }
@@ -302,8 +281,7 @@ public class SQLManager implements AbstractDB {
             stmt.setString(4, plot.world);
             stmt.executeUpdate();
             stmt.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
             Logger.add(LogLevel.DANGER, "Failed to save plot " + plot.id);
         }
@@ -331,8 +309,7 @@ public class SQLManager implements AbstractDB {
                 stmt.addBatch("ALTER TABLE `" + this.prefix + "plot_settings` ADD CONSTRAINT `" + this.prefix + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `" + this.prefix + "plot` (`id`) ON DELETE CASCADE");
             }
 
-        }
-        else {
+        } else {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
@@ -379,8 +356,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
                 }
@@ -405,8 +381,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                 }
 
@@ -429,8 +404,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.close();
             return id;
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
         return Integer.MAX_VALUE;
@@ -463,8 +437,7 @@ public class SQLManager implements AbstractDB {
                 statement.executeBatch();
                 statement.close();
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         final HashMap<Integer, Plot> plots = new HashMap<>();
@@ -497,8 +470,7 @@ public class SQLManager implements AbstractDB {
                 if (!worlds.contains(worldname)) {
                     if (noExist.containsKey(worldname)) {
                         noExist.put(worldname, noExist.get(worldname) + 1);
-                    }
-                    else {
+                    } else {
                         noExist.put(worldname, 1);
                     }
                 }
@@ -508,7 +480,7 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(o);
                     uuids.put(o, user);
                 }
-                p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[] { false, false, false, false });
+                p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
             // stmt.close();
@@ -528,8 +500,7 @@ public class SQLManager implements AbstractDB {
                 final Plot plot = plots.get(id);
                 if (plot != null) {
                     plot.addHelper(user);
-                }
-                else {
+                } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
             }
@@ -551,8 +522,7 @@ public class SQLManager implements AbstractDB {
                 final Plot plot = plots.get(id);
                 if (plot != null) {
                     plot.addTrusted(user);
-                }
-                else {
+                } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
             }
@@ -574,8 +544,7 @@ public class SQLManager implements AbstractDB {
                 final Plot plot = plots.get(id);
                 if (plot != null) {
                     plot.addDenied(user);
-                }
-                else {
+                } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
                 }
             }
@@ -620,17 +589,15 @@ public class SQLManager implements AbstractDB {
                             merged[3 - i] = ((m) & (1 << i)) != 0;
                         }
                         plot.settings.setMerged(merged);
-                    }
-                    else {
-                        plot.settings.setMerged(new boolean[] { false, false, false, false });
+                    } else {
+                        plot.settings.setMerged(new boolean[]{false, false, false, false});
                     }
 
                     String[] flags_string;
                     final String myflags = r.getString("flags");
                     if (myflags == null) {
-                        flags_string = new String[] {};
-                    }
-                    else {
+                        flags_string = new String[]{};
+                    } else {
                         flags_string = myflags.split(",");
                     }
                     final ArrayList<Flag> flags = new ArrayList<Flag>();
@@ -640,12 +607,10 @@ public class SQLManager implements AbstractDB {
                             final String[] split = element.split(":");
                             try {
                                 flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("�", ",")));
-                            }
-                            catch (final Exception e) {
+                            } catch (final Exception e) {
                                 exception = true;
                             }
-                        }
-                        else {
+                        } else {
                             flags.add(new Flag(FlagManager.getFlag(element, true), ""));
                         }
                     }
@@ -654,8 +619,7 @@ public class SQLManager implements AbstractDB {
                         setFlags(id, flags.toArray(new Flag[0]));
                     }
                     plot.settings.setFlags(flags.toArray(new Flag[0]));
-                }
-                else {
+                } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
             }
@@ -675,8 +639,7 @@ public class SQLManager implements AbstractDB {
             if (invalidPlot) {
                 PlotMain.sendConsoleSenderMessage("&c[WARNING] - Please create the world/s or remove the plots using the purge command");
             }
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to load plots.");
             e.printStackTrace();
         }
@@ -699,8 +662,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Could not set merged for plot " + plot.id);
                 }
@@ -729,8 +691,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.execute();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Could not set flag for plot " + plot.id);
                 }
@@ -755,8 +716,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, id);
                     stmt.execute();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Could not set flag for plot " + id);
                 }
@@ -781,8 +741,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set alias for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -816,8 +775,7 @@ public class SQLManager implements AbstractDB {
                         final int id = result.getInt("id");
                         ids.add(id);
                     }
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '" + world + "'!");
                     return;
@@ -853,8 +811,7 @@ public class SQLManager implements AbstractDB {
                         stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();
-                    }
-                    catch (final SQLException e) {
+                    } catch (final SQLException e) {
                         e.printStackTrace();
                         Logger.add(LogLevel.DANGER, "FAILED TO PURGE PLOT FROM DB '" + world + "' , '" + id + "' !");
                         return;
@@ -881,8 +838,7 @@ public class SQLManager implements AbstractDB {
                         final int id = result.getInt("id");
                         ids.add(id);
                     }
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '" + world + "'!");
                     return;
@@ -918,8 +874,7 @@ public class SQLManager implements AbstractDB {
                         stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();
-                    }
-                    catch (final SQLException e) {
+                    } catch (final SQLException e) {
                         e.printStackTrace();
                         Logger.add(LogLevel.DANGER, "FAILED TO PURGE WORLD '" + world + "'!");
                         return;
@@ -947,8 +902,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, getId(world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set position for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -958,6 +912,7 @@ public class SQLManager implements AbstractDB {
 
     /**
      * @param id
+     *
      * @return
      */
     @Override
@@ -1000,8 +955,7 @@ public class SQLManager implements AbstractDB {
                 h.put(var, val);
             }
             stmt.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to load settings for plot: " + id);
             e.printStackTrace();
         }
@@ -1021,8 +975,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(4, comment.senderName);
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
                 }
@@ -1046,8 +999,7 @@ public class SQLManager implements AbstractDB {
                 comments.add(comment);
             }
             statement.close();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
@@ -1067,8 +1019,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(4, comment.senderName);
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
                 }
@@ -1092,8 +1043,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
                 }
@@ -1116,8 +1066,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove trusted user for plot " + plot.id);
                 }
@@ -1140,8 +1089,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set helper for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -1164,8 +1112,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set plot trusted for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -1188,8 +1135,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     e.printStackTrace();
                     Logger.add(LogLevel.WARNING, "Failed to remove denied for plot " + plot.id);
                 }
@@ -1212,8 +1158,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(2, UUIDHandler.getUUID(player).toString());
                     statement.executeUpdate();
                     statement.close();
-                }
-                catch (final SQLException e) {
+                } catch (final SQLException e) {
                     Logger.add(LogLevel.WARNING, "Failed to set denied for plot " + plot.id);
                     e.printStackTrace();
                 }
@@ -1233,8 +1178,7 @@ public class SQLManager implements AbstractDB {
             }
             statement.close();
             return rating;
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }

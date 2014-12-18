@@ -21,27 +21,6 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -57,17 +36,29 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.function.mask.Mask;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused")
-public class WorldEditListener implements Listener {
+@SuppressWarnings("unused") public class WorldEditListener implements Listener {
 
-    final List<String>       monitored      = Arrays.asList(new String[] { "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", "" });
+    final List<String> monitored = Arrays.asList(new String[]{"set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", ""});
 
-    public final Set<String> blockedcmds    = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
+    public final Set<String> blockedcmds = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
     public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
     private boolean isPlotWorld(final Location l) {
@@ -135,8 +126,7 @@ public class WorldEditListener implements Listener {
                 e.setCancelled(true);
             }
             return;
-        }
-        else if (this.blockedcmds.contains(cmd)) {
+        } else if (this.blockedcmds.contains(cmd)) {
             e.setCancelled(true);
             return;
         }
@@ -180,8 +170,7 @@ public class WorldEditListener implements Listener {
         final Location l = p.getLocation();
         if (isPlotWorld(l)) {
             PWE.setMask(p, l);
-        }
-        else {
+        } else {
             PWE.removeMask(p);
         }
     }
@@ -240,30 +229,10 @@ public class WorldEditListener implements Listener {
         if (!isPlotWorld(q)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
-            }
-            else {
+            } else {
                 return;
             }
         }
         PWE.setMask(p, q);
-    }
-    
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onWorldChange(final PlayerChangedWorldEvent e) {
-        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
-            return;
-        }
-        
-        final Player p = e.getPlayer();
-        final Location t = p.getLocation();
-        final World f = e.getFrom();
-        if (!isPlotWorld(t)) {
-            if (PlotMain.isPlotWorld(f)) {
-                PWE.removeMask(p);
-            }
-            else {
-                return;
-            }
-        }
     }
 }

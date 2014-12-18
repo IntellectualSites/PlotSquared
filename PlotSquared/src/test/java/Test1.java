@@ -1,13 +1,3 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
-
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
@@ -15,14 +5,18 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.DefaultPlotManager;
 import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotHomePosition;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Biome;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public class Test1 {
 
@@ -109,8 +103,7 @@ public class Test1 {
         try {
             final PlotMain plugin = PlotMain.getMain();
             passed = plugin != null;
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;
@@ -121,8 +114,7 @@ public class Test1 {
         try {
             final Object id = new PlotId(0, 0);
             passed = id != null;
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;
@@ -131,10 +123,9 @@ public class Test1 {
     public boolean test4_InitPlot() {
         boolean passed = false;
         try {
-            new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[] { false, false, false, false });
+            new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false});
             passed = true;
-        }
-        catch (final Throwable ignored) {
+        } catch (final Throwable ignored) {
 
         }
         return passed;
@@ -228,7 +219,7 @@ public class Test1 {
 
                     final PlotId id = new PlotId(0, 0);
 
-                    plots.get("testworld").put(id, new Plot(id, DBFunc.everyone, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[] { false, false, false, false }));
+                    plots.get("testworld").put(id, new Plot(id, DBFunc.everyone, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false}));
 
                     return plots;
                 }
@@ -268,8 +259,7 @@ public class Test1 {
                 }
             };
             passed = true;
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;
@@ -284,8 +274,7 @@ public class Test1 {
         try {
             PlotMain.getMain().onEnable();
             passed = true;
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;
@@ -298,8 +287,7 @@ public class Test1 {
             final PlotManager manager = new DefaultPlotManager();
             PlotMain.addPlotWorld("poop", plotworld, manager);
             passed = (PlotMain.getPlotManager("poop") != null) && (PlotMain.getWorldSettings("poop") != null);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;
@@ -310,8 +298,7 @@ public class Test1 {
         try {
             new SetBlockFast();
             passed = true;
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
 
         }
         return passed;

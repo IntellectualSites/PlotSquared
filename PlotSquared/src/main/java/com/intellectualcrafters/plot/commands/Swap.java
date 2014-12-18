@@ -21,9 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -32,6 +29,8 @@ import com.intellectualcrafters.plot.object.PlotSelection;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -74,8 +73,7 @@ public class Swap extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
                 return false;
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
             return false;

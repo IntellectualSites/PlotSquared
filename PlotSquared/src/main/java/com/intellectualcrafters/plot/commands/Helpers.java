@@ -21,12 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -34,9 +28,13 @@ import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
-public class Helpers extends SubCommand {
+import java.util.UUID;
+
+@SuppressWarnings("deprecation") public class Helpers extends SubCommand {
 
     public Helpers() {
         super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);
@@ -61,8 +59,7 @@ public class Helpers extends SubCommand {
             UUID uuid;
             if (args[1].equalsIgnoreCase("*")) {
                 uuid = DBFunc.everyone;
-            }
-            else {
+            } else {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (!plot.helpers.contains(uuid)) {
@@ -87,15 +84,13 @@ public class Helpers extends SubCommand {
                 DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
                 final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
-            }
-            else {
+            } else {
                 PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
             PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
             return true;
-        }
-        else if (args[0].equalsIgnoreCase("remove")) {
+        } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.helpers.contains(uuid)) {
@@ -126,8 +121,7 @@ public class Helpers extends SubCommand {
             final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }

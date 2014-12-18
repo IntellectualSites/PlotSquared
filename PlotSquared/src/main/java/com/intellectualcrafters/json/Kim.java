@@ -1,67 +1,56 @@
 package com.intellectualcrafters.json;
 
 /**
- * Kim makes immutable eight bit Unicode strings. If the MSB of a byte is set,
- * then the next byte is a continuation byte. The last byte of a character
- * never has the MSB reset. Every byte that is not the last byte has the MSB
- * set. Kim stands for "Keep it minimal". A Unicode character is never longer
- * than 3 bytes. Every byte contributes 7 bits to the character. ASCII is
- * unmodified.
+ * Kim makes immutable eight bit Unicode strings. If the MSB of a byte is set, then the next byte is a continuation
+ * byte. The last byte of a character never has the MSB reset. Every byte that is not the last byte has the MSB set. Kim
+ * stands for "Keep it minimal". A Unicode character is never longer than 3 bytes. Every byte contributes 7 bits to the
+ * character. ASCII is unmodified.
  * <p/>
- * Kim UTF-8 one byte U+007F U+007F two bytes U+3FFF U+07FF three bytes U+10FFF
- * U+FFFF four bytes U+10FFFF
+ * Kim UTF-8 one byte U+007F U+007F two bytes U+3FFF U+07FF three bytes U+10FFF U+FFFF four bytes U+10FFFF
  * <p/>
- * Characters in the ranges U+0800..U+3FFF and U+10000..U+10FFFF will be one
- * byte smaller when encoded in Kim compared to UTF-8.
+ * Characters in the ranges U+0800..U+3FFF and U+10000..U+10FFFF will be one byte smaller when encoded in Kim compared
+ * to UTF-8.
  * <p/>
- * Kim is beneficial when using scripts such as Old South Arabian, Aramaic,
- * Avestan, Balinese, Batak, Bopomofo, Buginese, Buhid, Carian, Cherokee,
- * Coptic, Cyrillic, Deseret, Egyptian Hieroglyphs, Ethiopic, Georgian,
- * Glagolitic, Gothic, Hangul Jamo, Hanunoo, Hiragana, Kanbun, Kaithi, Kannada,
- * Katakana, Kharoshthi, Khmer, Lao, Lepcha, Limbu, Lycian, Lydian, Malayalam,
- * Mandaic, Meroitic, Miao, Mongolian, Myanmar, New Tai Lue, Ol Chiki, Old
- * Turkic, Oriya, Osmanya, Pahlavi, Parthian, Phags-Pa, Phoenician, Samaritan,
- * Sharada, Sinhala, Sora Sompeng, Tagalog, Tagbanwa, Takri, Tai Le, Tai Tham,
- * Tamil, Telugu, Thai, Tibetan, Tifinagh, UCAS.
+ * Kim is beneficial when using scripts such as Old South Arabian, Aramaic, Avestan, Balinese, Batak, Bopomofo,
+ * Buginese, Buhid, Carian, Cherokee, Coptic, Cyrillic, Deseret, Egyptian Hieroglyphs, Ethiopic, Georgian, Glagolitic,
+ * Gothic, Hangul Jamo, Hanunoo, Hiragana, Kanbun, Kaithi, Kannada, Katakana, Kharoshthi, Khmer, Lao, Lepcha, Limbu,
+ * Lycian, Lydian, Malayalam, Mandaic, Meroitic, Miao, Mongolian, Myanmar, New Tai Lue, Ol Chiki, Old Turkic, Oriya,
+ * Osmanya, Pahlavi, Parthian, Phags-Pa, Phoenician, Samaritan, Sharada, Sinhala, Sora Sompeng, Tagalog, Tagbanwa,
+ * Takri, Tai Le, Tai Tham, Tamil, Telugu, Thai, Tibetan, Tifinagh, UCAS.
  * <p/>
- * A kim object can be constructed from an ordinary UTF-16 string, or from a
- * byte array. A kim object can produce a UTF-16 string.
+ * A kim object can be constructed from an ordinary UTF-16 string, or from a byte array. A kim object can produce a
+ * UTF-16 string.
  * <p/>
- * As with UTF-8, it is possible to detect character boundaries within a byte
- * sequence. UTF-8 is one of the world's great inventions. While Kim is more
- * efficient, it is not clear that it is worth the expense of transition.
+ * As with UTF-8, it is possible to detect character boundaries within a byte sequence. UTF-8 is one of the world's
+ * great inventions. While Kim is more efficient, it is not clear that it is worth the expense of transition.
  *
  * @version 2013-04-18
  */
 public class Kim {
 
     /**
-     * The number of bytes in the kim. The number of bytes can be as much as
-     * three times the number of characters.
+     * The number of bytes in the kim. The number of bytes can be as much as three times the number of characters.
      */
-    public int     length   = 0;
+    public int length = 0;
     /**
      * The byte array containing the kim's content.
      */
-    private byte[] bytes    = null;
+    private byte[] bytes = null;
     /**
      * The kim's hashcode, conforming to Java's hashcode conventions.
      */
-    private int    hashcode = 0;
+    private int hashcode = 0;
     /**
      * The memoization of toString().
      */
-    private String string   = null;
+    private String string = null;
 
     /**
      * Make a kim from a portion of a byte array.
      *
-     * @param bytes
-     *            A byte array.
-     * @param from
-     *            The index of the first byte.
-     * @param thru
-     *            The index of the last byte plus one.
+     * @param bytes A byte array.
+     * @param from  The index of the first byte.
+     * @param thru  The index of the last byte plus one.
      */
     public Kim(final byte[] bytes, final int from, final int thru) {
 
@@ -88,25 +77,19 @@ public class Kim {
     /**
      * Make a kim from a byte array.
      *
-     * @param bytes
-     *            The byte array.
-     * @param length
-     *            The number of bytes.
+     * @param bytes  The byte array.
+     * @param length The number of bytes.
      */
     public Kim(final byte[] bytes, final int length) {
         this(bytes, 0, length);
     }
 
     /**
-     * Make a new kim from a substring of an existing kim. The coordinates are
-     * in byte units, not character units.
+     * Make a new kim from a substring of an existing kim. The coordinates are in byte units, not character units.
      *
-     * @param kim
-     *            The source of bytes.
-     * @param from
-     *            The point at which to take bytes.
-     * @param thru
-     *            The point at which to stop taking bytes.
+     * @param kim  The source of bytes.
+     * @param from The point at which to take bytes.
+     * @param thru The point at which to stop taking bytes.
      */
     public Kim(final Kim kim, final int from, final int thru) {
         this(kim.bytes, from, thru);
@@ -115,10 +98,9 @@ public class Kim {
     /**
      * Make a kim from a string.
      *
-     * @param string
-     *            The string.
-     * @throws JSONException
-     *             if surrogate pair mismatch.
+     * @param string The string.
+     *
+     * @throws JSONException if surrogate pair mismatch.
      */
     public Kim(final String string) throws JSONException {
         final int stringLength = string.length();
@@ -133,11 +115,9 @@ public class Kim {
                 final int c = string.charAt(i);
                 if (c <= 0x7F) {
                     this.length += 1;
-                }
-                else if (c <= 0x3FFF) {
+                } else if (c <= 0x3FFF) {
                     this.length += 2;
-                }
-                else {
+                } else {
                     if ((c >= 0xD800) && (c <= 0xDFFF)) {
                         i += 1;
                         final int d = string.charAt(i);
@@ -164,8 +144,7 @@ public class Kim {
                     sum += character;
                     this.hashcode += sum;
                     at += 1;
-                }
-                else if (character <= 0x3FFF) {
+                } else if (character <= 0x3FFF) {
                     b = 0x80 | (character >>> 7);
                     this.bytes[at] = (byte) b;
                     sum += b;
@@ -176,8 +155,7 @@ public class Kim {
                     sum += b;
                     this.hashcode += sum;
                     at += 1;
-                }
-                else {
+                } else {
                     if ((character >= 0xD800) && (character <= 0xDBFF)) {
                         i += 1;
                         character = (((character & 0x3FF) << 10) | (string.charAt(i) & 0x3FF)) + 65536;
@@ -204,14 +182,13 @@ public class Kim {
     }
 
     /**
-     * Returns the number of bytes needed to contain the character in Kim
-     * format.
+     * Returns the number of bytes needed to contain the character in Kim format.
      *
-     * @param character
-     *            a Unicode character between 0 and 0x10FFFF.
+     * @param character a Unicode character between 0 and 0x10FFFF.
+     *
      * @return 1, 2, or 3
-     * @throws JSONException
-     *             if the character is not representable in a kim.
+     *
+     * @throws JSONException if the character is not representable in a kim.
      */
     public static int characterSize(final int character) throws JSONException {
         if ((character < 0) || (character > 0x10FFFF)) {
@@ -221,14 +198,12 @@ public class Kim {
     }
 
     /**
-     * Returns the character at the specified index. The index refers to byte
-     * values and ranges from 0 to length - 1. The index of the next character
-     * is at index + Kim.characterSize(kim.characterAt(index)).
+     * Returns the character at the specified index. The index refers to byte values and ranges from 0 to length - 1.
+     * The index of the next character is at index + Kim.characterSize(kim.characterAt(index)).
      *
-     * @param at
-     *            the index of the char value. The first character is at 0.
-     * @throws JSONException
-     *             if at does not point to a valid character.
+     * @param at the index of the char value. The first character is at 0.
+     *
+     * @throws JSONException if at does not point to a valid character.
      * @returns a Unicode character between 0 and 0x10FFFF.
      */
     public int characterAt(final int at) throws JSONException {
@@ -243,8 +218,7 @@ public class Kim {
             if (character > 0x7F) {
                 return character;
             }
-        }
-        else {
+        } else {
             final int c2 = get(at + 2);
             character = ((c & 0x7F) << 14) | ((c1 & 0x7F) << 7) | c2;
             if (((c2 & 0x80) == 0) && (character > 0x3FFF) && (character <= 0x10FFFF) && ((character < 0xD800) || (character > 0xDFFF))) {
@@ -257,10 +231,9 @@ public class Kim {
     /**
      * Copy the contents of this kim to a byte array.
      *
-     * @param bytes
-     *            A byte array of sufficient size.
-     * @param at
-     *            The position within the byte array to take the byes.
+     * @param bytes A byte array of sufficient size.
+     * @param at    The position within the byte array to take the byes.
+     *
      * @return The position immediately after the copy.
      */
     public int copy(final byte[] bytes, final int at) {
@@ -269,13 +242,11 @@ public class Kim {
     }
 
     /**
-     * Two kim objects containing exactly the same bytes in the same order are
-     * equal to each other.
+     * Two kim objects containing exactly the same bytes in the same order are equal to each other.
      *
-     * @param obj
-     *            the other kim with which to compare.
-     * @returns true if this and obj are both kim objects containing identical
-     *          byte sequences.
+     * @param obj the other kim with which to compare.
+     *
+     * @returns true if this and obj are both kim objects containing identical byte sequences.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -295,11 +266,11 @@ public class Kim {
     /**
      * Get a byte from a kim.
      *
-     * @param at
-     *            The position of the byte. The first byte is at 0.
+     * @param at The position of the byte. The first byte is at 0.
+     *
      * @return The byte.
-     * @throws JSONException
-     *             if there is no byte at that position.
+     *
+     * @throws JSONException if there is no byte at that position.
      */
     public int get(final int at) throws JSONException {
         if ((at < 0) || (at > this.length)) {
@@ -317,13 +288,12 @@ public class Kim {
     }
 
     /**
-     * Produce a UTF-16 String from this kim. The number of codepoints in the
-     * string will not be greater than the number of bytes in the kim, although
-     * it could be less.
+     * Produce a UTF-16 String from this kim. The number of codepoints in the string will not be greater than the number
+     * of bytes in the kim, although it could be less.
      *
      * @return The string. A kim memoizes its string representation.
-     * @throws JSONException
-     *             if the kim is not valid.
+     *
+     * @throws JSONException if the kim is not valid.
      */
     @Override
     public String toString() throws JSONException {
@@ -336,8 +306,7 @@ public class Kim {
                 if (c < 0x10000) {
                     chars[length] = (char) c;
                     length += 1;
-                }
-                else {
+                } else {
                     chars[length] = (char) (0xD800 | ((c - 0x10000) >>> 10));
                     length += 1;
                     chars[length] = (char) (0xDC00 | (c & 0x03FF));

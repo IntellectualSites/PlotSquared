@@ -29,10 +29,8 @@ public abstract class TranslationFile {
     /**
      * Add a value
      *
-     * @param key
-     *            name
-     * @param value
-     *            value
+     * @param key   name
+     * @param value value
      */
     public abstract void add(String key, String value);
 

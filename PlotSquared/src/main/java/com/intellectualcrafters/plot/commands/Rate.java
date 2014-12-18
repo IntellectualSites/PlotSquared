@@ -21,15 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.entity.Player;
 
-@SuppressWarnings({ "unused", "deprecated", "javadoc" })
-public class Rate extends SubCommand {
+@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Rate extends SubCommand {
 
     /*
      * String cmd, String permission, String description, String usage, String
@@ -79,8 +77,7 @@ public class Rate extends SubCommand {
         boolean rated = true;
         try {
             DBFunc.getRatings(plot);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             rated = false;
         }
 
@@ -90,8 +87,7 @@ public class Rate extends SubCommand {
         final boolean success = true;
         if (success) {
             sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
-        }
-        else {
+        } else {
             sendMessage(plr, C.COMMAND_WENT_WRONG);
         }
         return true;

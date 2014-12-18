@@ -21,19 +21,6 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.permissions.PermissionAttachment;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
@@ -50,6 +37,18 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.permissions.PermissionAttachment;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created 2014-09-24 for PlotSquared
@@ -58,7 +57,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
  * @author Empire92
  */
 public class WorldGuardListener implements Listener {
-    public final ArrayList<String>  str_flags;
+    public final ArrayList<String> str_flags;
     public final ArrayList<Flag<?>> flags;
 
     public WorldGuardListener(final PlotMain plugin) {
@@ -87,12 +86,10 @@ public class WorldGuardListener implements Listener {
             manager.getRegion(plot.id.x + "-" + plot.id.y);
             requester.performCommand("region setowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(owner));
             requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             // requester.setOp(op);
 
-        }
-        finally {
+        } finally {
             add.remove();
             remove.remove();
         }
@@ -109,11 +106,9 @@ public class WorldGuardListener implements Listener {
                     requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key);
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             requester.setOp(op);
-        }
-        finally {
+        } finally {
             requester.setOp(op);
         }
     }
@@ -129,11 +124,9 @@ public class WorldGuardListener implements Listener {
                     requester.performCommand("region flag " + (plot.id.x + "-" + plot.id.y) + " " + key + " " + value);
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             requester.setOp(op);
-        }
-        finally {
+        } finally {
             requester.setOp(op);
         }
     }
@@ -205,8 +198,7 @@ public class WorldGuardListener implements Listener {
 
                 manager.addRegion(rg);
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             //
         }
     }
@@ -233,8 +225,7 @@ public class WorldGuardListener implements Listener {
             region.setOwners(owner);
 
             manager.addRegion(region);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             //
         }
     }
@@ -248,8 +239,7 @@ public class WorldGuardListener implements Listener {
 
             final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.removeRegion(plot.x + "-" + plot.y);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             //
         }
     }

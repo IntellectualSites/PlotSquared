@@ -389,24 +389,24 @@ public enum C {
      *
      * @see com.intellectualsites.translation.TranslationManager
      */
-    private static TranslationManager          manager;
+    private static TranslationManager manager;
 
     /**
      * The default file
      *
      * @see com.intellectualsites.translation.TranslationFile
      */
-    private static TranslationFile             defaultFile;
+    private static TranslationFile defaultFile;
 
     /**
      * Default
      */
-    private String                             d;
+    private String d;
 
     /**
      * Translated
      */
-    private String                             s;
+    private String s;
 
     /**
      * Constructor for custom strings.
@@ -421,8 +421,7 @@ public enum C {
     /**
      * Constructor
      *
-     * @param d
-     *            default
+     * @param d default
      */
     C(final String d) {
         this.d = d;
@@ -481,6 +480,7 @@ public enum C {
 
     /**
      * @return translated and color decoded
+     *
      * @see org.bukkit.ChatColor#translateAlternateColorCodes(char, String)
      */
     public String translated() {

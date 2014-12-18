@@ -8,13 +8,12 @@ package com.intellectualcrafters.json;
  */
 public class JSONException extends RuntimeException {
     private static final long serialVersionUID = 0;
-    private Throwable         cause;
+    private Throwable cause;
 
     /**
      * Constructs a JSONException with an explanatory message.
      *
-     * @param message
-     *            Detail about the reason for the exception.
+     * @param message Detail about the reason for the exception.
      */
     public JSONException(final String message) {
         super(message);
@@ -23,8 +22,7 @@ public class JSONException extends RuntimeException {
     /**
      * Constructs a new JSONException with the specified cause.
      *
-     * @param cause
-     *            The cause.
+     * @param cause The cause.
      */
     public JSONException(final Throwable cause) {
         super(cause.getMessage());
@@ -32,11 +30,9 @@ public class JSONException extends RuntimeException {
     }
 
     /**
-     * Returns the cause of this exception or null if the cause is nonexistent
-     * or unknown.
+     * Returns the cause of this exception or null if the cause is nonexistent or unknown.
      *
-     * @return the cause of this exception or null if the cause is nonexistent
-     *         or unknown.
+     * @return the cause of this exception or null if the cause is nonexistent or unknown.
      */
     @Override
     public Throwable getCause() {

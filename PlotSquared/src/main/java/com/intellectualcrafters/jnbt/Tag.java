@@ -38,8 +38,7 @@ public abstract class Tag {
     /**
      * Creates the tag with the specified name.
      *
-     * @param name
-     *            the name
+     * @param name the name
      */
     Tag(String name) {
         if (name == null) {

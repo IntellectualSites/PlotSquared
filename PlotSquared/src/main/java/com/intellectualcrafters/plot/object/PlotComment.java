@@ -26,7 +26,7 @@ package com.intellectualcrafters.plot.object;
  */
 public class PlotComment {
     public final String comment;
-    public final int    tier;
+    public final int tier;
     public final String senderName;
 
     public PlotComment(final String comment, final String senderName, final int tier) {

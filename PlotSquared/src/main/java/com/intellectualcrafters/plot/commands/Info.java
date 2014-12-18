@@ -21,16 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -41,12 +31,20 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
  */
-@SuppressWarnings({ "unused", "deprecated", "javadoc" })
-public class Info extends SubCommand {
+@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Info extends SubCommand {
 
     public Info() {
         super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
@@ -63,8 +61,7 @@ public class Info extends SubCommand {
                 return false;
             }
             plot = PlayerFunctions.getCurrentPlot(player);
-        }
-        else {
+        } else {
             if (args.length < 2) {
                 PlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
@@ -84,13 +81,11 @@ public class Info extends SubCommand {
                 }
                 world = Bukkit.getWorld(args[0]);
                 if (args.length == 3) {
-                    args = new String[] { args[2] };
-                }
-                else {
+                    args = new String[]{args[2]};
+                } else {
                     args = new String[0];
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 PlayerFunctions.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
@@ -215,8 +210,7 @@ public class Info extends SubCommand {
         for (int x = 0; x < l.size(); x++) {
             if ((x + 1) == l.size()) {
                 list.append(c.replace("%user%", getPlayerName(l.get(x))).replace(",", ""));
-            }
-            else {
+            } else {
                 list.append(c.replace("%user%", getPlayerName(l.get(x))));
             }
         }

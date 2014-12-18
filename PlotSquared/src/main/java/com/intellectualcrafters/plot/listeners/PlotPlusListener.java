@@ -21,18 +21,13 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,20 +41,14 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.*;
 
 /**
  * Created 2014-10-30 for PlotSquared
  *
  * @author Citymonstret
  */
-@SuppressWarnings({ "deprecation", "unused" })
-public class PlotPlusListener extends PlotListener implements Listener {
+@SuppressWarnings({"deprecation", "unused"}) public class PlotPlusListener extends PlotListener implements Listener {
 
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
@@ -244,7 +233,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         public final int interval;
         public final int amount;
         public final int max;
-        public int       count = 0;
+        public int count = 0;
 
         public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
@@ -267,8 +256,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }
 
-        private final String                 name;
-        private final Material               material;
+        private final String name;
+        private final Material material;
 
         public RecordMeta(final String name, final Material material) {
             this.name = name;

@@ -21,45 +21,44 @@
 
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Jesse Boyd
  */
 public abstract class PlotWorld {
 
-    public final static boolean      AUTO_MERGE_DEFAULT              = false;
-    public final static boolean      MOB_SPAWNING_DEFAULT            = false;
-    public final static Biome        PLOT_BIOME_DEFAULT              = Biome.FOREST;
-    public final static boolean      PLOT_CHAT_DEFAULT               = false;
-    public final static boolean      SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
-    public final static boolean      SCHEMATIC_ON_CLAIM_DEFAULT      = false;
-    public final static String       SCHEMATIC_FILE_DEFAULT          = "null";
-    public final static List<String> SCHEMATICS_DEFAULT              = null;
-    public final static List<String> DEFAULT_FLAGS_DEFAULT           = Arrays.asList();
-    public final static boolean      USE_ECONOMY_DEFAULT             = false;
-    public final static double       PLOT_PRICE_DEFAULT              = 100;
-    public final static double       MERGE_PRICE_DEFAULT             = 100;
-    public final static double       SELL_PRICE_DEFAULT              = 75;
-    public final static boolean      PVP_DEFAULT                     = false;
-    public final static boolean      PVE_DEFAULT                     = false;
-    public final static boolean      SPAWN_EGGS_DEFAULT              = false;
-    public final static boolean      SPAWN_CUSTOM_DEFAULT            = true;
-    public final static boolean      SPAWN_BREEDING_DEFAULT          = false;
+    public final static boolean AUTO_MERGE_DEFAULT = false;
+    public final static boolean MOB_SPAWNING_DEFAULT = false;
+    public final static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
+    public final static boolean PLOT_CHAT_DEFAULT = false;
+    public final static boolean SCHEMATIC_CLAIM_SPECIFY_DEFAULT = false;
+    public final static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
+    public final static String SCHEMATIC_FILE_DEFAULT = "null";
+    public final static List<String> SCHEMATICS_DEFAULT = null;
+    public final static List<String> DEFAULT_FLAGS_DEFAULT = Arrays.asList();
+    public final static boolean USE_ECONOMY_DEFAULT = false;
+    public final static double PLOT_PRICE_DEFAULT = 100;
+    public final static double MERGE_PRICE_DEFAULT = 100;
+    public final static double SELL_PRICE_DEFAULT = 75;
+    public final static boolean PVP_DEFAULT = false;
+    public final static boolean PVE_DEFAULT = false;
+    public final static boolean SPAWN_EGGS_DEFAULT = false;
+    public final static boolean SPAWN_CUSTOM_DEFAULT = true;
+    public final static boolean SPAWN_BREEDING_DEFAULT = false;
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     @SuppressWarnings("deprecation")
-    public static List<Material>     BLOCKS;                                           /*
+    public static List<Material> BLOCKS;                                           /*
      * =
      * new
      * ArrayList
@@ -263,25 +262,26 @@ public abstract class PlotWorld {
             }
         }
     }
-    public final String              worldname;
-    public boolean                   AUTO_MERGE;
-    public boolean                   MOB_SPAWNING;
-    public Biome                     PLOT_BIOME;
-    public boolean                   PLOT_CHAT;
-    public boolean                   SCHEMATIC_CLAIM_SPECIFY         = false;
-    public boolean                   SCHEMATIC_ON_CLAIM;
-    public String                    SCHEMATIC_FILE;
-    public List<String>              SCHEMATICS;
-    public List<String>              DEFAULT_FLAGS;
-    public boolean                   USE_ECONOMY;
-    public double                    PLOT_PRICE;
-    public double                    MERGE_PRICE;
-    public double                    SELL_PRICE;
-    public boolean                   PVP;
-    public boolean                   PVE;
-    public boolean                   SPAWN_EGGS;
-    public boolean                   SPAWN_CUSTOM;
-    public boolean                   SPAWN_BREEDING;
+
+    public final String worldname;
+    public boolean AUTO_MERGE;
+    public boolean MOB_SPAWNING;
+    public Biome PLOT_BIOME;
+    public boolean PLOT_CHAT;
+    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
+    public boolean SCHEMATIC_ON_CLAIM;
+    public String SCHEMATIC_FILE;
+    public List<String> SCHEMATICS;
+    public List<String> DEFAULT_FLAGS;
+    public boolean USE_ECONOMY;
+    public double PLOT_PRICE;
+    public double MERGE_PRICE;
+    public double SELL_PRICE;
+    public boolean PVP;
+    public boolean PVE;
+    public boolean SPAWN_EGGS;
+    public boolean SPAWN_CUSTOM;
+    public boolean SPAWN_BREEDING;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -290,8 +290,7 @@ public abstract class PlotWorld {
     /**
      * When a world is created, the following method will be called for each
      *
-     * @param config
-     *            Configuration Section
+     * @param config Configuration Section
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
@@ -320,8 +319,7 @@ public abstract class PlotWorld {
     /**
      * Saving core plotworld settings
      *
-     * @param config
-     *            Configuration Section
+     * @param config Configuration Section
      */
     public void saveConfiguration(final ConfigurationSection config) {
         final HashMap<String, Object> options = new HashMap<>();
@@ -360,8 +358,7 @@ public abstract class PlotWorld {
     }
 
     /**
-     * Used for the <b>/plot setup</b> command Return null if you do not want to
-     * support this feature
+     * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *
      * @return ConfigurationNode[]
      */

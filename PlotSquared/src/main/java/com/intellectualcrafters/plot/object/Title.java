@@ -21,14 +21,14 @@
 
 package com.intellectualcrafters.plot.object;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 /**
  * Minecraft 1.8 Title
@@ -36,8 +36,7 @@ import org.bukkit.entity.Player;
  * @author Maxim Van de Wynckel
  * @version 1.0.3
  */
-@SuppressWarnings("unused")
-public class Title {
+@SuppressWarnings("unused") public class Title {
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES;
 
     static {
@@ -45,28 +44,27 @@ public class Title {
     }
 
     /* Title packet */
-    private Class<?>                             packetTitle;
+    private Class<?> packetTitle;
     /* Title packet actions ENUM */
-    private Class<?>                             packetActions;
+    private Class<?> packetActions;
     /* Chat serializer */
-    private Class<?>                             nmsChatSerializer;
+    private Class<?> nmsChatSerializer;
     /* Title text and color */
-    private String                               title;
-    private ChatColor                            titleColor    = ChatColor.WHITE;
+    private String title;
+    private ChatColor titleColor = ChatColor.WHITE;
     /* Subtitle text and color */
-    private String                               subtitle      = "";
-    private ChatColor                            subtitleColor = ChatColor.WHITE;
+    private String subtitle = "";
+    private ChatColor subtitleColor = ChatColor.WHITE;
     /* Title timings */
-    private int                                  fadeInTime    = -1;
-    private int                                  stayTime      = -1;
-    private int                                  fadeOutTime   = -1;
-    private boolean                              ticks         = false;
+    private int fadeInTime = -1;
+    private int stayTime = -1;
+    private int fadeOutTime = -1;
+    private boolean ticks = false;
 
     /**
      * Create a new 1.8 title
      *
-     * @param title
-     *            Title
+     * @param title Title
      */
     public Title(final String title) {
         this.title = title;
@@ -76,10 +74,8 @@ public class Title {
     /**
      * Create a new 1.8 title
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
+     * @param title    Title text
+     * @param subtitle Subtitle text
      */
     public Title(final String title, final String subtitle) {
         this.title = "";
@@ -91,16 +87,11 @@ public class Title {
     /**
      * Create a new 1.8 title
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
-     * @param fadeInTime
-     *            Fade in time
-     * @param stayTime
-     *            Stay on screen time
-     * @param fadeOutTime
-     *            Fade out time
+     * @param title       Title text
+     * @param subtitle    Subtitle text
+     * @param fadeInTime  Fade in time
+     * @param stayTime    Stay on screen time
+     * @param fadeOutTime Fade out time
      */
     public Title(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) {
         this.title = "";
@@ -136,8 +127,7 @@ public class Title {
     /**
      * Set the title color
      *
-     * @param color
-     *            Chat color
+     * @param color Chat color
      */
     public void setTitleColor(final ChatColor color) {
         this.titleColor = color;
@@ -146,8 +136,7 @@ public class Title {
     /**
      * Set the subtitle color
      *
-     * @param color
-     *            Chat color
+     * @param color Chat color
      */
     public void setSubtitleColor(final ChatColor color) {
         this.subtitleColor = color;
@@ -156,8 +145,7 @@ public class Title {
     /**
      * Set title fade in time
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
     public void setFadeInTime(final int time) {
         this.fadeInTime = time;
@@ -166,8 +154,7 @@ public class Title {
     /**
      * Set title fade out time
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
     public void setFadeOutTime(final int time) {
         this.fadeOutTime = time;
@@ -176,8 +163,7 @@ public class Title {
     /**
      * Set title stay time
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
     public void setStayTime(final int time) {
         this.stayTime = time;
@@ -200,8 +186,7 @@ public class Title {
     /**
      * Send the title to a player
      *
-     * @param player
-     *            Player
+     * @param player Player
      */
     public void send(final Player player) {
         if ((getProtocolVersion(player) >= 47) && isSpigot() && (this.packetTitle != null)) {
@@ -229,8 +214,7 @@ public class Title {
                     packet = this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[1], serialized);
                     sendPacket.invoke(connection, packet);
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -248,8 +232,7 @@ public class Title {
     /**
      * Clear the title
      *
-     * @param player
-     *            Player
+     * @param player Player
      */
     public void clearTitle(final Player player) {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
@@ -261,8 +244,7 @@ public class Title {
                 final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
                 final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[3]);
                 sendPacket.invoke(connection, packet);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -271,8 +253,7 @@ public class Title {
     /**
      * Reset the title settings
      *
-     * @param player
-     *            Player
+     * @param player Player
      */
     public void resetTitle(final Player player) {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
@@ -284,8 +265,7 @@ public class Title {
                 final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
                 final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[4]);
                 sendPacket.invoke(connection, packet);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -294,8 +274,8 @@ public class Title {
     /**
      * Get the protocol version of the player
      *
-     * @param player
-     *            Player
+     * @param player Player
+     *
      * @return Protocol version
      */
     private int getProtocolVersion(final Player player) {
@@ -307,8 +287,7 @@ public class Title {
             version = (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
 
             return version;
-        }
-        catch (final Exception ex) {
+        } catch (final Exception ex) {
             // ex.printStackTrace(); <-- spammy console
         }
         return version;
@@ -326,15 +305,14 @@ public class Title {
     /**
      * Get class by url
      *
-     * @param namespace
-     *            Namespace url
+     * @param namespace Namespace url
+     *
      * @return Class
      */
     private Class<?> getClass(final String namespace) {
         try {
             return Class.forName(namespace);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -365,8 +343,7 @@ public class Title {
     private Object getHandle(final Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -393,8 +370,7 @@ public class Title {
         Class<?> clazz = null;
         try {
             clazz = Class.forName(fullName);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         return clazz;
@@ -405,8 +381,7 @@ public class Title {
             final Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }

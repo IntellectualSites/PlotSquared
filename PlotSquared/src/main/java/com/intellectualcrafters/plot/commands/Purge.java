@@ -21,16 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.entity.Player;
 
-@SuppressWarnings({ "unused", "deprecated", "javadoc" })
-public class Purge extends SubCommand {
+@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Purge extends SubCommand {
 
     public Purge() {
         super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
@@ -60,8 +58,7 @@ public class Purge extends SubCommand {
                     DBFunc.purge(world, id);
                     PlayerFunctions.sendMessage(null, "&aPurge of '" + args[0] + "' was successful!");
                     return true;
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 }
             }
@@ -77,8 +74,7 @@ public class Purge extends SubCommand {
             DBFunc.purge(args[0]);
             PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
             return true;
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, "This is a dangerous command, if you are sure, use /plot purge {world} -o");
             return false;
         }

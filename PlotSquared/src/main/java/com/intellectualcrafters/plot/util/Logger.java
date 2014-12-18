@@ -21,16 +21,12 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Logging of errors and debug messages.
@@ -40,7 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 public class Logger {
 
     private static ArrayList<String> entries;
-    private static File              log;
+    private static File log;
 
     public static void setup(final File file) {
         log = file;
@@ -52,8 +48,7 @@ public class Logger {
                 entries.add(line);
             }
             reader.close();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "File setup error Logger#setup");
         }
     }
