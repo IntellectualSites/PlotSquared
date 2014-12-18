@@ -21,38 +21,31 @@
 
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+import com.intellectualcrafters.plot.commands.Auto;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.*;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.DefaultPlotManager;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
+import com.intellectualcrafters.plot.uuid.UUIDSaver;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -61,51 +54,16 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.commands.Auto;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.MySQL;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.generator.WorldGenerator;
-import com.intellectualcrafters.plot.listeners.EntityListener;
-import com.intellectualcrafters.plot.listeners.ForceFieldListener;
-import com.intellectualcrafters.plot.listeners.InventoryListener;
-import com.intellectualcrafters.plot.listeners.PlayerEvents;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.listeners.WorldGuardListener;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.Lag;
-import com.intellectualcrafters.plot.util.Logger;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.Metrics;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SendChunk;
-import com.intellectualcrafters.plot.util.SetBlockFast;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
-import com.intellectualcrafters.plot.uuid.UUIDSaver;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 /**
  * PlotMain class.
@@ -115,20 +73,19 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
  */
 @SuppressWarnings("unused")
 public class PlotMain extends JavaPlugin {
-    private static PlotMain                                     main               = null;
+
     /**
      * Permission that allows for "everything"
      */
-    public static final String                                  ADMIN_PERMISSION   = "plots.admin";
+    public static final String ADMIN_PERMISSION = "plots.admin";
     /**
      * Storage version
      */
-    public final static int                                     storage_ver        = 1;
+    public final static int storage_ver = 1;
     /**
      * Boolean Flags (material)
      */
-    public final static HashMap<Material, String>               booleanFlags       = new HashMap<>();
-
+    public final static HashMap<Material, String> booleanFlags = new HashMap<>();
     /**
      * Initialize the material flags
      */
@@ -146,59 +103,62 @@ public class PlotMain extends JavaPlugin {
         booleanFlags.put(Material.DISPENSER, "dispenser");
         booleanFlags.put(Material.DROPPER, "dropper");
     }
-
     /**
      * All loaded plot worlds
      */
-    private final static HashMap<String, PlotWorld>             worlds             = new HashMap<>();
+    private final static HashMap<String, PlotWorld> worlds = new HashMap<>();
     /**
      * All world managers
      */
-    private final static HashMap<String, PlotManager>           managers           = new HashMap<>();
+    private final static HashMap<String, PlotManager> managers = new HashMap<>();
     /**
      * settings.properties
      */
-    public static File                                          configFile;
+    public static File configFile;
     /**
      * The main configuration file
      */
-    public static YamlConfiguration                             config;
+    public static YamlConfiguration config;
     /**
      * storage.properties
      */
-    public static File                                          storageFile;
+    public static File storageFile;
     /**
      * Contains storage options
      */
-    public static YamlConfiguration                             storage;
+    public static YamlConfiguration storage;
     /**
      * MySQL Connection
      */
-    public static Connection                                    connection;
+    public static Connection connection;
     /**
      * WorldEdit object
      */
-    public static WorldEditPlugin                               worldEdit          = null;
+    public static WorldEditPlugin worldEdit = null;
     /**
      * BarAPI object
      */
-    public static BarAPI                                        barAPI             = null;
+    public static BarAPI barAPI = null;
     /**
      * World Guard Object
      */
-    public static WorldGuardPlugin                              worldGuard         = null;
+    public static WorldGuardPlugin worldGuard = null;
     /**
      * World Guard Listener
      */
-    public static WorldGuardListener                            worldGuardListener = null;
+    public static WorldGuardListener worldGuardListener = null;
     /**
      * Economy Object (vault)
      */
-    public static Economy                                       economy;
+    public static Economy economy;
     /**
      * Use Economy?
      */
-    public static boolean                                       useEconomy         = false;
+    public static boolean useEconomy = false;
+    /**
+     * The instance
+     */
+    private static PlotMain main = null;
     /**
      * The UUID Saver
      */
@@ -251,10 +211,7 @@ public class PlotMain extends JavaPlugin {
      * @return permitted range
      */
     public static int hasPermissionRange(final Player player, final String stub, final int range) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
-            return Byte.MAX_VALUE;
-        }
-        if (player.hasPermission(stub + ".*")) {
+        if (player == null || player.isOp() || player.hasPermission(ADMIN_PERMISSION) || player.hasPermission(stub + ".*")) {
             return Byte.MAX_VALUE;
         }
         for (int i = range; i > 0; i--) {
@@ -411,7 +368,7 @@ public class PlotMain extends JavaPlugin {
      */
     public static Set<Plot> getPlots(final World world, final Player player) {
         final UUID uuid = UUIDHandler.getUUID(player);
-        final ArrayList<Plot> myplots = new ArrayList<>();
+        final List<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
                 if (plot.getOwner().equals(uuid)) {
@@ -704,6 +661,21 @@ public class PlotMain extends JavaPlugin {
     }
 
     /**
+     * Send a formatted message
+     * <p/>
+     * Replaced {0}, {1}...
+     *
+     * @param string To be formatted
+     * @param objs   To replace with (using #toString())
+     */
+    public static void sendConsoleSenderMessagef(String string, final Object... objs) {
+        for (int i = 0; i < objs.length; i++) {
+            string = string.replace("{" + i + "}", objs[i].toString());
+        }
+        sendConsoleSenderMessage(string);
+    }
+
+    /**
      * Teleport a player to a plot
      *
      * @param player
@@ -876,9 +848,20 @@ public class PlotMain extends JavaPlugin {
             settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
             settings.put("API Location", "" + Settings.API_URL);
             for (final Entry<String, String> setting : settings.entrySet()) {
-                sendConsoleSenderMessage(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+                sendConsoleSenderMessagef("{0} &cKey: &6{1}&c, Value: &c{2}", C.PREFIX, setting.getKey(), setting.getValue());
             }
         }
+    }
+
+    /**
+     * Get the instance
+     *
+     * @return instance
+     */
+    public static PlotMain getInstance() {
+        if (main == null)
+            throw new UnsupportedOperationException("Cannot retrieve the PlotMain instance before it's created");
+        return main;
     }
 
     /**
@@ -898,7 +881,7 @@ public class PlotMain extends JavaPlugin {
             public void run() {
                 if (this.ticked > 36_000L) {
                     this.ticked = 0l;
-                    sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + this.error);
+                    sendConsoleSenderMessagef("{0} KillAllEntities has been running for 60 minutes. Errors: {1}", C.PREFIX, this.error);
                     this.error = 0l;
                 }
                 for (final String w : getPlotWorlds()) {
@@ -1423,21 +1406,21 @@ public class PlotMain extends JavaPlugin {
      * Set all plots
      *
      * @param plots
-     *            New Plot LinkedHashMap
+     *            New Plot HashMap
      */
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
+    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = new LinkedHashMap<>(plots);
+        // PlotMain.plots.putAll(plots);
     }
 
     /**
      * Set all plots
      *
      * @param plots
-     *            New Plot HashMap
+     *            New Plot LinkedHashMap
      */
-    public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = new LinkedHashMap<>(plots);
-        // PlotMain.plots.putAll(plots);
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
@@ -1711,7 +1694,6 @@ public class PlotMain extends JavaPlugin {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             }
             setUUIDSaver(new PlotUUIDSaver());
-            // Looks really cool xD
             getUUIDSaver().globalPopulate();
         }
         // Now we're finished :D

@@ -21,15 +21,10 @@
 
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import org.bukkit.ChatColor;
 
 /**
  * Captions class.
@@ -490,5 +485,10 @@ public enum C {
      */
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());
+    }
+
+    @Override
+    public String toString() {
+        return this.s();
     }
 }
