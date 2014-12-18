@@ -28,11 +28,13 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -244,5 +246,24 @@ public class WorldEditListener implements Listener {
             }
         }
         PWE.setMask(p, q);
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onWorldChange(final PlayerChangedWorldEvent e) {
+        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+            return;
+        }
+        
+        final Player p = e.getPlayer();
+        final Location t = p.getLocation();
+        final World f = e.getFrom();
+        if (!isPlotWorld(t)) {
+            if (PlotMain.isPlotWorld(f)) {
+                PWE.removeMask(p);
+            }
+            else {
+                return;
+            }
+        }
     }
 }
