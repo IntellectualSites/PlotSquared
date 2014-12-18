@@ -21,33 +21,31 @@
 
 package com.intellectualcrafters.plot.util;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+import java.util.ArrayList;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 /**
- * SetBlockFast class<br>
- * Used to do fast world editing
+ * SetBlockFast class<br> Used to do fast world editing
  *
  * @author Empire92
  */
 public class SetBlockFast {
 
-    private static final RefClass classBlock      = getRefClass("{nms}.Block");
-    private static final RefClass classChunk      = getRefClass("{nms}.Chunk");
-    private static final RefClass classWorld      = getRefClass("{nms}.World");
+    private static final RefClass classBlock = getRefClass("{nms}.Block");
+    private static final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
 
-    private static RefMethod      methodGetHandle;
-    private static RefMethod      methodGetChunkAt;
-    private static RefMethod      methodA;
-    private static RefMethod      methodGetById;
+    private static RefMethod methodGetHandle;
+    private static RefMethod methodGetChunkAt;
+    private static RefMethod methodA;
+    private static RefMethod methodGetById;
 
     /**
      * Constructor
@@ -64,19 +62,15 @@ public class SetBlockFast {
     /**
      * Set the block at the location
      *
-     * @param world
-     *            World in which the block should be set
-     * @param x
-     *            X Coordinate
-     * @param y
-     *            Y Coordinate
-     * @param z
-     *            Z Coordinate
-     * @param blockId
-     *            Block ID
-     * @param data
-     *            Block Data Value
+     * @param world   World in which the block should be set
+     * @param x       X Coordinate
+     * @param y       Y Coordinate
+     * @param z       Z Coordinate
+     * @param blockId Block ID
+     * @param data    Block Data Value
+     *
      * @return true
+     *
      * @throws NoSuchMethodException
      */
     public static boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) throws NoSuchMethodException {
@@ -91,8 +85,7 @@ public class SetBlockFast {
     /**
      * Update chunks
      *
-     * @param player
-     *            Player whose chunks we're updating
+     * @param player Player whose chunks we're updating
      */
     public static void update(final org.bukkit.entity.Player player) {
         if (!PlotHelper.canSendChunk) {
@@ -118,8 +111,7 @@ public class SetBlockFast {
 
         try {
             SendChunk.sendChunk(chunks);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             PlotHelper.canSendChunk = false;
         }
     }

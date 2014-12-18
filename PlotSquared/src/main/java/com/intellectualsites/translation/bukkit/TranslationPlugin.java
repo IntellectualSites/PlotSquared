@@ -1,26 +1,21 @@
 package com.intellectualsites.translation.bukkit;
 
-import java.util.logging.Level;
-
+import com.intellectualsites.translation.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualsites.translation.Translation;
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.YamlTranslationFile;
+import java.util.logging.Level;
 
 public class TranslationPlugin extends JavaPlugin {
 
     @Translation(description = "Printed when the translator is fully loaded")
-    private static final String       TRANSLATOR_LOADED   = "The translator has been loaded";
+    private static final String TRANSLATOR_LOADED = "The translator has been loaded";
 
     @Translation(description = "Printed when the translator has been disabled")
-    private static final String       TRANSLATOR_DISABLED = "The translator has been disabled";
+    private static final String TRANSLATOR_DISABLED = "The translator has been disabled";
 
     private static TranslationManager manager;
 
-    private TranslationFile           english;
+    private TranslationFile english;
 
     @Override
     public void onEnable() {
@@ -29,8 +24,7 @@ public class TranslationPlugin extends JavaPlugin {
         // Scan this file for all @Translations
         try {
             TranslationManager.scan(TranslationPlugin.class, manager);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         // Now let's create some default files :D

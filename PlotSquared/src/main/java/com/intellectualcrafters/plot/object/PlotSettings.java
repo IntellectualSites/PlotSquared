@@ -21,16 +21,15 @@
 
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.sun.istack.internal.NotNull;
+import org.bukkit.block.Biome;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bukkit.block.Biome;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.sun.istack.internal.NotNull;
 
 /**
  * plot settings
@@ -38,20 +37,19 @@ import com.sun.istack.internal.NotNull;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused")
-public class PlotSettings {
+@SuppressWarnings("unused") public class PlotSettings {
     /**
      * Plot
      */
-    private final Plot             plot;
+    private final Plot plot;
     /**
      * merged plots
      */
-    private boolean[]              merged   = new boolean[] { false, false, false, false };
+    private boolean[] merged = new boolean[]{false, false, false, false};
     /**
      * plot alias
      */
-    private String                 alias;
+    private String alias;
     /**
      * Comments
      */
@@ -59,17 +57,16 @@ public class PlotSettings {
     /**
      * Flags
      */
-    private Set<Flag>              flags;
+    private Set<Flag> flags;
     /**
      * Home Position
      */
-    private PlotHomePosition       position;
+    private PlotHomePosition position;
 
     /**
      * Constructor
      *
-     * @param plot
-     *            object
+     * @param plot object
      */
     public PlotSettings(final Plot plot) {
         this.alias = "";
@@ -77,14 +74,10 @@ public class PlotSettings {
     }
 
     /**
-     * <b>Check if the plot is merged in a direction</b><br>
-     * 0 = North<br>
-     * 1 = East<br>
-     * 2 = South<br>
-     * 3 = West<br>
+     * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
-     * @param direction
-     *            Direction to check
+     * @param direction Direction to check
+     *
      * @return boolean merged
      */
     public boolean getMerged(final int direction) {
@@ -118,8 +111,7 @@ public class PlotSettings {
     }
 
     /**
-     * @param flag
-     *            to add
+     * @param flag to add
      */
     public void addFlag(final Flag flag) {
         final Flag hasFlag = getFlag(flag.getKey());
@@ -141,8 +133,7 @@ public class PlotSettings {
     /**
      * Set multiple flags
      *
-     * @param flags
-     *            Flag Array
+     * @param flags Flag Array
      */
     public void setFlags(@NotNull final Flag[] flags) {
         this.flags = new HashSet<>(Arrays.asList(flags));
@@ -151,8 +142,8 @@ public class PlotSettings {
     /**
      * Get a flag
      *
-     * @param flag
-     *            Flag to get
+     * @param flag Flag to get
+     *
      * @return flag
      */
     public Flag getFlag(final String flag) {
@@ -179,8 +170,7 @@ public class PlotSettings {
     /**
      * Set the plot alias
      *
-     * @param alias
-     *            alias to be used
+     * @param alias alias to be used
      */
     public void setAlias(final String alias) {
         this.alias = alias;

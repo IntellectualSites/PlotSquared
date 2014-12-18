@@ -21,19 +21,6 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -41,18 +28,25 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
+
+import java.util.*;
 
 /**
  * Functions involving players, plots and locations.
  *
  * @author Citymonstret
  */
-@SuppressWarnings("javadoc")
-public class PlayerFunctions {
+@SuppressWarnings("javadoc") public class PlayerFunctions {
 
     /**
-     * @param player
-     *            player
+     * @param player player
+     *
      * @return
      */
     public static boolean isInPlot(final Player player) {
@@ -60,8 +54,8 @@ public class PlayerFunctions {
     }
 
     /**
-     * @param plot
-     *            plot
+     * @param plot plot
+     *
      * @return
      */
     public static boolean hasExpired(final Plot plot) {
@@ -132,10 +126,10 @@ public class PlayerFunctions {
     }
 
     /**
-     * Returns the plot at a location (mega plots are not considered, all plots
-     * are treated as small plots)
+     * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
      *
      * @param loc
+     *
      * @return
      */
     public static PlotId getPlotAbs(final Location loc) {
@@ -152,6 +146,7 @@ public class PlayerFunctions {
      * Returns the plot id at a location (mega plots are considered)
      *
      * @param loc
+     *
      * @return
      */
     public static PlotId getPlot(final Location loc) {
@@ -168,6 +163,7 @@ public class PlayerFunctions {
      * Returns the plot a player is currently in.
      *
      * @param player
+     *
      * @return
      */
     public static Plot getCurrentPlot(final Player player) {
@@ -193,6 +189,7 @@ public class PlayerFunctions {
      * Updates a given plot with another instance
      *
      * @param plot
+     *
      * @deprecated
      */
     @Deprecated
@@ -204,6 +201,7 @@ public class PlayerFunctions {
      * Get the plots for a player
      *
      * @param plr
+     *
      * @return
      */
     public static Set<Plot> getPlayerPlots(final World world, final Player plr) {
@@ -218,6 +216,7 @@ public class PlayerFunctions {
      * Get the number of plots for a player
      *
      * @param plr
+     *
      * @return
      */
     public static int getPlayerPlotCount(final World world, final Player plr) {
@@ -235,6 +234,7 @@ public class PlayerFunctions {
      * Get the maximum number of plots a player is allowed
      *
      * @param p
+     *
      * @return
      */
     @SuppressWarnings("SuspiciousNameCombination")
@@ -244,6 +244,7 @@ public class PlayerFunctions {
 
     /**
      * @return PlotMain.getPlots();
+     *
      * @deprecated
      */
     @Deprecated
@@ -255,8 +256,7 @@ public class PlayerFunctions {
      * \\previous\\
      *
      * @param plr
-     * @param msg
-     *            Was used to wrap the chat client length (Packets out--)
+     * @param msg Was used to wrap the chat client length (Packets out--)
      */
     public static void sendMessageWrapped(final Player plr, String msg) {
         if (msg.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
@@ -276,20 +276,16 @@ public class PlayerFunctions {
     /**
      * Send a message to the player
      *
-     * @param plr
-     *            Player to recieve message
-     * @param msg
-     *            Message to send
-     * @return true
-     *         Can be used in things such as commands (return
-     *         PlayerFunctions.sendMessage(...))
+     * @param plr Player to recieve message
+     * @param msg Message to send
+     *
+     * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(final Player plr, final String msg) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
                 PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
-            }
-            else {
+            } else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }
         }
@@ -310,18 +306,16 @@ public class PlayerFunctions {
     /**
      * Send a message to the player
      *
-     * @param plr
-     *            Player to recieve message
-     * @param c
-     *            Caption to send
+     * @param plr Player to recieve message
+     * @param c   Caption to send
+     *
      * @return
      */
     public static boolean sendMessage(final Player plr, final C c, final String... args) {
         if (c.s().length() > 1) {
             if (plr == null) {
                 PlotMain.sendConsoleSenderMessage(c);
-            }
-            else {
+            } else {
                 String msg = c.s();
                 if ((args != null) && (args.length > 0)) {
                     for (final String str : args) {

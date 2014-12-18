@@ -21,12 +21,11 @@
 
 package com.intellectualcrafters.plot.events;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a flag is removed from a plot
@@ -36,17 +35,15 @@ import com.intellectualcrafters.plot.object.Plot;
  */
 public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
-    private final Plot         plot;
-    private final Flag         flag;
-    private boolean            cancelled;
+    private final Plot plot;
+    private final Flag flag;
+    private boolean cancelled;
 
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
-     * @param flag
-     *            Flag that was removed
-     * @param plot
-     *            Plot from which the flag was removed
+     * @param flag Flag that was removed
+     * @param plot Plot from which the flag was removed
      */
     public PlotFlagRemoveEvent(final Flag flag, final Plot plot) {
         this.plot = plot;

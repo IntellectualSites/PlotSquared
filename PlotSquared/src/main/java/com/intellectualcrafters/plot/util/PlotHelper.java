@@ -21,20 +21,13 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.object.*;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -42,35 +35,30 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHomePosition;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * plot functions
  *
  * @author Citymonstret
  */
-@SuppressWarnings({ "unused", "javadoc", "deprecation" })
-public class PlotHelper {
-    public final static HashMap<Plot, Integer> runners      = new HashMap<>();
-    public static boolean                      canSetFast   = false;
-    public static boolean                      canSendChunk = false;
-    public static ArrayList<String>            runners_p    = new ArrayList<>();
-    static long                                state        = 1;
+@SuppressWarnings({"unused", "javadoc", "deprecation"}) public class PlotHelper {
+    public final static HashMap<Plot, Integer> runners = new HashMap<>();
+    public static boolean canSetFast = false;
+    public static boolean canSendChunk = false;
+    public static ArrayList<String> runners_p = new ArrayList<>();
+    static long state = 1;
 
     /**
      * direction 0 = north, 1 = south, etc:
      *
      * @param id
      * @param direction
+     *
      * @return
      */
     public static PlotId getPlotIdRelative(final PlotId id, final int direction) {
@@ -93,6 +81,7 @@ public class PlotHelper {
      * @param plr
      * @param world
      * @param plotIds
+     *
      * @return
      */
     public static boolean mergePlots(final Player plr, final World world, final ArrayList<PlotId> plotIds) {
@@ -113,17 +102,14 @@ public class PlotHelper {
     }
 
     /**
-     * Completely merges a set of plots<br>
-     * <b>(There are no checks to make sure you supply the correct
-     * arguments)</b><br>
-     * - Misuse of this method can result in unusable plots<br>
-     * - the set of plots must belong to one owner and be rectangular<br>
-     * - the plot array must be sorted in ascending order<br>
-     * - Road will be removed where required<br>
-     * - changes will be saved to DB<br>
+     * Completely merges a set of plots<br> <b>(There are no checks to make sure you supply the correct
+     * arguments)</b><br> - Misuse of this method can result in unusable plots<br> - the set of plots must belong to one
+     * owner and be rectangular<br> - the plot array must be sorted in ascending order<br> - Road will be removed where
+     * required<br> - changes will be saved to DB<br>
      *
      * @param world
      * @param plotIds
+     *
      * @return boolean (success)
      */
     public static boolean mergePlots(final World world, final ArrayList<PlotId> plotIds) {
@@ -196,11 +182,8 @@ public class PlotHelper {
     }
 
     /**
-     * Merges 2 plots Removes the road inbetween <br>
-     * - Assumes the first plot parameter is lower <br>
-     * - Assumes neither are a Mega-plot <br>
-     * - Assumes plots are directly next to each other <br>
-     * - Saves to DB
+     * Merges 2 plots Removes the road inbetween <br> - Assumes the first plot parameter is lower <br> - Assumes neither
+     * are a Mega-plot <br> - Assumes plots are directly next to each other <br> - Saves to DB
      *
      * @param world
      * @param lesserPlot
@@ -216,8 +199,7 @@ public class PlotHelper {
                 greaterPlot.settings.setMerged(0, true);
                 manager.removeRoadSouth(plotworld, lesserPlot);
             }
-        }
-        else {
+        } else {
             if (!lesserPlot.settings.getMerged(1)) {
                 lesserPlot.settings.setMerged(1, true);
                 greaterPlot.settings.setMerged(3, true);
@@ -251,7 +233,7 @@ public class PlotHelper {
             return 0;
         }
         final long r = ((nextLong() >>> 32) * n) >> 32;
-            return (int) r;
+        return (int) r;
     }
 
     public static void removeSign(final World world, final Plot p) {
@@ -316,8 +298,7 @@ public class PlotHelper {
                 try {
                     SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
                     return true;
-                }
-                catch (final Throwable e) {
+                } catch (final Throwable e) {
                     canSetFast = false;
                 }
             }
@@ -327,12 +308,10 @@ public class PlotHelper {
             if (block.getTypeId() != plotblock.id) {
                 block.setTypeId(plotblock.id);
             }
-        }
-        else {
+        } else {
             if (block.getTypeId() == plotblock.id) {
                 block.setData(plotblock.data);
-            }
-            else {
+            } else {
                 block.setTypeIdAndData(plotblock.id, plotblock.data, false);
             }
         }
@@ -673,9 +652,9 @@ public class PlotHelper {
     public static short[] getBlock(final String block) {
         if (block.contains(":")) {
             final String[] split = block.split(":");
-            return new short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
+            return new short[]{Short.parseShort(split[0]), Short.parseShort(split[1])};
         }
-        return new short[] { Short.parseShort(block), 0 };
+        return new short[]{Short.parseShort(block), 0};
     }
 
     public static void clearAllEntities(final World world, final Plot plot, final boolean tile) {
@@ -688,8 +667,7 @@ public class PlotHelper {
                     final Player player = (Player) entity;
                     PlotMain.teleportPlayer(player, entity.getLocation(), plot);
                     PlotListener.plotExit(player, plot);
-                }
-                else {
+                } else {
                     entity.remove();
                 }
             }
@@ -775,8 +753,7 @@ public class PlotHelper {
                     }
                 }
             }
-        }
-        else {
+        } else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -788,8 +765,7 @@ public class PlotHelper {
                         }
                     }
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 //
             }
         }
@@ -813,8 +789,7 @@ public class PlotHelper {
                     }
                 }
             }
-        }
-        else {
+        } else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -828,8 +803,7 @@ public class PlotHelper {
                         }
                     }
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 //
             }
         }
@@ -847,8 +821,7 @@ public class PlotHelper {
                     }
                 }
             }
-        }
-        else {
+        } else {
             try {
                 for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
                     for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
@@ -860,8 +833,7 @@ public class PlotHelper {
                         }
                     }
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 //
             }
         }
@@ -910,10 +882,9 @@ public class PlotHelper {
     /**
      * Get plot home
      *
-     * @param w
-     *            World in which the plot is located
-     * @param plotid
-     *            Plot ID
+     * @param w      World in which the plot is located
+     * @param plotid Plot ID
+     *
      * @return Home Location
      */
     public static Location getPlotHome(final World w, final PlotId plotid) {
@@ -926,8 +897,7 @@ public class PlotHelper {
             final int z = bot.getBlockZ() - 2;
             final int y = getHeighestBlock(w, x, z);
             return new Location(w, x, y, z);
-        }
-        else {
+        } else {
             final Location bot = getPlotBottomLoc(w, plotid), top = getPlotTopLoc(w, plotid);
             final int x = top.getBlockX() - bot.getBlockX();
             final int z = top.getBlockZ() - bot.getBlockZ();
@@ -939,8 +909,8 @@ public class PlotHelper {
     /**
      * Retrieve the location of the default plot home position
      *
-     * @param plot
-     *            Plot
+     * @param plot Plot
+     *
      * @return the location
      */
     public static Location getPlotHomeDefault(final Plot plot) {
@@ -952,13 +922,12 @@ public class PlotHelper {
     /**
      * Get the plot home
      *
-     * @param w
-     *            World
-     * @param plot
-     *            Plot Object
+     * @param w    World
+     * @param plot Plot Object
+     *
      * @return Plot Home Location
-     * @see #getPlotHome(org.bukkit.World,
-     *      com.intellectualcrafters.plot.object.PlotId)
+     *
+     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      */
     public static Location getPlotHome(final World w, final Plot plot) {
         return getPlotHome(w, plot.id);
@@ -967,10 +936,8 @@ public class PlotHelper {
     /**
      * Refresh the plot chunks
      *
-     * @param world
-     *            World in which the plot is located
-     * @param plot
-     *            Plot Object
+     * @param world World in which the plot is located
+     * @param plot  Plot Object
      */
     public static void refreshPlotChunks(final World world, final Plot plot) {
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
@@ -990,16 +957,14 @@ public class PlotHelper {
                 if (canSendChunk) {
                     final Chunk chunk = world.getChunkAt(x, z);
                     chunks.add(chunk);
-                }
-                else {
+                } else {
                     world.refreshChunk(x, z);
                 }
             }
         }
         try {
             SendChunk.sendChunk(chunks);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             canSendChunk = false;
             for (int x = minChunkX; x <= maxChunkX; x++) {
                 for (int z = minChunkZ; z <= maxChunkZ; z++) {
@@ -1010,12 +975,12 @@ public class PlotHelper {
     }
 
     /**
-     * Gets the top plot location of a plot (all plots are treated as small
-     * plots)
-     * - To get the top loc of a mega plot use getPlotTopLoc(...)
+     * Gets the top plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega plot
+     * use getPlotTopLoc(...)
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static Location getPlotTopLocAbs(final World world, final PlotId id) {
@@ -1025,12 +990,12 @@ public class PlotHelper {
     }
 
     /**
-     * Gets the bottom plot location of a plot (all plots are treated as small
-     * plots)
-     * - To get the top loc of a mega plot use getPlotBottomLoc(...)
+     * Gets the bottom plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega
+     * plot use getPlotBottomLoc(...)
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static Location getPlotBottomLocAbs(final World world, final PlotId id) {
@@ -1044,6 +1009,7 @@ public class PlotHelper {
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static int getPlotWidth(final World world, final PlotId id) {
@@ -1051,12 +1017,12 @@ public class PlotHelper {
     }
 
     /**
-     * Gets the top loc of a plot (if mega, returns top loc of that mega plot)
-     * - If you would like each plot treated as a small plot use
-     * getPlotTopLocAbs(...)
+     * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
+     * a small plot use getPlotTopLocAbs(...)
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static Location getPlotTopLoc(final World world, PlotId id) {
@@ -1070,13 +1036,12 @@ public class PlotHelper {
     }
 
     /**
-     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega
-     * plot)
-     * - If you would like each plot treated as a small plot use
-     * getPlotBottomLocAbs(...)
+     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega plot) - If you would like each plot
+     * treated as a small plot use getPlotBottomLocAbs(...)
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static Location getPlotBottomLoc(final World world, PlotId id) {
@@ -1094,6 +1059,7 @@ public class PlotHelper {
      *
      * @param world
      * @param id
+     *
      * @return
      */
     public static Plot getPlot(final World world, final PlotId id) {
@@ -1110,6 +1076,7 @@ public class PlotHelper {
      * Returns the plot at a given location
      *
      * @param loc
+     *
      * @return
      */
     public static Plot getCurrentPlot(final Location loc) {

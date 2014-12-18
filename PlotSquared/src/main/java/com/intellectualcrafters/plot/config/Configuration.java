@@ -21,22 +21,20 @@
 
 package com.intellectualcrafters.plot.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.intellectualcrafters.plot.object.PlotBlock;
 import org.bukkit.block.Biome;
 
-import com.intellectualcrafters.plot.object.PlotBlock;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main Configuration Utility
  *
  * @author Empire92
  */
-@SuppressWarnings("unused")
-public class Configuration {
+@SuppressWarnings("unused") public class Configuration {
 
-    public static final SettingValue STRING     = new SettingValue("STRING") {
+    public static final SettingValue STRING = new SettingValue("STRING") {
         @Override
         public boolean validateValue(final String string) {
             return true;
@@ -60,14 +58,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue INTEGER    = new SettingValue("INTEGER") {
+    public static final SettingValue INTEGER = new SettingValue("INTEGER") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Integer.parseInt(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -78,14 +75,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BOOLEAN    = new SettingValue("BOOLEAN") {
+    public static final SettingValue BOOLEAN = new SettingValue("BOOLEAN") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Boolean.parseBoolean(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -96,14 +92,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue DOUBLE     = new SettingValue("DOUBLE") {
+    public static final SettingValue DOUBLE = new SettingValue("DOUBLE") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Double.parseDouble(string);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -114,14 +109,13 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BIOME      = new SettingValue("BIOME") {
+    public static final SettingValue BIOME = new SettingValue("BIOME") {
         @Override
         public boolean validateValue(final String string) {
             try {
                 Biome.valueOf(string.toUpperCase());
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -142,7 +136,7 @@ public class Configuration {
         }
     };
 
-    public static final SettingValue BLOCK      = new SettingValue("BLOCK") {
+    public static final SettingValue BLOCK = new SettingValue("BLOCK") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -150,13 +144,11 @@ public class Configuration {
                     final String[] split = string.split(":");
                     Short.parseShort(split[0]);
                     Short.parseShort(split[1]);
-                }
-                else {
+                } else {
                     Short.parseShort(string);
                 }
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -166,8 +158,7 @@ public class Configuration {
             if (string.contains(":")) {
                 final String[] split = string.split(":");
                 return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-            }
-            else {
+            } else {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
         }
@@ -177,7 +168,7 @@ public class Configuration {
             return ((PlotBlock) object).id + ":" + ((PlotBlock) object).data;
         }
     };
-    public static final SettingValue BLOCKLIST  = new SettingValue("BLOCKLIST") {
+    public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -191,14 +182,12 @@ public class Configuration {
                         final String[] split = block.split(":");
                         Short.parseShort(split[0]);
                         Short.parseShort(split[1]);
-                    }
-                    else {
+                    } else {
                         Short.parseShort(block);
                     }
                 }
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -220,8 +209,7 @@ public class Configuration {
                     if (value < min) {
                         min = value;
                     }
-                }
-                else {
+                } else {
                     counts[i] = 1;
                     if (1 < min) {
                         min = 1;
@@ -230,8 +218,7 @@ public class Configuration {
                 if (blocks[i].contains(":")) {
                     final String[] split = blocks[i].split(":");
                     values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-                }
-                else {
+                } else {
                     values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
                 }
             }
@@ -272,8 +259,7 @@ public class Configuration {
     }
 
     /**
-     * Create your own SettingValue object to make the management of plotworld
-     * configuration easier
+     * Create your own SettingValue object to make the management of plotworld configuration easier
      */
     public static abstract class SettingValue {
         private final String type;

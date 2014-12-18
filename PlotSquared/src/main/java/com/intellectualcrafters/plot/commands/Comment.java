@@ -21,18 +21,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Comment extends SubCommand {
 
@@ -62,8 +61,7 @@ public class Comment extends SubCommand {
                 DBFunc.setComment(plr.getWorld().getName(), plot, comment);
 
                 return true;
-            }
-            else {
+            } else {
                 return sendMessage(plr, C.NO_PERMISSION, "plots.comment." + args[0].toLowerCase());
             }
         }

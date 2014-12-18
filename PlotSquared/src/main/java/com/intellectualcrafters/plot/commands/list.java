@@ -21,12 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -34,6 +28,11 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -61,10 +60,9 @@ public class list extends SubCommand {
             final StringBuilder builder = new StringBuilder();
             builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
             if (plr != null) {
-                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all" }));
-            }
-            else {
-                builder.append(getArgumentList(new String[] { "all" }));
+                builder.append(getArgumentList(new String[]{"mine", "shared", "world", "all"}));
+            } else {
+                builder.append(getArgumentList(new String[]{"all"}));
             }
             PlayerFunctions.sendMessage(plr, builder.toString());
             return true;
@@ -84,8 +82,7 @@ public class list extends SubCommand {
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
-        }
-        else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
+        } else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
             for (final Plot p : PlotMain.getPlotsSorted()) {
@@ -96,8 +93,7 @@ public class list extends SubCommand {
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
-        }
-        else if (args[0].equalsIgnoreCase("all")) {
+        } else if (args[0].equalsIgnoreCase("all")) {
             // Current page
             int page = 0;
 
@@ -109,8 +105,7 @@ public class list extends SubCommand {
                     if (page < 0) {
                         page = 0;
                     }
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     page = 0;
                 }
             }
@@ -145,8 +140,7 @@ public class list extends SubCommand {
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
-        }
-        else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
+        } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
             final HashMap<PlotId, Plot> plots = PlotMain.getPlots(plr.getWorld());
@@ -156,10 +150,9 @@ public class list extends SubCommand {
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.values().size() + "").replaceAll("%plot%", plots.values().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
-        }
-        else {
+        } else {
             // execute(plr);
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
+            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
         }
     }

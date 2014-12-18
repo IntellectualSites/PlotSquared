@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.listeners;
 
+import com.intellectualcrafters.plot.object.InfoInventory;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -8,16 +10,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 
-import com.intellectualcrafters.plot.object.InfoInventory;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-
 /**
  * Created 2014-11-18 for PlotSquared
  *
  * @author Citymonstret
  */
-@SuppressWarnings("unused")
-public class InventoryListener implements Listener {
+@SuppressWarnings("unused") public class InventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryAction(final InventoryInteractEvent event) {

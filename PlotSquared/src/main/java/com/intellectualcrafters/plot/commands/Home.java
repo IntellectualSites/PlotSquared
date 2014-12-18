@@ -21,12 +21,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.entity.Player;
 
 /**
  * @author Citymonstret
@@ -52,16 +51,14 @@ public class Home extends SubCommand {
         if (plots.length == 1) {
             PlotMain.teleportPlayer(plr, plr.getLocation(), plots[0]);
             return true;
-        }
-        else if (plots.length > 1) {
+        } else if (plots.length > 1) {
             if (args.length < 1) {
-                args = new String[] { "1" };
+                args = new String[]{"1"};
             }
             int id = 0;
             try {
                 id = Integer.parseInt(args[0]);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 Plot temp;
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
@@ -82,8 +79,7 @@ public class Home extends SubCommand {
             }
             PlotMain.teleportPlayer(plr, plr.getLocation(), plots[id - 1]);
             return true;
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
             return true;
         }

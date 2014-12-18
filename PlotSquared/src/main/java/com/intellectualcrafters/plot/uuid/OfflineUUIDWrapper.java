@@ -1,15 +1,14 @@
 package com.intellectualcrafters.plot.uuid;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
 
@@ -29,8 +28,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         final String name = map.get(uuid).value;
         if (name != null) {
             return Bukkit.getOfflinePlayer(name);
-        }
-        else {
+        } else {
             for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                 if (getUUID(player).equals(uuid)) {
                     return player;

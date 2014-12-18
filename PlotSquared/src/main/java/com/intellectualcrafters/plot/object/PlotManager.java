@@ -21,14 +21,13 @@
 
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-@SuppressWarnings("unused")
-public abstract class PlotManager {
+import java.util.ArrayList;
+
+@SuppressWarnings("unused") public abstract class PlotManager {
 
     /*
      * Plot locations (methods with Abs in them will not need to consider mega

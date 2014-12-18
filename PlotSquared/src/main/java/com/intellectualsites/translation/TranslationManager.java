@@ -3,11 +3,7 @@ package com.intellectualsites.translation;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Translation Manager Main class
@@ -19,7 +15,7 @@ public class TranslationManager {
     /**
      * Objects
      */
-    private final LinkedList<TranslationObject>           translationObjects;
+    private final LinkedList<TranslationObject> translationObjects;
     /**
      * The translations
      */
@@ -29,14 +25,13 @@ public class TranslationManager {
      * Constructor
      */
     public TranslationManager() {
-        this(new TranslationObject[] {});
+        this(new TranslationObject[]{});
     }
 
     /**
      * Constructor
      *
-     * @param translationObjects
-     *            pre-init
+     * @param translationObjects pre-init
      */
     public TranslationManager(final TranslationObject[] translationObjects) {
         this.translationObjects = new LinkedList<TranslationObject>(Arrays.asList(translationObjects));
@@ -88,8 +83,8 @@ public class TranslationManager {
     /**
      * Add an object
      *
-     * @param t
-     *            object
+     * @param t object
+     *
      * @return instance
      */
     public TranslationManager addTranslationObject(final TranslationObject t) {
@@ -100,8 +95,8 @@ public class TranslationManager {
     /**
      * Remove an object
      *
-     * @param t
-     *            object
+     * @param t object
+     *
      * @return instance
      */
     public TranslationManager removeTranslationObject(final TranslationObject t) {

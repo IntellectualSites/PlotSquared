@@ -21,9 +21,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
+import org.bukkit.entity.Player;
 
 /**
  * Created by Citymonstret on 2014-08-03.
@@ -38,16 +37,15 @@ public class CommandPermission {
     public final String permission;
 
     /**
-     * @param permission
-     *            Command Permission
+     * @param permission Command Permission
      */
     public CommandPermission(final String permission) {
         this.permission = permission.toLowerCase();
     }
 
     /**
-     * @param player
-     *            Does the player have the permission?
+     * @param player Does the player have the permission?
+     *
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final Player player) {

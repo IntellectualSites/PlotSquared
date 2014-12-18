@@ -21,31 +21,27 @@
 
 package com.intellectualcrafters.plot.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import com.intellectualcrafters.plot.object.Plot;
-
 /**
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused")
-public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
+@SuppressWarnings("unused") public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private static HandlerList handlers = new HandlerList();
-    private final Plot         plot;
-    private final boolean      auto;
-    private boolean            cancelled;
+    private final Plot plot;
+    private final boolean auto;
+    private boolean cancelled;
 
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed
      *
-     * @param player
-     *            Player that claimed the plot
-     * @param plot
-     *            Plot that was claimed
+     * @param player Player that claimed the plot
+     * @param plot   Plot that was claimed
      */
     public PlayerClaimPlotEvent(final Player player, final Plot plot, final boolean auto) {
         super(player);

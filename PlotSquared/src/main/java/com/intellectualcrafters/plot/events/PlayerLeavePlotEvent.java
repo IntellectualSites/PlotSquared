@@ -21,11 +21,10 @@
 
 package com.intellectualcrafters.plot.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-
-import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * @author Citymonstret
@@ -34,15 +33,13 @@ import com.intellectualcrafters.plot.object.Plot;
 public class PlayerLeavePlotEvent extends PlayerEvent {
     private static HandlerList handlers = new HandlerList();
 
-    private final Plot         plot;
+    private final Plot plot;
 
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
-     * @param player
-     *            Player that left the plot
-     * @param plot
-     *            Plot that was left
+     * @param player Player that left the plot
+     * @param plot   Plot that was left
      */
     public PlayerLeavePlotEvent(final Player player, final Plot plot) {
         super(player);

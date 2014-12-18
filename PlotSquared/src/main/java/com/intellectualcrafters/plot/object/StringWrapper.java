@@ -32,8 +32,7 @@ public class StringWrapper {
     /**
      * Constructor
      *
-     * @param value
-     *            to wrap
+     * @param value to wrap
      */
     public StringWrapper(final String value) {
         this.value = value;
@@ -42,8 +41,8 @@ public class StringWrapper {
     /**
      * Check if a wrapped string equals another one
      *
-     * @param obj
-     *            to compare
+     * @param obj to compare
+     *
      * @return true if obj equals the stored value
      */
     @Override

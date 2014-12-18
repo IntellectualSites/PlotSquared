@@ -21,16 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-@SuppressWarnings({ "unused", "deprecation", "javadoc" })
-public class Kick extends SubCommand {
+@SuppressWarnings({"unused", "deprecation", "javadoc"}) public class Kick extends SubCommand {
 
     public Kick() {
         super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);

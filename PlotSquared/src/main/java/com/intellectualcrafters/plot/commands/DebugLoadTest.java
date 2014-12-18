@@ -21,13 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.lang.reflect.Field;
-
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
 
 /**
  * @author Citymonstret
@@ -45,14 +44,12 @@ public class DebugLoadTest extends SubCommand {
                 final Field fPlots = PlotMain.class.getDeclaredField("plots");
                 fPlots.setAccessible(true);
                 fPlots.set(null, DBFunc.getPlots());
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 PlotMain.sendConsoleSenderMessage("&3===FAILED&3===");
                 e.printStackTrace();
                 PlotMain.sendConsoleSenderMessage("&3===END OF STACKTRACE===");
             }
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;

@@ -21,11 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -35,13 +37,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created 2014-09-26 for PlotSquared
@@ -62,8 +61,7 @@ public class Setup extends SubCommand implements Listener {
 
         if (plr == null) {
             plrname = "";
-        }
-        else {
+        } else {
             plrname = plr.getName();
         }
 
@@ -77,20 +75,17 @@ public class Setup extends SubCommand implements Listener {
                 }
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                 }
 
                 // Creating the worlds
                 if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.plugin);
-                }
-                else {
+                } else {
                     if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.plugin);
-                    }
-                    else {
+                    } else {
                         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                             if (plugin.isEnabled()) {
                                 if (plugin.getDefaultWorldGenerator("world", "") != null) {
@@ -120,8 +115,7 @@ public class Setup extends SubCommand implements Listener {
             if (args.length < 1) {
                 sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 return true;
-            }
-            else {
+            } else {
                 if (args[0].equalsIgnoreCase("cancel")) {
                     setupMap.remove(plrname);
                     PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
@@ -133,8 +127,7 @@ public class Setup extends SubCommand implements Listener {
                         step = object.step[object.current];
                         sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                         return true;
-                    }
-                    else {
+                    } else {
                         sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                         return true;
                     }
@@ -151,15 +144,13 @@ public class Setup extends SubCommand implements Listener {
                     step = object.step[object.current];
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                     return true;
-                }
-                else {
+                } else {
                     sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                     return true;
                 }
             }
-        }
-        else {
+        } else {
             if (args.length < 1) {
                 sendMessage(plr, C.SETUP_MISSING_WORLD);
                 return true;
@@ -202,8 +193,7 @@ public class Setup extends SubCommand implements Listener {
             PlotWorld plotworld;
             if (generator instanceof PlotGenerator) {
                 plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
-            }
-            else {
+            } else {
                 plotworld = new DefaultPlotWorld(world);
             }
 
@@ -217,10 +207,10 @@ public class Setup extends SubCommand implements Listener {
     }
 
     private class SetupObject {
-        final String              world;
-        final String              plugin;
+        final String world;
+        final String plugin;
         final ConfigurationNode[] step;
-        int                       current = 0;
+        int current = 0;
 
         public SetupObject(final String world, final PlotWorld plotworld, final String plugin) {
             this.world = world;
