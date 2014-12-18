@@ -64,9 +64,22 @@ public class Unclaim extends SubCommand {
             if ((Math.abs(plot.id.x) <= Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) <= Math.abs(Auto.lastPlot.y))) {
                 Auto.lastPlot = plot.id;
             }
+<<<<<<< HEAD
         } else {
             PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
         }
+=======
+<<<<<<< HEAD
+        }
+        else {
+            PlayerFunctions.sendMessage(plr, "Plot unclaim has been denied.");
+=======
+        } else {
+            PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
+>>>>>>> 73e92b834155ea9e458d7299ad78f4fd9b55aa66
+        }
+        PlayerFunctions.sendMessage(plr, C.UNCLAIM_SUCCESS);
+>>>>>>> drtshock-master
         return true;
     }
 }
