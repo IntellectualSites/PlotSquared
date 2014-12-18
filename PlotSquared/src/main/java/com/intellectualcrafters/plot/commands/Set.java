@@ -21,17 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -48,14 +37,24 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.StringComparison;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Citymonstret
  */
 public class Set extends SubCommand {
 
-    public final static String[] values  = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "flag" };
-    public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
+    public final static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
+    public final static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
 
     public Set() {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
@@ -100,8 +99,7 @@ public class Set extends SubCommand {
                 if (PlotMain.worldGuardListener != null) {
                     if (message.equals("")) {
                         message = StringUtils.join(PlotMain.worldGuardListener.str_flags, "&c, &6");
-                    }
-                    else {
+                    } else {
                         message += "," + StringUtils.join(PlotMain.worldGuardListener.str_flags, "&c, &6");
                     }
                 }
@@ -113,8 +111,7 @@ public class Set extends SubCommand {
 
             try {
                 af = FlagManager.getFlag(args[1].toLowerCase());
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 af = new AbstractFlag(args[1].toLowerCase());
             }
 
@@ -183,8 +180,7 @@ public class Set extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 PlayerFunctions.sendMessage(plr, "&c" + e.getMessage());
                 return false;
             }
@@ -275,8 +271,7 @@ public class Set extends SubCommand {
             Material material;
             try {
                 material = getMaterial(args[1], PlotWorld.BLOCKS);
-            }
-            catch (final NullPointerException e) {
+            } catch (final NullPointerException e) {
                 material = null;
             }
             /*
@@ -296,8 +291,7 @@ public class Set extends SubCommand {
             if (args.length > 2) {
                 try {
                     data = (byte) Integer.parseInt(args[2]);
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
                     return true;
                 }
@@ -317,8 +311,7 @@ public class Set extends SubCommand {
                 return true;
             }
             //
-            @SuppressWarnings("unchecked")
-            final ArrayList<Material> materials = (ArrayList<Material>) ((ArrayList<Material>) PlotWorld.BLOCKS).clone();
+            @SuppressWarnings("unchecked") final ArrayList<Material> materials = (ArrayList<Material>) ((ArrayList<Material>) PlotWorld.BLOCKS).clone();
             materials.add(Material.AIR);
             //
             final String[] strings = args[1].split(",");
@@ -352,13 +345,11 @@ public class Set extends SubCommand {
                 if (ss.length == 1) {
 
                     blocks[index] = new PlotBlock((short) m.getId(), (byte) 0);
-                }
-                else {
+                } else {
                     byte b;
                     try {
                         b = (byte) Integer.parseInt(ss[1]);
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
                         return true;
                     }
@@ -402,8 +393,7 @@ public class Set extends SubCommand {
             if (args.length > 2) {
                 try {
                     data = (byte) Integer.parseInt(args[2]);
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
                     return true;
                 }
@@ -415,8 +405,7 @@ public class Set extends SubCommand {
             AbstractFlag af;
             try {
                 af = new AbstractFlag(args[0].toLowerCase());
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 af = new AbstractFlag("");
             }
             if (FlagManager.getFlags().contains(af)) {

@@ -21,19 +21,17 @@
 
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 /**
  * Random utilities
  *
  * @author Citymonstret
  */
-@SuppressWarnings("unused")
-public class RUtils {
+@SuppressWarnings("unused") public class RUtils {
 
     /**
      * Get the total allocated ram
@@ -65,8 +63,8 @@ public class RUtils {
     /**
      * Get formatted time
      *
-     * @param sec
-     *            seconds
+     * @param sec seconds
+     *
      * @return formatted time
      */
     public static String formatTime(final double sec) {
@@ -84,8 +82,7 @@ public class RUtils {
     /**
      * Force textures on the client
      *
-     * @param p
-     *            texture to force
+     * @param p texture to force
      */
     public void forceTexture(final Player p) {
         p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);

@@ -1,5 +1,8 @@
 package com.intellectualsites.translation;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -8,39 +11,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-
 /**
- * The YAML implementation of TranslationFile
- * Relies heavily on SnakeYAML
+ * The YAML implementation of TranslationFile Relies heavily on SnakeYAML
  *
  * @author Citymonstret
  */
 public class YamlTranslationFile extends TranslationFile {
 
     final private TranslationLanguage language;
-    final private String              name;
-    final private TranslationManager  manager;
-    private final File                file;
-    private HashMap<String, String>   map;
-    private String[]                  header;
-    private boolean                   fancyHead = false;
-    private YamlTranslationFile       instance;
+    final private String name;
+    final private TranslationManager manager;
+    private final File file;
+    private HashMap<String, String> map;
+    private String[] header;
+    private boolean fancyHead = false;
+    private YamlTranslationFile instance;
     /**
      * YAML Object
      */
-    private Yaml                      yaml;
+    private Yaml yaml;
 
     /**
      * Constructor
      *
-     * @param path
-     *            save path
-     * @param language
-     *            translation language
-     * @param name
-     *            project name
+     * @param path     save path
+     * @param language translation language
+     * @param name     project name
      */
     public YamlTranslationFile(final File path, final TranslationLanguage language, final String name, final TranslationManager manager) {
         this.language = language;
@@ -57,8 +53,7 @@ public class YamlTranslationFile extends TranslationFile {
                 if (!this.file.createNewFile()) {
                     throw new RuntimeException("Could not create: " + this.file.getName());
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -77,8 +72,8 @@ public class YamlTranslationFile extends TranslationFile {
     /**
      * Set the header
      *
-     * @param header
-     *            Comment header
+     * @param header Comment header
+     *
      * @return instance
      */
     public YamlTranslationFile header(final String... header) {
@@ -90,8 +85,8 @@ public class YamlTranslationFile extends TranslationFile {
     /**
      * Set a fancy header
      *
-     * @param header
-     *            Comment header
+     * @param header Comment header
+     *
      * @return instance
      */
     public YamlTranslationFile fancyHeader(final String... header) {
@@ -116,10 +111,8 @@ public class YamlTranslationFile extends TranslationFile {
     /**
      * Add a translation
      *
-     * @param key
-     *            translation name
-     * @param value
-     *            translation value
+     * @param key   translation name
+     * @param value translation value
      */
     @Override
     public void add(final String key, final String value) {
@@ -151,8 +144,7 @@ public class YamlTranslationFile extends TranslationFile {
                 for (final String head : this.header) {
                     writer.write("# " + head + "\n");
                 }
-            }
-            else if ((this.header != null) && this.fancyHead) {
+            } else if ((this.header != null) && this.fancyHead) {
                 for (final String head : this.header) {
                     writer.write(head);
                 }
@@ -165,15 +157,13 @@ public class YamlTranslationFile extends TranslationFile {
                 final String des = this.manager.getDescription(var);
                 if (des.equals("")) {
                     writer.write(var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
-                }
-                else {
+                } else {
                     writer.write(des + "\n" + var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
                 }
                 ++current;
             }
             writer.close();
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -205,8 +195,7 @@ public class YamlTranslationFile extends TranslationFile {
     public YamlTranslationFile read() {
         try {
             this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         if (this.map == null) {

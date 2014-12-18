@@ -21,12 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -38,9 +32,12 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
-public class Auto extends SubCommand {
+@SuppressWarnings("deprecation") public class Auto extends SubCommand {
     public static PlotId lastPlot = new PlotId(0, 0);
 
     public Auto() {
@@ -53,20 +50,16 @@ public class Auto extends SubCommand {
         if (absX > absY) {
             if (id.x > 0) {
                 return new PlotId(id.x, id.y + 1);
-            }
-            else {
+            } else {
                 return new PlotId(id.x, id.y - 1);
             }
-        }
-        else if (absY > absX) {
+        } else if (absY > absX) {
             if (id.y > 0) {
                 return new PlotId(id.x - 1, id.y);
-            }
-            else {
+            } else {
                 return new PlotId(id.x + 1, id.y);
             }
-        }
-        else {
+        } else {
             if (id.x.equals(id.y) && (id.x > 0)) {
                 return new PlotId(id.x, id.y + step);
             }
@@ -89,12 +82,10 @@ public class Auto extends SubCommand {
         String schematic = "";
         if (PlotMain.getPlotWorlds().length == 1) {
             world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
-        }
-        else {
+        } else {
             if (PlotMain.isPlotWorld(plr.getWorld())) {
                 world = plr.getWorld();
-            }
-            else {
+            } else {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
@@ -114,8 +105,7 @@ public class Auto extends SubCommand {
                     if (args.length > 1) {
                         schematic = args[1];
                     }
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     size_x = 1;
                     size_z = 1;
                     schematic = args[0];
@@ -123,8 +113,7 @@ public class Auto extends SubCommand {
                     // "&cError: Invalid size (X,Y)");
                     // return false;
                 }
-            }
-            else {
+            } else {
                 schematic = args[0];
                 // PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 // return false;
@@ -139,8 +128,7 @@ public class Auto extends SubCommand {
         if ((diff + (size_x * size_z)) >= 0) {
             if (diff < 0) {
                 PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff - 1) + "");
-            }
-            else {
+            } else {
                 PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }
             return false;
@@ -188,8 +176,7 @@ public class Auto extends SubCommand {
                 }
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
-        }
-        else {
+        } else {
             boolean lastPlot = true;
             while (!br) {
                 final PlotId start = getNextPlot(Auto.lastPlot, 1);
@@ -199,8 +186,7 @@ public class Auto extends SubCommand {
                 }
                 if ((PlotMain.getPlots(world).get(start) != null) && (PlotMain.getPlots(world).get(start).owner != null)) {
                     continue;
-                }
-                else {
+                } else {
                     lastPlot = false;
                 }
                 System.out.print("UNOWNED: " + start);

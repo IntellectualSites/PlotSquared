@@ -12,8 +12,7 @@ public final class IntArrayTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param value
-     *            the value of the tag
+     * @param value the value of the tag
      */
     public IntArrayTag(final int[] value) {
         super();
@@ -24,10 +23,8 @@ public final class IntArrayTag extends Tag {
     /**
      * Creates the tag.
      *
-     * @param name
-     *            the name of the tag
-     * @param value
-     *            the value of the tag
+     * @param name  the name of the tag
+     * @param value the value of the tag
      */
     public IntArrayTag(final String name, final int[] value) {
         super(name);

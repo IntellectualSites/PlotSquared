@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,10 +32,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.StringComparison;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotMain command class
@@ -47,11 +46,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     /**
      * Main Permission Node
      */
-    public static final String                MAIN_PERMISSION = "plots.use";
+    public static final String MAIN_PERMISSION = "plots.use";
 
-    private final static SubCommand[]         _subCommands    = new SubCommand[] { new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Setup(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand() };
+    private final static SubCommand[] _subCommands = new SubCommand[]{new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Setup(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand()};
 
-    public final static ArrayList<SubCommand> subCommands     = new ArrayList<SubCommand>() {
+    public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {
             addAll(Arrays.asList(_subCommands));
         }
@@ -75,7 +74,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static List<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
         final List<SubCommand> commands = getCommands(category, player);
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
-                // 100));
+        // 100));
         final int perPage = 5;
         final int totalPages = (int) Math.ceil(commands.size() / perPage);
         if (page > totalPages) {
@@ -152,8 +151,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             String arg2;
             if (args.length > 2) {
                 arg2 = args[2];
-            }
-            else {
+            } else {
                 arg2 = "1";
             }
 
@@ -175,8 +173,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
             // return PlayerFunctions.sendMessage(player, help.toString());
-        }
-        else {
+        } else {
             for (final SubCommand command : subCommands) {
                 if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.contains(args[0].toLowerCase())) {
                     final String[] arguments = new String[args.length - 1];
@@ -184,12 +181,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     if (command.permission.hasPermission(player)) {
                         if ((player != null) || !command.isPlayer) {
                             return command.execute(player, arguments);
-                        }
-                        else {
+                        } else {
                             return !PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
                         }
-                    }
-                    else {
+                    } else {
                         return no_permission(player, command.permission.permission.toLowerCase());
                     }
                 }
@@ -234,8 +229,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             if (cmd.permission.hasPermission(player)) {
                 if (cmd.cmd.startsWith(arg)) {
                     tabOptions.add(cmd.cmd);
-                }
-                else if (cmd.alias.get(0).startsWith(arg)) {
+                } else if (cmd.alias.get(0).startsWith(arg)) {
                     tabOptions.add(cmd.alias.get(0));
                 }
             }

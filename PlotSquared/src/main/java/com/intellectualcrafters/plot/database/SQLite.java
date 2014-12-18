@@ -21,16 +21,12 @@
 
 package com.intellectualcrafters.plot.database;
 
+import org.bukkit.plugin.Plugin;
+
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.logging.Level;
-
-import org.bukkit.plugin.Plugin;
 
 /**
  * Connects to and uses a SQLite database
@@ -41,15 +37,13 @@ import org.bukkit.plugin.Plugin;
 public class SQLite extends Database {
 
     private final String dbLocation;
-    private Connection   connection;
+    private Connection connection;
 
     /**
      * Creates a new SQLite instance
      *
-     * @param plugin
-     *            Plugin instance
-     * @param dbLocation
-     *            Location of the Database (Must end in .db)
+     * @param plugin     Plugin instance
+     * @param dbLocation Location of the Database (Must end in .db)
      */
     public SQLite(final Plugin plugin, final String dbLocation) {
         super(plugin);
@@ -68,8 +62,7 @@ public class SQLite extends Database {
         if (!(file.exists())) {
             try {
                 file.createNewFile();
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 this.plugin.getLogger().log(Level.SEVERE, "Unable to create database!");
             }
         }

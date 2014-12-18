@@ -21,13 +21,12 @@
 
 package com.intellectualcrafters.plot.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-
-import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a player teleports to a plot
@@ -38,20 +37,17 @@ import com.intellectualcrafters.plot.object.Plot;
 public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
-    private final Location           from;
-    private final Plot               plot;
+    private final Location from;
+    private final Plot plot;
 
-    private boolean                  cancelled;
+    private boolean cancelled;
 
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
-     * @param player
-     *            That was teleported
-     * @param from
-     *            Start location
-     * @param plot
-     *            Plot to which the player was teleported
+     * @param player That was teleported
+     * @param from   Start location
+     * @param plot   Plot to which the player was teleported
      */
     public PlayerTeleportToPlotEvent(final Player player, final Location from, final Plot plot) {
         super(player);

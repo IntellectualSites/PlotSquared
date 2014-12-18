@@ -21,14 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import static com.intellectualcrafters.plot.object.PlotSelection.currentSelection;
-
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotSelection;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import org.bukkit.entity.Player;
+
+import static com.intellectualcrafters.plot.object.PlotSelection.currentSelection;
 
 public class Clipboard extends SubCommand {
 

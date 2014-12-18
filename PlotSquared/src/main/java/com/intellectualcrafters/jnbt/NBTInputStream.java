@@ -10,28 +10,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong>
- * streams, and produces an object graph of subclasses of the {@code Tag}
- * object.
- * <p/>
- * <p>
- * The NBT format was created by Markus Persson, and the specification may be
- * found at <a href="http://www.minecraft.net/docs/NBT.txt">
- * http://www.minecraft.net/docs/NBT.txt</a>.
- * </p>
+ * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong> streams, and produces an object graph of
+ * subclasses of the {@code Tag} object. <p/> <p> The NBT format was created by Markus Persson, and the specification
+ * may be found at <a href="http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt</a>. </p>
  */
 public final class NBTInputStream implements Closeable {
 
     private final DataInputStream is;
 
     /**
-     * Creates a new {@code NBTInputStream}, which will source its data
-     * from the specified input stream.
+     * Creates a new {@code NBTInputStream}, which will source its data from the specified input stream.
      *
-     * @param is
-     *            the input stream
-     * @throws IOException
-     *             if an I/O error occurs
+     * @param is the input stream
+     *
+     * @throws IOException if an I/O error occurs
      */
     public NBTInputStream(final InputStream is) throws IOException {
         this.is = new DataInputStream(is);
@@ -41,8 +33,8 @@ public final class NBTInputStream implements Closeable {
      * Reads an NBT tag from the stream.
      *
      * @return The tag that was read.
-     * @throws IOException
-     *             if an I/O error occurs.
+     *
+     * @throws IOException if an I/O error occurs.
      */
     public Tag readTag() throws IOException {
         return readTag(0);
@@ -51,11 +43,11 @@ public final class NBTInputStream implements Closeable {
     /**
      * Reads an NBT from the stream.
      *
-     * @param depth
-     *            the depth of this tag
+     * @param depth the depth of this tag
+     *
      * @return The tag that was read.
-     * @throws IOException
-     *             if an I/O error occurs.
+     *
+     * @throws IOException if an I/O error occurs.
      */
     private Tag readTag(final int depth) throws IOException {
         final int type = this.is.readByte() & 0xFF;
@@ -66,8 +58,7 @@ public final class NBTInputStream implements Closeable {
             final byte[] nameBytes = new byte[nameLength];
             this.is.readFully(nameBytes);
             name = new String(nameBytes, NBTConstants.CHARSET);
-        }
-        else {
+        } else {
             name = "";
         }
 
@@ -77,23 +68,20 @@ public final class NBTInputStream implements Closeable {
     /**
      * Reads the payload of a tag, given the name and type.
      *
-     * @param type
-     *            the type
-     * @param name
-     *            the name
-     * @param depth
-     *            the depth
+     * @param type  the type
+     * @param name  the name
+     * @param depth the depth
+     *
      * @return the tag
-     * @throws IOException
-     *             if an I/O error occurs.
+     *
+     * @throws IOException if an I/O error occurs.
      */
     private Tag readTagPayload(final int type, final String name, final int depth) throws IOException {
         switch (type) {
             case NBTConstants.TYPE_END:
                 if (depth == 0) {
                     throw new IOException("TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
-                }
-                else {
+                } else {
                     return new EndTag();
                 }
             case NBTConstants.TYPE_BYTE:
@@ -138,8 +126,7 @@ public final class NBTInputStream implements Closeable {
                     final Tag tag = readTag(depth + 1);
                     if (tag instanceof EndTag) {
                         break;
-                    }
-                    else {
+                    } else {
                         tagMap.put(tag.getName(), tag);
                     }
                 }

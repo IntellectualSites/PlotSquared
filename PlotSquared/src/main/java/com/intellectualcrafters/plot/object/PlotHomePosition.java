@@ -29,7 +29,7 @@ public enum PlotHomePosition {
     DEFAULT("Default", 'd');
 
     private final String string;
-    private final char   ch;
+    private final char ch;
 
     PlotHomePosition(final String string, final char ch) {
         this.string = string;

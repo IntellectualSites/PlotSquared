@@ -21,18 +21,17 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import java.util.Arrays;
 
 public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {

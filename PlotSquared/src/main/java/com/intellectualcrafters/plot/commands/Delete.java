@@ -21,16 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.entity.Player;
 
 public class Delete extends SubCommand {
 
@@ -67,8 +65,7 @@ public class Delete extends SubCommand {
             if ((Math.abs(plot.id.x) <= Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) <= Math.abs(Auto.lastPlot.y))) {
                 Auto.lastPlot = plot.id;
             }
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, "Plot deletion has been denied.");
         }
         return true;

@@ -21,13 +21,12 @@
 
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.object.Plot;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Flag Manager Utility
@@ -35,8 +34,7 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused")
-public class FlagManager {
+@SuppressWarnings("unused") public class FlagManager {
 
     // TODO add some flags
     // - Plot clear interval
@@ -48,8 +46,8 @@ public class FlagManager {
     /**
      * Register an AbstractFlag with PlotSquared
      *
-     * @param flag
-     *            Flag to register
+     * @param flag Flag to register
+     *
      * @return success?
      */
     public static boolean addFlag(final AbstractFlag flag) {
@@ -90,8 +88,8 @@ public class FlagManager {
     /**
      * Get a list of registerd AbstragFlag objects based on player permissions
      *
-     * @param player
-     *            with permissions
+     * @param player with permissions
+     *
      * @return List (AbstractFlag)
      */
     public static List<AbstractFlag> getFlags(final Player player) {
@@ -107,8 +105,8 @@ public class FlagManager {
     /**
      * Get an AbstractFlag by a string Returns null if flag does not exist
      *
-     * @param string
-     *            Flag Key
+     * @param string Flag Key
+     *
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(final String string) {
@@ -123,10 +121,9 @@ public class FlagManager {
     /**
      * Get an AbstractFlag by a string
      *
-     * @param string
-     *            Flag Key
-     * @param create
-     *            If to create the flag if it does not exist
+     * @param string Flag Key
+     * @param create If to create the flag if it does not exist
+     *
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(final String string, final boolean create) {
@@ -141,8 +138,8 @@ public class FlagManager {
     /**
      * Remove a registered AbstractFlag
      *
-     * @param flag
-     *            Flag Key
+     * @param flag Flag Key
+     *
      * @return boolean Result of operation
      */
     public static boolean removeFlag(final AbstractFlag flag) {
@@ -155,8 +152,7 @@ public class FlagManager {
             final String[] split = flagstrings.get(i).split(";");
             if (split.length == 1) {
                 flags[i] = new Flag(getFlag(split[0], true), "");
-            }
-            else {
+            } else {
                 flags[i] = new Flag(getFlag(split[0], true), split[1]);
             }
         }
@@ -166,8 +162,8 @@ public class FlagManager {
     /**
      * Get the flags for a plot
      *
-     * @param plot
-     *            Plot to search in
+     * @param plot Plot to search in
+     *
      * @return List (AbstractFlag)
      */
     public static List<AbstractFlag> getPlotFlags(final Plot plot) {

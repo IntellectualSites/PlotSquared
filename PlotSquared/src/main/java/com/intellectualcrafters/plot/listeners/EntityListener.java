@@ -1,16 +1,12 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -25,18 +21,16 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author Empire92
  */
-@SuppressWarnings({ "unused", "deprecation" })
-public class EntityListener implements Listener {
+@SuppressWarnings({"unused", "deprecation"}) public class EntityListener implements Listener {
 
     public final static HashMap<String, HashMap<Plot, HashSet<Integer>>> entityMap = new HashMap<>();
 
@@ -75,7 +69,8 @@ public class EntityListener implements Listener {
                         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
                         final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
                         try {
-                            loops: for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
+                            loops:
+                            for (int i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
                                 for (int j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
                                     final Chunk chunk = world.getChunkAt(i, j);
                                     if (chunk.isLoaded()) {
@@ -84,8 +79,7 @@ public class EntityListener implements Listener {
                                     }
                                 }
                             }
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             it.remove();
                             continue;
                         }
@@ -112,8 +106,7 @@ public class EntityListener implements Listener {
                         int mobs;
                         if (entityMap.get(n).containsKey(plot)) {
                             mobs = entityMap.get(n).get(plot).size();
-                        }
-                        else {
+                        } else {
                             mobs = 0;
                         }
                         if (!(PlotMain.hasPermissionRange(p, "plots.mobcap", Settings.MOB_CAP) > mobs)) {
@@ -178,8 +171,7 @@ public class EntityListener implements Listener {
                 if (entityMap.get(w).containsKey(plot)) {
                     entityMap.get(w).get(plot).remove(id);
                 }
-            }
-            else {
+            } else {
                 for (final Entry<Plot, HashSet<Integer>> n : entityMap.get(w).entrySet()) {
                     n.getValue().remove(id);
                 }
@@ -200,8 +192,7 @@ public class EntityListener implements Listener {
                                 if (entityMap.get(w).containsKey(plot)) {
                                     if (entityMap.get(w).get(plot).size() == 1) {
                                         entityMap.get(w).remove(plot);
-                                    }
-                                    else {
+                                    } else {
                                         entityMap.get(w).get(plot).remove(entity.getEntityId());
                                     }
                                 }

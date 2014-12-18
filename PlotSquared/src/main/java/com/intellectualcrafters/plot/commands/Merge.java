@@ -21,15 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
-import net.milkbowl.vault.economy.Economy;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -39,14 +30,21 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import net.milkbowl.vault.economy.Economy;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 /**
  * @author Citymonstret
  */
 public class Merge extends SubCommand {
 
-    public final static String[] values  = new String[] { "north", "east", "south", "west" };
-    public final static String[] aliases = new String[] { "n", "e", "s", "w" };
+    public final static String[] values = new String[]{"north", "east", "south", "west"};
+    public final static String[] aliases = new String[]{"n", "e", "s", "w"};
 
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);

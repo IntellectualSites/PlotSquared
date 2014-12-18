@@ -21,15 +21,10 @@
 
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import org.bukkit.ChatColor;
 
 /**
  * Captions class.
@@ -394,24 +389,24 @@ public enum C {
      *
      * @see com.intellectualsites.translation.TranslationManager
      */
-    private static TranslationManager          manager;
+    private static TranslationManager manager;
 
     /**
      * The default file
      *
      * @see com.intellectualsites.translation.TranslationFile
      */
-    private static TranslationFile             defaultFile;
+    private static TranslationFile defaultFile;
 
     /**
      * Default
      */
-    private String                             d;
+    private String d;
 
     /**
      * Translated
      */
-    private String                             s;
+    private String s;
 
     /**
      * Constructor for custom strings.
@@ -426,8 +421,7 @@ public enum C {
     /**
      * Constructor
      *
-     * @param d
-     *            default
+     * @param d default
      */
     C(final String d) {
         this.d = d;
@@ -486,6 +480,7 @@ public enum C {
 
     /**
      * @return translated and color decoded
+     *
      * @see org.bukkit.ChatColor#translateAlternateColorCodes(char, String)
      */
     public String translated() {

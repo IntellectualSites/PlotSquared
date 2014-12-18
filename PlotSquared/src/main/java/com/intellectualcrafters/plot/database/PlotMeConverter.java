@@ -21,22 +21,6 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
-
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
@@ -46,6 +30,15 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -63,8 +56,7 @@ public class PlotMeConverter {
     /**
      * Constructor
      *
-     * @param plugin
-     *            Plugin Used to run the converter
+     * @param plugin Plugin Used to run the converter
      */
     public PlotMeConverter(final PlotMain plugin) {
         this.plugin = plugin;
@@ -127,8 +119,7 @@ public class PlotMeConverter {
 
                             final Boolean auto_link = plotConfig.getBoolean("worlds." + world.getName() + ".AutoLinkPlots"); //
                             PlotMain.config.set("worlds." + world.getName() + ".plot.auto_merge", auto_link);
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             sendMessage("&c-- &lFailed to save configuration for world '" + world.getName() + "'\nThis will need to be done using the setup command, or manually");
                         }
 
@@ -173,13 +164,11 @@ public class PlotMeConverter {
                                             psDenied.add(set.getValue());
                                         }
                                     }
-                                }
-                                else {
+                                } else {
                                     for (final String user : plot.getAllowed().split(",")) {
                                         if (user.equals("*")) {
                                             psAdded.add(DBFunc.everyone);
-                                        }
-                                        else {
+                                        } else {
                                             final UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
                                             psAdded.add(uuid);
                                         }
@@ -188,19 +177,16 @@ public class PlotMeConverter {
                                         for (final String user : plot.getDenied().split(",")) {
                                             if (user.equals("*")) {
                                                 psDenied.add(DBFunc.everyone);
-                                            }
-                                            else {
+                                            } else {
                                                 final UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + user).getBytes(Charsets.UTF_8));
                                                 psDenied.add(uuid);
                                             }
                                         }
-                                    }
-                                    catch (final Throwable e) {
+                                    } catch (final Throwable e) {
                                         // Okay, this is evil.
                                     }
                                 }
-                            }
-                            catch (final Throwable e) {
+                            } catch (final Throwable e) {
                                 e.printStackTrace();
                             }
                             final PlotId id = new PlotId(Integer.parseInt(plot.id.split(";")[0]), Integer.parseInt(plot.id.split(";")[1]));
@@ -208,20 +194,18 @@ public class PlotMeConverter {
                             if (online) {
                                 pl = new com.intellectualcrafters.plot.object.Plot(id, plot.getOwnerId(), psAdded, psTrusted, psDenied,
 
-                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
-                            }
-                            else {
+                                                                                          "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
+                            } else {
                                 final String owner = plot.getOwner();
                                 pl = new com.intellectualcrafters.plot.object.Plot(id, UUID.nameUUIDFromBytes(("OfflinePlayer:" + owner).getBytes(Charsets.UTF_8)), psAdded, psTrusted, psDenied,
 
-                                        "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[] { false, false, false, false });
+                                                                                          "", PlotHomePosition.DEFAULT, null, world.getName(), new boolean[]{false, false, false, false});
                             }
 
                             if (pl != null) {
                                 if (!PlotMain.getPlots(world).containsKey(id)) {
                                     createdPlots.add(pl);
-                                }
-                                else {
+                                } else {
                                     duplicate++;
                                 }
                             }
@@ -240,8 +224,7 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Saving configuration...");
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     PlotMain.sendConsoleSenderMessage(" - &cFailed to save configuration.");
                 }
 
@@ -250,8 +233,7 @@ public class PlotMeConverter {
 
                 if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                     MV = true;
-                }
-                else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                } else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                     MW = true;
                 }
 
@@ -266,26 +248,22 @@ public class PlotMeConverter {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + worldname);
                         try {
                             Thread.sleep(1000);
-                        }
-                        catch (final InterruptedException ex) {
+                        } catch (final InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
                         // load
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + worldname + " normal -g PlotSquared");
-                    }
-                    else if (MW) {
+                    } else if (MW) {
                         // unload
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + worldname);
                         try {
                             Thread.sleep(1000);
-                        }
-                        catch (final InterruptedException ex) {
+                        } catch (final InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
                         // load
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname + " plugin:PlotSquared");
-                    }
-                    else {
+                    } else {
                         Bukkit.getServer().unloadWorld(world, true);
                         final World myworld = WorldCreator.name(worldname).generator(new WorldGenerator(worldname)).createWorld();
                         myworld.save();

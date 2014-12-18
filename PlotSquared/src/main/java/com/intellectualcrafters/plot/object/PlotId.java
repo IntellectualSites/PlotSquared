@@ -35,10 +35,8 @@ public class PlotId {
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
      *
-     * @param x
-     *            The plot x coordinate
-     * @param y
-     *            The plot y coordinate
+     * @param x The plot x coordinate
+     * @param y The plot y coordinate
      */
     public PlotId(final int x, final int y) {
         this.x = x;
@@ -48,8 +46,8 @@ public class PlotId {
     /**
      * Get a Plot Id based on a string
      *
-     * @param string
-     *            to create id from
+     * @param string to create id from
+     *
      * @return null if the string is invalid
      */
     public static PlotId fromString(final String string) {
@@ -61,8 +59,7 @@ public class PlotId {
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return null;
         }
         return new PlotId(x, y);
@@ -93,18 +90,15 @@ public class PlotId {
         if (this.x >= 0) {
             if (this.y >= 0) {
                 return (this.x * this.x) + (3 * this.x) + (2 * this.x * this.y) + this.y + (this.y * this.y);
-            }
-            else {
+            } else {
                 final int y1 = -this.y;
                 return (this.x * this.x) + (3 * this.x) + (2 * this.x * y1) + y1 + (y1 * y1) + 1;
             }
-        }
-        else {
+        } else {
             final int x1 = -this.x;
             if (this.y >= 0) {
                 return -((x1 * x1) + (3 * x1) + (2 * x1 * this.y) + this.y + (this.y * this.y));
-            }
-            else {
+            } else {
                 final int y1 = -this.y;
                 return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
             }

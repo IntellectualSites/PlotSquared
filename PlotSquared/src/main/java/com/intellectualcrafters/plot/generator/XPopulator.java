@@ -21,21 +21,19 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Random;
-
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import java.util.Random;
 
 /**
  * @author Citymonstret
  */
-@SuppressWarnings("unused")
-public class XPopulator extends BlockPopulator {
+@SuppressWarnings("unused") public class XPopulator extends BlockPopulator {
 
     /*
      * Sorry, this isn't well documented at the moment.
@@ -43,24 +41,24 @@ public class XPopulator extends BlockPopulator {
      * information about how a BlockPopulator works.
      */
 
-    final int                      plotsize;
-    final int                      pathsize;
-    final PlotBlock                wall;
-    final PlotBlock                wallfilling;
-    final PlotBlock                floor1;
-    final PlotBlock                floor2;
-    final int                      size;
-    final int                      roadheight;
-    final int                      wallheight;
-    final int                      plotheight;
-    final PlotBlock[]              plotfloors;
-    final PlotBlock[]              filling;
+    final int plotsize;
+    final int pathsize;
+    final PlotBlock wall;
+    final PlotBlock wallfilling;
+    final PlotBlock floor1;
+    final PlotBlock floor2;
+    final int size;
+    final int roadheight;
+    final int wallheight;
+    final int plotheight;
+    final PlotBlock[] plotfloors;
+    final PlotBlock[] filling;
     private final DefaultPlotWorld plotworld;
-    final private double           pathWidthLower;
-    Biome                          biome;
-    private int                    X;
-    private int                    Z;
-    private long                   state;
+    final private double pathWidthLower;
+    Biome biome;
+    private int X;
+    private int Z;
+    private long state;
 
     public XPopulator(final PlotWorld pw) {
         this.plotworld = (DefaultPlotWorld) pw;
@@ -86,8 +84,7 @@ public class XPopulator extends BlockPopulator {
 
         if ((this.pathsize % 2) == 0) {
             this.pathWidthLower = Math.floor(this.pathsize / 2) - 1;
-        }
-        else {
+        } else {
             this.pathWidthLower = Math.floor(this.pathsize / 2);
         }
     }
@@ -126,8 +123,7 @@ public class XPopulator extends BlockPopulator {
     private void setCuboidRegion(final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks, final World w) {
         if (blocks.length == 1) {
             setCuboidRegion(x1, x2, y1, y2, z1, z2, blocks[0], w);
-        }
-        else {
+        } else {
             for (int x = x1; x < x2; x++) {
                 for (int z = z1; z < z2; z++) {
                     for (int y = y1; y < y2; y++) {
@@ -145,9 +141,9 @@ public class XPopulator extends BlockPopulator {
     public short[] getBlock(final String block) {
         if (block.contains(":")) {
             final String[] split = block.split(":");
-            return new short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
+            return new short[]{Short.parseShort(split[0]), Short.parseShort(split[1])};
         }
-        return new short[] { Short.parseShort(block), 0 };
+        return new short[]{Short.parseShort(block), 0};
     }
 
     @Override
@@ -207,14 +203,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -228,14 +222,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -248,14 +240,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -268,14 +258,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -291,14 +279,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinX + 2) <= 16) {
                     start = 16 - plotMinX - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartX - 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinX + 2) <= 16) || ((roadStartX - 1) <= 16))) {
@@ -313,14 +299,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinZ + 2) <= 16) {
                     start = 16 - plotMinZ - 1;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartZ - 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 2) <= 16) || ((roadStartZ - 1) <= 16))) {
@@ -335,14 +319,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinX + 1) <= 16) {
                     start = 16 - plotMinX;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartX + 1) <= 16) {
                     end = (16 - roadStartX) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinX + 1) <= 16) || (roadStartX <= 16))) {
@@ -357,14 +339,12 @@ public class XPopulator extends BlockPopulator {
                 int start, end;
                 if ((plotMinZ + 1) <= 16) {
                     start = 16 - plotMinZ;
-                }
-                else {
+                } else {
                     start = 16;
                 }
                 if ((roadStartZ + 1) <= 16) {
                     end = (16 - roadStartZ) + 1;
-                }
-                else {
+                } else {
                     end = 0;
                 }
                 if (!(((plotMinZ + 1) <= 16) || ((roadStartZ + 1) <= 16))) {
@@ -389,8 +369,7 @@ public class XPopulator extends BlockPopulator {
                     setCuboidRegion(0, 16 - roadStartX, 1, this.plotheight, 16 - plotMinZ, 16, this.filling, w);
                     setCuboidRegion(0, 16 - roadStartX, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors, w);
                 }
-            }
-            else {
+            } else {
                 if (roadStartZ <= 16) {
                     if (plotMinX > 16) {
                         setCuboidRegion(0, 16, 1, this.plotheight, 0, 16 - roadStartZ, this.filling, w);
@@ -402,8 +381,7 @@ public class XPopulator extends BlockPopulator {
                 if (plotMinZ <= 16) {
                     setCuboidRegion(16 - plotMinX, 16, 1, this.plotheight, 16 - plotMinZ, 16, this.filling, w);
                     setCuboidRegion(16 - plotMinX, 16, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors, w);
-                }
-                else {
+                } else {
                     int z = 16 - roadStartZ;
                     if (z < 0) {
                         z = 16;
@@ -414,8 +392,7 @@ public class XPopulator extends BlockPopulator {
                 if (roadStartZ <= 16) {
                     setCuboidRegion(16 - plotMinX, 16, 1, this.plotheight, 0, 16 - roadStartZ, this.filling, w);
                     setCuboidRegion(16 - plotMinX, 16, this.plotheight, this.plotheight + 1, 0, 16 - roadStartZ, this.plotfloors, w);
-                }
-                else {
+                } else {
                     if (roadStartX <= 16) {
                         if (plotMinZ > 16) {
                             int x = 16 - roadStartX;
@@ -427,8 +404,7 @@ public class XPopulator extends BlockPopulator {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 if (plotMinZ <= 16) {
                     if (roadStartX > 16) {
                         int x = 16 - roadStartX;
@@ -438,8 +414,7 @@ public class XPopulator extends BlockPopulator {
                         setCuboidRegion(0, x, 1, this.plotheight, 16 - plotMinZ, 16, this.filling, w);
                         setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 16 - plotMinZ, 16, this.plotfloors, w);
                     }
-                }
-                else {
+                } else {
                     if (roadStartZ > 16) {
                         int x = 16 - roadStartX;
                         if (x < 0) {
@@ -452,16 +427,14 @@ public class XPopulator extends BlockPopulator {
                         if (roadStartX > 16) {
                             setCuboidRegion(0, x, 1, this.plotheight, 0, z, this.filling, w);
                             setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 0, z, this.plotfloors, w);
-                        }
-                        else {
+                        } else {
                             setCuboidRegion(0, x, 1, this.plotheight, 0, z, this.filling, w);
                             setCuboidRegion(0, x, this.plotheight, this.plotheight + 1, 0, z, this.plotfloors, w);
                         }
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (roadStartX <= 16) {
                 if (roadStartZ <= 16) {
                     setCuboidRegion(0, 16 - roadStartX, 1, this.plotheight, 0, 16 - roadStartZ, this.filling, w);

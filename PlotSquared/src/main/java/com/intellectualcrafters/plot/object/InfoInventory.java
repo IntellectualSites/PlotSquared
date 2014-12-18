@@ -1,8 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,7 +10,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created 2014-11-18 for PlotSquared
@@ -21,15 +20,14 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
  */
 public class InfoInventory implements InventoryHolder {
 
-    private final Plot      plot;
+    private final Plot plot;
     private final Inventory inventory;
-    private final Player    player;
+    private final Player player;
 
     /**
      * Constructor
      *
-     * @param plot
-     *            from which we take information
+     * @param plot from which we take information
      */
     public InfoInventory(final Plot plot, final Player player) {
         this.plot = plot;

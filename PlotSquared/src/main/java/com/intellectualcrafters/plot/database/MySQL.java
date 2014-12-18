@@ -21,13 +21,9 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.bukkit.plugin.Plugin;
+
+import java.sql.*;
 
 /**
  * Connects to and uses a MySQL database
@@ -42,23 +38,17 @@ public class MySQL extends Database {
     private final String port;
     private final String hostname;
 
-    private Connection   connection;
+    private Connection connection;
 
     /**
      * Creates a new MySQL instance
      *
-     * @param plugin
-     *            Plugin instance
-     * @param hostname
-     *            Name of the host
-     * @param port
-     *            Port number
-     * @param database
-     *            Database name
-     * @param username
-     *            Username
-     * @param password
-     *            Password
+     * @param plugin   Plugin instance
+     * @param hostname Name of the host
+     * @param port     Port number
+     * @param database Database name
+     * @param username Username
+     * @param password Password
      */
     public MySQL(final Plugin plugin, final String hostname, final String port, final String database, final String username, final String password) {
         super(plugin);

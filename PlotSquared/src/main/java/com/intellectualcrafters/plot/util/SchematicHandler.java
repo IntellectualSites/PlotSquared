@@ -21,36 +21,22 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
+import com.intellectualcrafters.jnbt.*;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Schematic Handler
@@ -62,12 +48,10 @@ public class SchematicHandler {
     /**
      * Paste a schematic
      *
-     * @param location
-     *            origin
-     * @param schematic
-     *            schematic to paste
-     * @param plot
-     *            plot to paste in
+     * @param location  origin
+     * @param schematic schematic to paste
+     * @param plot      plot to paste in
+     *
      * @return true if succeeded
      */
     public static boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
@@ -95,8 +79,7 @@ public class SchematicHandler {
             int y_offset;
             if (HEIGHT == location.getWorld().getMaxHeight()) {
                 y_offset = 0;
-            }
-            else {
+            } else {
                 y_offset = l1.getBlockY();
             }
 
@@ -125,8 +108,7 @@ public class SchematicHandler {
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return false;
         }
         return true;
@@ -135,8 +117,8 @@ public class SchematicHandler {
     /**
      * Get a schematic
      *
-     * @param name
-     *            to check
+     * @param name to check
+     *
      * @return schematic if found, else null
      */
     public static Schematic getSchematic(final String name) {
@@ -180,12 +162,10 @@ public class SchematicHandler {
                 if ((index >> 1) >= addId.length) { // No corresponding
                     // AddBlocks index
                     blocks[index] = (short) (b[index] & 0xFF);
-                }
-                else {
+                } else {
                     if ((index & 1) == 0) {
                         blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
-                    }
-                    else {
+                    } else {
                         blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
                     }
                 }
@@ -233,8 +213,7 @@ public class SchematicHandler {
             // }
             // }
             schematic = new Schematic(collection, dimension, file);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -244,10 +223,9 @@ public class SchematicHandler {
     /**
      * Saves a schematic to a file path
      *
-     * @param tag
-     *            to save
-     * @param path
-     *            to save in
+     * @param tag  to save
+     * @param path to save in
+     *
      * @return true if succeeded
      */
     public static boolean save(final CompoundTag tag, final String path) {
@@ -263,8 +241,7 @@ public class SchematicHandler {
             output.writeTag(tag);
             output.close();
             stream.close();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -274,10 +251,9 @@ public class SchematicHandler {
     /**
      * Gets the schematic of a plot
      *
-     * @param world
-     *            to check
-     * @param id
-     *            plot
+     * @param world to check
+     * @param id    plot
+     *
      * @return tag
      */
     @SuppressWarnings("deprecation")
@@ -306,8 +282,7 @@ public class SchematicHandler {
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             PlotMain.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
@@ -337,8 +312,7 @@ public class SchematicHandler {
 
                     final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, y, pos1.getBlockZ() + z));
 
-                    @SuppressWarnings("deprecation")
-                    final int id2 = block.getTypeId();
+                    @SuppressWarnings("deprecation") final int id2 = block.getTypeId();
 
                     if (id2 > 255) {
                         if (addBlocks == null) {
@@ -408,8 +382,8 @@ public class SchematicHandler {
      */
     public static class Schematic {
         private final DataCollection[] blockCollection;
-        private final Dimension        schematicDimension;
-        private final File             file;
+        private final Dimension schematicDimension;
+        private final File file;
 
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
             this.blockCollection = blockCollection;
@@ -466,7 +440,7 @@ public class SchematicHandler {
      */
     public static class DataCollection {
         private final short block;
-        private final byte  data;
+        private final byte data;
 
         // public CompoundTag tag;
 

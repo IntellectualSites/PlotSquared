@@ -21,8 +21,10 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,27 +32,16 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import java.util.ArrayList;
 
-@SuppressWarnings("deprecation")
-public class DefaultPlotManager extends PlotManager {
+@SuppressWarnings("deprecation") public class DefaultPlotManager extends PlotManager {
 
     /**
-     * Default implementation of getting a plot at a given location For a
-     * simplified explanation of the math involved: - Get the current coords -
-     * shift these numbers down to something relatable for a single plot
-     * (similar to reducing trigonometric functions down to the first quadrant)
-     * - e.g. If the plot size is 20 blocks, and we are at x=25, it's equivalent
-     * to x=5 for that specific plot From this, and knowing how thick the road
-     * is, we can say whether x=5 is road, or plot. The number of shifts done,
-     * is also counted, and this number gives us the PlotId
+     * Default implementation of getting a plot at a given location For a simplified explanation of the math involved: -
+     * Get the current coords - shift these numbers down to something relatable for a single plot (similar to reducing
+     * trigonometric functions down to the first quadrant) - e.g. If the plot size is 20 blocks, and we are at x=25,
+     * it's equivalent to x=5 for that specific plot From this, and knowing how thick the road is, we can say whether
+     * x=5 is road, or plot. The number of shifts done, is also counted, and this number gives us the PlotId
      */
     @Override
     public PlotId getPlotIdAbs(final PlotWorld plotworld, final Location loc) {
@@ -68,8 +59,7 @@ public class DefaultPlotManager extends PlotManager {
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
             pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        }
-        else {
+        } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
 
@@ -101,8 +91,7 @@ public class DefaultPlotManager extends PlotManager {
     }
 
     /**
-     * Some complex stuff for traversing mega plots (return getPlotIdAbs if you
-     * do not support mega plots)
+     * Some complex stuff for traversing mega plots (return getPlotIdAbs if you do not support mega plots)
      */
     @Override
     public PlotId getPlotId(final PlotWorld plotworld, final Location loc) {
@@ -118,8 +107,7 @@ public class DefaultPlotManager extends PlotManager {
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
             pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        }
-        else {
+        } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
 
@@ -188,9 +176,8 @@ public class DefaultPlotManager extends PlotManager {
     }
 
     /**
-     * Check if a location is inside a specific plot(non-Javadoc) - For this
-     * implementation, we don't need to do anything fancier than referring to
-     * getPlotIdAbs(...)
+     * Check if a location is inside a specific plot(non-Javadoc) - For this implementation, we don't need to do
+     * anything fancier than referring to getPlotIdAbs(...)
      */
     @Override
     public boolean isInPlotAbs(final PlotWorld plotworld, final Location loc, final PlotId plotid) {
@@ -231,12 +218,10 @@ public class DefaultPlotManager extends PlotManager {
     }
 
     /**
-     * Clearing the plot needs to only consider removing the blocks - This
-     * implementation has used the SetCuboid function, as it is fast, and uses
-     * NMS code - It also makes use of the fact that deleting chunks is a lot
-     * faster than block updates This code is very messy, but you don't need to
-     * do something quite as complex unless you happen to have 512x512 sized
-     * plots
+     * Clearing the plot needs to only consider removing the blocks - This implementation has used the SetCuboid
+     * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
+     * than block updates This code is very messy, but you don't need to do something quite as complex unless you happen
+     * to have 512x512 sized plots
      */
     @Override
     public boolean clearPlot(final World world, final Plot plot, final boolean isDelete) {
@@ -262,8 +247,7 @@ public class DefaultPlotManager extends PlotManager {
 
         if (isDelete) {
             wall = dpw.WALL_BLOCK;
-        }
-        else {
+        } else {
             wall = dpw.CLAIMED_WALL_BLOCK;
         }
 
@@ -346,8 +330,7 @@ public class DefaultPlotManager extends PlotManager {
                                 if (mn == null) {
                                     mn = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
                                     mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                                }
-                                else if ((mx.getBlockZ() < (j + 15)) || (mx.getBlockX() < (i + 15))) {
+                                } else if ((mx.getBlockZ() < (j + 15)) || (mx.getBlockX() < (i + 15))) {
                                     mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
                                 }
                                 world.regenerateChunk(i / 16, j / 16);
@@ -378,8 +361,7 @@ public class DefaultPlotManager extends PlotManager {
                                 }
                             }, 5L);
                             return;
-                        }
-                        else {
+                        } else {
 
                             if (min.getBlockX() < plotMinX) {
                                 min.setX(plotMinX);
@@ -872,8 +854,7 @@ public class DefaultPlotManager extends PlotManager {
     }
 
     /**
-     * Finishing off plot merging by adding in the walls surrounding the plot
-     * (OPTIONAL)(UNFINISHED)
+     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED)
      */
     @Override
     public boolean finishPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
