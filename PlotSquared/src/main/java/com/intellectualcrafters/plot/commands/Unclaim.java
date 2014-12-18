@@ -52,7 +52,7 @@ public class Unclaim extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+        if (PlotMain.useEconomy && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(plr.getUniqueId())) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 final Economy economy = PlotMain.economy;
@@ -68,8 +68,9 @@ public class Unclaim extends SubCommand {
             }
         }
         else {
-            PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
+            PlayerFunctions.sendMessage(plr, "Plot unclaim has been denied.");
         }
+        PlayerFunctions.sendMessage(plr, C.);
         return true;
     }
 }

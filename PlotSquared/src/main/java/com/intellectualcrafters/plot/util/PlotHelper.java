@@ -259,7 +259,7 @@ public class PlotHelper {
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final Location loc = manager.getSignLoc(world, plotworld, p);
         final Block bs = loc.getBlock();
-        if (bs.getType() != Material.WALL_SIGN) {
+        if (bs.getType() == Material.WALL_SIGN) {
             bs.setType(Material.AIR);
         }
     }
