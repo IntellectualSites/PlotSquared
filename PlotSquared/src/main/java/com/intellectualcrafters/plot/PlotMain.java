@@ -72,7 +72,6 @@ import java.util.concurrent.TimeUnit;
  * @author Empire92
  */
 @SuppressWarnings("unused") public class PlotMain extends JavaPlugin {
-    private static PlotMain main = null;
     /**
      * Permission that allows for "everything"
      */
@@ -85,7 +84,6 @@ import java.util.concurrent.TimeUnit;
      * Boolean Flags (material)
      */
     public final static HashMap<Material, String> booleanFlags = new HashMap<>();
-
     /**
      * Initialize the material flags
      */
@@ -103,7 +101,6 @@ import java.util.concurrent.TimeUnit;
         booleanFlags.put(Material.DISPENSER, "dispenser");
         booleanFlags.put(Material.DROPPER, "dropper");
     }
-
     /**
      * All loaded plot worlds
      */
@@ -156,6 +153,7 @@ import java.util.concurrent.TimeUnit;
      * Use Economy?
      */
     public static boolean useEconomy = false;
+    private static PlotMain main = null;
     /**
      * The UUID Saver
      */
@@ -647,7 +645,7 @@ import java.util.concurrent.TimeUnit;
             player.teleport(location);
             PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
         }
-        return event.isCancelled();
+        return !event.isCancelled();
     }
 
     /**
@@ -816,80 +814,21 @@ import java.util.concurrent.TimeUnit;
                     sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + this.error);
                     this.error = 0l;
                 }
+                World world;
                 for (final String w : getPlotWorlds()) {
                     getWorldSettings(w);
-                    final World world = Bukkit.getServer().getWorld(w);
+                    world = Bukkit.getServer().getWorld(w);
                     try {
                         if (world.getLoadedChunks().length < 1) {
                             continue;
                         }
                         for (final Chunk chunk : world.getLoadedChunks()) {
                             final Entity[] entities = chunk.getEntities();
+                            Entity entity;
                             for (int i = entities.length - 1; i >= 0; i--) {
-                                final Entity entity = entities[i];
-                                if ((entity instanceof Player) || PlotListener.isInPlot(entity.getLocation())) {
-                                    continue;
+                                if (!((entity = entities[i]) instanceof Player) && !PlotListener.isInPlot(entity.getLocation())) {
+                                    entity.remove();
                                 }
-                                entity.remove();
-                                // boolean tamed = false;
-                                // if (Settings.MOB_PATHFINDING) {
-                                // if (entity instanceof Tameable) {
-                                // Tameable tameable = (Tameable) entity;
-                                // if (tameable.isTamed()) {
-                                // tamed = true;
-                                // }
-                                // }
-                                // else
-                                // if (entity instanceof LivingEntity) {
-                                // LivingEntity livingEntity = ((LivingEntity)
-                                // entity);
-                                // if (livingEntity.getCustomName() != null) {
-                                // tamed = true;
-                                // }
-                                // }
-                                // if (!tamed) {
-                                // entity.remove();
-                                // continue;
-                                // }
-                                // boolean found = false;
-                                // int radius = 1;
-                                // int dir = 0;
-                                // int x = this.location.getBlockX();
-                                // int y = this.location.getBlockY();
-                                // int z = this.location.getBlockZ();
-                                // while (!found && (radius < 4)) {
-                                // Location pos;
-                                // switch (dir) {
-                                // case 0:
-                                // pos = new Location(world, x + radius, y, z);
-                                // dir++;
-                                // break;
-                                // case 1:
-                                // pos = new Location(world, x, y, z + radius);
-                                // dir++;
-                                // break;
-                                // case 2:
-                                // pos = new Location(world, x - radius, y, z);
-                                // dir++;
-                                // break;
-                                // case 3:
-                                // pos = new Location(world, x, y, z - radius);
-                                // dir = 0;
-                                // radius++;
-                                // break;
-                                // default:
-                                // pos = this.location;
-                                // break;
-                                //
-                                // }
-                                // if (PlayerEvents.isInPlot(pos)) {
-                                // entity.teleport(pos.add(0.5, 0, 0.5));
-                                // found = true;
-                                // break;
-                                // }
-                                // }
-                                // entity.teleport(this.location.subtract(this.location.getDirection().normalize().multiply(2)));
-                                // }
                             }
                         }
                     } catch (final Throwable e) {
@@ -909,7 +848,6 @@ import java.util.concurrent.TimeUnit;
         final int config_ver = 1;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
-
         options.put("auto_update", false);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
@@ -1320,20 +1258,20 @@ import java.util.concurrent.TimeUnit;
     /**
      * Set all plots
      *
-     * @param plots New Plot LinkedHashMap
-     */
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
-    }
-
-    /**
-     * Set all plots
-     *
      * @param plots New Plot HashMap
      */
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotMain.plots = new LinkedHashMap<>(plots);
         // PlotMain.plots.putAll(plots);
+    }
+
+    /**
+     * Set all plots
+     *
+     * @param plots New Plot LinkedHashMap
+     */
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
     }
 
     /**
