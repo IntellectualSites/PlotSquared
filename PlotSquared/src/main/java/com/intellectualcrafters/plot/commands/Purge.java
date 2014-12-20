@@ -43,8 +43,6 @@ import org.bukkit.entity.Player;
                     final String world = split[0];
                     final PlotId id = new PlotId(Integer.parseInt(split[1]), Integer.parseInt(split[2]));
 
-                    System.out.print("VALID ID");
-
                     if (plr != null) {
                         PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
                         return false;
@@ -54,11 +52,16 @@ import org.bukkit.entity.Player;
                         PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
                         return false;
                     }
+                    
                     PlotMain.getPlots(world).remove(id);
                     DBFunc.purge(world, id);
                     PlayerFunctions.sendMessage(null, "&aPurge of '" + args[0] + "' was successful!");
                     return true;
                 } catch (final Exception e) {
+                    if (args.length == 1) {
+                        PlayerFunctions.sendMessage(plr, "This is a dangerous command, if you are sure, use /plot purge {world} -o");
+                        return false;
+                    }
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 }
             }

@@ -783,14 +783,14 @@ public class SQLManager implements AbstractDB {
                 if (ids.size() > 0) {
                     try {
 
-                        String prefix = "";
+                        String p = "";
                         final StringBuilder idstr = new StringBuilder("");
 
                         for (final Integer id : ids) {
-                            idstr.append(prefix + id);
-                            prefix = " OR `plot_plot_id` = ";
+                            idstr.append(p + id);
+                            p = " OR `plot_plot_id` = ";
                         }
-
+                        
                         PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
                         stmt.executeUpdate();
                         stmt.close();

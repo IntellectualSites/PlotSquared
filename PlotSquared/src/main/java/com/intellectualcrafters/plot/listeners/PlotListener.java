@@ -185,7 +185,7 @@ import java.util.UUID;
             if (plot.settings.getFlag("weather") != null) {
                 player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
             }
-            if (booleanFlag(plot, "titles") && Settings.TITLES && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
+            if ((booleanFlag(plot, "titles") || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
