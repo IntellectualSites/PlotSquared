@@ -463,7 +463,7 @@ public enum C {
      * @return translated if exists else default
      */
     public String s() {
-        return manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        return manager.getTranslated(name(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         /*
          * if (PlotMain.translations != null) {
          * final String t = PlotMain.translations.getString(this.toString());
@@ -485,5 +485,10 @@ public enum C {
      */
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());
+    }
+    
+    @Override
+    public String toString() {
+        return this.s();
     }
 }

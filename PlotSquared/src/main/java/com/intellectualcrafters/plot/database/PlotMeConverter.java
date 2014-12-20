@@ -73,7 +73,7 @@ public class PlotMeConverter {
             @Override
             public void run() {
                 sendMessage("&7Conversion has started");
-                sendMessage("7Caching playerdata...");
+                sendMessage("&7Caching playerdata...");
                 final ArrayList<com.intellectualcrafters.plot.object.Plot> createdPlots = new ArrayList<>();
                 // Online Mode
                 final boolean online = Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
