@@ -159,12 +159,11 @@ public class DefaultPlotWorld extends PlotWorld {
      */
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
-        this.PLOT_HEIGHT = config.getInt("plot.height");
-
         if (!config.contains("plot.height")) {
             PlotMain.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
-
+        
+        this.PLOT_HEIGHT = config.getInt("plot.height");
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));
         this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.floor"), ','));

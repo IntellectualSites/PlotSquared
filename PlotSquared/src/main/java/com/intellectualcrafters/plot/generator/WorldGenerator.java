@@ -86,7 +86,6 @@ public class WorldGenerator extends PlotGenerator {
         if (this.plotworld == null) {
             this.plotworld = (DefaultPlotWorld) PlotMain.getWorldSettings(world);
         }
-
         this.plotsize = this.plotworld.PLOT_WIDTH;
 
         this.pathsize = this.plotworld.ROAD_WIDTH;

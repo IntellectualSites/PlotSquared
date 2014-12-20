@@ -902,7 +902,6 @@ import java.util.concurrent.TimeUnit;
      *
      * @param plotworld World to create the section for
      */
-    @SuppressWarnings("unused")
     public static void createConfiguration(final PlotWorld plotworld) {
         final Map<String, Object> options = new HashMap<>();
 
@@ -930,7 +929,6 @@ import java.util.concurrent.TimeUnit;
 
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
 
-        // Let's create these here instead
         final PlotWorld plotWorld;
         final PlotGenerator plotGenerator;
         final PlotManager plotManager;
@@ -948,7 +946,7 @@ import java.util.concurrent.TimeUnit;
             if (!config.contains(path)) {
                 config.createSection(path);
             }
-
+            
             plotWorld.saveConfiguration(config.getConfigurationSection(path));
             plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
 

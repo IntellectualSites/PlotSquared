@@ -28,10 +28,12 @@ import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
@@ -75,7 +77,8 @@ public class Setup extends SubCommand implements Listener {
                 }
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                } catch (final IOException e) {
+                    PlotMain.config.load(PlotMain.configFile);
+                } catch (final IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
 
@@ -104,6 +107,12 @@ public class Setup extends SubCommand implements Listener {
                             }
                         }
                     }
+                }
+                try {
+                    plr.teleport(Bukkit.getWorld(world).getSpawnLocation());
+                }
+                catch (Exception e) {
+                    
                 }
                 sendMessage(plr, C.SETUP_FINISHED, object.world);
 
@@ -196,6 +205,7 @@ public class Setup extends SubCommand implements Listener {
             } else {
                 plotworld = new DefaultPlotWorld(world);
             }
+            PlotMain.removePlotWorld(world);
 
             setupMap.put(plrname, new SetupObject(world, plotworld, args[1]));
             sendMessage(plr, C.SETUP_INIT);

@@ -125,9 +125,9 @@ import org.bukkit.entity.Player;
             return false;
         }
         final int diff = PlayerFunctions.getPlayerPlotCount(world, plr) - PlayerFunctions.getAllowedPlots(plr);
-        if ((diff + (size_x * size_z)) >= 0) {
+        if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
-                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff - 1) + "");
+                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
             } else {
                 PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }

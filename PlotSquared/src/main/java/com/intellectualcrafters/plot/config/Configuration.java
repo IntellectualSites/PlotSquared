@@ -22,6 +22,7 @@
 package com.intellectualcrafters.plot.config;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
+
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
@@ -165,7 +166,7 @@ import java.util.List;
 
         @Override
         public Object parseObject(final Object object) {
-            return ((PlotBlock) object).id + ":" + ((PlotBlock) object).data;
+            return object;
         }
     };
     public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
@@ -235,11 +236,7 @@ import java.util.List;
 
         @Override
         public Object parseObject(final Object object) {
-            final List<String> list = new ArrayList<>();
-            for (final PlotBlock block : (PlotBlock[]) object) {
-                list.add((block.id + ":" + (block.data)));
-            }
-            return list;
+            return object;
         }
     };
 

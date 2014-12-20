@@ -22,9 +22,13 @@
 package com.intellectualcrafters.plot.config;
 
 import com.intellectualcrafters.plot.config.Configuration.SettingValue;
+import com.intellectualcrafters.plot.object.PlotBlock;
+
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration Node
@@ -70,6 +74,16 @@ public class ConfigurationNode {
     public Object getValue() {
         if (this.value instanceof String[]) {
             return Arrays.asList((String[]) this.value);
+        }
+        else if (this.value instanceof Object[]) {
+            List<String> values = new ArrayList<String>();
+            for (Object value : (Object[]) this.value) {
+                values.add(value.toString());
+            }
+            return values;
+        }
+        else if (this.value instanceof PlotBlock) {
+            return this.value.toString();
         }
         return this.value;
     }

@@ -23,6 +23,8 @@ package com.intellectualcrafters.plot.listeners;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
+import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
@@ -37,6 +39,7 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -69,29 +72,15 @@ public class WorldGuardListener implements Listener {
             this.flags.add(flag);
         }
     }
-
+    
     public void changeOwner(final Player requester, final UUID owner, final World world, final Plot plot) {
-        // boolean op = requester.isOp();
-        // requester.setOp(true);
-
-        // 10 ticks should be enough
-        final PermissionAttachment add = requester.addAttachment(PlotMain.getMain(), 10);
-        add.setPermission("worldguard.region.addowner.own.*", true);
-
-        final PermissionAttachment remove = requester.addAttachment(PlotMain.getMain(), 10);
-        remove.setPermission("worldguard.region.removeowner.own.*", true);
-
         try {
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
-            manager.getRegion(plot.id.x + "-" + plot.id.y);
-            requester.performCommand("region setowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(owner));
-            requester.performCommand("region removeowner " + (plot.id.x + "-" + plot.id.y) + " " + UUIDHandler.getName(plot.getOwner()));
+        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
+        DefaultDomain owners = new DefaultDomain();
+        owners.addPlayer(UUIDHandler.getName(owner));
+        region.setOwners(owners);
         } catch (final Exception e) {
-            // requester.setOp(op);
-
-        } finally {
-            add.remove();
-            remove.remove();
         }
     }
 
@@ -131,7 +120,6 @@ public class WorldGuardListener implements Listener {
         }
     }
 
-    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMerge(final PlotMergeEvent event) {
         final Plot main = event.getPlot();
@@ -165,7 +153,6 @@ public class WorldGuardListener implements Listener {
         manager.addRegion(rg);
     }
 
-    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onUnlink(final PlotUnlinkEvent event) {
         try {
@@ -199,11 +186,9 @@ public class WorldGuardListener implements Listener {
                 manager.addRegion(rg);
             }
         } catch (final Exception e) {
-            //
         }
     }
 
-    @SuppressWarnings("unused")
     @EventHandler
     public void onPlotClaim(final PlayerClaimPlotEvent event) {
         try {
@@ -226,11 +211,9 @@ public class WorldGuardListener implements Listener {
 
             manager.addRegion(region);
         } catch (final Exception e) {
-            //
         }
     }
 
-    @SuppressWarnings("unused")
     @EventHandler
     public void onPlotDelete(final PlotDeleteEvent event) {
         try {
@@ -240,7 +223,49 @@ public class WorldGuardListener implements Listener {
             final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
             manager.removeRegion(plot.x + "-" + plot.y);
         } catch (final Exception e) {
-            //
+        }
+    }
+    
+    public void addUser(final Player requester, final UUID user, final World world, final Plot plot) {
+        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
+        DefaultDomain members = region.getMembers();
+        members.addPlayer(UUIDHandler.getName(user));
+        region.setMembers(members);
+    }
+    
+    public void removeUser(final Player requester, final UUID user, final World world, final Plot plot) {
+        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
+        DefaultDomain members = region.getMembers();
+        members.removePlayer(UUIDHandler.getName(user));
+        region.setMembers(members);
+    }
+    
+    @EventHandler
+    public void onPlotHelper(final PlayerPlotHelperEvent event) {
+        if (event.wasAdded()) {
+            addUser(event.getInitiator(), event.getPlayer(), event.getInitiator().getWorld(), event.getPlot());
+        }
+        else {
+            removeUser(event.getInitiator(), event.getPlayer(), event.getInitiator().getWorld(), event.getPlot());
+        }
+    }
+    
+    @EventHandler
+    public void onPlotTrusted(final PlayerPlotTrustedEvent event) {
+        if (event.wasAdded()) {
+            addUser(event.getInitiator(), event.getPlayer(), event.getInitiator().getWorld(), event.getPlot());
+        }
+        else {
+            removeUser(event.getInitiator(), event.getPlayer(), event.getInitiator().getWorld(), event.getPlot());
+        }
+    }
+    
+    @EventHandler
+    public void onPlotDenied(final PlayerPlotTrustedEvent event) {
+        if (event.wasAdded()) {
+            removeUser(event.getInitiator(), event.getPlayer(), event.getInitiator().getWorld(), event.getPlot());
         }
     }
 }
