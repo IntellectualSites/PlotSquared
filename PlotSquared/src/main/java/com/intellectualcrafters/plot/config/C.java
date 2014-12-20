@@ -486,9 +486,4 @@ public enum C {
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());
     }
-
-    @Override
-    public String toString() {
-        return this.s();
-    }
 }
