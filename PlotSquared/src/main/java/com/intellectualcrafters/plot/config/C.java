@@ -89,14 +89,14 @@ public enum C {
     /*
      * Setup Stuff
      */
-    SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld"),
+    SETUP_INIT("&6PlotSquared Setup -> Setup a new plotworld\n&6Additional commands:\n&c - &6/plot setup <value>\n&c - &6/plot setup back\n&c - &6/plot setup cancel"),
     SETUP_STEP("&cStep &6%s&c: %s &c<Expecting: &6%s&c, Default: &6%s&c>"),
     SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: &6/plot setup cancel"),
     SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
     SETUP_FINISHED("&cFinished setup for world  &c%s.\n&4If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml"),
     SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
-    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/p setup &l<world>&6 <generator>&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
-    SETUP_MISSING_GENERATOR("&cYou need to specify a generator (&6/p setup <world> &l<generator>&r&c)\n&6Additional commands:\n&c - &6/p setup <value>\n&c - &6/p setup back\n&c - &6/p setup cancel"),
+    SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/plot setup &l<world>&6 <generator>&c)\n&6Additional commands:\n&c - &6/plot setup <value>\n&c - &6/plot setup back\n&c - &6/plot setup cancel"),
+    SETUP_MISSING_GENERATOR("&cYou need to specify a generator (&6/plot setup <world> &l<generator>&r&c)\n&6Additional commands:\n&c - &6/plot setup <value>\n&c - &6/plot setup back\n&c - &6/plot setup cancel"),
     SETUP_INVALID_GENERATOR("&cInvalid generator. Possible options: %s"),
     /*
      * Schematic Stuff
