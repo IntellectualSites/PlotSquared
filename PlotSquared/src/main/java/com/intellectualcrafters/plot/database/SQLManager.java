@@ -265,14 +265,21 @@ public class SQLManager implements AbstractDB {
             }
             stmt.executeUpdate();
             stmt.close();
-        } catch (final SQLException e) {
-            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not bulk save. Conversion may be slower...");
+        } catch (final Exception e) {
+            e.printStackTrace();
+            PlotMain.sendConsoleSenderMessage("&6[WARN] "+"Could not bulk save. Conversion may be slower...");
             try {
                 for (Plot plot : plots) {
-                    createPlot(plot);
+                    try {
+                        createPlot(plot);
+                    }
+                    catch (Exception e3) {
+                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot: "+plot.id);
+                    }
                 }
             }
             catch (Exception e2) {
+                e2.printStackTrace();
                 PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plots!");
             }
         }
