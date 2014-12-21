@@ -28,8 +28,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.Logger;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -104,7 +102,7 @@ public class SQLManager implements AbstractDB {
     // statement.close();
     // } catch (final SQLException e) {
     // e.printStackTrace();
-    // Logger.add(LogLevel.DANGER, "Could not reset MySQL timout.");
+    // PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Could not reset MySQL timout.");
     // }
     // }
     // });
@@ -130,7 +128,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.DANGER, "Could not set owner for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Could not set owner for plot " + plot.id);
                 }
             }
         });
@@ -175,7 +173,6 @@ public class SQLManager implements AbstractDB {
         if (helpers.size() == 0) {
             return;
         }
-
         // add plot settings
         final Integer[] ids = helpers.keySet().toArray(new Integer[helpers.keySet().size()]);
         StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
@@ -192,7 +189,9 @@ public class SQLManager implements AbstractDB {
             stmt.executeUpdate();
             stmt.close();
         } catch (final SQLException e) {
-            e.printStackTrace();
+            for (int i = 0; i < ids.length; i++) {
+                createPlotSettings(ids[i], null);
+            }
         }
 
         // add plot helpers
@@ -221,8 +220,15 @@ public class SQLManager implements AbstractDB {
             stmt.executeUpdate();
             stmt.close();
         } catch (final SQLException e) {
-            Logger.add(LogLevel.WARNING, "Failed to set helper for plots");
-            e.printStackTrace();
+            try {
+                for (final Integer id : helpers.keySet()) {
+                    for (final UUID helper : helpers.get(id)) {
+                        setHelper(id, helper);
+                    }
+                }
+            }
+            catch (Exception e2) {}
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set all helpers for plots");
         }
     }
 
@@ -260,8 +266,15 @@ public class SQLManager implements AbstractDB {
             stmt.executeUpdate();
             stmt.close();
         } catch (final SQLException e) {
-            e.printStackTrace();
-            Logger.add(LogLevel.DANGER, "Failed to save plots!");
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not bulk save. Conversion may be slower...");
+            try {
+                for (Plot plot : plots) {
+                    createPlot(plot);
+                }
+            }
+            catch (Exception e2) {
+                PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plots!");
+            }
         }
     }
 
@@ -283,7 +296,7 @@ public class SQLManager implements AbstractDB {
             stmt.close();
         } catch (final SQLException e) {
             e.printStackTrace();
-            Logger.add(LogLevel.DANGER, "Failed to save plot " + plot.id);
+            PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot " + plot.id);
         }
     }
 
@@ -358,7 +371,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.DANGER, "Failed to delete plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to delete plot " + plot.id);
                 }
             }
         });
@@ -640,7 +653,7 @@ public class SQLManager implements AbstractDB {
                 PlotMain.sendConsoleSenderMessage("&c[WARNING] - Please create the world/s or remove the plots using the purge command");
             }
         } catch (final SQLException e) {
-            Logger.add(LogLevel.WARNING, "Failed to load plots.");
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load plots.");
             e.printStackTrace();
         }
         return newplots;
@@ -664,7 +677,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Could not set merged for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not set merged for plot " + plot.id);
                 }
             }
         });
@@ -693,7 +706,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Could not set flag for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not set flag for plot " + plot.id);
                 }
             }
         });
@@ -718,7 +731,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Could not set flag for plot " + id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not set flag for plot " + id);
                 }
             }
         });
@@ -742,7 +755,7 @@ public class SQLManager implements AbstractDB {
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
-                    Logger.add(LogLevel.WARNING, "Failed to set alias for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set alias for plot " + plot.id);
                     e.printStackTrace();
                 }
 
@@ -777,7 +790,7 @@ public class SQLManager implements AbstractDB {
                     }
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '" + world + "'!");
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"FAILED TO PURGE WORLD '" + world + "'!");
                     return;
                 }
                 if (ids.size() > 0) {
@@ -813,11 +826,11 @@ public class SQLManager implements AbstractDB {
                         stmt.close();
                     } catch (final SQLException e) {
                         e.printStackTrace();
-                        Logger.add(LogLevel.DANGER, "FAILED TO PURGE PLOT FROM DB '" + world + "' , '" + id + "' !");
+                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE PLOT FROM DB '" + world + "' , '" + id + "' !");
                         return;
                     }
                 }
-                Logger.add(LogLevel.GENERAL, "SUCCESSFULLY PURGED PLOT FROM DB '" + world + "' , '" + id + "'!");
+                PlotMain.sendConsoleSenderMessage("&6[INFO] "+"SUCCESSFULLY PURGED PLOT FROM DB '" + world + "' , '" + id + "'!");
             }
         });
     }
@@ -840,7 +853,7 @@ public class SQLManager implements AbstractDB {
                     }
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "FAILED TO PURGE WORLD '" + world + "'!");
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"FAILED TO PURGE WORLD '" + world + "'!");
                     return;
                 }
                 if (ids.size() > 0) {
@@ -876,11 +889,11 @@ public class SQLManager implements AbstractDB {
                         stmt.close();
                     } catch (final SQLException e) {
                         e.printStackTrace();
-                        Logger.add(LogLevel.DANGER, "FAILED TO PURGE WORLD '" + world + "'!");
+                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE WORLD '" + world + "'!");
                         return;
                     }
                 }
-                Logger.add(LogLevel.GENERAL, "SUCCESSFULLY PURGED WORLD '" + world + "'!");
+                PlotMain.sendConsoleSenderMessage("&6[INFO] "+"SUCCESSFULLY PURGED WORLD '" + world + "'!");
             }
         });
     }
@@ -903,7 +916,7 @@ public class SQLManager implements AbstractDB {
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
-                    Logger.add(LogLevel.WARNING, "Failed to set position for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set position for plot " + plot.id);
                     e.printStackTrace();
                 }
             }
@@ -956,7 +969,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.close();
         } catch (final SQLException e) {
-            Logger.add(LogLevel.WARNING, "Failed to load settings for plot: " + id);
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load settings for plot: " + id);
             e.printStackTrace();
         }
         return h;
@@ -977,7 +990,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove helper for plot " + plot.id);
                 }
             }
         });
@@ -1000,7 +1013,7 @@ public class SQLManager implements AbstractDB {
             }
             statement.close();
         } catch (final SQLException e) {
-            Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
         return comments;
@@ -1021,7 +1034,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove helper for plot " + plot.id);
                 }
             }
         });
@@ -1045,7 +1058,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Failed to remove helper for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove helper for plot " + plot.id);
                 }
             }
         });
@@ -1068,7 +1081,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Failed to remove trusted user for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove trusted user for plot " + plot.id);
                 }
             }
         });
@@ -1090,13 +1103,31 @@ public class SQLManager implements AbstractDB {
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
-                    Logger.add(LogLevel.WARNING, "Failed to set helper for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set helper for plot " + plot.id);
                     e.printStackTrace();
                 }
             }
         });
     }
-
+    
+    public void setHelper(final int id, final UUID uuid) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
+                    statement.setInt(1, id);
+                    statement.setString(2, uuid.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set helper for id " + id);
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
     /**
      * @param plot
      * @param player
@@ -1113,7 +1144,7 @@ public class SQLManager implements AbstractDB {
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
-                    Logger.add(LogLevel.WARNING, "Failed to set plot trusted for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set plot trusted for plot " + plot.id);
                     e.printStackTrace();
                 }
             }
@@ -1137,7 +1168,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    Logger.add(LogLevel.WARNING, "Failed to remove denied for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove denied for plot " + plot.id);
                 }
             }
         });
@@ -1159,7 +1190,7 @@ public class SQLManager implements AbstractDB {
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
-                    Logger.add(LogLevel.WARNING, "Failed to set denied for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set denied for plot " + plot.id);
                     e.printStackTrace();
                 }
             }
@@ -1179,7 +1210,7 @@ public class SQLManager implements AbstractDB {
             statement.close();
             return rating;
         } catch (final SQLException e) {
-            Logger.add(LogLevel.WARNING, "Failed to fetch rating for plot " + plot.getId().toString());
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
         return 0.0d;

@@ -277,6 +277,6 @@ public class PlotMeConverter {
                 PlotMain.sendConsoleSenderMessage("&3PlotMe&8->&3PlotSquared&8:&7 Conversion has finished");
                 PlotMain.sendConsoleSenderMessage("&cAlthough the server may be functional in it's current state, it is recommended that you restart the server and remove PlotMe to finalize the installation. Please make careful note of any warning messages that may have showed up during conversion.");
             }
-        }, 20);
+        }, 300);
     }
 }
