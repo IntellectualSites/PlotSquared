@@ -260,7 +260,12 @@ public class SQLManager implements AbstractDB {
                 final Plot plot = plots.get(i);
                 stmt.setInt((i * 4) + 1, plot.id.x);
                 stmt.setInt((i * 4) + 2, plot.id.y);
-                stmt.setString((i * 4) + 3, plot.owner.toString());
+                try {
+                    stmt.setString((i * 4) + 3, plot.owner.toString());
+                }
+                catch (Exception e) {
+                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
+                }
                 stmt.setString((i * 4) + 4, plot.world);
             }
             stmt.executeUpdate();
@@ -292,19 +297,24 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlot(final Plot plot) {
-        PreparedStatement stmt = null;
-        try {
-            stmt = this.connection.prepareStatement(this.CREATE_PLOT);
-            stmt.setInt(1, plot.id.x);
-            stmt.setInt(2, plot.id.y);
-            stmt.setString(3, plot.owner.toString());
-            stmt.setString(4, plot.world);
-            stmt.executeUpdate();
-            stmt.close();
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot " + plot.id);
-        }
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
+                    stmt.setInt(1, plot.id.x);
+                    stmt.setInt(2, plot.id.y);
+                    stmt.setString(3, plot.owner.toString());
+                    stmt.setString(4, plot.world);
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot " + plot.id);
+                }
+            }
+        });
     }
 
     /**
