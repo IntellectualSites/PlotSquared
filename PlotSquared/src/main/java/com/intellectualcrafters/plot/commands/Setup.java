@@ -111,9 +111,7 @@ public class Setup extends SubCommand implements Listener {
                 try {
                     plr.teleport(Bukkit.getWorld(world).getSpawnLocation());
                 }
-                catch (Exception e) {
-                    
-                }
+                catch (Exception e) {}
                 sendMessage(plr, C.SETUP_FINISHED, object.world);
 
                 setupMap.remove(plrname);
@@ -126,6 +124,14 @@ public class Setup extends SubCommand implements Listener {
                 return true;
             } else {
                 if (args[0].equalsIgnoreCase("cancel")) {
+                    final String world = object.world;
+                    PlotMain.config.set(world, null);
+                    try {
+                        PlotMain.config.save(PlotMain.configFile);
+                        PlotMain.config.load(PlotMain.configFile);
+                    } catch (final IOException | InvalidConfigurationException e) {
+                        e.printStackTrace();
+                    }
                     setupMap.remove(plrname);
                     PlayerFunctions.sendMessage(plr, "&cCancelled setup.");
                     return true;
@@ -185,7 +191,7 @@ public class Setup extends SubCommand implements Listener {
 
             for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 if (plugin.isEnabled()) {
-                    if (plugin.getDefaultWorldGenerator("world", "") != null) {
+                    if (plugin.getDefaultWorldGenerator(world, "") != null) {
                         final String name = plugin.getDescription().getName();
                         generators.add(name);
                         if (args[1].equals(name)) {

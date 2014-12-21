@@ -38,13 +38,16 @@ import com.intellectualcrafters.plot.listeners.*;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
 import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1528,6 +1531,12 @@ import java.util.concurrent.TimeUnit;
             if (Settings.OFFLINE_MODE) {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             }
+            else if (checkVersion() && Bukkit.getOnlineMode()) {
+                UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
+            }
+            else {
+                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            }
             setUUIDSaver(new PlotUUIDSaver());
             // Looks really cool xD
             getUUIDSaver().globalPopulate();
@@ -1535,6 +1544,33 @@ import java.util.concurrent.TimeUnit;
         // Now we're finished :D
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
+        }
+    }
+    
+    public static boolean checkVersion() {
+        try {
+            String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            int a = Integer.parseInt(version[0]);
+            int b = Integer.parseInt(version[1]);
+            int c = 0;
+            if (version.length == 3) {
+                c = Integer.parseInt(version[2]);
+            }
+            if (a < 2) {
+                if (a < 1) {
+                    return false;
+                }
+                if (b < 7) {
+                    return false;
+                }
+                if (b == 7 && c < 5) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 

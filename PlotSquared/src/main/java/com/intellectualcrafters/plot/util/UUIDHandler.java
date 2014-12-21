@@ -315,7 +315,6 @@ import java.util.UUID;
      */
     public static UUID getUUID(final OfflinePlayer player) {
         if (uuidWrapper == null) {
-
             if (Settings.OFFLINE_MODE) {
                 uuidWrapper = new OfflineUUIDWrapper();
             } else {

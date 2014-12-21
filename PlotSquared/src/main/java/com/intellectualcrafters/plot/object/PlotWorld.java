@@ -306,6 +306,9 @@ public abstract class PlotWorld {
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.DEFAULT_FLAGS = config.getStringList("flags.default");
+        if (this.DEFAULT_FLAGS == null) {
+            this.DEFAULT_FLAGS = new ArrayList<>();
+        }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");
         this.SPAWN_EGGS = config.getBoolean("event.spawn.egg");
@@ -336,7 +339,7 @@ public abstract class PlotWorld {
         options.put("economy.prices.merge", PlotWorld.MERGE_PRICE_DEFAULT);
         options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
         options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
-        options.put("flags.default", PlotWorld.DEFAULT_FLAGS_DEFAULT);
+        options.put("flags.default", null);
         options.put("event.pvp", PlotWorld.PVP_DEFAULT);
         options.put("event.pve", PlotWorld.PVE_DEFAULT);
         options.put("event.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
