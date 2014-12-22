@@ -423,8 +423,7 @@ import java.util.UUID;
         final World w = plot.getWorld();
         final Plot p = new Plot(plot.id, UUIDHandler.getUUID(player), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotMain.updatePlot(p);
-        DBFunc.createPlot(p);
-        DBFunc.createPlotSettings(DBFunc.getId(w.getName(), plot.id), plot);
+        DBFunc.createPlotAndSettings(p);
         final PlotWorld plotworld = PlotMain.getWorldSettings(w);
         if (plotworld.AUTO_MERGE) {
             autoMerge(w, p, player);

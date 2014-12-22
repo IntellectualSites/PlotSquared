@@ -307,6 +307,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, plot.id.y);
                     stmt.setString(3, plot.owner.toString());
                     stmt.setString(4, plot.world);
+                    System.out.print("STMT: "+stmt.toString());
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final Exception e) {
@@ -317,6 +318,37 @@ public class SQLManager implements AbstractDB {
         });
     }
 
+    @Override
+    public void createPlotAndSettings(final Plot plot) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
+                    stmt.setInt(1, plot.id.x);
+                    stmt.setInt(2, plot.id.y);
+                    stmt.setString(3, plot.owner.toString());
+                    stmt.setString(4, plot.world);
+                    System.out.print("STMT: "+stmt.toString());
+                    stmt.executeUpdate();
+                    stmt.close();
+                    
+                    int id = getId(plot.world, plot.id);
+                    stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
+                    stmt.setInt(1, id);
+                    System.out.print("STMT: "+stmt.toString());
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot " + plot.id);
+                }
+            }
+        });
+    }
+
+    
     /**
      * Create tables
      *
@@ -409,6 +441,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
                     stmt.setInt(1, id);
+                    System.out.print("STMT: "+stmt.toString());
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1232,5 +1265,4 @@ public class SQLManager implements AbstractDB {
         }
         return 0.0d;
     }
-
 }

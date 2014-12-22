@@ -243,4 +243,6 @@ public interface AbstractDB {
      * @return Plot Comments within the specified tier
      */
     public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier);
+
+    public void createPlotAndSettings(Plot plot);
 }

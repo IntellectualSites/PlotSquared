@@ -85,6 +85,15 @@ public class DBFunc {
     public static void createPlot(final Plot plot) {
         dbManager.createPlot(plot);
     }
+    
+    /**
+     * Create a plot
+     *
+     * @param plot Plot to create
+     */
+    public static void createPlotAndSettings(final Plot plot) {
+        dbManager.createPlotAndSettings(plot);
+    }
 
     /**
      * Create tables
