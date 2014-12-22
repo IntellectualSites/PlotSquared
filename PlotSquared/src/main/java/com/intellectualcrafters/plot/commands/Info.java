@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -228,7 +229,11 @@ import java.util.UUID;
          * OfflinePlayer plr = Bukkit.getOfflinePlayer(uuid); if (plr.getName()
          * == null) { return "unknown"; } return plr.getName();
          */
-        return UUIDHandler.getName(uuid);
+        String name = UUIDHandler.getName(uuid);
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
     }
 
     private Biome getBiomeAt(final Plot plot) {

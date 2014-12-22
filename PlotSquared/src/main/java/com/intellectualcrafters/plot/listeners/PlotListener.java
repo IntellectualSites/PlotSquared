@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -68,8 +69,15 @@ import java.util.UUID;
         return PlotMain.getWorldSettings(world);
     }
 
-    public static String getName(final UUID uuid) {
-        return UUIDHandler.getName(uuid);
+    private static String getName(final UUID id) {
+        if (id == null) {
+            return "none";
+        }
+        String name = UUIDHandler.getName(id);
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
     }
 
     public static UUID getUUID(final String name) {

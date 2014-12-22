@@ -251,7 +251,10 @@ import java.util.UUID;
     }
 
     @SuppressWarnings("deprecation")
-    public static void setSign(final World world, final String name, final Plot p) {
+    public static void setSign(final World world, String name, final Plot p) {
+        if (name == null) {
+            name = "unknown";
+        }
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final Location loc = manager.getSignLoc(world, plotworld, p);

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created 2014-11-18 for PlotSquared
@@ -39,9 +41,17 @@ public class InfoInventory implements InventoryHolder {
     public Inventory getInventory() {
         return this.inventory;
     }
+    
+    public String getName(UUID uuid) {
+        String name = UUIDHandler.getName(this.plot.getOwner());
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
+    }
 
     public InfoInventory build() {
-        final ItemStack generalInfo = getItem(Material.EMERALD, "&cPlot Info", "&cID: &6" + this.plot.getId().toString(), "&cOwner: &6" + UUIDHandler.getName(this.plot.getOwner()), "&cAlias: &6" + this.plot.settings.getAlias(), "&cBiome: &6" + this.plot.settings.getBiome().toString().replaceAll("_", "").toLowerCase(), "&cCan Build: &6" + this.plot.hasRights(this.player), "&cIs Denied: &6" + this.plot.deny_entry(this.player));
+        final ItemStack generalInfo = getItem(Material.EMERALD, "&cPlot Info", "&cID: &6" + this.plot.getId().toString(), "&cOwner: &6" + getName(this.plot.getOwner()), "&cAlias: &6" + this.plot.settings.getAlias(), "&cBiome: &6" + this.plot.settings.getBiome().toString().replaceAll("_", "").toLowerCase(), "&cCan Build: &6" + this.plot.hasRights(this.player), "&cIs Denied: &6" + this.plot.deny_entry(this.player));
         final ItemStack helpers = getItem(Material.EMERALD, "&cHelpers", "&cAmount: &6" + this.plot.helpers.size(), "&8Click to view a list of the plot helpers");
         final ItemStack trusted = getItem(Material.EMERALD, "&cTrusted", "&cAmount: &6" + this.plot.trusted.size(), "&8Click to view a list of trusted players");
         final ItemStack denied = getItem(Material.EMERALD, "&cDenied", "&cAmount: &6" + this.plot.denied.size(), "&8Click to view a list of denied players");
