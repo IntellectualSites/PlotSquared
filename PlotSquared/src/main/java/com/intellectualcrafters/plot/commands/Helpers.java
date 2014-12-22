@@ -62,6 +62,10 @@ import java.util.UUID;
             } else {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
+            if (uuid == null) {
+                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                return false;
+            }
             if (!plot.helpers.contains(uuid)) {
                 if (plot.owner == uuid) {
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);

@@ -51,7 +51,11 @@ public class list extends SubCommand {
          * String name = Bukkit.getOfflinePlayer(id).getName(); if (name ==
          * null) { return "none"; } return name;
          */
-        return UUIDHandler.getName(id);
+        String name = UUIDHandler.getName(id);
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
     }
 
     @Override

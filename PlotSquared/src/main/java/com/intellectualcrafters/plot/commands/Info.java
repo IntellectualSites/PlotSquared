@@ -219,7 +219,7 @@ import java.util.UUID;
 
     private String getPlayerName(final UUID uuid) {
         if (uuid == null) {
-            return uuid.toString();
+            return "unknown";
         }
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
             return "everyone";

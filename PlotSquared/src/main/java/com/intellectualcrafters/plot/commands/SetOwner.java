@@ -71,7 +71,15 @@ import java.util.UUID;
 
         for (final PlotId id : plots) {
             final Plot current = PlotMain.getPlots(world).get(id);
-            current.owner = getUUID(args[0]);
+            
+            UUID uuid = getUUID(args[0]);
+            
+            if (uuid == null) {
+                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                return false;
+            }
+            
+            current.owner = uuid;
             PlotMain.updatePlot(current);
             DBFunc.setOwner(current, current.owner);
 
