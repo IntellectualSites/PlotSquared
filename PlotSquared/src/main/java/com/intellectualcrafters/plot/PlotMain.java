@@ -941,10 +941,13 @@ import java.util.concurrent.TimeUnit;
             plotGenerator = (PlotGenerator) generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
-            sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
-            sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+            
+            if (!world.equals("CheckingPlotSquaredGenerator")) {
+                sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
+                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
+                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+            }
 
             if (!config.contains(path)) {
                 config.createSection(path);

@@ -77,8 +77,7 @@ public class Setup extends SubCommand implements Listener {
                 }
                 try {
                     PlotMain.config.save(PlotMain.configFile);
-                    PlotMain.config.load(PlotMain.configFile);
-                } catch (final IOException | InvalidConfigurationException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                 }
 
@@ -125,11 +124,10 @@ public class Setup extends SubCommand implements Listener {
             } else {
                 if (args[0].equalsIgnoreCase("cancel")) {
                     final String world = object.world;
-                    PlotMain.config.set(world, null);
+                    PlotMain.config.set("worlds." + world, null);
                     try {
                         PlotMain.config.save(PlotMain.configFile);
-                        PlotMain.config.load(PlotMain.configFile);
-                    } catch (final IOException | InvalidConfigurationException e) {
+                    } catch (final IOException e) {
                         e.printStackTrace();
                     }
                     setupMap.remove(plrname);
@@ -191,7 +189,8 @@ public class Setup extends SubCommand implements Listener {
 
             for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 if (plugin.isEnabled()) {
-                    if (plugin.getDefaultWorldGenerator(world, "") != null) {
+                    if (plugin.getDefaultWorldGenerator("CheckingPlotSquaredGenerator", "") != null) {
+                        PlotMain.removePlotWorld(world);
                         final String name = plugin.getDescription().getName();
                         generators.add(name);
                         if (args[1].equals(name)) {
@@ -200,6 +199,12 @@ public class Setup extends SubCommand implements Listener {
                         }
                     }
                 }
+            }
+            PlotMain.config.set("worlds.CheckingPlotSquaredGenerator", null);
+            try {
+                PlotMain.config.save(PlotMain.configFile);
+            } catch (final IOException e) {
+                e.printStackTrace();
             }
             if (generator == null) {
                 sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringUtils.join(generators, C.BLOCK_LIST_SEPARATER.s()));
