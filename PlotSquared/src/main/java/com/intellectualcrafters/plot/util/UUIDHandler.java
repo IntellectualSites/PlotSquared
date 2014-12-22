@@ -111,6 +111,9 @@ import java.util.UUID;
      * @param uuid to cache
      */
     public static void add(final StringWrapper name, final UUID uuid) {
+        if (uuid == null || name == null) {
+            return;
+        }
         if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
             uuidMap.put(name, uuid);
         }
@@ -190,6 +193,10 @@ import java.util.UUID;
             return name;
         }
         if (online && !Settings.OFFLINE_MODE) {
+            if (!Settings.UUID_FECTHING) {
+                name = getNameOfflineFromOnlineUUID(uuid);
+                return name;
+            }
             if (!Settings.CUSTOM_API) {
                 try {
                     final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
@@ -272,6 +279,14 @@ import java.util.UUID;
         return name;
     }
 
+    private static UUID getUuidOnlineFromOfflinePlayer(final StringWrapper name) {
+        return getUUID(Bukkit.getOfflinePlayer(name.toString()));
+    }
+    
+    private static String getNameOfflineFromOnlineUUID(final UUID uuid) {
+        return uuidWrapper.getOfflinePlayer(uuid).getName();
+    }
+    
     /**
      * @param name to use as key
      *

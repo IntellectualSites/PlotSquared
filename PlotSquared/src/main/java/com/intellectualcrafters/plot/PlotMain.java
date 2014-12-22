@@ -776,8 +776,9 @@ import java.util.concurrent.TimeUnit;
             Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
             Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
             Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-            Settings.API_URL = config.getString("api.location");
-            Settings.CUSTOM_API = config.getBoolean("api.custom");
+            Settings.API_URL = config.getString("uuid.api.location");
+            Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
+            Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
         }
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
@@ -864,8 +865,9 @@ import java.util.concurrent.TimeUnit;
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        options.put("api.location", Settings.API_URL);
-        options.put("api.custom", Settings.CUSTOM_API);
+        options.put("uuid.api.location", Settings.API_URL);
+        options.put("uuid.api.custom", Settings.CUSTOM_API);
+        options.put("uuid.fecthing", Settings.UUID_FECTHING);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
@@ -1533,13 +1535,21 @@ import java.util.concurrent.TimeUnit;
         {
             if (Settings.OFFLINE_MODE) {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+                Settings.OFFLINE_MODE = true;
             }
             else if (checkVersion() && Bukkit.getOnlineMode()) {
                 UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
+                Settings.OFFLINE_MODE = false;
             }
             else {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+                Settings.OFFLINE_MODE = true;
             }
+            
+            if (Settings.OFFLINE_MODE) {
+                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared &cis using Offline Mode UUIDs either because of user preference, or because of the version of the Bukkit API");
+            }
+            
             setUUIDSaver(new PlotUUIDSaver());
             // Looks really cool xD
             getUUIDSaver().globalPopulate();

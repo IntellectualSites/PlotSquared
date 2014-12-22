@@ -29,6 +29,10 @@ package com.intellectualcrafters.plot.config;
  */
 public class Settings {
     /**
+     * Default UUID_FECTHING: false
+     */
+    public static boolean UUID_FECTHING = false;
+    /**
      *
      */
     public static int MAX_AUTO_SIZE = 4;
