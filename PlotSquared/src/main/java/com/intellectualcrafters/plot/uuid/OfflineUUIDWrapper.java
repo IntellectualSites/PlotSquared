@@ -25,7 +25,12 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     @Override
     public OfflinePlayer getOfflinePlayer(final UUID uuid) {
         final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
-        final String name = map.get(uuid).value;
+        String name;
+        try {
+            name = map.get(uuid).value;
+        } catch (NullPointerException e) {
+            name = null;
+        }
         if (name != null) {
             return Bukkit.getOfflinePlayer(name);
         } else {
