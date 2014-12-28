@@ -1253,6 +1253,10 @@ import java.util.concurrent.TimeUnit;
         managers.remove(world);
         worlds.remove(world);
     }
+    
+    public static void removePlots(final String world) {
+        plots.put(world, new HashMap<PlotId, Plot>());
+    }
 
     /**
      * Get all plots

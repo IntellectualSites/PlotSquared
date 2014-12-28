@@ -59,7 +59,8 @@ import org.bukkit.entity.Player;
                     return true;
                 } catch (final Exception e) {
                     if (args.length == 1) {
-                        PlayerFunctions.sendMessage(plr, "This is a dangerous command, if you are sure, use /plot purge {world} -o");
+                        PlayerFunctions.sendMessage(plr, "Use /plots purge <world>;<x>;<z>");
+                        PlayerFunctions.sendMessage(plr, "To purge all plots use /plots purge <world> -o");
                         return false;
                     }
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
@@ -73,12 +74,13 @@ import org.bukkit.entity.Player;
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
                 return false;
             }
-            PlotMain.removePlotWorld(args[0]);
+            PlotMain.removePlots(args[0]);
             DBFunc.purge(args[0]);
             PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
             return true;
         } else {
-            PlayerFunctions.sendMessage(plr, "This is a dangerous command, if you are sure, use /plot purge {world} -o");
+            PlayerFunctions.sendMessage(plr, "Use /plots purge <world>;<x>;<z>");
+            PlayerFunctions.sendMessage(plr, "To purge all plots use /plots purge <world> -o");
             return false;
         }
     }
