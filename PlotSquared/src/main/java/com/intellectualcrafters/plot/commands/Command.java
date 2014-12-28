@@ -37,6 +37,10 @@ public enum Command {
     // ratings)
     // - /plot rate <number out of 10>
     /**
+     * 
+     */
+    CREATEROADSCHEMATIC("createroadschematic"),
+    /**
     *
     */
     UNCLAIM("unclaim"),
