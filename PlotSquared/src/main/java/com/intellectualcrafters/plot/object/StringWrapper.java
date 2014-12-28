@@ -57,6 +57,9 @@ public class StringWrapper {
             return false;
         }
         final StringWrapper other = (StringWrapper) obj;
+        if (other.value == null || this.value == null) {
+            return false;
+        }
         if (Settings.OFFLINE_MODE) {
             return other.value.equals(this.value);
         }

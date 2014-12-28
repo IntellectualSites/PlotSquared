@@ -68,7 +68,7 @@ public class PlotMeConverter {
 
     public void runAsync() throws Exception {
         // We have to make it wait a couple of seconds
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, new Runnable() {
+        Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
 
             @Override
             public void run() {

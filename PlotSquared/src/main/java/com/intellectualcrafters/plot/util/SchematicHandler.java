@@ -114,6 +114,44 @@ public class SchematicHandler {
         return true;
     }
 
+    public static Schematic getSchematic(final CompoundTag tag, File file) {
+        final Map<String, Tag> tagMap = tag.getValue();
+
+        byte[] addId = new byte[0];
+        if (tagMap.containsKey("AddBlocks")) {
+            addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
+        }
+        final short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
+        final short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
+        final short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
+
+        final byte[] b = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
+        final byte[] d = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
+        final short[] blocks = new short[b.length];
+
+        final Dimension dimension = new Dimension(width, height, length);
+
+        for (int index = 0; index < b.length; index++) {
+            if ((index >> 1) >= addId.length) { // No corresponding
+                // AddBlocks index
+                blocks[index] = (short) (b[index] & 0xFF);
+            } else {
+                if ((index & 1) == 0) {
+                    blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
+                } else {
+                    blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
+                }
+            }
+        }
+
+        final DataCollection[] collection = new DataCollection[b.length];
+
+        for (int x = 0; x < b.length; x++) {
+            collection[x] = new DataCollection(blocks[x], d[x]);
+        }
+        return new Schematic(collection, dimension, file);
+    }
+    
     /**
      * Get a schematic
      *
@@ -136,88 +174,17 @@ public class SchematicHandler {
             return null;
         }
 
-        Schematic schematic;
         try {
             final InputStream iStream = new FileInputStream(file);
             final NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
             final CompoundTag tag = (CompoundTag) stream.readTag();
             stream.close();
-            final Map<String, Tag> tagMap = tag.getValue();
+            return getSchematic(tag, file);
 
-            byte[] addId = new byte[0];
-            if (tagMap.containsKey("AddBlocks")) {
-                addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
-            }
-            final short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
-            final short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
-            final short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
-
-            final byte[] b = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
-            final byte[] d = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
-            final short[] blocks = new short[b.length];
-
-            final Dimension dimension = new Dimension(width, height, length);
-
-            for (int index = 0; index < b.length; index++) {
-                if ((index >> 1) >= addId.length) { // No corresponding
-                    // AddBlocks index
-                    blocks[index] = (short) (b[index] & 0xFF);
-                } else {
-                    if ((index & 1) == 0) {
-                        blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
-                    } else {
-                        blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
-                    }
-                }
-            }
-
-            final DataCollection[] collection = new DataCollection[b.length];
-
-            for (int x = 0; x < b.length; x++) {
-                collection[x] = new DataCollection(blocks[x], d[x]);
-            }
-            // if (PlotMain.worldEdit!=null) {
-            // List<Tag> tileEntities = requireTag(tagMap, "TileEntities",
-            // ListTag.class).getValue();
-            //
-            // for (Tag blocktag : tileEntities) {
-            // if (!(blocktag instanceof CompoundTag)) continue;
-            // CompoundTag t = (CompoundTag) blocktag;
-            //
-            // int x = 0;
-            // int y = 0;
-            // int z = 0;
-            //
-            // Map<String, Tag> values = new HashMap<String, Tag>();
-            //
-            // for (Map.Entry<String, Tag> entry : t.getValue().entrySet()) {
-            // if (entry.getKey().equals("x")) {
-            // if (entry.getValue() instanceof IntTag) {
-            // x = ((IntTag) entry.getValue()).getValue();
-            // }
-            // } else if (entry.getKey().equals("y")) {
-            // if (entry.getValue() instanceof IntTag) {
-            // y = ((IntTag) entry.getValue()).getValue();
-            // }
-            // } else if (entry.getKey().equals("z")) {
-            // if (entry.getValue() instanceof IntTag) {
-            // z = ((IntTag) entry.getValue()).getValue();
-            // }
-            // }
-            //
-            // values.put(entry.getKey(), entry.getValue());
-            // }
-            //
-            // int index = y * width * length + z * height + x;
-            // collection[index].tag = new CompoundTag("", values);
-            // }
-            // }
-            schematic = new Schematic(collection, dimension, file);
         } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
-        return schematic;
     }
 
     /**
@@ -229,13 +196,13 @@ public class SchematicHandler {
      * @return true if succeeded
      */
     public static boolean save(final CompoundTag tag, final String path) {
-
         if (tag == null) {
             PlotMain.sendConsoleSenderMessage("&cCannot save empty tag");
             return false;
         }
-
         try {
+            File tmp = new File(path);
+            tmp.getParentFile().mkdirs();
             final OutputStream stream = new FileOutputStream(path);
             final NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream));
             output.writeTag(tag);
@@ -256,17 +223,23 @@ public class SchematicHandler {
      *
      * @return tag
      */
-    @SuppressWarnings("deprecation")
-    public static CompoundTag getCompoundTag(final World world, final PlotId id) {
-
+    public static CompoundTag getCompoundTag(final World world, PlotId id) {
         if (!PlotMain.getPlots(world).containsKey(id)) {
             return null;
-            // Plot is empty
         }
-
-        // loading chunks
+        
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLoc(world, id);
+        
+        return getCompoundTag(world, pos1, pos2);
+    }
+    
+    @SuppressWarnings("deprecation")
+    public static CompoundTag getCompoundTag(final World world, Location pos1, Location pos2) {
+
+        
+
+        // loading chunks
         int i = 0;
         int j = 0;
         try {
@@ -287,7 +260,7 @@ public class SchematicHandler {
             return null;
         }
         final int width = (pos2.getBlockX() - pos1.getBlockX()) + 1;
-        final int height = 256;
+        final int height = pos2.getBlockY() - pos1.getBlockY() + 1;
         final int length = (pos2.getBlockZ() - pos1.getBlockZ()) + 1;
 
         final HashMap<String, Tag> schematic = new HashMap<>();
@@ -305,12 +278,21 @@ public class SchematicHandler {
         byte[] addBlocks = null;
         final byte[] blockData = new byte[width * height * length];
 
+        int sx = pos1.getBlockX();
+        int ex = pos2.getBlockX();
+        
+        int sz = pos1.getBlockZ();
+        int ez = pos2.getBlockZ();
+
+        int sy = pos1.getBlockY();
+        int ey = pos2.getBlockY();
+        
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
                 for (int y = 0; y < height; y++) {
                     final int index = (y * width * length) + (z * width) + x;
 
-                    final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() + x, y, pos1.getBlockZ() + z));
+                    final Block block = world.getBlockAt(new Location(world, sx + x, sy + y, sz + z));
 
                     @SuppressWarnings("deprecation") final int id2 = block.getTypeId();
 
