@@ -24,7 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -214,7 +214,7 @@ public class Setup extends SubCommand implements Listener {
             if (generator instanceof PlotGenerator) {
                 plotworld = ((PlotGenerator) generator).getNewPlotWorld(world);
             } else {
-                plotworld = new DefaultPlotWorld(world);
+                plotworld = new HybridPlotWorld(world);
             }
             PlotMain.removePlotWorld(world);
 

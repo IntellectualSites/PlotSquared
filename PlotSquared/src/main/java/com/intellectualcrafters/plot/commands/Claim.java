@@ -27,14 +27,16 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -82,8 +84,8 @@ public class Claim extends SubCommand {
                 plot2.settings.setFlags(flags);
                 DBFunc.setFlags(plot.world, plot2, flags);
             }
-            if (world instanceof DefaultPlotWorld) {
-                final DefaultPlotWorld pW = (DefaultPlotWorld) world;
+            if (world instanceof HybridPlotWorld) {
+                final HybridPlotWorld pW = (HybridPlotWorld) world;
                 if (pW.CLAIMED_WALL_BLOCK != pW.WALL_BLOCK) {
                     PlotMain.getPlotManager(plot.getWorld()).setWall(plot.getWorld(), world, plot.getId(), pW.CLAIMED_WALL_BLOCK);
                     if (PlotHelper.canSetFast) {

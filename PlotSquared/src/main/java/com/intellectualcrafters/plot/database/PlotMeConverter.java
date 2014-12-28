@@ -24,12 +24,13 @@ package com.intellectualcrafters.plot.database;
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.worldcretornica.plotme.PlayerList;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -265,7 +266,7 @@ public class PlotMeConverter {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname + " plugin:PlotSquared");
                     } else {
                         Bukkit.getServer().unloadWorld(world, true);
-                        final World myworld = WorldCreator.name(worldname).generator(new WorldGenerator(worldname)).createWorld();
+                        final World myworld = WorldCreator.name(worldname).generator(new HybridGen(worldname)).createWorld();
                         myworld.save();
                     }
                 }

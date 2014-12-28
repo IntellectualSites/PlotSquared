@@ -31,9 +31,9 @@ import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
-import com.intellectualcrafters.plot.generator.WorldGenerator;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.*;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
@@ -970,8 +970,8 @@ import java.util.concurrent.TimeUnit;
             if (worlds.contains(world)) {
                 sendConsoleSenderMessage("&cWorld '" + world + "' in settings.yml is not using PlotSquared generator!");
 
-                plotWorld = new DefaultPlotWorld(world);
-                plotManager = new DefaultPlotManager();
+                plotWorld = new HybridPlotWorld(world);
+                plotManager = new HybridPlotManager();
 
                 if (!config.contains(path)) {
                     config.createSection(path);
@@ -1287,7 +1287,7 @@ import java.util.concurrent.TimeUnit;
      */
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
-        return new WorldGenerator(world);
+        return new HybridGen(world);
     }
 
     /**
