@@ -281,7 +281,7 @@ import java.util.Set;
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonExtend(final BlockPistonExtendEvent e) {
         if (isInPlot(e.getBlock().getLocation())) {
             for (final Block block : e.getBlocks()) {
@@ -338,7 +338,7 @@ import java.util.Set;
          */
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
         final Block b = e.getRetractLocation().getBlock();
         if (isPlotWorld(b.getLocation()) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {

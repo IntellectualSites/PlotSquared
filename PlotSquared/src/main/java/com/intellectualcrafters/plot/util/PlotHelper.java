@@ -692,17 +692,6 @@ import java.util.UUID;
         state = h;
 
         manager.clearPlot(world, plot, isDelete);
-
-        if (canSetFast) {
-            final Plugin plugin = PlotMain.getMain();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    PlotHelper.setBiome(world, plot, Biome.FOREST);
-                    refreshPlotChunks(world, plot);
-                }
-            }, 90L);
-        }
     }
 
     /**
@@ -734,12 +723,7 @@ import java.util.UUID;
         clear(world, plot, isDelete);
         removeSign(world, plot);
         final Plugin plugin = PlotMain.getMain();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
-            }
-        }, 90L);
+        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
 
     }
 
