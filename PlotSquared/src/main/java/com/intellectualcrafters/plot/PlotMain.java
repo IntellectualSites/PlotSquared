@@ -871,8 +871,8 @@ import java.util.concurrent.TimeUnit;
         options.put("UUID.read-from-disk", Settings.UUID_FROM_DISK);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
-        options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
-        options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
+//        options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
+//        options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
 
         for (final Entry<String, Object> node : options.entrySet()) {
@@ -893,8 +893,8 @@ import java.util.concurrent.TimeUnit;
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.TITLES = config.getBoolean("titles");
-        Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");
-        Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
+//        Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");
+//        Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
@@ -1460,9 +1460,9 @@ import java.util.concurrent.TimeUnit;
             plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
             plotCommand.setTabCompleter(command);
         }
-        if (Settings.MOB_CAP_ENABLED) {
-            getServer().getPluginManager().registerEvents(new EntityListener(), this);
-        }
+//        if (Settings.MOB_CAP_ENABLED) {
+//            getServer().getPluginManager().registerEvents(new EntityListener(), this);
+//        }
 
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);

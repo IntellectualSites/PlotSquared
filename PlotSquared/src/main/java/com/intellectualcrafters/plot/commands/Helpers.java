@@ -106,19 +106,6 @@ import java.util.UUID;
                 PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
-            /*
-             * if (!hasBeenOnServer(args[1])) {
-             * PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
-             * return true; } UUID uuid = null; if
-             * (Bukkit.getPlayer(args[1]) != null) { uuid =
-             * Bukkit.getPlayer(args[1]).getUniqueId(); } else { uuid =
-             * Bukkit.getOfflinePlayer(args[1]).getUniqueId(); } if (uuid ==
-             * null) { PlayerFunctions.sendMessage(plr,
-             * C.PLAYER_HAS_NOT_BEEN_ON); return true; } if
-             * (!plot.helpers.contains(uuid)) {
-             * PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED); return
-             * true; }
-             */
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
             DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));

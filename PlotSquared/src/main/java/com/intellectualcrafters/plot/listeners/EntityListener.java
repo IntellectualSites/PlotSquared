@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -110,7 +111,8 @@ import java.util.Set;
                             mobs = 0;
                         }
                         if (!(PlotMain.hasPermissionRange(p, "plots.mobcap", Settings.MOB_CAP) > mobs)) {
-                            PlayerFunctions.sendMessage(p, C.NO_PLOTS, "plots.mobcap." + (mobs + 1));
+                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.mobcap." + (mobs + 1));
+                            e.setCancelled(true);
                         }
                     }
                 }
@@ -152,8 +154,11 @@ import java.util.Set;
         if (!entityMap.containsKey(plot.world)) {
             entityMap.put(plot.world, new HashMap<Plot, HashSet<Integer>>());
         }
+        if (!entityMap.containsKey(plot.world)) {
+            entityMap.put(plot.world, new HashMap<Plot, HashSet<Integer>>());
+        }
         final HashMap<Plot, HashSet<Integer>> section = entityMap.get(plot.world);
-        if (section.containsKey(plot)) {
+        if (!section.containsKey(plot)) {
             section.put(plot, new HashSet<Integer>());
         }
         section.get(plot).add(entity.getEntityId());
@@ -164,6 +169,10 @@ import java.util.Set;
         final Entity entity = e.getEntity();
         final Location l = entity.getLocation();
         final String w = l.getWorld().getName();
+        remove(w, entity);
+    }
+    
+    public static void remove(String w, Entity entity) {
         if (entityMap.containsKey(w)) {
             final int id = entity.getEntityId();
             final Plot plot = PlotHelper.getCurrentPlot(entity.getLocation());

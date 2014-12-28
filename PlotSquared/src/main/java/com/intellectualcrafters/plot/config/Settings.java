@@ -56,11 +56,11 @@ public class Settings {
     /**
      * Mob Cap Enabled
      */
-    public static boolean MOB_CAP_ENABLED = false;
+//    public static boolean MOB_CAP_ENABLED = false;
     /**
      * The Mob Cap
      */
-    public static int MOB_CAP = 20;
+//    public static int MOB_CAP = 20;
     /**
      * Display titles
      */
