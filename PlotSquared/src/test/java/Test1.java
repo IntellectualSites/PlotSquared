@@ -3,11 +3,12 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.generator.DefaultPlotManager;
-import com.intellectualcrafters.plot.generator.DefaultPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
 import org.junit.Assert;
@@ -257,6 +258,12 @@ public class Test1 {
                 @Override
                 public void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
                 }
+
+                @Override
+                public void createPlotAndSettings(Plot plot) {
+                    // TODO Auto-generated method stub
+                    
+                }
             };
             passed = true;
         } catch (final Throwable e) {
@@ -283,8 +290,8 @@ public class Test1 {
     public boolean test8_AddPlotWorld() {
         boolean passed = false;
         try {
-            final PlotWorld plotworld = new DefaultPlotWorld("poop");
-            final PlotManager manager = new DefaultPlotManager();
+            final PlotWorld plotworld = new HybridPlotWorld("poop");
+            final PlotManager manager = new HybridPlotManager();
             PlotMain.addPlotWorld("poop", plotworld, manager);
             passed = (PlotMain.getPlotManager("poop") != null) && (PlotMain.getWorldSettings("poop") != null);
         } catch (final Throwable e) {
