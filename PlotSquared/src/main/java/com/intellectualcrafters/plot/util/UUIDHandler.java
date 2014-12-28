@@ -189,6 +189,10 @@ import java.util.UUID;
         if ((name = getNameOnlinePlayer(uuid)) != null) {
             return name;
         }
+        
+        if (!Settings.UUID_FROM_DISK) {
+            return null;
+        }
         if ((name = getNameOfflinePlayer(uuid)) != null) {
             return name;
         }

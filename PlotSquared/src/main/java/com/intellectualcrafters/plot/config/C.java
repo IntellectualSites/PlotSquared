@@ -239,6 +239,7 @@ public enum C {
     NEED_PLOT_NUMBER("&cYou've got to specify a plot number or alias"),
     NEED_BLOCK("&cYou've got to specify a block"),
     NEED_PLOT_ID("&cYou've got to specify a plot id."),
+    NEED_PLOT_WORLD("&cYou've got to specify a plot world."),
     NEED_USER("&cYou need to specify a username"),
     /*
      * Info

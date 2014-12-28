@@ -868,6 +868,7 @@ import java.util.concurrent.TimeUnit;
         options.put("uuid.api.location", Settings.API_URL);
         options.put("uuid.api.custom", Settings.CUSTOM_API);
         options.put("uuid.fecthing", Settings.UUID_FECTHING);
+        options.put("UUID.read-from-disk", Settings.UUID_FROM_DISK);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
@@ -898,6 +899,7 @@ import java.util.concurrent.TimeUnit;
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
+        Settings.UUID_FROM_DISK = config.getBoolean("UUID.read-from-disk");
 
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
