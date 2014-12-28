@@ -43,15 +43,27 @@ public enum Command {
     /**
     *
     */
+    DEBUGROADREGEN("debugroadregen"),
+    /**
+    *
+    */
+    REGENALLROADS("regenallroads"),
+    /**
+    *
+    */
+    DEBUGLOADTEST("debugloadtest"),
+    /**
+     * 
+     */
+    DEBUGSAVETEST("debugsavetest"),
+    /**
+     * 
+     */
     UNCLAIM("unclaim"),
     /**
      *
      */
-    DEBUGROADREGEN("debugroadregen"),
-    /**
-     *
-     */
-   DEBUGCLEAR("debugclear"),
+    DEBUGCLEAR("debugclear"),
     /**
      *
      */

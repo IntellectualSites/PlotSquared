@@ -61,8 +61,8 @@ import java.util.HashSet;
 @SuppressWarnings("deprecation") public class HybridPlotManager extends PlotManager {
 
     public RegionWrapper CURRENT_PLOT_CLEAR;
-    public HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS;
-    public HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA;
+    public HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
+    public HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     private int task;
     private static boolean UPDATE = false;
     
@@ -164,7 +164,7 @@ import java.util.HashSet;
                 else {
                     ChunkLoc loc = chunks.get(0);
                     
-                    PlotMain.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + "(aprrox 256 chunks)");
+                    PlotMain.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
                     PlotMain.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
                     
                     regenerateChunkChunk(world, loc);
@@ -222,7 +222,6 @@ import java.util.HashSet;
         
         HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
-            System.out.print("REGEN ROAD DISABLED");
             return false;
         }
         

@@ -25,6 +25,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class DebugSaveTest extends SubCommand {
 
     public DebugSaveTest() {
-        super(Command.DEBUGCLAIMTEST, "This debug command will force the recreation of all plots in the DB", "debugsavetest", CommandCategory.DEBUG, false);
+        super(Command.DEBUGSAVETEST, "This debug command will force the recreation of all plots in the DB", "debugsavetest", CommandCategory.DEBUG, false);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class DebugSaveTest extends SubCommand {
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
         } else {
-            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
+            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
         }
         return true;
     }

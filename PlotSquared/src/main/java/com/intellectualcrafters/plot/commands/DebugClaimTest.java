@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -172,7 +173,7 @@ public class DebugClaimTest extends SubCommand {
             }
 
         } else {
-            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
+            PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;
     }

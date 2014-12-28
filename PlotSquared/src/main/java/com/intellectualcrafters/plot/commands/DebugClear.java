@@ -63,6 +63,7 @@ public class DebugClear extends SubCommand {
                             HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
                             manager.clearPlotExperimental(Bukkit.getWorld(world), plot, false);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                            PlotMain.sendConsoleSenderMessage("&aDone!");
                         }
                     }
                 }
@@ -83,6 +84,7 @@ public class DebugClear extends SubCommand {
         assert plot != null;
         HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(plr.getWorld());
         manager.clearPlotExperimental(plr.getWorld(), plot, false);
+        PlayerFunctions.sendMessage(plr, "&aDone!");
 
         // sign
 

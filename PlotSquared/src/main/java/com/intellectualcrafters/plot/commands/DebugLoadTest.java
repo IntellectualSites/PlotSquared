@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -34,7 +35,7 @@ import java.lang.reflect.Field;
 public class DebugLoadTest extends SubCommand {
 
     public DebugLoadTest() {
-        super(Command.DEBUGCLAIMTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
+        super(Command.DEBUGLOADTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class DebugLoadTest extends SubCommand {
                 PlotMain.sendConsoleSenderMessage("&3===END OF STACKTRACE===");
             }
         } else {
-            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused.");
+            PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
         }
         return true;
     }

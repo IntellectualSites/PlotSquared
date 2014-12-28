@@ -44,7 +44,7 @@ import org.bukkit.entity.Player;
 public class RegenAllRoads extends SubCommand {
 
     public RegenAllRoads() {
-        super(Command.DEBUGROADREGEN, "Regenerate all road schematic in your current chunk", "debugroadregen", CommandCategory.DEBUG, false);
+        super(Command.REGENALLROADS, "Regenerate all road schematic in your current chunk", "regenallroads", CommandCategory.DEBUG, false);
     }
 
     @Override

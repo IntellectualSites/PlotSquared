@@ -189,10 +189,8 @@ import org.bukkit.entity.Player;
                 } else {
                     lastPlot = false;
                 }
-                System.out.print("UNOWNED: " + start);
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
                 if (isUnowned(world, start, end)) {
-                    System.out.print("LAST PLOT: " + start);
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             final Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));

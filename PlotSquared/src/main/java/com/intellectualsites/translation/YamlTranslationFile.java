@@ -200,7 +200,6 @@ public class YamlTranslationFile extends TranslationFile {
         }
         if (this.map == null) {
             this.map = new HashMap<String, String>();
-            System.out.println("Was null...");
         }
         for (final Map.Entry<String, String> objects : this.map.entrySet()) {
             final String key = objects.getKey();
