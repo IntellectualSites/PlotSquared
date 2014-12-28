@@ -36,17 +36,16 @@ import org.bukkit.entity.Player;
 
     @Override
     public boolean execute(final Player plr, final String... args) {
+        if (plr != null) {
+            PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+            return false;
+        }
         if (args.length != 2) {
             if (args.length == 1) {
                 try {
                     final String[] split = args[0].split(";");
                     final String world = split[0];
                     final PlotId id = new PlotId(Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-
-                    if (plr != null) {
-                        PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
-                        return false;
-                    }
 
                     if (!PlotMain.isPlotWorld(world)) {
                         PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
