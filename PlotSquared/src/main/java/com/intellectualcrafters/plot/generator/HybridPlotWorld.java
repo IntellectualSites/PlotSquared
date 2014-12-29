@@ -241,8 +241,8 @@ public class HybridPlotWorld extends PlotWorld {
                     byte data = blocks1[index].getData();
                     
                     if (id != 0) {
-                        addRoadBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z + this.PATH_WIDTH_LOWER + 1), id, data);
-                        addRoadBlock((short) (z + this.PATH_WIDTH_LOWER + 1), (short) (y + this.OFFSET), (short) (x - this.PATH_WIDTH_LOWER), id, data);
+                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z + this.PATH_WIDTH_LOWER + 1), id, data);
+                        addOverlayBlock((short) (z + this.PATH_WIDTH_LOWER + 1), (short) (y + this.OFFSET), (short) (x - this.PATH_WIDTH_LOWER), id, data);
                     }
                 }
             }
@@ -257,14 +257,14 @@ public class HybridPlotWorld extends PlotWorld {
                     short id = blocks2[index].getBlock();
                     byte data = blocks2[index].getData();
                     if (id != 0) {
-                        addRoadBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z - this.PATH_WIDTH_LOWER), id, data);
+                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z - this.PATH_WIDTH_LOWER), id, data);
                     }
                 }
             }
         }
     }
     
-    public void addRoadBlock(short x, short y, short z, short id, byte data) {
+    public void addOverlayBlock(short x, short y, short z, short id, byte data) {
         if (z < 0) {
             z += this.SIZE;
         }
