@@ -173,7 +173,7 @@ public enum C {
     /*
      * Player not found
      */
-    INVALID_PLAYER("&cPlayer not found: &6%player%."),
+    INVALID_PLAYER("&cPlayer not found: &6%s."),
     /*
      *
      */

@@ -1,65 +1,33 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.uuid.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 
-/**
- * This class can be used to efficiently translate UUIDs and names back and forth. It uses three primary methods of
- * achieving this: - Read From Cache - Read from OfflinePlayer objects - Read from (if onlinemode: mojang api) (else:
- * playername hashing) All UUIDs/Usernames will be stored in a map (cache) until the server is restarted.
- * <p/>
- * You can use getUuidMap() to save the uuids/names to a file (SQLite db for example). Primary methods: getUUID(String
- * name) & getName(UUID uuid) <-- You should ONLY use these. Call startFetch(JavaPlugin plugin) in your onEnable().
- * <p/>
- * Originally created by:
- *
- * @author Citymonstret
- * @author Empire92 for PlotSquared.
- */
-@SuppressWarnings("unused") public class UUIDHandler {
-
+public class UUIDHandler {
+    
+    public static boolean CACHED = false;
     public static UUIDWrapper uuidWrapper = null;
-
-    /**
-     * Online mode
-     *
-     * @see org.bukkit.Server#getOnlineMode()
-     */
-    private final static boolean online = Bukkit.getServer().getOnlineMode() && !Settings.OFFLINE_MODE;
-
+    
     /**
      * Map containing names and UUIDs
      *
@@ -67,6 +35,15 @@ import java.util.UUID;
      */
     private final static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
+    public static void add(final StringWrapper name, final UUID uuid) {
+        if (uuid == null || name == null) {
+            return;
+        }
+        if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
+            uuidMap.put(name, uuid);
+        }
+    }
+    
     /**
      * Get the map containing all names/uuids
      *
@@ -77,7 +54,7 @@ import java.util.UUID;
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return uuidMap;
     }
-
+    
     /**
      * Check if a uuid is cached
      *
@@ -103,253 +80,129 @@ import java.util.UUID;
     public static boolean nameExists(final StringWrapper name) {
         return uuidMap.containsKey(name);
     }
+    
+    public static void cacheAll() {
+        
+        UUIDHandler.CACHED = true;
+        HashSet<OfflinePlayer> players = new HashSet<>();
+        HashSet<String> worlds = new HashSet<>();
+        worlds.add(Bukkit.getWorlds().get(0).getName());
+        worlds.add("world");
 
-    /**
-     * Add a set to the cache
-     *
-     * @param name to cache
-     * @param uuid to cache
-     */
-    public static void add(final StringWrapper name, final UUID uuid) {
-        if (uuid == null || name == null) {
-            return;
-        }
-        if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
-            uuidMap.put(name, uuid);
-        }
-    }
-
-    /**
-     * @param name to use as key
-     *
-     * @return uuid
-     */
-    public static UUID getUUID(final String name) {
-        final StringWrapper nameWrap = new StringWrapper(name);
-        if (uuidMap.containsKey(nameWrap)) {
-            return uuidMap.get(nameWrap);
-        }
-        @SuppressWarnings("deprecation") final Player player = Bukkit.getPlayer(name);
-        if (player != null) {
-            final UUID uuid = getUUID(player);
-            add(nameWrap, uuid);
-            return uuid;
-        }
-        UUID uuid;
-        if (online) {
-            if (Settings.CUSTOM_API) {
-                if ((uuid = getUuidOnlinePlayer(nameWrap)) != null) {
-                    return uuid;
+        HashSet<UUID> uuids = new HashSet<>();
+        HashSet<String> names = new HashSet<>();
+        
+        for (String worldname : worlds) {
+            // Getting UUIDs
+            File playerdataFolder = new File(worldname + File.separator + "playerdata");
+            String[] dat = playerdataFolder.list(new FilenameFilter() {
+                public boolean accept(File f, String s) {
+                    return s.endsWith(".dat");
                 }
+            });
+            for (String current : dat) {
+                String s = current.replaceAll(".dat$", "");
                 try {
-                    return PlotMain.getUUIDSaver().mojangUUID(name);
-                } catch (final Exception e) {
-                    try {
-                        final UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
-                        uuid = fetcher.call().get(name);
-                        add(nameWrap, uuid);
-                    } catch (final Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    UUID uuid = UUID.fromString(s);
+                    uuids.add(uuid);
                 }
-            } else {
-                try {
-                    final UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
-                    uuid = fetcher.call().get(name);
-                    add(nameWrap, uuid);
-                } catch (final Exception ex) {
-                    ex.printStackTrace();
+                catch (Exception e) {
+                    PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
                 }
             }
-        } else {
-            return getUuidOfflineMode(nameWrap);
+            
+            // Getting names
+            File playersFolder = new File(worldname + File.separator + "players");
+            dat = playersFolder.list(new FilenameFilter() {
+                public boolean accept(File f, String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            for (String current : dat) {
+                names.add(current.replaceAll(".dat$", ""));
+            }
         }
+        
+        
+        UUIDWrapper wrapper = null;
+        for (UUID uuid : uuids) {
+            try {
+                OfflinePlayer player = wrapper.getOfflinePlayer(uuid);
+                uuid = UUIDHandler.uuidWrapper.getUUID(player);
+                StringWrapper name = new StringWrapper(player.getName());
+                add(name, uuid);
+            }
+            catch (Throwable e) {
+                PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Invalid playerdata: "+uuid.toString() + ".dat");
+            }
+        }
+        for (String name : names) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+            UUID uuid = UUIDHandler.uuidWrapper.getUUID(player);
+            StringWrapper nameWrap = new StringWrapper(name);
+            System.out.print(nameWrap);
+            add(nameWrap, uuid);
+        }
+        
+        PlotMain.sendConsoleSenderMessage("C.PREFIX.s() + &6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+    }
+    
+    public static UUID getUUID(Player player) {
+        return UUIDHandler.uuidWrapper.getUUID(player);
+    }
+    
+    public static UUID getUUID(OfflinePlayer player) {
+        return UUIDHandler.uuidWrapper.getUUID(player);
+    }
+    
+    public static String getName(UUID uuid) {
+        // check online
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UUID u2 = UUIDHandler.uuidWrapper.getUUID(player);
+            if (uuid.equals(u2)) {
+                return player.getName();
+            }
+        }
+        
+        // check cache
+        StringWrapper name = UUIDHandler.uuidMap.inverse().get(uuid);
+        if (name != null) {
+            return name.value;
+        }
+        
+        // check drive
+        if (Settings.UUID_FROM_DISK) {
+            OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+            String string = op.getName();
+            StringWrapper sw = new StringWrapper(string);
+            add(sw, uuid);
+            return string;
+        }
+        
         return null;
     }
 
-    /**
-     * @param uuid to use as key
-     *
-     * @return name (cache)
-     */
-    private static StringWrapper loopSearch(final UUID uuid) {
-        return uuidMap.inverse().get(uuid);
-    }
-
-    /**
-     * @param uuid to use as key
-     *
-     * @return Name
-     */
-    public static String getName(final UUID uuid) {
-        if (uuidExists(uuid)) {
-            return loopSearch(uuid).value;
-        }
-        String name;
-        if ((name = getNameOnlinePlayer(uuid)) != null) {
-            return name;
+    public static UUID getUUID(final String name) {
+        // check online
+        Player player = Bukkit.getPlayer(name);
+        if (player != null) {
+            UUID uuid = UUIDHandler.uuidWrapper.getUUID(player);
+            add(new StringWrapper(name), uuid);
+            return uuid;
         }
         
-        if (!Settings.UUID_FROM_DISK) {
-            return null;
+        // check cache
+        UUID uuid = UUIDHandler.uuidMap.get(name);
+        if (uuid != null) {
+            return uuid;
         }
-        if ((name = getNameOfflinePlayer(uuid)) != null) {
-            return name;
+        
+        // Read from disk
+        if (Settings.UUID_FROM_DISK) {
+            OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+            return UUIDHandler.uuidWrapper.getUUID(op);
         }
-        if (online && !Settings.OFFLINE_MODE) {
-            if (!Settings.UUID_FECTHING) {
-                name = getNameOfflineFromOnlineUUID(uuid);
-                return name;
-            }
-            if (!Settings.CUSTOM_API) {
-                try {
-                    final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
-                    name = fetcher.call().get(uuid);
-                    add(new StringWrapper(name), uuid);
-                    return name;
-                } catch (final Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                try {
-                    return PlotMain.getUUIDSaver().mojangName(uuid);
-                } catch (final Exception e) {
-                    try {
-                        final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
-                        name = fetcher.call().get(uuid);
-                        add(new StringWrapper(name), uuid);
-                        return name;
-                    } catch (final Exception ex) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            try {
-                return PlotMain.getUUIDSaver().mojangName(uuid);
-            } catch (final Exception e) {
-                try {
-                    final NameFetcher fetcher = new NameFetcher(Arrays.asList(uuid));
-                    name = fetcher.call().get(uuid);
-                    add(new StringWrapper(name), uuid);
-                    return name;
-                } catch (final Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } else {
-            return "unknown";
-        }
-        return "";
-    }
-
-    /**
-     * @param name to use as key
-     *
-     * @return UUID (name hash)
-     */
-    private static UUID getUuidOfflineMode(final StringWrapper name) {
-        final UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
-        add(name, uuid);
-        return uuid;
-    }
-
-    /**
-     * @param uuid to use as key
-     *
-     * @return String - name
-     */
-    private static String getNameOnlinePlayer(final UUID uuid) {
-        final Player player = uuidWrapper.getPlayer(uuid);
-        if ((player == null) || !player.isOnline()) {
-            return null;
-        }
-        final String name = player.getName();
-        add(new StringWrapper(name), uuid);
-        return name;
-    }
-
-    /**
-     * @param uuid to use as key
-     *
-     * @return String - name
-     */
-    private static String getNameOfflinePlayer(final UUID uuid) {
-        final OfflinePlayer player = uuidWrapper.getOfflinePlayer(uuid);
-        if ((player == null) || !player.hasPlayedBefore()) {
-            return null;
-        }
-        final String name = player.getName();
-        add(new StringWrapper(name), uuid);
-        return name;
-    }
-
-    private static UUID getUuidOnlineFromOfflinePlayer(final StringWrapper name) {
-        return getUUID(Bukkit.getOfflinePlayer(name.toString()));
-    }
-    
-    private static String getNameOfflineFromOnlineUUID(final UUID uuid) {
-        return uuidWrapper.getOfflinePlayer(uuid).getName();
-    }
-    
-    /**
-     * @param name to use as key
-     *
-     * @return UUID
-     */
-    private static UUID getUuidOnlinePlayer(final StringWrapper name) {
-        @SuppressWarnings("deprecation") final Player player = Bukkit.getPlayer(name.value);
-        if (player == null) {
-            return null;
-        }
-        final UUID uuid = getUUID(player);
-        add(name, uuid);
-        return uuid;
-    }
-
-    /**
-     * Handle saving of uuids
-     *
-     * @see com.intellectualcrafters.plot.uuid.UUIDSaver#globalSave(com.google.common.collect.BiMap)
-     */
-    @SuppressWarnings("unused")
-    public static void handleSaving() {
-        final UUIDSaver saver = PlotMain.getUUIDSaver();
-        saver.globalSave(getUuidMap());
-    }
-
-    public static UUID getUUID(final Player player) {
-        if (uuidWrapper == null) {
-            try {
-                getUUID(player);
-                uuidWrapper = new DefaultUUIDWrapper();
-            } catch (final Throwable e) {
-                uuidWrapper = new OfflineUUIDWrapper();
-            }
-        }
-        return uuidWrapper.getUUID(player);
-    }
-
-    /**
-     * Safely provide the correct UUID provider. Ignores user preference if not possible rather than break the plugin.
-     */
-    public static UUID getUUID(final OfflinePlayer player) {
-        if (uuidWrapper == null) {
-            if (Settings.OFFLINE_MODE) {
-                uuidWrapper = new OfflineUUIDWrapper();
-            } else {
-                try {
-                    getUUID(player);
-                    uuidWrapper = new DefaultUUIDWrapper();
-                } catch (final Throwable e) {
-                    uuidWrapper = new OfflineUUIDWrapper();
-                }
-            }
-        }
-        try {
-            return uuidWrapper.getUUID(player);
-        } catch (final Throwable e) {
-            uuidWrapper = new OfflineUUIDWrapper();
-            return uuidWrapper.getUUID(player);
-        }
+        
+        return null;
     }
 }

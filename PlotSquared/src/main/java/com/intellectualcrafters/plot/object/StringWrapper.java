@@ -60,9 +60,6 @@ public class StringWrapper {
         if (other.value == null || this.value == null) {
             return false;
         }
-        if (Settings.OFFLINE_MODE) {
-            return other.value.equals(this.value);
-        }
         return other.value.toLowerCase().equals(this.value.toLowerCase());
     }
 
@@ -85,9 +82,6 @@ public class StringWrapper {
     public int hashCode() {
         if (this.value == null) {
             return 0;
-        }
-        if (Settings.OFFLINE_MODE) {
-            return this.value.hashCode();
         }
         return this.value.toLowerCase().hashCode();
     }

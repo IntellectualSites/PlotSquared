@@ -157,18 +157,24 @@ import java.util.HashSet;
             public void run() {
                 if (chunks.size() == 0) {
                     HybridPlotManager.UPDATE = false;
-                    Bukkit.getScheduler().cancelTask(task);
                     PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Finished road conversion");
+                    Bukkit.getScheduler().cancelTask(task);
                     return;
                 }
                 else {
-                    ChunkLoc loc = chunks.get(0);
-                    
-                    PlotMain.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
-                    PlotMain.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
-                    
-                    regenerateChunkChunk(world, loc);
-                    chunks.remove(0);
+                    try {
+                        ChunkLoc loc = chunks.get(0);
+                        PlotMain.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
+                        PlotMain.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
+                        regenerateChunkChunk(world, loc);
+                        chunks.remove(0);
+                    }
+                    catch (Exception e) {
+                        ChunkLoc loc = chunks.get(0);
+                        PlotMain.sendConsoleSenderMessage("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        PlotMain.sendConsoleSenderMessage("&d - Potentially skipping 256 chunks");
+                        PlotMain.sendConsoleSenderMessage("&d - TODO: recommend chunkster if corrupt");
+                    }
                 }
             }
         }, 20, 20);
@@ -194,7 +200,7 @@ import java.util.HashSet;
                     ChunkLoc loc = new ChunkLoc(x, z);
                     chunks.add(loc);
                 }
-                catch (Exception e) { }
+                catch (Exception e) {  }
             }
         }
         
@@ -227,13 +233,31 @@ import java.util.HashSet;
         
         PlotId id1 = getPlotId(plotworld, bot);
         PlotId id2 = getPlotId(plotworld, top);
+
+        boolean toCheck = false;
+        
         
         if (id1 == null || id2 == null || id1 != id2) {
             boolean result = chunk.load(false);
             if (result) {
                 
-                int size = plotworld.SIZE;
+                while (!chunk.isLoaded()) {
+                    chunk.load(false);
+                }
                 
+                if (id1 != null) {
+                    Plot p1 = PlotHelper.getPlot(world, id1);
+                    if (p1 != null && p1.hasOwner() && p1.settings.isMerged()) {
+                        toCheck = true;
+                    }
+                }
+                if (id2 != null && !toCheck) {
+                    Plot p2 = PlotHelper.getPlot(world, id2);
+                    if (p2 != null && p2.hasOwner() && p2.settings.isMerged()) {
+                        toCheck = true;
+                    }
+                }
+                int size = plotworld.SIZE;
                 for (int X = 0; X < 16; X++) {
                     for (int Z = 0; Z < 16; Z++) {
                         
@@ -249,11 +273,17 @@ import java.util.HashSet;
                         
                         boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
                         boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
-                        
                         boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
                         boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
+                        boolean condition;
                         
-                        if (!gx || !gz || !lx || !lz) {
+                        if (toCheck) {
+                            Location l = new Location(world, x + X, 1, z + Z);
+                            condition = getPlotId(plotworld, l) == null;
+                        }
+                        else { condition = (!gx || !gz || !lx || !lz); }
+                        
+                        if (condition) {
                             int sy = plotworld.ROAD_HEIGHT + plotworld.OFFSET;
                             ChunkLoc loc = new ChunkLoc(absX, absZ);
                             HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);

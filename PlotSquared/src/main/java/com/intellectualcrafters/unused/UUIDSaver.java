@@ -19,46 +19,74 @@
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-package com.intellectualcrafters.plot.commands;
+package com.intellectualcrafters.unused;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import com.google.common.collect.BiMap;
+import com.intellectualcrafters.plot.object.StringWrapper;
 
-@SuppressWarnings({"unused", "deprecation", "javadoc"}) public class Kick extends SubCommand {
+import java.util.UUID;
 
-    public Kick() {
-        super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);
-    }
+/**
+ * @author Citymonstret
+ */
+public interface UUIDSaver {
 
-    @Override
-    public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, "You're not in a plot.");
-            return false;
-        }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return false;
-        }
-        if (args.length != 1) {
-            PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
-            return false;
-        }
-        if (Bukkit.getPlayer(args[0]) == null) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-            return false;
-        }
-        final Player player = Bukkit.getPlayer(args[0]);
-        if (!player.getWorld().equals(plr.getWorld()) || !PlayerFunctions.isInPlot(player) || (PlayerFunctions.getCurrentPlot(player) == null) || !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
-            return false;
-        }
-        player.teleport(player.getWorld().getSpawnLocation());
-        return true;
-    }
+    /**
+     * Populate the default list
+     */
+    public void globalPopulate();
+
+    /**
+     * Save the UUIDs
+     *
+     * @param biMap Map containing names and UUIDs
+     */
+    public void globalSave(final BiMap<StringWrapper, UUID> biMap);
+
+    /**
+     * Save a single UUIDSet
+     *
+     * @param set Set to save
+     */
+    public void save(final UUIDSet set);
+
+    /**
+     * Get a single UUIDSet
+     *
+     * @param name Username
+     *
+     * @return UUID Set
+     */
+    public UUIDSet get(final String name);
+
+    /**
+     * Get a single UUIDSet
+     *
+     * @param uuid UUID
+     *
+     * @return UUID Set
+     */
+    public UUIDSet get(final UUID uuid);
+
+    /**
+     * Fetch uuid from mojang servers
+     *
+     * @param name Username
+     *
+     * @return uuid
+     *
+     * @throws Exception
+     */
+    public UUID mojangUUID(final String name) throws Exception;
+
+    /**
+     * Fetch username from mojang servers
+     *
+     * @param uuid UUID
+     *
+     * @return username
+     *
+     * @throws Exception
+     */
+    public String mojangName(final UUID uuid) throws Exception;
 }

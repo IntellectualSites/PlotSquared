@@ -192,9 +192,7 @@ public class HybridPlotWorld extends PlotWorld {
         
         this.PATH_WIDTH_UPPER = (short) (this.PATH_WIDTH_LOWER + this.PLOT_WIDTH + 1);
         try {
-            if (true) {
-                setupSchematics();
-            }
+            setupSchematics();
         }
         catch (Exception e) {
             PlotMain.sendConsoleSenderMessage("&c - road schematics are disabled for this world.");
@@ -213,7 +211,7 @@ public class HybridPlotWorld extends PlotWorld {
         Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
         
         if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
-            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&cInvalid generator schematic for world '" + worldname + "'");
+            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
         
@@ -262,6 +260,8 @@ public class HybridPlotWorld extends PlotWorld {
                 }
             }
         }
+        
+        this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
     public void addOverlayBlock(short x, short y, short z, short id, byte data) {

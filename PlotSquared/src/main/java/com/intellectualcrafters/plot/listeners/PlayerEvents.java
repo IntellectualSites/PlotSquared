@@ -29,6 +29,8 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -53,6 +55,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Player Events involving plots
@@ -69,9 +72,17 @@ import java.util.Set;
 
     @EventHandler
     public static void onJoin(final PlayerJoinEvent event) {
-        if (!event.getPlayer().hasPlayedBefore()) {
-            event.getPlayer().saveData();
+        Player player = event.getPlayer();
+        if (!player.hasPlayedBefore()) {
+            player.saveData();
         }
+        
+        // UUID stuff
+        String username = player.getName();
+        StringWrapper name = new StringWrapper(username);
+        UUID uuid = UUIDHandler.getUUID(player);
+        UUIDHandler.add(name, uuid);
+        
         // textures(event.getPlayer());
         if (isInPlot(event.getPlayer().getLocation())) {
             if (Settings.TELEPORT_ON_LOGIN) {

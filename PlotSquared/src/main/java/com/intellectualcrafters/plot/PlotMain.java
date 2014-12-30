@@ -40,8 +40,6 @@ import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.PlotUUIDSaver;
-import com.intellectualcrafters.plot.uuid.UUIDSaver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
@@ -53,6 +51,9 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,7 +75,7 @@ import java.util.concurrent.TimeUnit;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class PlotMain extends JavaPlugin {
+@SuppressWarnings("unused") public class PlotMain extends JavaPlugin implements Listener {
     /**
      * Permission that allows for "everything"
      */
@@ -157,10 +158,6 @@ import java.util.concurrent.TimeUnit;
      */
     public static boolean useEconomy = false;
     private static PlotMain main = null;
-    /**
-     * The UUID Saver
-     */
-    private static UUIDSaver uuidSaver;
     /**
      * MySQL Object
      */
@@ -252,28 +249,6 @@ import java.util.concurrent.TimeUnit;
         }
 
         return true;
-    }
-
-    /**
-     * Get the uuid saver
-     *
-     * @return uuid saver
-     *
-     * @see com.intellectualcrafters.plot.uuid.UUIDSaver;
-     */
-    public static UUIDSaver getUUIDSaver() {
-        return uuidSaver;
-    }
-
-    /**
-     * Set the uuid saver
-     *
-     * @param saver new saver
-     *
-     * @see com.intellectualcrafters.plot.uuid.UUIDSaver
-     */
-    public static void setUUIDSaver(final UUIDSaver saver) {
-        uuidSaver = saver;
     }
 
     /**
@@ -928,6 +903,13 @@ import java.util.concurrent.TimeUnit;
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
     }
+    
+    @EventHandler
+    public static void worldLoad(WorldLoadEvent event) {
+        if (!UUIDHandler.CACHED) {
+            UUIDHandler.cacheAll();
+        }
+    }
 
     public static void loadWorld(final String world, final ChunkGenerator generator) {
         if (getWorldSettings(world) != null) {
@@ -1466,6 +1448,8 @@ import java.util.concurrent.TimeUnit;
 
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        // World load events
+        getServer().getPluginManager().registerEvents(this, this);
         // Info Inventory
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         // Flag runnable
@@ -1551,14 +1535,12 @@ import java.util.concurrent.TimeUnit;
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
                 Settings.OFFLINE_MODE = true;
             }
-            
             if (Settings.OFFLINE_MODE) {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared &cis using Offline Mode UUIDs either because of user preference, or because of the version of the Bukkit API");
+                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because of the version of the Bukkit API");
             }
-            
-            setUUIDSaver(new PlotUUIDSaver());
-            // Looks really cool xD
-            getUUIDSaver().globalPopulate();
+            else {
+                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");
+            }
         }
         // Now we're finished :D
         if (C.ENABLED.s().length() > 0) {
