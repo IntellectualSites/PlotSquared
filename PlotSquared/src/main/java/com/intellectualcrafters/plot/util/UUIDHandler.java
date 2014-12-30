@@ -140,11 +140,10 @@ public class UUIDHandler {
             OfflinePlayer player = Bukkit.getOfflinePlayer(name);
             UUID uuid = UUIDHandler.uuidWrapper.getUUID(player);
             StringWrapper nameWrap = new StringWrapper(name);
-            System.out.print(nameWrap);
             add(nameWrap, uuid);
         }
         
-        PlotMain.sendConsoleSenderMessage("C.PREFIX.s() + &6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
     public static UUID getUUID(Player player) {
