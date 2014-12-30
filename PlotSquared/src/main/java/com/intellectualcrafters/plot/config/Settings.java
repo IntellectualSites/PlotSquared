@@ -32,7 +32,7 @@ public class Settings {
      * Default UUID_FECTHING: false
      */
     public static boolean UUID_FECTHING = false;
-    public static boolean UUID_FROM_DISK = true;
+    public static boolean UUID_FROM_DISK = false;
     /**
      *
      */
