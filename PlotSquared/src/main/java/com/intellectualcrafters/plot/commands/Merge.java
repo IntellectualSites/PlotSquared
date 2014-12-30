@@ -30,7 +30,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -83,7 +86,7 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (!plot.getOwner().equals(plr.getUniqueId())) {
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -126,7 +129,7 @@ public class Merge extends SubCommand {
         }
         for (final PlotId myid : plots) {
             final Plot myplot = PlotMain.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(plr.getUniqueId()))) {
+            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)))) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }

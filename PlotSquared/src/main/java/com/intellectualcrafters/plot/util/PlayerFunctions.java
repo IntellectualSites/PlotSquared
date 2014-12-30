@@ -220,7 +220,7 @@ import java.util.*;
      * @return
      */
     public static int getPlayerPlotCount(final World world, final Player plr) {
-        final UUID uuid = plr.getUniqueId();
+        final UUID uuid = UUIDHandler.getUUID(plr);
         int count = 0;
         for (final Plot plot : PlotMain.getPlots(world).values()) {
             if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {

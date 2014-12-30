@@ -51,7 +51,7 @@ import java.util.UUID;
             return true;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot.owner == null) || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if (((plot.owner == null) || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }

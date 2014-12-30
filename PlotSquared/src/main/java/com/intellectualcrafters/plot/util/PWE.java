@@ -33,6 +33,7 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.mask.RegionMask;
 import com.sk89q.worldedit.regions.CuboidRegion;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -57,7 +58,7 @@ import org.bukkit.entity.Player;
                 final Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
                     boolean r;
-                    r = ((plot.getOwner() != null) && plot.getOwner().equals(p.getUniqueId())) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId());
+                    r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
                     if (!r) {
                         if (p.hasPermission("plots.worldedit.bypass")) {
                             removeMask(p, s);

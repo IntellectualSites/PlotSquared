@@ -124,7 +124,7 @@ import java.util.Set;
         }
         final Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
         if (plot != null) {
-            if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+            if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
                 PWE.setMask(p, l);
             }
         }
@@ -143,7 +143,7 @@ import java.util.Set;
         }
         if (this.restrictedcmds.contains(cmd)) {
             final Plot plot = PlayerFunctions.getCurrentPlot(p);
-            if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUniqueId()))) {
+            if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
                 e.setCancelled(true);
             }
             return;

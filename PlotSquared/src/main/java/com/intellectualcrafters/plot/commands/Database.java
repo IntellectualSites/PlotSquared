@@ -122,7 +122,7 @@ public class Database extends SubCommand {
                 }
                 UUID requester = null;
                 if (plr != null) {
-                    requester = plr.getUniqueId();
+                    requester = UUIDHandler.getUUID(plr);
                 }
                 insertPlots(manager, requester, n);
                 break;

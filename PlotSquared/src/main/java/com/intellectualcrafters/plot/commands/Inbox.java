@@ -27,6 +27,8 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -54,7 +56,7 @@ public class Inbox extends SubCommand {
         }
 
         Integer tier;
-        final UUID uuid = plr.getUniqueId();
+        final UUID uuid = UUIDHandler.getUUID(plr);
         if (PlotMain.hasPermission(plr, "plots.admin")) {
             tier = 0;
         } else if (plot.owner == uuid) {

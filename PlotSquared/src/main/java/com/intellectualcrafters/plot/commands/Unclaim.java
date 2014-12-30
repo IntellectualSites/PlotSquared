@@ -27,7 +27,10 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.entity.Player;
 
 public class Unclaim extends SubCommand {
@@ -45,7 +48,7 @@ public class Unclaim extends SubCommand {
         if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !PlotMain.hasPermission(plr, "plots.admin")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;

@@ -1523,11 +1523,17 @@ import java.util.concurrent.TimeUnit;
         }
         // Handle UUIDS
         {
+            boolean checkVersion = checkVersion();
+            if (!checkVersion && Settings.TITLES) {
+                sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are enabled - please update your version of Bukkit to support this feature.");
+                Settings.TITLES = false;
+                FlagManager.removeFlag(FlagManager.getFlag("titles"));
+            }
             if (Settings.OFFLINE_MODE) {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
                 Settings.OFFLINE_MODE = true;
             }
-            else if (checkVersion() && Bukkit.getOnlineMode()) {
+            else if (checkVersion && Bukkit.getOnlineMode()) {
                 UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
                 Settings.OFFLINE_MODE = false;
             }
@@ -1536,7 +1542,7 @@ import java.util.concurrent.TimeUnit;
                 Settings.OFFLINE_MODE = true;
             }
             if (Settings.OFFLINE_MODE) {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because of the version of the Bukkit API");
+                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
             }
             else {
                 sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");

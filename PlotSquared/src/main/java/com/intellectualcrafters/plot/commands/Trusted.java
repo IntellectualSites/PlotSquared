@@ -51,7 +51,7 @@ import java.util.UUID;
             return true;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot.owner == null) || !plot.getOwner().equals(plr.getUniqueId())) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if (((plot.owner == null) || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -107,19 +107,6 @@ import java.util.UUID;
                 PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
-            /*
-             * if (!hasBeenOnServer(args[1])) {
-             * PlayerFunctions.sendMessage(plr, C.PLAYER_HAS_NOT_BEEN_ON);
-             * return true; } UUID uuid = null; if
-             * (Bukkit.getPlayer(args[1]) != null) { uuid =
-             * Bukkit.getPlayer(args[1]).getUniqueId(); } else { uuid =
-             * Bukkit.getOfflinePlayer(args[1]).getUniqueId(); } if (uuid ==
-             * null) { PlayerFunctions.sendMessage(plr,
-             * C.PLAYER_HAS_NOT_BEEN_ON); return true; } if
-             * (!plot.trusted.contains(uuid)) {
-             * PlayerFunctions.sendMessage(plr, C.T_WAS_NOT_ADDED); return
-             * true; }
-             */
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
             DBFunc.removeTrusted(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));

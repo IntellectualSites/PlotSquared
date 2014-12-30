@@ -86,7 +86,7 @@ public class list extends SubCommand {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
             for (final Plot p : PlotMain.getPlotsSorted()) {
-                if (p.helpers.contains(plr.getUniqueId())) {
+                if (p.helpers.contains(UUIDHandler.getUUID(plr))) {
                     string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
                 }
             }

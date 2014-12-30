@@ -25,6 +25,8 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -62,7 +64,7 @@ public class Home extends SubCommand {
                 Plot temp;
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
-                        if (temp.getOwner().equals(plr.getUniqueId())) {
+                        if (temp.getOwner().equals(UUIDHandler.getUUID(plr))) {
                             PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
                             return true;
                         }

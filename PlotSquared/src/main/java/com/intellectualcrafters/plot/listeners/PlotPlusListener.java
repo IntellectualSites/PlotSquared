@@ -180,7 +180,7 @@ import java.util.*;
                 if (player == null) {
                     return;
                 }
-                if (UUIDHandler.getUUID(player).equals(event.getPlayer().getUniqueId())) {
+                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(event.getPlayer()))) {
                     return;
                 }
                 if (player.isOnline()) {
@@ -219,7 +219,7 @@ import java.util.*;
                 if (player == null) {
                     return;
                 }
-                if (UUIDHandler.getUUID(player).equals(event.getPlayer().getUniqueId())) {
+                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(event.getPlayer()))) {
                     return;
                 }
                 if (player.isOnline()) {

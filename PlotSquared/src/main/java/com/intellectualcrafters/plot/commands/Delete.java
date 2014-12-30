@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
@@ -45,12 +46,14 @@ public class Delete extends SubCommand {
         if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(plr.getUniqueId()))) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !PlotMain.hasPermission(plr, "plots.admin")) {
+            System.out.print(UUIDHandler.uuidWrapper.getUUID(plr));
+            System.out.print(plot.getOwner());
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
         final PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(plr.getUniqueId())) {
+        if (PlotMain.useEconomy && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 final Economy economy = PlotMain.economy;
