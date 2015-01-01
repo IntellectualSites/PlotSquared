@@ -1533,7 +1533,7 @@ import java.util.concurrent.TimeUnit;
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
                 Settings.OFFLINE_MODE = true;
             }
-            else if (checkVersion && Bukkit.getOnlineMode()) {
+            else if (checkVersion) {
                 UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
                 Settings.OFFLINE_MODE = false;
             }

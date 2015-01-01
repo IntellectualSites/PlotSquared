@@ -100,14 +100,16 @@ public class UUIDHandler {
                     return s.endsWith(".dat");
                 }
             });
-            for (String current : dat) {
-                String s = current.replaceAll(".dat$", "");
-                try {
-                    UUID uuid = UUID.fromString(s);
-                    uuids.add(uuid);
-                }
-                catch (Exception e) {
-                    PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
+            if (dat != null) {
+                for (String current : dat) {
+                    String s = current.replaceAll(".dat$", "");
+                    try {
+                        UUID uuid = UUID.fromString(s);
+                        uuids.add(uuid);
+                    }
+                    catch (Exception e) {
+                        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
+                    }
                 }
             }
             
@@ -118,13 +120,15 @@ public class UUIDHandler {
                     return s.endsWith(".dat");
                 }
             });
-            for (String current : dat) {
-                names.add(current.replaceAll(".dat$", ""));
+            if (dat != null) {
+                for (String current : dat) {
+                    names.add(current.replaceAll(".dat$", ""));
+                }
             }
         }
         
         
-        UUIDWrapper wrapper = null;
+        UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
             try {
                 OfflinePlayer player = wrapper.getOfflinePlayer(uuid);
@@ -155,6 +159,10 @@ public class UUIDHandler {
     }
     
     public static String getName(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        
         // check online
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID u2 = UUIDHandler.uuidWrapper.getUUID(player);
@@ -182,6 +190,10 @@ public class UUIDHandler {
     }
 
     public static UUID getUUID(final String name) {
+        if (name == null) {
+            return null;
+        }
+        
         // check online
         Player player = Bukkit.getPlayer(name);
         if (player != null) {

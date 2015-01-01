@@ -244,7 +244,7 @@ public enum C {
     /*
      * Info
      */
-    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
+    PLOT_UNOWNED("&cThe current plot must have an owner to perform this action"),
     /*
      * PLOT_INFO("" +
      * "&6ID&7: &a%id%&7\n" +

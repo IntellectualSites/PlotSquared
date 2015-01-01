@@ -83,10 +83,11 @@ public class Merge extends SubCommand {
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+        boolean admin = PlotMain.hasPermission(plr, "plots.admin");
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(    plr)) && !admin) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -129,7 +130,7 @@ public class Merge extends SubCommand {
         }
         for (final PlotId myid : plots) {
             final Plot myplot = PlotMain.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)))) {
+            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
@@ -161,7 +162,7 @@ public class Merge extends SubCommand {
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
         PlotHelper.mergePlots(world, plots);
 
-        PlotHelper.setSign(world, plr.getName(), plot);
+        PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
 
         if (PlotHelper.canSetFast) {
             SetBlockFast.update(plr);
