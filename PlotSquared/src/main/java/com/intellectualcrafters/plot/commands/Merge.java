@@ -87,7 +87,7 @@ public class Merge extends SubCommand {
             return false;
         }
         boolean admin = PlotMain.hasPermission(plr, "plots.admin");
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(    plr)) && !admin) {
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

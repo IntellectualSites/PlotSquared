@@ -153,7 +153,7 @@ public enum C {
      */
     NO_SCHEMATIC_PERMISSION("&cYou don't have the permission required to use schematic &6%s"),
     NO_PERMISSION("&cYou are lacking the permission node: &6%s"),
-    NO_PLOT_PERMS("&cYou don't have the permissions to do that in this plot"),
+    NO_PLOT_PERMS("&cYou must be the plot owner to perform this action"),
     CANT_CLAIM_MORE_PLOTS("&cYou can't claim more plots."),
     CANT_CLAIM_MORE_PLOTS_NUM("&cYou can't claim more than &6%s &cplots at once"),
     YOU_BE_DENIED("&cYou are not allowed to enter this plot"),
@@ -245,6 +245,7 @@ public enum C {
      * Info
      */
     PLOT_UNOWNED("&cThe current plot must have an owner to perform this action"),
+    PLOT_INFO_UNCLAIMED("&cPlot &6%s&c is not yet claimed"),
     /*
      * PLOT_INFO("" +
      * "&6ID&7: &a%id%&7\n" +
