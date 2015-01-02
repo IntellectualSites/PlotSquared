@@ -51,7 +51,7 @@ public class HybridGen extends PlotGenerator {
     /**
      * Set to static to re-use the same managet for all Default World Generators
      */
-    private static PlotManager manager = null;
+    private PlotManager manager = null;
     
     /**
      * Some generator specific variables (implementation dependent)

@@ -308,15 +308,18 @@ import java.util.concurrent.TimeUnit;
      * @param player player
      *
      * @return Set Containing the players plots
+     *  - ignores non plot worlds
      */
     public static Set<Plot> getPlots(final Player player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final HashMap<PlotId, Plot> world : plots.values()) {
-            for (final Plot plot : world.values()) {
-                if (plot.hasOwner()) {
-                    if (plot.getOwner().equals(uuid)) {
-                        myplots.add(plot);
+        for (final String world : plots.keySet()) {
+            if (isPlotWorld(world)) {
+                for (final Plot plot : plots.get(world).values()) {
+                    if (plot.hasOwner()) {
+                        if (plot.getOwner().equals(uuid)) {
+                            myplots.add(plot);
+                        }
                     }
                 }
             }
