@@ -1037,9 +1037,6 @@ import java.util.UUID;
         }
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final PlotManager manager = PlotMain.getPlotManager(world);
-        System.out.print("WORLD = "+(world));
-        System.out.print("MANAGER = "+(manager == null));
-        System.out.print("PLOTWORLD = "+(plotworld == null));
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
