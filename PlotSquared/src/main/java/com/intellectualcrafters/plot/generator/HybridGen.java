@@ -34,6 +34,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class HybridGen extends PlotGenerator {
     /**
      * Set to static to re-use the same managet for all Default World Generators
      */
-    private PlotManager manager = null;
+    private static PlotManager manager = null;
     
     /**
      * Some generator specific variables (implementation dependent)
@@ -146,10 +147,10 @@ public class HybridGen extends PlotGenerator {
      */
     @Override
     public PlotManager getPlotManager() {
-        if (manager == null) {
-            manager = new HybridPlotManager();
+        if (this.manager == null) {
+            this.manager = new HybridPlotManager();
         }
-        return manager;
+        return this.manager;
     }
 
     /**
@@ -220,7 +221,8 @@ public class HybridGen extends PlotGenerator {
         }
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-        return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
+//        return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
+        return new ArrayList<>();
     }
 
     /**
@@ -258,8 +260,8 @@ public class HybridGen extends PlotGenerator {
             int X = cx << 4;
             int Z = cz << 4;
             
-            short sx = (short) ((X) % this.size);
-            short sz = (short) ((Z) % this.size);
+            int sx = ((X) % this.size);
+            int sz = ((Z) % this.size);
             
             if (sx < 0) {
                 sx += this.size;
@@ -293,8 +295,8 @@ public class HybridGen extends PlotGenerator {
             return this.result;
         }
         
-        short sx = (short) ((cx << 4) % this.size);
-        short sz = (short) ((cz << 4) % this.size);
+        int sx = ((cx << 4) % this.size);
+        int sz = ((cz << 4) % this.size);
         
         if (sx < 0) {
             sx += this.size;
@@ -310,8 +312,8 @@ public class HybridGen extends PlotGenerator {
                 
                 biomes.setBiome(x, z, this.biome);
                 
-                short absX = (short) ((sx + x) % this.size);
-                short absZ = (short) ((sz + z) % this.size);
+                int absX = ((sx + x) % this.size);
+                int absZ = ((sz + z) % this.size);
                 
                 boolean gx = absX > pathWidthLower;
                 boolean gz = absZ > pathWidthLower;
@@ -348,7 +350,7 @@ public class HybridGen extends PlotGenerator {
                         if (blocks != null) {
                             for (short y : blocks.keySet()) {
                                 setBlock(this.result, x, this.roadheight + y, z, blocks.get(y));        
-                        }
+                            }
                         }
                     }
                 }

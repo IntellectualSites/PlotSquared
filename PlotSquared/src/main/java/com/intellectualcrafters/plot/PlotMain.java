@@ -21,8 +21,10 @@
 
 package com.intellectualcrafters.plot;
 
+import com.intellectualcrafters.plot.api.PlotAPI;
 import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -1477,6 +1479,7 @@ import java.util.concurrent.TimeUnit;
                 PlotMain.sendConsoleSenderMessage("&c - http://builds.enginehub.org/job/worldedit");
             } else {
                 getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
+                MainCommand.subCommands.add(new WE_Anywhere());
             }
         }
         if (Settings.WORLDGUARD) {

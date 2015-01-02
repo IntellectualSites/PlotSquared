@@ -60,7 +60,7 @@ import java.util.HashSet;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends PlotManager {
 
-    public RegionWrapper CURRENT_PLOT_CLEAR;
+    public RegionWrapper CURRENT_PLOT_CLEAR = null;
     public HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
     public HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     private int task;

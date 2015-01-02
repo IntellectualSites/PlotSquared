@@ -163,7 +163,7 @@ import org.bukkit.entity.Player;
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
                 final Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
-                if ((plot == null) || (plot.owner == null)) {
+                if ((plot.owner == null)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
@@ -212,6 +212,7 @@ import org.bukkit.entity.Player;
                 }
             }
         }
+        Auto.lastPlot  = new PlotId(0, 0);
         return true;
     }
 

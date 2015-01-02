@@ -185,10 +185,13 @@ import java.util.Set;
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
         final Player p = e.getPlayer();
+        final Location l = p.getLocation();
         if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+            if (isPlotWorld(l)) {
+                PWE.removeMask(p);
+            }
             return;
         }
-        final Location l = p.getLocation();
         if (isPlotWorld(l)) {
             PWE.setMask(p, l);
         } else {
