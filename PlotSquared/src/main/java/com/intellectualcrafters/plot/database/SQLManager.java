@@ -867,7 +867,6 @@ public class SQLManager implements AbstractDB {
                         stmt.close();
 
                         stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `id` = " + idstr + "");
-                        stmt.setString(1, world);
                         stmt.executeUpdate();
                         stmt.close();
                     } catch (final SQLException e) {
