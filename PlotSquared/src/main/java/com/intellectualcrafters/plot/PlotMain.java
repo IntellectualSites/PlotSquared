@@ -544,14 +544,19 @@ import java.util.concurrent.TimeUnit;
                                 }
                             }
                             for (final Plot plot : toDeletePlot) {
-                                final World worldobj = Bukkit.getWorld(world);
-                                PlotHelper.clear(worldobj, plot, true);
-                                PlotHelper.removeSign(worldobj, plot);
-                                DBFunc.delete(world, plot);
-                                removePlot(world, plot.id, true);
-                                if ((Math.abs(plot.id.x) < Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) < Math.abs(Auto.lastPlot.y))) {
-                                    Auto.lastPlot = plot.id;
-                                }
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final World worldobj = Bukkit.getWorld(world);
+                                        PlotHelper.clear(worldobj, plot, true);
+                                        PlotHelper.removeSign(worldobj, plot);
+                                        DBFunc.delete(world, plot);
+                                        removePlot(world, plot.id, true);
+                                        if ((Math.abs(plot.id.x) < Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) < Math.abs(Auto.lastPlot.y))) {
+                                            Auto.lastPlot = plot.id;
+                                        }
+                                    }
+                                });
                             }
                         }
                     }

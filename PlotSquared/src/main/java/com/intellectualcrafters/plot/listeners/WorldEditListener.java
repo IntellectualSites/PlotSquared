@@ -253,6 +253,7 @@ import java.util.Set;
         if (!isPlotWorld(q)) {
             if (isPlotWorld(f)) {
                 PWE.removeMask(p);
+                return;
             } else {
                 return;
             }
