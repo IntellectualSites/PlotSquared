@@ -212,6 +212,10 @@ public class Set extends SubCommand {
                 return false;
             }
             final String alias = args[1];
+            if (alias.length() >= 50) {
+                PlayerFunctions.sendMessage(plr, C.ALIAS_TOO_LONG);
+                return false;
+            }
             for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);

@@ -137,6 +137,7 @@ public enum C {
      */
     ALIAS_SET_TO("&cPlot alias set to &6%alias%"),
     MISSING_ALIAS("&cYou need to specify an alias"),
+    ALIAS_TOO_LONG("&cThe alias must be < 50 characters in length"),
     ALIAS_IS_TAKEN("&cThat alias is already taken"),
     /*
      * Position
