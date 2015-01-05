@@ -45,7 +45,7 @@ import java.util.UUID;
 /**
  * @author Citymonstret
  */
-@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Info extends SubCommand {
+@SuppressWarnings({"javadoc"}) public class Info extends SubCommand {
 
     public Info() {
         super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);

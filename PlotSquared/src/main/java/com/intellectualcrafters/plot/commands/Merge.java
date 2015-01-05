@@ -109,25 +109,40 @@ public class Merge extends SubCommand {
             return false;
         }
         final World world = plr.getWorld();
-        final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
+        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
         ArrayList<PlotId> plots;
         switch (direction) {
             case 0: // north = -y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
                 break;
             case 1: // east = +x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
                 break;
             case 2: // south = +y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
                 break;
             case 3: // west = -x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(plr.getWorld(), new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
                 break;
             default:
                 return false;
         }
+        
+        PlotId botId = plots.get(0);
+        PlotId topId = plots.get(plots.size() - 1);
+        
+        PlotId bot1 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, botId)).id;
+        PlotId bot2 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, topId)).id;
+        
+        PlotId top1 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, topId)).id;
+        PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
+        
+        bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
+        top = new PlotId(Math.min(top1.x, top2.x), Math.min(top1.y, top2.y));
+        
+        plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
+        
         for (final PlotId myid : plots) {
             final Plot myplot = PlotMain.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {

@@ -74,7 +74,7 @@ public class Settings {
     /**
      * Max allowed plots
      */
-    public static int MAX_PLOTS = 20;
+    public static int MAX_PLOTS = 127;
     /**
      * WorldGuard region on claimed plots
      */

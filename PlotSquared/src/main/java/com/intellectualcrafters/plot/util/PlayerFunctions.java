@@ -175,11 +175,8 @@ import java.util.*;
         if (id == null) {
             return null;
         }
-        final HashMap<PlotId, Plot> plots = PlotMain.getPlots(world);
-        if (plots != null) {
-            if (plots.containsKey(id)) {
-                return plots.get(id);
-            }
+        if (PlotMain.getPlots(world).containsKey(id)) {
+                return PlotMain.getPlots(world).get(id);
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
 

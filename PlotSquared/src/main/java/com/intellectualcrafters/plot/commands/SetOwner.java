@@ -53,11 +53,11 @@ import java.util.UUID;
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+        Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        if (plot == null || plot.owner == null) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (args.length < 1) {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
             return true;
