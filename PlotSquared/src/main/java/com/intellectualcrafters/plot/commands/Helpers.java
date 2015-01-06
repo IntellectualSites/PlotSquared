@@ -51,7 +51,11 @@ import java.util.UUID;
             return true;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot.owner == null) || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if ((plot == null) || !plot.hasOwner()) {
+            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            return false;
+        }
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotMain.hasPermission(plr, "plots.admin")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -67,7 +71,7 @@ import java.util.UUID;
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
-                if (plot.owner == uuid) {
+                if (plot.owner.equals(uuid)) {
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
@@ -85,7 +89,7 @@ import java.util.UUID;
                     DBFunc.removeDenied(plr.getWorld().getName(), plot, player);
                 }
                 plot.addHelper(uuid);
-                DBFunc.setHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+                DBFunc.setHelper(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
                 final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
@@ -102,13 +106,13 @@ import java.util.UUID;
                     return true;
                 }
                 plot.removeHelper(uuid);
-                DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+                DBFunc.removeHelper(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
                 PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
-            DBFunc.removeHelper(plr.getWorld().getName(), plot, Bukkit.getOfflinePlayer(args[1]));
+            DBFunc.removeHelper(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
             final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);

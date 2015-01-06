@@ -166,15 +166,17 @@ import java.util.UUID;
                         plot2.settings.setMerged(0, true);
                     }
                 }
-                if (changed) {
-                    result = true;
-                    DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
-                    if (plot2 != null) {
-                        DBFunc.setMerged(world.getName(), plot2, plot2.settings.getMerged());
-                    }
-                }
             }
         }
+        
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                final PlotId id = new PlotId(x, y);
+                final Plot plot = PlotMain.getPlots(world).get(id);
+                DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+            }
+        }
+
 
         manager.finishPlotMerge(world, plotworld, plotIds);
 

@@ -139,7 +139,7 @@ public class Merge extends SubCommand {
         PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
         
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
-        top = new PlotId(Math.min(top1.x, top2.x), Math.min(top1.y, top2.y));
+        top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
         
         plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
         

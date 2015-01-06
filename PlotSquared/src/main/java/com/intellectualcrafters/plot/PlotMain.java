@@ -800,7 +800,9 @@ import java.util.concurrent.TimeUnit;
             public void run() {
                 if (this.ticked > 36_000L) {
                     this.ticked = 0l;
-                    sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 60 minutes. Errors: " + this.error);
+                    if (this.error > 0) {
+                        sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 6 hours. Errors: " + this.error);
+                    }
                     this.error = 0l;
                 }
                 World world;
