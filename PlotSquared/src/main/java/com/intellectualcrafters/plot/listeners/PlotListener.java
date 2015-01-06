@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.listeners;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -188,13 +189,14 @@ import java.util.UUID;
                     player.setPlayerTime(time, true);
                 } catch (final Exception e) {
                     plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
+                    DBFunc.setFlags(plot.world, plot, plot.settings.getFlags());
                 }
             }
             if (plot.settings.getFlag("weather") != null) {
                 player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
             }
             if ((booleanFlag(plot, "titles") || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
-                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceFirst("%s", plot.getDisplayName());
+                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%y%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
                 final ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());

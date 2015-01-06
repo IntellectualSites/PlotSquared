@@ -659,7 +659,7 @@ public class SQLManager implements AbstractDB {
                     } else {
                         flags_string = myflags.split(",");
                     }
-                    final ArrayList<Flag> flags = new ArrayList<Flag>();
+                    final Set<Flag> flags = new HashSet<Flag>();
                     boolean exception = false;
                     for (final String element : flags_string) {
                         if (element.contains(":")) {
@@ -677,7 +677,7 @@ public class SQLManager implements AbstractDB {
                         PlotMain.sendConsoleSenderMessage("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
                         setFlags(id, flags.toArray(new Flag[0]));
                     }
-                    plot.settings.setFlags(flags.toArray(new Flag[0]));
+                    plot.settings.setFlags(flags);
                 } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
@@ -730,7 +730,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final String world, final Plot plot, final Flag[] flags) {
+    public void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
         plot.settings.setFlags(flags);
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;

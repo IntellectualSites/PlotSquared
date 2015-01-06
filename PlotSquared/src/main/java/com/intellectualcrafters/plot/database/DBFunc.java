@@ -25,11 +25,13 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
+
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -156,7 +158,7 @@ public class DBFunc {
         dbManager.setMerged(world, plot, merged);
     }
 
-    public static void setFlags(final String world, final Plot plot, final Flag[] flags) {
+    public static void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
         dbManager.setFlags(world, plot, flags);
     }
 

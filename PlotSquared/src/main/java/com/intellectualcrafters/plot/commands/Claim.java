@@ -79,11 +79,6 @@ public class Claim extends SubCommand {
                 }
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
-            if ((world.DEFAULT_FLAGS != null) && (world.DEFAULT_FLAGS.size() > 0)) {
-                final Flag[] flags = FlagManager.parseFlags(world.DEFAULT_FLAGS);
-                plot2.settings.setFlags(flags);
-                DBFunc.setFlags(plot.world, plot2, flags);
-            }
             if (world instanceof HybridPlotWorld) {
                 final HybridPlotWorld pW = (HybridPlotWorld) world;
                 if (pW.CLAIMED_WALL_BLOCK != pW.WALL_BLOCK) {

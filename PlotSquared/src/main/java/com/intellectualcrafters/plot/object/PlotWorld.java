@@ -23,6 +23,9 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -45,7 +48,6 @@ public abstract class PlotWorld {
     public final static boolean SCHEMATIC_ON_CLAIM_DEFAULT = false;
     public final static String SCHEMATIC_FILE_DEFAULT = "null";
     public final static List<String> SCHEMATICS_DEFAULT = null;
-    public final static List<String> DEFAULT_FLAGS_DEFAULT = Arrays.asList();
     public final static boolean USE_ECONOMY_DEFAULT = false;
     public final static double PLOT_PRICE_DEFAULT = 100;
     public final static double MERGE_PRICE_DEFAULT = 100;
@@ -272,7 +274,7 @@ public abstract class PlotWorld {
     public boolean SCHEMATIC_ON_CLAIM;
     public String SCHEMATIC_FILE;
     public List<String> SCHEMATICS;
-    public List<String> DEFAULT_FLAGS;
+    public Flag[] DEFAULT_FLAGS;
     public boolean USE_ECONOMY;
     public double PLOT_PRICE;
     public double MERGE_PRICE;
@@ -305,9 +307,12 @@ public abstract class PlotWorld {
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
-        this.DEFAULT_FLAGS = config.getStringList("flags.default");
-        if (this.DEFAULT_FLAGS == null) {
-            this.DEFAULT_FLAGS = new ArrayList<>();
+        List<String> flags = config.getStringList("flags.default");
+        if (flags == null) {
+            this.DEFAULT_FLAGS = new Flag[] {};
+        }
+        else {
+            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
         }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");

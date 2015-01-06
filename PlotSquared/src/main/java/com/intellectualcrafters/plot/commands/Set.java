@@ -142,13 +142,9 @@ public class Set extends SubCommand {
                     event.setCancelled(true);
                     return false;
                 }
-                final java.util.Set<Flag> newflags = plot.settings.getFlags();
-                final Flag oldFlag = plot.settings.getFlag(args[1].toLowerCase());
-                if (oldFlag != null) {
-                    newflags.remove(oldFlag);
-                }
-                plot.settings.setFlags(newflags.toArray(new Flag[newflags.size()]));
-                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags.toArray(new Flag[newflags.size()]));
+                final java.util.Set<Flag> newflags = FlagManager.removeFlag(plot.settings.getFlags(), args[1].toLowerCase());
+                plot.settings.setFlags(newflags);
+                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags);
                 PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
@@ -175,8 +171,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 plot.settings.addFlag(flag);
-                final java.util.Set<Flag> flags = plot.settings.getFlags();
-                DBFunc.setFlags(plr.getWorld().getName(), plot, flags.toArray(new Flag[flags.size()]));
+                DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags());
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 PlotListener.plotEntry(plr, plot);
                 return true;

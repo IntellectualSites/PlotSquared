@@ -109,7 +109,7 @@ public enum C {
     /*
      * Title Stuff
      */
-    TITLE_ENTERED_PLOT("You entered plot %s"),
+    TITLE_ENTERED_PLOT("You entered plot %world%;%x%;%z%"),
     TITLE_ENTERED_PLOT_COLOR("GOLD"),
     TITLE_ENTERED_PLOT_SUB("Owned by %s"),
     TITLE_ENTERED_PLOT_SUB_COLOR("RED"),

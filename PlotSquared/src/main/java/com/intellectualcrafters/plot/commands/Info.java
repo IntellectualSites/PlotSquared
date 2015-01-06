@@ -115,7 +115,7 @@ import java.util.UUID;
 
         String owner = "none";
         if (plot.owner != null) {
-            owner = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner).getName();
+            owner = UUIDHandler.getName(plot.owner);
         }
         if (owner == null) {
             owner = plot.owner.toString();
@@ -225,10 +225,6 @@ import java.util.UUID;
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
             return "everyone";
         }
-        /*
-         * OfflinePlayer plr = Bukkit.getOfflinePlayer(uuid); if (plr.getName()
-         * == null) { return "unknown"; } return plr.getName();
-         */
         String name = UUIDHandler.getName(uuid);
         if (name == null) {
             return "unknown";

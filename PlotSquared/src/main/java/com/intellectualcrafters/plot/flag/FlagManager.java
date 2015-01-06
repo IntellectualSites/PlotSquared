@@ -22,9 +22,11 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.object.Plot;
+
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,15 +67,15 @@ import java.util.Set;
         return f;
     }
 
-    public static Flag[] removeFlag(final Set<Flag> flags, final String r) {
-        final Flag[] flagArray = new Flag[flags.size() - 1];
+    public static Set<Flag> removeFlag(final Set<Flag> flags, final String r) {
+        final HashSet<Flag> newflags = new HashSet<>();
         int index = 0;
         for (final Flag flag : flags) {
-            if (!flag.getKey().equals(r)) {
-                flagArray[index++] = flag;
+            if (!flag.getKey().equalsIgnoreCase(r)) {
+                newflags.add(flag);
             }
         }
-        return flagArray;
+        return newflags;
     }
 
     /**

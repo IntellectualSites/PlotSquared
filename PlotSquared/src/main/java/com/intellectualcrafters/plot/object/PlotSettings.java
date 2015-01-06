@@ -135,8 +135,8 @@ import java.util.Set;
      *
      * @param flags Flag Array
      */
-    public void setFlags(@NotNull final Flag[] flags) {
-        this.flags = new HashSet<>(Arrays.asList(flags));
+    public void setFlags(@NotNull final Set<Flag> flags) {
+        this.flags = flags;
     }
 
     /**
@@ -152,6 +152,7 @@ import java.util.Set;
                 return myflag;
             }
         }
+        // FIXME: return default flag
         return null;
     }
 

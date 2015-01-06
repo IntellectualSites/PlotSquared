@@ -26,12 +26,15 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -108,7 +111,7 @@ import java.util.UUID;
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
-        this.settings.setFlags(new Flag[0]);
+        this.settings.setFlags(new HashSet<Flag>());
         this.world = world;
     }
 
@@ -131,7 +134,7 @@ import java.util.UUID;
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
-        this.settings.setFlags(new Flag[0]);
+        this.settings.setFlags(new HashSet<Flag>());
         this.world = world;
     }
 
@@ -149,7 +152,7 @@ import java.util.UUID;
      */
     @Deprecated
     @SuppressWarnings("unused")
-    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Flag[] flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -164,7 +167,7 @@ import java.util.UUID;
         if (flags != null) {
             this.settings.setFlags(flags);
         } else {
-            this.settings.setFlags(new Flag[0]);
+            this.settings.setFlags(new HashSet<Flag>());
         }
         this.world = world;
     }
@@ -178,7 +181,7 @@ import java.util.UUID;
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Flag[] flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -193,7 +196,7 @@ import java.util.UUID;
         if (flags != null) {
             this.settings.setFlags(flags);
         } else {
-            this.settings.setFlags(new Flag[0]);
+            this.settings.setFlags(new HashSet<Flag>());
         }
         this.world = world;
     }
@@ -268,7 +271,7 @@ import java.util.UUID;
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.getFlags().toArray(new Flag[this.settings.getFlags().size()]), getWorld().getName(), this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.getFlags(), getWorld().getName(), this.settings.getMerged());
         }
         return p;
     }
@@ -305,11 +308,11 @@ import java.util.UUID;
      *
      * @return alias if set, else id
      */
-    public String getDisplayName() {
+    public String toString() {
         if (this.settings.getAlias().length() > 1) {
             return this.settings.getAlias();
         }
-        return this.getId().x + ";" + this.getId().y;
+        return this.world + ";" + this.getId().x + ";" + this.getId().y;
     }
 
     /**

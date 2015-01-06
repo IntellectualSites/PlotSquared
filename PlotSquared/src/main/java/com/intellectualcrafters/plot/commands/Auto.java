@@ -168,11 +168,6 @@ import org.bukkit.entity.Player;
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(plot.id);
-                    if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        final Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
-                        plot2.settings.setFlags(flags);
-                        DBFunc.setFlags(plot2.world, plot2, flags);
-                    }
                 }
                 Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
             }
@@ -204,11 +199,6 @@ import org.bukkit.entity.Player;
                     br = true;
                     final PlotWorld pw = PlotMain.getWorldSettings(world);
                     final Plot plot2 = PlotMain.getPlots(world).get(start);
-                    if ((pw.DEFAULT_FLAGS != null) && (pw.DEFAULT_FLAGS.size() > 0)) {
-                        final Flag[] flags = FlagManager.parseFlags(pw.DEFAULT_FLAGS);
-                        plot2.settings.setFlags(flags);
-                        DBFunc.setFlags(plot2.world, plot2, flags);
-                    }
                 }
             }
         }

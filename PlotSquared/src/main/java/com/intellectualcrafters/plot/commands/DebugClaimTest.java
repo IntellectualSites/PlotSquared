@@ -67,7 +67,6 @@ public class DebugClaimTest extends SubCommand {
             if (teleport) {
                 PlotMain.teleportPlayer(player, player.getLocation(), plot);
             }
-            plot.settings.setFlags(FlagManager.parseFlags(PlotMain.getWorldSettings(player.getWorld()).DEFAULT_FLAGS));
         }
         return event.isCancelled();
     }
