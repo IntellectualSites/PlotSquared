@@ -1009,8 +1009,8 @@ import java.util.concurrent.TimeUnit;
     private static void setupStorage() {
         storage.set("version", storage_ver);
         final Map<String, Object> options = new HashMap<>();
-        options.put("mysql.use", true);
-        options.put("sqlite.use", false);
+        options.put("mysql.use", false);
+        options.put("sqlite.use", true);
         options.put("sqlite.db", "storage");
         options.put("mysql.host", "localhost");
         options.put("mysql.port", "3306");

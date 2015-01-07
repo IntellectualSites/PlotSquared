@@ -21,11 +21,15 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Purge extends SubCommand {
@@ -34,12 +38,51 @@ import org.bukkit.entity.Player;
         super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
     }
 
+    public PlotId getId(String id) {
+        try {
+            String[] split = id.split(";");
+            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
             PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
+        
+        if (args.length == 1) {
+            String arg = args[0].toLowerCase();
+            PlotId id = getId(arg);
+            if (id != null || arg.equals("plotid")) {
+                PlayerFunctions.sendMessage(plr, "/plot x;z &l<world>");
+                return false;
+            }
+            UUID uuid = UUIDHandler.getUUID(args[0]);
+            if (uuid != null) {
+                PlayerFunctions.sendMessage(plr, "/plot "+args[0]+" &l<world>");
+                return false;
+            }
+            if (arg.equals("player")) {
+                PlayerFunctions.sendMessage(plr, "/plot &l<player> <world>");
+                return false;
+            }
+            if (arg.equals("unowned")) {
+                PlayerFunctions.sendMessage(plr, "/plot unowned &l<world>");
+                return false;
+            }
+            if (arg.equals("unknown")) {
+                PlayerFunctions.sendMessage(plr, "/plot unknown &l<world>");
+                return false;
+            }
+            PlayerFunctions.sendMessage(plr, "Use /plot <x;z|player|unowned|unkown>");
+            return false;
+        }
+        
         if (args.length != 2) {
             if (args.length == 1) {
                 try {
