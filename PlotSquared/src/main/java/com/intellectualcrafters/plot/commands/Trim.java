@@ -51,6 +51,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -117,74 +119,100 @@ import org.bukkit.entity.Player;
             }
             PlayerFunctions.sendMessage(plr, "Modified: "+modified);
             // trim ID
+            return true;
         }
-        if (arg.equals("all")) {
-            sendMessage("Initializing...");
-            String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
-            File folder = new File(directory);
-            File[] regionFiles = folder.listFiles();
-            ArrayList<ChunkLoc> chunks = new ArrayList<>();
-            sendMessage("Step 1: Bulk chunk trim");
-            
-            int count = 0;
-            for (File file : regionFiles) {
-                String name = file.getName();
-                if (name.endsWith("mca")) {
-                    if (file.getTotalSpace() <= 8192) {
-                        file.delete();
+        if (!arg.equals("all")) {
+            PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
+            return false;
+        }
+        sendMessage("Initializing...");
+        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+        File folder = new File(directory);
+        File[] regionFiles = folder.listFiles();
+        ArrayList<ChunkLoc> chunkChunks = new ArrayList<>();
+        sendMessage("Step 1: Bulk chunk trim");
+        
+        int count = 0;
+        for (File file : regionFiles) {
+            String name = file.getName();
+            if (name.endsWith("mca")) {
+                if (file.getTotalSpace() <= 8192) {
+                    file.delete();
+                }
+                else {
+                    boolean delete = false;
+                    Path path = Paths.get(file.getPath());
+                    try {
+                        BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                        long creation = attr.creationTime().toMillis();
+                        long modification = file.lastModified();
+                        long diff = Math.abs(creation - modification);
+                        if (diff < 10000) {
+                            count++;
+                            file.delete();
+                            delete = true;
+                        }
+                    } catch (Exception e) {
+                        
                     }
-                    else {
-                        boolean delete = false;
-                        Path path = Paths.get(file.getPath());
+                    if (!delete) {
+                        String[] split = name.split("\\.");
                         try {
-                            BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                            long creation = attr.creationTime().toMillis();
-                            long modification = file.lastModified();
-                            long diff = Math.abs(creation - modification);
-                            if (diff < 10000) {
-                                count++;
-                                file.delete();
-                                delete = true;
-                            }
-                        } catch (Exception e) {
-                            
+                            int x = Integer.parseInt(split[1]);
+                            int z = Integer.parseInt(split[2]);
+                            ChunkLoc loc = new ChunkLoc(x, z);
+                            chunkChunks.add(loc);
                         }
-                        if (!delete) {
-                            String[] split = name.split("\\.");
-                            try {
-                                int x = Integer.parseInt(split[1]);
-                                int z = Integer.parseInt(split[2]);
-                                ChunkLoc loc = new ChunkLoc(x, z);
-                                chunks.add(loc);
-                            }
-                            catch (Exception e) {  }
-                        }
+                        catch (Exception e) {  }
                     }
                 }
             }
-            
-            count = 0;
-            PlotMain.sendConsoleSenderMessage("&6 - bulk trim removed " + (count * 256) + " chunks");
-            sendMessage("Step 2: Plot trim");
-            {
-                Set<Plot> plots = getOldPlots(world.getName());
-                PlotMain.sendConsoleSenderMessage("&6 - found "+plots.size()+" expired plots");
-                for (Plot plot : plots) {
-                    boolean modified = false;
-                    if (plot.hasOwner()) {
-                        modified = HybridPlotManager.checkModified(plot, 0);
-                    }
-                    if (plot.owner == null || HybridPlotManager.checkModified(plot, manager.REQUIRED_CHANGES));
-                }
-            }
-            
-            
-            PlotMain.sendConsoleSenderMessage("&6 - plot trim removed " + count + " plots");
-            sendMessage("Step 3: Chunk trim");
-            
         }
-        PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
-        return false;
+        
+        count = 0;
+        PlotMain.sendConsoleSenderMessage("&6 - bulk trim removed " + (count * 256) + " chunks");
+        if (manager == null) {
+            sendMessage("Could not continue as the selected world is not a HybridPlotWorld");
+            return false;
+        }
+        sendMessage("Step 2: Plot trim");
+        {
+            Set<Plot> plots = getOldPlots(world.getName());
+            PlotMain.sendConsoleSenderMessage("&6 - found "+plots.size()+" expired plots");
+            for (Plot plot : plots) {
+                boolean modified = false;
+                if (plot.hasOwner()) {
+                    modified = HybridPlotManager.checkModified(plot, 0);
+                }
+                if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
+                    PlotMain.removePlot(worldname, id, true);
+                    count++;
+                }
+            }
+        }
+        PlotMain.sendConsoleSenderMessage("&6 - plot trim removed " + count + " plots");
+        sendMessage("Step 3: Chunk trim");
+        for (ChunkLoc loc : chunkChunks) {
+            int sx = loc.x << 4;
+            int sz = loc.z << 4;
+            
+            boolean delete = true;
+            
+            loop:
+            for (int x = sx; x < sx + 16; x++) {
+                for (int z = sz; z < sz + 16; z++) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    if (hasPlot(world, chunk)) {
+                        delete = false;
+                        break loop;
+                    }
+                }
+            }
+            if (delete) {
+                deleteRegionFile(worldname, loc);
+            }
+        }
+        return true;
     }
     
     public Set<Plot> getOldPlots(String world) {
@@ -216,6 +244,35 @@ import org.bukkit.entity.Player;
             keep.add(uuid);
         }
         return toRemove;
+    }
+    
+    public void deleteRegionFile(String world, ChunkLoc loc) {
+        String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+        File file = new File(directory);
+        if (file.exists()) {
+            file.delete();
+        }
+        
+    }
+    
+    private boolean hasPlot(World world, Chunk chunk) {
+        int x1 = chunk.getX() << 4;
+        int z1 = chunk.getZ() << 4;
+        int x2 = x1 + 15;
+        int z2 = z1 + 15;
+        
+        Location bot = new Location(world, x1, 0, z1);
+        Plot plot;
+        plot = PlotHelper.getCurrentPlot(bot); 
+        if (plot.owner != null) {
+            return true;
+        }
+        Location top = new Location(world, x2, 0, z2);
+        plot = PlotHelper.getCurrentPlot(top); 
+        if (plot.owner != null) {
+            return true;
+        }
+        return false;
     }
     
     private void sendMessage(final String message) {

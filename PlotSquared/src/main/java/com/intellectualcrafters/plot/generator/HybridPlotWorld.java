@@ -45,7 +45,6 @@ public class HybridPlotWorld extends PlotWorld {
      * are used as little as possible to optimize math performance in many of
      * the functions/algorithms
      */
-
     /**
      * Default Road Height: 64
      */
@@ -138,6 +137,8 @@ public class HybridPlotWorld extends PlotWorld {
     public short SIZE;
     public short OFFSET;
     public short SCHEMATIC_HEIGHT;
+    
+    public short REQUIRED_CHANGES = 0;
 
     /*
      * Here we are just calling the super method, nothing special
