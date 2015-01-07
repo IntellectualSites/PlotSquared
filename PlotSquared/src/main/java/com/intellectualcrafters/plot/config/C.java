@@ -188,6 +188,8 @@ public enum C {
      * trim
      */
     TRIM_SYNTAX("Use /plot trim <all|x;y> <world>"),
+    TRIM_START("Starting a world trim task..."),
+    TRIM_IN_PROGRESS("A world trim task is already in progress!"),
     NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action"),
     /*
      * No <plot>

@@ -59,6 +59,9 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Trim extends SubCommand {
 
+    public static boolean TASK = false;
+    private static int TASK_ID = 0;
+    
     public Trim() {
         super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
     }
@@ -97,127 +100,27 @@ import org.bukkit.entity.Player;
             PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
-        World world = Bukkit.getWorld(args[1]);
-        if (world == null) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
-            return false;
-        }
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
-        HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
-        String worldname = world.getName();
         String arg = args[0].toLowerCase();
-        PlotId id = getId(arg);
-        if (id != null) {
-            if (manager == null) {
-                PlotMain.sendConsoleSenderMessage(C.NOT_VALID_HYBRID_PLOT_WORLD);
-                return false;
-            }
-            Plot plot = PlotHelper.getPlot(world, id);
-            boolean modified = false;
-            if (plot.hasOwner()) {
-                modified = HybridPlotManager.checkModified(plot, 0);
-            }
-            PlayerFunctions.sendMessage(plr, "Modified: "+modified);
-            // trim ID
-            return true;
-        }
         if (!arg.equals("all")) {
             PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
-        sendMessage("Initializing...");
-        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
-        File folder = new File(directory);
-        File[] regionFiles = folder.listFiles();
-        ArrayList<ChunkLoc> chunkChunks = new ArrayList<>();
-        sendMessage("Step 1: Bulk chunk trim");
-        
-        int count = 0;
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                if (file.getTotalSpace() <= 8192) {
-                    file.delete();
-                }
-                else {
-                    boolean delete = false;
-                    Path path = Paths.get(file.getPath());
-                    try {
-                        BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                        long creation = attr.creationTime().toMillis();
-                        long modification = file.lastModified();
-                        long diff = Math.abs(creation - modification);
-                        if (diff < 10000) {
-                            count++;
-                            file.delete();
-                            delete = true;
-                        }
-                    } catch (Exception e) {
-                        
-                    }
-                    if (!delete) {
-                        String[] split = name.split("\\.");
-                        try {
-                            int x = Integer.parseInt(split[1]);
-                            int z = Integer.parseInt(split[2]);
-                            ChunkLoc loc = new ChunkLoc(x, z);
-                            chunkChunks.add(loc);
-                        }
-                        catch (Exception e) {  }
-                    }
-                }
-            }
-        }
-        
-        count = 0;
-        PlotMain.sendConsoleSenderMessage("&6 - bulk trim removed " + (count * 256) + " chunks");
-        if (manager == null) {
-            sendMessage("Could not continue as the selected world is not a HybridPlotWorld");
+        final World world = Bukkit.getWorld(args[1]);
+        if (world == null || PlotMain.getWorldSettings(world) == null) {
+            PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
-        sendMessage("Step 2: Plot trim");
-        {
-            Set<Plot> plots = getOldPlots(world.getName());
-            PlotMain.sendConsoleSenderMessage("&6 - found "+plots.size()+" expired plots");
-            for (Plot plot : plots) {
-                boolean modified = false;
-                if (plot.hasOwner()) {
-                    modified = HybridPlotManager.checkModified(plot, 0);
-                }
-                if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
-                    PlotMain.removePlot(worldname, id, true);
-                    count++;
-                }
-            }
+        if (runTrimTask(world)) {
+            sendMessage(C.TRIM_START.s());
+            return true;
         }
-        PlotMain.sendConsoleSenderMessage("&6 - plot trim removed " + count + " plots");
-        sendMessage("Step 3: Chunk trim");
-        for (ChunkLoc loc : chunkChunks) {
-            int sx = loc.x << 4;
-            int sz = loc.z << 4;
-            
-            boolean delete = true;
-            
-            loop:
-            for (int x = sx; x < sx + 16; x++) {
-                for (int z = sz; z < sz + 16; z++) {
-                    Chunk chunk = world.getChunkAt(x, z);
-                    if (hasPlot(world, chunk)) {
-                        delete = false;
-                        break loop;
-                    }
-                }
-            }
-            if (delete) {
-                deleteRegionFile(worldname, loc);
-            }
-        }
-        return true;
+        sendMessage(C.TRIM_IN_PROGRESS.s());
+        return false;
     }
     
-    public Set<Plot> getOldPlots(String world) {
+    public ArrayList<Plot> getOldPlots(String world) {
         final Collection<Plot> plots = PlotMain.getPlots(world).values();
-        final Set<Plot> toRemove = new HashSet<>();
+        final ArrayList<Plot> toRemove = new ArrayList<>();
         Set<UUID> remove = new HashSet<>();
         Set<UUID> keep = new HashSet<>();
         for (Plot plot : plots) {
@@ -246,13 +149,139 @@ import org.bukkit.entity.Player;
         return toRemove;
     }
     
-    public void deleteRegionFile(String world, ChunkLoc loc) {
-        String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-        File file = new File(directory);
-        if (file.exists()) {
-            file.delete();
+    public boolean runTrimTask(final World world) {
+        if (Trim.TASK) {
+            return false;
         }
+        Trim.TASK = true;
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
+                final HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+                final String worldname = world.getName();
+                String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+                File folder = new File(directory);
+                File[] regionFiles = folder.listFiles();
+                ArrayList<ChunkLoc> chunkChunks = new ArrayList<>();
+                for (File file : regionFiles) {
+                    String name = file.getName();
+                    if (name.endsWith("mca")) {
+                        if (file.getTotalSpace() <= 8192) {
+                            file.delete();
+                        }
+                        else {
+                            boolean delete = false;
+                            Path path = Paths.get(file.getPath());
+                            try {
+                                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                                long creation = attr.creationTime().toMillis();
+                                long modification = file.lastModified();
+                                long diff = Math.abs(creation - modification);
+                                if (diff < 10000) {
+                                    PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+name+" (max 256 chunks)");
+                                    file.delete();
+                                    delete = true;
+                                }
+                            } catch (Exception e) {
+                                
+                            }
+                            if (!delete) {
+                                String[] split = name.split("\\.");
+                                try {
+                                    int x = Integer.parseInt(split[1]);
+                                    int z = Integer.parseInt(split[2]);
+                                    ChunkLoc loc = new ChunkLoc(x, z);
+                                    chunkChunks.add(loc);
+                                }
+                                catch (Exception e) {  }
+                            }
+                        }
+                    }
+                }
+                final ArrayList<Plot> plots = getOldPlots(world.getName());        
+                int count2 = 0;
+                Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+                    @Override
+                    public void run() {
+                        if (manager != null && plots.size() > 0) {
+                            Plot plot = plots.get(0);
+                            boolean modified = false;
+                            if (plot.hasOwner()) {
+                                modified = HybridPlotManager.checkModified(plot, 0);
+                            }
+                            if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
+                                PlotMain.removePlot(worldname, plot.id, true);
+                            }
+                            plots.remove(0);
+                        }
+                        else {
+                            trimPlots(world);
+                            Trim.TASK = false;
+                            sendMessage("Done!");
+                            Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+                            return;
+                        }
+                    }
+                }, 1, 1);
+            }
+        });
+        return true;
+    }
+    
+    private void trimPlots(World world) {
+        String worldname = world.getName();
+        ArrayList<ChunkLoc> chunks = getChunkChunks(world);
+        for (ChunkLoc loc : chunks) {
+            int sx = loc.x << 4;
+            int sz = loc.z << 4;
+            
+            boolean delete = true;
+            
+            loop:
+            for (int x = sx; x < sx + 16; x++) {
+                for (int z = sz; z < sz + 16; z++) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    if (hasPlot(world, chunk)) {
+                        delete = false;
+                        break loop;
+                    }
+                }
+            }
+            if (delete) {
+                deleteRegionFile(worldname, loc);
+            }
+        }
+    }
+    
+    public void deleteRegionFile(final String world, final ChunkLoc loc) {
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+                File file = new File(directory);
+                PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+file.getName()+" (max 256 chunks)");
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        });
         
+    }
+    
+    public ArrayList<ChunkLoc> getChunkChunks(World world) {
+        File[] regionFiles = new File(new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region").listFiles();
+        ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        for (File file : regionFiles) {
+            String name = file.getName();
+            if (name.endsWith("mca")) {
+                String[] split = name.split("\\.");
+                try {
+                    chunks.add(new ChunkLoc(Integer.parseInt(split[1]), Integer.parseInt(split[2])));
+                } catch (Exception e) {  }
+            }
+        }
+        return chunks;
     }
     
     private boolean hasPlot(World world, Chunk chunk) {
@@ -264,12 +293,12 @@ import org.bukkit.entity.Player;
         Location bot = new Location(world, x1, 0, z1);
         Plot plot;
         plot = PlotHelper.getCurrentPlot(bot); 
-        if (plot.owner != null) {
+        if (plot != null && plot.owner != null) {
             return true;
         }
         Location top = new Location(world, x2, 0, z2);
         plot = PlotHelper.getCurrentPlot(top); 
-        if (plot.owner != null) {
+        if (plot != null && plot.owner != null) {
             return true;
         }
         return false;

@@ -93,12 +93,12 @@ import java.util.HashSet;
             return true;
         }
         requiredChanges -= changes;
-        changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT + 2, world.getMaxHeight(), botz, topz, air);
+        changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT + 2, world.getMaxHeight() - 1, botz, topz, air);
         if (changes == -1) {
             return true;
         }
         requiredChanges -= changes;
-        changes = checkModified(requiredChanges, world, botx, topx, 1, hpw.PLOT_HEIGHT, botz, topz, hpw.MAIN_BLOCK);
+        changes = checkModified(requiredChanges, world, botx, topx, 1, hpw.PLOT_HEIGHT - 1, botz, topz, hpw.MAIN_BLOCK);
         if (changes == -1) {
             return true;
         }
