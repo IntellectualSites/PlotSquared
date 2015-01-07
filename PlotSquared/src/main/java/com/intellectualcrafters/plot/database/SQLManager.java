@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -816,133 +817,68 @@ public class SQLManager implements AbstractDB {
         PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
     }
 
-    @Override
-    public void purge(final String world, final PlotId id) {
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<Integer> ids = new ArrayList<Integer>();
+    public void purgeIds(final String world, final Set<Integer> uniqueIds) {
+        if (uniqueIds.size() > 0) {
+            try {
 
-                // Fetching a list of plot IDs for a world
-                try {
-                    final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("SELECT `id` FROM `" + SQLManager.this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?");
-                    stmt.setString(1, world);
-                    stmt.setInt(2, id.x);
-                    stmt.setInt(3, id.y);
-                    final ResultSet result = stmt.executeQuery();
-                    while (result.next()) {
-                        final int id = result.getInt("id");
-                        ids.add(id);
-                    }
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"FAILED TO PURGE WORLD '" + world + "'!");
-                    return;
+                String prefix = "";
+                final StringBuilder idstr = new StringBuilder("");
+
+                for (final Integer id : uniqueIds) {
+                    idstr.append(prefix + id);
+                    prefix = " OR `plot_plot_id` = ";
                 }
-                if (ids.size() > 0) {
-                    try {
 
-                        String p = "";
-                        final StringBuilder idstr = new StringBuilder("");
+                PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
+                stmt.executeUpdate();
+                stmt.close();
 
-                        for (final Integer id : ids) {
-                            idstr.append(p + id);
-                            p = " OR `plot_plot_id` = ";
-                        }
-                        
-                        PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
+                stmt.executeUpdate();
+                stmt.close();
 
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
+                stmt.executeUpdate();
+                stmt.close();
 
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
+                stmt.executeUpdate();
+                stmt.close();
 
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE PLOT FROM DB '" + world + "' , '" + id + "' !");
-                        return;
-                    }
-                }
-                PlotMain.sendConsoleSenderMessage("&6[INFO] "+"SUCCESSFULLY PURGED PLOT FROM DB '" + world + "' , '" + id + "'!");
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `world` = ?");
+                stmt.setString(1, world);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+                PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE WORLD '" + world + "'!");
+                return;
             }
-        });
+        }
+        PlotMain.sendConsoleSenderMessage("&6[INFO] "+"SUCCESSFULLY PURGED WORLD '" + world + "'!");
     }
-
     @Override
-    public void purge(final String world) {
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<Integer> ids = new ArrayList<Integer>();
-
-                // Fetching a list of plot IDs for a world
-                try {
-                    final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("SELECT `id` FROM `" + SQLManager.this.prefix + "plot` WHERE `world` = ?");
-                    stmt.setString(1, world);
-                    final ResultSet result = stmt.executeQuery();
-                    while (result.next()) {
-                        final int id = result.getInt("id");
-                        ids.add(id);
-                    }
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"FAILED TO PURGE WORLD '" + world + "'!");
-                    return;
+    public void purge(final String world, Set<PlotId> plots) {
+        PreparedStatement stmt;
+        try {
+            stmt = SQLManager.this.connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + this.prefix + "plot` WHERE `world` = ?");
+            stmt.setString(1, world);
+            ResultSet r = stmt.executeQuery();
+            PlotId plot_id;
+            Set<Integer> ids = new HashSet<>();
+            while (r.next()) {
+                plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                if (plots.contains(plot_id)) {
+                    ids.add(r.getInt("id"));
                 }
-                if (ids.size() > 0) {
-                    try {
-
-                        String prefix = "";
-                        final StringBuilder idstr = new StringBuilder("");
-
-                        for (final Integer id : ids) {
-                            idstr.append(prefix + id);
-                            prefix = " OR `plot_plot_id` = ";
-                        }
-
-                        PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
-                        stmt.executeUpdate();
-                        stmt.close();
-
-                        stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `world` = ?");
-                        stmt.setString(1, world);
-                        stmt.executeUpdate();
-                        stmt.close();
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE WORLD '" + world + "'!");
-                        return;
-                    }
-                }
-                PlotMain.sendConsoleSenderMessage("&6[INFO] "+"SUCCESSFULLY PURGED WORLD '" + world + "'!");
             }
-        });
+            purgeIds(world, ids);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE WORLD '" + world + "'!");
+        }
     }
-
+    
     /**
      * @param plot
      * @param position

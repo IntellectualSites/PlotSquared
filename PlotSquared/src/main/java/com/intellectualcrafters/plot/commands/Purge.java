@@ -21,15 +21,22 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Purge extends SubCommand {
@@ -54,7 +61,6 @@ import org.bukkit.entity.Player;
             PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
-        
         if (args.length == 1) {
             String arg = args[0].toLowerCase();
             PlotId id = getId(arg);
@@ -79,52 +85,81 @@ import org.bukkit.entity.Player;
                 PlayerFunctions.sendMessage(plr, "/plot unknown &l<world>");
                 return false;
             }
-            PlayerFunctions.sendMessage(plr, "Use /plot <x;z|player|unowned|unkown>");
-            return false;
-        }
-        
-        if (args.length != 2) {
-            if (args.length == 1) {
-                try {
-                    final String[] split = args[0].split(";");
-                    final String world = split[0];
-                    final PlotId id = new PlotId(Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-
-                    if (!PlotMain.isPlotWorld(world)) {
-                        PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
-                        return false;
-                    }
-                    
-                    PlotMain.getPlots(world).remove(id);
-                    DBFunc.purge(world, id);
-                    PlayerFunctions.sendMessage(null, "&aPurge of '" + args[0] + "' was successful!");
-                    return true;
-                } catch (final Exception e) {
-                    if (args.length == 1) {
-                        PlayerFunctions.sendMessage(plr, "Use /plots purge <world>;<x>;<z>");
-                        PlayerFunctions.sendMessage(plr, "To purge all plots use /plots purge <world> -o");
-                        return false;
-                    }
-                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-                }
+            if (arg.equals("all")) {
+                PlayerFunctions.sendMessage(plr, "/plot all &l<world>");
+                return false;
             }
             PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
-        if (args[1].equals("-o")) {
-            if (PlotMain.getPlots(args[0]) == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
-                return false;
-            }
-            PlotMain.removePlots(args[0]);
-            DBFunc.purge(args[0]);
-            PlayerFunctions.sendMessage(plr, (C.PURGE_SUCCESS));
-            return true;
-        } else {
-            PlayerFunctions.sendMessage(plr, "Use /plots purge <world>;<x>;<z>");
-            PlayerFunctions.sendMessage(plr, "To purge all plots use /plots purge <world> -o");
+        if (args.length != 2) {
+            PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
+        World world = Bukkit.getWorld(args[1]);
+        if (world == null || !PlotMain.isPlotWorld(world)) {
+            PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
+            return false;
+        }
+        String worldname = world.getName();
+        String arg = args[0].toLowerCase();
+        PlotId id = getId(arg);
+        if (id != null) {
+            HashSet<Integer> ids = new HashSet<Integer>();
+            int DBid = DBFunc.getId(worldname, id);
+            if (DBid != Integer.MAX_VALUE) {
+                ids.add(DBid);
+            }
+            DBFunc.purgeIds(worldname, ids);
+            return finishPurge(DBid == Integer.MAX_VALUE ? 1 : 0);
+        }
+        UUID uuid = UUIDHandler.getUUID(args[0]);
+        if (uuid != null) {
+            Set<Plot> plots = PlotMain.getPlots(world,uuid);
+            Set<PlotId> ids = new HashSet<>();
+            for (Plot plot : plots) {
+                ids.add(plot.id);
+            }
+            DBFunc.purge(worldname, ids);
+            return finishPurge(ids.size());
+        }
+        if (arg.equals("all")) {
+            Set<PlotId> ids = PlotMain.getPlots(world).keySet();
+            DBFunc.purge(worldname, ids);
+            return finishPurge(ids.size());
+        }
+        if (arg.equals("unknown")) {
+            Collection<Plot> plots = PlotMain.getPlots(world).values();
+            Set<PlotId> ids = new HashSet<>();
+            for (Plot plot : plots) {
+                if (plot.owner != null) {
+                    String name = UUIDHandler.getName(plot.owner);
+                    if (name == null) {
+                        ids.add(plot.id);
+                    }
+                }
+            }
+            DBFunc.purge(worldname, ids);
+            return finishPurge(ids.size());
+        }
+        if (arg.equals("unowned")) {
+            Collection<Plot> plots = PlotMain.getPlots(world).values();
+            Set<PlotId> ids = new HashSet<>();
+            for (Plot plot : plots) {
+                if (plot.owner == null) {
+                    ids.add(plot.id);
+                }
+            }
+            DBFunc.purge(worldname, ids);
+            return finishPurge(ids.size());
+        }
+        PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+        return false;
+    }
+
+    private boolean finishPurge(int amount) {
+        PlayerFunctions.sendMessage(null, C.PURGE_SUCCESS, amount + "");
+        return false;
     }
 
 }

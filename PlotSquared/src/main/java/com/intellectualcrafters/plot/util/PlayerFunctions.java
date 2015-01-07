@@ -310,17 +310,18 @@ import java.util.*;
      */
     public static boolean sendMessage(final Player plr, final C c, final String... args) {
         if (c.s().length() > 1) {
-            if (plr == null) {
-                PlotMain.sendConsoleSenderMessage(c);
-            } else {
-                String msg = c.s();
-                if ((args != null) && (args.length > 0)) {
-                    for (final String str : args) {
-                        if (msg.contains("%s")) {
-                            msg = msg.replaceFirst("%s", str);
-                        }
+            String msg = c.s();
+            if ((args != null) && (args.length > 0)) {
+                for (final String str : args) {
+                    if (msg.contains("%s")) {
+                        msg = msg.replaceFirst("%s", str);
                     }
                 }
+            }
+            if (plr == null) {
+                PlotMain.sendConsoleSenderMessage(c);
+            }
+            else {
                 sendMessage(plr, msg);
             }
         }

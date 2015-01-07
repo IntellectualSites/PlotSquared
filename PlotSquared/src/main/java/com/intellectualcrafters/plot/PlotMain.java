@@ -337,6 +337,16 @@ import java.util.concurrent.TimeUnit;
      */
     public static Set<Plot> getPlots(final World world, final Player player) {
         final UUID uuid = UUIDHandler.getUUID(player);
+        return getPlots(world, uuid);
+    }
+    
+    /**
+     * @param world  plot world
+     * @param player plot owner
+     *
+     * @return players plots
+     */
+    public static Set<Plot> getPlots(final World world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {

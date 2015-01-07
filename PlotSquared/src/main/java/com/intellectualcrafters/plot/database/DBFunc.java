@@ -170,12 +170,12 @@ public class DBFunc {
         dbManager.setAlias(world, plot, alias);
     }
 
-    public static void purge(final String world, final PlotId id) {
-        dbManager.purge(world, id);
+    public static void purgeIds(final String world, final Set<Integer> uniqueIds) {
+        dbManager.purgeIds(world, uniqueIds);
     }
 
-    public static void purge(final String world) {
-        dbManager.purge(world);
+    public static void purge(final String world, final Set<PlotId> plotIds) {
+        dbManager.purge(world, plotIds);
     }
 
     /**

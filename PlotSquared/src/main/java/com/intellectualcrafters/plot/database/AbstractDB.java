@@ -148,14 +148,14 @@ public interface AbstractDB {
      * @param world World in which the plot is located
      * @param id    Plot ID
      */
-    public void purge(final String world, final PlotId id);
+    public void purgeIds(final String world, final Set<Integer> uniqueIds);
 
     /**
      * Purge a whole world
      *
      * @param world World in which the plots should be purged
      */
-    public void purge(final String world);
+    public void purge(final String world, final Set<PlotId> plotIds);
 
     /**
      * Set Plot Home Position
