@@ -182,8 +182,13 @@ public enum C {
     /*
      * purge
      */
-    PURGE_SYNTAX("Use /plot <x;z|player|unowned|unknown|all> <world>"),
+    PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>"),
     PURGE_SUCCESS("Successfully purge %s plots"),
+    /*
+     * trim
+     */
+    TRIM_SYNTAX("Use /plot trim <all|x;y> <world>"),
+    NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action"),
     /*
      * No <plot>
      */

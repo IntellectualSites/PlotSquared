@@ -64,29 +64,29 @@ import org.bukkit.entity.Player;
         if (args.length == 1) {
             String arg = args[0].toLowerCase();
             PlotId id = getId(arg);
-            if (id != null || arg.equals("plotid")) {
-                PlayerFunctions.sendMessage(plr, "/plot x;z &l<world>");
+            if (id != null) {
+                PlayerFunctions.sendMessage(plr, "/plot purge x;z &l<world>");
                 return false;
             }
             UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                PlayerFunctions.sendMessage(plr, "/plot "+args[0]+" &l<world>");
+                PlayerFunctions.sendMessage(plr, "/plot purge "+args[0]+" &l<world>");
                 return false;
             }
             if (arg.equals("player")) {
-                PlayerFunctions.sendMessage(plr, "/plot &l<player> <world>");
+                PlayerFunctions.sendMessage(plr, "/plot purge &l<player> <world>");
                 return false;
             }
             if (arg.equals("unowned")) {
-                PlayerFunctions.sendMessage(plr, "/plot unowned &l<world>");
+                PlayerFunctions.sendMessage(plr, "/plot purge unowned &l<world>");
                 return false;
             }
             if (arg.equals("unknown")) {
-                PlayerFunctions.sendMessage(plr, "/plot unknown &l<world>");
+                PlayerFunctions.sendMessage(plr, "/plot purge unknown &l<world>");
                 return false;
             }
             if (arg.equals("all")) {
-                PlayerFunctions.sendMessage(plr, "/plot all &l<world>");
+                PlayerFunctions.sendMessage(plr, "/plot purge all &l<world>");
                 return false;
             }
             PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
@@ -133,7 +133,7 @@ import org.bukkit.entity.Player;
             Set<PlotId> ids = new HashSet<>();
             for (Plot plot : plots) {
                 if (plot.owner != null) {
-                    String name = UUIDHandler.getName(plot.owner);
+                    String name = UUIDHandler.getName(plot.owner);  
                     if (name == null) {
                         ids.add(plot.id);
                     }

@@ -66,6 +66,71 @@ import java.util.HashSet;
     private int task;
     private static boolean UPDATE = false;
     
+    public static boolean checkModified(Plot plot, int requiredChanges) {
+        World world = Bukkit.getWorld(plot.world);
+        Location bottom = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        Location top = PlotHelper.getPlotTopLoc(world, plot.id);
+        
+        int botx = bottom.getBlockX();
+        int boty = bottom.getBlockY();
+        int botz = bottom.getBlockZ();
+        
+        int topx = top.getBlockX();
+        int topy = top.getBlockY();
+        int topz = top.getBlockZ();
+        
+        HybridPlotWorld hpw = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+        
+        PlotBlock[] air = new PlotBlock[] {new PlotBlock((short) 0, (byte) 0)};
+        
+        int changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT, hpw.PLOT_HEIGHT, botz, topz, hpw.TOP_BLOCK);
+        if (changes == -1) {
+            return true;
+        }
+        requiredChanges -= changes;
+        changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT + 1, hpw.PLOT_HEIGHT + 1, botz, topz, air);
+        if (changes == -1) {
+            return true;
+        }
+        requiredChanges -= changes;
+        changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT + 2, world.getMaxHeight(), botz, topz, air);
+        if (changes == -1) {
+            return true;
+        }
+        requiredChanges -= changes;
+        changes = checkModified(requiredChanges, world, botx, topx, 1, hpw.PLOT_HEIGHT, botz, topz, hpw.MAIN_BLOCK);
+        if (changes == -1) {
+            return true;
+        }
+        return false;
+    }
+    
+    public static int checkModified(int threshhold, World world, int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock[] blocks) {
+        int count = 0;
+        for (int y = y1; y <= y2; y++) {
+            for (int x = x1; x <= x2; x++) {
+                for (int z = z1; z <= z2; z++) {
+                    Block block = world.getBlockAt(x,  y, z);
+                    int id = block.getTypeId();
+                    boolean same = false;
+                    for (PlotBlock p : blocks) {
+                        if (id == p.id) {
+                            same = true;
+                            break;
+                        }
+                    }
+                    if (!same) {
+                        count++;
+                        if (count > threshhold) {
+                            return -1;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+    
     public boolean setupRoadSchematic(Plot plot) {
         World world = Bukkit.getWorld(plot.world);
         

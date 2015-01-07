@@ -82,9 +82,7 @@ public class UUIDHandler {
     }
     
     public static void cacheAll() {
-        
         UUIDHandler.CACHED = true;
-        HashSet<OfflinePlayer> players = new HashSet<>();
         HashSet<String> worlds = new HashSet<>();
         worlds.add(Bukkit.getWorlds().get(0).getName());
         worlds.add("world");
