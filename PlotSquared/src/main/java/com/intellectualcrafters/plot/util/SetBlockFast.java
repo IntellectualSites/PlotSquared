@@ -88,6 +88,9 @@ public class SetBlockFast {
      * @param player Player whose chunks we're updating
      */
     public static void update(final org.bukkit.entity.Player player) {
+        if (!PlotHelper.canSetFast) {
+            return;
+        }
         if (!PlotHelper.canSendChunk) {
 
             final int distance = Bukkit.getViewDistance();
