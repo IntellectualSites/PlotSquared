@@ -75,7 +75,7 @@ import java.util.UUID;
             UUID uuid = getUUID(args[0]);
             
             if (uuid == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
             
