@@ -22,8 +22,10 @@
 package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.sun.istack.internal.NotNull;
+
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ import java.util.Set;
     /**
      * Flags
      */
-    private Set<Flag> flags;
+    public Set<Flag> flags;
     /**
      * Home Position
      */
@@ -110,52 +112,6 @@ import java.util.Set;
         return PlotHelper.getPlotBottomLoc(this.plot.getWorld(), this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
     }
 
-    /**
-     * @param flag to add
-     */
-    public void addFlag(final Flag flag) {
-        final Flag hasFlag = getFlag(flag.getKey());
-        if (hasFlag != null) {
-            this.flags.remove(hasFlag);
-        }
-        this.flags.add(flag);
-    }
-
-    /**
-     * Get all flags applied for the plot
-     *
-     * @return flags
-     */
-    public Set<Flag> getFlags() {
-        return this.flags;
-    }
-
-    /**
-     * Set multiple flags
-     *
-     * @param flags Flag Array
-     */
-    public void setFlags(@NotNull final Set<Flag> flags) {
-        this.flags = flags;
-    }
-
-    /**
-     * Get a flag
-     *
-     * @param flag Flag to get
-     *
-     * @return flag
-     */
-    public Flag getFlag(final String flag) {
-        for (final Flag myflag : this.flags) {
-            if (myflag.getKey().equals(flag)) {
-                return myflag;
-            }
-        }
-        // FIXME: return default flag
-        return null;
-    }
-
     public PlotHomePosition getPosition() {
         return this.position;
     }
@@ -178,7 +134,7 @@ import java.util.Set;
     }
 
     public String getJoinMessage() {
-        final Flag greeting = getFlag("greeting");
+        final Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
         if (greeting != null) {
             return greeting.getValue();
         }
@@ -191,7 +147,7 @@ import java.util.Set;
      * @return Farewell flag
      */
     public String getLeaveMessage() {
-        final Flag farewell = getFlag("farewell");
+        final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
         if (farewell != null) {
             return farewell.getValue();
         }
