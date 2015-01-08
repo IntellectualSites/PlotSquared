@@ -55,7 +55,7 @@ public class InfoInventory implements InventoryHolder {
         final ItemStack helpers = getItem(Material.EMERALD, "&cHelpers", "&cAmount: &6" + this.plot.helpers.size(), "&8Click to view a list of the plot helpers");
         final ItemStack trusted = getItem(Material.EMERALD, "&cTrusted", "&cAmount: &6" + this.plot.trusted.size(), "&8Click to view a list of trusted players");
         final ItemStack denied = getItem(Material.EMERALD, "&cDenied", "&cAmount: &6" + this.plot.denied.size(), "&8Click to view a list of denied players");
-        final ItemStack flags = getItem(Material.EMERALD, "&cFlags", "&cAmount: &6" + this.plot.settings.getFlags().size(), "&8Click to view a list of plot flags");
+        final ItemStack flags = getItem(Material.EMERALD, "&cFlags", "&cAmount: &6" + this.plot.settings.flags.size(), "&8Click to view a list of plot flags");
         this.inventory.setItem(2, generalInfo);
         this.inventory.setItem(3, helpers);
         this.inventory.setItem(4, trusted);

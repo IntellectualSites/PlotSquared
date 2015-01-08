@@ -111,7 +111,7 @@ import java.util.UUID;
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
-        this.settings.setFlags(new HashSet<Flag>());
+        this.settings.flags = new HashSet<Flag>();
         this.world = world;
     }
 
@@ -134,7 +134,7 @@ import java.util.UUID;
         this.settings.setAlias("");
         this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
-        this.settings.setFlags(new HashSet<Flag>());
+        this.settings.flags = new HashSet<Flag>();
         this.world = world;
     }
 
@@ -165,9 +165,9 @@ import java.util.UUID;
         this.settings.setMerged(merged);
         this.delete = false;
         if (flags != null) {
-            this.settings.setFlags(flags);
+            this.settings.flags = flags;
         } else {
-            this.settings.setFlags(new HashSet<Flag>());
+            this.settings.flags = new HashSet<Flag>();
         }
         this.world = world;
     }
@@ -194,9 +194,9 @@ import java.util.UUID;
         this.settings.setMerged(merged);
         this.delete = false;
         if (flags != null) {
-            this.settings.setFlags(flags);
+            this.settings.flags = flags;
         } else {
-            this.settings.setFlags(new HashSet<Flag>());
+            this.settings.flags = new HashSet<Flag>();
         }
         this.world = world;
     }
@@ -271,7 +271,7 @@ import java.util.UUID;
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.getFlags(), getWorld().getName(), this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, getWorld().getName(), this.settings.getMerged());
         }
         return p;
     }

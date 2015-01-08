@@ -124,7 +124,7 @@ public class Set extends SubCommand {
                 return false;
             }
             if (args.length == 2) {
-                if (plot.settings.getFlag(args[1].toLowerCase()) == null) {
+                if (FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase()) == null) {
                     if (PlotMain.worldGuardListener != null) {
                         if (PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
                             PlotMain.worldGuardListener.removeFlag(plr, plr.getWorld(), plot, args[1]);
@@ -134,17 +134,13 @@ public class Set extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
-                final Flag flag = plot.settings.getFlag(args[1].toLowerCase());
-                final PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
+                
+                boolean result = FlagManager.removePlotFlag(plot, args[1].toLowerCase());
+                
+                if (!result) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
-                    event.setCancelled(true);
                     return false;
                 }
-                final java.util.Set<Flag> newflags = FlagManager.removeFlag(plot.settings.getFlags(), args[1].toLowerCase());
-                plot.settings.setFlags(newflags);
-                DBFunc.setFlags(plr.getWorld().getName(), plot, newflags);
                 PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
@@ -163,15 +159,11 @@ public class Set extends SubCommand {
                 }
 
                 final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), value);
-                final PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
+                boolean result = FlagManager.addPlotFlag(plot, flag);
+                if (!result) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
-                    event.setCancelled(true);
                     return false;
                 }
-                plot.settings.addFlag(flag);
-                DBFunc.setFlags(plr.getWorld().getName(), plot, plot.settings.getFlags());
                 PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 PlotListener.plotEntry(plr, plot);
                 return true;

@@ -21,11 +21,19 @@
 
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
+import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.sun.istack.internal.NotNull;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +62,100 @@ import java.util.Set;
      */
     public static boolean addFlag(final AbstractFlag flag) {
         return (getFlag(flag.getKey()) == null) && flags.add(flag);
+    }
+
+    /**
+     * Get the value of a flag for a plot (respects flag defaults)
+     * @param plot
+     * @param flag
+     * @return
+     */
+    public static Flag getPlotFlag(Plot plot, String flag) {
+        ArrayList<Flag> flags = new ArrayList<>();
+        flags.addAll(plot.settings.flags);
+        PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
+        flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        for (final Flag myflag : flags) {
+            if (myflag.getKey().equals(flag)) {
+                return myflag;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the value of a flag for a plot (ignores flag defaults)
+     * @param plot
+     * @param flag
+     * @return
+     */
+    public static Flag getPlotFlagAbs(Plot plot, String flag) {
+        for (final Flag myflag : plot.settings.flags) {
+            if (myflag.getKey().equals(flag)) {
+                return myflag;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Add a flag to a plot
+     * @param plot
+     * @param flag
+     */
+    public static boolean addPlotFlag(Plot plot, final Flag flag) {
+        final PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+        final Flag hasFlag = getPlotFlag(plot, flag.getKey());
+        if (hasFlag != null) {
+            plot.settings.flags.remove(hasFlag);
+        }
+        plot.settings.flags.add(flag);
+        DBFunc.setFlags(plot.world, plot, plot.settings.flags);
+        return true;
+    }
+
+    /**
+     * 
+     * @param plot
+     * @return
+     */
+    public static Set<Flag> getPlotFlags(Plot plot) {
+        Set<Flag> plotflags = plot.settings.flags;
+        PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
+        plotflags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        return plotflags;
+    }
+    
+    public static boolean removePlotFlag(Plot plot, String flag) {
+        final Flag hasFlag = getPlotFlag(plot, flag);
+        if (hasFlag != null) {
+            Flag flagObj = FlagManager.getPlotFlagAbs(plot, flag);
+            if (flagObj != null) {
+                final PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flagObj, plot);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return false;
+                }
+                plot.settings.flags.remove(hasFlag);
+                DBFunc.setFlags(plot.world, plot, plot.settings.flags);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void setPlotFlags(Plot plot, Set<Flag> flags) {
+        if (flags == null) {
+            plot.settings.flags = new HashSet<>();
+            DBFunc.setFlags(plot.world, plot, plot.settings.flags);
+            return;
+        }
+        plot.settings.flags = flags;
+        DBFunc.setFlags(plot.world, plot, plot.settings.flags);
     }
 
     public static Flag[] removeFlag(final Flag[] flags, final String r) {
@@ -174,8 +276,8 @@ import java.util.Set;
      *
      * @return List (AbstractFlag)
      */
-    public static List<AbstractFlag> getPlotFlags(final Plot plot) {
-        final Set<Flag> plotFlags = plot.settings.getFlags();
+    public static List<AbstractFlag> getPlotAbstractFlags(final Plot plot) {
+        final Set<Flag> plotFlags = getPlotFlags(plot);
         final List<AbstractFlag> flags = new ArrayList<>();
         for (final Flag flag : plotFlags) {
             flags.add(flag.getAbstractFlag());

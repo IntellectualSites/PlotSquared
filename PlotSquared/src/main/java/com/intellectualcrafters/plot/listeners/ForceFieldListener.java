@@ -21,8 +21,10 @@
 
 package com.intellectualcrafters.plot.listeners;
 
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -102,7 +104,7 @@ public class ForceFieldListener implements Listener {
             return;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
-        if ((plot.settings.getFlag("forcefield") != null) && plot.settings.getFlag("forcefield").getValue().equals("true")) {
+        if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield")) {
                 if (plot.hasRights(player)) {
                     final Set<Player> players = getNearbyPlayers(player, plot);

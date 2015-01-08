@@ -678,7 +678,7 @@ public class SQLManager implements AbstractDB {
                         PlotMain.sendConsoleSenderMessage("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
                         setFlags(id, flags.toArray(new Flag[0]));
                     }
-                    plot.settings.setFlags(flags);
+                    FlagManager.setPlotFlags(plot, flags);
                 } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
@@ -732,7 +732,6 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
-        plot.settings.setFlags(flags);
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (final Flag flag : flags) {

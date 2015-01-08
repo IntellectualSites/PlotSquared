@@ -24,9 +24,11 @@ package com.intellectualcrafters.plot.listeners;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -170,8 +172,8 @@ import java.util.*;
     @EventHandler
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
-        if (plot.settings.getFlag("greeting") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plot.settings.getFlag("greeting").getValue()));
+        if (FlagManager.getPlotFlag(plot, "greeting") != null) {
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "greeting").getValue()));
         }
         if (booleanFlag(plot, "notify-enter")) {
             if (plot.hasOwner()) {
@@ -204,8 +206,8 @@ import java.util.*;
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
-        if (plot.settings.getFlag("farewell") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plot.settings.getFlag("farewell").getValue()));
+        if (FlagManager.getPlotFlag(plot, "farewell") != null) {
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "farewell").getValue()));
         }
         if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());

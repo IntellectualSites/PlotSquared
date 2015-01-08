@@ -174,7 +174,7 @@ import java.util.UUID;
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
-        final String flags = "&6" + (StringUtils.join(plot.settings.getFlags(), "").length() > 0 ? StringUtils.join(plot.settings.getFlags(), "&7, &6") : "none");
+        final String flags = "&6" + (StringUtils.join(plot.settings.flags, "").length() > 0 ? StringUtils.join(plot.settings.flags, "&7, &6") : "none");
         final boolean build = (player == null) || plot.hasRights(player);
 
         String owner = "none";

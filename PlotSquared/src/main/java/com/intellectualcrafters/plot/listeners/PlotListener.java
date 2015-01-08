@@ -24,7 +24,6 @@ package com.intellectualcrafters.plot.listeners;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -142,7 +141,7 @@ import java.util.UUID;
     }
 
     public static boolean booleanFlag(final Plot plot, final String flag) {
-        return (plot.settings.getFlag(flag) != null) && getBooleanFlag(plot.settings.getFlag(flag).getValue()).equals("true");
+        return (FlagManager.getPlotFlag(plot, flag) != null) && getBooleanFlag(FlagManager.getPlotFlag(plot, flag).getValue()).equals("true");
     }
 
     private static String getBooleanFlag(final String value) {
@@ -177,23 +176,22 @@ import java.util.UUID;
 
     public static void plotEntry(final Player player, final Plot plot) {
         if (plot.hasOwner()) {
-            if (plot.settings.getFlag("gamemode") != null) {
-                player.setGameMode(getGameMode(plot.settings.getFlag("gamemode").getValue()));
+            if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
+                player.setGameMode(getGameMode(FlagManager.getPlotFlag(plot, "gamemode").getValue()));
             }
-            if (plot.settings.getFlag("fly") != null) {
-                player.setAllowFlight(getFlagValue(plot.settings.getFlag("fly").getValue()));
+            if (FlagManager.getPlotFlag(plot, "fly") != null) {
+                player.setAllowFlight(getFlagValue(FlagManager.getPlotFlag(plot, "fly").getValue()));
             }
-            if (plot.settings.getFlag("time") != null) {
+            if (FlagManager.getPlotFlag(plot, "time") != null) {
                 try {
-                    final Long time = Long.parseLong(plot.settings.getFlag("time").getValue());
+                    final Long time = Long.parseLong(FlagManager.getPlotFlag(plot, "time").getValue());
                     player.setPlayerTime(time, true);
                 } catch (final Exception e) {
-                    plot.settings.setFlags(FlagManager.removeFlag(plot.settings.getFlags(), "time"));
-                    DBFunc.setFlags(plot.world, plot, plot.settings.getFlags());
+                    FlagManager.removePlotFlag(plot, "time");
                 }
             }
-            if (plot.settings.getFlag("weather") != null) {
-                player.setPlayerWeather(getWeatherType(plot.settings.getFlag("weather").getValue()));
+            if (FlagManager.getPlotFlag(plot, "weather") != null) {
+                player.setPlayerWeather(getWeatherType(FlagManager.getPlotFlag(plot, "weather").getValue()));
             }
             if ((booleanFlag(plot, "titles") || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%y%", plot.id.y + "").replaceAll("%world%", plot.world + "");
@@ -218,16 +216,16 @@ import java.util.UUID;
             final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
             Bukkit.getPluginManager().callEvent(callEvent);
         }
-        if (plot.settings.getFlag("fly") != null) {
+        if (FlagManager.getPlotFlag(plot, "fly") != null) {
             player.setAllowFlight(Bukkit.getAllowFlight());
         }
-        if (plot.settings.getFlag("gamemode") != null) {
+        if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
             player.setGameMode(Bukkit.getDefaultGameMode());
         }
-        if (plot.settings.getFlag("time") != null) {
+        if (FlagManager.getPlotFlag(plot, "time") != null) {
             player.resetPlayerTime();
         }
-        if (plot.settings.getFlag("weather") != null) {
+        if (FlagManager.getPlotFlag(plot, "weather") != null) {
             player.resetPlayerWeather();
         }
     }

@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
@@ -403,7 +404,7 @@ import java.util.UUID;
 
             if (PlotMain.booleanFlags.containsKey(event.getClickedBlock().getType())) {
                 final String flag = PlotMain.booleanFlags.get(event.getClickedBlock().getType());
-                if ((plot.settings.getFlag(flag) != null) && getFlagValue(plot.settings.getFlag(flag).getValue())) {
+                if ((FlagManager.getPlotFlag(plot, flag) != null) && getFlagValue(FlagManager.getPlotFlag(plot, flag).getValue())) {
                     return;
                 }
             }
