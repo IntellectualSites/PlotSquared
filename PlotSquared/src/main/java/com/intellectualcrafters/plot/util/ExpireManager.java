@@ -53,15 +53,12 @@ public class ExpireManager {
         ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
             @Override
             public void run() {
-                System.out.print("RUNNING TASK");
                 for (String world : PlotMain.getPlotWorldsString()) {
-                    System.out.print(" - check world");
                     if (!ExpireManager.updatingPlots.contains(world)) {
                         ExpireManager.updatingPlots.put(world, false);
                     }
                     Boolean updating = ExpireManager.updatingPlots.get(world);
                     if (updating) {
-                        System.out.print(" - ERR UPDATING");
                         return;
                     }
                     ArrayList<Plot> plots = expiredPlots.get(world);

@@ -58,7 +58,7 @@ public class SQLite extends Database {
         if (!this.plugin.getDataFolder().exists()) {
             this.plugin.getDataFolder().mkdirs();
         }
-        final File file = new File(this.plugin.getDataFolder(), this.dbLocation);
+        final File file = new File(this.dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
@@ -67,7 +67,7 @@ public class SQLite extends Database {
             }
         }
         Class.forName("org.sqlite.JDBC");
-        this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.plugin.getDataFolder().toPath().toString() + "/" + this.dbLocation);
+        this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
 

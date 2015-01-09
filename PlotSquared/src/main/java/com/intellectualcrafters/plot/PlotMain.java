@@ -834,6 +834,13 @@ import java.util.concurrent.TimeUnit;
     public static void worldLoad(WorldLoadEvent event) {
         if (!UUIDHandler.CACHED) {
             UUIDHandler.cacheAll();
+            if (Bukkit.getServer().getPluginManager().getPlugin("PlotMe") != null) {
+                try {
+                    new PlotMeConverter(PlotMain.getMain()).runAsync();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -1318,7 +1325,7 @@ import java.util.concurrent.TimeUnit;
             sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                connection = new SQLite(this, Settings.DB.SQLITE_DB + ".db").openConnection();
+                connection = new SQLite(this, this.getDataFolder() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();
@@ -1348,17 +1355,6 @@ import java.util.concurrent.TimeUnit;
             sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }
-        // We should not start the plugin if
-        // plotme is present. Maybe do this
-        // earlier, and no register any commands
-        // nor listeners, just run the converter?
-        if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
-            try {
-                new PlotMeConverter(this).runAsync();
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
         }
         // Setup the command handler
         {

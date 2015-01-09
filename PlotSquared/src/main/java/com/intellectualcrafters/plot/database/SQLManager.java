@@ -671,7 +671,6 @@ public class SQLManager implements AbstractDB {
                         if (element.contains(":")) {
                             final String[] split = element.split(":");
                             try {
-                                System.out.print("NEW FLAG] "+element);
                                 flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("�", ",")));
                             } catch (final Exception e) {
                                 e.printStackTrace();
@@ -755,7 +754,6 @@ public class SQLManager implements AbstractDB {
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string.toString());
                     stmt.setInt(2, getId(world, plot.id));
-                    System.out.print(stmt.toString());
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {

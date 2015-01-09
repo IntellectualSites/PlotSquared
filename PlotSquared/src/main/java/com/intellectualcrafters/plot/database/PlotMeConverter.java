@@ -107,9 +107,10 @@ public class PlotMeConverter {
                     while (r.next()) {
                         PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         String name = r.getString("owner");
+                        System.out.print("NAME: "+name);
                         String world = r.getString("world");
                         if (!plotSize.containsKey(world)) {
-                            int size = r.getInt("topZ") - r.getInt("botZ");
+                            int size = r.getInt("topZ") - r.getInt("bottomZ");
                             plotSize.put(world,size);
                             plots.put(world, new HashMap<PlotId, Plot>());
                         }

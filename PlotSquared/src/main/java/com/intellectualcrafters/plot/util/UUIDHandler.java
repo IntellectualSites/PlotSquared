@@ -201,7 +201,8 @@ public class UUIDHandler {
         }
         
         // check cache
-        UUID uuid = UUIDHandler.uuidMap.get(name);
+        StringWrapper wrap = new StringWrapper(name);
+        UUID uuid = UUIDHandler.uuidMap.get(wrap);
         if (uuid != null) {
             return uuid;
         }
@@ -209,7 +210,9 @@ public class UUIDHandler {
         // Read from disk
         if (Settings.UUID_FROM_DISK) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(name);
-            return UUIDHandler.uuidWrapper.getUUID(op);
+            uuid = UUIDHandler.uuidWrapper.getUUID(op);
+            add(new StringWrapper(name), uuid);
+            return uuid;
         }
         
         return null;

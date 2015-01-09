@@ -47,8 +47,6 @@ public class Delete extends SubCommand {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !PlotMain.hasPermission(plr, "plots.admin")) {
-            System.out.print(UUIDHandler.uuidWrapper.getUUID(plr));
-            System.out.print(plot.getOwner());
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
