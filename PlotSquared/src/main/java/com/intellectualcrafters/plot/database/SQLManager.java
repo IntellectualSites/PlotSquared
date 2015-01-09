@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.apache.commons.lang.StringUtils;
@@ -93,7 +94,7 @@ public class SQLManager implements AbstractDB {
 
     //
     // public void setTimout() {
-    // runTask(new Runnable() {
+    // TaskManager.runTask(new Runnable() {
     // @Override
     // public void run() {
     // try {
@@ -117,7 +118,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setOwner(final Plot plot, final UUID uuid) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -298,7 +299,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlot(final Plot plot) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -320,7 +321,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void createPlotAndSettings(final Plot plot) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -391,7 +392,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void delete(final String world, final Plot plot) {
         PlotMain.removePlot(world, plot.id, false);
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -432,7 +433,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlotSettings(final int id, final Plot plot) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -509,7 +510,6 @@ public class SQLManager implements AbstractDB {
             if (PlotMain.config.contains("worlds")) {
                 worlds = PlotMain.config.getConfigurationSection("worlds").getKeys(false);
             }
-
             final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
             final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
 
@@ -658,7 +658,12 @@ public class SQLManager implements AbstractDB {
                     if (myflags == null) {
                         flags_string = new String[]{};
                     } else {
-                        flags_string = myflags.split(",");
+                        if (myflags.length() > 0) {
+                            flags_string = myflags.split(",");
+                        }
+                        else {
+                            flags_string = new String[]{};
+                        }
                     }
                     final Set<Flag> flags = new HashSet<Flag>();
                     boolean exception = false;
@@ -666,8 +671,10 @@ public class SQLManager implements AbstractDB {
                         if (element.contains(":")) {
                             final String[] split = element.split(":");
                             try {
+                                System.out.print("NEW FLAG] "+element);
                                 flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("�", ",")));
                             } catch (final Exception e) {
+                                e.printStackTrace();
                                 exception = true;
                             }
                         } else {
@@ -678,7 +685,7 @@ public class SQLManager implements AbstractDB {
                         PlotMain.sendConsoleSenderMessage("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
                         setFlags(id, flags.toArray(new Flag[0]));
                     }
-                    FlagManager.setPlotFlags(plot, flags);
+                    plot.settings.flags = flags;
                 } else {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
@@ -709,7 +716,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void setMerged(final String world, final Plot plot, final boolean[] merged) {
         plot.settings.setMerged(merged);
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -741,13 +748,14 @@ public class SQLManager implements AbstractDB {
             flag_string.append(flag.getKey() + ":" + flag.getValue().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
             i++;
         }
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string.toString());
                     stmt.setInt(2, getId(world, plot.id));
+                    System.out.print(stmt.toString());
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -766,7 +774,7 @@ public class SQLManager implements AbstractDB {
             }
         }
         final String flag_string = StringUtils.join(newflags, ",");
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -790,7 +798,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void setAlias(final String world, final Plot plot, final String alias) {
         plot.settings.setAlias(alias);
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -810,12 +818,8 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * @param r
+     * Purge all plots with the f ollowing database IDs
      */
-    private void runTask(final Runnable r) {
-        PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
-    }
-
     public void purgeIds(final String world, final Set<Integer> uniqueIds) {
         if (uniqueIds.size() > 0) {
             try {
@@ -885,7 +889,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void setPosition(final String world, final Plot plot, final String position) {
         plot.settings.setPosition(PlotHomePosition.valueOf(position));
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -957,7 +961,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void removeComment(final String world, final Plot plot, final PlotComment comment) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1001,7 +1005,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setComment(final String world, final Plot plot, final PlotComment comment) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1027,7 +1031,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1050,7 +1054,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1073,7 +1077,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1091,7 +1095,7 @@ public class SQLManager implements AbstractDB {
     }
     
     public void setHelper(final int id, final UUID uuid) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1114,7 +1118,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1137,7 +1141,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeDenied(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1160,7 +1164,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {

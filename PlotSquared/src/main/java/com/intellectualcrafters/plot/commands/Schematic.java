@@ -127,8 +127,7 @@ public class Schematic extends SubCommand {
                         final int LENGTH = schematic.getSchematicDimension().getZ();
                         final int blen = b.length - 1;
 
-                        final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
-                        Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                        Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
                             @Override
                             public void run() {
                                 boolean result = false;

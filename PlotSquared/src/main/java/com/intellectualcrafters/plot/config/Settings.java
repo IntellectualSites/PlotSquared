@@ -113,7 +113,9 @@ public class Settings {
     /**
      * Days until a plot gets cleared
      */
-    public static int AUTO_CLEAR_DAYS = 365;
+    public static int AUTO_CLEAR_DAYS = -1;
+    
+    public static int MIN_BLOCKS_CHANGED = -1;
 
     /**
      * API Location

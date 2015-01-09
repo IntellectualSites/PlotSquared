@@ -177,23 +177,6 @@ import java.util.concurrent.TimeUnit;
     }
 
     /**
-     * Check for expired plots
-     */
-    public static void checkForExpiredPlots() {
-        final JavaPlugin plugin = PlotMain.getMain();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    checkExpired(plugin, true);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0l, 86_40_00L);
-    }
-
-    /**
      * Check a range of permissions e.g. 'plots.plot.<0-100>'<br> Returns highest integer in range.
      *
      * @param player to check
@@ -510,85 +493,6 @@ import java.util.concurrent.TimeUnit;
         }
         plot.hasChanged = true;
         plots.get(world).put(plot.id, plot);
-    }
-
-    /**
-     * TODO: <b>Implement better system The whole point of this system is to recycle old plots</b> <br> So why not just
-     * allow users to claim old plots, and try to hide the fact that the are owned. <br> <br> Reduce amount of expired
-     * plots: <br> - On /plot <br> auto<br> - allow claiming of old plot, clear it so the user doesn't know<br> - On
-     * /plot info,<br> - show that the plot is expired and allowed to be claimed Have the task run less often:<br> - Run
-     * the task when there are very little, or no players online (great for small servers)<br> - Run the task at startup
-     * (also only useful for small servers)<br> Also, in terms of faster code:<br> - Have an array of plots, sorted by
-     * expiry time.<br> - Add new plots to the end.<br> - The task then only needs to go through the first few plots
-     *
-     * @param plugin Plugin
-     * @param async  Call async?
-     */
-    private static void checkExpired(final JavaPlugin plugin, final boolean async) {
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    for (final String world : getPlotWorldsString()) {
-                        if (plots.containsKey(world)) {
-
-                            final ArrayList<Plot> toDeletePlot = new ArrayList<>();
-
-                            for (final Plot plot : plots.get(world).values()) {
-                                if (plot.owner == null) {
-                                    continue;
-                                }
-                                final long lastPlayed = getLastPlayed(plot.owner);
-                                if (lastPlayed == 0) {
-                                    continue;
-                                }
-                                final long compared = System.currentTimeMillis() - lastPlayed;
-                                if (TimeUnit.MILLISECONDS.toDays(compared) >= Settings.AUTO_CLEAR_DAYS) {
-                                    final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
-                                    Bukkit.getServer().getPluginManager().callEvent(event);
-                                    if (event.isCancelled()) {
-                                        event.setCancelled(true);
-                                    } else {
-                                        toDeletePlot.add(plot);
-                                    }
-                                }
-                            }
-                            for (final Plot plot : toDeletePlot) {
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        final World worldobj = Bukkit.getWorld(world);
-                                        PlotHelper.clear(worldobj, plot, true);
-                                        PlotHelper.removeSign(worldobj, plot);
-                                        DBFunc.delete(world, plot);
-                                        removePlot(world, plot.id, true);
-                                        if ((Math.abs(plot.id.x) < Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) < Math.abs(Auto.lastPlot.y))) {
-                                            Auto.lastPlot = plot.id;
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            });
-        } else {
-            for (final String world : getPlotWorldsString()) {
-                if (PlotMain.plots.containsKey(world)) {
-                    for (final Plot plot : PlotMain.plots.get(world).values()) {
-                        if (PlayerFunctions.hasExpired(plot)) {
-                            final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
-                            Bukkit.getServer().getPluginManager().callEvent(event);
-                            if (event.isCancelled()) {
-                                event.setCancelled(true);
-                            } else {
-                                DBFunc.delete(world, plot);
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -1451,7 +1355,7 @@ import java.util.concurrent.TimeUnit;
         // nor listeners, just run the converter?
         if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
             try {
-                new PlotMeConverter(this).runAsync();
+//                new PlotMeConverter(this).runAsync();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -1507,8 +1411,7 @@ import java.util.concurrent.TimeUnit;
             }
         }
         if (Settings.AUTO_CLEAR) {
-            checkExpired(PlotMain.getMain(), true);
-            checkForExpiredPlots();
+            ExpireManager.runTask();
         }
         // Economy setup
         {

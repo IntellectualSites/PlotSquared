@@ -46,8 +46,10 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import org.bukkit.Bukkit;
@@ -154,7 +156,7 @@ import org.bukkit.entity.Player;
             return false;
         }
         Trim.TASK = true;
-        runTask(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
@@ -231,7 +233,7 @@ import org.bukkit.entity.Player;
     
     private void trimPlots(World world) {
         String worldname = world.getName();
-        ArrayList<ChunkLoc> chunks = getChunkChunks(world);
+        ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         for (ChunkLoc loc : chunks) {
             int sx = loc.x << 4;
             int sz = loc.z << 4;
@@ -242,74 +244,20 @@ import org.bukkit.entity.Player;
             for (int x = sx; x < sx + 16; x++) {
                 for (int z = sz; z < sz + 16; z++) {
                     Chunk chunk = world.getChunkAt(x, z);
-                    if (hasPlot(world, chunk)) {
+                    if (ChunkManager.hasPlot(world, chunk)) {
                         delete = false;
                         break loop;
                     }
                 }
             }
             if (delete) {
-                deleteRegionFile(worldname, loc);
+                ChunkManager.deleteRegionFile(worldname, loc);
             }
         }
-    }
-    
-    public void deleteRegionFile(final String world, final ChunkLoc loc) {
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                File file = new File(directory);
-                PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+file.getName()+" (max 256 chunks)");
-                if (file.exists()) {
-                    file.delete();
-                }
-            }
-        });
-        
-    }
-    
-    public ArrayList<ChunkLoc> getChunkChunks(World world) {
-        File[] regionFiles = new File(new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region").listFiles();
-        ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                String[] split = name.split("\\.");
-                try {
-                    chunks.add(new ChunkLoc(Integer.parseInt(split[1]), Integer.parseInt(split[2])));
-                } catch (Exception e) {  }
-            }
-        }
-        return chunks;
-    }
-    
-    private boolean hasPlot(World world, Chunk chunk) {
-        int x1 = chunk.getX() << 4;
-        int z1 = chunk.getZ() << 4;
-        int x2 = x1 + 15;
-        int z2 = z1 + 15;
-        
-        Location bot = new Location(world, x1, 0, z1);
-        Plot plot;
-        plot = PlotHelper.getCurrentPlot(bot); 
-        if (plot != null && plot.owner != null) {
-            return true;
-        }
-        Location top = new Location(world, x2, 0, z2);
-        plot = PlotHelper.getCurrentPlot(top); 
-        if (plot != null && plot.owner != null) {
-            return true;
-        }
-        return false;
     }
     
     private void sendMessage(final String message) {
         PlotMain.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: " + message);
     }
     
-    private void runTask(final Runnable r) {
-        PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
-    }
-
 }
