@@ -5,7 +5,7 @@ load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
 authors: [Citymonstret, Empire92]
-softdepend: [WorldEdit, BarAPI, PlotMe, CameraAPI, Vault]
+softdepend: [WorldEdit, BarAPI, CameraAPI, Vault]
 database: false
 commands:
   plots:
