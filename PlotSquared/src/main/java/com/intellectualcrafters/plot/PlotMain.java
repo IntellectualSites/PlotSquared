@@ -1355,7 +1355,7 @@ import java.util.concurrent.TimeUnit;
         // nor listeners, just run the converter?
         if (getServer().getPluginManager().getPlugin("PlotMe") != null) {
             try {
-//                new PlotMeConverter(this).runAsync();
+                new PlotMeConverter(this).runAsync();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
