@@ -57,6 +57,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -1241,6 +1242,29 @@ import java.util.concurrent.TimeUnit;
     @Override
     @SuppressWarnings("deprecation")
     final public void onEnable() {
+        
+        /* <sarcasm>
+         * Oh, is this what it looks like?
+         * Are we stealing coding from PlotMe again?
+         */
+        
+        //Plugin competition = Bukkit.getPluginManager().getPlugin("PlotSquared");
+        Plugin competition = Bukkit.getPluginManager().getPlugin("PlotMe");
+        if (competition != null) {
+            getPluginLoader().disablePlugin(competition);
+        }
+        /*
+         * Oh no! How unethical of us to steal this above code from PlotMe and only change 1 line of code!
+         * If only we were good enough to code something like this ourselves!
+         * 
+         * You guys are hilarious how you intentionally try to make it difficult for your users to to switch plot plugins.
+         * If we didn't know any better, we'd say you're abusing your position as the most used plot plugin.
+         * </sarcasm>
+         * Side note from Empire92: Your continued bullying doesn't give me much incentive to support PlotMe with any of my other plugins:
+         *  - VoxelSniperRegions
+         *  - BiomeGenerator
+         */
+        
         PlotMain.main = this;
         // Setup the logger mechanics
         setupLogger();
