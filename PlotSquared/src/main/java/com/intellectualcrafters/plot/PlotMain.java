@@ -57,6 +57,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
@@ -765,6 +766,7 @@ import java.util.concurrent.TimeUnit;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
         options.put("auto_update", false);
+        options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
@@ -798,6 +800,7 @@ import java.util.concurrent.TimeUnit;
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
+        Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
@@ -840,6 +843,24 @@ import java.util.concurrent.TimeUnit;
             config.save(PlotMain.configFile);
         } catch (final IOException e) {
             PlotMain.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
+        }
+    }
+    
+    @EventHandler
+    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+        String message = event.getMessage();
+        if (message.toLowerCase().startsWith("/plotme")) {
+            Plugin plotme = Bukkit.getPluginManager().getPlugin("PlotMe");
+            if (plotme == null) {
+                Player player = event.getPlayer();
+                if (Settings.USE_PLOTME_ALIAS) {
+                    player.performCommand(message.replace("/plotme", "plots"));
+                }
+                else {
+                    PlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
+                }
+                event.setCancelled(true);
+            }
         }
     }
     

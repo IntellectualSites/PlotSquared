@@ -313,6 +313,10 @@ public enum C {
      */
     LEFT_PLOT("&cYou left a plot"),
     /*
+     * PlotMe
+     */
+    NOT_USING_PLOTME("&cThis server uses the &6PlotSquared &cplot management system. Please use the &6/plots &cinstead"),
+    /*
      * Wait
      */
     WAIT_FOR_TIMER("&cA setblock timer is bound to either the current plot or you. Please wait for it to finish"),

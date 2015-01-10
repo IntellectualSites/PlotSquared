@@ -38,7 +38,8 @@ public class Settings {
     /**
     *
     */
-   public static boolean CONVERT_PLOTME = true;
+    public static boolean CONVERT_PLOTME = true;
+    public static boolean USE_PLOTME_ALIAS = false;
     /**
      *
      */
