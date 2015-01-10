@@ -221,8 +221,7 @@ public class HybridGen extends PlotGenerator {
         }
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-//        return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
-        return new ArrayList<>();
+        return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
     }
 
     /**

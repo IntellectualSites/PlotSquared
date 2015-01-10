@@ -2,21 +2,17 @@ package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.Auto;
-import com.intellectualcrafters.plot.commands.Schematic;
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
@@ -127,6 +123,11 @@ public class ExpireManager {
                 continue;
             }
             if (keep.contains(uuid)) {
+                continue;
+            }
+            Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            if (player != null) {
+                keep.add(uuid);
                 continue;
             }
             OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);

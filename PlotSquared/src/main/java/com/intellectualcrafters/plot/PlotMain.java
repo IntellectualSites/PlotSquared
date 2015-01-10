@@ -21,54 +21,6 @@
 
 package com.intellectualcrafters.plot;
 
-import com.google.common.io.Files;
-import com.intellectualcrafters.plot.api.PlotAPI;
-import com.intellectualcrafters.plot.commands.Auto;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.WE_Anywhere;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.listeners.*;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
-import me.confuser.barapi.BarAPI;
-import net.milkbowl.vault.economy.Economy;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.*;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.UnknownDependencyException;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,9 +28,88 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
+import java.util.UUID;
+
+import me.confuser.barapi.BarAPI;
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.common.io.Files;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.listeners.ForceFieldListener;
+import com.intellectualcrafters.plot.listeners.InventoryListener;
+import com.intellectualcrafters.plot.listeners.PlayerEvents;
+import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.listeners.WorldGuardListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.Lag;
+import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.Metrics;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SendChunk;
+import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 /**
  * PlotMain class.
@@ -1136,6 +1167,29 @@ import java.util.concurrent.TimeUnit;
                 return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
             }
         });
+        
+        FlagManager.addFlag(new AbstractFlag("price") {
+            @Override
+            public String parseValue(final String value) {
+                try {
+                    double price = Double.parseDouble(value);
+                    if (price >= 0) {
+                        return price + "";
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                catch (Exception e) {
+                    return null;
+                }
+            }
+
+            @Override
+            public String getValueDesc() {
+                return "Flag value must be a positive number representing the price of the plot'";
+            }
+        });
 
         FlagManager.addFlag(new AbstractFlag("time") {
             @Override
@@ -1288,7 +1342,6 @@ import java.util.concurrent.TimeUnit;
                 Files.copy(file, to);
                 file.delete();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             try {
@@ -1309,7 +1362,6 @@ import java.util.concurrent.TimeUnit;
      * On Load.
      */
     @Override
-    @SuppressWarnings("deprecation")
     final public void onEnable() {
         if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
             CONVERT_PLOTME = true;
