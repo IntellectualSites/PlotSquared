@@ -23,11 +23,14 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -40,7 +43,7 @@ import java.util.UUID;
 public class list extends SubCommand {
 
     public list() {
-        super(Command.LIST, "List all plots", "list {mine|shared|all|world}", CommandCategory.INFO, false);
+        super(Command.LIST, "List all plots", "list {mine|shared|all|world|forsale}", CommandCategory.INFO, false);
     }
 
     private static String getName(final UUID id) {
@@ -60,11 +63,30 @@ public class list extends SubCommand {
             final StringBuilder builder = new StringBuilder();
             builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
             if (plr != null) {
-                builder.append(getArgumentList(new String[]{"mine", "shared", "world", "all"}));
+                builder.append(getArgumentList(new String[]{"mine", "shared", "world", "all", "forsale"}));
             } else {
                 builder.append(getArgumentList(new String[]{"all"}));
             }
             PlayerFunctions.sendMessage(plr, builder.toString());
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("forsale") && (plr != null)) {
+            final StringBuilder string = new StringBuilder();
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your")).append("\n");
+            int idx = 0;
+            for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
+                Flag price = FlagManager.getPlotFlag(p, "price");
+                if (price != null) {
+                    string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValue()).replaceAll("%owner", getName(p.owner))).append("\n");
+                    idx++;
+                }
+            }
+            if (idx == 0) {
+                PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+                return true;
+            }
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
+            PlayerFunctions.sendMessage(plr, string.toString());
             return true;
         }
         if (args[0].equalsIgnoreCase("mine") && (plr != null)) {

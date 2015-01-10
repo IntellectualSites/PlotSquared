@@ -85,6 +85,7 @@ public enum C {
     ECON_DISABLED("&cEconomy is not enabled"),
     CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"),
     NOT_FOR_SALE("&cThis plot is not for sale"),
+    PLOT_SOLD("&aYour plot; &6%s&a, has been sold to &6%s&a for &6$%s"),
     CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"),
     ADDED_BALANCE("&6%s &chas been added to your balance"),
     REMOVED_BALANCE("&6%s &chas been taken from your balance"),
@@ -356,6 +357,7 @@ public enum C {
     HELPER_REMOVED("&6You successfully removed a helper from the plot"),
     HELPER_NEED_ARGUMENT("&cArguments are missing. &6/plot helpers add <name> &cor &6/plot helpers remove <name>"),
     WAS_NOT_ADDED("&cThat player was not added as a helper on this plot"),
+    PLOT_REMOVED_HELPER("&6Plot %s of which you were added to has been deleted due to owner inactivity"),
     /*
      * Trusted
      */

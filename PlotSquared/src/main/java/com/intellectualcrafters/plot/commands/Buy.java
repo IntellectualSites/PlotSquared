@@ -88,13 +88,15 @@ public class Buy extends SubCommand {
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }
-        double price = Double.parseDouble(flag.getValue());
+        double initPrice = Double.parseDouble(flag.getValue());
+        double price = initPrice;
         PlotId id = plot.id;
         PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
         int size = PlayerFunctions.getPlotSelectionIds(world, id, id2).size();
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
+            initPrice += plotworld.SELL_PRICE * size;
         }
         if (price > 0d) {
             final Economy economy = PlotMain.economy;
@@ -103,9 +105,15 @@ public class Buy extends SubCommand {
             }
             economy.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
+            economy.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
+            Player owner = UUIDHandler.uuidWrapper.getPlayer(plot.owner);
+            if (owner != null) {
+                sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
+            }
         }
         plot.owner = UUIDHandler.getUUID(plr);
         DBFunc.setOwner(plot, plot.owner);
         PlayerFunctions.sendMessage(plr, C.CLAIMED);
+        return true;
     }
 }

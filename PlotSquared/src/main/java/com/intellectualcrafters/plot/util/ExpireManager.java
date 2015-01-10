@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.Auto;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
@@ -80,6 +82,14 @@ public class ExpireManager {
                         event.setCancelled(true);
                         return;
                     }
+                    
+                    for (UUID helper : plot.helpers) {
+                        Player player = UUIDHandler.uuidWrapper.getPlayer(helper);
+                        if (player != null) {
+                            PlayerFunctions.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
+                        }
+                    }
+                    
                     final World worldobj = Bukkit.getWorld(world);
                     final PlotManager manager = PlotMain.getPlotManager(world);
                     manager.clearPlot(worldobj, plot, false);
@@ -95,7 +105,7 @@ public class ExpireManager {
                 }
                 
             }
-        }, 1200, 1200);
+        }, 2400, 2400);
     }
     
     public static boolean isExpired(UUID uuid) {
