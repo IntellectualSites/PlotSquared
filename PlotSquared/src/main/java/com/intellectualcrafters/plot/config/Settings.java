@@ -36,6 +36,10 @@ public class Settings {
     public static boolean UUID_FECTHING = false;
     public static boolean UUID_FROM_DISK = false;
     /**
+    *
+    */
+   public static boolean CONVERT_PLOTME = true;
+    /**
      *
      */
     public static int MAX_AUTO_SIZE = 4;

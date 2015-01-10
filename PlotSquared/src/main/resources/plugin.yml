@@ -10,7 +10,7 @@ database: false
 commands:
   plots:
     description: PlotMain PlotSquared command.
-    aliases: [p,plotme,plot,ps,plotsquared,p2]
+    aliases: [p,plot,ps,plotsquared,p2]
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"
 permissions:

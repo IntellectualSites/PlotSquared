@@ -765,6 +765,7 @@ import java.util.concurrent.TimeUnit;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
         options.put("auto_update", false);
+        options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("worldguard.enabled", Settings.WORLDGUARD);
@@ -797,6 +798,7 @@ import java.util.concurrent.TimeUnit;
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
+        Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
@@ -1247,9 +1249,13 @@ import java.util.concurrent.TimeUnit;
     }
 
     public static boolean enablePlotMe() {
+        if (!Settings.CONVERT_PLOTME) {
+            return false;
+        }
         File file = new File(new File("").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe-Core.jar");
         if (file.exists()) {
             sendConsoleSenderMessage("&b==== Copying 'PlotMe-Core.jar' to 'PlotMe_JAR_relocated' for conversion purposes ===");
+            sendConsoleSenderMessage("&c - If you do not wish to convert, please stop the server now and set 'plotme-convert.enabled' to false");
             sendConsoleSenderMessage("&3 - Please ignore the below stacktrace...");
             try {
                 File to = new File(new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe_JAR_relocated" + File.separator + "PlotMe-Core.jar");
@@ -1263,6 +1269,11 @@ import java.util.concurrent.TimeUnit;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+            try {
+                Thread.sleep(5000);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
             return true;
         }
