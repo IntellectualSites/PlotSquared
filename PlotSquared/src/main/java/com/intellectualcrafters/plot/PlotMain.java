@@ -21,6 +21,7 @@
 
 package com.intellectualcrafters.plot;
 
+import com.google.common.io.Files;
 import com.intellectualcrafters.plot.api.PlotAPI;
 import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -48,6 +49,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -55,10 +57,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -171,12 +178,15 @@ import java.util.concurrent.TimeUnit;
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
 
     /**
+     * If plotme converter is enabled
+     */
+    private static boolean CONVERT_PLOTME = enablePlotMe();
+    /**
      * Return an instance of MySQL
      */
     public static MySQL getMySQL() {
         return mySQL;
     }
-
     /**
      * Check a range of permissions e.g. 'plots.plot.<0-100>'<br> Returns highest integer in range.
      *
@@ -520,7 +530,7 @@ import java.util.concurrent.TimeUnit;
      * @param string message
      */
     public static void sendConsoleSenderMessage(final String string) {
-        if (getMain().getServer().getConsoleSender() == null) {
+        if (PlotMain.main == null || getMain().getServer().getConsoleSender() == null) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
         } else {
             getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
@@ -835,7 +845,7 @@ import java.util.concurrent.TimeUnit;
     public static void worldLoad(WorldLoadEvent event) {
         if (!UUIDHandler.CACHED) {
             UUIDHandler.cacheAll();
-            if (Bukkit.getServer().getPluginManager().getPlugin("PlotMe") != null) {
+            if (CONVERT_PLOTME) {
                 try {
                     new PlotMeConverter(PlotMain.getMain()).runAsync();
                 } catch (final Exception e) {
@@ -1236,35 +1246,42 @@ import java.util.concurrent.TimeUnit;
         Logger.add(LogLevel.GENERAL, "Logger enabled");
     }
 
+    public static boolean enablePlotMe() {
+        File file = new File(new File("").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe-Core.jar");
+        if (file.exists()) {
+            sendConsoleSenderMessage("&b==== Copying 'PlotMe-Core.jar' to 'PlotMe_JAR_relocated' for conversion purposes ===");
+            sendConsoleSenderMessage("&3 - Please ignore the below stacktrace...");
+            try {
+                File to = new File(new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe_JAR_relocated" + File.separator + "PlotMe-Core.jar");
+                File parent = to.getParentFile();
+                if(!parent.exists()){
+                    parent.mkdirs();
+                }
+                to.createNewFile();
+                Files.copy(file, to);
+                file.delete();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return true;
+        }
+        file = new File(new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe.jar");
+        if (file.exists()) {
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * On Load.
      */
     @Override
     @SuppressWarnings("deprecation")
     final public void onEnable() {
-        
-        /* <sarcasm>
-         * Oh, is this what it looks like?
-         * Are we stealing coding from PlotMe again?
-         */
-        
-        //Plugin competition = Bukkit.getPluginManager().getPlugin("PlotSquared");
-        Plugin competition = Bukkit.getPluginManager().getPlugin("PlotMe");
-        if (competition != null) {
-            getPluginLoader().disablePlugin(competition);
+        if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
+            CONVERT_PLOTME = true;
         }
-        /*
-         * Oh no! How unethical of us to steal this above code from PlotMe and only change 1 line of code!
-         * If only we were good enough to code something like this ourselves!
-         * 
-         * You guys are hilarious how you intentionally try to make it difficult for your users to to switch plot plugins.
-         * If we didn't know any better, we'd say you're abusing your position as the most used plot plugin.
-         * </sarcasm>
-         * Side note from Empire92: Your continued bullying doesn't give me much incentive to support PlotMe with any of my other plugins:
-         *  - VoxelSniperRegions
-         *  - BiomeGenerator
-         */
-        
         PlotMain.main = this;
         // Setup the logger mechanics
         setupLogger();

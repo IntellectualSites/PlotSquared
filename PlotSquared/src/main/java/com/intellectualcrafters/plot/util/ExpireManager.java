@@ -87,7 +87,6 @@ public class ExpireManager {
                     final World worldobj = Bukkit.getWorld(world);
                     final PlotManager manager = PlotMain.getPlotManager(world);
                     manager.clearPlot(worldobj, plot, false);
-                    PlotHelper.clear(worldobj, plot, true);
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);
                     PlotMain.removePlot(world, plot.id, true);
@@ -100,7 +99,7 @@ public class ExpireManager {
                 }
                 
             }
-        }, 1, 20);
+        }, 1200, 1200);
     }
     
     public static boolean isExpired(UUID uuid) {

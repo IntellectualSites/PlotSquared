@@ -21,11 +21,13 @@
 
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -312,7 +314,13 @@ public abstract class PlotWorld {
             this.DEFAULT_FLAGS = new Flag[] {};
         }
         else {
-            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
+            try {
+                this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
+            }
+            catch (Exception e) {
+                PlotMain.sendConsoleSenderMessage("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
+                this.DEFAULT_FLAGS = new Flag[] {};
+            }
         }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");

@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.sk89q.worldedit.util.YAMLConfiguration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -53,7 +54,6 @@ public class PlotMeConverter {
      * PlotMain Object
      */
     private final PlotMain plugin;
-
     /**
      * Constructor
      *
@@ -70,15 +70,15 @@ public class PlotMeConverter {
     public void runAsync() throws Exception {
         // We have to make it wait a couple of seconds
         Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
-
             @Override
             public void run() {
                 try {
                     sendMessage("Conversion has started");
                     sendMessage("Connecting to PlotMe DB");
                     final ArrayList<Plot> createdPlots = new ArrayList<>();
-                    final Plugin plotMePlugin = Bukkit.getPluginManager().getPlugin("PlotMe");
-                    final FileConfiguration plotConfig = plotMePlugin.getConfig();
+                    String dataFolder = new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
+                    File plotMeFile = new File(dataFolder + "config.yml");
+                    final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
                     int count = 0;
                     
                     Connection connection;
@@ -93,7 +93,7 @@ public class PlotMeConverter {
                         connection = mySQL.openConnection();
                     }
                     else {
-                        connection = new SQLite(PlotMain.getMain(), plotMePlugin.getDataFolder() + File.separator +"plots.db").openConnection();
+                        connection = new SQLite(PlotMain.getMain(), dataFolder + File.separator +"plots.db").openConnection();
                     }
                     sendMessage("Collecting plot data");
                     ResultSet r;
@@ -105,9 +105,9 @@ public class PlotMeConverter {
                     stmt = connection.createStatement();
                     r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
                     while (r.next()) {
+                        count++;
                         PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         String name = r.getString("owner");
-                        System.out.print("NAME: "+name);
                         String world = r.getString("world");
                         if (!plotSize.containsKey(world)) {
                             int size = r.getInt("topZ") - r.getInt("bottomZ");
@@ -131,7 +131,6 @@ public class PlotMeConverter {
                     
                     r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
                     while (r.next()) {
-                        count++;
                         PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         String name = r.getString("player");
                         String world = r.getString("world");
@@ -170,7 +169,7 @@ public class PlotMeConverter {
                         }
                     }
                     
-                    sendMessage("Collected " + count + "plots from PlotMe");
+                    sendMessage("Collected " + count + " plots from PlotMe");
                     
                     for (String world : plots.keySet()) {
                         sendMessage("Copying config for: "+world);
@@ -200,7 +199,7 @@ public class PlotMeConverter {
                         }
                     }
                     
-                    File PLOTME_DG_FILE = new File(plotMePlugin + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
+                    File PLOTME_DG_FILE = new File(dataFolder + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
                     if (PLOTME_DG_FILE.exists()) {
                         YamlConfiguration PLOTME_DG_YML = YamlConfiguration.loadConfiguration(PLOTME_DG_FILE);
                         try {
@@ -301,8 +300,6 @@ public class PlotMeConverter {
                     }
 
                     PlotMain.setAllPlotsRaw(DBFunc.getPlots());
-                    sendMessage("Disabling PlotMe...");
-                    Bukkit.getPluginManager().disablePlugin(plotMePlugin);
                     sendMessage("Conversion has finished");
                     PlotMain.sendConsoleSenderMessage("&cAlthough the server may be functional in it's current state, it is recommended that you restart the server and remove PlotMe to finalize the installation. Please make careful note of any warning messages that may have showed up during conversion.");
                     

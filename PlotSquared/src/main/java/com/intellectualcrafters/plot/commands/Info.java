@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.InfoInventory;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -174,7 +175,7 @@ import java.util.UUID;
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
-        final String flags = "&6" + (StringUtils.join(plot.settings.flags, "").length() > 0 ? StringUtils.join(plot.settings.flags, "&7, &6") : "none");
+        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.hasRights(player);
 
         String owner = "none";
