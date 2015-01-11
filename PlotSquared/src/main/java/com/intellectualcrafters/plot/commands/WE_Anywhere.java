@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 public class WE_Anywhere extends SubCommand {
 
     public WE_Anywhere() {
-        super("weanywhere", "plots.worldedit.bypass", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
+        super("weanywhere", "plots.admin", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
     }
 
     @Override
@@ -39,9 +39,15 @@ public class WE_Anywhere extends SubCommand {
             PlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
-        PWE.removeMask(plr);
-        PlayerFunctions.sendMessage(plr, "&6Removed your WorldEdit mask");
+        
+        if (PWE.hasMask(plr)) {
+            PWE.removeMask(plr);
+            PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
+        }
+        else {
+            PWE.setMask(plr, plr.getLocation());
+            PlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
+        }
         return true;
     }
-
 }

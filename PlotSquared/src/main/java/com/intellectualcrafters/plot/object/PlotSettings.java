@@ -156,6 +156,9 @@ import java.util.Set;
 
     public ArrayList<PlotComment> getComments(final int tier) {
         final ArrayList<PlotComment> c = new ArrayList<>();
+        if (this.comments == null) {
+            return c;
+        }
         for (final PlotComment comment : this.comments) {
             if (comment.tier == tier) {
                 c.add(comment);

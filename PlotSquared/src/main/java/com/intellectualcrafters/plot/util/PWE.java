@@ -52,7 +52,9 @@ import org.bukkit.entity.Player;
             } else {
                 s = PlotMain.worldEdit.getSession(p);
             }
-
+            if (!PlotMain.isPlotWorld(p.getWorld())) {
+                removeMask(p);
+            }
             final PlotId id = PlayerFunctions.getPlot(l);
             if (id != null) {
                 final Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
@@ -93,6 +95,16 @@ import org.bukkit.entity.Player;
             // PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY,
             // "WorldEdit == Null?");
         }
+    }
+    
+    public static boolean hasMask(final Player p) {
+        LocalSession s;
+        if (PlotMain.worldEdit == null) {
+            s = WorldEdit.getInstance().getSession(p.getName());
+        } else {
+            s = PlotMain.worldEdit.getSession(p);
+        }
+        return !noMask(s);
     }
 
     public static boolean noMask(final LocalSession s) {

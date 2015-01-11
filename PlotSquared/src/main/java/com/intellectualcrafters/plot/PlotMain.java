@@ -210,10 +210,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
 
     /**
-     * If plotme converter is enabled
-     */
-    private static boolean CONVERT_PLOTME = enablePlotMe();
-    /**
      * Return an instance of MySQL
      */
     public static MySQL getMySQL() {
@@ -899,7 +895,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
     public static void worldLoad(WorldLoadEvent event) {
         if (!UUIDHandler.CACHED) {
             UUIDHandler.cacheAll();
-            if (CONVERT_PLOTME) {
+            if (Settings.CONVERT_PLOTME && Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
                 try {
                     new PlotMeConverter(PlotMain.getMain()).runAsync();
                 } catch (final Exception e) {
@@ -1322,50 +1318,12 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
         Logger.setup(log);
         Logger.add(LogLevel.GENERAL, "Logger enabled");
     }
-
-    public static boolean enablePlotMe() {
-        if (!Settings.CONVERT_PLOTME) {
-            return false;
-        }
-        File file = new File(new File("").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe-Core.jar");
-        if (file.exists()) {
-            sendConsoleSenderMessage("&b==== Copying 'PlotMe-Core.jar' to 'PlotMe_JAR_relocated' for conversion purposes ===");
-            sendConsoleSenderMessage("&c - If you do not wish to convert, please stop the server now and set 'plotme-convert.enabled' to false");
-            sendConsoleSenderMessage("&3 - Please ignore the below stacktrace...");
-            try {
-                File to = new File(new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe_JAR_relocated" + File.separator + "PlotMe-Core.jar");
-                File parent = to.getParentFile();
-                if(!parent.exists()){
-                    parent.mkdirs();
-                }
-                to.createNewFile();
-                Files.copy(file, to);
-                file.delete();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                Thread.sleep(5000);
-            } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-            return true;
-        }
-        file = new File(new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe.jar");
-        if (file.exists()) {
-            return true;
-        }
-        return false;
-    }
     
     /**
      * On Load.
      */
     @Override
     final public void onEnable() {
-        if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
-            CONVERT_PLOTME = true;
-        }
         PlotMain.main = this;
         // Setup the logger mechanics
         setupLogger();
