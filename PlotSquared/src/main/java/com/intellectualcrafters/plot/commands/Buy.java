@@ -84,6 +84,9 @@ public class Buy extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
+        if (plot.owner.equals(UUIDHandler.getUUID(plr))) {
+            return sendMessage(plr, C.CANNOT_BUY_OWN);
+        }
         Flag flag = FlagManager.getPlotFlag(plot, "price");
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
@@ -110,6 +113,7 @@ public class Buy extends SubCommand {
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }
+            FlagManager.removePlotFlag(plot, "price");
         }
         plot.owner = UUIDHandler.getUUID(plr);
         DBFunc.setOwner(plot, plot.owner);

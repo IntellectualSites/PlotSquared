@@ -40,7 +40,7 @@ import java.util.UUID;
 public class Inbox extends SubCommand {
 
     public Inbox() {
-        super(Command.INBOX, "Review a the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
+        super(Command.INBOX, "Review the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class Inbox extends SubCommand {
             public void run() {
                 ArrayList<PlotComment> comments = plot.settings.getComments(tier2);
                 if (comments == null) {
-                    comments = DBFunc.getCommenst(world, plot, tier2);
+                    comments = DBFunc.getComments(world, plot, tier2);
                     plot.settings.setComments(comments);
                 }
 

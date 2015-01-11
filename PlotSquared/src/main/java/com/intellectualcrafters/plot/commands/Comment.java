@@ -57,10 +57,8 @@ public class Comment extends SubCommand {
                 final String text = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                 final PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));
                 plot.settings.addComment(comment);
-
                 DBFunc.setComment(plr.getWorld().getName(), plot, comment);
-
-                return true;
+                return sendMessage(plr, C.COMMENT_ADDED);
             } else {
                 return sendMessage(plr, C.NO_PERMISSION, "plots.comment." + args[0].toLowerCase());
             }

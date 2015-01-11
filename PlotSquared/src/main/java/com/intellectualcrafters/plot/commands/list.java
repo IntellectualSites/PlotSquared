@@ -71,8 +71,11 @@ public class list extends SubCommand {
             return true;
         }
         if (args[0].equalsIgnoreCase("forsale") && (plr != null)) {
+            if (PlotMain.economy == null) {
+                return sendMessage(plr, C.ECON_DISABLED);
+            }
             final StringBuilder string = new StringBuilder();
-            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your")).append("\n");
+            string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "buyable")).append("\n");
             int idx = 0;
             for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
                 Flag price = FlagManager.getPlotFlag(p, "price");
@@ -85,7 +88,7 @@ public class list extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
                 return true;
             }
-            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "Includes").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
         }

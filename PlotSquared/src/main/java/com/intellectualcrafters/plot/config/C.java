@@ -58,6 +58,7 @@ public enum C {
     INVALID_INBOX("&cThat is not a valid inbox.\n&6Accepted values: %s"),
     NO_PERM_INBOX("&cYou do not have permission to read that inbox."),
     COMMENT_REMOVED("&aSuccessfully deleted %s."),
+    COMMENT_ADDED("&aA comment has been left"),
     /*
      * Console
      */
@@ -85,6 +86,7 @@ public enum C {
     ECON_DISABLED("&cEconomy is not enabled"),
     CANNOT_AFFORD_PLOT("&cYou cannot afford to buy this plot. It costs &6%s"),
     NOT_FOR_SALE("&cThis plot is not for sale"),
+    CANNOT_BUY_OWN("&cYou cannot buy your own plot"),
     PLOT_SOLD("&aYour plot; &6%s&a, has been sold to &6%s&a for &6$%s"),
     CANNOT_AFFORD_MERGE("&cYou cannot afford to merge the plots. It costs &6%s"),
     ADDED_BALANCE("&6%s &chas been added to your balance"),

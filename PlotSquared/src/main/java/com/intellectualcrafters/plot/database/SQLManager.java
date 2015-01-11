@@ -982,7 +982,7 @@ public class SQLManager implements AbstractDB {
     public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
         final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
         try {
-            final PreparedStatement statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` = ?");
+            final PreparedStatement statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` <= ?");
             statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
             statement.setInt(2, tier);
             final ResultSet set = statement.executeQuery();
