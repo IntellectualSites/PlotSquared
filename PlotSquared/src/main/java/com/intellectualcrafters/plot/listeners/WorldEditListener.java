@@ -211,7 +211,7 @@ import java.util.Set;
         if ((f.getBlockX() != t.getBlockX()) || (f.getBlockZ() != t.getBlockZ())) {
             final PlotId idF = PlayerFunctions.getPlot(f);
             final PlotId idT = PlayerFunctions.getPlot(t);
-            if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+            if ((!PWE.hasMask(e.getPlayer())) && PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
                 return;
             }
             if ((idT != null) && !(idF == idT)) {
