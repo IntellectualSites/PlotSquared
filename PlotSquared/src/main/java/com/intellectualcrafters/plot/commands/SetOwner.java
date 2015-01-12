@@ -38,7 +38,7 @@ import java.util.UUID;
 @SuppressWarnings("deprecation") public class SetOwner extends SubCommand {
 
     public SetOwner() {
-        super("setowner", "plots.admin", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
+        super("setowner", "plots.admin.command.setowner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
     }
 
     /*

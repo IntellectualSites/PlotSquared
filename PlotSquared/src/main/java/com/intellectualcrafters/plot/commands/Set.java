@@ -75,7 +75,7 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.hasRights(plr) && !PlotMain.hasPermission(plr, "plots.admin")) {
+        if (!plot.hasRights(plr) && !PlotMain.hasPermission(plr, "plots.admin.command.set")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

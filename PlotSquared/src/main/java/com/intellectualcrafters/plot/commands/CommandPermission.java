@@ -49,6 +49,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final Player player) {
-        return PlotMain.hasPermission(player, this.permission) || PlotMain.hasPermission(player, "plots.admin");
+        return PlotMain.hasPermission(player, this.permission);
     }
 }

@@ -109,7 +109,7 @@ import java.util.UUID;
                 }
                 if (enteredPlot(f, q)) {
                     final Plot plot = getCurrentPlot(q);
-                    final boolean admin = PlotMain.hasPermission(player, "plots.admin");
+                    final boolean admin = PlotMain.hasPermission(player, "plots.admin.entry.denied");
                     if (plot.deny_entry(player) && !admin) {
                         event.setCancelled(true);
                         return;
@@ -161,7 +161,7 @@ import java.util.UUID;
         if (!isPlotWorld(world)) {
             return;
         }
-        if (PlotMain.hasPermission(event.getPlayer(), "plots.admin")) {
+        if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.other")) {
             return;
         }
         if (isInPlot(event.getBlock().getLocation())) {
@@ -189,8 +189,7 @@ import java.util.UUID;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onPeskyMobsChangeTheWorldLikeWTFEvent( // LOL!
-                                                                    final EntityChangeBlockEvent event) {
+    public static void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
         final World world = event.getBlock().getWorld();
         if (!isPlotWorld(world)) {
             return;
@@ -204,17 +203,17 @@ import java.util.UUID;
             final Block b = event.getBlock();
             final Player p = (Player) e;
             if (!isInPlot(b.getLocation())) {
-                if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     event.setCancelled(true);
                 }
             } else {
                 final Plot plot = getCurrentPlot(b.getLocation());
-                if (plot == null) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (plot == null || !plot.hasOwner()) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         event.setCancelled(true);
                     }
                 } else if (!plot.hasRights(p)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         event.setCancelled(true);
                     }
                 }
@@ -383,39 +382,32 @@ import java.util.UUID;
         if (!isPlotWorld(world)) {
             return;
         }
-        if (PlotMain.hasPermission(event.getPlayer(), "plots.admin")) {
-            return;
-        }
+        Player player = event.getPlayer();
         if (isInPlot(event.getClickedBlock().getLocation())) {
             final Plot plot = getCurrentPlot(event.getClickedBlock().getLocation());
-
-            // They shouldn't be allowed to access other people's chests
-
-            // if (new ArrayList<>(Arrays.asList(new Material[] {
-            // Material.STONE_BUTTON, Material.WOOD_BUTTON,
-            // Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE,
-            // Material.CHEST, Material.TRAPPED_CHEST, Material.TRAP_DOOR,
-            // Material.WOOD_DOOR, Material.WOODEN_DOOR,
-            // Material.DISPENSER, Material.DROPPER
-            //
-            // })).contains(event.getClickedBlock().getType())) {
-            // return;
-            // }
-
+            if (!plot.hasOwner()) {
+                if (PlotMain.hasPermission(player, "plots.admin.interact.unowned")) {
+                    return;
+                }
+            }
             if (PlotMain.booleanFlags.containsKey(event.getClickedBlock().getType())) {
                 final String flag = PlotMain.booleanFlags.get(event.getClickedBlock().getType());
                 if ((FlagManager.getPlotFlag(plot, flag) != null) && getFlagValue(FlagManager.getPlotFlag(plot, flag).getValue())) {
                     return;
                 }
             }
-
             if (!plot.hasRights(event.getPlayer())) {
+                if (PlotMain.hasPermission(player, "plots.admin.interact.other")) {
+                    return;
+                }
                 event.setCancelled(true);
             }
+            return;
         }
-        if (PlayerFunctions.getPlot(event.getClickedBlock().getLocation()) == null) {
-            event.setCancelled(true);
+        if (PlotMain.hasPermission(player, "plots.admin.interact.road")) {
+            return;
         }
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -467,17 +459,17 @@ import java.util.UUID;
             if (e.getPlayer() != null) {
                 final Player p = e.getPlayer();
                 if (!isInPlot(b.getLocation())) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                         e.setCancelled(true);
                     }
                 } else {
                     final Plot plot = getCurrentPlot(b.getLocation());
-                    if (plot == null) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (plot == null || !plot.hasOwner()) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                             e.setCancelled(true);
                         }
                     } else if (!plot.hasRights(p)) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                             e.setCancelled(true);
                         }
                     }
@@ -519,22 +511,29 @@ import java.util.UUID;
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-        if (!PlotMain.hasPermission(e.getPlayer(), "plots.admin")) {
-            final BlockFace bf = e.getBlockFace();
-            final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
-            if (isPlotWorld(b.getLocation())) {
-                if (!isInPlot(b.getLocation())) {
+        final BlockFace bf = e.getBlockFace();
+        final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
+        if (isPlotWorld(b.getLocation())) {
+            if (!isInPlot(b.getLocation())) {
+                if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.road")) {
+                    return;
+                }
+                PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
+                e.setCancelled(true);
+            } else {
+                final Plot plot = getCurrentPlot(b.getLocation());
+                if (plot == null || !plot.hasOwner()) {
+                    if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.unowned")) {
+                        return;
+                    }
                     PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
                     e.setCancelled(true);
-                } else {
-                    final Plot plot = getCurrentPlot(b.getLocation());
-                    if (plot == null) {
-                        PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
-                        e.setCancelled(true);
-                    } else if (!plot.hasRights(e.getPlayer())) {
-                        PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
-                        e.setCancelled(true);
+                } else if (!plot.hasRights(e.getPlayer())) {
+                    if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.other")) {
+                        return;
                     }
+                    PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
+                    e.setCancelled(true);
                 }
             }
         }
@@ -568,21 +567,28 @@ import java.util.UUID;
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketFill(final PlayerBucketFillEvent e) {
-        if (!PlotMain.hasPermission(e.getPlayer(), "plots.admin")) {
-            final Block b = e.getBlockClicked();
-            if (isPlotWorld(b.getLocation())) {
-                if (!isInPlot(b.getLocation())) {
+        final Block b = e.getBlockClicked();
+        if (isPlotWorld(b.getLocation())) {
+            if (!isInPlot(b.getLocation())) {
+                if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.road")) {
+                    return;
+                }
+                PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
+                e.setCancelled(true);
+            } else {
+                final Plot plot = getCurrentPlot(b.getLocation());
+                if (plot == null || !plot.hasOwner()) {
+                    if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.unowned")) {
+                        return;
+                    }
                     PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
                     e.setCancelled(true);
-                } else {
-                    final Plot plot = getCurrentPlot(b.getLocation());
-                    if (plot == null) {
-                        PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
-                        e.setCancelled(true);
-                    } else if (!plot.hasRights(e.getPlayer())) {
-                        PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
-                        e.setCancelled(true);
+                } else if (!plot.hasRights(e.getPlayer())) {
+                    if (PlotMain.hasPermission(e.getPlayer(), "plots.admin.build.other")) {
+                        return;
                     }
+                    PlayerFunctions.sendMessage(e.getPlayer(), C.NO_PLOT_PERMS);
+                    e.setCancelled(true);
                 }
             }
         }
@@ -594,19 +600,19 @@ import java.util.UUID;
         if (isPlotWorld(b.getLocation())) {
             final Player p = e.getPlayer();
             if (!isInPlot(b.getLocation())) {
-                if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                     e.setCancelled(true);
                 }
             } else {
                 final Plot plot = getCurrentPlot(b.getLocation());
-                if (plot == null) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (plot == null || !plot.hasOwner()) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
                 } else if (!plot.hasRights(p)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
@@ -623,19 +629,19 @@ import java.util.UUID;
             final Location l = e.getEntity().getLocation();
             if (isPlotWorld(l)) {
                 if (!isInPlot(l)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.destroy.road")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
                 } else {
                     final Plot plot = getCurrentPlot(l);
-                    if (plot == null) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (plot == null || !plot.hasOwner()) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.destroy.unowned")) {
                             PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                             e.setCancelled(true);
                         }
                     } else if (!plot.hasRights(p)) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.destroy.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                             e.setCancelled(true);
                         }
@@ -651,19 +657,19 @@ import java.util.UUID;
         if (isPlotWorld(l)) {
             final Player p = e.getPlayer();
             if (!isInPlot(l)) {
-                if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (!PlotMain.hasPermission(p, "plots.admin.interact.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                     e.setCancelled(true);
                 }
             } else {
                 final Plot plot = getCurrentPlot(l);
-                if (plot == null) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (plot == null || !plot.hasOwner()) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.interact.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
                 } else if (!plot.hasRights(p)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.interact.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
@@ -688,14 +694,14 @@ import java.util.UUID;
                     return;
                 }
                 if (!isInPlot(l)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.pve.road")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setCancelled(true);
                     }
                 } else {
                     final Plot plot = getCurrentPlot(l);
-                    if (plot == null) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (plot == null || !plot.hasOwner()) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.pve.unowned")) {
                             PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                             e.setCancelled(true);
                             return;
@@ -708,7 +714,7 @@ import java.util.UUID;
                     }
                     assert plot != null;
                     if (!plot.hasRights(p)) {
-                        if (!PlotMain.hasPermission(p, "plots.admin")) {
+                        if (!PlotMain.hasPermission(p, "plots.admin.pve.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                             e.setCancelled(true);
                         }
@@ -724,19 +730,19 @@ import java.util.UUID;
         if (isPlotWorld(l)) {
             final Player p = e.getPlayer();
             if (!isInPlot(l)) {
-                if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (!PlotMain.hasPermission(p, "plots.admin.projectile.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                     e.setHatching(false);
                 }
             } else {
                 final Plot plot = getCurrentPlot(l);
-                if (plot == null) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                if (plot == null || !plot.hasOwner()) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.projectile.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setHatching(false);
                     }
                 } else if (!plot.hasRights(p)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin")) {
+                    if (!PlotMain.hasPermission(p, "plots.admin.projectile.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PLOT_PERMS);
                         e.setHatching(false);
                     }
@@ -754,13 +760,18 @@ import java.util.UUID;
         if (PlotMain.hasPermission(event.getPlayer(), "plots.admin")) {
             return;
         }
+        Player player = event.getPlayer();
         if (isInPlot(event.getBlock().getLocation())) {
             final Plot plot = getCurrentPlot(event.getBlockPlaced().getLocation());
-            if (!plot.hasRights(event.getPlayer())) {
+            if (!plot.hasOwner() && PlotMain.hasPermission(player, "plots.admin.build.unowned")) {
+                return;
+            }
+            if (!plot.hasRights(player) && !PlotMain.hasPermission(player, "plots.admin.build.other")) {
                 event.setCancelled(true);
             }
+            return;
         }
-        if (PlayerFunctions.getPlot(event.getBlockPlaced().getLocation()) == null) {
+        if (!PlotMain.hasPermission(player, "plots.admin.build.road")) {
             event.setCancelled(true);
         }
     }

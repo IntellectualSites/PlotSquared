@@ -54,7 +54,7 @@ public class Setup extends SubCommand implements Listener {
     public final static Map<String, SetupObject> setupMap = new HashMap<>();
 
     public Setup() {
-        super("setup", "plots.admin", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
+        super("setup", "plots.admin.command.setup", "Setup a PlotWorld", "setup {world} {generator}", "setup", CommandCategory.ACTIONS, false);
     }
 
     @Override

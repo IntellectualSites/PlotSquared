@@ -284,7 +284,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
      * @return true if player has the permission
      */
     public static boolean hasPermission(final Player player, final String perm) {
-        if ((player == null) || player.isOp()) {
+        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
             return true;
         }
         if (player.hasPermission(perm)) {
