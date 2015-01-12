@@ -32,15 +32,17 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             name = null;
         }
         if (name != null) {
-            return Bukkit.getOfflinePlayer(name);
-        } else {
-            for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                if (getUUID(player).equals(uuid)) {
-                    return player;
-                }
+            OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+            if (op.hasPlayedBefore()) {
+                return op;
             }
         }
-        return Bukkit.getOfflinePlayer(uuid.toString());
+        for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (getUUID(player).equals(uuid)) {
+                return player;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -19,7 +19,7 @@
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-package com.intellectualcrafters.plot.object;
+package com.intellectualcrafters.unused;
 
 /**
  * @author Citymonstret

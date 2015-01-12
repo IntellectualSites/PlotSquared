@@ -30,17 +30,20 @@ import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.StringComparison;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
@@ -174,23 +177,24 @@ public class Set extends SubCommand {
         }
 
         if (args[0].equalsIgnoreCase("home")) {
-            if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.MISSING_POSITION);
-                return false;
-            }
-            PlotHomePosition position = null;
-            for (final PlotHomePosition p : PlotHomePosition.values()) {
-                if (p.isMatching(args[1])) {
-                    position = p;
+            if (args.length > 1) {
+                if (args[1].equalsIgnoreCase("none")) {
+                    plot.settings.setPosition(null);
+                    DBFunc.setPosition(plr.getWorld().getName(), plot, "");
+                    return true;
                 }
+                return PlayerFunctions.sendMessage(plr, C.HOME_ARGUMENT);
             }
-            if (position == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_POSITION);
-                return false;
-            }
-            DBFunc.setPosition(plr.getWorld().getName(), plot, position.toString());
-            PlayerFunctions.sendMessage(plr, C.POSITION_SET);
-            return true;
+            //set to current location
+            World world = plr.getWorld();
+            Location base = PlotHelper.getPlotBottomLoc(world, plot.id);
+            int y = PlotHelper.getHeighestBlock(world, base.getBlockX(), base.getBlockZ());
+            base.setY(y);
+            Location relative = plr.getLocation().subtract(base);
+            BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+            plot.settings.setPosition(blockloc);
+            DBFunc.setPosition(plr.getWorld().getName(), plot, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
+            return PlayerFunctions.sendMessage(plr, C.POSITION_SET);
         }
 
         if (args[0].equalsIgnoreCase("alias")) {

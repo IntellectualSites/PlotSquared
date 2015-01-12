@@ -180,7 +180,7 @@ import java.util.UUID;
 
         String owner = "none";
         if (plot.owner != null) {
-            owner = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner).getName();
+            owner = UUIDHandler.getName(plot.owner);
         }
         if (owner == null) {
             owner = plot.owner.toString();

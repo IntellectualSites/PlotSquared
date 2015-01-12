@@ -53,18 +53,6 @@ import java.util.*;
         return getCurrentPlot(player) != null;
     }
 
-    /**
-     * @param plot plot
-     *
-     * @return
-     */
-    public static boolean hasExpired(final Plot plot) {
-        final OfflinePlayer player = UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner);
-        final long lp = player.getLastPlayed();
-        final long cu = System.currentTimeMillis();
-        return (lp - cu) > 30l;
-    }
-
     public static ArrayList<PlotId> getPlotSelectionIds(@SuppressWarnings("unused") final World world, final PlotId pos1, final PlotId pos2) {
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {

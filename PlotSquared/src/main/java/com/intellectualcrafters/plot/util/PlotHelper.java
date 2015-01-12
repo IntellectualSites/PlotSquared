@@ -280,7 +280,7 @@ import java.util.UUID;
             return "unknown";
         }
         final OfflinePlayer plr = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-        if (plr == null) {
+        if (!plr.hasPlayedBefore()) {
             return "unknown";
         }
         return plr.getName();
@@ -889,21 +889,18 @@ import java.util.UUID;
      * @return Home Location
      */
     public static Location getPlotHome(final World w, final PlotId plotid) {
-
-        if (getPlot(w, plotid).settings.getPosition() == PlotHomePosition.DEFAULT) {
-
-            final Location bot = getPlotBottomLoc(w, plotid);
-
-            final int x = bot.getBlockX();
-            final int z = bot.getBlockZ() - 2;
-            final int y = getHeighestBlock(w, x, z);
-            return new Location(w, x, y, z);
-        } else {
-            final Location bot = getPlotBottomLoc(w, plotid), top = getPlotTopLoc(w, plotid);
+        Plot plot = getPlot(w, plotid);
+        BlockLoc home = plot.settings.getPosition();
+        final Location bot = getPlotBottomLoc(w, plotid);
+        if (home == null) {
+            final Location top = getPlotTopLoc(w, plotid);
             final int x = top.getBlockX() - bot.getBlockX();
             final int z = top.getBlockZ() - bot.getBlockZ();
             final int y = getHeighestBlock(w, x, z);
             return new Location(w, bot.getBlockX() + (x / 2), y, bot.getBlockZ() + (z / 2));
+        }
+        else {
+            return bot.add(home.x, home.y, home.z);
         }
     }
 

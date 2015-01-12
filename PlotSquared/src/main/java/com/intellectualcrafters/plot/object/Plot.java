@@ -109,7 +109,6 @@ import java.util.UUID;
         this.denied = denied;
         this.trusted = new ArrayList<>();
         this.settings.setAlias("");
-        this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
         this.settings.flags = new HashSet<Flag>();
         this.world = world;
@@ -132,7 +131,6 @@ import java.util.UUID;
         this.denied = denied;
         this.trusted = new ArrayList<>();
         this.settings.setAlias("");
-        this.settings.setPosition(PlotHomePosition.DEFAULT);
         this.delete = false;
         this.settings.flags = new HashSet<Flag>();
         this.world = world;
@@ -152,7 +150,7 @@ import java.util.UUID;
      */
     @Deprecated
     @SuppressWarnings("unused")
-    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Set<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -181,7 +179,7 @@ import java.util.UUID;
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final PlotHomePosition position, final Set<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;

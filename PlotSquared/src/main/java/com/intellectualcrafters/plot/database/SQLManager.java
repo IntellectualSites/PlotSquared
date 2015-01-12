@@ -24,9 +24,9 @@ package com.intellectualcrafters.plot.database;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotHomePosition;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -540,7 +540,7 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(o);
                     uuids.put(o, user);
                 }
-                p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", PlotHomePosition.DEFAULT, null, worldname, new boolean[]{false, false, false, false});
+                p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
             // stmt.close();
@@ -632,15 +632,20 @@ public class SQLManager implements AbstractDB {
                     }
 
                     final String pos = r.getString("position");
-                    if (pos != null) {
-                        for (final PlotHomePosition plotHomePosition : PlotHomePosition.values()) {
-                            if (plotHomePosition.isMatching(pos)) {
-                                if (plotHomePosition != PlotHomePosition.DEFAULT) {
-                                    plot.settings.setPosition(plotHomePosition);
-                                }
-                                break;
+                    
+                    switch (pos.toLowerCase()) {
+                        case "":
+                        case "default":
+                        case "0,0,0":
+                        case "center":
+                            break;
+                        default:
+                            try {
+                                String[] split = pos.split(",");
+                                BlockLoc loc = new BlockLoc(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
+                                plot.settings.setPosition(loc);
                             }
-                        }
+                            catch (Exception e) {}
                     }
                     final Integer m = r.getInt("merged");
                     if (m != null) {
@@ -886,7 +891,6 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setPosition(final String world, final Plot plot, final String position) {
-        plot.settings.setPosition(PlotHomePosition.valueOf(position));
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {

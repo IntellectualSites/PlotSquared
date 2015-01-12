@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.sun.istack.internal.NotNull;
 
+import org.bukkit.Location;
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ import java.util.Set;
     /**
      * Home Position
      */
-    private PlotHomePosition position;
+    private BlockLoc position;
 
     /**
      * Constructor
@@ -112,11 +113,14 @@ import java.util.Set;
         return PlotHelper.getPlotBottomLoc(this.plot.getWorld(), this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
     }
 
-    public PlotHomePosition getPosition() {
+    public BlockLoc getPosition() {
+        if (this.position == null) {
+            return new BlockLoc(0, 0, 0);
+        }
         return this.position;
     }
 
-    public void setPosition(final PlotHomePosition position) {
+    public void setPosition(BlockLoc position) {
         this.position = position;
     }
 
