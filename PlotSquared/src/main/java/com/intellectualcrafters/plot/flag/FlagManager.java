@@ -75,7 +75,9 @@ import java.util.Set;
         ArrayList<Flag> flags = new ArrayList<>();
         flags.addAll(plot.settings.flags);
         PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
-        flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        if (plotworld != null) {
+            flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        }
         for (final Flag myflag : flags) {
             if (myflag.getKey().equals(flag)) {
                 return myflag;

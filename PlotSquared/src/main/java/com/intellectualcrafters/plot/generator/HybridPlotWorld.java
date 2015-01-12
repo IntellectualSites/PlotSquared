@@ -39,7 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class HybridPlotWorld extends PlotWorld {
-
+    
     /*
      * These variables are set to ensure fast access to config settings Strings
      * are used as little as possible to optimize math performance in many of
@@ -68,11 +68,11 @@ public class HybridPlotWorld extends PlotWorld {
     /**
      * Default main block: 1
      */
-    public final static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 1, (byte) 0)};
+    public final static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
     /**
      * Default top blocks: {"2"}
      */
-    public final static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[]{new PlotBlock((short) 2, (byte) 0)};
+    public final static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
     /**
      * Default wall block: 44
      */
@@ -139,15 +139,17 @@ public class HybridPlotWorld extends PlotWorld {
     public short SCHEMATIC_HEIGHT;
     
     public short REQUIRED_CHANGES = 0;
-
+    
     /*
      * Here we are just calling the super method, nothing special
      */
     public HybridPlotWorld(final String worldname) {
         super(worldname);
     }
+    
     public HashMap<ChunkLoc, HashMap<Short, Short>> G_SCH;
     public HashMap<ChunkLoc, HashMap<Short, Byte>> G_SCH_DATA;
+    
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
      * <p/>
@@ -158,9 +160,10 @@ public class HybridPlotWorld extends PlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         // TODO return a set of configuration nodes (used for setup command)
-        return new ConfigurationNode[]{new ConfigurationNode("plot.height", HybridPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", HybridPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", HybridPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", HybridPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", HybridPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", HybridPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", HybridPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true), new ConfigurationNode("road.height", HybridPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", HybridPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", HybridPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", HybridPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true),};
+        return new ConfigurationNode[] { new ConfigurationNode("plot.height", HybridPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", HybridPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", HybridPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", HybridPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", HybridPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", HybridPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", HybridPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
+                new ConfigurationNode("road.height", HybridPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", HybridPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", HybridPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", HybridPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), };
     }
-
+    
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
@@ -194,8 +197,7 @@ public class HybridPlotWorld extends PlotWorld {
         this.PATH_WIDTH_UPPER = (short) (this.PATH_WIDTH_LOWER + this.PLOT_WIDTH + 1);
         try {
             setupSchematics();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             PlotMain.sendConsoleSenderMessage("&c - road schematics are disabled for this world.");
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
@@ -206,7 +208,7 @@ public class HybridPlotWorld extends PlotWorld {
         G_SCH = new HashMap<>();
         this.OFFSET = -1 + 1;
         String schem1Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad";
-        String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname +"/intersection";
+        String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/intersection";
         
         Schematic schem1 = SchematicHandler.getSchematic(schem1Str);
         Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
@@ -232,7 +234,6 @@ public class HybridPlotWorld extends PlotWorld {
         
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
-                ChunkLoc loc = new ChunkLoc(x, z);
                 for (short y = 0; y < h1; y++) {
                     int index = y * w1 * l1 + z * w1 + x;
                     
@@ -240,8 +241,8 @@ public class HybridPlotWorld extends PlotWorld {
                     byte data = blocks1[index].getData();
                     
                     if (id != 0) {
-                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z + this.PATH_WIDTH_LOWER + 1), id, data);
-                        addOverlayBlock((short) (z + this.PATH_WIDTH_LOWER + 1), (short) (y + this.OFFSET), (short) (x - this.PATH_WIDTH_LOWER), id, data);
+                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z + this.PATH_WIDTH_LOWER + 1), id, data, false);
+                        addOverlayBlock((short) (z + this.PATH_WIDTH_LOWER + 1), (short) (y + this.OFFSET), (short) (x - this.PATH_WIDTH_LOWER), id, data, true);
                     }
                 }
             }
@@ -249,28 +250,145 @@ public class HybridPlotWorld extends PlotWorld {
         
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
-                ChunkLoc loc = new ChunkLoc(x, z);
                 for (short y = 0; y < h2; y++) {
                     int index = y * w2 * l2 + z * w2 + x;
-                    
                     short id = blocks2[index].getBlock();
                     byte data = blocks2[index].getData();
                     if (id != 0) {
-                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z - this.PATH_WIDTH_LOWER), id, data);
+                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z - this.PATH_WIDTH_LOWER), id, data, false);
                     }
                 }
             }
         }
-        
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
-    public void addOverlayBlock(short x, short y, short z, short id, byte data) {
+    public boolean isRotate(short id) {
+        switch (id) {
+            case 23:
+                return true;
+            case 26:
+                return true;
+            case 27:
+                return true;
+            case 28:
+                return true;
+            case 29:
+                return true;
+            case 33:
+                return true;
+            case 53:
+                return true;
+            case 54:
+                return true;
+            case 55:
+                return true;
+            case 61:
+                return true;
+            case 62:
+                return true;
+            case 64:
+                return true;
+            case 65:
+                return true;
+            case 68:
+                return true;
+            case 71:
+                return true;
+            case 77:
+                return true;
+            case 86:
+                return true;
+            case 84:
+                return true;
+            case 93:
+                return true;
+            case 94:
+                return true;
+            case 96:
+                return true;
+            case 107:
+                return true;
+            case 108:
+                return true;
+            case 109:
+                return true;
+            case 111:
+                return true;
+            case 119:
+                return true;
+            case 128:
+                return true;
+            case 130:
+                return true;
+            case 131:
+                return true;
+            case 134:
+                return true;
+            case 135:
+                return true;
+            case 136:
+                return true;
+            case 143:
+                return true;
+            case 144:
+                return true;
+            case 145:
+                return true;
+            case 146:
+                return true;
+            case 149:
+                return true;
+            case 150:
+                return true;
+            case 156:
+                return true;
+            case 157:
+                return true;
+            case 158:
+                return true;
+            case 163:
+                return true;
+            case 164:
+                return true;
+            case 167:
+                return true;
+            case 180:
+                return true;
+            case 183:
+                return true;
+            case 184:
+                return true;
+            case 185:
+                return true;
+            case 186:
+                return true;
+            case 187:
+                return true;
+            case 193:
+                return true;
+            case 194:
+                return true;
+            case 195:
+                return true;
+            case 196:
+                return true;
+            case 197:
+                return true;
+            default:
+                return false;
+        }
+    }
+    
+    public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate) {
         if (z < 0) {
             z += this.SIZE;
         }
         if (x < 0) {
             x += this.SIZE;
+        }
+        if (rotate && isRotate(id)) {
+            data = (byte) ((data + 2) % 4);
         }
         ChunkLoc loc = new ChunkLoc(x, z);
         if (!this.G_SCH.containsKey(loc)) {

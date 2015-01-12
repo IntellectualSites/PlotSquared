@@ -34,7 +34,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -147,10 +146,10 @@ public class HybridGen extends PlotGenerator {
      */
     @Override
     public PlotManager getPlotManager() {
-        if (this.manager == null) {
-            this.manager = new HybridPlotManager();
+        if (HybridGen.manager == null) {
+            HybridGen.manager = new HybridPlotManager();
         }
-        return this.manager;
+        return HybridGen.manager;
     }
 
     /**
@@ -252,7 +251,7 @@ public class HybridGen extends PlotGenerator {
                 setBlock(this.result, x, 0, z, (short) 7);
             }
         }
-        HybridPlotManager hpm = ((HybridPlotManager) this.manager); 
+        HybridPlotManager hpm = ((HybridPlotManager) HybridGen.manager); 
         RegionWrapper plot = hpm.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             
@@ -272,8 +271,8 @@ public class HybridGen extends PlotGenerator {
             
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
+                    biomes.setBiome(x, z, this.biome);
                     if (isIn(plot, X + x, Z + z)) {
-                        biomes.setBiome(x, z, this.biome);
                         for (short y = 1; y < this.plotheight; y++) {
                             setBlock(this.result, x, y, z, this.filling);
                         }
