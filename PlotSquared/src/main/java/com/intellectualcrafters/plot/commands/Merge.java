@@ -21,6 +21,15 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+
+import net.milkbowl.vault.economy.Economy;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
@@ -31,15 +40,6 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import net.milkbowl.vault.economy.Economy;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 /**
  * @author Citymonstret

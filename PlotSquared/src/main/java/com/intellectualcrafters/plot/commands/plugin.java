@@ -21,17 +21,18 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 public class plugin extends SubCommand {
 

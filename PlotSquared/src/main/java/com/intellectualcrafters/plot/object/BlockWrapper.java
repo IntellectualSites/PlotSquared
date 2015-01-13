@@ -21,7 +21,6 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -83,7 +82,7 @@ public class BlockWrapper {
      * @param block Block from which we get the data
      */
     @SuppressWarnings({"deprecation", "unused"})
-    public BlockWrapper(@NotNull final Block block) {
+    public BlockWrapper(final Block block) {
         this.x = block.getX();
         this.y = block.getY();
         this.z = block.getZ();
@@ -99,7 +98,7 @@ public class BlockWrapper {
      * @return block created/fetched from settings
      */
     @SuppressWarnings({"unused", "deprecation"})
-    public Block toBlock(@NotNull final World world) {
+    public Block toBlock(final World world) {
         final Block block = world.getBlockAt(this.x, this.y, this.z);
         block.setTypeIdAndData(this.id, this.data, true);
         return block;

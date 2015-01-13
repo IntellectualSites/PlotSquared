@@ -21,12 +21,11 @@
 
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.object.PlotBlock;
+import java.util.ArrayList;
 
 import org.bukkit.block.Biome;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intellectualcrafters.plot.object.PlotBlock;
 
 /**
  * Main Configuration Utility

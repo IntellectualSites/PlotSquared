@@ -21,6 +21,16 @@
 
 package com.intellectualcrafters.plot.api;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
@@ -31,17 +41,11 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.*;
-import com.sun.istack.internal.NotNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.Set;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.PlotSquaredException;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * PlotSquared API
@@ -120,7 +124,7 @@ import java.util.Set;
      *                                                                 instance
      * @see com.intellectualcrafters.plot.PlotMain
      */
-    public PlotAPI(@NotNull final JavaPlugin plugin) {
+    public PlotAPI(final JavaPlugin plugin) {
         this.plotMain = PlotMain.getMain();
         if (this.plotMain == null) {
             throw new PlotSquaredException(PlotSquaredException.PlotError.PLOTMAIN_NULL, "Failed to fetch the plotmain instance, Plot API for " + plugin.getName() + " will be disabled");
@@ -145,7 +149,7 @@ import java.util.Set;
      *
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(@NotNull final Player player) {
+    public Set<Plot> getPlayerPlots(final Player player) {
         return PlotMain.getPlots(player);
     }
 
@@ -159,7 +163,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.PlotMain#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotWorld,
      * com.intellectualcrafters.plot.object.PlotManager)
      */
-    public void addPlotWorld(@NotNull final String world, @NotNull final PlotWorld plotWorld, @NotNull final PlotManager manager) {
+    public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
         PlotMain.addPlotWorld(world, plotWorld, manager);
     }
 
@@ -258,7 +262,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.object.PlotManager
      * @see PlotMain#getPlotManager(org.bukkit.World)
      */
-    public PlotManager getPlotManager(@NotNull final World world) {
+    public PlotManager getPlotManager(final World world) {
         return PlotMain.getPlotManager(world);
     }
 
@@ -273,7 +277,7 @@ import java.util.Set;
      * @see PlotMain#getPlotManager(String)
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
-    public PlotManager getPlotManager(@NotNull final String world) {
+    public PlotManager getPlotManager(final String world) {
         return PlotMain.getPlotManager(world);
     }
 
@@ -288,7 +292,7 @@ import java.util.Set;
      * @see PlotMain#getWorldSettings(org.bukkit.World)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(@NotNull final World world) {
+    public PlotWorld getWorldSettings(final World world) {
         return PlotMain.getWorldSettings(world);
     }
 
@@ -302,7 +306,7 @@ import java.util.Set;
      * @see PlotMain#getWorldSettings(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(@NotNull final String world) {
+    public PlotWorld getWorldSettings(final String world) {
         return PlotMain.getWorldSettings(world);
     }
 
@@ -315,7 +319,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
      * com.intellectualcrafters.plot.config.C, String...)
      */
-    public void sendMessage(@NotNull final Player player, @NotNull final C c) {
+    public void sendMessage(final Player player, final C c) {
         PlayerFunctions.sendMessage(player, c);
     }
 
@@ -327,7 +331,7 @@ import java.util.Set;
      *
      * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, String)
      */
-    public void sendMessage(@NotNull final Player player, @NotNull final String string) {
+    public void sendMessage(final Player player, final String string) {
         PlayerFunctions.sendMessage(player, string);
     }
 
@@ -338,7 +342,7 @@ import java.util.Set;
      *
      * @see PlotMain#sendConsoleSenderMessage(String)
      */
-    public void sendConsoleMessage(@NotNull final String msg) {
+    public void sendConsoleMessage(final String msg) {
         PlotMain.sendConsoleSenderMessage(msg);
     }
 
@@ -350,7 +354,7 @@ import java.util.Set;
      * @see #sendConsoleMessage(String)
      * @see com.intellectualcrafters.plot.config.C
      */
-    public void sendConsoleMessage(@NotNull final C c) {
+    public void sendConsoleMessage(final C c) {
         sendConsoleMessage(c.s());
     }
 
@@ -362,7 +366,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
      * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
-    public void addFlag(@NotNull final AbstractFlag flag) {
+    public void addFlag(final AbstractFlag flag) {
         FlagManager.addFlag(flag);
     }
 
@@ -390,7 +394,7 @@ import java.util.Set;
      * @see PlotHelper#getPlot(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(@NotNull final World world, final int x, final int z) {
+    public Plot getPlot(final World world, final int x, final int z) {
         return PlotHelper.getPlot(world, new PlotId(x, z));
     }
 
@@ -404,7 +408,7 @@ import java.util.Set;
      * @see PlotHelper#getCurrentPlot(org.bukkit.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(@NotNull final Location l) {
+    public Plot getPlot(final Location l) {
         return PlotHelper.getCurrentPlot(l);
     }
 
@@ -418,7 +422,7 @@ import java.util.Set;
      * @see #getPlot(org.bukkit.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(@NotNull final Player player) {
+    public Plot getPlot(final Player player) {
         return this.getPlot(player.getLocation());
     }
 
@@ -431,7 +435,7 @@ import java.util.Set;
      *
      * @see #getPlots(org.bukkit.World, org.bukkit.entity.Player, boolean)
      */
-    public boolean hasPlot(@NotNull final World world, @NotNull final Player player) {
+    public boolean hasPlot(final World world, final Player player) {
         return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
     }
 
@@ -443,7 +447,7 @@ import java.util.Set;
      *
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(@NotNull final World world, @NotNull final Player plr, final boolean just_owner) {
+    public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
         for (final Plot plot : PlotMain.getPlots(world).values()) {
             if (just_owner) {
@@ -469,7 +473,7 @@ import java.util.Set;
      * @see PlotMain#getWorldPlots(org.bukkit.World)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(@NotNull final World world) {
+    public Plot[] getPlots(final World world) {
         return PlotMain.getWorldPlots(world);
     }
 
@@ -493,7 +497,7 @@ import java.util.Set;
      *
      * @see com.intellectualcrafters.plot.PlotMain#isPlotWorld(org.bukkit.World)
      */
-    public boolean isPlotWorld(@NotNull final World world) {
+    public boolean isPlotWorld(final World world) {
         return PlotMain.isPlotWorld(world);
     }
 
@@ -513,7 +517,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.object.PlotHomePosition
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location[] getLocations(@NotNull final Plot p) {
+    public Location[] getLocations(final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return new Location[]{PlotHelper.getPlotBottomLoc(world, p.id), PlotHelper.getPlotTopLoc(world, p.id), PlotHelper.getPlotHome(world, p.id)};
     }
@@ -530,7 +534,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.object.PlotHomePosition
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getHomeLocation(@NotNull final Plot p) {
+    public Location getHomeLocation(final Plot p) {
         return PlotHelper.getPlotHome(p.getWorld(), p.id);
     }
 
@@ -545,7 +549,7 @@ import java.util.Set;
      * com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getBottomLocation(@NotNull final Plot p) {
+    public Location getBottomLocation(final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return PlotHelper.getPlotBottomLoc(world, p.id);
     }
@@ -560,7 +564,7 @@ import java.util.Set;
      * @see PlotHelper#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getTopLocation(@NotNull final Plot p) {
+    public Location getTopLocation(final Plot p) {
         final World world = Bukkit.getWorld(p.world);
         return PlotHelper.getPlotTopLoc(world, p.id);
     }
@@ -574,7 +578,7 @@ import java.util.Set;
      *
      * @see com.intellectualcrafters.plot.util.PlayerFunctions#isInPlot(org.bukkit.entity.Player)
      */
-    public boolean isInPlot(@NotNull final Player player) {
+    public boolean isInPlot(final Player player) {
         return PlayerFunctions.isInPlot(player);
     }
 
@@ -586,7 +590,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.commands.MainCommand#subCommands
      * @see com.intellectualcrafters.plot.commands.SubCommand
      */
-    public void registerCommand(@NotNull final SubCommand c) {
+    public void registerCommand(final SubCommand c) {
         MainCommand.subCommands.add(c);
     }
 
@@ -612,7 +616,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.util.PlayerFunctions#getPlayerPlotCount(org.bukkit.World,
      * org.bukkit.entity.Player)
      */
-    public int getPlayerPlotCount(@NotNull final World world, @NotNull final Player player) {
+    public int getPlayerPlotCount(final World world, final Player player) {
         return PlayerFunctions.getPlayerPlotCount(world, player);
     }
 
@@ -628,7 +632,7 @@ import java.util.Set;
      * org.bukkit.entity.Player)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Set<Plot> getPlayerPlots(@NotNull final World world, @NotNull final Player player) {
+    public Set<Plot> getPlayerPlots(final World world, final Player player) {
         return PlayerFunctions.getPlayerPlots(world, player);
     }
 
@@ -641,7 +645,7 @@ import java.util.Set;
      *
      * @see com.intellectualcrafters.plot.util.PlayerFunctions#getAllowedPlots(org.bukkit.entity.Player)
      */
-    public int getAllowedPlots(@NotNull final Player player) {
+    public int getAllowedPlots(final Player player) {
         return PlayerFunctions.getAllowedPlots(player);
     }
 }

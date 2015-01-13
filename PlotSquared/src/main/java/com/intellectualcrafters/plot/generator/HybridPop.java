@@ -1,17 +1,17 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
+import java.util.HashMap;
+import java.util.Random;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import java.util.HashMap;
-import java.util.Random;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 
 /**
  * @author Citymonstret

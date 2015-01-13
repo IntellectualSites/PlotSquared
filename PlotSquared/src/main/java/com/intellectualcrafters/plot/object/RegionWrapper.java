@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.HashMap;
 
 public class RegionWrapper {
     public final int minX;

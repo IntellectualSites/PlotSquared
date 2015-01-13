@@ -21,7 +21,6 @@
 
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.Bukkit;
 
 /**
  * Updater and DB settings

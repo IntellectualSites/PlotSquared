@@ -21,21 +21,20 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 
 /**
  * @author Jesse Boyd
@@ -319,7 +318,7 @@ public abstract class PlotWorld {
             }
             catch (Exception e) {
                 PlotMain.sendConsoleSenderMessage("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
-                this.DEFAULT_FLAGS = new Flag[] {};
+                this.DEFAULT_FLAGS = new Flag[]{};
             }
         }
         this.PVP = config.getBoolean("event.pvp");

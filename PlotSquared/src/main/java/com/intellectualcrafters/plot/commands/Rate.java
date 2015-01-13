@@ -21,13 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Rate extends SubCommand {
 

@@ -21,11 +21,11 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.util.PWE;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-
-import org.bukkit.entity.Player;
 
 public class WE_Anywhere extends SubCommand {
 

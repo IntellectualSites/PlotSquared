@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,9 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * Created 2014-11-18 for PlotSquared

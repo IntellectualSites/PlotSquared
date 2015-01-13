@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.uuid;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class DefaultUUIDWrapper extends UUIDWrapper {
 

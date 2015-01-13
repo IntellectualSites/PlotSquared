@@ -21,23 +21,21 @@
 
 package com.intellectualcrafters.plot.flag;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.sun.istack.internal.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Flag Manager Utility
@@ -75,7 +73,7 @@ import java.util.Set;
         ArrayList<Flag> flags = new ArrayList<>();
         flags.addAll(plot.settings.flags);
         PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
-        if (plotworld != null) {
+        if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
             flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
         }
         for (final Flag myflag : flags) {
@@ -129,7 +127,9 @@ import java.util.Set;
     public static Set<Flag> getPlotFlags(Plot plot) {
         Set<Flag> plotflags = plot.settings.flags;
         PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
-        plotflags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
+        	plotflags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+        }
         return plotflags;
     }
     

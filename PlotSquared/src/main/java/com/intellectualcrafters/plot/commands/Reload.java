@@ -21,11 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.entity.Player;
 
 public class Reload extends SubCommand {
 

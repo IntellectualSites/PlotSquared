@@ -21,19 +21,19 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotId;
-
-import org.bukkit.OfflinePlayer;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * @author Citymonstret

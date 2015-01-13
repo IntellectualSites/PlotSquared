@@ -21,12 +21,13 @@
 
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.object.Plot;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * @author Citymonstret

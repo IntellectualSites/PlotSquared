@@ -21,9 +21,13 @@
 
 package com.intellectualcrafters.plot.database;
 
-import org.bukkit.plugin.Plugin;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import java.sql.*;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Connects to and uses a MySQL database

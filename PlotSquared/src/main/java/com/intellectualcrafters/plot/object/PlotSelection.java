@@ -21,14 +21,15 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
+import java.util.HashMap;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-import java.util.HashMap;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SetBlockFast;
 
 /**
  * Created 2014-10-12 for PlotSquared

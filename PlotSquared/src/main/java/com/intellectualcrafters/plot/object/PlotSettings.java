@@ -21,18 +21,14 @@
 
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import org.bukkit.block.Biome;
+
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.sun.istack.internal.NotNull;
-
-import org.bukkit.Location;
-import org.bukkit.block.Biome;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * plot settings

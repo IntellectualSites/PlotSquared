@@ -1,9 +1,14 @@
 package com.intellectualsites.translation.bukkit;
 
-import com.intellectualsites.translation.*;
+import java.util.logging.Level;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Level;
+import com.intellectualsites.translation.Translation;
+import com.intellectualsites.translation.TranslationFile;
+import com.intellectualsites.translation.TranslationLanguage;
+import com.intellectualsites.translation.TranslationManager;
+import com.intellectualsites.translation.YamlTranslationFile;
 
 public class TranslationPlugin extends JavaPlugin {
 

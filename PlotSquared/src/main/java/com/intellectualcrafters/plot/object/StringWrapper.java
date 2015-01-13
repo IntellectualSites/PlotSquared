@@ -21,7 +21,6 @@
 
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.config.Settings;
 
 /**
  * @author Empire92

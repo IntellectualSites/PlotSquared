@@ -21,13 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import java.lang.reflect.Field;
 
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 /**
  * @author Citymonstret

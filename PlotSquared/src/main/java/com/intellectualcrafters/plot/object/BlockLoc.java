@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.object;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 
 
 public class BlockLoc {

@@ -21,14 +21,14 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
-
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 /**
  * @author Citymonstret

@@ -21,14 +21,15 @@
 
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 import java.util.ArrayList;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
 /**
  * SetBlockFast class<br> Used to do fast world editing

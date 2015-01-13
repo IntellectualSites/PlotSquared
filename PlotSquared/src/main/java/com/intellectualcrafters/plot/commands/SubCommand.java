@@ -21,12 +21,13 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 /**
  * SubCommand class

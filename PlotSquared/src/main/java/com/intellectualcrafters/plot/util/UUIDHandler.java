@@ -2,9 +2,6 @@ package com.intellectualcrafters.plot.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
@@ -21,7 +18,6 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 
 public class UUIDHandler {
     

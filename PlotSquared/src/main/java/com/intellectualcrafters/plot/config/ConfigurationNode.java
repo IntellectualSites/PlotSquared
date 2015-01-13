@@ -21,14 +21,14 @@
 
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.config.Configuration.SettingValue;
-import com.intellectualcrafters.plot.object.PlotBlock;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellectualcrafters.plot.config.Configuration.SettingValue;
+import com.intellectualcrafters.plot.object.PlotBlock;
 
 /**
  * Configuration Node

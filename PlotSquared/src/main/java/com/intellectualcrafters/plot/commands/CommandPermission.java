@@ -21,8 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
 import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.PlotMain;
 
 /**
  * Created by Citymonstret on 2014-08-03.

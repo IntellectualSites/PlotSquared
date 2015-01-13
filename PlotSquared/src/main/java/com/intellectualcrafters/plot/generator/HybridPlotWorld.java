@@ -23,6 +23,9 @@ package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.ConfigurationSection;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -34,9 +37,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class HybridPlotWorld extends PlotWorld {
     

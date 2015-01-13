@@ -21,6 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -30,9 +33,6 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 /**
  * Created 2014-08-01 for PlotSquared

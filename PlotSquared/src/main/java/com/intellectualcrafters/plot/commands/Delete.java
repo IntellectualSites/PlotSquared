@@ -21,6 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -28,8 +32,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.entity.Player;
 
 public class Delete extends SubCommand {
 

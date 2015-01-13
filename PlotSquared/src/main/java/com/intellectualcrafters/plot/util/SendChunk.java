@@ -1,16 +1,17 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)

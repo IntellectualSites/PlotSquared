@@ -21,6 +21,12 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -30,12 +36,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * @author Citymonstret

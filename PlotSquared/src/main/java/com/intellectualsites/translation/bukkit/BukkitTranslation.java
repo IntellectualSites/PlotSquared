@@ -1,13 +1,14 @@
 package com.intellectualsites.translation.bukkit;
 
+import java.io.File;
+
+import org.bukkit.Material;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
 import com.intellectualsites.translation.TranslationObject;
-import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 /**
  * @author Citymonstret

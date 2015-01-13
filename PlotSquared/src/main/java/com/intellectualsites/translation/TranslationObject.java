@@ -1,6 +1,5 @@
 package com.intellectualsites.translation;
 
-import com.sun.istack.internal.NotNull;
 
 public class TranslationObject {
 
@@ -13,7 +12,7 @@ public class TranslationObject {
     // Like a plugin name for example | can be null
     private final String creationDescription;
 
-    public TranslationObject(@NotNull final String key, @NotNull final String defaultValue, String description, String creationDescription) {
+    public TranslationObject(final String key, final String defaultValue, String description, String creationDescription) {
         if (description == null) {
             description = "";
         }

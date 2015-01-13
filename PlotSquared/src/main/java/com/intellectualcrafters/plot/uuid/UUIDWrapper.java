@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.uuid;
 
+import java.util.UUID;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public abstract class UUIDWrapper {
     public abstract UUID getUUID(Player player);
