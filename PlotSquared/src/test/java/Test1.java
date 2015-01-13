@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.UUID;
 
 public class Test1 {
@@ -124,7 +125,7 @@ public class Test1 {
     public boolean test4_InitPlot() {
         boolean passed = false;
         try {
-            new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false});
+            new Plot(new PlotId(0, 0), DBFunc.everyone, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, null, null, "testworld", new boolean[]{false, false, false, false});
             passed = true;
         } catch (final Throwable ignored) {
 
@@ -163,10 +164,6 @@ public class Test1 {
                 }
 
                 @Override
-                public void setFlags(final String world, final Plot plot, final Flag[] flags) {
-                }
-
-                @Override
                 public void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
                 }
 
@@ -195,14 +192,6 @@ public class Test1 {
                 }
 
                 @Override
-                public void purge(final String world) {
-                }
-
-                @Override
-                public void purge(final String world, final PlotId id) {
-                }
-
-                @Override
                 public HashMap<String, Object> getSettings(final int id) {
                     return null;
                 }
@@ -220,7 +209,7 @@ public class Test1 {
 
                     final PlotId id = new PlotId(0, 0);
 
-                    plots.get("testworld").put(id, new Plot(id, DBFunc.everyone, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, PlotHomePosition.DEFAULT, null, "testworld", new boolean[]{false, false, false, false}));
+                    plots.get("testworld").put(id, new Plot(id, DBFunc.everyone, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), null, null, null, "testworld", new boolean[]{false, false, false, false}));
 
                     return plots;
                 }
@@ -261,6 +250,24 @@ public class Test1 {
 
                 @Override
                 public void createPlotAndSettings(Plot plot) {
+                    // TODO Auto-generated method stub
+                    
+                }
+
+                @Override
+                public void setFlags(String world, Plot plot, Set<Flag> flags) {
+                    // TODO Auto-generated method stub
+                    
+                }
+
+                @Override
+                public void purgeIds(String world, Set<Integer> uniqueIds) {
+                    // TODO Auto-generated method stub
+                    
+                }
+
+                @Override
+                public void purge(String world, Set<PlotId> plotIds) {
                     // TODO Auto-generated method stub
                     
                 }
