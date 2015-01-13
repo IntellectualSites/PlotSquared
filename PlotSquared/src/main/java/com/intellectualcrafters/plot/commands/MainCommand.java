@@ -65,9 +65,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
-            if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
-                cmds.add(c);
-            }
+        	if (!c.isPlayer || player != null) {
+	            if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
+	                cmds.add(c);
+	            }
+        	}
         }
         return cmds;
     }
