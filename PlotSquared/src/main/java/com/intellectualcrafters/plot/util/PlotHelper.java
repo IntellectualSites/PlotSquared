@@ -64,6 +64,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static boolean canSendChunk = false;
     public static ArrayList<String> runners_p = new ArrayList<>();
     static long state = 1;
+    public static HashMap<String, PlotId> lastPlot;
+    public static HashMap<String, Integer> worldBorder;
 
     /**
      * direction 0 = north, 1 = south, etc:

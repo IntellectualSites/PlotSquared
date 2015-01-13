@@ -36,9 +36,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 
-@SuppressWarnings("deprecation") public class Auto extends SubCommand {
-    public static PlotId lastPlot = new PlotId(0, 0);
-
+public class Auto extends SubCommand {
     public Auto() {
         super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
     }
@@ -159,23 +157,22 @@ import com.intellectualcrafters.plot.util.PlotHelper;
             // }
         }
         boolean br = false;
+        String worldname = world.getName();
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
-                final Plot plot = PlotHelper.getPlot(world, Auto.lastPlot);
+                final Plot plot = PlotHelper.getPlot(world, getLastPlot(worldname));
                 if ((plot.owner == null)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
-                    final PlotWorld pw = PlotMain.getWorldSettings(world);
-                    final Plot plot2 = PlotMain.getPlots(world).get(plot.id);
                 }
-                Auto.lastPlot = getNextPlot(Auto.lastPlot, 1);
+                PlotHelper.lastPlot.put(worldname, getNextPlot(getLastPlot(worldname), 1));
             }
         } else {
             boolean lastPlot = true;
             while (!br) {
-                final PlotId start = getNextPlot(Auto.lastPlot, 1);
+                final PlotId start = getNextPlot(getLastPlot(worldname), 1);
                 // Checking if the current set of plots is a viable option.
-                Auto.lastPlot = start;
+                PlotHelper.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
                 if ((PlotMain.getPlots(world).get(start) != null) && (PlotMain.getPlots(world).get(start).owner != null)) {
@@ -196,15 +193,20 @@ import com.intellectualcrafters.plot.util.PlotHelper;
                         return false;
                     }
                     br = true;
-                    final PlotWorld pw = PlotMain.getWorldSettings(world);
-                    final Plot plot2 = PlotMain.getPlots(world).get(start);
                 }
             }
         }
-        Auto.lastPlot  = new PlotId(0, 0);
+        PlotHelper.lastPlot.put(worldname, new PlotId(0, 0));
         return true;
     }
 
+    public PlotId getLastPlot(String world) {
+    	if (PlotHelper.lastPlot == null) {
+    		PlotHelper.lastPlot.put(world, new PlotId(0,0));
+    	}
+    	return PlotHelper.lastPlot.get(world);
+    }
+    
     public boolean isUnowned(final World world, final PlotId pos1, final PlotId pos2) {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
