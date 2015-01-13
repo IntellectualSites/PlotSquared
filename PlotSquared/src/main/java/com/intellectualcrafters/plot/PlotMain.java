@@ -1498,6 +1498,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
                 final RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
                 if (economyProvider != null) {
                     economy = economyProvider.getProvider();
+                    MainCommand.subCommands.add(new Buy());
                 }
             }
             useEconomy = (economy != null);

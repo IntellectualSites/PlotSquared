@@ -92,13 +92,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.worldcretornica</groupId>
-            <artifactId>PlotMe</artifactId>
-            <version>0.13d-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/plotme-0.13f.jar</systemPath>
-        </dependency>
-        <dependency>
 		   <groupId>junit</groupId>
 		   <artifactId>junit</artifactId>
 		   <version>4.11</version>
