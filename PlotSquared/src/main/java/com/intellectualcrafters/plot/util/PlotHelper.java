@@ -900,7 +900,8 @@ import java.util.UUID;
             return new Location(w, bot.getBlockX() + (x / 2), y, bot.getBlockZ() + (z / 2));
         }
         else {
-            return bot.add(home.x, home.y, home.z);
+        	final int y = getHeighestBlock(w, home.x, home.z);
+            return bot.add(home.x, home.y + y, home.z);
         }
     }
 
