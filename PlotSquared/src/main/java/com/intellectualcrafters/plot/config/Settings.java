@@ -51,7 +51,7 @@ public class Settings {
     /**
      * Default kill road mobs: true
      */
-    public final static boolean KILL_ROAD_MOBS_DEFAULT = true;
+    public final static boolean KILL_ROAD_MOBS_DEFAULT = false;
     /**
      * Default mob pathfinding: true
      */
