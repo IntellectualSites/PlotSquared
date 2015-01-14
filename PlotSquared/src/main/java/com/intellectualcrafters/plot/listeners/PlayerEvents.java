@@ -93,7 +93,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
+public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
     @EventHandler
     public static void onWorldLoad(final WorldLoadEvent event) {
@@ -135,6 +135,24 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
                 if (!isPlotWorld(player.getWorld())) {
                     return;
+                }
+                String worldname = q.getWorld().getName();
+                if (PlotHelper.worldBorder.containsKey(worldname)) {
+                	int border = PlotHelper.worldBorder.get(worldname);
+                	boolean passed = false;
+                	if (t.getBlockX() >= border) {
+                		q.setX(border);
+                		passed = true;
+                	}
+                	if (t.getBlockZ() >= border) {
+                		q.setZ(border);
+                		passed = true;
+                	}
+                	if (passed) {
+                		event.setTo(q);
+                		PlayerFunctions.sendMessage(player, C.BORDER);
+                		return;
+                	}
                 }
                 if (enteredPlot(f, q)) {
                     final Plot plot = getCurrentPlot(q);

@@ -58,6 +58,7 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_EGGS_DEFAULT = false;
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
+    public final static boolean WORLD_BORDER_DEFAULT = false;
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     @SuppressWarnings("deprecation")
@@ -285,6 +286,7 @@ public abstract class PlotWorld {
     public boolean SPAWN_EGGS;
     public boolean SPAWN_CUSTOM;
     public boolean SPAWN_BREEDING;
+    public boolean WORLD_BORDER;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -308,6 +310,7 @@ public abstract class PlotWorld {
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
+        this.WORLD_BORDER = config.getBoolean("world.border");
         List<String> flags = config.getStringList("flags.default");
         if (flags == null) {
             this.DEFAULT_FLAGS = new Flag[] {};
@@ -357,6 +360,7 @@ public abstract class PlotWorld {
         options.put("event.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
+        options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
         final ConfigurationNode[] settings = getSettingNodes();
         /*
          * Saving generator specific settings

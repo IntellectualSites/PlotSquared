@@ -37,6 +37,10 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  * @author Citymonstret
  */
 public enum C {
+	/*
+	 * Border
+	 */
+	BORDER("&cYou are outside the current map border"),
     /*
      * Unclaim
      */

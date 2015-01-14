@@ -928,22 +928,19 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
                 sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
                 sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
             }
-
             if (!config.contains(path)) {
                 config.createSection(path);
             }
-            
             plotWorld.saveConfiguration(config.getConfigurationSection(path));
             plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
-
             try {
                 config.save(configFile);
             } catch (final IOException e) {
                 e.printStackTrace();
             }
-
             // Now add it
             addPlotWorld(world, plotWorld, plotManager);
+            PlotHelper.setupBorder(world);
         } else {
             if (worlds.contains(world)) {
                 sendConsoleSenderMessage("&cWorld '" + world + "' in settings.yml is not using PlotSquared generator!");

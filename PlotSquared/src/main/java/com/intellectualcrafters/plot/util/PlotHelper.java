@@ -64,9 +64,27 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static boolean canSendChunk = false;
     public static ArrayList<String> runners_p = new ArrayList<>();
     static long state = 1;
-    public static HashMap<String, PlotId> lastPlot;
-    public static HashMap<String, Integer> worldBorder;
+    public static HashMap<String, PlotId> lastPlot = new HashMap<>();
+    public static HashMap<String, Integer> worldBorder = new HashMap<>();
 
+    public static int getBorder(World world) {
+    	String worldname = world.getName();
+    	if (worldBorder.containsKey(worldname)) {
+    		return worldBorder.get(worldname);
+    	}
+    	return Integer.MAX_VALUE;
+    }
+    
+    public static void setupBorder(String world) {
+    	PlotWorld plotworld = PlotMain.getWorldSettings(world);
+    	if (!plotworld.WORLD_BORDER) {
+    		return;
+    	}
+    	for (Plot plot : PlotMain.getPlots(world).values()) {
+    		updateWorldBorder(plot);
+    	}
+    }
+    
     /**
      * direction 0 = north, 1 = south, etc:
      *
@@ -434,8 +452,27 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return true;
     }
+    
+    public static void updateWorldBorder(Plot plot) {
+    	String world = plot.world;
+    	PlotManager manager = PlotMain.getPlotManager(world);
+    	PlotWorld plotworld = PlotMain.getWorldSettings(world);
+    	Location bot = manager.getPlotBottomLocAbs(plotworld, plot.id);
+		Location top = manager.getPlotTopLocAbs(plotworld, plot.id);
+		int border = worldBorder.get(plot.world);
+		int botmax = Math.max(Math.abs(bot.getBlockX()), Math.abs(bot.getBlockZ()));
+		int topmax = Math.max(Math.abs(top.getBlockX()), Math.abs(top.getBlockZ()));
+		int max = Math.max(botmax, topmax);
+		if (max > border ) {
+			worldBorder.put(plot.world, max);
+		}
+    }
 
     public static boolean createPlot(final Player player, final Plot plot) {
+    	
+    	if (PlotHelper.worldBorder.containsKey(plot.world)) {
+    		updateWorldBorder(plot);
+    	}
         final World w = plot.getWorld();
         final Plot p = new Plot(plot.id, UUIDHandler.getUUID(player), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotMain.updatePlot(p);
