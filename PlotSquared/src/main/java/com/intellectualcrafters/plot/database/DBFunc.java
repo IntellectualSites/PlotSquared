@@ -214,8 +214,8 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
-        return dbManager.getComments(world, plot, tier);
+    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, final boolean below) {
+        return dbManager.getComments(world, plot, tier, below);
     }
 
     /**

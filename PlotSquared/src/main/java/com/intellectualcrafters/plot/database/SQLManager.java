@@ -977,11 +977,20 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `tier` = ? AND `sender` = ?");
-                    statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, comment.comment);
-                    statement.setInt(3, comment.tier);
-                    statement.setString(4, comment.senderName);
+                	PreparedStatement statement;
+                	if (plot != null) {
+	                    statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `tier` = ? AND `sender` = ?");
+	                    statement.setInt(1, getId(world, plot.id));
+	                    statement.setString(2, comment.comment);
+	                    statement.setInt(3, comment.tier);
+	                    statement.setString(4, comment.senderName);
+                	}
+                	else {
+                		statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `comment` = ? AND `tier` = ? AND `sender` = ?");
+	                    statement.setString(1, comment.comment);
+	                    statement.setInt(2, comment.tier);
+	                    statement.setString(3, comment.senderName);
+                	}
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -993,12 +1002,20 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
+    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, boolean below) {
         final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
         try {
-            final PreparedStatement statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` <= ?");
-            statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
-            statement.setInt(2, tier);
+            final PreparedStatement statement;
+            String comparison = below ? ">=" : "=";
+            if (plot != null) {
+            	statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` " + comparison + " ?");
+            	statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
+                statement.setInt(2, tier);
+            }
+            else {
+            	statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `tier` " + comparison + " ?");
+                statement.setInt(1, tier);
+            }
             final ResultSet set = statement.executeQuery();
             PlotComment comment;
             while (set.next()) {
