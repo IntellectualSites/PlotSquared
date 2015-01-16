@@ -310,7 +310,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                 }
             }
             if (plr == null) {
-                PlotMain.sendConsoleSenderMessage(c);
+                PlotMain.sendConsoleSenderMessage(msg);
             }
             else {
                 sendMessage(plr, msg);
