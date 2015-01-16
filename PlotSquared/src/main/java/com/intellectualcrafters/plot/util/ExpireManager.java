@@ -98,8 +98,13 @@ public class ExpireManager {
                     PlotMain.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(0);
                     PlotMain.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
-                    if ((Math.abs(plot.id.x) < Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) < Math.abs(Auto.lastPlot.y))) {
-                        Auto.lastPlot = plot.id;
+                    String owner;
+                    PlotMain.sendConsoleSenderMessage("&3 - World: "+plot.world);
+                    if (plot.hasOwner()) {
+                    	PlotMain.sendConsoleSenderMessage("&3 - Owner: "+UUIDHandler.getName(plot.owner));
+                    }
+                    else {
+                    	PlotMain.sendConsoleSenderMessage("&3 - Owner: Unowned");
                     }
                     return;
                 }
