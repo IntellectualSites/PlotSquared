@@ -203,7 +203,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 player.setPlayerWeather(getWeatherType(FlagManager.getPlotFlag(plot, "weather").getValue()));
             }
             if ((booleanFlag(plot, "titles") || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
-                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%y%", plot.id.y + "").replaceAll("%world%", plot.world + "");
+                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
                 final ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
