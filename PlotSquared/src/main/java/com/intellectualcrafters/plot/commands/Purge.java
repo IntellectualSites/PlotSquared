@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Purge extends SubCommand {
+@SuppressWarnings({"javadoc"}) public class Purge extends SubCommand {
 
     public Purge() {
         super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
@@ -124,6 +124,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         if (arg.equals("all")) {
             Set<PlotId> ids = PlotMain.getPlots(world).keySet();
+            if (ids.size() == 0) {
+            	return PlayerFunctions.sendMessage(null, "&cNo plots found");
+            }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
         }
@@ -138,6 +141,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                     }
                 }
             }
+            if (ids.size() == 0) {
+            	return PlayerFunctions.sendMessage(null, "&cNo plots found");
+            }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
         }
@@ -148,6 +154,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (plot.owner == null) {
                     ids.add(plot.id);
                 }
+            }
+            if (ids.size() == 0) {
+            	return PlayerFunctions.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());

@@ -201,7 +201,7 @@ public class Auto extends SubCommand {
     }
 
     public PlotId getLastPlot(String world) {
-    	if (PlotHelper.lastPlot == null) {
+    	if (PlotHelper.lastPlot == null || !PlotHelper.lastPlot.containsKey(world)) {
     		PlotHelper.lastPlot.put(world, new PlotId(0,0));
     	}
     	return PlotHelper.lastPlot.get(world);

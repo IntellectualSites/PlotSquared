@@ -831,37 +831,36 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * Purge all plots with the f ollowing database IDs
+     * Purge all plots with the following database IDs
      */
     public void purgeIds(final String world, final Set<Integer> uniqueIds) {
         if (uniqueIds.size() > 0) {
             try {
 
-                String prefix = "";
+                String stmt_prefix = "";
                 final StringBuilder idstr = new StringBuilder("");
 
                 for (final Integer id : uniqueIds) {
-                    idstr.append(prefix + id);
-                    prefix = " OR `plot_plot_id` = ";
+                    idstr.append(stmt_prefix + id);
+                    stmt_prefix = " OR `plot_plot_id` = ";
                 }
-
-                PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
+                PreparedStatement stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
                 stmt.executeUpdate();
                 stmt.close();
 
-                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr + "");
                 stmt.executeUpdate();
                 stmt.close();
 
-                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr + "");
                 stmt.executeUpdate();
                 stmt.close();
 
-                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
                 stmt.executeUpdate();
                 stmt.close();
 
-                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + prefix + "plot` WHERE `world` = ?");
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot` WHERE `world` = ?");
                 stmt.setString(1, world);
                 stmt.executeUpdate();
                 stmt.close();
@@ -875,6 +874,9 @@ public class SQLManager implements AbstractDB {
     }
     @Override
     public void purge(final String world, Set<PlotId> plots) {
+    	for (PlotId id : plots) {
+    		PlotMain.removePlot(world, id, true);
+    	}
         PreparedStatement stmt;
         try {
             stmt = SQLManager.this.connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + this.prefix + "plot` WHERE `world` = ?");
