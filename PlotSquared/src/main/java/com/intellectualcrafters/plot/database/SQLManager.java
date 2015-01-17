@@ -88,7 +88,7 @@ public class SQLManager implements AbstractDB {
 
         // schedule reconnect
         if (PlotMain.getMySQL() != null) {
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+            Bukkit.getScheduler().runTaskTimer(PlotMain.getMain(), new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -283,7 +283,6 @@ public class SQLManager implements AbstractDB {
             stmt.executeUpdate();
             stmt.close();
         } catch (final Exception e) {
-            e.printStackTrace();
             PlotMain.sendConsoleSenderMessage("&6[WARN] "+"Could not bulk save. Conversion may be slower...");
             try {
                 for (Plot plot : plots) {

@@ -240,6 +240,7 @@ public class PlotMeConverter {
                     }
                     
                     sendMessage("Creating plot DB");
+                    Thread.sleep(1000);
                     DBFunc.createPlots(createdPlots);
                     sendMessage("Creating settings/helpers DB");
                     DBFunc.createAllSettingsAndHelpers(createdPlots);

@@ -71,7 +71,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      */
     public static Flag getPlotFlag(Plot plot, String flag) {
         ArrayList<Flag> flags = new ArrayList<>();
-        flags.addAll(plot.settings.flags);
+        if (plot.settings.flags != null && plot.settings.flags.size() > 0) {
+        	flags.addAll(plot.settings.flags);
+        }
         PlotWorld plotworld = PlotMain.getWorldSettings(plot.world);
         if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
             flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
@@ -91,6 +93,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @return
      */
     public static Flag getPlotFlagAbs(Plot plot, String flag) {
+    	if (plot.settings.flags == null || plot.settings.flags.size() == 0) {
+        	return null;
+        }
         for (final Flag myflag : plot.settings.flags) {
             if (myflag.getKey().equals(flag)) {
                 return myflag;
