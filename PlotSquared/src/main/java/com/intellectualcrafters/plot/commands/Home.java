@@ -65,7 +65,7 @@ public class Home extends SubCommand {
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
                         if (temp.getOwner().equals(UUIDHandler.getUUID(plr))) {
-                            PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
+                            teleportPlayer(plr, temp);
                             return true;
                         }
                     }
@@ -79,11 +79,16 @@ public class Home extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
-            PlotMain.teleportPlayer(plr, plr.getLocation(), plots[id - 1]);
+            teleportPlayer(plr, plots[id - 1]);
             return true;
         } else {
             PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
             return true;
         }
     }
+    
+    public void teleportPlayer(Player player, Plot plot) {
+    	PlotMain.teleportPlayer(player, player.getLocation(), plot);
+    }
+    
 }

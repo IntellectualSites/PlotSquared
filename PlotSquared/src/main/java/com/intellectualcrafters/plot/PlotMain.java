@@ -575,10 +575,11 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
      * @return true if successful
      */
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
-        final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
+    	Plot bot = PlayerFunctions.getBottomPlot(player.getWorld(), plot);
+        final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            final Location location = PlotHelper.getPlotHome(Bukkit.getWorld(plot.world), plot);
+            final Location location = PlotHelper.getPlotHome(Bukkit.getWorld(bot.world), bot);
             if ((location.getBlockX() >= 29999999) || (location.getBlockX() <= -29999999) || (location.getBlockZ() >= 299999999) || (location.getBlockZ() <= -29999999)) {
                 event.setCancelled(true);
                 return false;

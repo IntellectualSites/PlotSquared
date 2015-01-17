@@ -61,7 +61,6 @@ public abstract class PlotWorld {
     public final static boolean WORLD_BORDER_DEFAULT = false;
     // TODO make this configurable
     // make non static and static_default_valu + add config option
-    @SuppressWarnings("deprecation")
     public static List<Material> BLOCKS;                                           /*
      * =
      * new
@@ -258,7 +257,6 @@ public abstract class PlotWorld {
      */
 
     static {
-        // TODO: Let jesse decide if this is stupid or not
         BLOCKS = new ArrayList<>();
         for (final Material material : Material.values()) {
             if (material.isBlock() && material.isSolid() && !material.hasGravity() && !material.isTransparent() && material.isOccluding() && (material != Material.DROPPER)) {
