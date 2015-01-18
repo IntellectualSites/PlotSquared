@@ -148,7 +148,7 @@ public class Test1 {
             DBFunc.dbManager = new AbstractDB() {
 
                 @Override
-                public void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+                public void setTrusted(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
@@ -164,11 +164,11 @@ public class Test1 {
                 }
 
                 @Override
-                public void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
+                public void setHelper(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
-                public void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
+                public void setDenied(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
@@ -180,15 +180,15 @@ public class Test1 {
                 }
 
                 @Override
-                public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+                public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
-                public void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
+                public void removeHelper(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
-                public void removeDenied(final String world, final Plot plot, final OfflinePlayer player) {
+                public void removeDenied(final String world, final Plot plot, final UUID uuid) {
                 }
 
                 @Override
@@ -221,11 +221,6 @@ public class Test1 {
                 @Override
                 public int getId(final String world, final PlotId id2) {
                     return 0;
-                }
-
-                @Override
-                public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier) {
-                    return null;
                 }
 
                 @Override
@@ -275,6 +270,11 @@ public class Test1 {
                     // TODO Auto-generated method stub
                     
                 }
+
+				@Override
+				public ArrayList<PlotComment> getComments(String world, Plot plot, int tier, boolean below) {
+					return null;
+				}
             };
             passed = true;
         } catch (final Throwable e) {
