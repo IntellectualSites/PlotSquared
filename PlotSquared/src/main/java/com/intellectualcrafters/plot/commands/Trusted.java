@@ -77,21 +77,16 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
-                OfflinePlayer player = null;
                 if (plot.helpers.contains(uuid)) {
                     plot.helpers.remove(uuid);
-                    player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    DBFunc.removeHelper(plr.getWorld().getName(), plot, player);
+                    DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
                 }
                 if (plot.denied.contains(uuid)) {
                     plot.denied.remove(uuid);
-                    if (player == null) {
-                        player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    }
-                    DBFunc.removeDenied(plr.getWorld().getName(), plot, player);
+                    DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
                 }
                 plot.addTrusted(uuid);
-                DBFunc.setTrusted(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+                DBFunc.setTrusted(plr.getWorld().getName(), plot, uuid);
                 final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
@@ -108,13 +103,13 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                     return true;
                 }
                 plot.removeTrusted(uuid);
-                DBFunc.removeTrusted(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+                DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
                 PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
-            DBFunc.removeTrusted(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+            DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);

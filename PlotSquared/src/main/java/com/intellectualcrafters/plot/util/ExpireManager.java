@@ -146,7 +146,7 @@ public class ExpireManager {
                 continue;
             }
             OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            if (!op.hasPlayedBefore()) {
+            if (op==null || !op.hasPlayedBefore()) {
                 toRemove.add(plot);
                 PlotMain.removePlot(plot.world, plot.id, true);
                 continue;

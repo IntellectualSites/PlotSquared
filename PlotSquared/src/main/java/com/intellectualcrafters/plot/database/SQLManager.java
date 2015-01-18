@@ -1060,14 +1060,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
+    public void removeHelper(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1083,14 +1083,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+    public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1106,14 +1106,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
+    public void setHelper(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1147,14 +1147,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
+    public void setTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1170,14 +1170,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void removeDenied(final String world, final Plot plot, final OfflinePlayer player) {
+    public void removeDenied(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
@@ -1193,14 +1193,14 @@ public class SQLManager implements AbstractDB {
      * @param player
      */
     @Override
-    public void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
+    public void setDenied(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
                     statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, UUIDHandler.getUUID(player).toString());
+                    statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {

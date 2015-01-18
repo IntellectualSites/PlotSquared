@@ -77,21 +77,16 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                     PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
-                OfflinePlayer player = null;
                 if (plot.trusted.contains(uuid)) {
                     plot.trusted.remove(uuid);
-                    player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, player);
+                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
                 }
                 if (plot.helpers.contains(uuid)) {
                     plot.helpers.remove(uuid);
-                    if (player == null) {
-                        player = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    }
-                    DBFunc.removeHelper(plr.getWorld().getName(), plot, player);
+                    DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
                 }
                 plot.addDenied(uuid);
-                DBFunc.setDenied(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+                DBFunc.setDenied(plr.getWorld().getName(), plot, uuid);
                 final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
@@ -116,13 +111,13 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                     return true;
                 }
                 plot.removeDenied(uuid);
-                DBFunc.removeDenied(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+                DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
                 PlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeDenied(uuid);
-            DBFunc.removeDenied(plr.getWorld().getName(), plot, UUIDHandler.uuidWrapper.getOfflinePlayer(uuid));
+            DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             PlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);

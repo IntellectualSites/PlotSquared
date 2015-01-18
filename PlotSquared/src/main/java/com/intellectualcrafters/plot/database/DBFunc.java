@@ -222,48 +222,48 @@ public class DBFunc {
      * @param plot
      * @param player
      */
-    public static void removeHelper(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.removeHelper(world, plot, player);
+    public static void removeHelper(final String world, final Plot plot, final UUID uuid) {
+        dbManager.removeHelper(world, plot, uuid);
     }
 
     /**
      * @param plot
      * @param player
      */
-    public static void removeTrusted(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.removeTrusted(world, plot, player);
+    public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
+        dbManager.removeTrusted(world, plot, uuid);
     }
 
     /**
      * @param plot
      * @param player
      */
-    public static void setHelper(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.setHelper(world, plot, player);
+    public static void setHelper(final String world, final Plot plot, final UUID uuid) {
+        dbManager.setHelper(world, plot, uuid);
     }
 
     /**
      * @param plot
      * @param player
      */
-    public static void setTrusted(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.setTrusted(world, plot, player);
+    public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
+        dbManager.setTrusted(world, plot, uuid);
     }
 
     /**
      * @param plot
      * @param player
      */
-    public static void removeDenied(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.removeDenied(world, plot, player);
+    public static void removeDenied(final String world, final Plot plot, final UUID uuid) {
+        dbManager.removeDenied(world, plot, uuid);
     }
 
     /**
      * @param plot
      * @param player
      */
-    public static void setDenied(final String world, final Plot plot, final OfflinePlayer player) {
-        dbManager.setDenied(world, plot, player);
+    public static void setDenied(final String world, final Plot plot, final UUID uuid) {
+        dbManager.setDenied(world, plot, uuid);
     }
 
     public static double getRatings(final Plot plot) {

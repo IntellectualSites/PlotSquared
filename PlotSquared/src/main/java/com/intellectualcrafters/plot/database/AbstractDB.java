@@ -174,39 +174,39 @@ public interface AbstractDB {
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be removed
+     * @param uuid Player that should be removed
      */
-    public void removeHelper(final String world, final Plot plot, final OfflinePlayer player);
+    public void removeHelper(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be removed
+     * @param uuid Player that should be removed
      */
-    public void removeTrusted(final String world, final Plot plot, final OfflinePlayer player);
+    public void removeTrusted(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be removed
+     * @param uuid Player that should be removed
      */
-    public void setHelper(final String world, final Plot plot, final OfflinePlayer player);
+    public void setHelper(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be added
+     * @param uuid Player that should be added
      */
-    public void setTrusted(final String world, final Plot plot, final OfflinePlayer player);
-
-    /**
-     * @param plot   Plot Object
-     * @param player Player that should be added
-     */
-    public void removeDenied(final String world, final Plot plot, final OfflinePlayer player);
+    public void setTrusted(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
      * @param player Player that should be added
      */
-    public void setDenied(final String world, final Plot plot, final OfflinePlayer player);
+    public void removeDenied(final String world, final Plot plot, final UUID uuid);
+
+    /**
+     * @param plot   Plot Object
+     * @param player Player that should be added
+     */
+    public void setDenied(final String world, final Plot plot, final UUID uuid);
 
     /**
      * Get Plots ratings
