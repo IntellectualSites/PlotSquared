@@ -60,7 +60,7 @@ import com.sk89q.worldedit.function.mask.Mask;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class WorldEditListener implements Listener {
+public class WorldEditListener implements Listener {
 
     final List<String> monitored = Arrays.asList(new String[]{"set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", ""});
 
@@ -192,7 +192,9 @@ import com.sk89q.worldedit.function.mask.Mask;
         }
         final Location f = e.getFrom();
         final Player p = e.getPlayer();
-
+        if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+        	return;
+        }
         if ((f.getBlockX() != t.getBlockX()) || (f.getBlockZ() != t.getBlockZ())) {
             final PlotId idF = PlayerFunctions.getPlot(f);
             final PlotId idT = PlayerFunctions.getPlot(t);
