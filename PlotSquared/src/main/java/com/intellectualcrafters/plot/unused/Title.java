@@ -19,7 +19,7 @@
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-package com.intellectualcrafters.plot.object;
+package com.intellectualcrafters.plot.unused;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,7 +36,7 @@ import org.bukkit.entity.Player;
  * @author Maxim Van de Wynckel
  * @version 1.0.3
  */
-@SuppressWarnings("unused") public class Title {
+public class Title {
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES;
 
     static {

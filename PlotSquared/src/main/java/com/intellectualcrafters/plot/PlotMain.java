@@ -95,6 +95,8 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Lag;
@@ -117,7 +119,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class PlotMain extends JavaPlugin implements Listener {
+public class PlotMain extends JavaPlugin implements Listener {
     /**
      * Permission that allows for "everything"
      */
@@ -1528,10 +1530,13 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
         // Handle UUIDS
         {
             boolean checkVersion = checkVersion();
-            if (!checkVersion && Settings.TITLES) {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are enabled - please update your version of Bukkit to support this feature.");
+            if (!checkVersion) {
+                sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
                 Settings.TITLES = false;
                 FlagManager.removeFlag(FlagManager.getFlag("titles"));
+            }
+            else {
+            	AbstractTitle.TITLE_CLASS = new DefaultTitle();
             }
             if (Settings.OFFLINE_MODE) {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();

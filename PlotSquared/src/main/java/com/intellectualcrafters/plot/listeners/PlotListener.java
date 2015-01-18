@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.Title;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
@@ -207,11 +207,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
                 final ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
-                final Title title = new Title(sTitleMain, sTitleSub, 10, 20, 10);
-                title.setTitleColor(sTitleMainColor);
-                title.setSubtitleColor(sTitleSubColor);
-                title.setTimingsToTicks();
-                title.send(player);
+                if (AbstractTitle.TITLE_CLASS != null) {
+                	AbstractTitle.TITLE_CLASS.sendTitle(player, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                }
             }
             {
                 final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);

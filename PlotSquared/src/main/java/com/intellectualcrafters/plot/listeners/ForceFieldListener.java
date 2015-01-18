@@ -97,7 +97,6 @@ public class ForceFieldListener implements Listener {
     }
 
     @EventHandler
-    @SuppressWarnings("unused")
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
         if (!PlayerFunctions.isInPlot(player)) {

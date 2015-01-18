@@ -188,12 +188,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return newflags;
     }
     
-    // FIXME get resultant flags for a plot (with DB change)
-    
-    // remove a flag
-    
-    // add a flag
-
     /**
      * Get a list of registered AbstractFlag objects
      *

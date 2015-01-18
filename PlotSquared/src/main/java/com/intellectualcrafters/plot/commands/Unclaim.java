@@ -64,9 +64,6 @@ public class Unclaim extends SubCommand {
         final boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {
             DBFunc.delete(plr.getWorld().getName(), plot);
-            if ((Math.abs(plot.id.x) <= Math.abs(Auto.lastPlot.x)) && (Math.abs(plot.id.y) <= Math.abs(Auto.lastPlot.y))) {
-                Auto.lastPlot = plot.id;
-            }
         } else {
             PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
         }
