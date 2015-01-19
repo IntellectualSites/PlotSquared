@@ -66,7 +66,7 @@ public class Inbox extends SubCommand {
         final UUID uuid = UUIDHandler.getUUID(plr);
         if (PlotMain.hasPermission(plr, "plots.comment.admin")) {
             tier = 0;
-        } else if (plot != null && plot.owner == uuid) {
+        } else if (plot != null && plot.owner.equals(uuid)) {
             tier = 1;
         } else if (plot != null && plot.helpers.contains(uuid)) {
             tier = 2;
