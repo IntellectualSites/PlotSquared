@@ -231,6 +231,12 @@ public class HybridPlotWorld extends PlotWorld {
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
         this.SCHEMATIC_HEIGHT = (short) Math.max(h2, h1);
+
+        int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
+        int oddshift = 0;
+        if (this.ROAD_WIDTH % 2 != 0) {
+        	oddshift = 1;
+        }
         
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
@@ -241,8 +247,8 @@ public class HybridPlotWorld extends PlotWorld {
                     byte data = blocks1[index].getData();
                     
                     if (id != 0) {
-                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z + this.PATH_WIDTH_LOWER + 1), id, data, false);
-                        addOverlayBlock((short) (z + this.PATH_WIDTH_LOWER + 1), (short) (y + this.OFFSET), (short) (x - this.PATH_WIDTH_LOWER), id, data, true);
+                        addOverlayBlock((short) (x - (shift)), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + this.OFFSET), (short) (x - shift), id, data, true);
                     }
                 }
             }
@@ -255,7 +261,7 @@ public class HybridPlotWorld extends PlotWorld {
                     short id = blocks2[index].getBlock();
                     byte data = blocks2[index].getData();
                     if (id != 0) {
-                        addOverlayBlock((short) (x - this.PATH_WIDTH_LOWER), (short) (y + this.OFFSET), (short) (z - this.PATH_WIDTH_LOWER), id, data, false);
+                        addOverlayBlock((short) (x - shift), (short) (y + this.OFFSET), (short) (z - shift), id, data, false);
                     }
                 }
             }
