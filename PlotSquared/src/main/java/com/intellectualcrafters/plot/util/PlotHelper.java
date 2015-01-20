@@ -454,6 +454,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     }
     
     public static void updateWorldBorder(Plot plot) {
+    	if (!worldBorder.containsKey(plot.world)) {
+    		return;
+    	}
     	String world = plot.world;
     	PlotManager manager = PlotMain.getPlotManager(world);
     	PlotWorld plotworld = PlotMain.getWorldSettings(world);
