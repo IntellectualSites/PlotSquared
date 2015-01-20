@@ -5,8 +5,6 @@ PlotSquared - Plot Plugin Extraordinaire.
 ## Compile: ##
 Build the project using your favourite compiler (maven is the recommended way to build), then package the jar using `mvn package` **MAVEN IS REQUIRED TO BUILD AND PACKAGE THE JAR**
 
-To build the PlotMe converter, you need a PlotMe jar file (a release post-UUID), we won't host and share this for obvious reasons.
-
 ## API: ##
 The main API class can be found [here](https://github.com/IntellectualCrafters/PlotSquared/blob/master/PlotSquared/src/main/java/com/intellectualcrafters/plot/api/PlotAPI.java "API"). JavaDoc's can be found [here](http://git.plotworld.info/jdocs/ "JDOCS").
 
