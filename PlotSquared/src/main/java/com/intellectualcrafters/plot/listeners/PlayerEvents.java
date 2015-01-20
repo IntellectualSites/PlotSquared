@@ -138,7 +138,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 String worldname = q.getWorld().getName();
                 if (PlotHelper.worldBorder.containsKey(worldname)) {
-                	int border = PlotHelper.worldBorder.get(worldname);
+                	int border = PlotHelper.getBorder(worldname);
                 	boolean passed = false;
                 	if (t.getBlockX() >= border) {
                 		q.setX(border);

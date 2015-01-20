@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public class UUIDHandler {
@@ -203,8 +204,8 @@ public class UUIDHandler {
             return uuid;
         }
         
-        // Read from disk
-        if (Settings.UUID_FROM_DISK) {
+        // Read from disk OR convert directly to offline UUID
+        if (Settings.UUID_FROM_DISK || uuidWrapper instanceof OfflineUUIDWrapper) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(name);
             uuid = UUIDHandler.uuidWrapper.getUUID(op);
             add(new StringWrapper(name), uuid);

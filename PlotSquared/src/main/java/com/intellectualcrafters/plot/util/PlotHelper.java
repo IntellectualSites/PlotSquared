@@ -67,10 +67,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
 
-    public static int getBorder(World world) {
-    	String worldname = world.getName();
+    public static int getBorder(String worldname) {
     	if (worldBorder.containsKey(worldname)) {
-    		return worldBorder.get(worldname);
+    		PlotWorld plotworld = PlotMain.getWorldSettings(worldname);
+    		return worldBorder.get(worldname) + 16;
     	}
     	return Integer.MAX_VALUE;
     }
@@ -79,6 +79,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     	PlotWorld plotworld = PlotMain.getWorldSettings(world);
     	if (!plotworld.WORLD_BORDER) {
     		return;
+    	}
+    	if (!worldBorder.containsKey(world)) {
+    		worldBorder.put(world,0);
     	}
     	for (Plot plot : PlotMain.getPlots(world).values()) {
     		updateWorldBorder(plot);

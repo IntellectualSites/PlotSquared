@@ -24,7 +24,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
@@ -35,7 +34,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-@SuppressWarnings("deprecation") public class Helpers extends SubCommand {
+public class Helpers extends SubCommand {
 
     public Helpers() {
         super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);

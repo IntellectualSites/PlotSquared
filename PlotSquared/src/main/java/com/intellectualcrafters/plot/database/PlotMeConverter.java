@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -119,8 +120,15 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 owner = DBFunc.everyone;
                             } else {
-                                sendMessage("&cCould not identify owner for plot: " + id);
-                                continue;
+                              	try {
+                              		UUID uuid = uuidFromBytes(r.getBytes("ownerId"));
+                              		owner = UUIDHandler.getUUID(UUIDHandler.getName(uuid));
+                            	}
+                            	catch (Exception e) {}
+                              	if (owner == null) {
+	                                sendMessage("&cCould not identify owner for plot: " + id +" -> " + name);
+	                                continue;
+                              	}
                             }
                         }
                         final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
@@ -310,5 +318,11 @@ public class PlotMeConverter {
                 }
             }
         }, 20);
+    }
+    private UUID uuidFromBytes(byte[] byteArray) {
+        ByteBuffer wrapped = ByteBuffer.wrap(byteArray);
+        long minor = wrapped.getLong();
+        long major = wrapped.getLong();
+        return new UUID(major, minor);
     }
 }

@@ -39,7 +39,7 @@ public class plugin extends SubCommand {
     public static String downloads, version;
 
     public plugin() {
-        super("plugin", "plots.use", "Show plugin information", "plugin", "pl", CommandCategory.INFO, false);
+        super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
     }
 
     public static void setup(final JavaPlugin plugin) {
@@ -99,7 +99,7 @@ public class plugin extends SubCommand {
                     {
                         add(String.format("&c>> &6PlotSquared (Version: %s)", PlotMain.getMain().getDescription().getVersion()));
                         add(String.format("&c>> &6Made by Citymonstret and Empire92"));
-                        add(String.format("&c>> &6Download at &lhttp://i-s.link/ps"));
+                        add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
                         add(String.format("&c>> &cNewest Version (Spigot): %s", version));
                         add(String.format("&c>> &cTotal Downloads (Spigot): %s", downloads));
                     }
