@@ -1359,7 +1359,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             killAllEntities();
         }
         if (C.ENABLED.s().length() > 0) {
-            Broadcast(C.ENABLED);
+            sendConsoleSenderMessage(C.ENABLED);
         }
 
         // Add tables to this one, if we create more :D
@@ -1475,7 +1475,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             final String version = worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
                 PlotMain.sendConsoleSenderMessage("&cThis version of WorldEdit does not support PlotSquared.");
-                PlotMain.sendConsoleSenderMessage("&cPlease use WorldEdit 6+");
+                PlotMain.sendConsoleSenderMessage("&cPlease use WorldEdit 6+ for masking support");
                 PlotMain.sendConsoleSenderMessage("&c - http://builds.enginehub.org/job/worldedit");
             } else {
                 getServer().getPluginManager().registerEvents(new WorldEditListener(), this);

@@ -130,7 +130,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Player player = event.getPlayer();
             final Location f = event.getFrom();
             final Location t = event.getTo();
-            final Location q = new Location(t.getWorld(), t.getBlockX(), 64, t.getZ());
+            final Location q = new Location(t.getWorld(), t.getBlockX(), t.getBlockY(), t.getZ());
 
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
                 if (!isPlotWorld(player.getWorld())) {

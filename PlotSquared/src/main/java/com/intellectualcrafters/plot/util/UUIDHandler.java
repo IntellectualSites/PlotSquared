@@ -79,6 +79,7 @@ public class UUIDHandler {
     }
     
     public static void cacheAll() {
+    	PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Starting player data caching");
         UUIDHandler.CACHED = true;
         HashSet<String> worlds = new HashSet<>();
         worlds.add(Bukkit.getWorlds().get(0).getName());
@@ -121,8 +122,6 @@ public class UUIDHandler {
                 }
             }
         }
-        
-        
         UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
             try {
@@ -141,7 +140,6 @@ public class UUIDHandler {
             StringWrapper nameWrap = new StringWrapper(name);
             add(nameWrap, uuid);
         }
-        
         PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
