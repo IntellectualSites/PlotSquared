@@ -119,16 +119,10 @@ public class PlotMeConverter {
                         if (owner == null) {
                             if (name.equals("*")) {
                                 owner = DBFunc.everyone;
-                            } else {
-                              	try {
-                              		UUID uuid = uuidFromBytes(r.getBytes("ownerId"));
-                              		owner = UUIDHandler.getUUID(UUIDHandler.getName(uuid));
-                            	}
-                            	catch (Exception e) {}
-                              	if (owner == null) {
-	                                sendMessage("&cCould not identify owner for plot: " + id +" -> " + name);
-	                                continue;
-                              	}
+                            }
+                            else {
+                                sendMessage("&cCould not identify owner for plot: " + id +" -> " + name);
+                                continue;
                             }
                         }
                         final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
