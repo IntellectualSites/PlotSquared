@@ -112,15 +112,17 @@ public class ExpireManager {
     }
     
     public static boolean isExpired(UUID uuid) {
-        OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-        if (!op.hasPlayedBefore()) {
-            return true;
-        }
-        long last = op.getLastPlayed();
-        long compared = System.currentTimeMillis() - last;
-        if (compared >= 86400000 * Settings.AUTO_CLEAR_DAYS) {
-            return true;
-        }
+    	String name = UUIDHandler.getName(uuid);
+    	if (name != null) {
+    		OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+    		if (op.hasPlayedBefore()) {
+    			long last = op.getLastPlayed();
+    	        long compared = System.currentTimeMillis() - last;
+    	        if (compared >= 86400000 * Settings.AUTO_CLEAR_DAYS) {
+    	            return true;
+    	        } 
+    		}
+    	}
         return false;
     }
     

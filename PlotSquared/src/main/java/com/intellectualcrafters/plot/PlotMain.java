@@ -862,7 +862,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
-        Settings.OFFLINE_MODE = config.getBoolean("uuid.offline");
+        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
 
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
