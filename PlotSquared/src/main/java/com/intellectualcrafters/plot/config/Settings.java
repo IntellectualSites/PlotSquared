@@ -108,6 +108,10 @@ public class Settings {
      * Verbose?
      */
     public static boolean DEBUG = true;
+    /**
+     * Have colored console messages?
+     */
+    public static boolean CONSOLE_COLOR = true;
 
     /**
      * Auto clear enabled

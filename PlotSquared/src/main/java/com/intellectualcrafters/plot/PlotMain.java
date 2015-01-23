@@ -574,7 +574,11 @@ public class PlotMain extends JavaPlugin implements Listener {
         if (PlotMain.main == null || getMain().getServer().getConsoleSender() == null) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
         } else {
-            getMain().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', string));
+        	String message = ChatColor.translateAlternateColorCodes('&', string);
+        	if (!Settings.CONSOLE_COLOR) {
+        		message = ChatColor.stripColor(message);
+        	}
+            getMain().getServer().getConsoleSender().sendMessage(message);
         }
     }
 
@@ -814,6 +818,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
+        options.put("console.color", Settings.CONSOLE_COLOR);
         options.put("metrics", true);
         options.put("debug", true);
         options.put("clear.auto.enabled", false);
@@ -821,10 +826,10 @@ public class PlotMain extends JavaPlugin implements Listener {
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        options.put("uuid.api.location", Settings.API_URL);
-        options.put("uuid.api.custom", Settings.CUSTOM_API);
-        options.put("uuid.fecthing", Settings.UUID_FECTHING);
-        options.put("UUID.read-from-disk", Settings.UUID_FROM_DISK);
+//        options.put("uuid.api.location", Settings.API_URL);
+//        options.put("uuid.api.custom", Settings.CUSTOM_API);
+//        options.put("uuid.fecthing", Settings.UUID_FECTHING);
+        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
 //        options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
@@ -840,6 +845,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         if (Settings.DEBUG) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
+        Settings.CONSOLE_COLOR = config.getBoolean("console.color");
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
@@ -856,8 +862,8 @@ public class PlotMain extends JavaPlugin implements Listener {
         Settings.MAX_PLOTS = config.getInt("max_plots");
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
-        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
-        Settings.UUID_FROM_DISK = config.getBoolean("UUID.read-from-disk");
+        Settings.OFFLINE_MODE = config.getBoolean("uuid.offline");
+        Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
 
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
