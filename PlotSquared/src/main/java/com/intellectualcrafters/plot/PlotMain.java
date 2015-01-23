@@ -65,6 +65,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.Buy;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
@@ -519,6 +520,17 @@ public class PlotMain extends JavaPlugin implements Listener {
             }
         }
         plots.get(world).remove(id);
+        
+        if (PlotHelper.lastPlot.containsKey(world)) {
+        	PlotId last = PlotHelper.lastPlot.get(world);
+        	int last_max = Math.max(last.x, last.y);
+        	int this_max = Math.max(id.x, id.y);
+        	
+        	if (this_max < last_max) {
+        		PlotHelper.lastPlot.put(world, id);
+        	}
+        }
+        
         return true;
     }
 

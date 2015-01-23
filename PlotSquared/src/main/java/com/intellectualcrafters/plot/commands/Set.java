@@ -45,9 +45,11 @@ import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -186,8 +188,7 @@ public class Set extends SubCommand {
             //set to current location
             World world = plr.getWorld();
             Location base = PlotHelper.getPlotBottomLoc(world, plot.id);
-            int y = PlotHelper.getHeighestBlock(world, base.getBlockX(), base.getBlockZ());
-            base.setY(y);
+            base.setY(0);
             Location relative = plr.getLocation().subtract(base);
             BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
             plot.settings.setPosition(blockloc);
@@ -210,7 +211,7 @@ public class Set extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
-                if (Bukkit.getOfflinePlayer(alias).hasPlayedBefore()) {
+                if (UUIDHandler.nameExists(new StringWrapper(alias))) {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }

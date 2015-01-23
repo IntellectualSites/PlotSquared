@@ -192,7 +192,7 @@ public class WorldEditListener implements Listener {
         }
         final Location f = e.getFrom();
         final Player p = e.getPlayer();
-        if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+        if (PlotMain.hasPermission(p, "plots.worldedit.bypass") && !PWE.hasMask(p)) {
         	return;
         }
         if ((f.getBlockX() != t.getBlockX()) || (f.getBlockZ() != t.getBlockZ())) {

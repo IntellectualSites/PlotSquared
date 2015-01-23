@@ -98,7 +98,6 @@ public class ExpireManager {
                     PlotMain.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(0);
                     PlotMain.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
-                    String owner;
                     PlotMain.sendConsoleSenderMessage("&3 - World: "+plot.world);
                     if (plot.hasOwner()) {
                     	PlotMain.sendConsoleSenderMessage("&3 - Owner: "+UUIDHandler.getName(plot.owner));
@@ -147,8 +146,6 @@ public class ExpireManager {
             }
             OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
             if (op==null || !op.hasPlayedBefore()) {
-                toRemove.add(plot);
-                PlotMain.removePlot(plot.world, plot.id, true);
                 continue;
             }
             long last = op.getLastPlayed();

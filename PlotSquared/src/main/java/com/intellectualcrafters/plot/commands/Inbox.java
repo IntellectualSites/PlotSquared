@@ -47,11 +47,10 @@ public class Inbox extends SubCommand {
     public boolean execute(final Player plr, final String... args) {
     	boolean report = false;
     	if (args.length == 1){
-    		if (args[1].equalsIgnoreCase("reports")) {
+    		if (args[0].equalsIgnoreCase("reports")) {
     			report = true;
     		}
     	}
-    	
         if (!PlayerFunctions.isInPlot(plr) && !report) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
@@ -126,8 +125,9 @@ public class Inbox extends SubCommand {
                     	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
                         return false;
                     }
+                	break;
                 default:
-                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[]{"admin", "owner", "helper", "trusted", "everyone"}, tier, 4));
+                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[]{"admin", "owner", "helper", "trusted", "everyone"}, Math.max(0, tier), 4));
                     return false;
             }
         }

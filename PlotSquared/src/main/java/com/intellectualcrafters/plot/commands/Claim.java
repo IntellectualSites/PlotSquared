@@ -51,6 +51,9 @@ public class Claim extends SubCommand {
     }
 
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
+    	if (plot.hasOwner() || plot.settings.isMerged()) {
+    		return false;
+    	}
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {

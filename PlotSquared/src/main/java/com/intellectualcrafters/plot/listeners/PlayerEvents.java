@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -68,6 +69,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
@@ -100,6 +102,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         PlotMain.loadWorld(event.getWorld());
     }
 
+    @EventHandler
+    public static void onChunkLoad(final ChunkLoadEvent event) {
+    	String worldname = event.getWorld().getName();
+    	Chunk chunk = event.getChunk();
+        if (PlotHelper.worldBorder.containsKey(worldname)) {
+        	int border = PlotHelper.getBorder(worldname);
+        	int x = Math.abs(chunk.getX() << 4);
+        	int z = Math.abs(chunk.getZ() << 4);
+        	if (x > border || z > border) {
+        		chunk.unload(false, true);
+        	}
+        }
+    }
+    
     @EventHandler
     public static void onJoin(final PlayerJoinEvent event) {
         Player player = event.getPlayer();

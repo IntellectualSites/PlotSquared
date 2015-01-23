@@ -946,16 +946,17 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         Plot plot = getPlot(w, plotid);
         BlockLoc home = plot.settings.getPosition();
         final Location bot = getPlotBottomLoc(w, plotid);
+    	PlotManager manager = PlotMain.getPlotManager(w);
         if (home == null || (home.x == 0 && home.z == 0)) {
             final Location top = getPlotTopLoc(w, plotid);
             final int x = top.getBlockX() - bot.getBlockX();
             final int z = top.getBlockZ() - bot.getBlockZ();
-            final int y = getHeighestBlock(w, x, z);
+            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotMain.getWorldSettings(w), plot).getBlockY());
             return new Location(w, bot.getBlockX() + (x / 2), y, bot.getBlockZ() + (z / 2));
         }
         else {
-        	final int y = getHeighestBlock(w, home.x, home.z);
-            return bot.add(home.x, home.y + y, home.z);
+        	final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
+            return bot.add(home.x, y, home.z);
         }
     }
 
