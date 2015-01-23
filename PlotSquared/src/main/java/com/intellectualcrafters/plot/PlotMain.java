@@ -802,7 +802,7 @@ public class PlotMain extends JavaPlugin implements Listener {
     /**
      * SETUP: settings.yml
      */
-    private static void setupConfig() {
+    public static void setupConfig() {
         final int config_ver = 1;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();

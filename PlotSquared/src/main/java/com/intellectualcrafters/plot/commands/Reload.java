@@ -37,11 +37,11 @@ public class Reload extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         try {
-            PlotMain.reloadTranslations();
-
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotMain.config.load(PlotMain.configFile);
+            PlotMain.setupConfig();
+            C.setupTranslations();
             for (final String pw : PlotMain.getPlotWorlds()) {
                 final PlotWorld plotworld = PlotMain.getWorldSettings(pw);
                 plotworld.loadDefaultConfiguration(PlotMain.config.getConfigurationSection("worlds." + pw));

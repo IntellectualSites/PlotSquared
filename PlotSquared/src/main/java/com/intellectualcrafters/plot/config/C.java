@@ -139,8 +139,8 @@ public enum C {
     /*
      * Reload
      */
-    RELOADED_CONFIGS("&6The translation files has been reloaded"),
-    RELOAD_FAILED("&cFailed to reload the translations file"),
+    RELOADED_CONFIGS("&6Translations and world settings have been reloaded"),
+    RELOAD_FAILED("&cFailed to reload file configurations"),
     /*
      * BarAPI
      */
@@ -440,7 +440,6 @@ public enum C {
     /**
      * Constructor for custom strings.
      */
-    @SuppressWarnings("unused")
     C() {
         /*
          * use setCustomString();
@@ -481,7 +480,6 @@ public enum C {
      *
      * @return default
      */
-    @SuppressWarnings("unused")
     public String d() {
         return this.d;
     }
