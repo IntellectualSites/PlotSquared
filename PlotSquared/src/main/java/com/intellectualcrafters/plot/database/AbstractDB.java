@@ -28,8 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;

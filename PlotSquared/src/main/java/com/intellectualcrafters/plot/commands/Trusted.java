@@ -24,7 +24,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;

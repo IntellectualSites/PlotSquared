@@ -22,7 +22,6 @@
 package com.intellectualcrafters.plot.api;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
