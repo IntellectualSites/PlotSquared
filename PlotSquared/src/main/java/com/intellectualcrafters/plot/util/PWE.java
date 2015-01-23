@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.sk89q.worldedit.LocalSession;
@@ -59,6 +60,9 @@ import com.sk89q.worldedit.regions.CuboidRegion;
             if (id != null) {
                 final Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
+                	if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
+                		return;
+                	}
                     boolean r;
                     r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
                     if (!r) {

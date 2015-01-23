@@ -86,6 +86,14 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return null;
     }
     
+    public static boolean isPlotFlagTrue(Plot plot, String strFlag) {
+    	Flag flag = getPlotFlag(plot, strFlag);
+    	if (flag == null) {
+    		return false;
+    	}
+    	return flag.getValue().equals("true");
+    }
+    
     /**
      * Get the value of a flag for a plot (ignores flag defaults)
      * @param plot

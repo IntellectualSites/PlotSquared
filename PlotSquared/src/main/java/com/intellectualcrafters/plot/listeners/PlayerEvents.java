@@ -244,6 +244,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler
     public static void onBigBoom(final EntityExplodeEvent event) {
+    	// TODO allow tnt explosion within some plots
+    	// TODO prevent entity velocity from explosion in plotworld
         final World world = event.getLocation().getWorld();
         if (!isPlotWorld(world)) {
             return;
