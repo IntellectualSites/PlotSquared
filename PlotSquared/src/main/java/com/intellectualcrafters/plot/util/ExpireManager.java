@@ -36,6 +36,7 @@ public class ExpireManager {
                 @Override
                 public void run() {
                     ArrayList<Plot> plots = getOldPlots(world);
+                    PlotMain.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots!");
                     expiredPlots.put(world, plots);
                     updatingPlots.put(world, false);
                 }

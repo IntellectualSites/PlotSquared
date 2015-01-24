@@ -475,7 +475,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     }
 
     public static boolean createPlot(final Player player, final Plot plot) {
-    	
     	if (PlotHelper.worldBorder.containsKey(plot.world)) {
     		updateWorldBorder(plot);
     	}
