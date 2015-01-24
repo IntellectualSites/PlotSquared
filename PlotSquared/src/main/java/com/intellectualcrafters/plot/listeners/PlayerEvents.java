@@ -170,16 +170,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 		return;
                 	}
                 }
-                if (enteredPlot(f, q)) {
-                    final Plot plot = getCurrentPlot(q);
-                    final boolean admin = PlotMain.hasPermission(player, "plots.admin.entry.denied");
-                    if (plot.deny_entry(player) && !admin) {
-                        event.setCancelled(true);
+                Plot plot = getCurrentPlot(q);
+                if (plot != null) {
+                	if (!plot.equals(getCurrentPlot(f))) {
+                		event.setCancelled(true);
                         return;
-                    }
-                    plotEntry(player, plot);
+                	}
+	                if (plot.deny_entry(player)) {
+	                	if (!PlotMain.hasPermission(player, "plots.admin.entry.denied")) {
+	                		event.setCancelled(true);
+	                        return;
+	                	}
+	                }
                 } else if (leftPlot(f, q)) {
-                    final Plot plot = getCurrentPlot(event.getFrom());
+                    plot = getCurrentPlot(event.getFrom());
                     plotExit(player, plot);
                 }
             }
