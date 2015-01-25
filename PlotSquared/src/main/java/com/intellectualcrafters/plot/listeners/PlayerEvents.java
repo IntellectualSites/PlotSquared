@@ -160,8 +160,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 		q.setX(border);
                 		passed = true;
                 	}
+                	else if (t.getBlockX() <= -border) {
+                		q.setX(-border);
+                		passed = true;
+                	}
                 	if (t.getBlockZ() >= border) {
                 		q.setZ(border);
+                		passed = true;
+                	}
+                	else if (t.getBlockZ() <= -border) {
+                		q.setZ(-border);
                 		passed = true;
                 	}
                 	if (passed) {
