@@ -37,11 +37,10 @@ public class AbstractFlag {
     public AbstractFlag(final String key) {
         this(key, new FlagValue.StringValue());
     }
-
     /**
-     * AbstractFlag is a parameter used in creating a new Flag
-     *
-     * @param key The key must be alphabetical characters and <= 16 characters in length
+     * AbstractFlag is a parameter used in creating a new Flag<br>
+     * The key must be alphabetical characters and <= 16 characters in length
+     * @param key
      */
     public AbstractFlag(final String key, final FlagValue<?> value) {
         if (!StringUtils.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
@@ -58,10 +57,14 @@ public class AbstractFlag {
         }
     }
 
-    public String parseValue(final String value) {
+    public Object parseValueRaw(final String value) {
         return this.value.parse(value);
     }
-
+    
+    public String toString(final Object t) {
+        return this.value.toString(t);
+    }
+    
     public String getValueDesc() {
         return this.value.getDescription();
     }

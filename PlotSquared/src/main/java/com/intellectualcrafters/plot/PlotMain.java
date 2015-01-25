@@ -80,6 +80,7 @@ import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
@@ -1030,134 +1031,27 @@ public class PlotMain extends JavaPlugin implements Listener {
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
         for (final String flag : stringFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag) {
-                @Override
-                public String parseValue(final String value) {
-                    return value;
-                }
-
-                @Override
-                public String getValueDesc() {
-                    return "Value must be a string, supports color codes (&)";
-                }
-            });
+            FlagManager.addFlag(new AbstractFlag(flag));
         }
         for (final String flag : intervalFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag) {
-                @Override
-                public String parseValue(final String value) {
-                    int seconds;
-                    int amount;
-                    final String[] values = value.split(" ");
-                    if (values.length < 2) {
-                        seconds = 1;
-                        try {
-                            amount = Integer.parseInt(values[0]);
-                        } catch (final Exception e) {
-                            return null;
-                        }
-                    } else {
-                        try {
-                            amount = Integer.parseInt(values[0]);
-                            seconds = Integer.parseInt(values[1]);
-                        } catch (final Exception e) {
-                            return null;
-                        }
-                    }
-                    return amount + " " + seconds;
-                }
-
-                @Override
-                public String getValueDesc() {
-                    return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
-                }
-            });
+            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.IntervalValue()));
         }
         for (final String flag : booleanFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag) {
-                @Override
-                public String parseValue(final String value) {
-                    switch (value) {
-                        case "on":
-                        case "1":
-                        case "true":
-                        case "enabled":
-                            return "true";
-                        case "off":
-                        case "0":
-                        case "false":
-                        case "disabled":
-                            return "false";
-                        default:
-                            return null;
-                    }
-                }
-
-                @Override
-                public String getValueDesc() {
-                    return "Value must be true/false, 1/0, on/off, enabled/disabled";
-                }
-            });
+            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.BooleanValue()));
         }
     }
 
     private static void defaultFlags() {
         addPlusFlags();
-        FlagManager.addFlag(new AbstractFlag("fly") {
-            @Override
-            public String parseValue(final String value) {
-                switch (value) {
-                    case "on":
-                    case "enabled":
-                    case "true":
-                    case "1":
-                        return "true";
-                    case "off":
-                    case "disabled":
-                    case "false":
-                    case "0":
-                        return "false";
-                    default:
-                        return null;
-                }
-            }
-
-            @Override
-            public String getValueDesc() {
-                return "Flag value must be a boolean: true, false, enabled, disabled";
-            }
-        });
+        FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
 
         for (final String str : booleanFlags.values()) {
-            FlagManager.addFlag(new AbstractFlag(str) {
-
-                @Override
-                public String parseValue(final String value) {
-                    switch (value) {
-                        case "true":
-                        case "1":
-                        case "yes":
-                            return "true";
-                        case "false":
-                        case "off":
-                        case "0":
-                            return "false";
-                        default:
-                            return null;
-                    }
-                }
-
-                @Override
-                public String getValueDesc() {
-                    return "Flag value must be a boolean: true, false";
-                }
-
-            });
+            FlagManager.addFlag(new AbstractFlag(str, new FlagValue.BooleanValue()));
         }
 
         FlagManager.addFlag(new AbstractFlag("gamemode") {
             @Override
-            public String parseValue(final String value) {
+            public String parseValueRaw(final String value) {
                 switch (value) {
                     case "creative":
                     case "c":
@@ -1182,48 +1076,13 @@ public class PlotMain extends JavaPlugin implements Listener {
             }
         });
         
-        FlagManager.addFlag(new AbstractFlag("price") {
-            @Override
-            public String parseValue(final String value) {
-                try {
-                    double price = Double.parseDouble(value);
-                    if (price >= 0) {
-                        return price + "";
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                catch (Exception e) {
-                    return null;
-                }
-            }
+        FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
 
-            @Override
-            public String getValueDesc() {
-                return "Flag value must be a positive number representing the price of the plot'";
-            }
-        });
-
-        FlagManager.addFlag(new AbstractFlag("time") {
-            @Override
-            public String parseValue(final String value) {
-                try {
-                    return Long.parseLong(value) + "";
-                } catch (final Exception e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public String getValueDesc() {
-                return "Flag value must be a time in ticks: 0=sunrise 12000=noon 18000=sunset 24000=night";
-            }
-        });
+        FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
 
         FlagManager.addFlag(new AbstractFlag("weather") {
             @Override
-            public String parseValue(final String value) {
+            public String parseValueRaw(final String value) {
                 switch (value) {
                     case "rain":
                     case "storm":

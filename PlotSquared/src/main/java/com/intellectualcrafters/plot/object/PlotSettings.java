@@ -136,7 +136,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public String getJoinMessage() {
         final Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
         if (greeting != null) {
-            return greeting.getValue();
+            return greeting.getValueString();
         }
         return "";
     }
@@ -149,7 +149,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public String getLeaveMessage() {
         final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
         if (farewell != null) {
-            return farewell.getValue();
+            return farewell.getValueString();
         }
         return "";
     }

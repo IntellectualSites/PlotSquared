@@ -145,7 +145,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return;
         }
         final Plot plot = getPlot(player);
-        if (booleanFlag(plot, "instabreak")) {
+        if (booleanFlag(plot, "instabreak", false)) {
             event.getBlock().breakNaturally();
         }
     }
@@ -159,21 +159,21 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         if (!isInPlot(player)) {
             return;
         }
-        if (booleanFlag(getPlot(player), "invincible")) {
+        if (booleanFlag(getPlot(player), "invincible", false)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection")) {
+        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop")) {
+        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop", false)) {
             event.setCancelled(true);
         }
     }
@@ -182,9 +182,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "greeting") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "greeting").getValue()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "greeting").getValueString()));
         }
-        if (booleanFlag(plot, "notify-enter")) {
+        if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
 
                 final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
@@ -216,7 +216,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "farewell").getValue()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
         if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());
@@ -224,7 +224,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         if (healRunnable.containsKey(event.getPlayer().getName())) {
             healRunnable.remove(event.getPlayer().getName());
         }
-        if (booleanFlag(plot, "notify-leave")) {
+        if (booleanFlag(plot, "notify-leave", false)) {
             if (plot.hasOwner()) {
                 final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
                 if (player == null) {

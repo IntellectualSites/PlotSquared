@@ -683,7 +683,9 @@ public class SQLManager implements AbstractDB {
                         if (element.contains(":")) {
                             final String[] split = element.split(":");
                             try {
-                                flags.add(new Flag(FlagManager.getFlag(split[0], true), split[1].replaceAll("\u00AF", ":").replaceAll("�", ",")));
+                            	String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
+                            	Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
+                                flags.add(flag);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 exception = true;
@@ -756,7 +758,7 @@ public class SQLManager implements AbstractDB {
             if (i != 0) {
                 flag_string.append(",");
             }
-            flag_string.append(flag.getKey() + ":" + flag.getValue().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+            flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
             i++;
         }
         TaskManager.runTask(new Runnable() {

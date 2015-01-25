@@ -149,18 +149,18 @@ public class Set extends SubCommand {
             }
             try {
                 String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                value = af.parseValue(value);
-                if (value == null) {
+                Object parsed_value = af.parseValueRaw(value);
+                if (parsed_value == null) {
                     PlayerFunctions.sendMessage(plr, af.getValueDesc());
                     return false;
                 }
 
                 if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotMain.worldGuardListener != null)) {
-                    PlotMain.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], value);
+                    PlotMain.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], af.toString(parsed_value));
                     return false;
                 }
 
-                final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), value);
+                final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed_value);
                 boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);

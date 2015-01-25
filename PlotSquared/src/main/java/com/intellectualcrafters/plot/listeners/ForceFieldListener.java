@@ -104,7 +104,7 @@ public class ForceFieldListener implements Listener {
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
-            if (!PlotListener.booleanFlag(plot, "forcefield")) {
+            if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
                 if (plot.hasRights(player)) {
                     final Set<Player> players = getNearbyPlayers(player, plot);
                     for (final Player oPlayer : players) {

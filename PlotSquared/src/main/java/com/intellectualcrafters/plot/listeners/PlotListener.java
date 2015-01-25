@@ -41,6 +41,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -49,6 +50,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.sk89q.worldguard.protection.flags.BooleanFlag;
 
 /**
  * @author Citymonstret
@@ -60,6 +62,18 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
+    }
+    
+    public static boolean booleanFlag(Plot plot, String key, boolean defaultValue) {
+    	Flag flag = FlagManager.getPlotFlag(plot, key);
+    	if (flag == null) {
+    		return defaultValue;
+    	}
+    	Object value = flag.getValue();
+    	if (value instanceof Boolean) {
+    		return (boolean) value;
+    	}
+    	return defaultValue;
     }
 
     public static boolean isInPlot(final Player player) {
@@ -149,27 +163,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
     }
 
-    public static boolean booleanFlag(final Plot plot, final String flag) {
-        return (FlagManager.getPlotFlag(plot, flag) != null) && getBooleanFlag(FlagManager.getPlotFlag(plot, flag).getValue()).equals("true");
-    }
-
-    private static String getBooleanFlag(final String value) {
-        switch (value) {
-            case "on":
-            case "1":
-            case "true":
-            case "enabled":
-                return "true";
-            case "off":
-            case "0":
-            case "false":
-            case "disabled":
-                return "false";
-            default:
-                return null;
-        }
-    }
-
     private static GameMode getGameMode(final String str) {
         switch (str) {
             case "creative":
@@ -185,24 +178,28 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 
     public static void plotEntry(final Player player, final Plot plot) {
         if (plot.hasOwner()) {
-            if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
-                player.setGameMode(getGameMode(FlagManager.getPlotFlag(plot, "gamemode").getValue()));
+        	Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");
+            if (gamemodeFlag != null) {
+                player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
             }
-            if (FlagManager.getPlotFlag(plot, "fly") != null) {
-                player.setAllowFlight(getFlagValue(FlagManager.getPlotFlag(plot, "fly").getValue()));
+            Flag flyFlag = FlagManager.getPlotFlag(plot, "fly"); 
+            if (flyFlag != null) {
+                player.setAllowFlight((boolean) flyFlag.getValue());
             }
-            if (FlagManager.getPlotFlag(plot, "time") != null) {
+            Flag timeFlag = FlagManager.getPlotFlag(plot, "time");
+            if (timeFlag != null) {
                 try {
-                    final Long time = Long.parseLong(FlagManager.getPlotFlag(plot, "time").getValue());
+                    long time = (long) timeFlag.getValue();
                     player.setPlayerTime(time, true);
                 } catch (final Exception e) {
                     FlagManager.removePlotFlag(plot, "time");
                 }
             }
-            if (FlagManager.getPlotFlag(plot, "weather") != null) {
-                player.setPlayerWeather(getWeatherType(FlagManager.getPlotFlag(plot, "weather").getValue()));
+            Flag weatherFlag = FlagManager.getPlotFlag(plot, "weather");
+            if (weatherFlag != null) {
+                player.setPlayerWeather(getWeatherType(weatherFlag.getValueString()));
             }
-            if ((booleanFlag(plot, "titles") || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
+            if ((booleanFlag(plot, "titles", false) || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());

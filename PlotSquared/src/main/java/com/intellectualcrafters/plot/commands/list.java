@@ -80,7 +80,7 @@ public class list extends SubCommand {
             for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
                 Flag price = FlagManager.getPlotFlag(p, "price");
                 if (price != null) {
-                    string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValue()).replaceAll("%owner", getName(p.owner))).append("\n");
+                    string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValueString()).replaceAll("%owner", getName(p.owner))).append("\n");
                     idx++;
                 }
             }

@@ -468,8 +468,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             if (PlotMain.booleanFlags.containsKey(event.getClickedBlock().getType())) {
                 final String flag = PlotMain.booleanFlags.get(event.getClickedBlock().getType());
-                if ((FlagManager.getPlotFlag(plot, flag) != null) && getFlagValue(FlagManager.getPlotFlag(plot, flag).getValue())) {
-                    return;
+                if (PlotListener.booleanFlag(plot, flag, false)) {
+                	return;
                 }
             }
             if (!plot.hasRights(event.getPlayer())) {
@@ -782,10 +782,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (aPlr && !booleanFlag(plot, "pvp")) {
+                    } else if (aPlr && !booleanFlag(plot, "pvp", false)) {
                         return;
                     }
-                    if (!aPlr && !booleanFlag(plot, "pve")) {
+                    if (!aPlr && !booleanFlag(plot, "pve", false)) {
                         return;
                     }
                     assert plot != null;

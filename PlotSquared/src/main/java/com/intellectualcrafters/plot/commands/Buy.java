@@ -86,7 +86,7 @@ public class Buy extends SubCommand {
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }
-        double initPrice = Double.parseDouble(flag.getValue());
+        double initPrice = (double) flag.getValue();
         double price = initPrice;
         PlotId id = plot.id;
         PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;

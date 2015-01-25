@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class Flag {
     private final AbstractFlag key;
-    private final String value;
+    private final Object value;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
@@ -49,10 +49,18 @@ public class Flag {
             throw new IllegalArgumentException("Value must be <= 48 characters");
         }
         this.key = key;
-        this.value = key.parseValue(value);
+        this.value = key.parseValueRaw(value);
         if (this.value == null) {
             throw new IllegalArgumentException(key.getValueDesc());
         }
+    }
+
+    /**
+     * Warning: Unchecked
+     */
+    public Flag(final AbstractFlag key, final Object value) {
+    	this.key = key;
+    	this.value = value;
     }
 
     /**
@@ -78,8 +86,12 @@ public class Flag {
      *
      * @return String
      */
-    public String getValue() {
+    public Object getValue() {
         return this.value;
+    }
+    
+    public String getValueString() {
+    	return this.key.toString(this.value);
     }
 
     @Override
@@ -87,7 +99,7 @@ public class Flag {
         if (this.value.equals("")) {
             return this.key.getKey();
         }
-        return this.key + ":" + this.value;
+        return this.key + ":" + getValueString();
     }
 
     @Override
