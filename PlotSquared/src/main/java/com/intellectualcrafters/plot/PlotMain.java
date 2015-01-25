@@ -815,7 +815,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
-        options.put("worldguard.enabled", Settings.WORLDGUARD);
+//        options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("console.color", Settings.CONSOLE_COLOR);
@@ -850,8 +850,9 @@ public class PlotMain extends JavaPlugin implements Listener {
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
-        Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
-        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
+//        Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
+        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf"
+        		+ "inding");
         Settings.METRICS = config.getBoolean("metrics");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");

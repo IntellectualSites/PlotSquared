@@ -1007,12 +1007,12 @@ public class SQLManager implements AbstractDB {
             final PreparedStatement statement;
             String comparison = below ? ">=" : "=";
             if (plot != null) {
-            	statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` " + comparison + " ?");
+            	statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` " + comparison + " ?");
             	statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
                 statement.setInt(2, tier);
             }
             else {
-            	statement = this.connection.prepareStatement("SELECT `*` FROM `" + this.prefix + "plot_comments` WHERE `tier` " + comparison + " ?");
+            	statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `tier` " + comparison + " ?");
                 statement.setInt(1, tier);
             }
             final ResultSet set = statement.executeQuery();
@@ -1025,7 +1025,7 @@ public class SQLManager implements AbstractDB {
             }
             statement.close();
         } catch (final SQLException e) {
-            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch rating for plot " + plot.getId().toString());
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch comment");
             e.printStackTrace();
         }
         return comments;
@@ -1046,7 +1046,7 @@ public class SQLManager implements AbstractDB {
                     statement.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove helper for plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set comment for plot " + plot.id);
                 }
             }
         });

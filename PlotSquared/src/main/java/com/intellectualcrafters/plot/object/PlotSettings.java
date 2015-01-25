@@ -157,7 +157,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public ArrayList<PlotComment> getComments(final int tier) {
         final ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
-            return c;
+            return null;
         }
         for (final PlotComment comment : this.comments) {
             if (comment.tier == tier) {

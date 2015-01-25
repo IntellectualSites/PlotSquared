@@ -52,7 +52,7 @@ public class Comment extends SubCommand {
 
         final List<String> recipients = Arrays.asList("admin", "owner", "helper", "trusted", "everyone");
 
-        if ((args.length == 2) && recipients.contains(args[0].toLowerCase())) {
+        if ((args.length > 1) && recipients.contains(args[0].toLowerCase())) {
 
             if (PlotMain.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
                 final String text = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");

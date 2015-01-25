@@ -156,19 +156,19 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (PlotHelper.worldBorder.containsKey(worldname)) {
                 	int border = PlotHelper.getBorder(worldname);
                 	boolean passed = false;
-                	if (t.getBlockX() >= border) {
+                	if (t.getBlockX() > border) {
                 		q.setX(border);
                 		passed = true;
                 	}
-                	else if (t.getBlockX() <= -border) {
+                	else if (t.getBlockX() < -border) {
                 		q.setX(-border);
                 		passed = true;
                 	}
-                	if (t.getBlockZ() >= border) {
+                	if (t.getBlockZ() > border) {
                 		q.setZ(border);
                 		passed = true;
                 	}
-                	else if (t.getBlockZ() <= -border) {
+                	else if (t.getBlockZ() < -border) {
                 		q.setZ(-border);
                 		passed = true;
                 	}
@@ -181,15 +181,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Plot plot = getCurrentPlot(q);
                 if (plot != null) {
                 	if (!plot.equals(getCurrentPlot(f))) {
-                		event.setCancelled(true);
-                        return;
+                		if (plot.deny_entry(player)) {
+    	                	if (!PlotMain.hasPermission(player, "plots.admin.entry.denied")) {
+    	                		event.setCancelled(true);
+    	                        return;
+    	                	}
+    	                }
+                		plotEntry(player, plot);
                 	}
-	                if (plot.deny_entry(player)) {
-	                	if (!PlotMain.hasPermission(player, "plots.admin.entry.denied")) {
-	                		event.setCancelled(true);
-	                        return;
-	                	}
-	                }
                 } else if (leftPlot(f, q)) {
                     plot = getCurrentPlot(event.getFrom());
                     plotExit(player, plot);
