@@ -43,8 +43,11 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
@@ -59,6 +62,7 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_SETTINGS;
     public final String CREATE_HELPERS;
     public final String CREATE_PLOT;
+    public final String CREATE_CLUSTER;
     // Private Final
     private Connection connection;
     private final String prefix;
@@ -83,6 +87,7 @@ public class SQLManager implements AbstractDB {
         this.CREATE_SETTINGS = "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
         this.CREATE_HELPERS = "INSERT INTO `" + this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+        this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
 
         // schedule reconnect
         if (PlotMain.getMySQL() != null) {
@@ -376,15 +381,22 @@ public class SQLManager implements AbstractDB {
             if (add_constraint) {
                 stmt.addBatch("ALTER TABLE `" + this.prefix + "plot_settings` ADD CONSTRAINT `" + this.prefix + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `" + this.prefix + "plot` (`id`) ON DELETE CASCADE");
             }
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + "`tier` INT(11) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_settings` (" + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`cluster_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         } else {
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+        	stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`tier` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
+            
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + "`tier` INT(11) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_settings` (" + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`cluster_id`)" + ")");
         }
         stmt.executeBatch();
         stmt.clearBatch();
@@ -1229,4 +1241,253 @@ public class SQLManager implements AbstractDB {
         }
         return 0.0d;
     }
+
+	@Override
+	public void delete(final PlotCluster cluster) {
+		ClusterManager.removeCluster(cluster);
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                final int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_settings` WHERE `cluster_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_helpers` WHERE `cluster_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster` WHERE `id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to delete plot cluster: " + cluster.pos1 + ":" + cluster.pos2);
+                }
+            }
+        });
+	}
+
+	@Override
+	public int getClusterId(String world, PlotClusterId id) {
+		PreparedStatement stmt = null;
+        try {
+            stmt = this.connection.prepareStatement("SELECT `id` FROM `" + this.prefix + "cluster` WHERE `pos1_x` = ? AND `pos1_z` = ? AND `pos2_x` = ? AND `pos2_z` = ? AND world = ? ORDER BY `timestamp` ASC");
+            stmt.setInt(1, id.pos1.x);
+            stmt.setInt(2, id.pos1.y);
+            stmt.setInt(3, id.pos1.x);
+            stmt.setInt(3, id.pos2.y);
+            stmt.setString(5, world);
+            final ResultSet r = stmt.executeQuery();
+            int c_id = Integer.MAX_VALUE;
+            while (r.next()) {
+            	c_id = r.getInt("id");
+            }
+            stmt.close();
+            return c_id;
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+        return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public HashMap<String, HashSet<PlotCluster>> getClusters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFlags(final PlotCluster cluster, Set<Flag> flags) {
+		final StringBuilder flag_string = new StringBuilder();
+        int i = 0;
+        for (final Flag flag : flags) {
+            if (i != 0) {
+                flag_string.append(",");
+            }
+            flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+            i++;
+        }
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `flags` = ? WHERE `cluster_id` = ?");
+                    stmt.setString(1, flag_string.toString());
+                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.execute();
+                    stmt.close();
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Could not set flag for plot " + cluster);
+                }
+            }
+        });
+		
+	}
+
+	@Override
+	public void setClusterName(final PlotCluster cluster, final String name) {
+		cluster.settings.setAlias(name);
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `alias` = ?  WHERE `cluster_id` = ?");
+                    stmt.setString(1, name);
+                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set alias for cluster " + cluster);
+                    e.printStackTrace();
+                }
+
+            }
+        });
+	}
+
+	@Override
+	public void removeHelper(final PlotCluster cluster, final UUID uuid) {
+		TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_helpers` WHERE `cluster_id` = ? AND `user_uuid` = ?");
+                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setString(2, uuid.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove helper for cluster " + cluster);
+                }
+            }
+        });
+	}
+
+	@Override
+	public void setHelper(final PlotCluster cluster, final UUID uuid) {
+		TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_helpers` (`cluster_id`, `user_uuid`) VALUES(?,?)");
+                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setString(2, uuid.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set helper for cluster " + cluster);
+                    e.printStackTrace();
+                }
+            }
+        });
+	}
+
+	@Override
+	public void createCluster(final PlotCluster cluster) {
+		TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_CLUSTER);
+                    stmt.setInt(1, cluster.pos1.x);
+                    stmt.setInt(2, cluster.pos1.y);
+                    stmt.setInt(3, cluster.pos2.x);
+                    stmt.setInt(4, cluster.pos2.y);
+                    stmt.setString(5, cluster.owner.toString());
+                    stmt.setString(6, cluster.world);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    
+                    int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
+                    stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_settings`(`cluster_id`) VALUES(" + "?)");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save cluster " + cluster);
+                }
+            }
+        });
+	}
+
+	@Override
+	public void resizeCluster(PlotCluster current, PlotClusterId resize) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPosition(final PlotCluster cluster, final String position) {
+		TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `position` = ?  WHERE `cluster_id` = ?");
+                    stmt.setString(1, position);
+                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set position for cluster " + cluster);
+                    e.printStackTrace();
+                }
+            }
+        });
+	}
+
+	@Override
+	public HashMap<String, Object> getClusterSettings(int id) {
+		final HashMap<String, Object> h = new HashMap<String, Object>();
+        PreparedStatement stmt = null;
+        try {
+            stmt = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "cluster_settings` WHERE `cluster_id` = ?");
+            stmt.setInt(1, id);
+            final ResultSet r = stmt.executeQuery();
+            String var;
+            Object val;
+            while (r.next()) {
+                var = "biome";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "rain";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "custom_time";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "time";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "deny_entry";
+                val = r.getObject(var);
+                h.put(var, (short) 0);
+                var = "alias";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "position";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "flags";
+                val = r.getObject(var);
+                h.put(var, val);
+                var = "merged";
+                val = r.getObject(var);
+                h.put(var, val);
+            }
+            stmt.close();
+        } catch (final SQLException e) {
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load settings for cluster: " + id);
+            e.printStackTrace();
+        }
+        return h;
+	}
 }

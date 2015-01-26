@@ -29,6 +29,7 @@ package com.intellectualcrafters.plot.config;
  * @author Empire92
  */
 public class Settings {
+	public static boolean ENABLE_CLUSTERS = false;
     /**
      * Default UUID_FECTHING: false
      */

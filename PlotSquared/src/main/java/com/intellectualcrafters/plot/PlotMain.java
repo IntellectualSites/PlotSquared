@@ -98,6 +98,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Lag;
@@ -812,6 +813,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
         options.put("auto_update", false);
+        options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
@@ -842,6 +844,7 @@ public class PlotMain extends JavaPlugin implements Listener {
                 config.set(node.getKey(), node.getValue());
             }
         }
+        Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
         Settings.DEBUG = config.getBoolean("debug");
         if (Settings.DEBUG) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
@@ -1278,6 +1281,9 @@ public class PlotMain extends JavaPlugin implements Listener {
                 return;
             }
             plots = DBFunc.getPlots();
+            if (Settings.ENABLE_CLUSTERS) {
+            	ClusterManager.clusters = DBFunc.getClusters();
+            }
         }
         // TODO: Implement mongo
         else if (Settings.DB.USE_MONGO) {
@@ -1310,6 +1316,9 @@ public class PlotMain extends JavaPlugin implements Listener {
                 return;
             }
             plots = DBFunc.getPlots();
+            if (Settings.ENABLE_CLUSTERS) {
+            	ClusterManager.clusters = DBFunc.getClusters();
+            }
         } else {
             Logger.add(LogLevel.DANGER, "No storage type is set.");
             sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");

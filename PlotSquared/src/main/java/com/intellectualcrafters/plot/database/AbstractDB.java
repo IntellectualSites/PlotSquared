@@ -24,12 +24,15 @@ package com.intellectualcrafters.plot.database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
 
@@ -90,6 +93,8 @@ public interface AbstractDB {
      * @param plot Plot that should be deleted
      */
     public void delete(final String world, final Plot plot);
+    
+    public void delete(final PlotCluster cluster);
 
     /**
      * Create plot settings
@@ -108,12 +113,28 @@ public interface AbstractDB {
      * @return Integer = Plot Entry Id
      */
     public int getId(final String world, final PlotId id2);
-
+    
+    /**
+     * Get the id of a given plot cluster
+     *
+     * @param world Which the plot is located in
+     * @param pos1   bottom Plot ID 
+     * @param pos2	 top Plot ID
+     *
+     * @return Integer = Cluster Entry Id
+     */
+    public int getClusterId(final String world, final PlotClusterId id);
+    
     /**
      * @return A linked hashmap containing all plots
      */
     public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots();
 
+    /**
+     * @return A hashmap containing all plot clusters
+     */
+    public HashMap<String, HashSet<PlotCluster>> getClusters();
+    
     /**
      * Set the merged status for a plot
      *
@@ -131,7 +152,22 @@ public interface AbstractDB {
      * @param flags flags to set (flag[])
      */
     public void setFlags(final String world, final Plot plot, final Set<Flag> flags);
-
+    
+    /**
+     * Set cluster flags
+     *
+     * @param world World in which the plot is located
+     * @param cluster PlotCluster Object
+     * @param flags flags to set (flag[])
+     */
+    public void setFlags(final PlotCluster cluster, final Set<Flag> flags);
+    
+    /**
+     * Rename a cluster
+     */
+    public void setClusterName(final PlotCluster cluster, final String name);
+    
+    
     /**
      * Set the plot alias
      *
@@ -162,6 +198,13 @@ public interface AbstractDB {
      * @param position Plot Home Position
      */
     public void setPosition(final String world, final Plot plot, final String position);
+    
+    /**
+     * 
+     * @param cluster
+     * @param position
+     */
+    public void setPosition(final PlotCluster cluster, final String position);
 
     /**
      * @param id Plot Entry ID
@@ -169,12 +212,25 @@ public interface AbstractDB {
      * @return Plot Settings
      */
     public HashMap<String, Object> getSettings(final int id);
+    
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public HashMap<String, Object> getClusterSettings(final int id);
 
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
     public void removeHelper(final String world, final Plot plot, final UUID uuid);
+    
+    /**
+     * @param cluster   PlotCluster Object
+     * @param uuid Player that should be removed
+     */
+    public void removeHelper(final PlotCluster cluster, final UUID uuid);
 
     /**
      * @param plot   Plot Object
@@ -187,6 +243,12 @@ public interface AbstractDB {
      * @param uuid Player that should be removed
      */
     public void setHelper(final String world, final Plot plot, final UUID uuid);
+    
+    /**
+     * @param cluster PlotCluster Object
+     * @param uuid Player that should be removed
+     */
+    public void setHelper(final PlotCluster cluster, final UUID uuid);
 
     /**
      * @param plot   Plot Object
@@ -245,4 +307,8 @@ public interface AbstractDB {
     public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, boolean below);
 
     public void createPlotAndSettings(Plot plot);
+    
+    public void createCluster(PlotCluster cluster);
+    
+    public void resizeCluster(PlotCluster current, PlotClusterId resize);
 }

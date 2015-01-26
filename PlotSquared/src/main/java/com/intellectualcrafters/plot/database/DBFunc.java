@@ -23,12 +23,15 @@ package com.intellectualcrafters.plot.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
 
@@ -159,6 +162,10 @@ public class DBFunc {
     public static void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
         dbManager.setFlags(world, plot, flags);
     }
+    
+    public static void setFlags(final PlotCluster cluster, final Set<Flag> flags) {
+        dbManager.setFlags(cluster, flags);
+    }
 
     /**
      * @param plot
@@ -223,6 +230,32 @@ public class DBFunc {
     public static void removeHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeHelper(world, plot, uuid);
     }
+    
+    /**
+     * @param cluster
+     * @param player
+     */
+    public static void removeHelper(final PlotCluster cluster, final UUID uuid) {
+        dbManager.removeHelper(cluster, uuid);
+    }
+
+    /**
+     * @param world
+     * @param cluster
+     * @param name
+     */
+    public static void createCluster(String world, PlotCluster cluster) {
+    	dbManager.createCluster(cluster);
+    }
+
+    /**
+     * @param world
+     * @param current
+     * @param resize
+     */
+    public static void resizeCluster(PlotCluster current, PlotClusterId resize) {
+    	dbManager.resizeCluster(current, resize);
+    }
 
     /**
      * @param plot
@@ -238,6 +271,10 @@ public class DBFunc {
      */
     public static void setHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.setHelper(world, plot, uuid);
+    }
+    
+    public static void setHelper(final PlotCluster cluster, final UUID uuid) {
+        dbManager.setHelper(cluster, uuid);
     }
 
     /**
@@ -266,5 +303,17 @@ public class DBFunc {
 
     public static double getRatings(final Plot plot) {
         return dbManager.getRatings(plot);
+    }
+    
+    public static HashMap<String, HashSet<PlotCluster>> getClusters() {
+    	return dbManager.getClusters();
+    }
+    
+    public static void setPosition(PlotCluster cluster, String position) {
+    	dbManager.setPosition(cluster, position);
+    }
+    
+    public static HashMap<String, Object> getClusterSettings(int id) {
+    	return dbManager.getClusterSettings(id);
     }
 }

@@ -13,7 +13,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotRegion;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
 
@@ -22,7 +22,6 @@ public class AugmentedPopulator extends BlockPopulator {
 	public final PlotGenerator generator;
 	public final PlotWorld plotworld;
 	public final PlotManager manager;
-	public HashSet<PlotRegion> regions;
 	
 	
 	public BlockWrapper getBlock(int i, int j, short[][] result) {
@@ -37,32 +36,17 @@ public class AugmentedPopulator extends BlockPopulator {
 		return new BlockWrapper(x, y, z, id, (byte) 0);
 	}
 	
-	public AugmentedPopulator(PlotGenerator generator, PlotWorld plotworld, PlotManager manager, HashSet<PlotRegion> regions) {
+	public AugmentedPopulator(PlotGenerator generator, PlotWorld plotworld, PlotManager manager) {
 		this.generator = generator;
 		this.plotworld = plotworld;
 		this.manager = manager;
-		this.regions = regions;
-	}
-	
-	// Check if the augmented populator contains the plot id
-	public boolean contains(PlotId id) {
-		// TODO check if any regions contain the id
-		return false;
-	}
-	
-	/**
-	 * Returns false if the proposed region overlaps with an existing region
-	 */
-	public boolean addRegion(PlotRegion region) {
-		boolean contains = false; //TODO check if any regions contain these plots
-		if (contains) {// contains
-			return false;
-		}
-		return regions.add(region);
 	}
 	
 	@Override
 	public void populate(World world, Random rand, Chunk chunk) {
+		
+		// TODO check if chunk is in any clusters
+		
 		int X = chunk.getX();
 		int Z = chunk.getZ();
 		int x = X << 4;
