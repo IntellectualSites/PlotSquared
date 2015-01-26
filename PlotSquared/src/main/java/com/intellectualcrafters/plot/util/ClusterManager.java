@@ -13,7 +13,7 @@ public class ClusterManager {
 	private static PlotCluster last;
 	
 	public static boolean contains(PlotCluster cluster, PlotId id) {
-		if (cluster.pos1.x <= id.x && cluster.pos1.y <= id.y && cluster.pos2.x >= id.x && cluster.pos2.y >= id.y) {
+		if (cluster.getP1().x <= id.x && cluster.getP1().y <= id.y && cluster.getP2().x >= id.x && cluster.getP2().y >= id.y) {
 			return true;
 		}
 		return false;
@@ -53,6 +53,6 @@ public class ClusterManager {
 	}
 	
 	public static PlotClusterId getClusterId(PlotCluster cluster) {
-		return new PlotClusterId(cluster.pos1, cluster.pos2);
+		return new PlotClusterId(cluster.getP1(), cluster.getP2());
 	}
 }

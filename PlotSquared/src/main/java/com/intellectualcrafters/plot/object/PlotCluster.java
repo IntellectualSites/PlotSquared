@@ -1,14 +1,35 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class PlotCluster {
 
-	public PlotSettings settings;
 	public final String world;
-	public final PlotId pos1;
-	public final PlotId pos2;
-	public final UUID owner;
+	
+	public PlotSettings settings;
+	public UUID owner;
+
+	public HashSet<UUID> helpers = new HashSet<UUID>();
+	
+	private PlotId pos1;
+	private PlotId pos2;
+	
+	public PlotId getP1() {
+		return this.pos1;
+	}
+	
+	public PlotId getP2() {
+		return this.pos2;
+	}
+	
+	public void setP1(PlotId id) {
+		this.pos1 = id;
+	}
+	
+	public void setP2(PlotId id) {
+		this.pos2 = id;
+	}
 	
 	public PlotCluster(String world, PlotId pos1, PlotId pos2, UUID owner) {
 		this.world = world;

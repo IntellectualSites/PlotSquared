@@ -562,11 +562,10 @@ public class SQLManager implements AbstractDB {
                 p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
-            // stmt.close();
+
             /*
              * Getting helpers
              */
-            // stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -583,12 +582,9 @@ public class SQLManager implements AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
             }
-            // stmt.close();
-
             /*
              * Getting trusted
              */
-            // stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -605,12 +601,9 @@ public class SQLManager implements AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
             }
-            // stmt.close();
-
             /*
              * Getting denied
              */
-            // stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -627,9 +620,6 @@ public class SQLManager implements AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
                 }
             }
-            // stmt.close();
-
-            // stmt = connection.createStatement();
             r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -1264,7 +1254,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to delete plot cluster: " + cluster.pos1 + ":" + cluster.pos2);
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to delete plot cluster: " + cluster.getP1() + ":" + cluster.getP2());
                 }
             }
         });
@@ -1295,8 +1285,177 @@ public class SQLManager implements AbstractDB {
 
 	@Override
 	public HashMap<String, HashSet<PlotCluster>> getClusters() {
-		// TODO Auto-generated method stub
-		return null;
+		 final LinkedHashMap<String, HashSet<PlotCluster>> newClusters = new LinkedHashMap<>();
+        final HashMap<Integer, PlotCluster> clusters = new HashMap<>();
+        Statement stmt = null;
+        try {
+
+            Set<String> worlds = new HashSet<>();
+            if (PlotMain.config.contains("worlds")) {
+                worlds = PlotMain.config.getConfigurationSection("worlds").getKeys(false);
+            }
+            final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
+            final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
+
+            /*
+             * Getting clusters
+             */
+            stmt = this.connection.createStatement();
+            ResultSet r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "cluster`");
+            PlotId pos1;
+            PlotId pos2;
+            PlotCluster cluster; 
+            String owner;
+            String worldname;
+            UUID user;
+            int id;
+            while (r.next()) {
+            	pos1 = new PlotId(r.getInt("pos1_x"), r.getInt("pos1_z"));
+            	pos2 = new PlotId(r.getInt("pos2_x"), r.getInt("pos2_z"));
+                id = r.getInt("id");
+                worldname = r.getString("world");
+                if (!worlds.contains(worldname)) {
+                    if (noExist.containsKey(worldname)) {
+                        noExist.put(worldname, noExist.get(worldname) + 1);
+                    } else {
+                        noExist.put(worldname, 1);
+                    }
+                }
+                owner = r.getString("owner");
+                user = uuids.get(owner);
+                if (user == null) {
+                    user = UUID.fromString(owner);
+                    uuids.put(owner, user);
+                }
+                cluster = new PlotCluster(worldname, pos1, pos2, user);
+                clusters.put(id, cluster);
+            }
+
+            /*
+             * Getting helpers
+             */
+            r = stmt.executeQuery("SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_helpers`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                owner = r.getString("user_uuid");
+                user = uuids.get(owner);
+                if (user == null) {
+                    user = UUID.fromString(owner);
+                    uuids.put(owner, user);
+                }
+                cluster = clusters.get(id);
+                if (cluster != null) {
+                    cluster.helpers.add(user);
+                } else {
+                    PlotMain.sendConsoleSenderMessage("&cCluster " + id + " in cluster_helpers does not exist. Please create the cluster or remove this entry.");
+                }
+            }
+            r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "cluster_settings`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                cluster = clusters.get(id);
+                if (cluster != null) {
+
+                    final String b = r.getString("biome");
+                    if (b != null) {
+                        for (final Biome mybiome : Biome.values()) {
+                            if (mybiome.toString().equalsIgnoreCase(b)) {
+                                break;
+                            }
+                        }
+                    }
+
+                    final String alias = r.getString("alias");
+                    if (alias != null) {
+                        cluster.settings.setAlias(alias);
+                    }
+
+                    final String pos = r.getString("position");
+                    
+                    switch (pos.toLowerCase()) {
+                        case "":
+                        case "default":
+                        case "0,0,0":
+                        case "center":
+                            break;
+                        default:
+                            try {
+                                String[] split = pos.split(",");
+                                BlockLoc loc = new BlockLoc(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
+                                cluster.settings.setPosition(loc);
+                            }
+                            catch (Exception e) {}
+                    }
+                    final Integer m = r.getInt("merged");
+                    if (m != null) {
+                        final boolean[] merged = new boolean[4];
+                        for (int i = 0; i < 4; i++) {
+                            merged[3 - i] = ((m) & (1 << i)) != 0;
+                        }
+                        cluster.settings.setMerged(merged);
+                    } else {
+                        cluster.settings.setMerged(new boolean[]{false, false, false, false});
+                    }
+
+                    String[] flags_string;
+                    final String myflags = r.getString("flags");
+                    if (myflags == null) {
+                        flags_string = new String[]{};
+                    } else {
+                        if (myflags.length() > 0) {
+                            flags_string = myflags.split(",");
+                        }
+                        else {
+                            flags_string = new String[]{};
+                        }
+                    }
+                    final Set<Flag> flags = new HashSet<Flag>();
+                    boolean exception = false;
+                    for (final String element : flags_string) {
+                        if (element.contains(":")) {
+                            final String[] split = element.split(":");
+                            try {
+                            	String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
+                            	Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
+                                flags.add(flag);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                exception = true;
+                            }
+                        } else {
+                            flags.add(new Flag(FlagManager.getFlag(element, true), ""));
+                        }
+                    }
+                    if (exception) {
+                        PlotMain.sendConsoleSenderMessage("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
+                        setFlags(id, flags.toArray(new Flag[0]));
+                    }
+                    cluster.settings.flags = flags;
+                } else {
+                    PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
+                }
+            }
+            stmt.close();
+            for (final PlotCluster c : clusters.values()) {
+                final String world = c.world;
+                if (!newClusters.containsKey(world)) {
+                	newClusters.put(world, new HashSet<PlotCluster>());
+                }
+                newClusters.get(world).add(c);
+            }
+            boolean invalidPlot = false;
+            for (final String w : noExist.keySet()) {
+                invalidPlot = true;
+                PlotMain.sendConsoleSenderMessage("&c[WARNING] Found " + noExist.get(w) + " clusters in DB for non existant world; '" + w + "'.");
+            }
+            if (invalidPlot) {
+                PlotMain.sendConsoleSenderMessage("&c[WARNING] - Please create the world/s or remove the clusters using the purge command");
+            }
+        } catch (final SQLException e) {
+            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load clusters.");
+            e.printStackTrace();
+        }
+        return newClusters;
 	}
 
 	@Override
@@ -1396,10 +1555,10 @@ public class SQLManager implements AbstractDB {
                 PreparedStatement stmt = null;
                 try {
                     stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_CLUSTER);
-                    stmt.setInt(1, cluster.pos1.x);
-                    stmt.setInt(2, cluster.pos1.y);
-                    stmt.setInt(3, cluster.pos2.x);
-                    stmt.setInt(4, cluster.pos2.y);
+                    stmt.setInt(1, cluster.getP1().x);
+                    stmt.setInt(2, cluster.getP1().y);
+                    stmt.setInt(3, cluster.getP2().x);
+                    stmt.setInt(4, cluster.getP2().y);
                     stmt.setString(5, cluster.owner.toString());
                     stmt.setString(6, cluster.world);
                     stmt.executeUpdate();
@@ -1419,9 +1578,30 @@ public class SQLManager implements AbstractDB {
 	}
 
 	@Override
-	public void resizeCluster(PlotCluster current, PlotClusterId resize) {
-		// TODO Auto-generated method stub
-		
+	public void resizeCluster(final PlotCluster current, final PlotClusterId resize) {
+		final PlotId pos1 = new PlotId(current.getP1().x, current.getP1().y);
+		final PlotId pos2 = new PlotId(current.getP2().x, current.getP2().y);
+		current.setP1(resize.pos1);
+		current.setP2(resize.pos2);
+		TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster` SET `pos1_x` = ?, `pos1_z` = ?, `pos2_x` = ?, `pos2_z` = ?  WHERE `cluster_id` = ?");
+                    stmt.setInt(1, pos1.x);
+                    stmt.setInt(2, pos1.y);
+                    stmt.setInt(3, pos2.x);
+                    stmt.setInt(4, pos2.y);
+                    stmt.setInt(5, getClusterId(current.world, ClusterManager.getClusterId(current)));
+                    stmt.executeUpdate();
+                    stmt.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to rezize cluster " + current);
+                    e.printStackTrace();
+                }
+            }
+        });		
 	}
 
 	@Override
