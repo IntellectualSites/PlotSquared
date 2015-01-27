@@ -168,7 +168,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 
         final PlotId id = plot.id;
         final PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
-        final int num = PlayerFunctions.getPlotSelectionIds(world, id, id2).size();
+        final int num = PlayerFunctions.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
         final String biome = getBiomeAt(plot).toString();
         final String helpers = getPlayerList(plot.helpers);

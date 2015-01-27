@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-@SuppressWarnings("deprecation") public class SetOwner extends SubCommand {
+public class SetOwner extends SubCommand {
 
     public SetOwner() {
         super("setowner", "plots.admin.command.setowner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
@@ -68,7 +68,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
 
-        final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(world, bot, top);
+        final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(bot, top);
 
         for (final PlotId id : plots) {
             final Plot current = PlotMain.getPlots(world).get(id);

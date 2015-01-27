@@ -209,6 +209,7 @@ public enum C {
      * No <plot>
      */
     NOT_IN_PLOT("&cYou're not in a plot"),
+    NOT_IN_CLUSTER("&cYou're not in a plot cluster"),
     NOT_IN_PLOT_WORLD("&cYou're not in a plot world"),
     NOT_VALID_WORLD("&cThat is not a valid world (case sensitive)"),
     NOT_VALID_PLOT_WORLD("&cThat is not a valid plot world (case sensitive)"),

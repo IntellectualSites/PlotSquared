@@ -56,7 +56,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return getCurrentPlot(player) != null;
     }
 
-    public static ArrayList<PlotId> getPlotSelectionIds(@SuppressWarnings("unused") final World world, final PlotId pos1, final PlotId pos2) {
+    public static ArrayList<PlotId> getPlotSelectionIds(PlotId pos1, final PlotId pos2) {
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
@@ -147,7 +147,13 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             return null;
         }
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        return manager.getPlotId(plotworld, loc);
+        PlotId id = manager.getPlotId(plotworld, loc);
+        if (plotworld.REQUIRE_CLUSTER) {
+        	if (ClusterManager.getCluster(world, id) == null) {
+        		return null;
+        	}
+        }
+        return id;
     }
 
     /**
@@ -225,7 +231,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
-    @SuppressWarnings("SuspiciousNameCombination")
     public static int getAllowedPlots(final Player p) {
         return PlotMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }

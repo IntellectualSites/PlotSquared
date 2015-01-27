@@ -90,7 +90,7 @@ public class Buy extends SubCommand {
         double price = initPrice;
         PlotId id = plot.id;
         PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
-        int size = PlayerFunctions.getPlotSelectionIds(world, id, id2).size();
+        int size = PlayerFunctions.getPlotSelectionIds(id, id2).size();
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;

@@ -33,6 +33,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 
@@ -59,6 +60,12 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
+    public final static boolean REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
+    
+    // are plot clusters enabled
+    // require claim in cluster
+    
+    
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     public static List<Material> BLOCKS;                                           /*
@@ -285,6 +292,7 @@ public abstract class PlotWorld {
     public boolean SPAWN_CUSTOM;
     public boolean SPAWN_BREEDING;
     public boolean WORLD_BORDER;
+    public boolean REQUIRE_CLUSTER = false;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -296,6 +304,9 @@ public abstract class PlotWorld {
      * @param config Configuration Section
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
+    	if (Settings.ENABLE_CLUSTERS) {
+    		this.REQUIRE_CLUSTER = config.getBoolean("claim.require_cluster");
+    	}
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
@@ -359,6 +370,9 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
+        if (Settings.ENABLE_CLUSTERS) {
+        	options.put("claim.require_cluster", PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT);
+    	}
         final ConfigurationNode[] settings = getSettingNodes();
         /*
          * Saving generator specific settings

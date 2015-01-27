@@ -104,7 +104,7 @@ public class DebugClaimTest extends SubCommand {
 
             final ArrayList<Plot> plots = new ArrayList<>();
 
-            for (final PlotId id : PlayerFunctions.getPlotSelectionIds(world, min, max)) {
+            for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
                 final Plot plot = PlotHelper.getPlot(world, id);
                 final boolean contains = PlotMain.getPlots(world).containsKey(plot.id);
                 if (contains) {

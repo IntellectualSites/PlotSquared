@@ -49,8 +49,6 @@ public class AugmentedPopulator extends BlockPopulator {
 		else {
 			x = z_1 - (z << 4);
 		}
-		
-		
 		short id = result[i][j];
 		return new BlockWrapper(x, y, z, id, (byte) 0);
 	}
@@ -59,7 +57,7 @@ public class AugmentedPopulator extends BlockPopulator {
 		this.generator = generator;
 		this.plotworld = generator.getNewPlotWorld(world);
 		this.manager = generator.getPlotManager();
-		
+
 		World bukkitWorld = Bukkit.getWorld(world);
 		
 		Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
@@ -77,9 +75,6 @@ public class AugmentedPopulator extends BlockPopulator {
 	
 	@Override
 	public void populate(World world, Random rand, Chunk chunk) {
-		
-		// TODO check if chunk is in any clusters
-		
 		int X = chunk.getX();
 		int Z = chunk.getZ();
 		int x = X << 4;

@@ -31,8 +31,10 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 
@@ -156,6 +158,17 @@ public class Auto extends SubCommand {
             }
             // }
         }
+        
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        if (plotworld.REQUIRE_CLUSTER) {
+        	Location loc = plr.getLocation();
+        	Plot plot = PlotHelper.getCurrentPlot(loc);
+        	if (plot == null) {
+        		return sendMessage(plr, C.NOT_IN_PLOT);
+        	}
+        	PlotCluster cluster = ClusterManager.getCluster(loc);
+        }
+        
         boolean br = false;
         String worldname = world.getName();
         if ((size_x == 1) && (size_z == 1)) {
@@ -189,7 +202,7 @@ public class Auto extends SubCommand {
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(world, start, end))) {
+                    if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(start, end))) {
                         return false;
                     }
                     br = true;

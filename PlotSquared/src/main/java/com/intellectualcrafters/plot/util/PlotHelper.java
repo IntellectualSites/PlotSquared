@@ -397,7 +397,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             count++;
             final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
             final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, player, 0)) {
                 final boolean result = mergePlots(world, plots);
                 if (result) {
@@ -405,7 +405,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
             if (ownsPlots(world, plots, player, 1)) {
                 final boolean result = mergePlots(world, plots);
                 if (result) {
@@ -413,7 +413,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
             if (ownsPlots(world, plots, player, 2)) {
                 final boolean result = mergePlots(world, plots);
                 if (result) {
@@ -421,7 +421,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, player, 3)) {
                 final boolean result = mergePlots(world, plots);
                 if (result) {
