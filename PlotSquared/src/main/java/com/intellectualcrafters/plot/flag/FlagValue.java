@@ -288,9 +288,15 @@ public abstract class FlagValue<T> {
         }
     }
     
-    public static class PlotBlockListValue extends FlagValue<HashSet<PlotBlock>> {
+    public interface ListValue {
+        public void add(Object t, String value);
+        public void remove(Object t, String value);
+    }
+    
+    public static class PlotBlockListValue extends FlagValue<HashSet<PlotBlock>> implements ListValue {
 
-    	@Override
+    	@SuppressWarnings("unchecked")
+        @Override
     	public String toString(Object t) {
     		return StringUtils.join((HashSet<PlotBlock>) t, ",");
     	}
@@ -323,6 +329,18 @@ public abstract class FlagValue<T> {
         @Override
         public String getDescription() {
         	return "Flag value must be a block list";
+        }
+
+        @Override
+        public void add(Object t, String value) {
+            ((HashSet<PlotBlock>)t).addAll(parse(value));
+        }
+
+        @Override
+        public void remove(Object t, String value) {
+            for (PlotBlock item : parse(value)) {
+                ((HashSet<PlotBlock>)t).remove(item);
+            }
         }
     }
 

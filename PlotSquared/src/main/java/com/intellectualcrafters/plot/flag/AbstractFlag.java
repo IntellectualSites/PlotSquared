@@ -31,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class AbstractFlag {
 
-    private final String key;
-    private final FlagValue<?> value;
+    public final String key;
+    public final FlagValue<?> value;
 
     public AbstractFlag(final String key) {
         this(key, new FlagValue.StringValue());
@@ -55,6 +55,10 @@ public class AbstractFlag {
         } else {
             this.value = value;
         }
+    }
+    
+    public boolean isList() {
+        return this.value instanceof FlagValue.ListValue;
     }
 
     public Object parseValueRaw(final String value) {
