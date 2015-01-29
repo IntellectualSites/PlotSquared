@@ -9,6 +9,8 @@ public abstract class UUIDWrapper {
     public abstract UUID getUUID(Player player);
 
     public abstract UUID getUUID(OfflinePlayer player);
+    
+    public abstract UUID getUUID(String name);
 
     public abstract OfflinePlayer getOfflinePlayer(UUID uuid);
 

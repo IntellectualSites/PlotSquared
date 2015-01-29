@@ -56,4 +56,9 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         return null;
     }
 
+    @Override
+    public UUID getUUID(String name) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+    }
+
 }

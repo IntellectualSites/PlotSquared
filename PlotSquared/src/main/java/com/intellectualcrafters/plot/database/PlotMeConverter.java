@@ -83,6 +83,9 @@ public class PlotMeConverter {
                     final ArrayList<Plot> createdPlots = new ArrayList<>();
                     final String dataFolder = new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
                     final File plotMeFile = new File(dataFolder + "config.yml");
+                    if (!plotMeFile.exists()) {
+                        return;
+                    }
                     final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
                     int count = 0;
                     
@@ -96,6 +99,7 @@ public class PlotMeConverter {
                         connection = new SQLite(PlotMain.getMain(), dataFolder + File.separator + "plots.db").openConnection();
                     }
                     sendMessage("Collecting plot data");
+                    sendMessage(" - plotmePlots");
                     ResultSet r;
                     Statement stmt;
                     final HashMap<String, Integer> plotSize = new HashMap<>();
@@ -114,7 +118,6 @@ public class PlotMeConverter {
                             plotSize.put(world, size);
                             plots.put(world, new HashMap<PlotId, Plot>());
                         }
-                        
                         UUID owner = UUIDHandler.getUUID(name);
                         if (owner == null) {
                             if (name.equals("*")) {
@@ -128,7 +131,7 @@ public class PlotMeConverter {
                         final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
                         plots.get(world).put(id, plot);
                     }
-                    
+                    sendMessage(" - plotmeAllowed");
                     r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
                     while (r.next()) {
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -147,7 +150,7 @@ public class PlotMeConverter {
                             plots.get(world).get(id).helpers.add(helper);
                         }
                     }
-                    
+                    sendMessage(" - plotmeDenied");
                     r = stmt.executeQuery("SELECT * FROM `plotmeDenied`");
                     while (r.next()) {
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -301,7 +304,7 @@ public class PlotMeConverter {
                                 
                                 PlotMain.setAllPlotsRaw(DBFunc.getPlots());
                                 sendMessage("Conversion has finished");
-                                PlotMain.sendConsoleSenderMessage("&cAlthough the server may be functional in it's current state, it is recommended that you restart the server and remove PlotMe to finalize the installation. Please make careful note of any warning messages that may have showed up during conversion.");
+                                PlotMain.sendConsoleSenderMessage("&cPlease disable 'plotme-convert.enabled' in the settings.yml to indicate that you conversion is no longer required.");
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }

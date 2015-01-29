@@ -188,7 +188,7 @@ public class UUIDHandler {
     }
 
     public static UUID getUUID(final String name) {
-        if (name == null) {
+        if (name == null || name.length() == 0) {
             return null;
         }
         // check online
@@ -205,11 +205,9 @@ public class UUIDHandler {
         if (uuid != null) {
             return uuid;
         }
-        
         // Read from disk OR convert directly to offline UUID
         if (Settings.UUID_FROM_DISK || uuidWrapper instanceof OfflineUUIDWrapper) {
-            OfflinePlayer op = Bukkit.getOfflinePlayer(name);
-            uuid = UUIDHandler.uuidWrapper.getUUID(op);
+            uuid = UUIDHandler.uuidWrapper.getUUID(name);
             add(new StringWrapper(name), uuid);
             return uuid;
         }

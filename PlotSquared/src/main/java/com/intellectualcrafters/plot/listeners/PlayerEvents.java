@@ -38,7 +38,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -106,12 +105,12 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onWorldLoad(final WorldLoadEvent event) {
         PlotMain.loadWorld(event.getWorld());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onChunkLoad(final ChunkLoadEvent event) {
     	String worldname = event.getWorld().getName();
     	Chunk chunk = event.getChunk();
@@ -125,7 +124,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onJoin(final PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPlayedBefore()) {
@@ -275,7 +274,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onBigBoom(final EntityExplodeEvent event) {
         final World world = event.getLocation().getWorld();
         if (!isPlotWorld(world)) {
@@ -482,7 +481,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (block == null) {

@@ -28,4 +28,9 @@ public class DefaultUUIDWrapper extends UUIDWrapper {
         return Bukkit.getPlayer(uuid);
     }
 
+    @Override
+    public UUID getUUID(String name) {
+        return Bukkit.getOfflinePlayer(name).getUniqueId();
+    }
+
 }

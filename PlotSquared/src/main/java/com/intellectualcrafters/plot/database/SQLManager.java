@@ -31,11 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PlotMain;
@@ -151,100 +153,105 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
-
-        // TODO SEVERE [ More than 5000 plots will fail in a single SQLite
-        // query.
-
-        final HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<>();
-        final HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<>();
-        try {
-            final PreparedStatement stmt = this.connection.prepareStatement(this.GET_ALL_PLOTS);
-            final ResultSet result = stmt.executeQuery();
-            while (result.next()) {
-                final int id = result.getInt("id");
-                final int idx = result.getInt("plot_id_x");
-                final int idz = result.getInt("plot_id_z");
-                final String world = result.getString("world");
-
-                if (!stored.containsKey(world)) {
-                    stored.put(world, new HashMap<PlotId, Integer>());
-                }
-                stored.get(world).put(new PlotId(idx, idz), id);
-            }
-        } catch (final SQLException e) {
-            e.printStackTrace();
+    public void createAllSettingsAndHelpers(final ArrayList<Plot> mylist) {
+        int size = mylist.size();
+        int packet;
+        if (PlotMain.getMySQL() != null) {
+            packet = Math.min(size, 50000);
         }
-
-        for (final Plot plot : plots) {
-            final String world = Bukkit.getWorld(plot.world).getName();
-            if (stored.containsKey(world)) {
-                final Integer id = stored.get(world).get(plot.id);
-                if (id != null) {
-                    helpers.put(id, plot.helpers);
-                }
-            }
+        else {
+            packet = Math.min(size, 5000);
         }
-
-        if (helpers.size() == 0) {
-            return;
-        }
-        // add plot settings
-        final Integer[] ids = helpers.keySet().toArray(new Integer[helpers.keySet().size()]);
-        StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
-        for (int i = 0; i < (ids.length - 1); i++) {
-            statement.append("(?),");
-        }
-        statement.append("(?)");
-        PreparedStatement stmt = null;
-        try {
-            stmt = this.connection.prepareStatement(statement.toString());
-            for (int i = 0; i < ids.length; i++) {
-                stmt.setInt(i + 1, ids[i]);
-            }
-            stmt.executeUpdate();
-            stmt.close();
-        } catch (final SQLException e) {
-            for (int i = 0; i < ids.length; i++) {
-                createPlotSettings(ids[i], null);
-            }
-        }
-
-        // add plot helpers
-        String prefix = "";
-        statement = new StringBuilder(this.CREATE_HELPERS);
-        for (final Integer id : helpers.keySet()) {
-            for (final UUID helper : helpers.get(id)) {
-                statement.append(prefix + "(?, ?)");
-                prefix = ",";
-            }
-        }
-        if (prefix.equals("")) {
-            return;
-        }
-        try {
-            stmt = this.connection.prepareStatement(statement.toString());
-            int counter = 0;
-            for (final Integer id : helpers.keySet()) {
-                for (final UUID helper : helpers.get(id)) {
-
-                    stmt.setInt((counter * 2) + 1, id);
-                    stmt.setString((counter * 2) + 2, helper.toString());
-                    counter++;
-                }
-            }
-            stmt.executeUpdate();
-            stmt.close();
-        } catch (final SQLException e) {
+        int amount = size/packet;
+        for (int j = 0; j <= amount;j++) {
+            List<Plot> plots = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
+            final HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<>();
+            final HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<>();
             try {
-                for (final Integer id : helpers.keySet()) {
-                    for (final UUID helper : helpers.get(id)) {
-                        setHelper(id, helper);
+                final PreparedStatement stmt = this.connection.prepareStatement(this.GET_ALL_PLOTS);
+                final ResultSet result = stmt.executeQuery();
+                while (result.next()) {
+                    final int id = result.getInt("id");
+                    final int idx = result.getInt("plot_id_x");
+                    final int idz = result.getInt("plot_id_z");
+                    final String world = result.getString("world");
+    
+                    if (!stored.containsKey(world)) {
+                        stored.put(world, new HashMap<PlotId, Integer>());
+                    }
+                    stored.get(world).put(new PlotId(idx, idz), id);
+                }
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+            for (final Plot plot : plots) {
+                final String world = plot.world;
+                if (stored.containsKey(world)) {
+                    final Integer id = stored.get(world).get(plot.id);
+                    if (id != null) {
+                        helpers.put(id, plot.helpers);
                     }
                 }
             }
-            catch (Exception e2) {}
-            PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set all helpers for plots");
+            if (helpers.size() == 0) {
+                return;
+            }
+            // add plot settings
+            final Integer[] ids = helpers.keySet().toArray(new Integer[helpers.keySet().size()]);
+            StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
+            for (int i = 0; i < (ids.length - 1); i++) {
+                statement.append("(?),");
+            }
+            statement.append("(?)");
+            PreparedStatement stmt = null;
+            try {
+                stmt = this.connection.prepareStatement(statement.toString());
+                for (int i = 0; i < ids.length; i++) {
+                    stmt.setInt(i + 1, ids[i]);
+                }
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final SQLException e) {
+                for (int i = 0; i < ids.length; i++) {
+                    createPlotSettings(ids[i], null);
+                }
+            }
+            // add plot helpers
+            String prefix = "";
+            statement = new StringBuilder(this.CREATE_HELPERS);
+            for (final Integer id : helpers.keySet()) {
+                for (final UUID helper : helpers.get(id)) {
+                    statement.append(prefix + "(?, ?)");
+                    prefix = ",";
+                }
+            }
+            if (prefix.equals("")) {
+                return;
+            }
+            try {
+                stmt = this.connection.prepareStatement(statement.toString());
+                int counter = 0;
+                for (final Integer id : helpers.keySet()) {
+                    for (final UUID helper : helpers.get(id)) {
+    
+                        stmt.setInt((counter * 2) + 1, id);
+                        stmt.setString((counter * 2) + 2, helper.toString());
+                        counter++;
+                    }
+                }
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final SQLException e) {
+                try {
+                    for (final Integer id : helpers.keySet()) {
+                        for (final UUID helper : helpers.get(id)) {
+                            setHelper(id, helper);
+                        }
+                    }
+                }
+                catch (Exception e2) {}
+                PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set all helpers for plots");
+            }
         }
     }
 
@@ -254,53 +261,62 @@ public class SQLManager implements AbstractDB {
      * @param plots
      */
     @Override
-    public void createPlots(final ArrayList<Plot> plots) {
-
-        // TODO SEVERE [ More than 5000 plots will fail in a single SQLite
-        // query.
-
-        if (plots.size() == 0) {
-            return;
+    public void createPlots(final ArrayList<Plot> mylist) {
+        int size = mylist.size();
+        int packet;
+        if (PlotMain.getMySQL() != null) {
+            packet = Math.min(size, 50000);
         }
-        final StringBuilder statement = new StringBuilder(this.CREATE_PLOTS);
-
-        for (int i = 0; i < (plots.size() - 1); i++) {
-            statement.append("(?,?,?,?),");
+        else {
+            packet = Math.min(size, 5000);
         }
-        statement.append("(?,?,?,?)");
-
-        PreparedStatement stmt = null;
-        try {
-            stmt = this.connection.prepareStatement(statement.toString());
-            for (int i = 0; i < plots.size(); i++) {
-                final Plot plot = plots.get(i);
-                stmt.setInt((i * 4) + 1, plot.id.x);
-                stmt.setInt((i * 4) + 2, plot.id.y);
-                try {
-                    stmt.setString((i * 4) + 3, plot.owner.toString());
-                }
-                catch (Exception e) {
-                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
-                }
-                stmt.setString((i * 4) + 4, plot.world);
+        int amount = size/packet;
+        for (int j = 0; j <= amount;j++) {
+            List<Plot> plots = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
+            if (plots.size() == 0) {
+                return;
             }
-            stmt.executeUpdate();
-            stmt.close();
-        } catch (final Exception e) {
-            PlotMain.sendConsoleSenderMessage("&6[WARN] "+"Could not bulk save. Conversion may be slower...");
+            final StringBuilder statement = new StringBuilder(this.CREATE_PLOTS);
+    
+            for (int i = 0; i < (plots.size() - 1); i++) {
+                statement.append("(?,?,?,?),");
+            }
+            statement.append("(?,?,?,?)");
+    
+            PreparedStatement stmt = null;
             try {
-                for (Plot plot : plots) {
+                stmt = this.connection.prepareStatement(statement.toString());
+                for (int i = 0; i < plots.size(); i++) {
+                    final Plot plot = plots.get(i);
+                    stmt.setInt((i * 4) + 1, plot.id.x);
+                    stmt.setInt((i * 4) + 2, plot.id.y);
                     try {
-                        createPlot(plot);
+                        stmt.setString((i * 4) + 3, plot.owner.toString());
                     }
-                    catch (Exception e3) {
-                        PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot: "+plot.id);
+                    catch (Exception e) {
+                        stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
+                    }
+                    stmt.setString((i * 4) + 4, plot.world);
+                }
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final Exception e) {
+                e.printStackTrace();
+                PlotMain.sendConsoleSenderMessage("&6[WARN] "+"Could not bulk save. Conversion may be slower...");
+                try {
+                    for (Plot plot : plots) {
+                        try {
+                            createPlot(plot);
+                        }
+                        catch (Exception e3) {
+                            PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plot: "+plot.id);
+                        }
                     }
                 }
-            }
-            catch (Exception e2) {
-                e2.printStackTrace();
-                PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plots!");
+                catch (Exception e2) {
+                    e2.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to save plots!");
+                }
             }
         }
     }
@@ -1392,9 +1408,6 @@ public class SQLManager implements AbstractDB {
                     final String alias = r.getString("alias");
                     if (alias != null) {
                         cluster.settings.setAlias(alias);
-                    }
-                    else {
-                        System.out.print("ALIAS IS NULL!!!");
                     }
 
                     final String pos = r.getString("position");

@@ -900,7 +900,14 @@ public class PlotMain extends JavaPlugin implements Listener {
     public static void worldLoad(WorldLoadEvent event) {
         if (!UUIDHandler.CACHED) {
             UUIDHandler.cacheAll();
-            if (Settings.CONVERT_PLOTME && Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
+            if (Settings.CONVERT_PLOTME) {
+                if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
+                    sendConsoleSenderMessage("&c[IMPORTANT] THIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU WISH TO CONVERT A PLOTME DATABASE");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - Please delete your PlotMe.jar before starting your server!");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - This is required as the database may be locked if PlotMe is using it!");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                    return;
+                }
                 try {
                     new PlotMeConverter(PlotMain.getMain()).runAsync();
                 } catch (final Exception e) {
