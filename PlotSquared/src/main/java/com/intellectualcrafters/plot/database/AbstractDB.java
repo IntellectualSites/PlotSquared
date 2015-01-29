@@ -239,11 +239,10 @@ public interface AbstractDB {
     public void removeTrusted(final String world, final Plot plot, final UUID uuid);
     /**
      * 
-     * @param world
      * @param cluster
      * @param uuid
      */
-    public void removeInvited(final String world, final PlotCluster cluster, final UUID uuid);
+    public void removeInvited(final PlotCluster cluster, final UUID uuid);
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed

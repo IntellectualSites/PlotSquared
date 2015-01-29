@@ -3,10 +3,12 @@ package com.intellectualcrafters.plot.util;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
@@ -34,6 +36,63 @@ public class ClusterManager {
 	        return clusters.get(world);
 	    }
 	    return new HashSet<>();
+	}
+	
+	public static Location getHome(PlotCluster cluster) {
+	    World world = Bukkit.getWorld(cluster.world);
+	    BlockLoc home = cluster.settings.getPosition();
+	    Location toReturn;
+	    if (home.y == 0) {
+	        // default pos
+	        PlotId center = getCenterPlot(cluster);
+	        toReturn = PlotHelper.getPlotHome(world, center); 
+	        if (toReturn.getBlockY() == 0) {
+	            final PlotManager manager = PlotMain.getPlotManager(world);
+	            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+	            final Location loc = manager.getSignLoc(world, plotworld, PlotHelper.getPlot(world, center));
+	            toReturn.setY(loc.getY());
+	        }
+	    }
+	    else {
+	        toReturn = getClusterBottom(cluster).add(home.x, home.y, home.z);
+	    }
+	    int max = world.getHighestBlockAt(toReturn).getY();
+	    if (max > toReturn.getBlockY()) {
+	        toReturn.setY(max);
+	    }
+	    return toReturn;
+	}
+	
+	public static PlotId getCenterPlot(PlotCluster cluster) {
+	    PlotId bot = cluster.getP1();
+	    PlotId top = cluster.getP2();
+	    return new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+	}
+	
+	public static Location getClusterBottom(PlotCluster cluster) {
+        String world = cluster.world;
+        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+    }
+	
+	public static Location getClusterTop(PlotCluster cluster) {
+        String world = cluster.world;
+        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final PlotManager manager = PlotMain.getPlotManager(world);
+        return manager.getPlotTopLocAbs(plotworld, cluster.getP2());
+    }
+	
+	public static PlotCluster getCluster(String world, String name) {
+	    if (!clusters.containsKey(world)) {
+	        return null;
+	    }
+	    for (PlotCluster cluster : clusters.get(world)) {
+	        if (cluster.getName().equals(name)) {
+	            return cluster;
+	        }
+	    }
+	    return null;
 	}
 	
 	public static boolean contains(PlotCluster cluster, Location loc) {

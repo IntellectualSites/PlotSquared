@@ -1697,7 +1697,7 @@ public class SQLManager implements AbstractDB {
 	}
 
     @Override
-    public void removeInvited(String world, final PlotCluster cluster, final UUID uuid) {
+    public void removeInvited(final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {

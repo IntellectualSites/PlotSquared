@@ -168,17 +168,31 @@ public class Auto extends SubCommand {
         		return sendMessage(plr, C.NOT_IN_PLOT);
         	}
         	PlotCluster cluster = ClusterManager.getCluster(loc);
+        	// Must be standing in a cluster
+        	if (cluster == null) {
+                PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                return false;
+            }
         	PlotId bot = cluster.getP1();
         	PlotId top = cluster.getP2();
-        	PlotId id = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+        	PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+        	PlotId id = new PlotId(0, 0);
         	int width = Math.max(top.x - bot.x, top.y - bot.y);
         	int max = width * width;
-        	
-        	// TODO finish cluster auto claiming
-        	
+        	//
         	for (int i = 0; i <= max; i++) {
+        	    PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
+        	    Plot current = PlotHelper.getPlot(world, currentId);
+        	    if (current != null && !current.hasOwner() && cluster.equals(ClusterManager.getCluster(current))) {
+        	        Claim.claimPlot(plr, plot, true, true);
+        	        return true;
+        	    }
         	    id = getNextPlot(id, 1);
         	}
+        	
+        	// no free plots
+        	PlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
+        	return false;
         }
         
         boolean br = false;

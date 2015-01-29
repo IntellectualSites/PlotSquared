@@ -45,8 +45,12 @@ public class PlotCluster {
 	}
 	
 	public boolean hasRights(UUID uuid) {
-	    return (invited.contains(uuid)|| invited.contains(DBFunc.everyone) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
-	}
+        return (owner.equals(uuid) || invited.contains(uuid)|| invited.contains(DBFunc.everyone) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
+    }
+	
+	public boolean hasHelperRights(UUID uuid) {
+        return (owner.equals(uuid) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
+    }
 	
 	public String getName() {
 	    return this.settings.getAlias();

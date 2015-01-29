@@ -40,7 +40,7 @@ public enum C {
     /*
      * Cluster
      */
-    CLUSTER_AVAILABLE_ARGS("&6The following sub commands are available: &clist, create, delete, resize, invite, kick, leave, helpers, info, tp"),
+    CLUSTER_AVAILABLE_ARGS("&6The following sub commands are available: &clist, create, delete, resize, invite, kick, leave, helpers, info, tp, sethome"),
     CLUSTER_LIST_HEADING("&cThere are %s clusters in this world"),
     CLUSTER_LIST_ELEMENT("&7 - &6%s\n"),
     CLUSTER_INTERSECTION("&6The proposed area overlaps with %s existing cluster/s"),
@@ -48,7 +48,17 @@ public enum C {
     CLUSTER_DELETED("&6Successfully deleted the cluster."),
     CLUSTER_RESIZED("&6Successfully resized the cluster."),
     CLUSTER_ADDED_USER("&6Successfully added user to the cluster."),
+    CANNOT_KICK_PLAYER("&cYou cannot kick that player"),
     CLUSTER_INVITED("&6You have been invited to the following cluster: %s."),
+    CLUSTER_REMOVED("&cYou have been removed from cluster %s"),
+    CLUSTER_KICKED_USER("&6Successfully kicked the user"),
+    INVALID_CLUSTER("&cInvalid cluster name: %s"),
+    CLUSTER_NOT_ADDED("&cThat player was not added to the plot cluster"),
+    CLUSTER_CANNOT_LEAVE("&cYou must delete or transfer ownership before leaving"),
+    CLUSTER_ADDED_HELPER("&6Successfully added a helper to the cluster"),
+    CLUSTER_REMOVED_HELPER("&6Successfully removed a helper to the cluster"),
+    CLUSTER_TELEPORTING("&6Teleporting..."),
+    CLUSTER_INFO("&6Current cluster: %id%\nName: %name%\nOwner: %owner%\nSize: %size%\nRights: %rights%"),
 	/*
 	 * Border
 	 */
@@ -168,7 +178,7 @@ public enum C {
      * Position
      */
     MISSING_POSITION("&cYou need to specify a position. Possible values: &6none"),
-    POSITION_SET("&cPlot home position set to your current location"),
+    POSITION_SET("&Home position set to your current location"),
     HOME_ARGUMENT("&cUse /plot set home [none]"),
     INVALID_POSITION("&cThat is not a valid position value"),
     /*
@@ -221,8 +231,9 @@ public enum C {
     /*
      * No <plot>
      */
+    NO_FREE_PLOTS("&cThere are no free plots available"),
     NOT_IN_PLOT("&cYou're not in a plot"),
-    NOT_IN_CLUSTER("&cYou're not in a plot cluster"),
+    NOT_IN_CLUSTER("&cYou must be within a plot cluster to perform that action"),
     NOT_IN_PLOT_WORLD("&cYou're not in a plot world"),
     NOT_VALID_WORLD("&cThat is not a valid world (case sensitive)"),
     NOT_VALID_PLOT_WORLD("&cThat is not a valid plot world (case sensitive)"),

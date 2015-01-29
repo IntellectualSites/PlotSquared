@@ -275,8 +275,8 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void removeInvited(final String world, final PlotCluster cluster, final UUID uuid) {
-        dbManager.removeInvited(world, cluster, uuid);
+    public static void removeInvited(final PlotCluster cluster, final UUID uuid) {
+        dbManager.removeInvited(cluster, uuid);
     }
 
     /**

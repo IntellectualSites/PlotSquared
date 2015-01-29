@@ -15,6 +15,7 @@ import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
@@ -140,6 +141,10 @@ public class UUIDHandler {
             StringWrapper nameWrap = new StringWrapper(name);
             add(nameWrap, uuid);
         }
+        
+        // add the Everyone '*' UUID
+        add(new StringWrapper("*"), DBFunc.everyone);
+        
         PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
@@ -186,7 +191,6 @@ public class UUIDHandler {
         if (name == null) {
             return null;
         }
-        
         // check online
         Player player = Bukkit.getPlayer(name);
         if (player != null) {
