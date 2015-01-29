@@ -902,11 +902,10 @@ public class PlotMain extends JavaPlugin implements Listener {
             UUIDHandler.cacheAll();
             if (Settings.CONVERT_PLOTME) {
                 if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
-                    sendConsoleSenderMessage("&c[IMPORTANT] THIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU WISH TO CONVERT A PLOTME DATABASE");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - Please delete your PlotMe.jar before starting your server!");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - This is required as the database may be locked if PlotMe is using it!");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
-                    return;
+                    sendConsoleSenderMessage("&c[IMPORTANT] THIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                    sendConsoleSenderMessage("&c[IMPORTANT] - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
                 }
                 try {
                     new PlotMeConverter(PlotMain.getMain()).runAsync();
