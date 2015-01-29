@@ -178,7 +178,7 @@ public enum C {
      * Position
      */
     MISSING_POSITION("&cYou need to specify a position. Possible values: &6none"),
-    POSITION_SET("&Home position set to your current location"),
+    POSITION_SET("&6Home position set to your current location"),
     HOME_ARGUMENT("&cUse /plot set home [none]"),
     INVALID_POSITION("&cThat is not a valid position value"),
     /*
