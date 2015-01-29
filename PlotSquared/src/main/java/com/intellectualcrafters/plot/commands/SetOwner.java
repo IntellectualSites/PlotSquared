@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class SetOwner extends SubCommand {
 
     public SetOwner() {
-        super("setowner", "plots.admin.command.setowner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
+        super("setowner", "plots.set.owner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
     }
 
     /*
@@ -57,19 +57,21 @@ public class SetOwner extends SubCommand {
         Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (plot == null || plot.owner == null) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
+            return false;
         }
         if (args.length < 1) {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
-            return true;
+            return false;
         }
-
+        
+        if (!plot.owner.equals(UUIDHandler.getUUID(plr))) {
+            PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
+            return false;
+        }
         final World world = plr.getWorld();
         final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-
         final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(bot, top);
-
         for (final PlotId id : plots) {
             final Plot current = PlotMain.getPlots(world).get(id);
             
@@ -89,9 +91,7 @@ public class SetOwner extends SubCommand {
             }
         }
         PlotHelper.setSign(world, args[0], plot);
-
         PlayerFunctions.sendMessage(plr, C.SET_OWNER);
-
         return true;
     }
 }
