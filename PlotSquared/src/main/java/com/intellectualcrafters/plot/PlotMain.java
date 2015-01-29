@@ -132,27 +132,6 @@ public class PlotMain extends JavaPlugin implements Listener {
      */
     public final static int storage_ver = 1;
     /**
-     * Boolean Flags (material)
-     */
-    public final static HashMap<Material, String> booleanFlags = new HashMap<>();
-    /**
-     * Initialize the material flags
-     */
-    static {
-        booleanFlags.put(Material.WOODEN_DOOR, "wooden_door");
-        booleanFlags.put(Material.IRON_DOOR, "iron_door");
-        booleanFlags.put(Material.STONE_BUTTON, "stone_button");
-        booleanFlags.put(Material.WOOD_BUTTON, "wooden_button");
-        booleanFlags.put(Material.LEVER, "lever");
-        booleanFlags.put(Material.WOOD_PLATE, "wooden_plate");
-        booleanFlags.put(Material.STONE_PLATE, "stone_plate");
-        booleanFlags.put(Material.CHEST, "chest");
-        booleanFlags.put(Material.TRAPPED_CHEST, "trapped_chest");
-        booleanFlags.put(Material.TRAP_DOOR, "trap_door");
-        booleanFlags.put(Material.DISPENSER, "dispenser");
-        booleanFlags.put(Material.DROPPER, "dropper");
-    }
-    /**
      * All loaded plot worlds
      */
     private final static HashMap<String, PlotWorld> worlds = new HashMap<>();
@@ -1050,10 +1029,31 @@ public class PlotMain extends JavaPlugin implements Listener {
     private static void defaultFlags() {
         addPlusFlags();
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
-
-        for (final String str : booleanFlags.values()) {
-            FlagManager.addFlag(new AbstractFlag(str, new FlagValue.BooleanValue()));
-        }
+        
+        FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("animal-attack", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
+        
+        FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
+        FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
+        FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
+        
 
         FlagManager.addFlag(new AbstractFlag("gamemode") {
             @Override

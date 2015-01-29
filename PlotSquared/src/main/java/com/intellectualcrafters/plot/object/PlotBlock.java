@@ -34,7 +34,22 @@ public class PlotBlock {
     }
 
     @Override
-    public String toString() {
-        return this.id + ":" + this.data;
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PlotBlock other = (PlotBlock) obj;
+        return (this.id == other.id && (this.data == other.data || other.data == -1));
+    }
+
+    @Override
+    public int hashCode() {
+        return (id + data) * (id + data + 1) + data;
     }
 }
