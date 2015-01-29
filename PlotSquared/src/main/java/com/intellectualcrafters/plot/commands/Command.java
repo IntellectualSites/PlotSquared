@@ -36,7 +36,7 @@ public enum Command {
     // (Rating system) (ratings can be stored as the average, and number of
     // ratings)
     // - /plot rate <number out of 10>
-    CLUSTER("cluster", "cl"),
+    CLUSTER("cluster", "clusters"),
     BUY("buy","b"),
     CREATEROADSCHEMATIC("createroadschematic"),
     DEBUGROADREGEN("debugroadregen"),

@@ -24,8 +24,8 @@ package com.intellectualcrafters.plot.flag;
 import org.apache.commons.lang.StringUtils;
 
 public class Flag {
-    private final AbstractFlag key;
-    private final Object value;
+    private AbstractFlag key;
+    private Object value;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
@@ -52,6 +52,13 @@ public class Flag {
         this.value = key.parseValueRaw(value);
         if (this.value == null) {
             throw new IllegalArgumentException(key.getValueDesc());
+        }
+    }
+    
+    public void setKey(AbstractFlag key) {
+        this.key = key;
+        if (this.value instanceof String) {
+            this.value = key.parseValueRaw((String) this.value);
         }
     }
 

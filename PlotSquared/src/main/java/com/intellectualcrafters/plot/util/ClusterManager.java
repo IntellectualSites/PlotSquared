@@ -108,7 +108,7 @@ public class ClusterManager {
     }
 	
 	public static HashSet<PlotCluster> getIntersects(String world, PlotClusterId id) {
-	    if (clusters.containsKey(world)) {
+	    if (!clusters.containsKey(world)) {
 	        return new HashSet<>();
 	    }
 	    HashSet<PlotCluster> list = new HashSet<PlotCluster>();

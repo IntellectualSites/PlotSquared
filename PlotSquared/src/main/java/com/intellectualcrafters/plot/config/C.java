@@ -58,7 +58,7 @@ public enum C {
     CLUSTER_ADDED_HELPER("&6Successfully added a helper to the cluster"),
     CLUSTER_REMOVED_HELPER("&6Successfully removed a helper to the cluster"),
     CLUSTER_TELEPORTING("&6Teleporting..."),
-    CLUSTER_INFO("&6Current cluster: %id%\nName: %name%\nOwner: %owner%\nSize: %size%\nRights: %rights%"),
+    CLUSTER_INFO("&6Current cluster: &7%id%\n&6Name: &7%name%\n&6Owner: &7%owner%\n&6Size: &7%size%\n&6Rights: &7%rights%"),
 	/*
 	 * Border
 	 */

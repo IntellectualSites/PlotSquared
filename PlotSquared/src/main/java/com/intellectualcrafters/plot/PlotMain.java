@@ -1224,6 +1224,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         // Setup configuration
         configs();
+        defaultFlags();
         // Setup metrics
         if (Settings.METRICS) {
             try {
@@ -1244,12 +1245,18 @@ public class PlotMain extends JavaPlugin implements Listener {
         if (C.ENABLED.s().length() > 0) {
             sendConsoleSenderMessage(C.ENABLED);
         }
+        final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.subCommands.add(new Cluster());
+            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments", "cluster"};
+        }
+        else {
+            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
         }
 
         // Add tables to this one, if we create more :D
-        final String[] tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
+        
+        
 
         // Use mysql?
         if (Settings.DB.USE_MYSQL) {
@@ -1356,7 +1363,6 @@ public class PlotMain extends JavaPlugin implements Listener {
         // Forcefield listener
         getServer().getPluginManager().registerEvents(new ForceFieldListener(this), this);
         // Default flags
-        defaultFlags();
 
         if (getServer().getPluginManager().getPlugin("BarAPI") != null) {
             barAPI = (BarAPI) getServer().getPluginManager().getPlugin("BarAPI");

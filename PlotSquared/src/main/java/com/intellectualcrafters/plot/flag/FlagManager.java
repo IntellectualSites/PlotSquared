@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
@@ -61,8 +62,19 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return success?
      */
-    public static boolean addFlag(final AbstractFlag flag) {
-        return (getFlag(flag.getKey()) == null) && flags.add(flag);
+    public static boolean addFlag(final AbstractFlag af) {
+        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        String key = af.getKey();
+        if (PlotMain.getAllPlotsRaw() != null) {
+            for (Plot plot : PlotMain.getPlots()) {
+                for (Flag flag : plot.settings.flags) {
+                    if (flag.getAbstractFlag().getKey().equals(af)) {
+                        flag.setKey(af);
+                    }
+                }
+            }
+        }
+        return (getFlag(af.getKey()) == null) && flags.add(af);
     }
 
     public static Flag getSettingFlag(String world, PlotSettings settings, String flag) {
