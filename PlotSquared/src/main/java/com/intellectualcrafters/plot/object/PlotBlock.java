@@ -52,4 +52,9 @@ public class PlotBlock {
     public int hashCode() {
         return (id + data) * (id + data + 1) + data;
     }
+    
+    @Override
+    public String toString() {
+        return this.id + ":" + this.data;
+    }
 }

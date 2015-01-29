@@ -78,14 +78,14 @@ public class PlotMeConverter {
             @Override
             public void run() {
                 try {
-                    sendMessage("Conversion has started");
-                    sendMessage("Connecting to PlotMe DB");
                     final ArrayList<Plot> createdPlots = new ArrayList<>();
                     final String dataFolder = new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
                     final File plotMeFile = new File(dataFolder + "config.yml");
                     if (!plotMeFile.exists()) {
                         return;
                     }
+                    sendMessage("Conversion has started");
+                    sendMessage("Connecting to PlotMe DB");
                     final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
                     int count = 0;
                     

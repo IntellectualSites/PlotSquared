@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -110,7 +111,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
                     return false;
                 }
-                if (args.length != 3) {
+                if (args.length != 2 && args.length != 3) {
                     PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
                     return false;
                 }
@@ -128,10 +129,17 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
-                boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
-                if (!result) {
-                    PlayerFunctions.sendMessage(player, C.FLAG_NOT_REMOVED);
-                    return false;
+                if (args.length == 3 && flag.getAbstractFlag().isList()) {
+                    String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                    ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
+                    DBFunc.setFlags(plot.world, plot, plot.settings.flags);
+                }
+                else {
+                    boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
+                    if (!result) {
+                        PlayerFunctions.sendMessage(player, C.FLAG_NOT_REMOVED);
+                        return false;
+                    }
                 }
                 PlayerFunctions.sendMessage(player, C.FLAG_REMOVED);
                 PlotListener.plotEntry(player, plot);
@@ -166,13 +174,14 @@ public class FlagCmd extends SubCommand {
                     flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed);
                 }
                 else {
-                    ((FlagValue.ListValue) flag.getValue()).add(flag.getValue(), value);
+                    ((FlagValue.ListValue) flag.getAbstractFlag().value).add(flag.getValue(), value);
                 }
                 boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
                     PlayerFunctions.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
+                DBFunc.setFlags(plot.world, plot, plot.settings.flags);
                 PlayerFunctions.sendMessage(player, C.FLAG_ADDED);
                 PlotListener.plotEntry(player, plot);
                 return true;
