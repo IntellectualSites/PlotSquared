@@ -66,6 +66,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.commands.Buy;
+import com.intellectualcrafters.plot.commands.Cluster;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
@@ -1242,6 +1243,9 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         if (C.ENABLED.s().length() > 0) {
             sendConsoleSenderMessage(C.ENABLED);
+        }
+        if (Settings.ENABLE_CLUSTERS) {
+            MainCommand.subCommands.add(new Cluster());
         }
 
         // Add tables to this one, if we create more :D
