@@ -37,6 +37,18 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  * @author Citymonstret
  */
 public enum C {
+    /*
+     * Cluster
+     */
+    CLUSTER_AVAILABLE_ARGS("&6The following sub commands are available: &clist, create, delete, resize, invite, kick, leave, helpers, info, tp"),
+    CLUSTER_LIST_HEADING("&cThere are %s clusters in this world"),
+    CLUSTER_LIST_ELEMENT("&7 - &6%s\n"),
+    CLUSTER_INTERSECTION("&6The proposed area overlaps with %s existing cluster/s"),
+    CLUSTER_ADDED("&6Successfully created the cluster."),
+    CLUSTER_DELETED("&6Successfully deleted the cluster."),
+    CLUSTER_RESIZED("&6Successfully resized the cluster."),
+    CLUSTER_ADDED_USER("&6Successfully added user to the cluster."),
+    CLUSTER_INVITED("&6You have been invited to the following cluster: %s."),
 	/*
 	 * Border
 	 */
@@ -185,6 +197,7 @@ public enum C {
     NAME_LITTLE("&c%s name is too short, &6%s&c<&6%s"),
     NO_COMMANDS("&cI'm sorry, but you're not permitted to use any subcommands."),
     SUBCOMMAND_SET_OPTIONS_HEADER("&cPossible Values: "),
+    COMMAND_SYNTAX("&6Usage: &c%s"),
     /*
      * Player not found
      */
@@ -247,6 +260,7 @@ public enum C {
     NOT_VALID_BLOCK("&cThat's not a valid block."),
     NOT_VALID_NUMBER("&cThat's not a valid number"),
     NOT_VALID_PLOT_ID("&cThat's not a valid plot id."),
+    PLOT_ID_FORM("&cThe plot id must be in the form: &6X;Y &ce.g. &6-5;7"),
     NOT_YOUR_PLOT("&cThat is not your plot."),
     NO_SUCH_PLOT("&cThere is no such plot"),
     PLAYER_HAS_NOT_BEEN_ON("&cThat player hasn't been in the plotworld"),

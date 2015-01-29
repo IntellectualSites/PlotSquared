@@ -60,7 +60,7 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
-    public final static boolean REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
+    public static boolean REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
     
     // are plot clusters enabled
     // require claim in cluster

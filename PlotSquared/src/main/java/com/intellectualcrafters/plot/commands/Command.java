@@ -36,154 +36,44 @@ public enum Command {
     // (Rating system) (ratings can be stored as the average, and number of
     // ratings)
     // - /plot rate <number out of 10>
+    CLUSTER("cluster", "cl"),
     BUY("buy","b"),
-    /**
-     * 
-     */
     CREATEROADSCHEMATIC("createroadschematic"),
-    /**
-    *
-    */
     DEBUGROADREGEN("debugroadregen"),
-    /**
-    *
-    */
     REGENALLROADS("regenallroads"),
-    /**
-    *
-    */
     DEBUGLOADTEST("debugloadtest"),
-    /**
-     * 
-     */
     DEBUGSAVETEST("debugsavetest"),
-    /**
-     * 
-     */
     UNCLAIM("unclaim"),
-    /**
-     *
-     */
     DEBUGCLEAR("debugclear"),
-    /**
-     *
-     */
     SWAP("swap"),
-    /**
-     *
-     */
     INBOX("inbox"),
-    /**
-     *
-     */
     DEBUGCLAIMTEST("debugclaimtest"),
-    /**
-     *
-     */
     COMMENT("comment", "msg"),
-    /**
-     *
-     */
     TRUSTED("trusted", "trust"),
-    /**
-     *
-     */
     PASTE("paste"),
-    /**
-     *
-     */
     CLIPBOARD("clipboard", "cboard"),
-    /**
-     *
-     */
     COPY("copy"),
-    /**
-     *
-     */
     KICK("kick", "k"),
-    /**
-     *
-     */
     HELPERS("helpers", "hp"),
-    /**
-     *
-     */
     DENIED("denied", "dn"),
-    /**
-     *
-     */
     CLAIM("claim", "c"),
-    /**
-     *
-     */
     MERGE("merge", "m"),
-    /**
-     *
-     */
     UNLINK("unlink", "u"),
-    /**
-     *
-     */
     CLEAR("clear", "clear", new CommandPermission("plots.clear")),
-    /**
-     *
-     */
     DELETE("delete", "d", new CommandPermission("plots.delete")),
-    /**
-     *
-     */
     DEBUG("debug", "debug", new CommandPermission("plots.admin")),
-    /**
-     *
-     */
     INTERFACE("interface", "int", new CommandPermission("plots.interface")),
-    /**
-     *
-     */
     HOME("home", "h"),
-    /**
-     *
-     */
     INFO("info", "i"),
-    /**
-     *
-     */
     LIST("list", "l"),
-    /**
-     *
-     */
     SET("set", "s"),
-    /**
-     *
-     */
     PURGE("purge"),
-    /**
-     *
-     */
     SETUP("setup"),
-    /**
-     *
-     */
     OP("op", "admin"),
-    /**
-     *
-     */
     DEOP("deop", "deadmin"),
-    /**
-     *
-     */
     BAN("ban", "block"),
-    /**
-     *
-     */
     UNBAN("unban", "unblock"),
-    /**
-     *
-     */
     DATABASE("database", "convert"),
-    /**
-     *
-     */
     TP("tp", "tp");
 
     /**

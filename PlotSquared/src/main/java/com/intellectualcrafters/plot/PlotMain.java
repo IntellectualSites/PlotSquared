@@ -976,16 +976,18 @@ public class PlotMain extends JavaPlugin implements Listener {
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
-
+                
+                // TODO Augment the world generation with a custom populator
+                
+                PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = true;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadConfiguration(config.getConfigurationSection(path));
-
+                PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-
                 // Now add it :p
                 addPlotWorld(world, plotWorld, plotManager);
             }
@@ -1368,13 +1370,13 @@ public class PlotMain extends JavaPlugin implements Listener {
                 MainCommand.subCommands.add(new WE_Anywhere());
             }
         }
-        if (Settings.WORLDGUARD) {
-            if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-                worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
-                worldGuardListener = new WorldGuardListener(this);
-                getServer().getPluginManager().registerEvents(worldGuardListener, this);
-            }
-        }
+//        if (Settings.WORLDGUARD) {
+//            if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+//                worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+//                worldGuardListener = new WorldGuardListener(this);
+//                getServer().getPluginManager().registerEvents(worldGuardListener, this);
+//            }
+//        }
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }

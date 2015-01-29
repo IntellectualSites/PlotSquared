@@ -47,6 +47,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -383,6 +384,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + "`tier` INT(11) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_invited` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + "`tier` INT(11) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_settings` (" + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`cluster_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         } else {
@@ -395,7 +397,8 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
             
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(45) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + "`tier` INT(11) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_invited` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_settings` (" + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`cluster_id`)" + ")");
         }
         stmt.executeBatch();
@@ -1248,6 +1251,9 @@ public class SQLManager implements AbstractDB {
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_helpers` WHERE `cluster_id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
+                    stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_invited` WHERE `cluster_id` = ?");
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster` WHERE `id` = ?");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
@@ -1350,12 +1356,30 @@ public class SQLManager implements AbstractDB {
                     PlotMain.sendConsoleSenderMessage("&cCluster " + id + " in cluster_helpers does not exist. Please create the cluster or remove this entry.");
                 }
             }
+            /*
+             * Getting invited
+             */
+            r = stmt.executeQuery("SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_invited`");
+            while (r.next()) {
+                id = r.getInt("plot_plot_id");
+                owner = r.getString("user_uuid");
+                user = uuids.get(owner);
+                if (user == null) {
+                    user = UUID.fromString(owner);
+                    uuids.put(owner, user);
+                }
+                cluster = clusters.get(id);
+                if (cluster != null) {
+                    cluster.invited.add(user);
+                } else {
+                    PlotMain.sendConsoleSenderMessage("&cCluster " + id + " in cluster_invited does not exist. Please create the cluster or remove this entry.");
+                }
+            }
             r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "cluster_settings`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
                 cluster = clusters.get(id);
                 if (cluster != null) {
-
                     final String b = r.getString("biome");
                     if (b != null) {
                         for (final Biome mybiome : Biome.values()) {
@@ -1432,7 +1456,7 @@ public class SQLManager implements AbstractDB {
                     }
                     cluster.settings.flags = flags;
                 } else {
-                    PlotMain.sendConsoleSenderMessage("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
+                    PlotMain.sendConsoleSenderMessage("&cCluster " + id + " in cluster_settings does not exist. Please create the cluster or remove this entry.");
                 }
             }
             stmt.close();
@@ -1565,8 +1589,9 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                     
                     int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
-                    stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_settings`(`cluster_id`) VALUES(" + "?)");
+                    stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_settings`(`cluster_id`, `alias`) VALUES(?, ?" + ")");
                     stmt.setInt(1, id);
+                    stmt.setString(2, cluster.settings.getAlias());
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final Exception e) {
@@ -1670,4 +1695,43 @@ public class SQLManager implements AbstractDB {
         }
         return h;
 	}
+
+    @Override
+    public void removeInvited(String world, final PlotCluster cluster, final UUID uuid) {
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_invited` WHERE `cluster_id` = ? AND `user_uuid` = ?");
+                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setString(2, uuid.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to remove invited for cluster " + cluster);
+                }
+            }
+        });
+        
+    }
+
+    @Override
+    public void setInvited(String world, final PlotCluster cluster, final UUID uuid) {
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_invited` (`cluster_id`, `user_uuid`) VALUES(?,?)");
+                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setString(2, uuid.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to set helper for cluster " + cluster);
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

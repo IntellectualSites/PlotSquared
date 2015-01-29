@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.Plot;
@@ -24,17 +25,50 @@ public class ClusterManager {
 		return false;
 	}
 	
-	public static boolean contains(PlotCluster cluster, Location loc) {
-		String world = loc.getWorld().getName();
-		PlotManager manager = PlotMain.getPlotManager(world);
-		PlotWorld plotworld = PlotMain.getWorldSettings(world);
-		Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
-		Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
-		if (bot.getBlockX() < loc.getBlockX() && bot.getBlockZ() < loc.getBlockZ() && top.getBlockX() > loc.getBlockX() && top.getBlockZ() > loc.getBlockZ()) {
-			return true;
-		}
-		return false;
+	public static HashSet<PlotCluster> getClusters(World world) {
+	    return getClusters(world.getName());
 	}
+	
+	public static HashSet<PlotCluster> getClusters(String world) {
+	    if (clusters.containsKey(world)) {
+	        return clusters.get(world);
+	    }
+	    return new HashSet<>();
+	}
+	
+	public static boolean contains(PlotCluster cluster, Location loc) {
+        String world = loc.getWorld().getName();
+        PlotManager manager = PlotMain.getPlotManager(world);
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+        Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
+        if (bot.getBlockX() < loc.getBlockX() && bot.getBlockZ() < loc.getBlockZ() && top.getBlockX() > loc.getBlockX() && top.getBlockZ() > loc.getBlockZ()) {
+            return true;
+        }
+        return false;
+    }
+	
+	public static HashSet<PlotCluster> getIntersects(String world, PlotClusterId id) {
+	    if (clusters.containsKey(world)) {
+	        return new HashSet<>();
+	    }
+	    HashSet<PlotCluster> list = new HashSet<PlotCluster>();
+	    for (PlotCluster cluster : clusters.get(world)) {
+	        if (intersects(cluster, id)) {
+	            list.add(cluster);
+	        }
+	    }
+	    return list;
+	}
+	
+	public static boolean intersects(PlotCluster cluster, PlotClusterId id) {
+	    PlotId pos1 = cluster.getP1();
+        PlotId pos2 = cluster.getP2();
+	    if (pos1.x <= id.pos2.x && pos2.x >= id.pos1.x && pos1.y <= id.pos2.y && pos2.y >= id.pos1.y) {
+	        return true;
+	    }
+	    return false;
+    }
 	
 	public static PlotCluster getCluster(Plot plot) {
 		return getCluster(plot.world, plot.id);

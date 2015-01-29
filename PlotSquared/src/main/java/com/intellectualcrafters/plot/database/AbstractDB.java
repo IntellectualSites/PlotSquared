@@ -237,7 +237,13 @@ public interface AbstractDB {
      * @param uuid Player that should be removed
      */
     public void removeTrusted(final String world, final Plot plot, final UUID uuid);
-
+    /**
+     * 
+     * @param world
+     * @param cluster
+     * @param uuid
+     */
+    public void removeInvited(final String world, final PlotCluster cluster, final UUID uuid);
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
@@ -255,6 +261,13 @@ public interface AbstractDB {
      * @param uuid Player that should be added
      */
     public void setTrusted(final String world, final Plot plot, final UUID uuid);
+    /**
+     * 
+     * @param world
+     * @param cluster
+     * @param uuid
+     */
+    public void setInvited(final String world, final PlotCluster cluster, final UUID uuid);
 
     /**
      * @param plot   Plot Object

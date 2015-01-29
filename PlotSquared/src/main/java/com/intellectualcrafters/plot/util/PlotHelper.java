@@ -88,6 +88,16 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     	}
     }
     
+    public static PlotId parseId(String arg) {
+        try {
+            String[] split = arg.split(";");
+            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1])) ;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
     /**
      * direction 0 = north, 1 = south, etc:
      *

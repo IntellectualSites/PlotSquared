@@ -115,6 +115,10 @@ public class DBFunc {
     public static void delete(final String world, final Plot plot) {
         dbManager.delete(world, plot);
     }
+    
+    public static void delete(final PlotCluster toDelete) {
+        dbManager.delete(toDelete);
+    }
 
     /**
      * Create plot settings
@@ -264,6 +268,16 @@ public class DBFunc {
     public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeTrusted(world, plot, uuid);
     }
+    
+    /**
+     * 
+     * @param world
+     * @param plot
+     * @param uuid
+     */
+    public static void removeInvited(final String world, final PlotCluster cluster, final UUID uuid) {
+        dbManager.removeInvited(world, cluster, uuid);
+    }
 
     /**
      * @param plot
@@ -284,6 +298,10 @@ public class DBFunc {
     public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.setTrusted(world, plot, uuid);
     }
+    
+    public static void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
+        dbManager.setInvited(world, cluster, uuid);
+    }
 
     /**
      * @param plot
@@ -300,7 +318,7 @@ public class DBFunc {
     public static void setDenied(final String world, final Plot plot, final UUID uuid) {
         dbManager.setDenied(world, plot, uuid);
     }
-
+    
     public static double getRatings(final Plot plot) {
         return dbManager.getRatings(plot);
     }
@@ -314,6 +332,6 @@ public class DBFunc {
     }
     
     public static HashMap<String, Object> getClusterSettings(int id) {
-    	return dbManager.getClusterSettings(id);
+        return dbManager.getClusterSettings(id);
     }
 }

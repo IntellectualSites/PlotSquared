@@ -25,32 +25,17 @@ public class AugmentedPopulator extends BlockPopulator {
 	public final PlotManager manager;
 	public final PlotGenerator generator;
 	
-	private final int botx;
-	private final int botz;
-	private final int topx;
-	private final int topz;
+	private final int bx;
+	private final int bz;
+	private final int tx;
+	private final int tz;
 	
-	public BlockWrapper getBlock(int X, int Z, int i, int j, short[][] result, boolean check) {
-		int y_1 = (i << 4);
-		int y_2 = (j >> 8);
-		int y = y_1 + y_2;
-		int z_1 = (j - ((y & 0xF) << 8));
-		int z = (z_1 >> 4);
-		int x;
-		if (check) {
-			if (z < botz || z > topz) {
-				return null;
-			}
-			x = z_1 - (z << 4);
-			if (x < botx || x > topx) {
-				return null;
-			}
-		}
-		else {
-			x = z_1 - (z << 4);
-		}
-		short id = result[i][j];
-		return new BlockWrapper(x, y, z, id, (byte) 0);
+	public BlockWrapper getBlock(int X, int Z, int i, int j, short[][] r, boolean c) {
+		int y = (i << 4) + (j >> 8);
+		int a = (j - ((y & 0xF) << 8));
+		int z = (a >> 4);
+		int x = a - (z << 4);
+		return (c && (z < bz || z > tz || x < bx || x > tx)) ? null : new BlockWrapper(x, y, z, r[i][j], (byte) 0);
 	}
 	
 	public AugmentedPopulator(String world, PlotGenerator generator, PlotCluster cluster) {
@@ -60,14 +45,14 @@ public class AugmentedPopulator extends BlockPopulator {
 
 		World bukkitWorld = Bukkit.getWorld(world);
 		
-		Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
-		Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
+		Location b = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+		Location t = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
 		
-		this.botx = bot.getBlockX();
-		this.botz = bot.getBlockZ();
+		this.bx = b.getBlockX();
+		this.bz = b.getBlockZ();
 		
-		this.topx = top.getBlockX();
-		this.topz = top.getBlockZ();
+		this.tx = t.getBlockX();
+		this.tz = t.getBlockZ();
 		
 		// Add the populator
 		bukkitWorld.getPopulators().add(this);
@@ -82,10 +67,10 @@ public class AugmentedPopulator extends BlockPopulator {
 		int x2 = x + 15;
 		int z2 = z + 15;
 		
-		boolean inX1 = (x > botx && x < topx);
-		boolean inX2 = (x2 > botx && x2 < topx);
-		boolean inZ1 = (z > botz && z < topz);
-		boolean inZ2 = (z2 > botz && z2 < topz);
+		boolean inX1 = (x > bx && x < tx);
+		boolean inX2 = (x2 > bx && x2 < tx);
+		boolean inZ1 = (z > bz && z < tz);
+		boolean inZ2 = (z2 > bz && z2 < tz);
 		
 		
 		boolean inX = inX1 || inX2;

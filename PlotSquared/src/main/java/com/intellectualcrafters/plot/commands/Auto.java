@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -167,6 +168,17 @@ public class Auto extends SubCommand {
         		return sendMessage(plr, C.NOT_IN_PLOT);
         	}
         	PlotCluster cluster = ClusterManager.getCluster(loc);
+        	PlotId bot = cluster.getP1();
+        	PlotId top = cluster.getP2();
+        	PlotId id = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+        	int width = Math.max(top.x - bot.x, top.y - bot.y);
+        	int max = width * width;
+        	
+        	// TODO finish cluster auto claiming
+        	
+        	for (int i = 0; i <= max; i++) {
+        	    id = getNextPlot(id, 1);
+        	}
         }
         
         boolean br = false;

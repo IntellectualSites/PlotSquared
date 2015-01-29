@@ -67,7 +67,7 @@ public class Unlink extends SubCommand {
         final World world = plr.getWorld();
         final PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
-        final ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(world, pos1, pos2);
+        final ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(pos1, pos2);
 
         final PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
 
