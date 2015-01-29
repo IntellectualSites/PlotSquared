@@ -45,7 +45,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  */
 @SuppressWarnings("ALL") public class PWE {
 
-    public static void setMask(final Player p, final Location l) {
+    public static void setMask(final Player p, final Location l, boolean force) {
         try {
             LocalSession s;
             if (PlotMain.worldEdit == null) {
@@ -63,15 +63,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                 	if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
                 		return;
                 	}
-                    boolean r;
-                    r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
-                    if (!r) {
-                        if (p.hasPermission("plots.worldedit.bypass")) {
-                            removeMask(p, s);
-                            return;
-                        }
-                    } else {
-
+                    boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
+                    if (r) {
                         final World w = p.getWorld();
 
                         final Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
@@ -89,12 +82,13 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                     }
                 }
             }
-            if (noMask(s)) {
+            if (force ^ (noMask(s) && !PlotMain.hasPermission(p, "plots.worldedit.bypass"))) {
                 final BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
                 final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
                 s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
             }
         } catch (final Exception e) {
+            e.printStackTrace();
             // throw new
             // PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY,
             // "WorldEdit == Null?");

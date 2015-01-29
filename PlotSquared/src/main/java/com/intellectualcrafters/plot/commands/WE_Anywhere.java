@@ -45,7 +45,7 @@ public class WE_Anywhere extends SubCommand {
             PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
         }
         else {
-            PWE.setMask(plr, plr.getLocation());
+            PWE.setMask(plr, plr.getLocation(), true);
             PlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
         }
         return true;

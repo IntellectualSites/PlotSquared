@@ -110,7 +110,7 @@ public class WorldEditListener implements Listener {
         final Plot plot = PlotHelper.getCurrentPlot(b.getLocation());
         if (plot != null) {
             if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
-                PWE.setMask(p, l);
+                PWE.setMask(p, l, false);
             }
         }
     }
@@ -178,7 +178,7 @@ public class WorldEditListener implements Listener {
             return;
         }
         if (isPlotWorld(l)) {
-            PWE.setMask(p, l);
+            PWE.setMask(p, l, false);
         } else {
             PWE.removeMask(p);
         }
@@ -192,17 +192,16 @@ public class WorldEditListener implements Listener {
         }
         final Location f = e.getFrom();
         final Player p = e.getPlayer();
-        if (PlotMain.hasPermission(p, "plots.worldedit.bypass") && !PWE.hasMask(p)) {
-        	return;
+        if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+            if (!PWE.hasMask(p)) {
+                return;
+            }
         }
         if ((f.getBlockX() != t.getBlockX()) || (f.getBlockZ() != t.getBlockZ())) {
             final PlotId idF = PlayerFunctions.getPlot(f);
             final PlotId idT = PlayerFunctions.getPlot(t);
-            if ((!PWE.hasMask(e.getPlayer())) && PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
-                return;
-            }
             if ((idT != null) && !(idF == idT)) {
-                PWE.setMask(p, t);
+                PWE.setMask(p, t, false);
             }
         }
     }
@@ -220,7 +219,7 @@ public class WorldEditListener implements Listener {
             return;
         }
         if (isPlotWorld(t)) {
-            PWE.setMask(p, t);
+            PWE.setMask(p, t, false);
             return;
         }
         if ((f != null) && isPlotWorld(f)) {
@@ -230,10 +229,12 @@ public class WorldEditListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent e) {
-        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
-            return;
-        }
         final Player p = e.getPlayer();
+        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+            if (!PWE.hasMask(p)) {
+                return;
+            }
+        }
         final Location t = e.getTo();
         final Location q = new Location(t.getWorld(), t.getBlockX(), 64, t.getZ());
         final Location f = e.getFrom();
@@ -243,6 +244,6 @@ public class WorldEditListener implements Listener {
             }
             return;
         }
-        PWE.setMask(p, q);
+        PWE.setMask(p, q, false);
     }
 }
