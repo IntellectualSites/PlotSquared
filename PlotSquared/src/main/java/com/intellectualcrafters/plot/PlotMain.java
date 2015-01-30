@@ -1352,9 +1352,6 @@ public class PlotMain extends JavaPlugin implements Listener {
             plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
             plotCommand.setTabCompleter(command);
         }
-//        if (Settings.MOB_CAP_ENABLED) {
-//            getServer().getPluginManager().registerEvents(new EntityListener(), this);
-//        }
 
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
@@ -1367,7 +1364,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         // Flag+ listener
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
         // Forcefield listener
-        getServer().getPluginManager().registerEvents(new ForceFieldListener(this), this);
+        getServer().getPluginManager().registerEvents(new ForceFieldListener(), this);
         // Default flags
 
         if (getServer().getPluginManager().getPlugin("BarAPI") != null) {

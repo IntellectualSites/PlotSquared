@@ -42,10 +42,6 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
  */
 public class ForceFieldListener implements Listener {
 
-    public ForceFieldListener(final JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
     private Set<Player> getNearbyPlayers(final Player player, final Plot plot) {
         final Set<Player> players = new HashSet<>();
         Player oPlayer;

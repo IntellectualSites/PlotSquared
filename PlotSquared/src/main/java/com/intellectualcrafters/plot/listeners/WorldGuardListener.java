@@ -63,7 +63,6 @@ public class WorldGuardListener implements Listener {
     public final ArrayList<Flag<?>> flags;
 
     public WorldGuardListener(final PlotMain plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         this.str_flags = new ArrayList<>();
         this.flags = new ArrayList<>();
         for (final Flag<?> flag : DefaultFlag.getFlags()) {
