@@ -181,7 +181,15 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         Set<Flag> plotflags = settings.flags;
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
-        	plotflags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
+            HashSet<String> flagStrings = new HashSet<>();
+            for (Flag flag : plotflags) {
+                flagStrings.add(flag.getKey());
+            }
+            for (Flag newflag : plotworld.DEFAULT_FLAGS) {
+                if (!flagStrings.contains(newflag.getKey())) {
+                    plotflags.add(newflag);
+                }
+            }
         }
         return plotflags;
     }

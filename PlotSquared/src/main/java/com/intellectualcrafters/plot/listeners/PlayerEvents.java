@@ -46,6 +46,7 @@ import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -254,9 +255,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Plot plot = getCurrentPlot(event.getBlock().getLocation());
             if (!plot.hasOwner()) {
                 if (PlotMain.hasPermission(player, "plots.admin.destroy.unowned")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.unowned");
                     return;
                 }
+                PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.unowned");
                 event.setCancelled(true);
             }
             if (!plot.hasRights(event.getPlayer())) {
@@ -266,17 +267,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
                 if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.other")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.other");
                     return;
                 }
+                PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.other");
                 event.setCancelled(true);
             }
             return;
         }
         if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.road")) {
-            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
             return;
         }
+        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
         event.setCancelled(true);
     }
 
@@ -492,6 +493,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
         Block block = event.getClickedBlock();
         if (block == null) {
             return;
@@ -505,9 +509,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Plot plot = getCurrentPlot(event.getClickedBlock().getLocation());
             if (!plot.hasOwner()) {
                 if (PlotMain.hasPermission(player, "plots.admin.interact.unowned")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.unowned");
                     return;
                 }
+                PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                event.setCancelled(true);
             }
             Flag use = FlagManager.getPlotFlag(plot, "use");
             if (use != null && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
@@ -515,17 +520,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             if (!plot.hasRights(player)) {
                 if (PlotMain.hasPermission(player, "plots.admin.interact.other")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.other");
                     return;
                 }
+                PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.other");
                 event.setCancelled(true);
             }
             return;
         }
         if (PlotMain.hasPermission(player, "plots.admin.interact.road")) {
-            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
             return;
         }
+        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
         event.setCancelled(true);
     }
 
@@ -867,44 +872,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler
-    public void ArmorStandDestroy(EntityDamageByEntityEvent e){
-        final Location l = e.getEntity().getLocation();
-        if (isPlotWorld(l)) {
-            Entity d = e.getDamager();
-            if (d instanceof Player) {
-                final Player p = (Player) d;
-                final PlotWorld pW = getPlotWorld(l.getWorld());
-                if (!isInPlot(l)) {
-                    if (!PlotMain.hasPermission(p, "plots.admin.destroy.road")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.road");
-                        e.setCancelled(true);
-                    }
-                } else {
-                    final Plot plot = getCurrentPlot(l);
-                    if (plot == null || !plot.hasOwner()) {
-                        if (!PlotMain.hasPermission(p, "plots.admin.destroy.unowned")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.unowned");
-                            e.setCancelled(true);
-                            return;
-                        }
-                        return;
-                    } 
-                    if (!plot.hasRights(p)) {
-                        if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
-                            return;
-                        }
-                        if (!PlotMain.hasPermission(p, "plots.admin.destroy.other")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.other");
-                            e.setCancelled(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = e.getEntity().getLocation();
@@ -933,10 +900,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (aPlr && !booleanFlag(plot, "pvp", false)) {
+                    } else if (aPlr && booleanFlag(plot, "pvp", false)) {
                         return;
                     }
-                    if (!aPlr && !booleanFlag(plot, "pve", false)) {
+                    if (!aPlr && booleanFlag(plot, "pve", false)) {
                         return;
                     }
                     assert plot != null;
