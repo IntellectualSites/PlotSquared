@@ -1,13 +1,22 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -18,7 +27,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
 public class ClusterManager {
 	public static HashMap<String, HashSet<PlotCluster>> clusters;
-	private static PlotCluster last;
+	private static HashSet<String> regenerating = new HashSet<>();
+	public static PlotCluster last;
 	
 	public static boolean contains(PlotCluster cluster, PlotId id) {
 		if (cluster.getP1().x <= id.x && cluster.getP1().y <= id.y && cluster.getP2().x >= id.x && cluster.getP2().y >= id.y) {
@@ -190,5 +200,76 @@ public class ClusterManager {
 	
 	public static PlotClusterId getClusterId(PlotCluster cluster) {
 		return new PlotClusterId(cluster.getP1(), cluster.getP2());
+	}
+	
+	public static AugmentedPopulator getPopulator(PlotCluster cluster) {
+	    World world = Bukkit.getWorld(cluster.world);
+	    for (Iterator<BlockPopulator> iterator = world.getPopulators().iterator(); iterator.hasNext();) {
+            BlockPopulator populator = iterator.next();
+            if (populator instanceof AugmentedPopulator) {
+                if (((AugmentedPopulator) populator).cluster.equals(cluster)) {
+                    return (AugmentedPopulator) populator;
+                }
+            }
+        }
+	    return null;
+	}
+	
+	public static void regenCluster(final PlotCluster cluster) {
+	    if (regenerating.contains(cluster.world + ":" + cluster.getName())) {
+	        return;
+	    }
+	    regenerating.add(cluster.world + ":" + cluster.getName());
+	    int interval = 1;
+	    int i = 0;
+	    final Random rand = new Random();
+        final World world = Bukkit.getWorld(cluster.world);
+        
+	    Location bot = getClusterBottom(cluster);
+	    Location top = getClusterTop(cluster);
+	    
+	    int minChunkX = bot.getBlockX() >> 4;
+	    int maxChunkX = (top.getBlockX() >> 4) + 1;
+	    int minChunkZ = bot.getBlockZ() >> 4;
+        int maxChunkZ = (top.getBlockZ() >> 4) + 1;
+	    
+	    final AugmentedPopulator populator = getPopulator(cluster);
+	    final ArrayList<Chunk> chunks = new ArrayList<>();
+	    
+	    TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                ClusterManager.regenerating.remove(cluster.world + ":" + cluster.getName());
+                Player owner = UUIDHandler.uuidWrapper.getPlayer(cluster.owner);
+                if (owner != null) {
+                    PlayerFunctions.sendMessage(owner, C.CLEARING_DONE);
+                }
+            }
+        }, interval * chunks.size() + 20);
+	    
+	    // chunks
+	    for (int x = minChunkX; x <= maxChunkX; x++) {
+            for (int z = minChunkZ; z <= maxChunkZ; z++) {
+                final Chunk chunk = world.getChunkAt(x, z);
+                chunks.add(chunk);
+            }
+        }
+	    for (final Chunk chunk : chunks) {
+	        i+=interval;
+	        TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (populator == null) {
+                        world.regenerateChunk(chunk.getX(), chunk.getZ());
+                        chunk.unload();
+                        chunk.load();
+                    }
+                    else {
+                        populator.populate(world, rand, chunk);
+                    }
+                }
+            }, i);
+	        
+	    }
 	}
 }

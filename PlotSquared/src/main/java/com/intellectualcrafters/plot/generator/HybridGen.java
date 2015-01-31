@@ -52,6 +52,10 @@ public class HybridGen extends PlotGenerator {
      * Set to static to re-use the same managet for all Default World Generators
      */
     private static PlotManager manager = null;
+    /**
+     * plotworld object
+     */
+    public HybridPlotWorld plotworld = null;
     
     /**
      * Some generator specific variables (implementation dependent)
@@ -76,10 +80,6 @@ public class HybridGen extends PlotGenerator {
      * result object is returned for each generated chunk, do stuff to it
      */
     short[][] result;
-    /**
-     * plotworld object
-     */
-    HybridPlotWorld plotworld = null;
     /**
      * Faster sudo-random number generator than java.util.random
      */
@@ -308,7 +308,9 @@ public class HybridGen extends PlotGenerator {
         for (short x = 0; x < 16; x++) {
             for (short z = 0; z < 16; z++) {
                 
-                biomes.setBiome(x, z, this.biome);
+                if (biomes != null) {
+                    biomes.setBiome(x, z, this.biome);
+                }
                 
                 int absX = ((sx + x) % this.size);
                 int absZ = ((sz + z) % this.size);

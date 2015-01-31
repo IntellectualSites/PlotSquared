@@ -247,12 +247,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Player player = event.getPlayer();
-        if (isInPlot(event.getBlock().getLocation())) {
+        Location loc = event.getBlock().getLocation();
+        if (isInPlot(loc)) {
             if (event.getBlock().getY() == 0) {
                 event.setCancelled(true);
                 return;
             }
-            final Plot plot = getCurrentPlot(event.getBlock().getLocation());
+            final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner()) {
                 if (PlotMain.hasPermission(player, "plots.admin.destroy.unowned")) {
                     return;
@@ -278,7 +279,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
-        event.setCancelled(true);
+        if (isCluster(loc)) { event.setCancelled(true); }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -287,20 +288,30 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!isPlotWorld(world)) {
             return;
         }
-        final Plot plot = getCurrentPlot(event.getLocation());
+        Location loc = event.getLocation();
+        final Plot plot = getCurrentPlot(loc);
         if (plot != null && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                 Iterator<Block> iter = event.blockList().iterator();
                 while (iter.hasNext()) {
                     Block b = iter.next();
-                    if (!getCurrentPlot(b.getLocation()).equals(plot)) {
+                    if (!getCurrentPlot(loc).equals(plot)) {
                         iter.remove();
                     }
                 }
                 return;
             }
         }
-        event.setCancelled(true);
+        if (isCluster(loc)) { event.setCancelled(true); }
+        else {
+            Iterator<Block> iter = event.blockList().iterator();
+            while (iter.hasNext()) {
+                Block b = iter.next();
+                if (isCluster(loc)) {
+                    iter.remove();
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -317,13 +328,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         } else {
             final Block b = event.getBlock();
             final Player p = (Player) e;
-            if (!isInPlot(b.getLocation())) {
+            Location loc = b.getLocation();
+            if (!isInPlot(loc)) {
                 if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                     event.setCancelled(true);
                 }
             } else {
-                final Plot plot = getCurrentPlot(b.getLocation());
+                final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
@@ -332,7 +344,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        event.setCancelled(true);
+                        if (isCluster(loc)) { event.setCancelled(true); }
                     }
                 }
             }
@@ -340,22 +352,23 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onEntityBlockForm(final EntityBlockFormEvent event) {
-        final World world = event.getBlock().getWorld();
+    public static void onEntityBlockForm(final EntityBlockFormEvent e) {
+        final World world = e.getBlock().getWorld();
         if (!isPlotWorld(world)) {
             return;
         }
-        if ((!(event.getEntity() instanceof Player))) {
-            event.setCancelled(true);
+        if ((!(e.getEntity() instanceof Player))) {
+            if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -363,9 +376,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -373,9 +387,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBD(final BlockDamageEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -383,9 +398,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -393,9 +409,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -403,9 +420,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -415,64 +433,19 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (isInPlot(e.getBlock().getLocation())) {
             for (final Block block : e.getBlocks()) {
                 if (!isInPlot(block.getLocation())) {
-                    e.setCancelled(true);
+                    if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
                 }
             }
         }
-        /*
-         * if (isInPlot(e.getBlock().getLocation())) {
-         * e.getDirection();
-         * final int modifier = e.getBlocks().size();
-         * Location l = e.getBlock().getLocation();
-         * {
-         * if (e.getDirection() == BlockFace.EAST) {
-         * l = e.getBlock().getLocation().subtract(modifier, 0, 0);
-         * } else if (e.getDirection() == BlockFace.NORTH) {
-         * l = e.getBlock().getLocation().subtract(0, 0, modifier);
-         * } else if (e.getDirection() == BlockFace.SOUTH) {
-         * l = e.getBlock().getLocation().add(0, 0, modifier);
-         * } else if (e.getDirection() == BlockFace.WEST) {
-         * l = e.getBlock().getLocation().add(modifier, 0, 0);
-         * }
-         * if (!isInPlot(l)) {
-         * e.setCancelled(true);
-         * return;
-         * }
-         * }
-         * for (final Block b : e.getBlocks()) {
-         * if (!isInPlot(b.getLocation())) {
-         * return;
-         * }
-         * {
-         * if (e.getDirection() == BlockFace.EAST) {
-         * if (!isInPlot(b.getLocation().subtract(1, 0, 0))) {
-         * e.setCancelled(true);
-         * }
-         * } else if (e.getDirection() == BlockFace.NORTH) {
-         * if (!isInPlot(b.getLocation().subtract(0, 0, 1))) {
-         * e.setCancelled(true);
-         * }
-         * } else if (e.getDirection() == BlockFace.SOUTH) {
-         * if (!isInPlot(b.getLocation().add(0, 0, 1))) {
-         * e.setCancelled(true);
-         * }
-         * } else if (e.getDirection() == BlockFace.WEST) {
-         * if (!isInPlot(b.getLocation().add(1, 0, 0))) {
-         * e.setCancelled(true);
-         * }
-         * }
-         * }
-         * }
-         * }
-         */
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
         final Block b = e.getRetractLocation().getBlock();
-        if (isPlotWorld(b.getLocation()) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
-            if (!isInPlot(b.getLocation())) {
-                e.setCancelled(true);
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
+            if (!isInPlot(loc)) {
+                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -484,8 +457,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         for (int i = blocks.size() - 1; i >= 0; i--) {
             if (remove || isPlotWorld(blocks.get(i).getLocation())) {
                 remove = true;
-                if (!isInPlot(blocks.get(i).getLocation())) {
-                    e.getBlocks().remove(i);
+                Location loc = blocks.get(i).getLocation();
+                if (!isInPlot(loc)) {
+                    if (isCluster(loc)) { e.getBlocks().remove(i); }
                 }
             }
         }
@@ -505,8 +479,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Player player = event.getPlayer();
-        if (isInPlot(event.getClickedBlock().getLocation())) {
-            final Plot plot = getCurrentPlot(event.getClickedBlock().getLocation());
+        Location loc = event.getClickedBlock().getLocation();
+        if (isInPlot(loc)) {
+            final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner()) {
                 if (PlotMain.hasPermission(player, "plots.admin.interact.unowned")) {
                     return;
@@ -531,7 +506,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
-        event.setCancelled(true);
+        if (isCluster(loc)) { event.setCancelled(true); }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -552,8 +527,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (event.getEntity() instanceof Player) {
             return;
         }
-        if (!isInPlot(event.getLocation())) {
-            event.setCancelled(true);
+        Location loc = event.getLocation();
+        if (!isInPlot(loc)) {
+            if (isCluster(loc)) { event.setCancelled(true); }
         }
     }
 
@@ -579,16 +555,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Block b = e.getBlock();
+        Location loc = b.getLocation();
         if (b != null) {
             if (e.getPlayer() != null) {
                 final Player p = e.getPlayer();
-                if (!isInPlot(b.getLocation())) {
+                if (!isInPlot(loc)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                         e.setCancelled(true);
                     }
                 } else {
-                    final Plot plot = getCurrentPlot(b.getLocation());
+                    final Plot plot = getCurrentPlot(loc);
                     if (plot == null || !plot.hasOwner()) {
                         if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
@@ -597,12 +574,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     } else if (!plot.hasRights(p)) {
                         if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                            e.setCancelled(true);
+                            if (isCluster(loc)) { e.setCancelled(true); }
                         }
                     }
                 }
             } else {
-                e.setCancelled(true);
+                if (isCluster(loc)) { e.setCancelled(true); }
             }
         }
     }
@@ -640,16 +617,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public static void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         final BlockFace bf = e.getBlockFace();
         final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
-        if (isPlotWorld(b.getLocation())) {
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
             Player p = e.getPlayer();
-            if (!isInPlot(b.getLocation())) {
+            if (!isInPlot(loc)) {
                 if (PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     return;
                 }
                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                 e.setCancelled(true);
             } else {
-                final Plot plot = getCurrentPlot(b.getLocation());
+                final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
                     if (PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         return;
@@ -665,7 +643,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                    e.setCancelled(true);
+                    if (isCluster(loc)) { e.setCancelled(true); }
                 }
             }
         }
@@ -700,16 +678,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
-        if (isPlotWorld(b.getLocation())) {
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
             Player p = e.getPlayer();
-            if (!isInPlot(b.getLocation())) {
+            if (!isInPlot(loc)) {
                 if (PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     return;
                 }
                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                 e.setCancelled(true);
             } else {
-                final Plot plot = getCurrentPlot(b.getLocation());
+                final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
                     if (PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         return;
@@ -726,7 +705,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                    e.setCancelled(true);
+                    if (isCluster(loc)) { e.setCancelled(true); }
                 }
             }
         }
@@ -735,15 +714,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
-        if (isPlotWorld(b.getLocation())) {
+        Location loc = b.getLocation();
+        if (isPlotWorld(loc)) {
             final Player p = e.getPlayer();
-            if (!isInPlot(b.getLocation())) {
+            if (!isInPlot(loc)) {
                 if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                     e.setCancelled(true);
                 }
             } else {
-                final Plot plot = getCurrentPlot(b.getLocation());
+                final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
@@ -755,7 +735,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        e.setCancelled(true);
+                        if (isCluster(loc)) { e.setCancelled(true); }
                     }
                 }
             }
@@ -787,7 +767,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.destroy.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.other");
-                            e.setCancelled(true);
+                            if (isCluster(l)) { e.setCancelled(true); }
                         }
                     }
                 }
@@ -828,7 +808,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.interact.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
-                        e.setCancelled(true);
+                        if (isCluster(l)) { e.setCancelled(true); }
                     }
                 }
             }
@@ -864,7 +844,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.vehicle.break.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
-                            e.setCancelled(true);
+                            if (isCluster(l)) { e.setCancelled(true); }
                         }
                     }
                 }
@@ -919,7 +899,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.pve.other")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.other");
-                            e.setCancelled(true);
+                            if (isCluster(l)) { e.setCancelled(true); }
                         }
                     }
                 }
@@ -947,7 +927,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.projectile.other")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
-                        e.setHatching(false);
+                        if (isCluster(l)) { e.setHatching(false); }
                     }
                 }
             }
@@ -964,8 +944,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Player player = event.getPlayer();
-        if (isInPlot(event.getBlock().getLocation())) {
-            final Plot plot = getCurrentPlot(event.getBlockPlaced().getLocation());
+        Location loc = event.getBlock().getLocation();
+        if (isInPlot(loc)) {
+            final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner() && PlotMain.hasPermission(player, "plots.admin.build.unowned")) {
                 PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.unowned");
                 return;
@@ -985,7 +966,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         if (!PlotMain.hasPermission(player, "plots.admin.build.road")) {
             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.road");
-            event.setCancelled(true);
+            if (isCluster(loc)) { event.setCancelled(true); }
         }
     }
 }

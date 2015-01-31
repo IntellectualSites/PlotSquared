@@ -61,6 +61,7 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
     public static boolean REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
+    public static boolean CLUSTER_GEN_ORE_DEFAULT = true;
     
     // are plot clusters enabled
     // require claim in cluster
@@ -293,6 +294,7 @@ public abstract class PlotWorld {
     public boolean SPAWN_BREEDING;
     public boolean WORLD_BORDER;
     public boolean REQUIRE_CLUSTER = false;
+    public boolean CLUSTER_ORE;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -305,7 +307,8 @@ public abstract class PlotWorld {
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
     	if (Settings.ENABLE_CLUSTERS) {
-    		this.REQUIRE_CLUSTER = config.getBoolean("claim.require_cluster");
+    	    this.REQUIRE_CLUSTER = config.getBoolean("cluster.require-claim-in-cluster");
+    	    this.CLUSTER_ORE = config.getBoolean("cluster.generate-ores");
     	}
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
@@ -371,7 +374,8 @@ public abstract class PlotWorld {
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
         if (Settings.ENABLE_CLUSTERS) {
-        	options.put("claim.require_cluster", PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT);
+            options.put("cluster.require-claim-in-cluster", PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT);
+            options.put("cluster.generate-ores", PlotWorld.CLUSTER_GEN_ORE_DEFAULT);
     	}
         final ConfigurationNode[] settings = getSettingNodes();
         /*

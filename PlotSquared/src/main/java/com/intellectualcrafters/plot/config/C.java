@@ -57,6 +57,7 @@ public enum C {
     CLUSTER_CANNOT_LEAVE("&cYou must delete or transfer ownership before leaving"),
     CLUSTER_ADDED_HELPER("&6Successfully added a helper to the cluster"),
     CLUSTER_REMOVED_HELPER("&6Successfully removed a helper to the cluster"),
+    CLUSTER_REGENERATED("&6Successfully started cluster regeneration"),
     CLUSTER_TELEPORTING("&6Teleporting..."),
     CLUSTER_INFO("&6Current cluster: &7%id%\n&6Name: &7%name%\n&6Owner: &7%owner%\n&6Size: &7%size%\n&6Rights: &7%rights%"),
 	/*
@@ -332,7 +333,7 @@ public enum C {
      * Clearing
      */
     CLEARING_PLOT("&cClearing plot async."),
-    CLEARING_DONE("&6Done, took &a%time%&6 ms!"),
+    CLEARING_DONE("&6Clear completed!"),
     CLEARING_DONE_PACKETS("&6(&a%time% &6ms for packets)"),
     /*
      * Claiming

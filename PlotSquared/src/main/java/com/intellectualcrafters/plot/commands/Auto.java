@@ -177,14 +177,14 @@ public class Auto extends SubCommand {
         	PlotId top = cluster.getP2();
         	PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
         	PlotId id = new PlotId(0, 0);
-        	int width = Math.max(top.x - bot.x, top.y - bot.y);
+        	int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
         	int max = width * width;
         	//
         	for (int i = 0; i <= max; i++) {
         	    PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
         	    Plot current = PlotHelper.getPlot(world, currentId);
-        	    if (current != null && !current.hasOwner() && cluster.equals(ClusterManager.getCluster(current))) {
-        	        Claim.claimPlot(plr, plot, true, true);
+        	    if (current != null && (current.hasOwner() == false) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
+        	        Claim.claimPlot(plr, current, true, true);
         	        return true;
         	    }
         	    id = getNextPlot(id, 1);

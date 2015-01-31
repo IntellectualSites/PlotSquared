@@ -1629,7 +1629,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 PreparedStatement stmt = null;
                 try {
-                    stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster` SET `pos1_x` = ?, `pos1_z` = ?, `pos2_x` = ?, `pos2_z` = ?  WHERE `cluster_id` = ?");
+                    stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster` SET `pos1_x` = ?, `pos1_z` = ?, `pos2_x` = ?, `pos2_z` = ?  WHERE `id` = ?");
                     stmt.setInt(1, pos1.x);
                     stmt.setInt(2, pos1.y);
                     stmt.setInt(3, pos2.x);

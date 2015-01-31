@@ -82,6 +82,7 @@ import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
@@ -93,6 +94,7 @@ import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -277,7 +279,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         final String[] nodes = perm.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i]).append(".");
+            n.append(nodes[i] + ("."));
             if (player.hasPermission(n + "*")) {
                 return true;
             }
@@ -915,7 +917,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             }
         }
     }
-
+    
     public static void loadWorld(final String world, final ChunkGenerator generator) {
         if (getWorldSettings(world) != null) {
             return;
@@ -967,12 +969,21 @@ public class PlotMain extends JavaPlugin implements Listener {
                 
                 PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = true;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
-                plotWorld.loadConfiguration(config.getConfigurationSection(path));
+                plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
                 PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
+                }
+                if (plotWorld.REQUIRE_CLUSTER) {
+                    if (ClusterManager.getClusters(world).size() > 0) {
+                        HybridGen gen = new HybridGen(world);
+                        gen.plotworld = (HybridPlotWorld) plotWorld;
+                        for (PlotCluster cluster : ClusterManager.getClusters(world)) {
+                            new AugmentedPopulator(world, gen, cluster);
+                        }
+                    }
                 }
                 // Now add it :p
                 addPlotWorld(world, plotWorld, plotManager);

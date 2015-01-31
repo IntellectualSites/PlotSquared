@@ -48,6 +48,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.sk89q.worldguard.protection.flags.BooleanFlag;
@@ -87,6 +88,14 @@ import com.sk89q.worldguard.protection.flags.BooleanFlag;
     public static boolean isPlotWorld(final World world) {
         return PlotMain.isPlotWorld(world);
     }
+    
+    public static boolean isCluster(Location location) {
+        PlotWorld plotworld = PlotMain.getWorldSettings(location.getWorld());
+        if (plotworld.REQUIRE_CLUSTER) {
+            return ClusterManager.getCluster(location) != null;
+        }
+        return false;
+    }
 
     public static PlotWorld getPlotWorld(final World world) {
         return PlotMain.getWorldSettings(world);
@@ -105,20 +114,6 @@ import com.sk89q.worldguard.protection.flags.BooleanFlag;
 
     public static UUID getUUID(final String name) {
         return UUIDHandler.getUUID(name);
-    }
-
-    // unused
-    public static void blockChange(final Block block, final Cancellable event) {
-        final Location loc = block.getLocation();
-        final String world = loc.getWorld().getName();
-        final PlotManager manager = PlotMain.getPlotManager(world);
-        if (manager != null) {
-            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-            final PlotId id = manager.getPlotId(plotworld, loc);
-            if (id == null) {
-                event.setCancelled(true);
-            }
-        }
     }
 
     public static boolean enteredPlot(final Location l1, final Location l2) {
