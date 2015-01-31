@@ -101,7 +101,9 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (args.length != 4) {
+                    PlotId id = ClusterManager.estimatePlotId(plr.getLocation());
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
+                    PlayerFunctions.sendMessage(plr, C.CLUSTER_CURRENT_PLOTID, "" + id);
                     return false;
                 }
                 // check pos1 / pos2

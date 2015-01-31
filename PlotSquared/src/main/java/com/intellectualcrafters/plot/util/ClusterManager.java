@@ -215,6 +215,33 @@ public class ClusterManager {
 	    return null;
 	}
 	
+	public static PlotId estimatePlotId(Location loc) {
+	    PlotId a = new PlotId(0, 0);
+	    PlotId b = new PlotId(1, 1);
+	    int xw;
+	    int zw;
+	    	    
+	    String world = loc.getWorld().getName();
+	    PlotWorld plotworld = PlotMain.getWorldSettings(world);
+	    if (plotworld == null) {
+	        xw = 39;
+	        zw = 39;
+	    }
+	    else {
+	        PlotManager manager = PlotMain.getPlotManager(world);
+	        Location al = manager.getPlotBottomLocAbs(plotworld, a);
+	        Location bl = manager.getPlotBottomLocAbs(plotworld, b);
+	        
+	        xw = bl.getBlockX() - al.getBlockX();
+	        zw = bl.getBlockZ() - al.getBlockZ();
+	    }
+	    
+	    int x = loc.getBlockX();
+	    int z = loc.getBlockZ();
+	    
+	    return new PlotId((x/xw) + 1,(z/zw) + 1);
+	}
+	
 	public static void regenCluster(final PlotCluster cluster) {
 	    if (regenerating.contains(cluster.world + ":" + cluster.getName())) {
 	        return;

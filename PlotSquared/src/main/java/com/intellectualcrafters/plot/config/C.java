@@ -60,6 +60,7 @@ public enum C {
     CLUSTER_REGENERATED("&6Successfully started cluster regeneration"),
     CLUSTER_TELEPORTING("&6Teleporting..."),
     CLUSTER_INFO("&6Current cluster: &7%id%\n&6Name: &7%name%\n&6Owner: &7%owner%\n&6Size: &7%size%\n&6Rights: &7%rights%"),
+    CLUSTER_CURRENT_PLOTID("&6Current plot: &7%s"),
 	/*
 	 * Border
 	 */
