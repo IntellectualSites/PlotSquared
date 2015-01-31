@@ -278,8 +278,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.road")) {
             return;
         }
-        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
-        if (isCluster(loc)) { event.setCancelled(true); }
+        if (isCluster(loc)) { 
+            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
+            event.setCancelled(true); 
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -343,8 +345,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        if (isCluster(loc)) { event.setCancelled(true); }
+                        if (isCluster(loc)) { 
+                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                            event.setCancelled(true); 
+                        }
                     }
                 }
             }
@@ -505,8 +509,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (PlotMain.hasPermission(player, "plots.admin.interact.road")) {
             return;
         }
-        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
-        if (isCluster(loc)) { event.setCancelled(true); }
+        if (isCluster(loc)) { 
+            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
+            event.setCancelled(true); 
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -573,8 +579,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                     } else if (!plot.hasRights(p)) {
                         if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                            if (isCluster(loc)) { e.setCancelled(true); }
+                            if (isCluster(loc)) { 
+                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                                e.setCancelled(true); 
+                            }
                         }
                     }
                 }
@@ -642,8 +650,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         return;
                     }
-                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                    if (isCluster(loc)) { e.setCancelled(true); }
+                    if (isCluster(loc)) { 
+                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                        e.setCancelled(true); 
+                    }
                 }
             }
         }
@@ -704,8 +714,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         return;
                     }
-                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                    if (isCluster(loc)) { e.setCancelled(true); }
+                    if (isCluster(loc)) { 
+                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                        e.setCancelled(true); 
+                    }
                 }
             }
         }
@@ -734,8 +746,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        if (isCluster(loc)) { e.setCancelled(true); }
+                        if (isCluster(loc)) { 
+                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                            e.setCancelled(true); 
+                        }
                     }
                 }
             }
@@ -766,8 +780,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.destroy.other")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.other");
-                            if (isCluster(l)) { e.setCancelled(true); }
+                            if (isCluster(l)) {
+                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.other");
+                                e.setCancelled(true); 
+                            }
                         }
                     }
                 }
@@ -807,8 +823,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.interact.other")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
-                        if (isCluster(l)) { e.setCancelled(true); }
+                        if (isCluster(l)) { 
+                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
+                            e.setCancelled(true); 
+                        }
                     }
                 }
             }
@@ -843,8 +861,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.vehicle.break.other")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
-                            if (isCluster(l)) { e.setCancelled(true); }
+                            if (isCluster(l)) {
+                                e.setCancelled(true); 
+                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
+                            }
                         }
                     }
                 }
@@ -898,8 +918,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.pve.other")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.other");
-                            if (isCluster(l)) { e.setCancelled(true); }
+                            if (isCluster(l)) { 
+                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.other");
+                                e.setCancelled(true); 
+                            }
                         }
                     }
                 }
@@ -926,8 +948,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.projectile.other")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
-                        if (isCluster(l)) { e.setHatching(false); }
+                        if (isCluster(l)) { 
+                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
+                            e.setHatching(false); 
+                        }
                     }
                 }
             }
@@ -965,8 +989,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (!PlotMain.hasPermission(player, "plots.admin.build.road")) {
-            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.road");
-            if (isCluster(loc)) { event.setCancelled(true); }
+            if (isCluster(loc)) { 
+                PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.road");
+                event.setCancelled(true); 
+            }
         }
     }
 }
