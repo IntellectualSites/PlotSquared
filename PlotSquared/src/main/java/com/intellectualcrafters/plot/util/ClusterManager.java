@@ -251,6 +251,7 @@ public class ClusterManager {
 	    int i = 0;
 	    final Random rand = new Random();
         final World world = Bukkit.getWorld(cluster.world);
+        final PlotWorld plotworld = PlotMain.getWorldSettings(cluster.world);
         
 	    Location bot = getClusterBottom(cluster);
 	    Location top = getClusterTop(cluster);
@@ -286,7 +287,7 @@ public class ClusterManager {
 	        TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    if (populator == null) {
+                    if (populator == null || plotworld.CLUSTER_ORE) {
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
                         chunk.unload();
                         chunk.load();
