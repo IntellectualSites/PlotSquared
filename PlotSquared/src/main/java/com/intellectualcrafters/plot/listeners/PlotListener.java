@@ -89,12 +89,12 @@ import com.sk89q.worldguard.protection.flags.BooleanFlag;
         return PlotMain.isPlotWorld(world);
     }
     
-    public static boolean isCluster(Location location) {
+    public static boolean isPlotArea(Location location) {
         PlotWorld plotworld = PlotMain.getWorldSettings(location.getWorld());
         if (plotworld.REQUIRE_CLUSTER) {
             return ClusterManager.getCluster(location) != null;
         }
-        return false;
+        return true;
     }
 
     public static PlotWorld getPlotWorld(final World world) {

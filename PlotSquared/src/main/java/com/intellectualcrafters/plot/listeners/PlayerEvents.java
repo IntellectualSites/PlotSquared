@@ -278,7 +278,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.road")) {
             return;
         }
-        if (isCluster(loc)) { 
+        if (isPlotArea(loc)) { 
             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
             event.setCancelled(true); 
         }
@@ -304,12 +304,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 return;
             }
         }
-        if (isCluster(loc)) { event.setCancelled(true); }
+        if (isPlotArea(loc)) { event.setCancelled(true); }
         else {
             Iterator<Block> iter = event.blockList().iterator();
             while (iter.hasNext()) {
                 Block b = iter.next();
-                if (isCluster(loc)) {
+                if (isPlotArea(loc)) {
                     iter.remove();
                 }
             }
@@ -345,7 +345,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                        if (isCluster(loc)) { 
+                        if (isPlotArea(loc)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                             event.setCancelled(true); 
                         }
@@ -362,7 +362,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if ((!(e.getEntity() instanceof Player))) {
-            if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+            if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
         }
     }
 
@@ -372,7 +372,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -383,7 +383,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -394,7 +394,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -405,7 +405,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -416,7 +416,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -427,7 +427,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -437,7 +437,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (isInPlot(e.getBlock().getLocation())) {
             for (final Block block : e.getBlocks()) {
                 if (!isInPlot(block.getLocation())) {
-                    if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                    if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
                 }
             }
         }
@@ -449,7 +449,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = b.getLocation();
         if (isPlotWorld(loc) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
             if (!isInPlot(loc)) {
-                if (isCluster(e.getBlock().getLocation())) { e.setCancelled(true); }
+                if (isPlotArea(e.getBlock().getLocation())) { e.setCancelled(true); }
             }
         }
     }
@@ -463,7 +463,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 remove = true;
                 Location loc = blocks.get(i).getLocation();
                 if (!isInPlot(loc)) {
-                    if (isCluster(loc)) { e.getBlocks().remove(i); }
+                    if (isPlotArea(loc)) { e.getBlocks().remove(i); }
                 }
             }
         }
@@ -509,7 +509,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (PlotMain.hasPermission(player, "plots.admin.interact.road")) {
             return;
         }
-        if (isCluster(loc)) { 
+        if (isPlotArea(loc)) { 
             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.interact.road");
             event.setCancelled(true); 
         }
@@ -535,7 +535,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Location loc = event.getLocation();
         if (!isInPlot(loc)) {
-            if (isCluster(loc)) { event.setCancelled(true); }
+            if (isPlotArea(loc)) { event.setCancelled(true); }
         }
     }
 
@@ -579,7 +579,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                     } else if (!plot.hasRights(p)) {
                         if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                            if (isCluster(loc)) { 
+                            if (isPlotArea(loc)) { 
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                                 e.setCancelled(true); 
                             }
@@ -587,7 +587,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             } else {
-                if (isCluster(loc)) { e.setCancelled(true); }
+                if (isPlotArea(loc)) { e.setCancelled(true); }
             }
         }
     }
@@ -650,7 +650,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         return;
                     }
-                    if (isCluster(loc)) { 
+                    if (isPlotArea(loc)) { 
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                         e.setCancelled(true); 
                     }
@@ -714,7 +714,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         return;
                     }
-                    if (isCluster(loc)) { 
+                    if (isPlotArea(loc)) { 
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                         e.setCancelled(true); 
                     }
@@ -746,7 +746,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
-                        if (isCluster(loc)) { 
+                        if (isPlotArea(loc)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                             e.setCancelled(true); 
                         }
@@ -780,7 +780,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.destroy.other")) {
-                            if (isCluster(l)) {
+                            if (isPlotArea(l)) {
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.destroy.other");
                                 e.setCancelled(true); 
                             }
@@ -823,7 +823,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!PlotMain.hasPermission(p, "plots.admin.interact.other")) {
-                        if (isCluster(l)) { 
+                        if (isPlotArea(l)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
                             e.setCancelled(true); 
                         }
@@ -861,7 +861,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.vehicle.break.other")) {
-                            if (isCluster(l)) {
+                            if (isPlotArea(l)) {
                                 e.setCancelled(true); 
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
                             }
@@ -918,7 +918,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!PlotMain.hasPermission(p, "plots.admin.pve.other")) {
-                            if (isCluster(l)) { 
+                            if (isPlotArea(l)) { 
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.other");
                                 e.setCancelled(true); 
                             }
@@ -948,7 +948,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.projectile.other")) {
-                        if (isCluster(l)) { 
+                        if (isPlotArea(l)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
                             e.setHatching(false); 
                         }
@@ -989,7 +989,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (!PlotMain.hasPermission(player, "plots.admin.build.road")) {
-            if (isCluster(loc)) { 
+            if (isPlotArea(loc)) { 
                 PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.road");
                 event.setCancelled(true); 
             }
