@@ -65,7 +65,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                 	}
                     boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
                     if (r) {
-                        final World w = p.getWorld();
+                        final World w = l.getWorld();
 
                         final Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
                         final Location tloc = PlotHelper.getPlotTopLoc(w, plot.id);
