@@ -37,6 +37,7 @@ public enum Command {
     // ratings)
     // - /plot rate <number out of 10>
     FLAG("flag", "f"),
+    TARGET("target"),
     CLUSTER("cluster", "clusters"),
     BUY("buy","b"),
     CREATEROADSCHEMATIC("createroadschematic"),

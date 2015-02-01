@@ -38,6 +38,10 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  */
 public enum C {
     /*
+     * Compass
+     */
+    COMPASS_TARGET("&6Successfully targeted plot with compass"),
+    /*
      * Cluster
      */
     CLUSTER_AVAILABLE_ARGS("&6The following sub commands are available: &clist, create, delete, resize, invite, kick, leave, helpers, info, tp, sethome"),
