@@ -91,7 +91,7 @@ import com.sk89q.worldguard.protection.flags.BooleanFlag;
     
     public static boolean isPlotArea(Location location) {
         PlotWorld plotworld = PlotMain.getWorldSettings(location.getWorld());
-        if (plotworld.REQUIRE_CLUSTER) {
+        if (Settings.ENABLE_CLUSTERS && plotworld.REQUIRE_CLUSTER) {
             return ClusterManager.getCluster(location) != null;
         }
         return true;

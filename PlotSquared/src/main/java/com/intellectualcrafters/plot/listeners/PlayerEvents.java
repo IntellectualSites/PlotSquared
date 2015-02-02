@@ -248,12 +248,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Player player = event.getPlayer();
         Location loc = event.getBlock().getLocation();
-        if (isInPlot(loc)) {
+        final Plot plot = getCurrentPlot(loc);
+        if (plot != null) {
             if (event.getBlock().getY() == 0) {
                 event.setCancelled(true);
                 return;
             }
-            final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner()) {
                 if (PlotMain.hasPermission(player, "plots.admin.destroy.unowned")) {
                     return;
@@ -278,7 +278,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (PlotMain.hasPermission(event.getPlayer(), "plots.admin.destroy.road")) {
             return;
         }
-        if (isPlotArea(loc)) { 
+        if (isPlotArea(loc)) {
             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.road");
             event.setCancelled(true); 
         }
