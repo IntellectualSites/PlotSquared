@@ -202,7 +202,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
                 }
-                if (args.length != 3) {
+                if (args.length != 1) {
                     PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag list");
                     return false;
                 }

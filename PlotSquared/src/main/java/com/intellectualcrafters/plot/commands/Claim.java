@@ -81,7 +81,7 @@ public class Claim extends SubCommand {
             }
             if (world instanceof HybridPlotWorld) {
                 final HybridPlotWorld pW = (HybridPlotWorld) world;
-                if (pW.CLAIMED_WALL_BLOCK != pW.WALL_BLOCK) {
+                if (!(pW.CLAIMED_WALL_BLOCK.equals(pW.WALL_BLOCK))) {
                     PlotMain.getPlotManager(plot.getWorld()).setWall(plot.getWorld(), world, plot.getId(), pW.CLAIMED_WALL_BLOCK);
                     if (PlotHelper.canSetFast) {
                         SetBlockFast.update(player);
