@@ -217,6 +217,8 @@ public class HybridPlotWorld extends PlotWorld {
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
+        // Do not populate road if using schematic population
+        this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
         
         DataCollection[] blocks1 = schem1.getBlockCollection();
         DataCollection[] blocks2 = schem2.getBlockCollection();

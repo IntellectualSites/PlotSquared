@@ -135,7 +135,6 @@ public class HybridPop extends BlockPopulator {
         HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(w);
         RegionWrapper plot = manager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
-            
             short sx = (short) ((X) % this.size);
             short sz = (short) ((Z) % this.size);
             
