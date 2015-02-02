@@ -62,7 +62,12 @@ public class AbstractFlag {
     }
 
     public Object parseValueRaw(final String value) {
-        return this.value.parse(value);
+        try {
+            return this.value.parse(value);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
     
     public String toString(final Object t) {

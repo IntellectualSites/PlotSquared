@@ -333,13 +333,23 @@ public abstract class FlagValue<T> {
 
         @Override
         public void add(Object t, String value) {
-            ((HashSet<PlotBlock>)t).addAll(parse(value));
+            try {
+                ((HashSet<PlotBlock>)t).addAll(parse(value));
+            }
+            catch (Exception e) {
+                
+            }
         }
 
         @Override
         public void remove(Object t, String value) {
-            for (PlotBlock item : parse(value)) {
-                ((HashSet<PlotBlock>)t).remove(item);
+            try {
+                for (PlotBlock item : parse(value)) {
+                    ((HashSet<PlotBlock>)t).remove(item);
+                }
+            }
+            catch (Exception e) {
+                
             }
         }
     }

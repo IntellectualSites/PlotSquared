@@ -24,6 +24,7 @@ package com.intellectualcrafters.plot.generator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -203,6 +204,16 @@ import com.intellectualcrafters.plot.util.SendChunk;
         
         int sx = loc.x << 4;
         int sz = loc.z << 4;
+        
+        HashSet<Chunk> chunks = new HashSet<Chunk>();
+        
+        for (int x = sx; x < sx + 16; x++) {
+            for (int z = sz; z < sz + 16; z++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                chunk.load(false);
+                chunks.add(chunk);
+            }
+        }
         
         for (int x = sx; x < sx + 16; x++) {
             for (int z = sz; z < sz + 16; z++) {

@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 public class RegenAllRoads extends SubCommand {
 
     public RegenAllRoads() {
-        super(Command.REGENALLROADS, "Regenerate all roads in the map", "regenallroads", CommandCategory.DEBUG, false);
+        super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "regenallroads", CommandCategory.DEBUG, false);
     }
 
     @Override
@@ -65,6 +65,8 @@ public class RegenAllRoads extends SubCommand {
         World world = Bukkit.getWorld(name);
         ArrayList<ChunkLoc> chunks = hpm.getChunkChunks(world);
         
+        PlotMain.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
+        PlotMain.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         PlotMain.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 256));
         PlotMain.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
         
