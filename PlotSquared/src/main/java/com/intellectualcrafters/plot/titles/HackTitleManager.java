@@ -221,58 +221,54 @@ public class HackTitleManager {
 	 * @param player
 	 *            Player
 	 */
-	public void send(Player player) {
+	public void send(Player player) throws Exception {
 		if (getProtocolVersion(player) >= 47 && isSpigot()
 				&& packetTitle != null) {
 			// First reset previous settings
 			resetTitle(player);
-			try {
-				// Send timings first
-				Object handle = getHandle(player);
-				Object connection = getField(handle.getClass(),
-						"playerConnection").get(handle);
-				Object[] actions = packetActions.getEnumConstants();
-				Method sendPacket = getMethod(connection.getClass(),
-						"sendPacket");
-				Object packet = packetTitle.getConstructor(packetActions,
-						Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(
-						actions[2], fadeInTime * (ticks ? 1 : 20),
-						stayTime * (ticks ? 1 : 20),
-						fadeOutTime * (ticks ? 1 : 20));
-				// Send if set
-				if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
-					sendPacket.invoke(connection, packet);
+			// Send timings first
+			Object handle = getHandle(player);
+			Object connection = getField(handle.getClass(),
+					"playerConnection").get(handle);
+			Object[] actions = packetActions.getEnumConstants();
+			Method sendPacket = getMethod(connection.getClass(),
+					"sendPacket");
+			Object packet = packetTitle.getConstructor(packetActions,
+					Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(
+					actions[2], fadeInTime * (ticks ? 1 : 20),
+					stayTime * (ticks ? 1 : 20),
+					fadeOutTime * (ticks ? 1 : 20));
+			// Send if set
+			if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
+				sendPacket.invoke(connection, packet);
 
-				// Send title
-				Object serialized = getMethod(nmsChatSerializer, "a",
-						String.class).invoke(
-						null,
-						"{text:\""
-								+ ChatColor.translateAlternateColorCodes('&',
-										title) + "\",color:"
-								+ titleColor.name().toLowerCase() + "}");
+			// Send title
+			Object serialized = getMethod(nmsChatSerializer, "a",
+					String.class).invoke(
+					null,
+					"{text:\""
+							+ ChatColor.translateAlternateColorCodes('&',
+									title) + "\",color:"
+							+ titleColor.name().toLowerCase() + "}");
+			packet = packetTitle.getConstructor(packetActions,
+					getNMSClass("IChatBaseComponent")).newInstance(
+					actions[0], serialized);
+			sendPacket.invoke(connection, packet);
+			if (subtitle != "") {
+				// Send subtitle if present
+				serialized = getMethod(nmsChatSerializer, "a", String.class)
+						.invoke(null,
+								"{text:\""
+										+ ChatColor
+												.translateAlternateColorCodes(
+														'&', subtitle)
+										+ "\",color:"
+										+ subtitleColor.name()
+												.toLowerCase() + "}");
 				packet = packetTitle.getConstructor(packetActions,
 						getNMSClass("IChatBaseComponent")).newInstance(
-						actions[0], serialized);
+						actions[1], serialized);
 				sendPacket.invoke(connection, packet);
-				if (subtitle != "") {
-					// Send subtitle if present
-					serialized = getMethod(nmsChatSerializer, "a", String.class)
-							.invoke(null,
-									"{text:\""
-											+ ChatColor
-													.translateAlternateColorCodes(
-															'&', subtitle)
-											+ "\",color:"
-											+ subtitleColor.name()
-													.toLowerCase() + "}");
-					packet = packetTitle.getConstructor(packetActions,
-							getNMSClass("IChatBaseComponent")).newInstance(
-							actions[1], serialized);
-					sendPacket.invoke(connection, packet);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -280,7 +276,7 @@ public class HackTitleManager {
 	/**
 	 * Broadcast the title to all players
 	 */
-	public void broadcast() {
+	public void broadcast() throws Exception {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			send(p);
 		}

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.titles;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -222,53 +223,52 @@ public class DefaultTitleManager {
 	 *
 	 * @param player
 	 *            Player
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
 	 */
-	public void send(Player player) {
+	public void send(Player player) throws Exception {
 		if (packetTitle != null) {
 			// First reset previous settings
 			resetTitle(player);
-			try {
-				// Send timings first
-				Object handle = getHandle(player);
-				Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-				Object[] actions = packetActions.getEnumConstants();
-				Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-				Object packet =
-						packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], null, fadeInTime
-								* (ticks ? 1 : 20), stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
-				// Send if set
-				if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
-					sendPacket.invoke(connection, packet);
-
-				// Send title
-				Object serialized =
-						getMethod(nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
-								+ ChatColor.translateAlternateColorCodes('&', title) + "\",color:"
-								+ titleColor.name().toLowerCase() + "}");
-				packet =
-						packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
+			// Send timings first
+			Object handle = getHandle(player);
+			Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+			Object[] actions = packetActions.getEnumConstants();
+			Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+			Object packet =
+					packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], null, fadeInTime
+							* (ticks ? 1 : 20), stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
+			// Send if set
+			if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
 				sendPacket.invoke(connection, packet);
-				if (subtitle != "") {
-					// Send subtitle if present
-					serialized =
-							getMethod(nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
-									+ ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:"
-									+ subtitleColor.name().toLowerCase() + "}");
-					packet =
-							packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[1], serialized);
-					sendPacket.invoke(connection, packet);
-				}
-			}
-			catch (Exception e) {
-				e.printStackTrace();
+
+			// Send title
+			Object serialized =
+					getMethod(nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
+							+ ChatColor.translateAlternateColorCodes('&', title) + "\",color:"
+							+ titleColor.name().toLowerCase() + "}");
+			packet =
+					packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
+			sendPacket.invoke(connection, packet);
+			if (subtitle != "") {
+				// Send subtitle if present
+				serialized =
+						getMethod(nmsChatSerializer, "a", String.class).invoke(null, "{text:\""
+								+ ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:"
+								+ subtitleColor.name().toLowerCase() + "}");
+				packet =
+						packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[1], serialized);
+				sendPacket.invoke(connection, packet);
 			}
 		}
 	}
 
 	/**
 	 * Broadcast the title to all players
+	 * @throws Exception 
 	 */
-	public void broadcast() {
+	public void broadcast() throws Exception {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			send(p);
 		}
