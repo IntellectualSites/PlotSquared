@@ -238,7 +238,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
-                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
+                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
