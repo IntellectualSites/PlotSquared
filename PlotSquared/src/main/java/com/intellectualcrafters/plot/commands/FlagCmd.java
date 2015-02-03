@@ -81,6 +81,18 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
+                AbstractFlag af = FlagManager.getFlag(args[1]);
+                if (af == null) {
+                    PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
+                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
+                    return false;
+                }
+                // flag key
+                PlayerFunctions.sendMessage(player, C.FLAG_KEY, af.getKey());
+                // flag type
+                PlayerFunctions.sendMessage(player, C.FLAG_TYPE, af.value.getClass().getSimpleName());
+                // Flag type description
+                PlayerFunctions.sendMessage(player, C.FLAG_DESC, af.getValueDesc());
                 PlayerFunctions.sendMessage(player, "&cNot implemented.");
             }
             case "set": {
@@ -208,7 +220,7 @@ public class FlagCmd extends SubCommand {
                 }
                 HashMap<String, ArrayList<String>> flags = new HashMap<>();
                 for (AbstractFlag af : FlagManager.getFlags()) {
-                    String type = af.value.getClass().toString().replaceAll("Value", "");
+                    String type = af.value.getClass().getSimpleName().replaceAll("Value", "");
                     if (!flags.containsKey(type)) {
                         flags.put(type, new ArrayList<String>());
                     }

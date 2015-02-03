@@ -385,6 +385,10 @@ public enum C {
     /*
      * Flag
      */
+    FLAG_KEY("&cKey: %s"),
+    FLAG_TYPE("&cType: %s"),
+    FLAG_DESC("&cDesc: %s"),
+    
     NEED_KEY("&cPossible values: &6%values%"),
     NOT_VALID_FLAG("&cThat is not a valid flag"),
     NOT_VALID_VALUE("&cFlag values must be alphanumerical"),
