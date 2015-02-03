@@ -42,6 +42,7 @@ public enum Command {
     BUY("buy","b"),
     CREATEROADSCHEMATIC("createroadschematic"),
     DEBUGROADREGEN("debugroadregen"),
+    DEBUGFIXFLAGS("debugfixflags"),
     REGENALLROADS("regenallroads"),
     DEBUGLOADTEST("debugloadtest"),
     DEBUGSAVETEST("debugsavetest"),
