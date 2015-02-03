@@ -46,6 +46,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
@@ -186,16 +187,19 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
-
                 final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
                 if (player == null) {
                     return;
                 }
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(event.getPlayer()))) {
+                Player trespasser = event.getPlayer();
+                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                    return;
+                }
+                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", event.getPlayer().getName()).replace("%plot", plot.getId().toString()));
+                    PlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
@@ -230,11 +234,15 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (player == null) {
                     return;
                 }
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(event.getPlayer()))) {
+                Player trespasser = event.getPlayer();
+                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                    return;
+                }
+                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", event.getPlayer().getName()).replace("%plot", plot.getId().toString()));
+                    PlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
