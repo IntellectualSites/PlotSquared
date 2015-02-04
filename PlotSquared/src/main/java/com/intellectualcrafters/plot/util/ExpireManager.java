@@ -164,7 +164,12 @@ public class ExpireManager {
                     String filename = null;
                     if (PlotMain.checkVersion()) {
                         foldername = "playerdata";
-                        filename = uuid.toString() + ".dat";
+                        try {
+                            filename = op.getUniqueId() +".dat";
+                        }
+                        catch (Throwable e) {
+                            filename = uuid.toString() + ".dat";
+                        }
                     }
                     else {
                         foldername = "players";
