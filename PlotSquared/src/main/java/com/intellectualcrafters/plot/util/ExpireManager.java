@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +25,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 public class ExpireManager {
     
     private static long timestamp = 0;
-    public static ConcurrentHashMap<String, ArrayList<Plot>> expiredPlots = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, HashMap<Plot, Long>> expiredPlots = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Boolean> updatingPlots = new ConcurrentHashMap<>();
     public static int task;
     
@@ -35,7 +37,7 @@ public class ExpireManager {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<Plot> plots = getOldPlots(world);
+                    HashMap<Plot, Long> plots = getOldPlots(world);
                     PlotMain.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots!");
                     expiredPlots.put(world, plots);
                     updatingPlots.put(world, false);
@@ -52,28 +54,31 @@ public class ExpireManager {
             @Override
             public void run() {
                 for (String world : PlotMain.getPlotWorldsString()) {
-                    if (!ExpireManager.updatingPlots.contains(world)) {
+                    if (!ExpireManager.updatingPlots.containsKey(world)) {
                         ExpireManager.updatingPlots.put(world, false);
                     }
                     Boolean updating = ExpireManager.updatingPlots.get(world);
                     if (updating) {
                         return;
                     }
-                    ArrayList<Plot> plots = expiredPlots.get(world);
+                    if (!expiredPlots.containsKey(world)) {
+                        updateExpired(world);
+                        return;
+                    }
+                    Set<Plot> plots = expiredPlots.get(world).keySet();
                     if (plots == null || plots.size() == 0) {
                         updateExpired(world);
                         return;
                     }
-                    Plot plot = plots.get(0);
-                    
+                    Plot plot = plots.iterator().next();
                     if (plot.owner != null) {
                         if (UUIDHandler.uuidWrapper.getPlayer(plot.owner) != null) {
-                            expiredPlots.get(world).remove(0);
+                            expiredPlots.get(world).remove(plot);
                             return;
                         }
                     }
                     if (!isExpired(plot.owner)) {
-                        expiredPlots.get(world).remove(0);
+                        expiredPlots.get(world).remove(plot);
                         return;
                     }
                     final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
@@ -96,7 +101,7 @@ public class ExpireManager {
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);
                     PlotMain.removePlot(world, plot.id, true);
-                    expiredPlots.get(world).remove(0);
+                    expiredPlots.get(world).remove(plot);
                     PlotMain.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
                     PlotMain.sendConsoleSenderMessage("&3 - World: "+plot.world);
                     if (plot.hasOwner()) {
@@ -127,15 +132,15 @@ public class ExpireManager {
         return false;
     }
     
-    public static ArrayList<Plot> getOldPlots(String world) {
+    public static HashMap<Plot, Long> getOldPlots(String world) {
         final Collection<Plot> plots = PlotMain.getPlots(world).values();
-        final ArrayList<Plot> toRemove = new ArrayList<>();
-        Set<UUID> remove = new HashSet<>();
+        final HashMap<Plot, Long> toRemove = new HashMap<>();
+        HashMap<UUID, Long> remove = new HashMap<>();
         Set<UUID> keep = new HashSet<>();
         for (Plot plot : plots) {
             UUID uuid = plot.owner;
-            if (uuid == null || remove.contains(uuid)) {
-                toRemove.add(plot);
+            if (uuid == null || remove.containsKey(uuid)) {
+                toRemove.put(plot, remove.get(uuid));
                 continue;
             }
             if (keep.contains(uuid)) {
@@ -153,8 +158,43 @@ public class ExpireManager {
             long last = op.getLastPlayed();
             long compared = System.currentTimeMillis() - last;
             if (compared >= 86400000 * Settings.AUTO_CLEAR_DAYS) {
-                toRemove.add(plot);
-                remove.add(uuid);
+                if (Settings.AUTO_CLEAR_CHECK_DISK) {
+                    String worldname = Bukkit.getWorlds().get(0).getName();
+                    String foldername;
+                    String filename = null;
+                    if (PlotMain.checkVersion()) {
+                        foldername = "playerdata";
+                        filename = uuid.toString() + ".dat";
+                    }
+                    else {
+                        foldername = "players";
+                        String playername = UUIDHandler.getName(uuid);
+                        if (playername != null) {
+                            filename = playername + ".dat";
+                        }
+                    }
+                    if (filename != null) {
+                        File playerFile = new File(worldname + File.separator + foldername + File.separator + filename);
+                        if (!playerFile.exists()) {
+                            PlotMain.sendConsoleSenderMessage("Could not find file: " + filename);
+                        }
+                        else {
+                            try {
+                                last = playerFile.lastModified();
+                                compared = System.currentTimeMillis() - last;
+                                if (compared < 86400000 * Settings.AUTO_CLEAR_DAYS) {
+                                    keep.add(uuid);
+                                    continue;
+                                }
+                            }
+                            catch (Exception e) {
+                                PlotMain.sendConsoleSenderMessage("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
+                            }
+                        }
+                    }
+                }
+                toRemove.put(plot, last);
+                remove.put(uuid, last);
             }
             keep.add(uuid);
         }

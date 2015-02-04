@@ -21,11 +21,16 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -42,7 +47,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final Player player, final String... args) {
-    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired"});
+    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen"});
         if (args.length > 0) {
         	String arg = args[0].toLowerCase();
         	switch (arg) {
@@ -80,12 +85,34 @@ public class DebugExec extends SubCommand {
 	        				return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
 	        			}
 	        			PlayerFunctions.sendMessage(null, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
-	        			for (Plot plot : ExpireManager.expiredPlots.get(args[1])) {
-	        				PlayerFunctions.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner));
+	        			for (Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
+	        			    Plot plot = entry.getKey();
+	        			    Long stamp = entry.getValue();
+	        				PlayerFunctions.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) +" : " + stamp);
 	        			}
 	        			return true;
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec show-expired <world>");
+	        	case "seen":
+	        	    if (args.length != 1) {
+	        	        return PlayerFunctions.sendMessage(null, "Use /plot debugexec seen <player>");
+	        	    }
+	        	    UUID uuid = UUIDHandler.getUUID(args[1]);
+	        	    if (uuid == null) {
+	        	        return PlayerFunctions.sendMessage(null, "player not found: " + args[1]);
+	        	    }
+	        	    OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+	        	    if (op == null || !op.hasPlayedBefore()) {
+	        	        return PlayerFunctions.sendMessage(null, "player hasn't connected before: " + args[1]);
+	        	    }
+	        	    Timestamp stamp = new Timestamp(op.getLastPlayed());
+	        	    Date date = new Date(stamp.getTime());
+	        	    PlayerFunctions.sendMessage(null, "PLAYER: " + args[1]);
+	        	    PlayerFunctions.sendMessage(null, "UUID: " + uuid);
+	        	    PlayerFunctions.sendMessage(null, "Object: " + date.toGMTString());
+	        	    PlayerFunctions.sendMessage(null, "GMT: " + date.toGMTString());
+	        	    PlayerFunctions.sendMessage(null, "Local: " + date.toLocaleString());
+	        	    return true;
         	}
         }
     	PlayerFunctions.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");

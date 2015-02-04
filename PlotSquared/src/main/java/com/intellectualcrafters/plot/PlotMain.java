@@ -808,6 +808,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         options.put("debug", true);
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
+        options.put("clear.check-disk", Settings.AUTO_CLEAR_CHECK_DISK);
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -841,6 +842,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         		+ "inding");
         Settings.METRICS = config.getBoolean("metrics");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.TITLES = config.getBoolean("titles");

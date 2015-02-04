@@ -52,7 +52,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Trim extends SubCommand {
+public class Trim extends SubCommand {
 
     public static boolean TASK = false;
     private static int TASK_ID = 0;

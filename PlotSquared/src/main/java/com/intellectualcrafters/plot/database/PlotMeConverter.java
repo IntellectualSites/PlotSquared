@@ -84,7 +84,7 @@ public class PlotMeConverter {
                     if (!plotMeFile.exists()) {
                         return;
                     }
-                    sendMessage("Conversion has started");
+                    sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
                     sendMessage("Connecting to PlotMe DB");
                     final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
                     int count = 0;
