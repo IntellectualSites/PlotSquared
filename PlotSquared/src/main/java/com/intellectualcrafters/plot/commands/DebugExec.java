@@ -94,7 +94,7 @@ public class DebugExec extends SubCommand {
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec show-expired <world>");
 	        	case "seen":
-	        	    if (args.length != 1) {
+	        	    if (args.length != 2) {
 	        	        return PlayerFunctions.sendMessage(null, "Use /plot debugexec seen <player>");
 	        	    }
 	        	    UUID uuid = UUIDHandler.getUUID(args[1]);
