@@ -124,7 +124,7 @@ public class ExpireManager {
     		if (op.hasPlayedBefore()) {
     			long last = op.getLastPlayed();
     	        long compared = System.currentTimeMillis() - last;
-    	        if (compared >= 86400000 * Settings.AUTO_CLEAR_DAYS) {
+    	        if (compared >= 86400000l * Settings.AUTO_CLEAR_DAYS) {
     	            return true;
     	        } 
     		}
@@ -140,7 +140,14 @@ public class ExpireManager {
         for (Plot plot : plots) {
             UUID uuid = plot.owner;
             if (uuid == null || remove.containsKey(uuid)) {
-                toRemove.put(plot, remove.get(uuid));
+                Long stamp;
+                if (uuid == null) {
+                    stamp = 0l;
+                }
+                else {
+                    stamp = remove.get(uuid);
+                }
+                toRemove.put(plot, stamp);
                 continue;
             }
             if (keep.contains(uuid)) {
@@ -157,7 +164,7 @@ public class ExpireManager {
             }
             long last = op.getLastPlayed();
             long compared = System.currentTimeMillis() - last;
-            if (compared >= 86400000 * Settings.AUTO_CLEAR_DAYS) {
+            if (compared >= 86400000l * Settings.AUTO_CLEAR_DAYS) {
                 if (Settings.AUTO_CLEAR_CHECK_DISK) {
                     String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
@@ -187,7 +194,7 @@ public class ExpireManager {
                             try {
                                 last = playerFile.lastModified();
                                 compared = System.currentTimeMillis() - last;
-                                if (compared < 86400000 * Settings.AUTO_CLEAR_DAYS) {
+                                if (compared < 86400000l * Settings.AUTO_CLEAR_DAYS) {
                                     keep.add(uuid);
                                     continue;
                                 }
@@ -200,6 +207,7 @@ public class ExpireManager {
                 }
                 toRemove.put(plot, last);
                 remove.put(uuid, last);
+                continue;
             }
             keep.add(uuid);
         }

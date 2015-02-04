@@ -123,7 +123,7 @@ public class Settings {
      * Days until a plot gets cleared
      */
     public static int AUTO_CLEAR_DAYS = 360;
-    public static boolean AUTO_CLEAR_CHECK_DISK = true;
+    public static boolean AUTO_CLEAR_CHECK_DISK = false;
     
     public static int MIN_BLOCKS_CHANGED = -1;
 

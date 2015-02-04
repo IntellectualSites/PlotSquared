@@ -48,6 +48,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -113,37 +114,6 @@ public class Trim extends SubCommand {
         return false;
     }
     
-    public ArrayList<Plot> getOldPlots(String world) {
-        final Collection<Plot> plots = PlotMain.getPlots(world).values();
-        final ArrayList<Plot> toRemove = new ArrayList<>();
-        Set<UUID> remove = new HashSet<>();
-        Set<UUID> keep = new HashSet<>();
-        for (Plot plot : plots) {
-            UUID uuid = plot.owner;
-            if (uuid == null || remove.contains(uuid)) {
-                toRemove.add(plot);
-                continue;
-            }
-            if (keep.contains(uuid)) {
-                continue;
-            }
-            OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            if (!op.hasPlayedBefore()) {
-                toRemove.add(plot);
-                PlotMain.removePlot(plot.world, plot.id, true);
-                continue;
-            }
-            long last = op.getLastPlayed();
-            long compared = System.currentTimeMillis() - last;
-            if (TimeUnit.MILLISECONDS.toDays(compared) >= Settings.AUTO_CLEAR_DAYS) {
-                toRemove.add(plot);
-                remove.add(uuid);
-            }
-            keep.add(uuid);
-        }
-        return toRemove;
-    }
-    
     public boolean runTrimTask(final World world) {
         if (Trim.TASK) {
             return false;
@@ -194,13 +164,13 @@ public class Trim extends SubCommand {
                         }
                     }
                 }
-                final ArrayList<Plot> plots = getOldPlots(world.getName());        
+                final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();        
                 int count2 = 0;
                 Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
                     @Override
                     public void run() {
                         if (manager != null && plots.size() > 0) {
-                            Plot plot = plots.get(0);
+                            Plot plot = plots.iterator().next();
                             boolean modified = false;
                             if (plot.hasOwner()) {
                                 modified = HybridPlotManager.checkModified(plot, 0);
