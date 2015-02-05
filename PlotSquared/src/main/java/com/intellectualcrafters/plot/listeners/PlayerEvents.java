@@ -927,10 +927,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
-            System.out.print(1);
-            System.out.print(d instanceof Arrow);
-            System.out.print(isPlotArea(l));
-            System.out.print(!(a instanceof Creature));
             if (d instanceof Arrow && isPlotArea(l) && (!(a instanceof Creature))) {
                 e.setCancelled(true);
             }
