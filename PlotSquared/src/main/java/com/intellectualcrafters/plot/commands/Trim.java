@@ -165,15 +165,13 @@ public class Trim extends SubCommand {
                     }
                 }
                 final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();        
-                int count2 = 0;
                 Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
                     @Override
                     public void run() {
                         if (manager != null && plots.size() > 0) {
                             Plot plot = plots.iterator().next();
-                            boolean modified = false;
                             if (plot.hasOwner()) {
-                                modified = HybridPlotManager.checkModified(plot, 0);
+                                HybridPlotManager.checkModified(plot, 0);
                             }
                             if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
                                 PlotMain.removePlot(worldname, plot.id, true);

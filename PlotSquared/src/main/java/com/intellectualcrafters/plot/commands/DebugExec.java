@@ -74,8 +74,9 @@ public class DebugExec extends SubCommand {
 	        			if (world == null) {
 	        				return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
 	        			}
+	        			PlayerFunctions.sendMessage(null, "Updating expired plot list");
 	        			ExpireManager.updateExpired(args[1]);
-	        			return PlayerFunctions.sendMessage(null, "Updating expired plot list");
+	        			return true;
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec update-expired <world>");
 	        	case "show-expired":

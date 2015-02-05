@@ -882,7 +882,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 final Player p = (Player) d;
                 final boolean aPlr = a instanceof Player;
                 final PlotWorld pW = getPlotWorld(l.getWorld());
-                if (!aPlr && pW.PVE && (!(a instanceof ItemFrame))) {
+                if (!aPlr && pW.PVE && (!(a instanceof ItemFrame) && !(a.getEntityId() == 416) ) ) {
                     return;
                 } else if (aPlr && pW.PVP) {
                     return;

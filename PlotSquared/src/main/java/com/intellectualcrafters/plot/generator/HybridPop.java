@@ -118,7 +118,6 @@ public class HybridPop extends BlockPopulator {
 
     @Override
     public void populate(final World w, final Random r, final Chunk c) {
-        // initializing with bedrock pre-made
         int cx = c.getX(), cz = c.getZ();
         
         if (doState) {

@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,28 +23,40 @@ import com.intellectualcrafters.plot.object.PlotManager;
 
 public class ExpireManager {
     
-    private static long timestamp = 0;
     public static ConcurrentHashMap<String, HashMap<Plot, Long>> expiredPlots = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Boolean> updatingPlots = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, Long> timestamp = new ConcurrentHashMap<>();
     public static int task;
     
-    public static void updateExpired(final String world) {
+    public static long getTimeStamp(final String world) {
+        if (timestamp.containsKey(world)) {
+            return timestamp.get(world);
+        }
+        else {
+            timestamp.put(world, 0l);
+            return 0;
+        }
+    }
+    
+    public static boolean updateExpired(final String world) {
         updatingPlots.put(world, true);
         long now = System.currentTimeMillis();
-        if (now > timestamp) {
-            timestamp = now + 86400000;
+        if (now > getTimeStamp(world)) {
+            timestamp.put(world, now + 86400000l);
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
                     HashMap<Plot, Long> plots = getOldPlots(world);
-                    PlotMain.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots!");
+                    PlotMain.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots for " + world + "!");
                     expiredPlots.put(world, plots);
                     updatingPlots.put(world, false);
                 }
             });
+            return true;
         }
         else {
             updatingPlots.put(world, false);
+            return false;
         }
     }
     
@@ -67,8 +78,10 @@ public class ExpireManager {
                     }
                     Set<Plot> plots = expiredPlots.get(world).keySet();
                     if (plots == null || plots.size() == 0) {
-                        updateExpired(world);
-                        return;
+                        if (updateExpired(world)) {
+                            return;
+                        }
+                        continue;
                     }
                     Plot plot = plots.iterator().next();
                     if (plot.owner != null) {
@@ -87,14 +100,12 @@ public class ExpireManager {
                         event.setCancelled(true);
                         return;
                     }
-                    
                     for (UUID helper : plot.helpers) {
                         Player player = UUIDHandler.uuidWrapper.getPlayer(helper);
                         if (player != null) {
                             PlayerFunctions.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
                         }
                     }
-                    
                     final World worldobj = Bukkit.getWorld(world);
                     final PlotManager manager = PlotMain.getPlotManager(world);
                     manager.clearPlot(worldobj, plot, false);
@@ -112,7 +123,6 @@ public class ExpireManager {
                     }
                     return;
                 }
-                
             }
         }, 2400, 2400);
     }
