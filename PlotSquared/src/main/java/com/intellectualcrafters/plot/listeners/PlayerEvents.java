@@ -38,6 +38,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
@@ -81,7 +82,6 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.config.C;
@@ -927,8 +927,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
-            else if (d instanceof Arrow && isPlotArea(l)) {
-                    e.setCancelled(true);
+            System.out.print(1);
+            System.out.print(d instanceof Arrow);
+            System.out.print(isPlotArea(l));
+            System.out.print(!(a instanceof Creature));
+            if (d instanceof Arrow && isPlotArea(l) && (!(a instanceof Creature))) {
+                e.setCancelled(true);
             }
         }
     }
