@@ -37,6 +37,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
@@ -925,6 +926,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                     }
                 }
+            }
+            else if (d instanceof Arrow && isPlotArea(l)) {
+                    e.setCancelled(true);
             }
         }
     }
