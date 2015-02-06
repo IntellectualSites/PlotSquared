@@ -27,7 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-@SuppressWarnings("unused") public abstract class PlotManager {
+public abstract class PlotManager {
 
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
@@ -49,7 +49,6 @@ import org.bukkit.block.Biome;
     /*
      * Plot clearing (return false if you do not support some method)
      */
-
     public abstract boolean clearPlot(final World world, final Plot plot, boolean isDelete);
 
     public abstract Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot);

@@ -75,11 +75,9 @@ import com.intellectualcrafters.plot.util.SendChunk;
         Location top = PlotHelper.getPlotTopLoc(world, plot.id);
         
         int botx = bottom.getBlockX();
-        int boty = bottom.getBlockY();
         int botz = bottom.getBlockZ();
         
         int topx = top.getBlockX();
-        int topy = top.getBlockY();
         int topz = top.getBlockZ();
         
         HybridPlotWorld hpw = (HybridPlotWorld) PlotMain.getWorldSettings(world);

@@ -518,25 +518,26 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void MobSpawn(final CreatureSpawnEvent event) {
+        System.out.print(1);
         final World world = event.getLocation().getWorld();
+        if (event.getEntity() instanceof Player) {
+            return;
+        }
         if (!isPlotWorld(world)) {
+            return;
+        }
+        Location loc = event.getLocation();
+        if (!isPlotArea(loc)) {
             return;
         }
         final PlotWorld pW = getPlotWorld(world);
         final CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
-        if ((reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) && pW.SPAWN_EGGS) {
-            return;
-        } else if ((reason == CreatureSpawnEvent.SpawnReason.BREEDING) && pW.SPAWN_BREEDING) {
-            return;
-        } else if ((reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM) {
-            return;
-        }
-        if (event.getEntity() instanceof Player) {
-            return;
-        }
-        Location loc = event.getLocation();
-        if (!isInPlot(loc)) {
-            if (isPlotArea(loc)) { event.setCancelled(true); }
+        if (!(reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) && pW.SPAWN_EGGS) {
+            event.setCancelled(true);
+        } else if (!(reason == CreatureSpawnEvent.SpawnReason.BREEDING) && pW.SPAWN_BREEDING) {
+            event.setCancelled(true);
+        } else if (!(reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM) {
+            event.setCancelled(true);
         }
     }
 

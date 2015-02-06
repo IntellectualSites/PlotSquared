@@ -1072,7 +1072,6 @@ public class PlotMain extends JavaPlugin implements Listener {
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
-        
 
         FlagManager.addFlag(new AbstractFlag("gamemode") {
             @Override
