@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotCluster {
 

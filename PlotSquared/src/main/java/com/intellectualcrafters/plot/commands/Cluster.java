@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.BlockPopulator;
@@ -35,7 +34,6 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -185,7 +183,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-                if (plotworld.REQUIRE_CLUSTER) {
+                if (plotworld.TYPE == 2) {
                     ArrayList<Plot> toRemove = new ArrayList<>();
                     for (Plot plot : PlotMain.getPlots(plr.getWorld()).values()) {
                         PlotCluster other = ClusterManager.getCluster(plot);
@@ -198,7 +196,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 DBFunc.delete(cluster);
-                if (plotworld.REQUIRE_CLUSTER) {
+                if (plotworld.TYPE == 2) {
                     for (Iterator<BlockPopulator> iterator = plr.getWorld().getPopulators().iterator(); iterator.hasNext();) {
                         BlockPopulator populator = iterator.next();
                         if (populator instanceof AugmentedPopulator) {

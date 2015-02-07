@@ -161,7 +161,7 @@ public class Auto extends SubCommand {
         }
         
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        if (plotworld.REQUIRE_CLUSTER) {
+        if (plotworld.TYPE == 2) {
         	Location loc = plr.getLocation();
         	Plot plot = PlotHelper.getCurrentPlot(loc);
         	if (plot == null) {

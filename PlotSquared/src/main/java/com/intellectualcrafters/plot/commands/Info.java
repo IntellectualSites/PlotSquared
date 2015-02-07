@@ -34,7 +34,6 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.InfoInventory;
 import com.intellectualcrafters.plot.object.Plot;

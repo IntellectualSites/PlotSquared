@@ -15,7 +15,6 @@ import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -287,7 +286,7 @@ public class ClusterManager {
 	        TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    if (populator == null || plotworld.CLUSTER_ORE) {
+                    if (populator == null || plotworld.TYPE == 0) {
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
                         chunk.unload();
                         chunk.load();

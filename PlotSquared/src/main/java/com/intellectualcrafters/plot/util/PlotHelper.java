@@ -88,6 +88,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     	}
     }
     
+    public static void createWorld(String world, String generator) {
+        
+    }
+    
     public static PlotId parseId(String arg) {
         try {
             String[] split = arg.split(";");

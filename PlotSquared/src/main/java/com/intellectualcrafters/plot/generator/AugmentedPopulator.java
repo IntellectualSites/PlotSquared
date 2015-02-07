@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -13,10 +12,9 @@ import org.bukkit.generator.BlockPopulator;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.BlockWrapper;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -27,6 +25,9 @@ public class AugmentedPopulator extends BlockPopulator {
 	public final PlotManager manager;
 	public final PlotGenerator generator;
 	public final PlotCluster cluster;
+	public final boolean p;
+	public final boolean b;
+	public final boolean o;
 	
 	private final int bx;
 	private final int bz;
@@ -46,25 +47,37 @@ public class AugmentedPopulator extends BlockPopulator {
 		}
 	}
 	
-	public AugmentedPopulator(String world, PlotGenerator generator, PlotCluster cluster) {
+	public AugmentedPopulator(String world, PlotGenerator generator, PlotCluster cluster, boolean p, boolean b) {
 	    this.cluster = cluster;
 		this.generator = generator;
 		this.plotworld = PlotMain.getWorldSettings(world);
 		this.manager = generator.getPlotManager();
+		this.p = p;
+		this.b = b;
+		this.o = this.plotworld.TERRAIN == 1 || this.plotworld.TERRAIN == 2;
 
 		World bukkitWorld = Bukkit.getWorld(world);
 		
-		Location b = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
-		Location t = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
-		
-		this.bx = b.getBlockX();
-		this.bz = b.getBlockZ();
-		
-		this.tx = t.getBlockX();
-		this.tz = t.getBlockZ();
+		if (cluster != null) {
+    		Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+    		Location tl = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
+    		
+    		this.bx = bl.getBlockX();
+    		this.bz = bl.getBlockZ();
+    		
+    		this.tx = tl.getBlockX();
+    		this.tz = tl.getBlockZ();
+		}
+		else {
+		    this.bx = Integer.MIN_VALUE;
+            this.bz = Integer.MIN_VALUE;
+            
+            this.tx = Integer.MAX_VALUE;
+            this.tz = Integer.MAX_VALUE;
+		}
 		
 		// Add the populator
-		if (this.plotworld.CLUSTER_ORE) {
+		if (this.o) {
 		    bukkitWorld.getPopulators().add(0, this);
 		}
 		else {
@@ -73,7 +86,7 @@ public class AugmentedPopulator extends BlockPopulator {
 	}
 	
 	@Override
-	public void populate(final World world, final Random rand, Chunk chunk) {
+	public void populate(final World world, final Random rand, final Chunk chunk) {
 		final int X = chunk.getX();
 		final int Z = chunk.getZ();
 		final int x = X << 4;
@@ -100,12 +113,15 @@ public class AugmentedPopulator extends BlockPopulator {
 		else {
 			check = false;
 		}
-		if (this.plotworld.CLUSTER_ORE) {
+		if (this.o) {
+		    chunk.load(true);
 		    populateBlocks(world, rand, X, Z, x, z, check);
 		    TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     populateBiome(world, x, z);
+                    chunk.unload();
+                    chunk.load();
                 }
             }, 20);
         }
@@ -119,18 +135,22 @@ public class AugmentedPopulator extends BlockPopulator {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
+                    chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
+                    chunk.unload();
+                    chunk.load();
                 }
-            }, 40 + rand.nextInt(10));
+            }, 40 + rand.nextInt(40));
 		}
-		
 	}
 	
 	private void populateBiome(World world, int x, int z) {
-	    for (int i = 0; i < 16; i++) {
-	        for (int j = 0; j < 16; j++) {
-	            world.setBiome(x + i, z + j, plotworld.PLOT_BIOME);
-	        }
+	    if (this.b) {
+    	    for (int i = 0; i < 16; i++) {
+    	        for (int j = 0; j < 16; j++) {
+    	            world.setBiome(x + i, z + j, plotworld.PLOT_BIOME);
+    	        }
+    	    }
 	    }
 	}
 	
@@ -143,8 +163,13 @@ public class AugmentedPopulator extends BlockPopulator {
                 if (blockInfo == null) {
                     continue;
                 }
+                int xx = x + blockInfo.x;
+                int zz = z + blockInfo.z;
+                if (p && manager.getPlotIdAbs(plotworld, new Location(world, xx, 0, zz)) != null) {
+                    continue;
+                }
                 PlotBlock plotblock = new PlotBlock((short) blockInfo.id, (byte) 0 );
-                Block block = world.getBlockAt(x + blockInfo.x, blockInfo.y, z + blockInfo.z);
+                Block block = world.getBlockAt(xx, blockInfo.y, zz);
                 PlotHelper.setBlock(block, plotblock);
             }
         }

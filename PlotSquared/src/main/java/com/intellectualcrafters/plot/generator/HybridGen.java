@@ -90,7 +90,6 @@ public class HybridGen extends PlotGenerator {
      */
     public HybridGen(final String world) {
         super(world);
-
         if (this.plotworld == null) {
             this.plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
         }
@@ -165,7 +164,9 @@ public class HybridGen extends PlotGenerator {
      */
     @Override
     public PlotWorld getNewPlotWorld(final String world) {
-        this.plotworld = new HybridPlotWorld(world);
+        if (this.plotworld == null) {
+            this.plotworld = new HybridPlotWorld(world);
+        }
         return this.plotworld;
     }
 

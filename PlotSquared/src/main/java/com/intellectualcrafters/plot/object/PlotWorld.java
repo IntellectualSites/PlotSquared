@@ -60,8 +60,6 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
-    public static boolean REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
-    public static boolean CLUSTER_GEN_ORE_DEFAULT = true;
     
     // are plot clusters enabled
     // require claim in cluster
@@ -69,200 +67,7 @@ public abstract class PlotWorld {
     
     // TODO make this configurable
     // make non static and static_default_valu + add config option
-    public static List<Material> BLOCKS;                                           /*
-     * =
-     * new
-     * ArrayList
-     * <
-     * >
-     * (
-     * Arrays
-     * .
-     * asList
-     * (
-     * new
-     * Material
-     * [
-     * ]
-     * {
-     * ACACIA_STAIRS
-     * ,
-     * BEACON
-     * ,
-     * BEDROCK
-     * ,
-     * BIRCH_WOOD_STAIRS
-     * ,
-     * BOOKSHELF
-     * ,
-     * BREWING_STAND
-     * ,
-     * BRICK
-     * ,
-     * BRICK_STAIRS
-     * ,
-     * BURNING_FURNACE
-     * ,
-     * CAKE_BLOCK
-     * ,
-     * CAULDRON
-     * ,
-     * CLAY_BRICK
-     * ,
-     * CLAY
-     * ,
-     * COAL_BLOCK
-     * ,
-     * COAL_ORE
-     * ,
-     * COBBLE_WALL
-     * ,
-     * COBBLESTONE
-     * ,
-     * COBBLESTONE_STAIRS
-     * ,
-     * COMMAND
-     * ,
-     * DARK_OAK_STAIRS
-     * ,
-     * DAYLIGHT_DETECTOR
-     * ,
-     * DIAMOND_ORE
-     * ,
-     * DIAMOND_BLOCK
-     * ,
-     * DIRT
-     * ,
-     * DISPENSER
-     * ,
-     * DROPPER
-     * ,
-     * EMERALD_BLOCK
-     * ,
-     * EMERALD_ORE
-     * ,
-     * ENCHANTMENT_TABLE
-     * ,
-     * ENDER_PORTAL_FRAME
-     * ,
-     * ENDER_STONE
-     * ,
-     * FURNACE
-     * ,
-     * GLOWSTONE
-     * ,
-     * GOLD_ORE
-     * ,
-     * GOLD_BLOCK
-     * ,
-     * GRASS
-     * ,
-     * GRAVEL
-     * ,
-     * GLASS
-     * ,
-     * HARD_CLAY
-     * ,
-     * HAY_BLOCK
-     * ,
-     * HUGE_MUSHROOM_1
-     * ,
-     * HUGE_MUSHROOM_2
-     * ,
-     * IRON_BLOCK
-     * ,
-     * IRON_ORE
-     * ,
-     * JACK_O_LANTERN
-     * ,
-     * JUKEBOX
-     * ,
-     * JUNGLE_WOOD_STAIRS
-     * ,
-     * LAPIS_BLOCK
-     * ,
-     * LAPIS_ORE
-     * ,
-     * LEAVES
-     * ,
-     * LEAVES_2
-     * ,
-     * LOG
-     * ,
-     * LOG_2
-     * ,
-     * MELON_BLOCK
-     * ,
-     * MOB_SPAWNER
-     * ,
-     * MOSSY_COBBLESTONE
-     * ,
-     * MYCEL
-     * ,
-     * NETHER_BRICK
-     * ,
-     * NETHER_BRICK_STAIRS
-     * ,
-     * NETHERRACK
-     * ,
-     * NOTE_BLOCK
-     * ,
-     * OBSIDIAN
-     * ,
-     * PACKED_ICE
-     * ,
-     * PUMPKIN
-     * ,
-     * QUARTZ_BLOCK
-     * ,
-     * QUARTZ_ORE
-     * ,
-     * QUARTZ_STAIRS
-     * ,
-     * REDSTONE_BLOCK
-     * ,
-     * SANDSTONE
-     * ,
-     * SAND
-     * ,
-     * SANDSTONE_STAIRS
-     * ,
-     * SMOOTH_BRICK
-     * ,
-     * SMOOTH_STAIRS
-     * ,
-     * SNOW_BLOCK
-     * ,
-     * SOUL_SAND
-     * ,
-     * SPONGE
-     * ,
-     * SPRUCE_WOOD_STAIRS
-     * ,
-     * STONE
-     * ,
-     * WOOD
-     * ,
-     * WOOD_STAIRS
-     * ,
-     * WORKBENCH
-     * ,
-     * WOOL
-     * ,
-     * getMaterial
-     * (
-     * 44
-     * )
-     * ,
-     * getMaterial
-     * (
-     * 126
-     * )
-     * }
-     * )
-     * )
-     * ;
-     */
+    public static List<Material> BLOCKS;
 
     static {
         BLOCKS = new ArrayList<>();
@@ -293,8 +98,8 @@ public abstract class PlotWorld {
     public boolean SPAWN_CUSTOM;
     public boolean SPAWN_BREEDING;
     public boolean WORLD_BORDER;
-    public boolean REQUIRE_CLUSTER = false;
-    public boolean CLUSTER_ORE;
+    public int TYPE = 0;
+    public int TERRAIN = 0;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -307,8 +112,10 @@ public abstract class PlotWorld {
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
     	if (Settings.ENABLE_CLUSTERS) {
-    	    this.REQUIRE_CLUSTER = config.getBoolean("cluster.require-claim-in-cluster");
-    	    this.CLUSTER_ORE = config.getBoolean("cluster.generate-ores");
+    	    if (config.contains("generator.terrain")) {
+        	    this.TERRAIN = config.getInt("generator.terrain");
+        	    this.TYPE = config.getInt("generator.type");
+    	    }
     	}
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
@@ -373,9 +180,9 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
-        if (Settings.ENABLE_CLUSTERS) {
-            options.put("cluster.require-claim-in-cluster", PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT);
-            options.put("cluster.generate-ores", PlotWorld.CLUSTER_GEN_ORE_DEFAULT);
+        if (Settings.ENABLE_CLUSTERS && this.TYPE != 0) {
+            options.put("generator.terrain", this.TERRAIN);
+            options.put("generator.type", this.TYPE);
     	}
         final ConfigurationNode[] settings = getSettingNodes();
         /*

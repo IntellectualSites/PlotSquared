@@ -81,7 +81,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldInitEvent;
+
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.config.C;
@@ -109,7 +110,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onWorldLoad(final WorldLoadEvent event) {
+    public static void onWorldInit(final WorldInitEvent event) {
         PlotMain.loadWorld(event.getWorld());
     }
 
@@ -518,7 +519,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void MobSpawn(final CreatureSpawnEvent event) {
-        System.out.print(1);
         final World world = event.getLocation().getWorld();
         if (event.getEntity() instanceof Player) {
             return;

@@ -49,7 +49,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
@@ -70,6 +69,7 @@ import com.intellectualcrafters.plot.commands.Cluster;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -84,7 +84,6 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
@@ -94,6 +93,7 @@ import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldGuardListener;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -186,6 +186,7 @@ public class PlotMain extends JavaPlugin implements Listener {
      */
     public static boolean useEconomy = false;
     private static PlotMain main = null;
+    private static boolean LOADING_WORLD = false;
     /**
      * MySQL Object
      */
@@ -932,11 +933,10 @@ public class PlotMain extends JavaPlugin implements Listener {
         final PlotManager plotManager;
         final String path = "worlds." + world;
 
-        if ((generator != null) && (generator instanceof PlotGenerator)) {
+        if (!LOADING_WORLD && (generator != null) && (generator instanceof PlotGenerator)) {
             plotGenerator = (PlotGenerator) generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
-            
             if (!world.equals("CheckingPlotSquaredGenerator")) {
                 sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
                 sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
@@ -957,38 +957,62 @@ public class PlotMain extends JavaPlugin implements Listener {
             addPlotWorld(world, plotWorld, plotManager);
             PlotHelper.setupBorder(world);
         } else {
-            if (worlds.contains(world)) {
-                sendConsoleSenderMessage("&cWorld '" + world + "' in settings.yml is not using PlotSquared generator!");
-
-                plotWorld = new HybridPlotWorld(world);
-                plotManager = new HybridPlotManager();
-
+            if (!worlds.contains(world)) {
+                return;
+            }
+            if (!LOADING_WORLD) {
+                LOADING_WORLD = true;
+                try {
+                    String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
+                    Plugin gen_plugin = gen_string == null ? null : Bukkit.getPluginManager().getPlugin(gen_string);
+                    if (gen_plugin != null && gen_plugin.isEnabled()) {
+                        gen_plugin.getDefaultWorldGenerator(world, "");
+                    }
+                    else {
+                        new HybridGen(world);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.print("ERRRRRRRRRRRRRR 6");
+                    e.printStackTrace();
+                    LOADING_WORLD = false;
+                    removePlotWorld(world);
+                }
+                finally {
+                    LOADING_WORLD = false;
+                }
+            }
+            else {
+                PlotGenerator gen_class = (PlotGenerator) generator;
+                plotWorld = gen_class.getNewPlotWorld(world);
+                plotManager = gen_class.getPlotManager();
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
-                
-                // TODO Augment the world generation with a custom populator
-                
-                PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = true;
+                plotWorld.TYPE = 2;
+                plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
-                PlotWorld.REQUIRE_CLAIM_IN_CLUSTER_DEFAULT = false;
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                if (plotWorld.REQUIRE_CLUSTER) {
+                if (plotWorld.TYPE == 2 && !Settings.ENABLE_CLUSTERS) {
+                    sendConsoleSenderMessage("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please enable plot custers or delete this world from your settings.yml!");
+                    return;
+                }
+                addPlotWorld(world, plotWorld, plotManager);
+                if (plotWorld.TYPE == 2) {
                     if (ClusterManager.getClusters(world).size() > 0) {
-                        HybridGen gen = new HybridGen(world);
-                        gen.plotworld = (HybridPlotWorld) plotWorld;
                         for (PlotCluster cluster : ClusterManager.getClusters(world)) {
-                            new AugmentedPopulator(world, gen, cluster);
+                            new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
                 }
-                // Now add it :p
-                addPlotWorld(world, plotWorld, plotManager);
+                else if (plotWorld.TYPE == 1) {
+                    new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
+                }
             }
         }
     }
@@ -1193,6 +1217,98 @@ public class PlotMain extends JavaPlugin implements Listener {
      */
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+        if (id != null && id.length() > 0) {
+            // save configuration
+            String[] split = id.split(",");
+            HybridPlotWorld plotworld = new HybridPlotWorld(world);
+            
+            int width = HybridPlotWorld.PLOT_WIDTH_DEFAULT;
+            int gap = HybridPlotWorld.ROAD_WIDTH_DEFAULT;
+            int height = HybridPlotWorld.PLOT_HEIGHT_DEFAULT;
+            PlotBlock[] floor = HybridPlotWorld.TOP_BLOCK_DEFAULT;
+            PlotBlock[] main = HybridPlotWorld.MAIN_BLOCK_DEFAULT;
+            PlotBlock wall = HybridPlotWorld.WALL_FILLING_DEFAULT;
+            PlotBlock border = HybridPlotWorld.WALL_BLOCK_DEFAULT;
+            
+            for (String element : split) {
+                String[] pair = element.split("=");
+                if (pair.length != 2) {
+                    sendConsoleSenderMessage("&cNo value provided for: &7" + element);
+                    return null;
+                }
+                String key = pair[0].toLowerCase();
+                String value = pair[1];
+                try {
+                    switch (key) {
+                        case "s":
+                        case "size": {
+                            HybridPlotWorld.PLOT_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            break;
+                        }
+                        case "g":
+                        case "gap": {
+                            HybridPlotWorld.ROAD_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            break;
+                        }
+                        case "h":
+                        case "height": {
+                            HybridPlotWorld.PLOT_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            HybridPlotWorld.ROAD_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            HybridPlotWorld.WALL_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            break;
+                        }
+                        case "f":
+                        case "floor": {
+                            HybridPlotWorld.TOP_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            break;   
+                        }
+                        case "m":
+                        case "main": {
+                            HybridPlotWorld.MAIN_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            break;
+                        }
+                        case "w":
+                        case "wall": {
+                            HybridPlotWorld.WALL_FILLING_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            break;
+                        }
+                        case "b":
+                        case "border": {
+                            HybridPlotWorld.WALL_BLOCK_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            break;
+                        }
+                        default: {
+                            sendConsoleSenderMessage("&cKey not found: &7" + element);
+                            return null;
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    sendConsoleSenderMessage("&cInvalid value: &7" + value + " in arg " + element);
+                    return null;
+                }
+            }
+            try {
+                String root = "worlds." + world;
+                if (!config.contains(root)) {
+                    config.createSection(root);
+                }
+                plotworld.saveConfiguration(config.getConfigurationSection(root));
+                HybridPlotWorld.PLOT_HEIGHT_DEFAULT = height;
+                HybridPlotWorld.ROAD_HEIGHT_DEFAULT = height;
+                HybridPlotWorld.WALL_HEIGHT_DEFAULT = height;
+                HybridPlotWorld.TOP_BLOCK_DEFAULT = floor;
+                HybridPlotWorld.MAIN_BLOCK_DEFAULT = main;
+                HybridPlotWorld.WALL_BLOCK_DEFAULT = border;
+                HybridPlotWorld.WALL_FILLING_DEFAULT = wall;
+                HybridPlotWorld.PLOT_WIDTH_DEFAULT = width;
+                HybridPlotWorld.ROAD_WIDTH_DEFAULT = gap;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return new HybridGen(world);
     }
 

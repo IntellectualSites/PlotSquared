@@ -32,9 +32,7 @@ import org.bukkit.Location;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
@@ -45,13 +43,11 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.sk89q.worldguard.protection.flags.BooleanFlag;
 
 /**
  * @author Citymonstret
@@ -91,7 +87,7 @@ import com.sk89q.worldguard.protection.flags.BooleanFlag;
     
     public static boolean isPlotArea(Location location) {
         PlotWorld plotworld = PlotMain.getWorldSettings(location.getWorld());
-        if (Settings.ENABLE_CLUSTERS && plotworld.REQUIRE_CLUSTER) {
+        if (plotworld.TYPE == 2) {
             return ClusterManager.getCluster(location) != null;
         }
         return true;
