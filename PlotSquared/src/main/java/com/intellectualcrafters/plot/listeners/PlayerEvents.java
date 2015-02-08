@@ -158,7 +158,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Player player = event.getPlayer();
             final Location f = event.getFrom();
             final Location t = event.getTo();
-            final Location q = new Location(t.getWorld(), t.getBlockX(), t.getBlockY(), t.getZ());
+            final Location q = new Location(t.getWorld(), t.getBlockX(), 0, t.getZ());
 
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
                 if (!isPlotWorld(player.getWorld())) {
@@ -202,8 +202,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     	                }
                 		plotEntry(player, plot);
                 	}
-                } else if (leftPlot(f, q)) {
-                    plot = getCurrentPlot(event.getFrom());
+                } else if (leftPlot(f, event.getTo())) {
+                    plot = getCurrentPlot(f);
                     plotExit(player, plot);
                 }
             }

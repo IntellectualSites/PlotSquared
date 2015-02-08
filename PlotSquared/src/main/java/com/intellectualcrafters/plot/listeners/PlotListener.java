@@ -113,15 +113,15 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     }
 
     public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 0, l1.getBlockZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 0, l2.getBlockZ()));
         return (p2 != null) && ((p1 == null) || !p1.equals(p2));
 
     }
 
     public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 64, l1.getBlockZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 64, l2.getBlockZ()));
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 0, l1.getBlockZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 0, l2.getBlockZ()));
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
 
@@ -152,7 +152,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         } else {
             return WeatherType.CLEAR;
         }
-    }
+    }   
 
     private static GameMode getGameMode(final String str) {
         switch (str) {
