@@ -229,6 +229,15 @@ public class ChunkManager {
             }
             else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x+","+loc.y+","+loc.z); }
         }
+        for (BlockLoc loc: dropperContents.keySet()) {
+            Block block = world.getBlockAt(loc.x, loc.y, loc.z);
+            BlockState state = block.getState();
+            if (state instanceof Dropper) {
+                ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
+                state.update(true);
+            }
+            else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x+","+loc.y+","+loc.z); }
+        }
         for (BlockLoc loc: beaconContents.keySet()) {
             Block block = world.getBlockAt(loc.x, loc.y, loc.z);
             BlockState state = block.getState();
@@ -396,6 +405,12 @@ public class ChunkManager {
                         Dispenser dispenser = (Dispenser) block.getState();
                         ItemStack[] invDis = dispenser.getInventory().getContents().clone();
                         dispenserContents.put(bl, invDis);
+                        break;
+                    case 158:
+                        bl = new BlockLoc(x, y, z);
+                        Dropper dropper = (Dropper) block.getState();
+                        ItemStack[] invDro = dropper.getInventory().getContents().clone();
+                        dropperContents.put(bl, invDro);
                         break;
                     case 117:
                         bl = new BlockLoc(x, y, z);
