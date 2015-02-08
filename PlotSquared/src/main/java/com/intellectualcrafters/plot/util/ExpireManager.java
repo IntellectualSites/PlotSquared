@@ -179,7 +179,7 @@ public class ExpireManager {
                     String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
                     String filename = null;
-                    if (PlotMain.checkVersion()) {
+                    if (PlotMain.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
                             filename = op.getUniqueId() +".dat";

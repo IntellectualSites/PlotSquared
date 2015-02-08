@@ -88,6 +88,7 @@ import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
+import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
@@ -1480,9 +1481,12 @@ public class PlotMain extends JavaPlugin implements Listener {
             plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
             plotCommand.setTabCompleter(command);
         }
-
+        
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        if (checkVersion(1, 8, 0)) {
+            getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
+        }
         // World load events
         getServer().getPluginManager().registerEvents(this, this);
         // Info Inventory
@@ -1558,7 +1562,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         // Handle UUIDS
         {
-            boolean checkVersion = checkVersion();
+            boolean checkVersion = checkVersion(1, 7, 5);
             if (!checkVersion) {
                 sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
                 Settings.TITLES = false;
@@ -1592,7 +1596,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
     }
     
-    public static boolean checkVersion() {
+    public static boolean checkVersion(int major, int minor, int minor2) {
         try {
             String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
             int a = Integer.parseInt(version[0]);
@@ -1601,18 +1605,10 @@ public class PlotMain extends JavaPlugin implements Listener {
             if (version.length == 3) {
                 c = Integer.parseInt(version[2]);
             }
-            if (a < 2) {
-                if (a < 1) {
-                    return false;
-                }
-                if (b < 7) {
-                    return false;
-                }
-                if (b == 7 && c < 5) {
-                    return false;
-                }
+            if (a > major || (a == major && b > minor) || (a == major && b == minor && c >= minor2)) {
+                return true;
             }
-            return true;
+            return false;
         }
         catch (Exception e) {
             return false;

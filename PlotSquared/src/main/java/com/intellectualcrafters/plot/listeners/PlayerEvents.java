@@ -470,6 +470,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
+    
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
@@ -536,7 +537,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             event.setCancelled(true);
         } else if (!(reason == CreatureSpawnEvent.SpawnReason.BREEDING) && pW.SPAWN_BREEDING) {
             event.setCancelled(true);
-        } else if (!(reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM) {
+        } else if (!(reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM && !(event.getEntityType().getTypeId() == 30)) {
             event.setCancelled(true);
         }
     }
@@ -884,7 +885,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 final Player p = (Player) d;
                 final boolean aPlr = a instanceof Player;
                 final PlotWorld pW = getPlotWorld(l.getWorld());
-                if (!aPlr && pW.PVE && (!(a instanceof ItemFrame) && !(a.getEntityId() == 416) ) ) {
+                if (!aPlr && pW.PVE && (!(a instanceof ItemFrame) && !(a.getType().getTypeId() == 30) ) ) {
                     return;
                 } else if (aPlr && pW.PVP) {
                     return;
