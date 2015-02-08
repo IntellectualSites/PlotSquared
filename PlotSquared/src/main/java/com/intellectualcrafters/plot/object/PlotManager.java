@@ -28,7 +28,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 
 public abstract class PlotManager {
-
+    
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
      * plots)

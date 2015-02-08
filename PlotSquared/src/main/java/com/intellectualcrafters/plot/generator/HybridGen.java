@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -
@@ -252,8 +253,7 @@ public class HybridGen extends PlotGenerator {
                 setBlock(this.result, x, 0, z, (short) 7);
             }
         }
-        HybridPlotManager hpm = ((HybridPlotManager) HybridGen.manager); 
-        RegionWrapper plot = hpm.CURRENT_PLOT_CLEAR;
+        RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             
             int X = cx << 4;
@@ -281,7 +281,7 @@ public class HybridGen extends PlotGenerator {
                     }
                     else {
                         ChunkLoc loc = new ChunkLoc(X + x, Z + z);
-                        HashMap<Short, Short> blocks = hpm.GENERATE_BLOCKS.get(loc);
+                        HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
                         if (blocks != null) {
                             for (short y : blocks.keySet()) {
                                 setBlock(this.result, x, y, z, blocks.get(y).shortValue());

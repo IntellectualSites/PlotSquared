@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
  * @author Citymonstret
@@ -132,7 +133,7 @@ public class HybridPop extends BlockPopulator {
         this.Z = cz << 4;
         
         HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(w);
-        RegionWrapper plot = manager.CURRENT_PLOT_CLEAR;
+        RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             short sx = (short) ((X) % this.size);
             short sz = (short) ((Z) % this.size);
@@ -159,7 +160,7 @@ public class HybridPop extends BlockPopulator {
                     }
                     else {
                         ChunkLoc loc = new ChunkLoc(X + x, Z + z);
-                        HashMap<Short, Byte> data = manager.GENERATE_DATA.get(loc);
+                        HashMap<Short, Byte> data = ChunkManager.GENERATE_DATA.get(loc);
                         if (data != null) {
                             for (short y : data.keySet()) {
                                 setBlock(w, x, y, z, data.get(y).byteValue());

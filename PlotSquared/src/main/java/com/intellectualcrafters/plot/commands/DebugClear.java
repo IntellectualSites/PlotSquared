@@ -26,10 +26,10 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -59,8 +59,7 @@ public class DebugClear extends SubCommand {
                         if (plot == null) {
                             PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
-                            manager.clearPlotExperimental(Bukkit.getWorld(world), plot, false);
+                            ChunkManager.clearPlotExperimental(Bukkit.getWorld(world), plot, false);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
                             PlotMain.sendConsoleSenderMessage("&aDone!");
                         }
@@ -81,8 +80,7 @@ public class DebugClear extends SubCommand {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(plr.getWorld());
-        manager.clearPlotExperimental(plr.getWorld(), plot, false);
+        ChunkManager.clearPlotExperimental(plr.getWorld(), plot, false);
         PlayerFunctions.sendMessage(plr, "&aDone!");
 
         // sign

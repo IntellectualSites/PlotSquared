@@ -762,7 +762,13 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         h = (prime * h) + pos1.getBlockX();
         h = (prime * h) + pos1.getBlockZ();
         state = h;
-
+        
+        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        if (plotworld.TERRAIN != 0) {
+            ChunkManager.clearPlotExperimental(world, plot, isDelete);
+            return;
+        }
+        
         manager.clearPlot(world, plot, isDelete);
         
         if (canSetFast) {
