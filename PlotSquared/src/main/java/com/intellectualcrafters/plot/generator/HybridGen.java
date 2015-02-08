@@ -272,7 +272,9 @@ public class HybridGen extends PlotGenerator {
             
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    biomes.setBiome(x, z, this.biome);
+                    if (biomes != null) {
+                        biomes.setBiome(x, z, this.biome);
+                    }
                     if (isIn(plot, X + x, Z + z)) {
                         for (short y = 1; y < this.plotheight; y++) {
                             setBlock(this.result, x, y, z, this.filling);

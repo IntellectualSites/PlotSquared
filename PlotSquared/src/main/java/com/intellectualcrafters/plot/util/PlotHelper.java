@@ -941,11 +941,12 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
     public static int getHeighestBlock(final World world, final int x, final int z) {
         boolean safe = false;
+        int id;
         for (int i = 1; i < world.getMaxHeight(); i++) {
-            final int id = world.getBlockAt(x, i, z).getTypeId();
+            id = world.getBlockAt(x, i, z).getTypeId();
             if (id == 0) {
                 if (safe) {
-                    return i - 1;
+                    return i;
                 }
                 safe = true;
             }
@@ -968,10 +969,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     	PlotManager manager = PlotMain.getPlotManager(w);
         if (home == null || (home.x == 0 && home.z == 0)) {
             final Location top = getPlotTopLoc(w, plotid);
-            final int x = top.getBlockX() - bot.getBlockX();
-            final int z = top.getBlockZ() - bot.getBlockZ();
+            final int x = ((top.getBlockX() - bot.getBlockX())/2) + bot.getBlockX();
+            final int z = ((top.getBlockZ() - bot.getBlockZ())/2) + bot.getBlockZ();
             final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotMain.getWorldSettings(w), plot).getBlockY());
-            return new Location(w, bot.getBlockX() + (x / 2), y, bot.getBlockZ() + (z / 2));
+            return new Location(w, x, y, z);
         }
         else {
         	final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
