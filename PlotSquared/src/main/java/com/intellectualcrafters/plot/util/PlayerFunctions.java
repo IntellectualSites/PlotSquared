@@ -148,7 +148,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlotId id = manager.getPlotId(plotworld, loc);
-        if (id!=null && plotworld.TYPE != 0) {
+        if (id!=null && plotworld.TYPE == 2) {
         	if (ClusterManager.getCluster(world, id) == null) {
         		return null;
         	}
