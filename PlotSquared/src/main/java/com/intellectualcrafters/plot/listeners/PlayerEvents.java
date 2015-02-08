@@ -655,6 +655,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                 e.setCancelled(true);
+                return;
             } else {
                 final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
@@ -674,7 +675,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     if (isPlotArea(loc)) { 
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        e.setCancelled(true); 
+                        e.setCancelled(true);
+                        return;
                     }
                 }
             }
@@ -720,6 +722,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                 e.setCancelled(true);
+                return;
             } else {
                 final Plot plot = getCurrentPlot(loc);
                 if (plot == null || !plot.hasOwner()) {
@@ -758,6 +761,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                     e.setCancelled(true);
+                    return;
                 }
             } else {
                 final Plot plot = getCurrentPlot(loc);
