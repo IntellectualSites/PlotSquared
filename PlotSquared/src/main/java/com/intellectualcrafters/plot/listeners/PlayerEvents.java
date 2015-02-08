@@ -585,6 +585,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.build.road")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
                         e.setCancelled(true);
+                        return;
                     }
                 } else {
                     final Plot plot = getCurrentPlot(loc);
@@ -592,12 +593,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                             e.setCancelled(true);
+                            return;
                         }
                     } else if (!plot.hasRights(p)) {
                         if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                             if (isPlotArea(loc)) { 
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                                e.setCancelled(true); 
+                                e.setCancelled(true);
+                                return;
                             }
                         }
                     }
@@ -660,6 +663,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                     e.setCancelled(true);
+                    return;
                 } else if (!plot.hasRights(e.getPlayer())) {
                     Flag use = FlagManager.getPlotFlag(plot, "use");
                     if (use != null && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
@@ -724,6 +728,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                     e.setCancelled(true);
+                    return;
                 } else if (!plot.hasRights(e.getPlayer())) {
                     Flag use = FlagManager.getPlotFlag(plot, "use");
                     Block block = e.getBlockClicked();
@@ -735,7 +740,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                     if (isPlotArea(loc)) { 
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                        e.setCancelled(true); 
+                        e.setCancelled(true);
+                        return;
                     }
                 }
             }
@@ -759,6 +765,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.build.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                         e.setCancelled(true);
+                        return;
                     }
                 } else if (!plot.hasRights(p)) {
                     if (FlagManager.isPlotFlagTrue(plot, "hanging-place")) {
@@ -767,7 +774,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.build.other")) {
                         if (isPlotArea(loc)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                            e.setCancelled(true); 
+                            e.setCancelled(true);
+                            return;
                         }
                     }
                 }
@@ -830,6 +838,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.interact.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
+                        return;
                     }
                 } else if (!plot.hasRights(p)) {
                     Entity entity = e.getRightClicked();
@@ -917,6 +926,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.pve.road")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.road");
                         e.setCancelled(true);
+                        return;
                     }
                 } else {
                     final Plot plot = getCurrentPlot(l);
@@ -946,7 +956,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         if (!PlotMain.hasPermission(p, "plots.admin.pve.other")) {
                             if (isPlotArea(l)) { 
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.pve.other");
-                                e.setCancelled(true); 
+                                e.setCancelled(true);
+                                return;
                             }
                         }
                     }
@@ -967,6 +978,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (!PlotMain.hasPermission(p, "plots.admin.projectile.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.road");
                     e.setHatching(false);
+                    return;
                 }
             } else {
                 final Plot plot = getCurrentPlot(l);
@@ -974,12 +986,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (!PlotMain.hasPermission(p, "plots.admin.projectile.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.unowned");
                         e.setHatching(false);
+                        return;
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!PlotMain.hasPermission(p, "plots.admin.projectile.other")) {
                         if (isPlotArea(l)) { 
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
-                            e.setHatching(false); 
+                            e.setHatching(false);
+                            return;
                         }
                     }
                 }
@@ -1000,8 +1014,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Location loc = event.getBlock().getLocation();
         if (isInPlot(loc)) {
             final Plot plot = getCurrentPlot(loc);
-            if (!plot.hasOwner() && PlotMain.hasPermission(player, "plots.admin.build.unowned")) {
+            if (!plot.hasOwner()) {
+                if (PlotMain.hasPermission(player, "plots.admin.build.unowned")) {
+                    return;
+                }
                 PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.build.unowned");
+                event.setCancelled(true);
                 return;
             }
             if (!plot.hasRights(player)) {
