@@ -25,6 +25,7 @@ public class AugmentedPopulator extends BlockPopulator {
 	public final PlotManager manager;
 	public final PlotGenerator generator;
 	public final PlotCluster cluster;
+	public final Random r = new Random();
 	public final boolean p;
 	public final boolean b;
 	public final boolean o;
@@ -172,6 +173,9 @@ public class AugmentedPopulator extends BlockPopulator {
                 Block block = world.getBlockAt(xx, blockInfo.y, zz);
                 PlotHelper.setBlock(block, plotblock);
             }
+        }
+        for (BlockPopulator populator : generator.getDefaultPopulators(world)) {
+            populator.populate(world, r,world.getChunkAt(X, Z));
         }
 	}
 }
