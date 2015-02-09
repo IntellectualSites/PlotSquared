@@ -231,7 +231,12 @@ public class ChunkManager {
     
     public static void restoreEntities(World world, int x_offset, int z_offset) {
         for (EntityWrapper entity : entities) {
-            entity.spawn(world, x_offset, z_offset);
+            try {
+                entity.spawn(world, x_offset, z_offset);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
