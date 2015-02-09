@@ -22,6 +22,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
@@ -59,7 +61,10 @@ public class DebugClear extends SubCommand {
                         if (plot == null) {
                             PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            ChunkManager.clearPlotExperimental(Bukkit.getWorld(world), plot, false);
+                            World bukkitWorld = Bukkit.getWorld(world);
+                            Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id);
+                            Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
+                            ChunkManager.regenerateRegion(pos1, pos2);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
                             PlotMain.sendConsoleSenderMessage("&aDone!");
                         }
@@ -80,7 +85,10 @@ public class DebugClear extends SubCommand {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        ChunkManager.clearPlotExperimental(plr.getWorld(), plot, false);
+        World bukkitWorld = plr.getWorld();
+        Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id);
+        Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
+        ChunkManager.regenerateRegion(pos1, pos2);
         PlayerFunctions.sendMessage(plr, "&aDone!");
 
         // sign

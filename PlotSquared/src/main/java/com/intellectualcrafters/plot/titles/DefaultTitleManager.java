@@ -44,8 +44,9 @@ public class DefaultTitleManager {
 	 *
 	 * @param title
 	 *            Title
+	 * @throws ClassNotFoundException 
 	 */
-	public DefaultTitleManager(String title) {
+	public DefaultTitleManager(String title) throws ClassNotFoundException {
 		this.title = title;
 		loadClasses();
 	}
@@ -57,8 +58,9 @@ public class DefaultTitleManager {
 	 *            Title text
 	 * @param subtitle
 	 *            Subtitle text
+	 * @throws ClassNotFoundException 
 	 */
-	public DefaultTitleManager(String title, String subtitle) {
+	public DefaultTitleManager(String title, String subtitle) throws ClassNotFoundException {
 		this.title = title;
 		this.subtitle = subtitle;
 		loadClasses();
@@ -69,8 +71,9 @@ public class DefaultTitleManager {
 	 *
 	 * @param title
 	 *            Title
+	 * @throws ClassNotFoundException 
 	 */
-	public DefaultTitleManager(DefaultTitleManager title) {
+	public DefaultTitleManager(DefaultTitleManager title) throws ClassNotFoundException {
 		// Copy title
 		this.title = title.title;
 		this.subtitle = title.subtitle;
@@ -96,8 +99,9 @@ public class DefaultTitleManager {
 	 *            Stay on screen time
 	 * @param fadeOutTime
 	 *            Fade out time
+	 * @throws ClassNotFoundException 
 	 */
-	public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
+	public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) throws ClassNotFoundException {
 		this.title = title;
 		this.subtitle = subtitle;
 		this.fadeInTime = fadeInTime;
@@ -108,8 +112,9 @@ public class DefaultTitleManager {
 
 	/**
 	 * Load spigot and NMS classes
+	 * @throws ClassNotFoundException 
 	 */
-	private void loadClasses() {
+	private void loadClasses() throws ClassNotFoundException {
 		packetTitle = getNMSClass("PacketPlayOutTitle");
 		packetActions = getNMSClass("EnumTitleAction");
 		chatBaseComponent = getNMSClass("IChatBaseComponent");
@@ -363,15 +368,10 @@ public class DefaultTitleManager {
 		return version;
 	}
 
-	private Class<?> getNMSClass(String className) {
+	private Class<?> getNMSClass(String className) throws ClassNotFoundException {
 		String fullName = "net.minecraft.server." + getVersion() + className;
 		Class<?> clazz = null;
-		try {
-			clazz = Class.forName(fullName);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		clazz = Class.forName(fullName);
 		return clazz;
 	}
 

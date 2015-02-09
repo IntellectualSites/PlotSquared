@@ -765,7 +765,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld.TERRAIN != 0) {
-            ChunkManager.clearPlotExperimental(world, plot, isDelete);
+            final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+            ChunkManager.regenerateRegion(pos1, pos2);
             return;
         }
         

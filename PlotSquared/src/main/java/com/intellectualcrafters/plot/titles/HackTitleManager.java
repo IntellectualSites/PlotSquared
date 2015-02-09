@@ -41,8 +41,9 @@ public class HackTitleManager {
 	 * 
 	 * @param title
 	 *            Title
+	 * @throws ClassNotFoundException 
 	 */
-	public HackTitleManager(String title) {
+	public HackTitleManager(String title) throws ClassNotFoundException {
 		this.title = title;
 		loadClasses();
 	}
@@ -54,8 +55,9 @@ public class HackTitleManager {
 	 *            Title text
 	 * @param subtitle
 	 *            Subtitle text
+	 * @throws ClassNotFoundException 
 	 */
-	public HackTitleManager(String title, String subtitle) {
+	public HackTitleManager(String title, String subtitle) throws ClassNotFoundException {
 		this.title = title;
 		this.subtitle = subtitle;
 		loadClasses();
@@ -66,8 +68,9 @@ public class HackTitleManager {
 	 * 
 	 * @param title
 	 *            Title
+	 * @throws ClassNotFoundException 
 	 */
-	public HackTitleManager(HackTitleManager title) {
+	public HackTitleManager(HackTitleManager title) throws ClassNotFoundException {
 		// Copy title
 		this.title = title.title;
 		this.subtitle = title.subtitle;
@@ -93,9 +96,10 @@ public class HackTitleManager {
 	 *            Stay on screen time
 	 * @param fadeOutTime
 	 *            Fade out time
+	 * @throws ClassNotFoundException 
 	 */
 	public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime,
-			int fadeOutTime) {
+			int fadeOutTime) throws ClassNotFoundException {
 		this.title = title;
 		this.subtitle = subtitle;
 		this.fadeInTime = fadeInTime;
@@ -106,8 +110,9 @@ public class HackTitleManager {
 
 	/**
 	 * Load spigot and NMS classes
+	 * @throws ClassNotFoundException 
 	 */
-	private void loadClasses() {
+	private void loadClasses() throws ClassNotFoundException {
 		packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
 		packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
 		nmsChatSerializer = getNMSClass("ChatSerializer");
@@ -439,14 +444,10 @@ public class HackTitleManager {
 		return version;
 	}
 
-	private Class<?> getNMSClass(String className) {
+	private Class<?> getNMSClass(String className) throws ClassNotFoundException {
 		String fullName = "net.minecraft.server." + getVersion() + className;
 		Class<?> clazz = null;
-		try {
-			clazz = Class.forName(fullName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		clazz = Class.forName(fullName);
 		return clazz;
 	}
 
