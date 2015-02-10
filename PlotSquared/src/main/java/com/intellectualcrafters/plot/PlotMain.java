@@ -1347,6 +1347,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         setupLogger();
         // Setup translations
         C.setupTranslations();
+        C.saveTranslations();
         // Check for outdated java version.
         if (getJavaVersion() < 1.7) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
@@ -1620,13 +1621,6 @@ public class PlotMain extends JavaPlugin implements Listener {
      */
     @Override
     final public void onDisable() {
-        try {
-            C.saveTranslations();
-        } catch (final Exception e) {
-            sendConsoleSenderMessage("Failed to save translations");
-            Logger.add(LogLevel.DANGER, "Failed to save translations");
-            e.printStackTrace();
-        }
         Logger.add(LogLevel.GENERAL, "Logger disabled");
         try {
             Logger.write();
