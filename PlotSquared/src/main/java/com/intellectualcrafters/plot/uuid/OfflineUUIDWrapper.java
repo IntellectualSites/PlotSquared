@@ -1,9 +1,12 @@
 package com.intellectualcrafters.plot.uuid;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
@@ -13,6 +16,19 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
 
+    private Method getOnline = null;
+    private Object[] arg = new Object[0];
+
+    public OfflineUUIDWrapper() {
+        try {
+            this.getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public UUID getUUID(final Player player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
@@ -46,9 +62,31 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         return null;
     }
 
+    public Player[] getOnlinePlayers() {
+        if (getOnline == null) {
+            return Bukkit.getOnlinePlayers().toArray(new Player[0]);
+        }
+        try {
+            Object players = getOnline.invoke(Bukkit.getServer(), arg);
+            if (players instanceof Player[]) {
+                return (Player[]) players;
+            }
+            else {
+                @SuppressWarnings("unchecked")
+                Collection<? extends Player> p = (Collection<? extends Player>) players;
+                return p.toArray(new Player[0]);
+            }
+        }
+        catch (Exception e) {
+            System.out.print("Failed to resolve online players");
+            getOnline = null;
+            return Bukkit.getOnlinePlayers().toArray(new Player[0]);
+        }
+    }
+    
     @Override
     public Player getPlayer(final UUID uuid) {
-        for (final Player player : Bukkit.getOnlinePlayers()) {
+        for (final Player player : getOnlinePlayers()) {
             if (getUUID(player).equals(uuid)) {
                 return player;
             }

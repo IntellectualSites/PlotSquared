@@ -162,11 +162,9 @@ public class UUIDHandler {
         }
         
         // check online
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            UUID u2 = UUIDHandler.uuidWrapper.getUUID(player);
-            if (uuid.equals(u2)) {
-                return player.getName();
-            }
+        Player player = uuidWrapper.getPlayer(uuid);
+        if (player != null) {
+            return player.getName();
         }
         
         // check cache

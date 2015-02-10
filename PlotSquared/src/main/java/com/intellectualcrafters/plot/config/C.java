@@ -161,7 +161,7 @@ public enum C {
     /*
      * Core Stuff
      */
-    PREFIX("&c[&6&Plot&c] "),
+    PREFIX("&c[&6Plot&c] "),
     ENABLED("&6PlotSquared is now enabled"),
     EXAMPLE_MESSAGE("&cThis is an example message &k!!!"),
     /*
