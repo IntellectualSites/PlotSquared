@@ -62,7 +62,7 @@ public class DebugClear extends SubCommand {
                             PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             World bukkitWorld = Bukkit.getWorld(world);
-                            Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id);
+                            Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
                             Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
                             ChunkManager.regenerateRegion(pos1, pos2);
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
@@ -86,7 +86,7 @@ public class DebugClear extends SubCommand {
         }
         assert plot != null;
         World bukkitWorld = plr.getWorld();
-        Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id);
+        Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
         Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
         ChunkManager.regenerateRegion(pos1, pos2);
         PlayerFunctions.sendMessage(plr, "&aDone!");
