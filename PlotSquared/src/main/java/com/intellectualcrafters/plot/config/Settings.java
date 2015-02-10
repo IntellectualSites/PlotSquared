@@ -113,7 +113,11 @@ public class Settings {
      * Have colored console messages?
      */
     public static boolean CONSOLE_COLOR = true;
-
+    
+    /**
+     * The delay (in seconds) before teleportation commences
+     */
+    public static int TELEPORT_DELAY;
     /**
      * Auto clear enabled
      */

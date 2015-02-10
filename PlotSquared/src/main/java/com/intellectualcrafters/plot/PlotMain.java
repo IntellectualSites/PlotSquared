@@ -113,6 +113,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SendChunk;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
@@ -587,8 +588,36 @@ public class PlotMain extends JavaPlugin implements Listener {
                 event.setCancelled(true);
                 return false;
             }
-            player.teleport(location);
-            PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
+            if (Settings.TELEPORT_DELAY == 0 || hasPermission(player, "plots.teleport.delay.bypass")) {
+                PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                player.teleport(location);
+                return true;
+            }
+            PlayerFunctions.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
+            Location loc = player.getLocation();
+            final World world = player.getWorld();
+            final int x = loc.getBlockX();
+            final int z = loc.getBlockZ();
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    Location loc = player.getLocation();
+                    if (!loc.getWorld().equals(world)) {
+                        PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
+                        return;
+                    }
+                    if (loc.getBlockX() != x || loc.getBlockZ() != z) {
+                        PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
+                        return;
+                    }
+                    PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                    player.teleport(location);
+                }
+            }, Settings.TELEPORT_DELAY * 20);
+            return true;
         }
         return !event.isCancelled();
     }
@@ -796,6 +825,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         final int config_ver = 1;
         config.set("version", config_ver);
         final Map<String, Object> options = new HashMap<>();
+        options.put("teleport.delay", 0);
         options.put("auto_update", false);
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
@@ -834,6 +864,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         if (Settings.DEBUG) {
             sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
+        Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");

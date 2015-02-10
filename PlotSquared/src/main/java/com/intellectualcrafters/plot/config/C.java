@@ -260,6 +260,8 @@ public enum C {
      */
     TELEPORTED_TO_PLOT("&6You have been teleported"),
     TELEPORTED_TO_ROAD("&cYou got teleported to the road"),
+    TELEPORT_IN_SECONDS("&6Teleporting in %s seconds. Do not move..."),
+    TELEPORT_FAILED("&cTeleportation cancelled due to movement"),
     /*
      * Set Block
      */
@@ -504,7 +506,11 @@ public enum C {
     }
 
     public static void saveTranslations() {
-        manager.saveAll(defaultFile).saveFile(defaultFile);
+        try {
+            manager.saveAll(defaultFile).saveFile(defaultFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
