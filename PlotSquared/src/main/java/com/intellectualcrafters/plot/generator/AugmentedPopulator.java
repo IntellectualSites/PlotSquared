@@ -112,6 +112,9 @@ public class AugmentedPopulator extends BlockPopulator {
 			check = true;
 		}
 		else {
+		    if (plotworld.TERRAIN == 2) {
+		        return;
+		    }
 			check = false;
 		}
 		if (this.o) {
