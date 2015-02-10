@@ -71,7 +71,6 @@ public enum Command {
     LIST("list", "l"),
     SET("set", "s"),
     PURGE("purge"),
-    SETUP("setup"),
     OP("op", "add"),
     DEOP("deop", "deadmin"),
     BAN("ban", "block"),
