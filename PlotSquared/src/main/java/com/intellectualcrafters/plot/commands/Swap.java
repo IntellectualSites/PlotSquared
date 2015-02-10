@@ -42,7 +42,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class Swap extends SubCommand {
 
     public Swap() {
-        super(Command.SWAP, "Swap two plots", "copy", CommandCategory.ACTIONS, true);
+        super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
     }
 
     @Override

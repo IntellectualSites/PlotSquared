@@ -495,12 +495,8 @@ public enum C {
     }
 
     public static void setupTranslations() {
-        if (manager == null) {
-            manager = new TranslationManager();
-        }
-        if (defaultFile == null) {
-            defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager).read();
-        }
+        manager = new TranslationManager();
+        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager).read();
         // register everything in this class
         for (final C c : values()) {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
