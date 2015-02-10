@@ -21,35 +21,18 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.TaskManager;
+import java.sql.*;
+import java.util.*;
 
 /**
  * @author Citymonstret
@@ -64,9 +47,9 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_HELPERS;
     public final String CREATE_PLOT;
     public final String CREATE_CLUSTER;
+    private final String prefix;
     // Private Final
     private Connection connection;
-    private final String prefix;
 
     /**
      * Constructor
@@ -437,7 +420,7 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Failed to delete plot " + plot.id);
+                    PlotMain.sendConsoleSenderMessage("&c[ERROR] " + "Failed to delete plot " + plot.id);
                 }
             }
         });
@@ -749,6 +732,71 @@ public class SQLManager implements AbstractDB {
                 }
             }
         });
+    }
+
+    @Override
+    public void swapPlots(final Plot p1, final Plot p2) {
+        TaskManager.runTask(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        /*
+                        update ticket
+                        set ticket_index = case when ticket_index = :x then :y else :x end
+                        where ticket_index in (:x, :y);
+
+                        FROM
+                        http://stackoverflow.com/questions/6018374/swap-two-rows-using-sql-query
+
+                         */
+                        try {
+                            PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                                    "UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `plot_plot_id` = CASE WHEN `plot_plot_id` = ? then ? else ? END WHERE `plot_plot_id` IN (?, ?)"
+                            );
+                            int id1 = getId(p1.getWorld().getName(), p1.id), id2 = getId(p2.getWorld().getName(), p2.id);
+                            stmt.setInt(1, id1);
+                            stmt.setInt(2, id2);
+                            stmt.setInt(3, id1);
+                            stmt.setInt(4, id1);
+                            stmt.setInt(5, id2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                    "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `plot_plot_id` = CASE WHEN `plot_plot_id` = ? then ? else ? END WHERE `plot_plot_id` IN (?, ?)"
+                            );
+                            stmt.setInt(1, id1);
+                            stmt.setInt(2, id2);
+                            stmt.setInt(3, id1);
+                            stmt.setInt(4, id1);
+                            stmt.setInt(5, id2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                    "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `plot_plot_id` = CASE WHEN `plot_plot_id` = ? then ? else ? END WHERE `plot_plot_id` IN (?, ?)"
+                            );
+                            stmt.setInt(1, id1);
+                            stmt.setInt(2, id2);
+                            stmt.setInt(3, id1);
+                            stmt.setInt(4, id1);
+                            stmt.setInt(5, id2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                    "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `plot_plot_id` = CASE WHEN `plot_plot_id` = ? then ? else ? END WHERE `plot_plot_id` IN (?, ?)"
+                            );
+                            stmt.setInt(1, id1);
+                            stmt.setInt(2, id2);
+                            stmt.setInt(3, id1);
+                            stmt.setInt(4, id1);
+                            stmt.setInt(5, id2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
     }
 
     @Override

@@ -21,11 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotSelection;
@@ -33,6 +31,8 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -87,6 +87,11 @@ public class Swap extends SubCommand {
             return false;
         }
         PlotSelection.swap(world, plot.id, plotid);
+
+        // TODO Requires testing!!
+        DBFunc.dbManager.swapPlots(plot, PlotHelper.getPlot(world, plotid));
+        // TODO Requires testing!!
+
         PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
 
         if (PlotHelper.canSetFast) {

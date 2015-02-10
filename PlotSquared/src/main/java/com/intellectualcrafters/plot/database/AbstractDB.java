@@ -21,20 +21,11 @@
 
 package com.intellectualcrafters.plot.database;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.*;
+
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * @author Citymonstret
@@ -143,6 +134,13 @@ public interface AbstractDB {
      * @param merged boolean[]
      */
     public void setMerged(final String world, final Plot plot, final boolean[] merged);
+
+    /**
+     * Swap the settings, helpers etc. of two plots
+     * @param p1 Plot1
+     * @param p2 Plot2
+     */
+    public void swapPlots(final Plot p1, final Plot p2);
 
     /**
      * Set plot flags
