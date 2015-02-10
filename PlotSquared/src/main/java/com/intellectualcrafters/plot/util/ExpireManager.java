@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.commands.Unlink;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -108,6 +109,9 @@ public class ExpireManager {
                     }
                     final World worldobj = Bukkit.getWorld(world);
                     final PlotManager manager = PlotMain.getPlotManager(world);
+                    if (plot.settings.isMerged()) {
+                        Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
+                    }
                     manager.clearPlot(worldobj, plot, false);
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);

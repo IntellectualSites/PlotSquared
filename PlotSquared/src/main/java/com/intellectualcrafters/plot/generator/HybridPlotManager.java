@@ -589,8 +589,8 @@ import com.intellectualcrafters.plot.util.SendChunk;
 
         final HybridPlotWorld dpw = ((HybridPlotWorld) PlotMain.getWorldSettings(world));
 
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+        final Location pos1 = PlotHelper.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
+        final Location pos2 = PlotHelper.getPlotTopLocAbs(world, plot.id);
 
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;

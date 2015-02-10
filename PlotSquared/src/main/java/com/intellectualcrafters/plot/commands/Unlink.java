@@ -65,6 +65,27 @@ public class Unlink extends SubCommand {
         }
 
         final World world = plr.getWorld();
+        if (!unlinkPlot(world, plot)) {
+            PlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
+            return false;
+        }
+        try {
+            if (PlotHelper.canSetFast) {
+                SetBlockFast.update(plr);
+            }
+        } catch (final Exception e) {
+            // execute(final Player plr, final String... args) {
+            try {
+                PlotMain.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
+            } catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
+        return true;
+    }
+    
+    public static boolean unlinkPlot(World world, Plot plot) {
         final PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
         final ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(pos1, pos2);
@@ -74,7 +95,6 @@ public class Unlink extends SubCommand {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
-            PlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
         }
 
@@ -119,25 +139,10 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-                PlotHelper.setSign(plr.getWorld(), UUIDHandler.getName(plot.owner), plot);
+                PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
             }
         }
-        try {
-            if (PlotHelper.canSetFast) {
-                SetBlockFast.update(plr);
-            }
-        } catch (final Exception e) {
-            // execute(final Player plr, final String... args) {
-            try {
-                PlotMain.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
-            } catch (final Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
         manager.finishPlotUnlink(world, plotworld, ids);
-
-        PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
 }
