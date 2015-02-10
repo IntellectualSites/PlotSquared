@@ -302,7 +302,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Iterator<Block> iter = event.blockList().iterator();
                 while (iter.hasNext()) {
                     Block b = iter.next();
-                    if (!getCurrentPlot(loc).equals(plot)) {
+                    if (!plot.equals(getCurrentPlot(b.getLocation()))) {
                         iter.remove();
                     }
                 }
