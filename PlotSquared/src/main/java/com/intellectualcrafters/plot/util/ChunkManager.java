@@ -145,7 +145,9 @@ public class ChunkManager {
                     initMaps();
                     int absX = x << 4;
                     int absZ = z << 4;
+                    boolean save = false;
                     if (x == c1x || z == c1z) {
+                        save = true;
                         for (int X = 0; X < 16; X++) {
                             for (int Z = 0; Z < 16; Z++) {
                                 if ((X + absX < sx || Z + absZ < sz) || (X + absX > ex || Z + absZ > ez)) {
@@ -156,6 +158,7 @@ public class ChunkManager {
                     }
                     else if (x == c2x || z == c2z) {
                         for (int X = 0; X < 16; X++) {
+                            save = true;
                             for (int Z = 0; Z < 16; Z++) {
                                 if ((X + absX > ex || Z + absZ > ez) || (X + absX < sx || Z + absZ < sz)) {
                                     saveBlock(world, maxY, X + absX, Z + absZ);
@@ -163,10 +166,14 @@ public class ChunkManager {
                             }
                         }
                     }
-                    saveEntities(chunk, CURRENT_PLOT_CLEAR);
+                    if (save) {
+                        saveEntities(chunk, CURRENT_PLOT_CLEAR);
+                    }
                     world.regenerateChunk(x, z);
-                    restoreBlocks(world, 0, 0);
-                    restoreEntities(world, 0, 0);
+                    if (save) {
+                        restoreBlocks(world, 0, 0);
+                        restoreEntities(world, 0, 0);
+                    }
                     chunk.unload();
                     chunk.load();
                 }
@@ -217,15 +224,6 @@ public class ChunkManager {
             }
             EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
             entities.add(wrap);
-            
-            
-            
-//            int y = loc.getBlockY();
-//            BlockLoc bl = new BlockLoc(x, y, z);
-//            EntityWrapper wrap = new EntityWrapper(entity.getType().getTypeId());
-//            entities.put(wrap, bl);
-//            System.out.print(entity.isDead());
-//            entity.teleport(new Location(chunk.getWorld(), 0, 65, 0));
         }
     }
     

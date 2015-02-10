@@ -111,12 +111,10 @@ public abstract class PlotWorld {
      * @param config Configuration Section
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
-    	if (Settings.ENABLE_CLUSTERS) {
-    	    if (config.contains("generator.terrain")) {
-        	    this.TERRAIN = config.getInt("generator.terrain");
-        	    this.TYPE = config.getInt("generator.type");
-    	    }
-    	}
+	    if (config.contains("generator.terrain")) {
+    	    this.TERRAIN = config.getInt("generator.terrain");
+    	    this.TYPE = config.getInt("generator.type");
+	    }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));

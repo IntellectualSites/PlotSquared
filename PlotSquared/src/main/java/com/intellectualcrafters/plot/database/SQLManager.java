@@ -106,24 +106,6 @@ public class SQLManager implements AbstractDB {
 
     }
 
-    //
-    // public void setTimout() {
-    // TaskManager.runTask(new Runnable() {
-    // @Override
-    // public void run() {
-    // try {
-    // final PreparedStatement statement =
-    // connection.prepareStatement("SET GLOBAL wait_timeout =28800;");
-    // statement.executeQuery();
-    // statement.close();
-    // } catch (final SQLException e) {
-    // e.printStackTrace();
-    // PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"Could not reset MySQL timout.");
-    // }
-    // }
-    // });
-    // }
-
     /**
      * Set Plot owner
      *
@@ -508,7 +490,7 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * @return
+     * Load all plots, helpers, denied, trusted, and every setting from DB into a hashmap
      */
     @Override
     public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
