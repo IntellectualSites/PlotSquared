@@ -48,7 +48,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SendChunk;
 
-@SuppressWarnings("deprecation") public class HybridPlotManager extends PlotManager {
+@SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
 
     private int task;
     private static boolean UPDATE = false;
