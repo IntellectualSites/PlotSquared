@@ -39,6 +39,7 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 
@@ -125,14 +126,22 @@ public class Setup extends SubCommand {
                 }
                 object.generator = args[0];
                 object.current++;
+                
+                String partial = Settings.ENABLE_CLUSTERS ? "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots" : "";  
                 PlayerFunctions.sendMessage(plr, "&6What world type do you want?"
                 + "\n&8 - &2DEFAULT&8 - &7Standard plot generation"
                 + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain"
-                + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
+                + partial);
                 break;
             }
             case 1: { // choose world type
-                List<String> types = Arrays.asList(new String[] {"default", "augmented", "partial"});
+                List<String> types;
+                if (Settings.ENABLE_CLUSTERS) {
+                    types = Arrays.asList(new String[] {"default", "augmented", "partial"});
+                }
+                else {
+                    types = Arrays.asList(new String[] {"default", "augmented"});
+                }
                 if (args.length != 1 || !types.contains(args[0].toLowerCase())) {
                     PlayerFunctions.sendMessage(plr, "&cYou must choose a world type!"
                     + "\n&8 - &2DEFAULT&8 - &7Standard plot generation"
