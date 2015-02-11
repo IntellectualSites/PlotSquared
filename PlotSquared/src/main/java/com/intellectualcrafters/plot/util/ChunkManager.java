@@ -261,6 +261,7 @@ public class ChunkManager {
                 entity.spawn(world, x_offset, z_offset);
             }
             catch (Exception e) {
+                System.out.print("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id);
                 e.printStackTrace();
             }
         }

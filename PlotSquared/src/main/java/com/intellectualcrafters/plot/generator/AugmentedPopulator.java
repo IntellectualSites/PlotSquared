@@ -17,6 +17,8 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -174,8 +176,15 @@ public class AugmentedPopulator extends BlockPopulator {
                 }
                 int xx = x + blockInfo.x;
                 int zz = z + blockInfo.z;
-                if (p && manager.getPlotIdAbs(plotworld, new Location(world, xx, 0, zz)) != null) {
-                    continue;
+                if (p) {
+                    if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                        if (ChunkManager.isIn(ChunkManager.CURRENT_PLOT_CLEAR, xx, zz)) {
+                            continue;
+                        }
+                    }
+                    else if (manager.getPlotIdAbs(plotworld, new Location(world, xx, 0, zz)) != null) {
+                        continue;
+                    }
                 }
                 PlotHelper.setBlock(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
             }
@@ -184,4 +193,8 @@ public class AugmentedPopulator extends BlockPopulator {
             populator.populate(world, r,world.getChunkAt(X, Z));
         }
 	}
+	
+	public boolean isIn(RegionWrapper plot, int x, int z) {
+        return (x >= plot.minX && x <= plot.maxX && z >= plot.minZ && z <= plot.maxZ);
+    }
 }
