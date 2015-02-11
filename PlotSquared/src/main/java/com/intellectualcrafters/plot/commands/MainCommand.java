@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,10 +32,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.StringComparison;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotMain command class
@@ -75,7 +74,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     public static List<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
-        final List<SubCommand> commands = getCommands(category, player);
+        List<SubCommand> commands;
+        if (category != null) {
+            commands = getCommands(category, player);
+        } else {
+            commands = subCommands;
+        }
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
         // 100));
         final int perPage = 5;
@@ -92,7 +96,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         help.add(C.HELP_HEADER.s());
         // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
-        help.add(C.HELP_CATEGORY.s().replace("%category%", category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages + 1)).replace("%dis%", "" + (commands.size() % perPage)).replace("%total%", "" + commands.size()));
+        help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages + 1)).replace("%dis%", "" + (commands.size() % perPage)).replace("%total%", "" + commands.size()));
 
         SubCommand cmd;
 
@@ -128,6 +132,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
+                builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
                 return PlayerFunctions.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
@@ -138,7 +143,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     break;
                 }
             }
-            if (cato == null) {
+            if (cato == null && !cat.equalsIgnoreCase("all")) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(C.HELP_INFO.s());
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {

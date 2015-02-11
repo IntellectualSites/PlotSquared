@@ -21,18 +21,15 @@
 
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
+import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,14 +43,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
-import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.*;
 
 /**
  * Created 2014-10-30 for PlotSquared
@@ -183,7 +173,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "greeting") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "greeting").getValueString()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s() + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
         }
         if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
@@ -220,7 +210,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', FlagManager.getPlotFlag(plot, "farewell").getValueString()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s() + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
         if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());

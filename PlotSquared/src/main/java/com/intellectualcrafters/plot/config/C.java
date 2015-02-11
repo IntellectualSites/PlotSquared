@@ -21,15 +21,10 @@
 
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import org.bukkit.ChatColor;
 
 /**
  * Captions class.
@@ -158,6 +153,8 @@ public enum C {
     TITLE_LEFT_PLOT_COLOR("GOLD"),
     TITLE_LEFT_PLOT_SUB("Owned by %s"),
     TITLE_LEFT_PLOT_SUB_COLOR("RED"),
+    PREFIX_GREETING("&6%id%&c> "),
+    PREFIX_FAREWELL("&c%id%&c> "),
     /*
      * Core Stuff
      */
