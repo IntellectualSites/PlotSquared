@@ -149,7 +149,6 @@ public class ChunkManager {
             @Override
             public void run() {
                 if (chunks.size() == 0) {
-                    System.out.print("DONE");
                     TaskManager.runTaskLater(whenDone, 1);
                     Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
                     return;
