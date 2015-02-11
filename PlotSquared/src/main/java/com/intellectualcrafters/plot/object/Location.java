@@ -1,5 +1,8 @@
 package com.intellectualcrafters.plot.object;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created 2015-02-11 for PlotSquared
  *
@@ -155,5 +158,23 @@ public class Location implements Cloneable, Comparable<Location> {
     @Override
     public String toString() {
         return "\"plotsquaredlocation\":{" + "\"x\":" + x + ",\"y\":" + y + ",\"z\":" + z + ",\"yaw\":" + yaw + ",\"pitch\":" + pitch + ",\"world\":\"" + world + "\"}";
+    }
+
+    private Object getBukkitWorld() {
+        try {
+            Class clazz = Class.forName("org.bukkit.Bukkit");
+            return clazz.getMethod("getWorld", String.class).invoke(null, world);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Object toBukkitLocation() {
+        try {
+            Constructor constructor = Class.forName("org.bukkit.Location").getConstructor(Class.forName("org.bukkit.World"), double.class, double.class, double.class, float.class, float.class);
+            return constructor.newInstance(Class.forName("org.bukkit.World").cast(getBukkitWorld()), x, y, z, yaw, pitch);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+            return null;
+        }
     }
 }
