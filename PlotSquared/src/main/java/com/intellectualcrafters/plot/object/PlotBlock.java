@@ -45,16 +45,19 @@ public class PlotBlock {
             return false;
         }
         final PlotBlock other = (PlotBlock) obj;
-        return (this.id == other.id && (this.data == other.data || other.data == -1));
+        return (this.id == other.id && (this.data == other.data || this.data == -1 || other.data == -1));
     }
 
     @Override
     public int hashCode() {
-        return (id + data) * (id + data + 1) + data;
+        return id;
     }
     
     @Override
     public String toString() {
+        if (this.data == -1) {
+            return this.id + "";
+        }
         return this.id + ":" + this.data;
     }
 }

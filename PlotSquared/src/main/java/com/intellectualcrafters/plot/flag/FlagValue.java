@@ -269,10 +269,15 @@ public abstract class FlagValue<T> {
         		String[] split = t.split(":");
             	byte data;
             	if (split.length == 2) {
-            		data = Byte.parseByte(split[1]);
+            	    if ("*".equals(split[1])) {
+                        data = -1;
+                    }
+                    else {
+                        data = Byte.parseByte(split[1]);
+                    }
             	}
             	else {
-            		data = 0;
+            		data = -1;
             	}
             	short id = Short.parseShort(split[0]);
             	return new PlotBlock(id, data);
@@ -314,10 +319,15 @@ public abstract class FlagValue<T> {
             	String[] split = item.split(":");
             	byte data;
             	if (split.length == 2) {
-            		data = Byte.parseByte(split[1]);
+            	    if ("*".equals(split[1])) {
+            	        data = -1;
+            	    }
+            	    else {
+            	        data = Byte.parseByte(split[1]);
+            	    }
             	}
             	else {
-            		data = 0;
+            		data = -1;
             	}
             	short id = Short.parseShort(split[0]);
             	PlotBlock block = new PlotBlock(id, data);

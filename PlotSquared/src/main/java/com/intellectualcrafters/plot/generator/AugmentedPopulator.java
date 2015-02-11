@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.object.BlockWrapper;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
@@ -112,10 +113,14 @@ public class AugmentedPopulator extends BlockPopulator {
 			check = true;
 		}
 		else {
-		    if (plotworld.TERRAIN == 2) {
+			check = false;
+		}
+		if (plotworld.TERRAIN == 2) {
+		    PlotId plot1 = manager.getPlotIdAbs(plotworld, new Location(world, x, 0, z));
+		    PlotId plot2 = manager.getPlotIdAbs(plotworld, new Location(world, x2, 0, z2));
+		    if (plot1 != null && plot2 != null && plot1.equals(plot2)) {
 		        return;
 		    }
-			check = false;
 		}
 		if (this.o) {
 		    chunk.load(true);
