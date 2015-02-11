@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 public class Ban extends SubCommand {
 
     public Ban() {
-        super(Command.BAN, "Alis for /plot denied add", "/plot ban [player]", CommandCategory.ACTIONS, true);
+        super(Command.BAN, "Alias for /plot denied add", "/plot ban [player]", CommandCategory.ACTIONS, true);
     }
 
     @Override

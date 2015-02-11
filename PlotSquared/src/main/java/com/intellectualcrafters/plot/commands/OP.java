@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 public class OP extends SubCommand {
 
     public OP() {
-        super(Command.OP, "Alis for /plot trusted add", "/plot op [player]", CommandCategory.ACTIONS, true);
+        super(Command.OP, "Alias for /plot trusted add", "/plot op [player]", CommandCategory.ACTIONS, true);
     }
 
     @Override

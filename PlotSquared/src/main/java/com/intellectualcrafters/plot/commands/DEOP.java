@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 public class DEOP extends SubCommand {
 
     public DEOP() {
-        super(Command.DEOP, "Alis for /plot trusted remove", "/plot deop  [player]", CommandCategory.ACTIONS, true);
+        super(Command.DEOP, "Alias for /plot trusted remove", "/plot deop  [player]", CommandCategory.ACTIONS, true);
     }
 
     @Override

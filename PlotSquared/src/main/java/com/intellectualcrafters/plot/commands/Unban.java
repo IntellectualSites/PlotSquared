@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 public class Unban extends SubCommand {
 
     public Unban() {
-        super(Command.UNBAN, "Alis for /plot denied remove", "/plot unban [player]", CommandCategory.ACTIONS, true);
+        super(Command.UNBAN, "Alias for /plot denied remove", "/plot unban [player]", CommandCategory.ACTIONS, true);
     }
 
     @Override
