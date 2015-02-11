@@ -882,6 +882,12 @@ public class PlotMain extends JavaPlugin implements Listener {
 //        Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");
 //        Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
+        if (Settings.MAX_PLOTS > 32767) {
+            sendConsoleSenderMessage("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
+            Settings.MAX_PLOTS = 32767;
+        }
+        
+        
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
