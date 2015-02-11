@@ -598,9 +598,16 @@ public class PlotMain extends JavaPlugin implements Listener {
             final World world = player.getWorld();
             final int x = loc.getBlockX();
             final int z = loc.getBlockZ();
+            final String name = player.getName();
+            TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
+                    if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
+                        PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
+                        return;
+                    }
+                    TaskManager.TELEPORT_QUEUE.remove(name);
                     if (!player.isOnline()) {
                         return;
                     }

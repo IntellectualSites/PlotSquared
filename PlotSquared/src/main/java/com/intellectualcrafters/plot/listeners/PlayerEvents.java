@@ -99,6 +99,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
@@ -161,6 +162,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Location q = new Location(t.getWorld(), t.getBlockX(), 0, t.getZ());
 
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
+                if (Settings.TELEPORT_DELAY != 0 && TaskManager.TELEPORT_QUEUE.size() > 0) {
+                    String name = player.getName();
+                    if (TaskManager.TELEPORT_QUEUE.contains(name)) {
+                        TaskManager.TELEPORT_QUEUE.remove(name);
+                    }
+                }
                 if (!isPlotWorld(player.getWorld())) {
                     return;
                 }
@@ -916,6 +923,15 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Location l = e.getEntity().getLocation();
         final Entity d = e.getDamager();
         final Entity a = e.getEntity();
+        
+        if (Settings.TELEPORT_DELAY != 0 && TaskManager.TELEPORT_QUEUE.size() > 0 && a instanceof Player) {
+            Player player = (Player) a;
+            String name = player.getName();
+            if (TaskManager.TELEPORT_QUEUE.contains(name)) {
+                TaskManager.TELEPORT_QUEUE.remove(name);
+            }
+        }
+        
         if (isPlotWorld(l)) {
             if (d instanceof Player) {
                 final Player p = (Player) d;
