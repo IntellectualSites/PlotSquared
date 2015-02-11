@@ -248,11 +248,14 @@ public class HybridGen extends PlotGenerator {
         }
         
         this.result = new short[maxY / 16][];
-        for (short x = 0; x < 16; x++) {
-            for (short z = 0; z < 16; z++) {
-                setBlock(this.result, x, 0, z, (short) 7);
+        if (plotworld.PLOT_BEDROCK) {
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    setBlock(this.result, x, 0, z, (short) 7);
+                }
             }
         }
+        
         RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             
@@ -330,6 +333,15 @@ public class HybridGen extends PlotGenerator {
                         setBlock(this.result, x, y, z, this.filling);
                     }
                     setBlock(this.result, x, this.plotheight, z, this.plotfloors);
+                    if (plotworld.PLOT_SCHEMATIC) {
+                        ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
+                        if (blocks != null) {
+                            for (short y : blocks.keySet()) {
+                                setBlock(this.result, x, this.plotheight + y, z, blocks.get(y));        
+                            }
+                        }
+                    }
                 } else {
                     // wall
                     if ((absX >= pathWidthLower && absX <= pathWidthUpper && absZ >= pathWidthLower && absZ <= pathWidthUpper))

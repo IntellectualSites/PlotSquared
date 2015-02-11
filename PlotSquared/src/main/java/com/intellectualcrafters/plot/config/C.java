@@ -131,9 +131,9 @@ public enum C {
      * Setup Stuff
      */
     SETUP_INIT("&6Usage: &7/plot setup <value>"),
-    SETUP_STEP("&7[&6Step %s&7] &6%s &cExpecting: &6%s&c, Default: &6%s&c>"),
+    SETUP_STEP("&7[&6Step %s&7] &6%s &7- &6Expecting: &7%s &6Default: &7%s"),
     SETUP_INVALID_ARG("&c%s is not a valid argument for step %s. To cancel setup use: &6/plot setup cancel"),
-    SETUP_VALID_ARG("&cValue &6%s &cset for step %s"),
+    SETUP_VALID_ARG("&cValue &6%s &cset to %s"),
     SETUP_FINISHED("&6Finished setup for world &c%s.\n&4If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml"),
     SETUP_WORLD_TAKEN("&c%s is already a registered plotworld"),
     SETUP_MISSING_WORLD("&cYou need to specify a world name (&6/plot setup &l<world>&6 <generator>&c)\n&6Additional commands:\n&c - &6/plot setup <value>\n&c - &6/plot setup back\n&c - &6/plot setup cancel"),

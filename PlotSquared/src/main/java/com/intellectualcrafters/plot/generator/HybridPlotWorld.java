@@ -131,12 +131,18 @@ public class HybridPlotWorld extends PlotWorld {
      * Road block
      */
     public PlotBlock ROAD_BLOCK;
+    /**
+     * If bedrock is enabled
+     */
+    public boolean PLOT_BEDROCK;
     
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public short SIZE;
     public short OFFSET;
     public short SCHEMATIC_HEIGHT;
+    
+    public boolean PLOT_SCHEMATIC = false;
     
     public short REQUIRED_CHANGES = 0;
     
@@ -161,7 +167,7 @@ public class HybridPlotWorld extends PlotWorld {
     public ConfigurationNode[] getSettingNodes() {
         // TODO return a set of configuration nodes (used for setup command)
         return new ConfigurationNode[] { new ConfigurationNode("plot.height", HybridPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", HybridPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", HybridPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", HybridPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", HybridPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", HybridPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", HybridPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
-                new ConfigurationNode("road.height", HybridPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", HybridPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", HybridPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", HybridPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), };
+                new ConfigurationNode("road.height", HybridPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", HybridPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", HybridPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", HybridPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), new ConfigurationNode("plot.bedrock", true, "Plot bedrock generation", Configuration.BOOLEAN, true) };
     }
     
     /**
@@ -173,7 +179,7 @@ public class HybridPlotWorld extends PlotWorld {
         if (!config.contains("plot.height")) {
             PlotMain.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
-        
+        this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));
@@ -209,9 +215,11 @@ public class HybridPlotWorld extends PlotWorld {
         this.OFFSET = -1 + 1;
         String schem1Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad";
         String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/intersection";
+        String schem3Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/plot";
         
         Schematic schem1 = SchematicHandler.getSchematic(schem1Str);
         Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
+        Schematic schem3 = SchematicHandler.getSchematic(schem3Str);
         
         if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&3 - schematic: &7false");
@@ -268,6 +276,28 @@ public class HybridPlotWorld extends PlotWorld {
                 }
             }
         }
+        
+        if (schem3 != null) {
+            PLOT_SCHEMATIC = true;
+            DataCollection[] blocks3 = schem3.getBlockCollection();
+            Dimension d3 = schem3.getSchematicDimension();
+            short w3 = (short) d3.getX();
+            short l3 = (short) d3.getZ();
+            short h3 = (short) d3.getY();
+            for (short x = 0; x < w3; x++) {
+                for (short z = 0; z < l3; z++) {
+                    for (short y = 0; y < h3; y++) {
+                        int index = y * w3 * l3 + z * w3 + x;
+                        short id = blocks3[index].getBlock();
+                        byte data = blocks3[index].getData();
+                        if (id != 0) {
+                            addOverlayBlock((short) (x + shift + oddshift), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
+                        }
+                    }
+                }
+            }
+        }
+        
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
