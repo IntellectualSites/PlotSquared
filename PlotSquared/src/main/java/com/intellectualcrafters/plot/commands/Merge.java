@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
@@ -178,10 +179,7 @@ public class Merge extends SubCommand {
         PlotHelper.mergePlots(world, plots);
 
         PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
-
-        if (PlotHelper.canSetFast) {
-            SetBlockFast.update(plr);
-        }
+        PlotHelper.update(plr);
         return true;
     }
 }

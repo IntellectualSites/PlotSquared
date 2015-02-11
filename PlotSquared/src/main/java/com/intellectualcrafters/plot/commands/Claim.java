@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -83,9 +84,7 @@ public class Claim extends SubCommand {
                 final HybridPlotWorld pW = (HybridPlotWorld) world;
                 if (!(pW.CLAIMED_WALL_BLOCK.equals(pW.WALL_BLOCK))) {
                     PlotMain.getPlotManager(plot.getWorld()).setWall(plot.getWorld(), world, plot.getId(), pW.CLAIMED_WALL_BLOCK);
-                    if (PlotHelper.canSetFast) {
-                        SetBlockFast.update(player);
-                    }
+                    PlotHelper.update(player);
                 }
             }
         }

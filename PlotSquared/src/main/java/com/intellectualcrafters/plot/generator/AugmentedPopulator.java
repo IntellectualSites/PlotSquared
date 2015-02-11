@@ -177,9 +177,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 if (p && manager.getPlotIdAbs(plotworld, new Location(world, xx, 0, zz)) != null) {
                     continue;
                 }
-                PlotBlock plotblock = new PlotBlock((short) blockInfo.id, (byte) 0 );
-                Block block = world.getBlockAt(xx, blockInfo.y, zz);
-                PlotHelper.setBlock(block, plotblock);
+                PlotHelper.setBlock(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
             }
         }
         for (BlockPopulator populator : generator.getDefaultPopulators(world)) {

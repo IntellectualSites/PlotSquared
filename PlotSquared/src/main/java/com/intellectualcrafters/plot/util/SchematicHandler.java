@@ -113,11 +113,7 @@ public class SchematicHandler {
                         // z_offset, block.tag);
                         // }
                         // else {
-                        final Block bukkitBlock = world.getBlockAt(l1.getBlockX() + x + x_offset, y + y_offset, l1.getBlockZ() + z + z_offset);
-
-                        final PlotBlock plotblock = new PlotBlock(id, data);
-
-                        PlotHelper.setBlock(bukkitBlock, plotblock);
+                        PlotHelper.setBlock(world, l1.getBlockX() + x + x_offset, y + y_offset, l1.getBlockZ() + z + z_offset, id, data);
                         // }
                     }
                 }
@@ -350,7 +346,6 @@ public class SchematicHandler {
 
             final int area = WIDTH * LENGTH;
             final int r = i % (area);
-
             final int x = r % WIDTH;
             final int y = i / area;
             final int z = r / WIDTH;
@@ -358,12 +353,7 @@ public class SchematicHandler {
             if (y > 256) {
                 break;
             }
-
-            final Block block = world.getBlockAt(l1.getBlockX() + x + x_offset, l1.getBlockY() + y, l1.getBlockZ() + z + z_offset);
-
-            final PlotBlock plotblock = new PlotBlock(id, data);
-
-            final boolean set = PlotHelper.setBlock(block, plotblock);
+            final boolean set = PlotHelper.setBlock(world, l1.getBlockX() + x + x_offset, l1.getBlockY() + y, l1.getBlockZ() + z + z_offset, id, data);
             if (!result && set) {
                 result = true;
             }

@@ -108,11 +108,14 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.Metrics;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SendChunk;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.SetBlockFast_1_8;
+import com.intellectualcrafters.plot.util.SetBlockSlow;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
@@ -1587,13 +1590,22 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         // Test for SetBlockFast
         {
-            try {
-                new SetBlockFast();
-                PlotHelper.canSetFast = true;
-            } catch (final Throwable e) {
-                PlotHelper.canSetFast = false;
+            if (checkVersion(1, 8, 0)) {
+                try {
+                    AbstractSetBlock.setBlockManager = new SetBlockFast_1_8();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
+                }
             }
-
+            else {
+                try {
+                    AbstractSetBlock.setBlockManager = new SetBlockFast();
+                } catch (NoSuchMethodException e) {
+                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
+                }
+            }
             try {
                 new SendChunk();
                 PlotHelper.canSendChunk = true;
