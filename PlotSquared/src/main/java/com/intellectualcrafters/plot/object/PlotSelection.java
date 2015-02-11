@@ -78,13 +78,7 @@ import com.intellectualcrafters.plot.util.SetBlockFast;
         final Location bot2 = PlotHelper.getPlotBottomLocAbs(world, id2).add(1, 0, 1);
         final Location bot1 = PlotHelper.getPlotBottomLocAbs(world, id1).add(1, 0, 1);
         final Location top1 = PlotHelper.getPlotTopLocAbs(world, id1);
-
-        final int minX = bot1.getBlockX(), maxX = top1.getBlockX(), minZ = bot1.getBlockZ(), maxZ = top1.getBlockZ(),
-
-                minX2 = bot2.getBlockX(), minZ2 = bot2.getBlockZ();
-
-        final boolean canSetFast = PlotHelper.canSetFast;
-
+        final int minX = bot1.getBlockX(), maxX = top1.getBlockX(), minZ = bot1.getBlockZ(), maxZ = top1.getBlockZ(), minX2 = bot2.getBlockX(), minZ2 = bot2.getBlockZ();
         for (int x = 0; x <= (maxX - minX); x++) {
             for (int z = 0; z <= (maxZ - minZ); z++) {
                 for (int y = 1; y <= world.getMaxHeight(); y++) {
@@ -96,25 +90,7 @@ import com.intellectualcrafters.plot.util.SetBlockFast;
                     final BlockWrapper b2 = wrapBlock(block2);
 
                     if ((b1.id != b2.id) || (b1.data != b2.data)) {
-                        if (canSetFast) {
-                            try {
-                                SetBlockFast.set(world, b1.x, b1.y, b1.z, b2.id, b2.data);
-                                SetBlockFast.set(world, b2.x, b2.y, b2.z, b1.id, b1.data);
-                            } catch (final NoSuchMethodException e) {
-                                PlotHelper.canSetFast = false;
-                            }
-                        } else {
-                            if ((b1.id != b2.id) && (b1.data != b2.data)) {
-                                block1.setTypeIdAndData(b2.id, b2.data, false);
-                                block2.setTypeIdAndData(b1.id, b1.data, false);
-                            } else if (b1.id != b2.id) {
-                                block1.setTypeId(b2.id);
-                                block2.setTypeId(b1.id);
-                            } else {
-                                block1.setData(b2.data);
-                                block2.setData(b1.data);
-                            }
-                        }
+                        PlotHelper.setBlock(world, b1.x, b1.y, b1.z, b2.id, b2.data);
                     }
                 }
             }

@@ -42,6 +42,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -191,13 +192,15 @@ import com.intellectualcrafters.plot.util.SendChunk;
                 chunks.add(chunk);
             }
         }
-        
+        ArrayList<Chunk> chunks2 = new ArrayList<>();
         for (int x = sx; x < sx + 16; x++) {
             for (int z = sz; z < sz + 16; z++) {
                 Chunk chunk = world.getChunkAt(x, z);
+                chunks2.add(chunk);
                 regenerateRoad(chunk);
             }
         }
+        AbstractSetBlock.setBlockManager.update(chunks2);
     }
     
     public boolean scheduleRoadUpdate(final World world) {
@@ -343,17 +346,13 @@ import com.intellectualcrafters.plot.util.SendChunk;
                             ChunkLoc loc = new ChunkLoc(absX, absZ);
                             HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                             for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT; y++) {
-                                Block block = world.getBlockAt(x + X, y, z + Z);
-                                PlotBlock plotBlock = new PlotBlock((short) 0, (byte) 0);
-                                PlotHelper.setBlock(block, plotBlock);
+                                PlotHelper.setBlock(world, x + X, sy + y, z + Z, 0, (byte) 0);
                             }
                             if (blocks != null) {
                                 HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);
                                 if (datas == null) {
                                     for (Short y : blocks.keySet()) {
-                                        Block block = world.getBlockAt(x + X, sy + y, z + Z);
-                                        PlotBlock plotBlock = new PlotBlock(blocks.get(y), (byte) 0);
-                                        PlotHelper.setBlock(block, plotBlock);
+                                        PlotHelper.setBlock(world, x + X, sy + y, z + Z, blocks.get(y), (byte) 0);
                                     }
                                 }
                                 else {
@@ -362,24 +361,11 @@ import com.intellectualcrafters.plot.util.SendChunk;
                                         if (data == null) {
                                             data = 0;
                                         }
-                                        Block block = world.getBlockAt(x + X, sy + y, z + Z);
-                                        PlotBlock plotBlock = new PlotBlock(blocks.get(y), data);
-                                        PlotHelper.setBlock(block, plotBlock);
+                                        PlotHelper.setBlock(world, x + X, sy + y, z + Z, blocks.get(y), data);
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                
-                if (PlotHelper.canSetFast) {
-                    if (PlotHelper.canSendChunk) {
-                        ArrayList<Chunk> chunks = new ArrayList<>();
-                        chunks.add(chunk);
-                        SendChunk.sendChunk(chunks);
-                    }
-                    else {
-                        world.refreshChunk(chunk.getX(), chunk.getZ());
                     }
                 }
                 return true;
@@ -963,37 +949,30 @@ import com.intellectualcrafters.plot.util.SendChunk;
         final Location top = PlotHelper.getPlotTopLoc(w, plotid);
 
         int x, z;
-
-        Block block;
-
         z = bottom.getBlockZ();
         for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                block = w.getBlockAt(x, y, z);
-                PlotHelper.setBlock(block, plotblock);
+                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
             }
         }
 
         x = top.getBlockX() + 1;
         for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                block = w.getBlockAt(x, y, z);
-                PlotHelper.setBlock(block, plotblock);
+                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
             }
         }
 
         z = top.getBlockZ() + 1;
         for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                block = w.getBlockAt(x, y, z);
-                PlotHelper.setBlock(block, plotblock);
+                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
             }
         }
         x = bottom.getBlockX();
         for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                block = w.getBlockAt(x, y, z);
-                PlotHelper.setBlock(block, plotblock);
+                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
             }
         }
         return true;
@@ -1010,26 +989,21 @@ import com.intellectualcrafters.plot.util.SendChunk;
 
         int x, z;
 
-        Block block;
         z = bottom.getBlockZ();
         for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-            block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
-            PlotHelper.setBlock(block, plotblock);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
         }
         x = top.getBlockX() + 1;
         for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-            block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
-            PlotHelper.setBlock(block, plotblock);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
         }
         z = top.getBlockZ() + 1;
         for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-            block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
-            PlotHelper.setBlock(block, plotblock);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
         }
         x = bottom.getBlockX();
         for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-            block = w.getBlockAt(x, dpw.WALL_HEIGHT + 1, z);
-            PlotHelper.setBlock(block, plotblock);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
         }
         return true;
     }
@@ -1246,9 +1220,7 @@ import com.intellectualcrafters.plot.util.SendChunk;
                     HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
                     if (datas == null) {
                         for (Short y : blocks.keySet()) {
-                            Block block = world.getBlockAt(sx + loc.x, sy + y, sz + loc.z);
-                            PlotBlock plotBlock = new PlotBlock(blocks.get(y), (byte) 0);
-                            PlotHelper.setBlock(block, plotBlock);
+                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), (byte) 0);
                         }
                     }
                     else {
@@ -1257,9 +1229,7 @@ import com.intellectualcrafters.plot.util.SendChunk;
                             if (data == null) {
                                 data = 0;
                             }
-                            Block block = world.getBlockAt(sx + loc.x, sy + y, sz + loc.z);
-                            PlotBlock plotBlock = new PlotBlock(blocks.get(y), data);
-                            PlotHelper.setBlock(block, plotBlock);
+                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), data);
                         }
                     }
                 }

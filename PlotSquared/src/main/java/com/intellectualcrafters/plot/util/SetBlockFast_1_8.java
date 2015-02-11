@@ -27,10 +27,10 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
 /**
@@ -38,9 +38,15 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
-public class SetBlockFast extends AbstractSetBlock {
+public class SetBlockFast_1_8 extends AbstractSetBlock {
 
     private static final RefClass classBlock = getRefClass("{nms}.Block");
+    private static final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
+    private static final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
+    
+    
+    
+    
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
     private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
@@ -48,18 +54,23 @@ public class SetBlockFast extends AbstractSetBlock {
     private static RefMethod methodGetHandle;
     private static RefMethod methodGetChunkAt;
     private static RefMethod methodA;
-    private static RefMethod methodGetById;
+    private static RefMethod methodGetByCombinedId;
 
+    private static RefConstructor constructorBlockPosition;
+    
     /**
      * Constructor
      *
      * @throws NoSuchMethodException
      */
-    public SetBlockFast() throws NoSuchMethodException {
+    public SetBlockFast_1_8() throws NoSuchMethodException {
+        
+        constructorBlockPosition = classBlockPosition.getConstructor(int.class, int.class, int.class);
+        methodGetByCombinedId = classBlock.getMethod("getByCombinedId", int.class);
+        
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
-        methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
-        methodGetById = classBlock.getMethod("getById", int.class);
+        methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
     }
 
     /**
@@ -75,12 +86,12 @@ public class SetBlockFast extends AbstractSetBlock {
      * @return true
      */
     @Override
-    public boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
-
+    public boolean set(final World world, final int x, final int y, final int z, final int blockId, final byte data) {
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
-        final Object block = methodGetById.of(null).call(blockId);
-        methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
+        final Object pos = constructorBlockPosition.create((int) (x & 0x0f), y, (int) (z & 0x0f));
+        final Object id = methodGetByCombinedId.of(null).call(blockId + (data << 12));
+        methodA.of(chunk).call(pos, id);
         return true;
     }
 

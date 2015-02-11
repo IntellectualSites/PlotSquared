@@ -300,7 +300,7 @@ public class HybridPlotWorld extends PlotWorld {
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
-    public boolean isRotate(short id) {
+    public static boolean isRotate(short id) {
         switch (id) {
             case 23:
                 return true;
@@ -424,17 +424,18 @@ public class HybridPlotWorld extends PlotWorld {
         if (x < 0) {
             x += this.SIZE;
         }
-        if (rotate && isRotate(id)) {
-            data = (byte) ((data + 2) % 4);
-        }
         ChunkLoc loc = new ChunkLoc(x, z);
         if (!this.G_SCH.containsKey(loc)) {
             this.G_SCH.put(loc, new HashMap<Short, Short>());
         }
         
         this.G_SCH.get(loc).put(y, id);
-        
-        if (data == 0) {
+        if (isRotate(id)) {
+            if (rotate) {
+                data = (byte) ((data + 2) % 4);
+            }
+        }
+        else if (data == 0) {
             return;
         }
         if (!this.G_SCH_DATA.containsKey(loc)) {

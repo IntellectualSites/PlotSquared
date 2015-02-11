@@ -27,10 +27,12 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotSelection;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -93,11 +95,7 @@ public class Swap extends SubCommand {
         // TODO Requires testing!!
 
         PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
-
-        if (PlotHelper.canSetFast) {
-            SetBlockFast.update(plr);
-        }
-
+        PlotHelper.update(plr);
         return true;
     }
 }
