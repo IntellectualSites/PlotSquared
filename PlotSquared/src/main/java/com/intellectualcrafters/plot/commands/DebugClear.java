@@ -73,10 +73,10 @@ public class DebugClear extends SubCommand {
                                 @Override
                                 public void run() {
                                     PlotHelper.runners.remove(plot);
+                                    PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                                    PlotMain.sendConsoleSenderMessage("&aDone!");
                                 }
                             });
-                            PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
-                            PlotMain.sendConsoleSenderMessage("&aDone!");
                         }
                     }
                 }
@@ -107,9 +107,9 @@ public class DebugClear extends SubCommand {
             @Override
             public void run() {
                 PlotHelper.runners.remove(plot);
+                PlayerFunctions.sendMessage(plr, "&aDone!");
             }
         });
-        PlayerFunctions.sendMessage(plr, "&aDone!");
 
         // sign
 

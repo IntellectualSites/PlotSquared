@@ -340,7 +340,7 @@ public enum C {
      * Clearing
      */
     CLEARING_PLOT("&cClearing plot async."),
-    CLEARING_DONE("&6Clear completed!"),
+    CLEARING_DONE("&6Clear completed! Took %sms."),
     CLEARING_DONE_PACKETS("&6(&a%time% &6ms for packets)"),
     /*
      * Claiming

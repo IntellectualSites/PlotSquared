@@ -512,161 +512,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return world.getEntities().size();
     }
 
-    // public static void adjustLinkedPlots(String id) {
-    // World world = Bukkit.getWorld(Settings.PLOT_WORLD);
-    // int x = getIdX(id);
-    // int z = getIdZ(id);
-    //
-    // plot p11 = getPlot(id);
-    // if (p11 != null) {
-    // plot p01, p10, p12, p21, p00, p02, p20, p22;
-    // p01 = getPlot(x - 1, z);
-    // p10 = getPlot(x, z - 1);
-    // p12 = getPlot(x, z + 1);
-    // p21 = getPlot(x + 1, z);
-    // p00 = getPlot(x - 1, z - 1);
-    // p02 = getPlot(x - 1, z + 1);
-    // p20 = getPlot(x + 1, z - 1);
-    // p22 = getPlot(x + 1, z + 1);
-    // if (p01 != null && p01.owner.equals(p11.owner)) {
-    // fillroad(p01, p11, world);
-    // }
-    //
-    // if (p10 != null && p10.owner.equals(p11.owner)) {
-    // fillroad(p10, p11, world);
-    // }
-    //
-    // if (p12 != null && p12.owner.equals(p11.owner)) {
-    // fillroad(p12, p11, world);
-    // }
-    //
-    // if (p21 != null && p21.owner.equals(p11.owner)) {
-    // fillroad(p21, p11, world);
-    // }
-    //
-    // if (p00 != null && p10 != null && p01 != null
-    // && p00.owner.equals(p11.owner)
-    // && p11.owner.equals(p10.owner)
-    // && p10.owner.equals(p01.owner)) {
-    // fillmiddleroad(p00, p11, world);
-    // }
-    //
-    // if (p10 != null && p20 != null && p21 != null
-    // && p10.owner.equals(p11.owner)
-    // && p11.owner.equals(p20.owner)
-    // && p20.owner.equals(p21.owner)) {
-    // fillmiddleroad(p20, p11, world);
-    // }
-    //
-    // if (p01 != null && p02 != null && p12 != null
-    // && p01.owner.equals(p11.owner)
-    // && p11.owner.equals(p02.owner)
-    // && p02.owner.equals(p12.owner)) {
-    // fillmiddleroad(p02, p11, world);
-    // }
-    //
-    // if (p12 != null && p21 != null && p22 != null
-    // && p12.owner.equals(p11.owner)
-    // && p11.owner.equals(p21.owner)
-    // && p21.owner.equals(p22.owner)) {
-    // fillmiddleroad(p22, p11, world);
-    // }
-    // }
-    // }
-    //
-    // public static void fillroad(plot plot1, plot plot2, World w) {
-    // Location bottomPlot1, topPlot1, bottomPlot2, topPlot2;
-    // bottomPlot1 = getPlotBottomLoc(w, plot1.id);
-    // topPlot1 = getPlotTopLoc(w, plot1.id);
-    // bottomPlot2 = getPlotBottomLoc(w, plot2.id);
-    // topPlot2 = getPlotTopLoc(w, plot2.id);
-    //
-    // int minX, maxX, minZ, maxZ;
-    //
-    // boolean isWallX;
-    //
-    // int h = Settings.ROAD_HEIGHT;
-    // int wallId = Settings.WALL_BLOCK;
-    // int fillId = Settings.TOP_BLOCK;
-    //
-    // if(bottomPlot1.getBlockX() == bottomPlot2.getBlockX()) {
-    // minX = bottomPlot1.getBlockX();
-    // maxX = topPlot1.getBlockX();
-    //
-    // minZ = Math.min(bottomPlot1.getBlockZ(), bottomPlot2.getBlockZ()) +
-    // Settings.PLOT_WIDTH;
-    // maxZ = Math.min(topPlot1.getBlockZ(), topPlot2.getBlockZ()) -
-    // Settings.PLOT_WIDTH;
-    // } else {
-    // minZ = bottomPlot1.getBlockZ();
-    // maxZ = topPlot1.getBlockZ();
-    //
-    // minX = Math.min(bottomPlot1.getBlockX(), bottomPlot2.getBlockX()) +
-    // Settings.PLOT_WIDTH;
-    // maxX = Math.max(topPlot1.getBlockX(), topPlot2.getBlockX()) -
-    // Settings.PLOT_WIDTH;
-    // }
-    //
-    // isWallX = (maxX - minX) > (maxZ - minZ);
-    //
-    // if(isWallX) {
-    // minX--;
-    // maxX++;
-    // } else {
-    // minZ--;
-    // maxZ++;
-    // }
-    //
-    // for(int x = minX; x <= maxX; x++) {
-    // for(int z = minZ; x <= maxZ; z++) {
-    // for(int y = h; y < h + 3; y++) {
-    // if(y >= (h + 2)) {
-    // w.getBlockAt(x,y,z).setType(Material.AIR);
-    // } else if(y == (h + 1)) {
-    // if(isWallX && (x == minX || x == maxX)) {
-    // w.getBlockAt(x,y,z).setTypeIdAndData(wallId, (byte) 0, true);
-    // } else if(!isWallX && (z == minZ || z == maxZ)) {
-    // w.getBlockAt(x,y,z).setTypeIdAndData(wallId, (byte) 0, true);
-    // } else {
-    // w.getBlockAt(x,y,z).setType(Material.AIR);
-    // }
-    // } else {
-    // w.getBlockAt(x,y,z).setTypeIdAndData(fillId, (byte) 0, true);
-    // }
-    // }
-    // }
-    // }
-    // }
-    //
-    // public static void fillmiddleroad(plot p1, plot p2, World w) {
-    // Location b1 = getPlotBottomLoc(w, p1.id);
-    // Location t1 = getPlotTopLoc(w, p1.id);
-    // Location b2 = getPlotBottomLoc(w, p2.id);
-    // Location t2 = getPlotTopLoc(w, p2.id);
-    //
-    // int minX, maxX, minZ, maxZ;
-    //
-    // int h = Settings.ROAD_HEIGHT;
-    // int fillID = Settings.TOP_BLOCK;
-    //
-    // minX = Math.min(t1.getBlockX(), t2.getBlockX());
-    // maxX = Math.max(b1.getBlockX(), b2.getBlockX());
-    //
-    // minZ = Math.min(t1.getBlockZ(), t2.getBlockZ());
-    // maxZ = Math.max(b1.getBlockZ(), b2.getBlockZ());
-    //
-    // for(int x = minX; x <= maxX; x++) {
-    // for(int z = minZ; z <= maxZ; z++) {
-    // for(int y = h; y < h + 3; y++) {
-    // if(y >= (h + 1)) {
-    // w.getBlockAt(x,y,z).setType(Material.AIR);
-    // } else {
-    // w.getBlockAt(x,y,z).setTypeId(fillID);
-    // }
-    // }
-    // }
-    // }
-    // }
 
     public static int getTileEntities(final World world) {
         PlotMain.getWorldSettings(world);
@@ -748,7 +593,14 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
 
-    public static void clear(final World world, final Plot plot, final boolean isDelete) {
+    /**
+     * Clear a plot. Use null player if no player is present
+     * @param player
+     * @param world
+     * @param plot
+     * @param isDelete
+     */
+    public static void clear(final Player player, final World world, final Plot plot, final boolean isDelete) {
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return;
@@ -763,6 +615,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         h = (prime * h) + pos1.getBlockZ();
         state = h;
         
+        final long start = System.currentTimeMillis();
+        
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld.TERRAIN != 0) {
             runners.put(plot, 1);
@@ -770,6 +624,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
+                    if (player != null && player.isOnline()) {
+                        PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
+                    }
                     runners.remove(plot);
                 }
             });
@@ -791,7 +648,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     }
 
     /**
-     * Clear a plot
+     * Clear a plot and associated sections: [sign, entities, border]
      *
      * @param requester
      * @param plot
@@ -799,7 +656,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static void clear(final Player requester, final Plot plot, final boolean isDelete) {
         if (requester == null) {
             clearAllEntities(plot.getWorld(), plot, false);
-            clear(plot.getWorld(), plot, isDelete);
+            clear(requester, plot.getWorld(), plot, isDelete);
             removeSign(plot.getWorld(), plot);
             return;
         }
@@ -810,16 +667,12 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
 
-        final long start = System.currentTimeMillis();
-
         final World world;
         world = requester.getWorld();
 
         clearAllEntities(world, plot, false);
-        clear(world, plot, isDelete);
+        clear(requester, world, plot, isDelete);
         removeSign(world, plot);
-        final Plugin plugin = PlotMain.getMain();
-        PlayerFunctions.sendMessage(requester, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
     }
 
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock newblock) {
