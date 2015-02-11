@@ -22,6 +22,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -51,7 +54,7 @@ public class DebugExec extends SubCommand {
         if (args.length > 0) {
         	String arg = args[0].toLowerCase();
         	switch (arg) {
-	        	case "stop-expire":
+	        	case "stop-expire": {
 	        		if (ExpireManager.task != -1) {
 	        			Bukkit.getScheduler().cancelTask(ExpireManager.task);
 	        		}
@@ -60,7 +63,8 @@ public class DebugExec extends SubCommand {
 	        		}
 	        		ExpireManager.task = -1;
 	        		return PlayerFunctions.sendMessage(null, "Cancelled task.");
-	        	case "start-expire":
+	        	}
+	        	case "start-expire": {
 	        		if (ExpireManager.task == -1) {
 	        			ExpireManager.runTask();
 	        		}
@@ -68,7 +72,8 @@ public class DebugExec extends SubCommand {
 	        			return PlayerFunctions.sendMessage(null, "Plot expiry task already started");
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Started plot expiry task");
-	        	case "update-expired":
+	        	}
+	        	case "update-expired": {
 	        		if (args.length > 1) {
 	        			World world = Bukkit.getWorld(args[1]);
 	        			if (world == null) {
@@ -79,7 +84,8 @@ public class DebugExec extends SubCommand {
 	        			return true;
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec update-expired <world>");
-	        	case "show-expired":
+	        	}
+	        	case "show-expired": {
 	        		if (args.length > 1) {
 	        			World world = Bukkit.getWorld(args[1]);
 	        			if (world == null || !ExpireManager.expiredPlots.containsKey(args[1])) {
@@ -94,7 +100,8 @@ public class DebugExec extends SubCommand {
 	        			return true;
 	        		}
 	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec show-expired <world>");
-	        	case "seen":
+	        	}
+	        	case "seen": {
 	        	    if (args.length != 2) {
 	        	        return PlayerFunctions.sendMessage(null, "Use /plot debugexec seen <player>");
 	        	    }
@@ -114,6 +121,26 @@ public class DebugExec extends SubCommand {
 	        	    PlayerFunctions.sendMessage(null, "GMT: " + date.toGMTString());
 	        	    PlayerFunctions.sendMessage(null, "Local: " + date.toLocaleString());
 	        	    return true;
+	        	}
+	        	case "trim-get-chunks": {
+	        	    if (args.length != 2) {
+	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-get-chunks <world>");
+	        	        PlayerFunctions.sendMessage(null, "&7 - Generates a list of regions to trim");
+	        	        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
+	        	    }
+	        	    World world = Bukkit.getWorld(args[1]);
+	        	    if (world == null || !PlotMain.isPlotWorld(args[1])) {
+                        return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
+                    }
+	        	    ArrayList<ChunkLoc> chunks0 = Trim.getTrimChunks(world);
+	        	    PlayerFunctions.sendMessage(null, "BULK MCR: " + chunks0.size());
+	        	    ArrayList<ChunkLoc> chunks = Trim.getTrimPlots(world);
+	        	    chunks.addAll(chunks0);
+	        	    PlayerFunctions.sendMessage(null, "MCR: " + chunks.size());
+	        	    PlayerFunctions.sendMessage(null, "CHUNKS: " + chunks.size() * 256);
+	        	    PlayerFunctions.sendMessage(null, "Calculating size on disk...");
+	        	    PlayerFunctions.sendMessage(null, "SIZE (bytes): " + Trim.calculateSizeOnDisk(world, chunks));
+	        	}
         	}
         }
     	PlayerFunctions.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");

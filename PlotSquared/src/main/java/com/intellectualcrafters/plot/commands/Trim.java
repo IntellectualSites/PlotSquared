@@ -27,6 +27,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -157,7 +159,7 @@ public class Trim extends SubCommand {
                         }
                     }
                 }
-                final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();        
+                final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
                 Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
                     @Override
                     public void run() {
@@ -185,8 +187,98 @@ public class Trim extends SubCommand {
         return true;
     }
     
-    private void trimPlots(World world) {
-        String worldname = world.getName();
+    public static ArrayList<Plot> expired = null;
+    
+    public static void updateUnmodifiedPlots(final World world) {
+        final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+        final ArrayList<Plot> expired = new ArrayList<>();
+        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
+        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
+        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+            @Override
+            public void run() {
+                if (manager != null && plots.size() > 0) {
+                    Plot plot = plots.iterator().next();
+                    if (plot.hasOwner()) {
+                        HybridPlotManager.checkModified(plot, 0);
+                    }
+                    if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
+                        expired.add(plot);
+                        sendMessage("found expired: " + plot);
+                    }
+                }
+                else {
+                    Trim.expired = expired;
+                    Trim.TASK = false;
+                    sendMessage("Done!");
+                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+                    return;
+                }
+            }
+        }, 1, 1);
+    }
+    
+    public static long calculateSizeOnDisk(World world, ArrayList<ChunkLoc> chunks) {
+        int result = 0;
+        for (ChunkLoc loc : chunks) {
+            String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+            File file = new File(directory);
+            result += file.getTotalSpace();
+        }
+        return result;
+    }
+    
+    public static ArrayList<ChunkLoc> getTrimChunks(World world) {
+        ArrayList<ChunkLoc> toRemove = new ArrayList<>();
+        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+        File folder = new File(directory);
+        File[] regionFiles = folder.listFiles();
+        for (File file : regionFiles) {
+            String name = file.getName();
+            if (name.endsWith("mca")) {
+                if (file.getTotalSpace() <= 8192) {
+                    try {
+                        String[] split = name.split("\\.");
+                        int x = Integer.parseInt(split[1]);
+                        int z = Integer.parseInt(split[2]);
+                        ChunkLoc loc = new ChunkLoc(x, z);
+                        toRemove.add(loc);
+                    }
+                    catch (Exception e) {}
+                    continue;
+                }
+                else {
+                    boolean delete = false;
+                    Path path = Paths.get(file.getPath());
+                    try {
+                        BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                        long creation = attr.creationTime().toMillis();
+                        long modification = file.lastModified();
+                        long diff = Math.abs(creation - modification);
+                        if (diff < 10000) {
+                            PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+name+" (max 256 chunks)");
+                            try {
+                                String[] split = name.split("\\.");
+                                int x = Integer.parseInt(split[1]);
+                                int z = Integer.parseInt(split[2]);
+                                ChunkLoc loc = new ChunkLoc(x, z);
+                                toRemove.add(loc);
+                            }
+                            catch (Exception e) {}
+                            delete = true;
+                        }
+                    } catch (Exception e) {
+                        
+                    }
+                }
+            }
+        }
+        return toRemove;
+    }
+    
+    public static ArrayList<ChunkLoc> getTrimPlots(World world) {
+        ArrayList<ChunkLoc> toRemove = new ArrayList<>();
         ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         for (ChunkLoc loc : chunks) {
             int sx = loc.x << 4;
@@ -205,12 +297,21 @@ public class Trim extends SubCommand {
                 }
             }
             if (delete) {
-                ChunkManager.deleteRegionFile(worldname, loc);
+                toRemove.add(loc);
             }
+        }
+        return toRemove;
+    }
+    
+    public static void trimPlots(World world) {
+        ArrayList<ChunkLoc> chunks = getTrimPlots(world);
+        String worldname = world.getName();
+        for (ChunkLoc loc : chunks) {
+            ChunkManager.deleteRegionFile(worldname, loc);
         }
     }
     
-    private void sendMessage(final String message) {
+    public static void sendMessage(final String message) {
         PlotMain.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: " + message);
     }
     
