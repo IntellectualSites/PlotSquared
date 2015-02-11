@@ -120,7 +120,7 @@ public class Trim extends SubCommand {
                 final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
                 final HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
                 final String worldname = world.getName();
-                String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+                String directory = world.getName() + File.separator + "region";
                 File folder = new File(directory);
                 File[] regionFiles = folder.listFiles();
                 ArrayList<ChunkLoc> chunkChunks = new ArrayList<>();
@@ -222,16 +222,21 @@ public class Trim extends SubCommand {
     public static long calculateSizeOnDisk(World world, ArrayList<ChunkLoc> chunks) {
         int result = 0;
         for (ChunkLoc loc : chunks) {
-            String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+            String directory = world.getName() + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
             File file = new File(directory);
-            result += file.getTotalSpace();
+            try {
+                result += file.length();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
     
     public static ArrayList<ChunkLoc> getTrimChunks(World world) {
         ArrayList<ChunkLoc> toRemove = new ArrayList<>();
-        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+        String directory = world.getName() + File.separator + "region";
         File folder = new File(directory);
         File[] regionFiles = folder.listFiles();
         for (File file : regionFiles) {
@@ -245,11 +250,12 @@ public class Trim extends SubCommand {
                         ChunkLoc loc = new ChunkLoc(x, z);
                         toRemove.add(loc);
                     }
-                    catch (Exception e) {}
+                    catch (Exception e) {
+                        System.out.print(name);
+                    }
                     continue;
                 }
                 else {
-                    boolean delete = false;
                     Path path = Paths.get(file.getPath());
                     try {
                         BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
@@ -265,8 +271,9 @@ public class Trim extends SubCommand {
                                 ChunkLoc loc = new ChunkLoc(x, z);
                                 toRemove.add(loc);
                             }
-                            catch (Exception e) {}
-                            delete = true;
+                            catch (Exception e) {
+                                System.out.print(name);
+                            }
                         }
                     } catch (Exception e) {
                         
@@ -290,7 +297,7 @@ public class Trim extends SubCommand {
             for (int x = sx; x < sx + 16; x++) {
                 for (int z = sz; z < sz + 16; z++) {
                     Chunk chunk = world.getChunkAt(x, z);
-                    if (ChunkManager.hasPlot(world, chunk)) {
+                    if (ChunkManager.hasPlot(world, chunk) != null) {
                         delete = false;
                         break loop;
                     }

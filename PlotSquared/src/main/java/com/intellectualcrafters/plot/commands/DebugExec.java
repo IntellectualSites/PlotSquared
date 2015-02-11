@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -38,11 +39,15 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class DebugExec extends SubCommand {
+
+    private ArrayList<ChunkLoc> chunks = null;
+    private World world;
 
     public DebugExec() {
     	super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
@@ -50,7 +55,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final Player player, final String... args) {
-    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen"});
+    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check-chunks", "trim-get-chunks"});
         if (args.length > 0) {
         	String arg = args[0].toLowerCase();
         	switch (arg) {
@@ -136,10 +141,38 @@ public class DebugExec extends SubCommand {
 	        	    PlayerFunctions.sendMessage(null, "BULK MCR: " + chunks0.size());
 	        	    ArrayList<ChunkLoc> chunks = Trim.getTrimPlots(world);
 	        	    chunks.addAll(chunks0);
+	        	    this.chunks = chunks;
+	        	    this.world = world;
 	        	    PlayerFunctions.sendMessage(null, "MCR: " + chunks.size());
 	        	    PlayerFunctions.sendMessage(null, "CHUNKS: " + chunks.size() * 256);
 	        	    PlayerFunctions.sendMessage(null, "Calculating size on disk...");
 	        	    PlayerFunctions.sendMessage(null, "SIZE (bytes): " + Trim.calculateSizeOnDisk(world, chunks));
+	        	    return true;
+	        	}
+	        	case "trim-check-chunks": {
+	        	    if (this.chunks == null) {
+	        	        return PlayerFunctions.sendMessage(null, "Please run the 'trim-get-chunks' command first");
+	        	    }
+	        	    
+	        	    PlayerFunctions.sendMessage(null, "Checking MCR files for existing plots:");
+	        	    int count = 0;
+	        	    for (ChunkLoc loc : chunks) {
+	                    int sx = loc.x << 4;
+	                    int sz = loc.z << 4;
+	                    loop:
+	                    for (int x = sx; x < sx + 16; x++) {
+	                        for (int z = sz; z < sz + 16; z++) {
+	                            Chunk chunk = world.getChunkAt(x, z);
+	                            Plot plot = ChunkManager.hasPlot(world, chunk);
+	                            if (plot != null) {
+	                                PlayerFunctions.sendMessage(null, " - " + plot);
+	                                count++;
+	                                break loop;
+	                            }
+	                        }
+	                    }
+	                }
+	        	    PlayerFunctions.sendMessage(null, "Found " + count + "plots.");
 	        	}
         	}
         }

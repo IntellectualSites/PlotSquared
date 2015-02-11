@@ -51,7 +51,7 @@ public class ChunkManager {
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
     
     public static ArrayList<ChunkLoc> getChunkChunks(World world) {
-        File[] regionFiles = new File(new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region").listFiles();
+        File[] regionFiles = new File(world.getName() + File.separator + "region").listFiles();
         ArrayList<ChunkLoc> chunks = new ArrayList<>();
         for (File file : regionFiles) {
             String name = file.getName();
@@ -69,7 +69,7 @@ public class ChunkManager {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+                String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 File file = new File(directory);
                 PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+file.getName()+" (max 256 chunks)");
                 if (file.exists()) {
@@ -79,7 +79,7 @@ public class ChunkManager {
         });
     }
     
-    public static boolean hasPlot(World world, Chunk chunk) {
+    public static Plot hasPlot(World world, Chunk chunk) {
         int x1 = chunk.getX() << 4;
         int z1 = chunk.getZ() << 4;
         int x2 = x1 + 15;
@@ -89,14 +89,14 @@ public class ChunkManager {
         Plot plot;
         plot = PlotHelper.getCurrentPlot(bot); 
         if (plot != null && plot.owner != null) {
-            return true;
+            return plot;
         }
         Location top = new Location(world, x2, 0, z2);
         plot = PlotHelper.getCurrentPlot(top); 
         if (plot != null && plot.owner != null) {
-            return true;
+            return plot;
         }
-        return false;
+        return null;
     }
     
     private static HashMap<BlockLoc, ItemStack[]> chestContents;
@@ -335,7 +335,6 @@ public class ChunkManager {
             if (state instanceof Skull) {
                 Object[] data = skullData.get(loc);
                 if (data[0] != null) {
-                    System.out.print("SET OWNER");
                     ((Skull) (state)).setOwner((String) data[0]);
                 }
                 if (((Integer) data[1]) != 0) {
@@ -523,7 +522,6 @@ public class ChunkManager {
                         hopperContents.put(bl, invHop);
                         break;
                     case 397:
-                        System.out.print("SAVING SKULL");
                         bl = new BlockLoc(x, y, z);
                         Skull skull = (Skull) block.getState();
                         String o = skull.getOwner();
