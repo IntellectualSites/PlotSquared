@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.commons.lang.mutable.MutableInt;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,8 +31,11 @@ import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -42,6 +47,8 @@ public class ChunkManager {
     public static RegionWrapper CURRENT_PLOT_CLEAR = null;
     public static HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
     public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
+    public static MutableInt index = new MutableInt(0);
+    public static HashMap<Integer, Integer> tasks = new HashMap<>();
     
     public static ArrayList<ChunkLoc> getChunkChunks(World world) {
         File[] regionFiles = new File(new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region").listFiles();
@@ -110,27 +117,49 @@ public class ChunkManager {
     
     private static HashSet<EntityWrapper> entities;
     
-    public static boolean regenerateRegion(Location pos1, Location pos2) {
-        World world = pos1.getWorld();
+    public static boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
+        index.increment();
+        final Plugin plugin = (Plugin) PlotMain.getMain();
+        
+        final World world = pos1.getWorld();
         Chunk c1 = world.getChunkAt(pos1);
         Chunk c2 = world.getChunkAt(pos2);
+        
+        final int sx = pos1.getBlockX();
+        final int sz = pos1.getBlockZ();
+        final int ex = pos2.getBlockX();
+        final int ez = pos2.getBlockZ();
 
-        CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
+        final int c1x = c1.getX();
+        final int c1z = c1.getZ();
+        final int c2x = c2.getX();
+        final int c2z = c2.getZ();
         
-        int sx = pos1.getBlockX();
-        int sz = pos1.getBlockZ();
-        int ex = pos2.getBlockX();
-        int ez = pos2.getBlockZ();
-        
-        int c1x = c1.getX();
-        int c1z = c1.getZ();
-        int c2x = c2.getX();
-        int c2z = c2.getZ();
-        
-        int maxY = world.getMaxHeight();
+        final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
         for (int x = c1x; x <= c2x; x ++) {
             for (int z = c1z; z <= c2z; z ++) {
                 Chunk chunk = world.getChunkAt(x, z);
+                chunk.load(false);
+                chunks.add(chunk);
+            }
+        }
+        final int maxY = world.getMaxHeight();
+        final Integer currentIndex = index.toInteger();
+        final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                if (chunks.size() == 0) {
+                    System.out.print("DONE");
+                    TaskManager.runTaskLater(whenDone, 1);
+                    Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
+                    return;
+                }
+                CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
+                Chunk chunk = chunks.get(0);
+                chunks.remove(0);
+                int x = chunk.getX();
+                int z = chunk.getZ();
+                
                 boolean loaded = true;
                 if (!chunk.isLoaded()) {
                     boolean result = chunk.load(false);
@@ -177,10 +206,10 @@ public class ChunkManager {
                     chunk.unload();
                     chunk.load();
                 }
+                CURRENT_PLOT_CLEAR = null;
             }
-        }
-        CURRENT_PLOT_CLEAR = null;
-        initMaps();
+        }, 1, 1);
+        tasks.put(currentIndex, task);
         return true;
     }
     

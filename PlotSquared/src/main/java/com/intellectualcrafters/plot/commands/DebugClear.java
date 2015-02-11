@@ -64,7 +64,17 @@ public class DebugClear extends SubCommand {
                             World bukkitWorld = Bukkit.getWorld(world);
                             Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
                             Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-                            ChunkManager.regenerateRegion(pos1, pos2);
+                            if (PlotHelper.runners.containsKey(plot)) {
+                                PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+                                return false;
+                            }
+                            PlotHelper.runners.put(plot, 1);
+                            ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+                                @Override
+                                public void run() {
+                                    PlotHelper.runners.remove(plot);
+                                }
+                            });
                             PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
                             PlotMain.sendConsoleSenderMessage("&aDone!");
                         }
@@ -88,7 +98,17 @@ public class DebugClear extends SubCommand {
         World bukkitWorld = plr.getWorld();
         Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
         Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-        ChunkManager.regenerateRegion(pos1, pos2);
+        if (PlotHelper.runners.containsKey(plot)) {
+            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+            return false;
+        }
+        PlotHelper.runners.put(plot, 1);
+        ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+            @Override
+            public void run() {
+                PlotHelper.runners.remove(plot);
+            }
+        });
         PlayerFunctions.sendMessage(plr, "&aDone!");
 
         // sign

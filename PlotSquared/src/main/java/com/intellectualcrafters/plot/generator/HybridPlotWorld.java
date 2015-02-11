@@ -221,6 +221,33 @@ public class HybridPlotWorld extends PlotWorld {
         Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
         Schematic schem3 = SchematicHandler.getSchematic(schem3Str);
         
+        int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
+        int oddshift = 0;
+        if (this.ROAD_WIDTH % 2 != 0) {
+            oddshift = 1;
+        }
+        
+        if (schem3 != null) {
+            PLOT_SCHEMATIC = true;
+            DataCollection[] blocks3 = schem3.getBlockCollection();
+            Dimension d3 = schem3.getSchematicDimension();
+            short w3 = (short) d3.getX();
+            short l3 = (short) d3.getZ();
+            short h3 = (short) d3.getY();
+            for (short x = 0; x < w3; x++) {
+                for (short z = 0; z < l3; z++) {
+                    for (short y = 0; y < h3; y++) {
+                        int index = y * w3 * l3 + z * w3 + x;
+                        short id = blocks3[index].getBlock();
+                        byte data = blocks3[index].getData();
+                        if (id != 0) {
+                            addOverlayBlock((short) (x + shift + oddshift), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
+                        }
+                    }
+                }
+            }
+        }
+        
         if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
             PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
@@ -242,12 +269,6 @@ public class HybridPlotWorld extends PlotWorld {
         short h2 = (short) d2.getY();
         this.SCHEMATIC_HEIGHT = (short) Math.max(h2, h1);
 
-        int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
-        int oddshift = 0;
-        if (this.ROAD_WIDTH % 2 != 0) {
-        	oddshift = 1;
-        }
-        
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
@@ -276,28 +297,6 @@ public class HybridPlotWorld extends PlotWorld {
                 }
             }
         }
-        
-        if (schem3 != null) {
-            PLOT_SCHEMATIC = true;
-            DataCollection[] blocks3 = schem3.getBlockCollection();
-            Dimension d3 = schem3.getSchematicDimension();
-            short w3 = (short) d3.getX();
-            short l3 = (short) d3.getZ();
-            short h3 = (short) d3.getY();
-            for (short x = 0; x < w3; x++) {
-                for (short z = 0; z < l3; z++) {
-                    for (short y = 0; y < h3; y++) {
-                        int index = y * w3 * l3 + z * w3 + x;
-                        short id = blocks3[index].getBlock();
-                        byte data = blocks3[index].getData();
-                        if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
-                        }
-                    }
-                }
-            }
-        }
-        
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
