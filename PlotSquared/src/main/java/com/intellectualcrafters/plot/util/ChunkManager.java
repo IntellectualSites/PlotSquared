@@ -11,6 +11,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.SkullType;
 import org.bukkit.World;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
@@ -341,7 +342,10 @@ public class ChunkManager {
                     ((Skull) (state)).setOwner((String) data[0]);
                 }
                 if (((Integer) data[1]) != 0) {
-                    ((Skull) (state)).setRotation(getRotation((Integer) data[1]));
+                    ((Skull) (state)).setRotation(BlockFace.values()[(int) data[1]]);
+                }
+                if (((Integer) data[2]) != 0) {
+                    ((Skull) (state)).setSkullType(SkullType.values()[(int) data[2]]);
                 }
                 state.update(true);
             }
@@ -528,8 +532,10 @@ public class ChunkManager {
                         bl = new BlockLoc(x, y, z);
                         Skull skull = (Skull) block.getState();
                         String o = skull.getOwner();
-                        short rot = (short) skull.getRotation().ordinal();
-                        skullData.put(bl, new Object[] {o, rot});
+                        byte skulltype = getOrdinal(SkullType.values(),skull.getSkullType());
+                        BlockFace te = skull.getRotation();
+                        short rot = (short) getOrdinal(BlockFace.values(), skull.getRotation());
+                        skullData.put(bl, new Object[] {o, rot, skulltype});
                         break;
                 }
             }
@@ -539,59 +545,12 @@ public class ChunkManager {
         GENERATE_DATA.put(loc, datas);
     }
     
-    public static BlockFace getRotation(int ordinal) {
-        switch (ordinal) {
-            case 0: {
-                return BlockFace.NORTH;
-            } 
-            case 1: {
-                return BlockFace.NORTH_NORTH_EAST;
-            } 
-            case 2: {
-                return BlockFace.NORTH_EAST;
-            } 
-            case 3: {
-                return BlockFace.EAST_NORTH_EAST;
-            } 
-            case 4: {
-                return BlockFace.EAST;
-            } 
-            case 5: {
-                return BlockFace.EAST_SOUTH_EAST;
-            } 
-            case 6: {
-                return BlockFace.SOUTH_EAST;
-            } 
-            case 7: {
-                return BlockFace.SOUTH_SOUTH_EAST;
-            } 
-            case 8: {
-                return BlockFace.SOUTH;
-            } 
-            case 9: {
-                return BlockFace.SOUTH_SOUTH_WEST;
-            } 
-            case 10: {
-                return BlockFace.SOUTH_WEST;
-            } 
-            case 11: {
-                return BlockFace.WEST_SOUTH_WEST;
-            } 
-            case 12: {
-                return BlockFace.WEST;
-            } 
-            case 13: {
-                return BlockFace.WEST_NORTH_WEST;
-            } 
-            case 14: {
-                return BlockFace.NORTH_WEST;
-            } 
-            case 15: {
-                return BlockFace.NORTH_NORTH_WEST;
-            }
-            default: {
-                return BlockFace.NORTH;
+    private static byte getOrdinal(Object[] list, Object value) {
+        for (byte i = 0; i < list.length; i++) {
+            if (list[i].equals(value)) {
+                return i;
             }
         }
+        return 0;
     }
 }
