@@ -8,11 +8,13 @@ import java.util.HashSet;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.SkullType;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -29,6 +31,8 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
@@ -117,6 +121,8 @@ public class ChunkManager {
     private static HashMap<BlockLoc, String> cmdData;
     private static HashMap<BlockLoc, String[]> signContents;
     private static HashMap<BlockLoc, Note> noteBlockContents;
+    private static HashMap<BlockLoc, ArrayList<Byte[]>> bannerColors;
+    private static HashMap<BlockLoc, Byte> bannerBase;
     
     private static HashSet<EntityWrapper> entities;
     
@@ -234,6 +240,8 @@ public class ChunkManager {
         noteBlockContents = new HashMap<>();
         signContents = new HashMap<>();
         cmdData = new HashMap<>();
+        bannerBase= new HashMap<>();
+        bannerColors = new HashMap<>();
         
         entities = new HashSet<>();
     }
@@ -425,6 +433,22 @@ public class ChunkManager {
             }
             else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate furnace: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
+        
+        for (BlockLoc loc: bannerBase.keySet()) {
+            Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+            BlockState state = block.getState();
+            if (state instanceof Banner) {
+                Banner banner = (Banner) state;
+                byte base = bannerBase.get(loc);
+                ArrayList<Byte[]> colors = bannerColors.get(loc);
+                banner.setBaseColor(DyeColor.values()[base]);
+                for (Byte[] color : colors) {
+                    banner.addPattern(new Pattern(DyeColor.getByDyeData(color[1]), PatternType.values()[color[0]]));
+                }
+                state.update(true);
+            }
+            else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate banner: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+        }
     }
     
     public static void saveBlock(World world, int maxY, int x, int z) {
@@ -536,6 +560,19 @@ public class ChunkManager {
                         BlockFace te = skull.getRotation();
                         short rot = (short) getOrdinal(BlockFace.values(), skull.getRotation());
                         skullData.put(bl, new Object[] {o, rot, skulltype});
+                        break;
+                    case 176:
+                    case 177:
+                        bl = new BlockLoc(x, y, z);
+                        Banner banner = (Banner) block.getState();
+                        byte base = getOrdinal(DyeColor.values(), banner.getBaseColor());
+                        ArrayList<Byte[]> types = new ArrayList<>();
+                        
+                        for (Pattern pattern : banner.getPatterns()) {  
+                            types.add(new Byte[] {getOrdinal(PatternType.values(), pattern.getPattern()), pattern.getColor().getDyeData() });
+                        }
+                        bannerBase.put(bl, base);
+                        bannerColors.put(bl, types);
                         break;
                 }
             }

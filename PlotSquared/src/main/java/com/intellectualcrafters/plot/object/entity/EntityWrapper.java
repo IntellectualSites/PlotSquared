@@ -72,6 +72,9 @@ public class EntityWrapper {
             entity.setCustomName(this.lived.name);
             entity.setCustomNameVisible(this.lived.visible);
         }
+        if (this.lived.potions != null && this.lived.potions.size() > 0) {
+            entity.addPotionEffects(this.lived.potions);
+        }
         entity.setRemainingAir(this.lived.air);
         entity.setRemoveWhenFarAway(this.lived.persistent);
         
@@ -98,6 +101,7 @@ public class EntityWrapper {
 
     public void storeLiving(final LivingEntity lived) {
         this.lived = new LivingEntityStats();
+        this.lived.potions = lived.getActivePotionEffects();
         this.lived.loot = lived.getCanPickupItems();
         this.lived.name = lived.getCustomName();
         this.lived.visible = lived.isCustomNameVisible();
