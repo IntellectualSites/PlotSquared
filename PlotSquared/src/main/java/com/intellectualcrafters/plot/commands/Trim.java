@@ -101,37 +101,49 @@ public class Trim extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
-        if (runTrimTask(world)) {
-            sendMessage(C.TRIM_START.s());
-            return true;
+        
+        if (Trim.TASK) {
+            sendMessage(C.TRIM_IN_PROGRESS.s());
+            return false;
         }
-        sendMessage(C.TRIM_IN_PROGRESS.s());
-        return false;
+        
+        sendMessage(C.TRIM_START.s());
+        final ArrayList<ChunkLoc> empty = new ArrayList<>();
+        getTrimRegions(empty, world, new Runnable() {
+            @Override
+            public void run() {
+                deleteChunks(world, empty);
+            }
+        });
+        return true;
     }
     
-    public boolean runTrimTask(final World world) {
+    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final World world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
-        Trim.TASK = true;
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
-                final HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
-                final String worldname = world.getName();
                 String directory = world.getName() + File.separator + "region";
                 File folder = new File(directory);
                 File[] regionFiles = folder.listFiles();
-                ArrayList<ChunkLoc> chunkChunks = new ArrayList<>();
                 for (File file : regionFiles) {
                     String name = file.getName();
                     if (name.endsWith("mca")) {
                         if (file.getTotalSpace() <= 8192) {
-                            file.delete();
+                            try {
+                                String[] split = name.split("\\.");
+                                int x = Integer.parseInt(split[1]);
+                                int z = Integer.parseInt(split[2]);
+                                ChunkLoc loc = new ChunkLoc(x, z);
+                                empty.add(loc);
+                            }
+                            catch (Exception e) {
+                                System.out.print("INVALID MCA: " + name);
+                            }
                         }
                         else {
-                            boolean delete = false;
                             Path path = Paths.get(file.getPath());
                             try {
                                 BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
@@ -139,51 +151,70 @@ public class Trim extends SubCommand {
                                 long modification = file.lastModified();
                                 long diff = Math.abs(creation - modification);
                                 if (diff < 10000) {
-                                    PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+name+" (max 256 chunks)");
-                                    file.delete();
-                                    delete = true;
+                                    try {
+                                        String[] split = name.split("\\.");
+                                        int x = Integer.parseInt(split[1]);
+                                        int z = Integer.parseInt(split[2]);
+                                        ChunkLoc loc = new ChunkLoc(x, z);
+                                        empty.add(loc);
+                                    }
+                                    catch (Exception e) {
+                                        System.out.print("INVALID MCA: " + name);
+                                    }
                                 }
                             } catch (Exception e) {
                                 
                             }
-                            if (!delete) {
-                                String[] split = name.split("\\.");
-                                try {
-                                    int x = Integer.parseInt(split[1]);
-                                    int z = Integer.parseInt(split[2]);
-                                    ChunkLoc loc = new ChunkLoc(x, z);
-                                    chunkChunks.add(loc);
-                                }
-                                catch (Exception e) {  }
-                            }
                         }
                     }
                 }
-                final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
-                Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
-                    @Override
-                    public void run() {
-                        if (manager != null && plots.size() > 0) {
-                            Plot plot = plots.iterator().next();
-                            if (plot.hasOwner()) {
-                                HybridPlotManager.checkModified(plot, 0);
-                            }
-                            if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
-                                PlotMain.removePlot(worldname, plot.id, true);
-                            }
-                            plots.remove(0);
-                        }
-                        else {
-                            trimPlots(world);
-                            Trim.TASK = false;
-                            sendMessage("Done!");
-                            Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
-                            return;
-                        }
-                    }
-                }, 1, 1);
+                Trim.TASK = false;
+                TaskManager.runTask(whenDone);
             }
         });
+        Trim.TASK = true;
+        return true;
+    }
+    
+    public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final World world, final Runnable whenDone) {
+        if (Trim.TASK) {
+            return false;
+        }
+        sendMessage("Collecting region data...");
+        final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
+        sendMessage(" - MCA #: " + chunks.size());
+        sendMessage(" - CHUNKS: " + (chunks.size() * 256) +" (max)");
+        sendMessage(" - TIME ESTIMATE: " + (chunks.size()/1200) +" minutes");
+        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+            @Override
+            public void run() {
+                if (chunks.size() == 0) {
+                    TaskManager.runTask(whenDone);
+                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+                    return;
+                }
+                ChunkLoc loc = chunks.get(0);
+                int sx = loc.x << 5;
+                int sz = loc.z << 5;
+                
+                boolean delete = true;
+                
+                loop:
+                for (int x = sx; x < sx + 32; x++) {
+                    for (int z = sz; z < sz + 32; z++) {
+                        Chunk chunk = world.getChunkAt(x, z);
+                        if (ChunkManager.hasPlot(world, chunk) != null) {
+                            delete = false;
+                            break loop;
+                        }
+                    }
+                }
+                if (delete) {
+                    empty.add(loc);
+                }
+            }
+        }, 1L, 1L);
+        Trim.TASK = true;
         return true;
     }
     
@@ -219,99 +250,7 @@ public class Trim extends SubCommand {
         }, 1, 1);
     }
     
-    public static long calculateSizeOnDisk(World world, ArrayList<ChunkLoc> chunks) {
-        int result = 0;
-        for (ChunkLoc loc : chunks) {
-            String directory = world.getName() + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-            File file = new File(directory);
-            try {
-                result += file.length();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-    
-    public static ArrayList<ChunkLoc> getTrimChunks(World world) {
-        ArrayList<ChunkLoc> toRemove = new ArrayList<>();
-        String directory = world.getName() + File.separator + "region";
-        File folder = new File(directory);
-        File[] regionFiles = folder.listFiles();
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                if (file.getTotalSpace() <= 8192) {
-                    try {
-                        String[] split = name.split("\\.");
-                        int x = Integer.parseInt(split[1]);
-                        int z = Integer.parseInt(split[2]);
-                        ChunkLoc loc = new ChunkLoc(x, z);
-                        toRemove.add(loc);
-                    }
-                    catch (Exception e) {
-                        System.out.print(name);
-                    }
-                    continue;
-                }
-                else {
-                    Path path = Paths.get(file.getPath());
-                    try {
-                        BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                        long creation = attr.creationTime().toMillis();
-                        long modification = file.lastModified();
-                        long diff = Math.abs(creation - modification);
-                        if (diff < 10000) {
-                            PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+name+" (max 256 chunks)");
-                            try {
-                                String[] split = name.split("\\.");
-                                int x = Integer.parseInt(split[1]);
-                                int z = Integer.parseInt(split[2]);
-                                ChunkLoc loc = new ChunkLoc(x, z);
-                                toRemove.add(loc);
-                            }
-                            catch (Exception e) {
-                                System.out.print(name);
-                            }
-                        }
-                    } catch (Exception e) {
-                        
-                    }
-                }
-            }
-        }
-        return toRemove;
-    }
-    
-    public static ArrayList<ChunkLoc> getTrimPlots(World world) {
-        ArrayList<ChunkLoc> toRemove = new ArrayList<>();
-        ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
-        for (ChunkLoc loc : chunks) {
-            int sx = loc.x << 4;
-            int sz = loc.z << 4;
-            
-            boolean delete = true;
-            
-            loop:
-            for (int x = sx; x < sx + 16; x++) {
-                for (int z = sz; z < sz + 16; z++) {
-                    Chunk chunk = world.getChunkAt(x, z);
-                    if (ChunkManager.hasPlot(world, chunk) != null) {
-                        delete = false;
-                        break loop;
-                    }
-                }
-            }
-            if (delete) {
-                toRemove.add(loc);
-            }
-        }
-        return toRemove;
-    }
-    
-    public static void trimPlots(World world) {
-        ArrayList<ChunkLoc> chunks = getTrimPlots(world);
+    public static void deleteChunks(World world, ArrayList<ChunkLoc> chunks) {
         String worldname = world.getName();
         for (ChunkLoc loc : chunks) {
             ChunkManager.deleteRegionFile(worldname, loc);
@@ -319,7 +258,7 @@ public class Trim extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PlotMain.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: " + message);
+        PlotMain.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: &7" + message);
     }
     
 }

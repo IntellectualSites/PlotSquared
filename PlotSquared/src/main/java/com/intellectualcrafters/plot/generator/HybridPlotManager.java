@@ -180,13 +180,13 @@ import com.intellectualcrafters.plot.util.SendChunk;
     
     public void regenerateChunkChunk(World world, ChunkLoc loc) {
         
-        int sx = loc.x << 4;
-        int sz = loc.z << 4;
+        int sx = loc.x << 5;
+        int sz = loc.z << 5;
         
         HashSet<Chunk> chunks = new HashSet<Chunk>();
         
-        for (int x = sx; x < sx + 16; x++) {
-            for (int z = sz; z < sz + 16; z++) {
+        for (int x = sx; x < sx + 32; x++) {
+            for (int z = sz; z < sz + 32; z++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 chunk.load(false);
                 chunks.add(chunk);

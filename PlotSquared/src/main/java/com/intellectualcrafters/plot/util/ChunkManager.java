@@ -78,7 +78,7 @@ public class ChunkManager {
             public void run() {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 File file = new File(directory);
-                PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+file.getName()+" (max 256 chunks)");
+                PlotMain.sendConsoleSenderMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
                 }
