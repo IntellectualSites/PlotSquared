@@ -100,7 +100,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag");
                     return false;
                 }
-                if (args.length != 3) {
+                if (args.length < 3) {
                     PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
                     return false;
                 }
@@ -173,7 +173,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
                     return false;
                 }
-                if (args.length != 3) {
+                if (args.length < 3) {
                     PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
                     return false;
                 }
