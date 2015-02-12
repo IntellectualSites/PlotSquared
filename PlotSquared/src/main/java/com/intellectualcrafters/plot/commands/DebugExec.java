@@ -59,7 +59,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final Player player, final String... args) {
-    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check-chunks", "trim-get-chunks"});
+    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check"});
         if (args.length > 0) {
         	String arg = args[0].toLowerCase();
         	switch (arg) {
@@ -133,7 +133,7 @@ public class DebugExec extends SubCommand {
 	        	}
 	        	case "trim-check": {
 	        	    if (args.length != 2) {
-	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-get-chunks <world>");
+	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-check <world>");
 	        	        PlayerFunctions.sendMessage(null, "&7 - Generates a list of regions to trim");
 	        	        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
 	        	    }
@@ -142,12 +142,12 @@ public class DebugExec extends SubCommand {
                         return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
                     }
 	        	    final ArrayList<ChunkLoc> empty = new ArrayList<>();
-	        	    Trim.getTrimRegions(empty, world, new Runnable() {
+	        	    boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
                         @Override
                         public void run() {
                             Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
                             Trim.sendMessage(" - MCA #: " + empty.size());
-                            Trim.sendMessage(" - CHUNKS: " + (empty.size() * 256) + " (max)");
+                            Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
                             final File file = new File(PlotMain.getMain().getDataFolder() + File.separator + "trim.txt");
                             PrintWriter writer;
@@ -158,7 +158,7 @@ public class DebugExec extends SubCommand {
                                     writer.println(worldname +"/region/r." + loc.x + "." + loc.z +".mca" );
                                 }
                                 writer.close();
-                                Trim.sendMessage("File saved");
+                                Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                                 Trim.sendMessage("File failed to save! :(");
@@ -169,7 +169,10 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - Add 31 to each number to get the end position");
                         }
                     });
-	        	    return true;
+	        	    if (!result) {
+	        	        PlayerFunctions.sendMessage(null, "Trim task already started!");
+	        	    }
+	        	    return result;
 	        	}
         	}
         }

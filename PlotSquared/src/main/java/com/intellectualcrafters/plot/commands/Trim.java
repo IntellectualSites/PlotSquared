@@ -29,10 +29,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -46,6 +48,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Trim extends SubCommand {
@@ -180,40 +183,42 @@ public class Trim extends SubCommand {
         if (Trim.TASK) {
             return false;
         }
+        final long startOld = System.currentTimeMillis();
         sendMessage("Collecting region data...");
-        final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
+        final ArrayList<Plot> plots = new ArrayList<>();
+        plots.addAll(PlotMain.getPlots(world).values());
+        final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
-        sendMessage(" - CHUNKS: " + (chunks.size() * 256) +" (max)");
+        sendMessage(" - CHUNKS: " + (chunks.size() * 1024) +" (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size()/1200) +" minutes");
         Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
             @Override
             public void run() {
-                if (chunks.size() == 0) {
-                    TaskManager.runTask(whenDone);
-                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
-                    return;
-                }
-                ChunkLoc loc = chunks.get(0);
-                int sx = loc.x << 5;
-                int sz = loc.z << 5;
-                
-                boolean delete = true;
-                
-                loop:
-                for (int x = sx; x < sx + 32; x++) {
-                    for (int z = sz; z < sz + 32; z++) {
-                        Chunk chunk = world.getChunkAt(x, z);
-                        if (ChunkManager.hasPlot(world, chunk) != null) {
-                            delete = false;
-                            break loop;
-                        }
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 50) {
+                    if (plots.size() == 0) {
+                        empty.addAll(chunks);
+                        System.out.print("DONE!");
+                        Trim.TASK = false;
+                        TaskManager.runTask(whenDone);
+                        Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+                        return;
                     }
-                }
-                if (delete) {
-                    empty.add(loc);
+                    Plot plot = plots.get(0);
+                    plots.remove(0);
+                    Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id);
+                    Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+                    
+                    Location pos3 = new Location(world, pos1.getBlockX(), 64, pos2.getBlockZ());
+                    Location pos4 = new Location(world, pos2.getBlockX(), 64, pos1.getBlockZ());
+                    
+                    chunks.remove(ChunkManager.getChunkChunk(pos1));
+                    chunks.remove(ChunkManager.getChunkChunk(pos2));
+                    chunks.remove(ChunkManager.getChunkChunk(pos3));
+                    chunks.remove(ChunkManager.getChunkChunk(pos4));
                 }
             }
-        }, 1L, 1L);
+        }, 20L, 20L);
         Trim.TASK = true;
         return true;
     }

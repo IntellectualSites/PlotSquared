@@ -67,7 +67,7 @@ public class RegenAllRoads extends SubCommand {
         
         PlotMain.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
         PlotMain.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotMain.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 256));
+        PlotMain.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
         PlotMain.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
         
         boolean result = hpm.scheduleRoadUpdate(world);

@@ -34,15 +34,11 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -56,6 +52,12 @@ public class ChunkManager {
     public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     public static MutableInt index = new MutableInt(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
+    
+    public static ChunkLoc getChunkChunk(Location loc) {
+        int x = loc.getBlockX() >> 9;
+        int z = loc.getBlockZ() >> 9;
+        return new ChunkLoc(x, z);
+    }
     
     public static ArrayList<ChunkLoc> getChunkChunks(World world) {
         File[] regionFiles = new File(world.getName() + File.separator + "region").listFiles();
