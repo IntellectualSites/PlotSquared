@@ -30,6 +30,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -437,8 +439,8 @@ public class ChunkManager {
                 switch (id) {
                     case 54:
                         bl = new BlockLoc(x, y, z);
-                        Chest chest = (Chest) block.getState();
-                        ItemStack[] inventory = chest.getBlockInventory().getContents().clone();
+                        InventoryHolder chest = (InventoryHolder) block.getState();
+                        ItemStack[] inventory = chest.getInventory().getContents().clone();
                         chestContents.put(bl, inventory);
                         break;
                     case 52:
