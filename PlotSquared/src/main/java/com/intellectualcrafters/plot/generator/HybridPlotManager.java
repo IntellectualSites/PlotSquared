@@ -21,11 +21,14 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -34,24 +37,15 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SendChunk;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
 
-    private int task;
     private static boolean UPDATE = false;
+    private int task;
     
     public static boolean checkModified(Plot plot, int requiredChanges) {
         World world = Bukkit.getWorld(plot.world);
@@ -84,10 +78,7 @@ import com.intellectualcrafters.plot.util.SendChunk;
         }
         requiredChanges -= changes;
         changes = checkModified(requiredChanges, world, botx, topx, 1, hpw.PLOT_HEIGHT - 1, botz, topz, hpw.MAIN_BLOCK);
-        if (changes == -1) {
-            return true;
-        }
-        return false;
+        return changes == -1;
     }
     
     public static int checkModified(int threshhold, World world, int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock[] blocks) {
