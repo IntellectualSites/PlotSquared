@@ -68,7 +68,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         if (PlotMain.getAllPlotsRaw() != null) {
             for (Plot plot : PlotMain.getPlots()) {
                 for (Flag flag : plot.settings.flags) {
-                    if (flag.getAbstractFlag().getKey().equals(af)) {
+                    if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
                         flag.setKey(af);
                     }
                 }
