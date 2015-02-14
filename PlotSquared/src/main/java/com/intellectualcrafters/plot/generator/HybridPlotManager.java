@@ -263,7 +263,7 @@ import com.intellectualcrafters.plot.util.SendChunk;
         }
         
         for (Chunk chunk : world.getLoadedChunks()) {
-            ChunkLoc loc = new ChunkLoc(chunk.getX() >> 4, chunk.getZ() >> 4);
+            ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
             if (!chunks.contains(loc)) {
                 chunks.add(loc);
             }
