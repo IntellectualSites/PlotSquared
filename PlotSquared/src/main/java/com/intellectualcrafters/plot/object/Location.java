@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.object;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Created 2015-02-11 for PlotSquared
@@ -13,6 +14,8 @@ public class Location implements Cloneable, Comparable<Location> {
     private double x, y, z;
     private float yaw, pitch;
     private String world;
+    private boolean built;
+    private Object o;
 
     public Location(final String world, final double x, final double y, final double z, final float yaw, final float pitch) {
         this.world = world;
@@ -21,6 +24,8 @@ public class Location implements Cloneable, Comparable<Location> {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+        this.built = false;
+        this.o = null;
     }
 
     public Location() {
@@ -37,6 +42,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setX(final double x) {
         this.x = x;
+        this.built = false;
     }
 
     public double getY() {
@@ -45,6 +51,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setY(final double y) {
         this.y = y;
+        this.built = false;
     }
 
     public double getZ() {
@@ -53,6 +60,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setZ(final double z) {
         this.z = z;
+        this.built = false;
     }
 
     public String getWorld() {
@@ -61,6 +69,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setWorld(final String world) {
         this.world = world;
+        this.built = false;
     }
 
     public float getYaw() {
@@ -69,6 +78,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setYaw(final float yaw) {
         this.yaw = yaw;
+        this.built = false;
     }
 
     public float getPitch() {
@@ -77,12 +87,14 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public void setPitch(final float pitch) {
         this.pitch = pitch;
+        this.built = false;
     }
 
     public void add(double x, double y, double z) {
         this.x += x;
         this.y += y;
         this.z += z;
+        this.built = false;
     }
 
     public double getEuclideanDistanceSquared(final Location l2) {
@@ -125,12 +137,14 @@ public class Location implements Cloneable, Comparable<Location> {
         } else {
             setYaw((float) (-Math.asin(l / c) / Math.PI * 180));
         }
+        this.built = false;
     }
 
     public void subtract(double x, double y, double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
+        this.built = false;
     }
 
     @Override
@@ -170,11 +184,22 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Object toBukkitLocation() {
+        if (built) {
+            return o;
+        }
         try {
             Constructor constructor = Class.forName("org.bukkit.Location").getConstructor(Class.forName("org.bukkit.World"), double.class, double.class, double.class, float.class, float.class);
-            return constructor.newInstance(Class.forName("org.bukkit.World").cast(getBukkitWorld()), x, y, z, yaw, pitch);
+            built = true;
+            return (o = constructor.newInstance(Class.forName("org.bukkit.World").cast(getBukkitWorld()), x, y, z, yaw, pitch));
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             return null;
+        }
+    }
+
+    public void teleport(final Object o) throws Exception {
+        if (o.getClass().getName().contains("org.bukkit.entity")) {
+            Method m = o.getClass().getMethod("teleport", Class.forName("org.bukkit.Location"));
+            m.invoke(o, toBukkitLocation());
         }
     }
 }
