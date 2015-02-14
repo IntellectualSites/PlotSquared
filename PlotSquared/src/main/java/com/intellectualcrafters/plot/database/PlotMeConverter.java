@@ -42,6 +42,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -196,7 +197,10 @@ public class PlotMeConverter {
                             final String road = plotConfig.getString("worlds." + plotMeWorldName + ".RoadMainBlockId");
                             PlotMain.config.set("worlds." + world + ".road.block", road);
                             
-                            final Integer height = plotConfig.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                            Integer height = plotConfig.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                            if (height == null) {
+                                height = 64;
+                            }
                             PlotMain.config.set("worlds." + world + ".road.height", height);
                         } catch (final Exception e) {
                             sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
@@ -209,26 +213,52 @@ public class PlotMeConverter {
                         try {
                             for (final String world : plots.keySet()) {
                                 String plotMeWorldName = world.toLowerCase();
-                                final Integer pathwidth = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
+                                Integer pathwidth = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
+                                if (pathwidth == null) {
+                                    pathwidth = 7;
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.width", pathwidth);
                                 
-                                final Integer plotsize = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
+                                Integer plotsize = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
+                                if (plotsize == null) {
+                                    plotsize = 32;
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.size", plotsize);
                                 
-                                final String wallblock = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".WallBlock"); //
+                                String wallblock = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".WallBlock"); //
+                                if (wallblock == null) {
+                                    wallblock = "44";
+                                }
                                 PlotMain.config.set("worlds." + world + ".wall.block", wallblock);
                                 
-                                final String floor = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".PlotFloorBlock"); //
+                                String floor = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".PlotFloorBlock"); //
+                                if (floor == null) {
+                                    floor = "2";
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.floor", Arrays.asList(floor));
                                 
-                                final String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock"); //
+                                String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock"); //
+                                if (filling == null) {
+                                    filling = "3";
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.filling", Arrays.asList(filling));
                                 
-                                final String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock");
+                                String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock");
+                                if (road == null) {
+                                    road = "5";
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.block", road);
                                 
-                                final Integer height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                                Integer height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                                if (height == null || height == 0) {
+                                    height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".GroundHeight"); //
+                                    if (height == null || height == 0) {
+                                        height = 64;
+                                    }
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.height", height);
+                                PlotMain.config.set("worlds." + world + ".plot.height", height);
+                                PlotMain.config.set("worlds." + world + ".wall.height", height);
                             }
                         } catch (final Exception e) {
                             
