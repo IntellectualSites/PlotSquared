@@ -21,6 +21,9 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +46,7 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.sk89q.worldedit.regions.Region;
 
 public class DebugExec extends SubCommand {
 
@@ -55,7 +59,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final Player player, final String... args) {
-    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check-chunks", "trim-get-chunks"});
+    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check"});
         if (args.length > 0) {
         	String arg = args[0].toLowerCase();
         	switch (arg) {
@@ -127,52 +131,48 @@ public class DebugExec extends SubCommand {
 	        	    PlayerFunctions.sendMessage(null, "Local: " + date.toLocaleString());
 	        	    return true;
 	        	}
-	        	case "trim-get-chunks": {
+	        	case "trim-check": {
 	        	    if (args.length != 2) {
-	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-get-chunks <world>");
+	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-check <world>");
 	        	        PlayerFunctions.sendMessage(null, "&7 - Generates a list of regions to trim");
 	        	        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
 	        	    }
-	        	    World world = Bukkit.getWorld(args[1]);
+	        	    final World world = Bukkit.getWorld(args[1]);
 	        	    if (world == null || !PlotMain.isPlotWorld(args[1])) {
                         return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
                     }
-	        	    ArrayList<ChunkLoc> chunks0 = Trim.getTrimChunks(world);
-	        	    PlayerFunctions.sendMessage(null, "BULK MCR: " + chunks0.size());
-	        	    ArrayList<ChunkLoc> chunks = Trim.getTrimPlots(world);
-	        	    chunks.addAll(chunks0);
-	        	    this.chunks = chunks;
-	        	    this.world = world;
-	        	    PlayerFunctions.sendMessage(null, "MCR: " + chunks.size());
-	        	    PlayerFunctions.sendMessage(null, "CHUNKS: " + chunks.size() * 256);
-	        	    PlayerFunctions.sendMessage(null, "Calculating size on disk...");
-	        	    PlayerFunctions.sendMessage(null, "SIZE (bytes): " + Trim.calculateSizeOnDisk(world, chunks));
-	        	    return true;
-	        	}
-	        	case "trim-check-chunks": {
-	        	    if (this.chunks == null) {
-	        	        return PlayerFunctions.sendMessage(null, "Please run the 'trim-get-chunks' command first");
+	        	    final ArrayList<ChunkLoc> empty = new ArrayList<>();
+	        	    boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
+                        @Override
+                        public void run() {
+                            Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
+                            Trim.sendMessage(" - MCA #: " + empty.size());
+                            Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
+                            Trim.sendMessage("Exporting log for manual approval...");
+                            final File file = new File(PlotMain.getMain().getDataFolder() + File.separator + "trim.txt");
+                            PrintWriter writer;
+                            try {
+                                writer = new PrintWriter(file);
+                                String worldname = world.getName();
+                                for (ChunkLoc loc : empty) {
+                                    writer.println(worldname +"/region/r." + loc.x + "." + loc.z +".mca" );
+                                }
+                                writer.close();
+                                Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                                Trim.sendMessage("File failed to save! :(");
+                            }
+                            Trim.sendMessage("How to get the chunk coords from a region file:");
+                            Trim.sendMessage(" - Locate the x,z values for the region file (the two numbers which are separated by a dot)");
+                            Trim.sendMessage(" - Multiply each number by 32; this gives you the starting position");
+                            Trim.sendMessage(" - Add 31 to each number to get the end position");
+                        }
+                    });
+	        	    if (!result) {
+	        	        PlayerFunctions.sendMessage(null, "Trim task already started!");
 	        	    }
-	        	    
-	        	    PlayerFunctions.sendMessage(null, "Checking MCR files for existing plots:");
-	        	    int count = 0;
-	        	    for (ChunkLoc loc : chunks) {
-	                    int sx = loc.x << 4;
-	                    int sz = loc.z << 4;
-	                    loop:
-	                    for (int x = sx; x < sx + 16; x++) {
-	                        for (int z = sz; z < sz + 16; z++) {
-	                            Chunk chunk = world.getChunkAt(x, z);
-	                            Plot plot = ChunkManager.hasPlot(world, chunk);
-	                            if (plot != null) {
-	                                PlayerFunctions.sendMessage(null, " - " + plot);
-	                                count++;
-	                                break loop;
-	                            }
-	                        }
-	                    }
-	                }
-	        	    PlayerFunctions.sendMessage(null, "Found " + count + "plots.");
+	        	    return result;
 	        	}
         	}
         }

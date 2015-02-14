@@ -42,6 +42,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -112,7 +113,9 @@ public class PlotMeConverter {
                         count++;
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         final String name = r.getString("owner");
-                        final String world = r.getString("world");
+                        final String world = getWorld(r.getString("world"));
+                        
+                        
                         if (!plotSize.containsKey(world)) {
                             final int size = r.getInt("topZ") - r.getInt("bottomZ");
                             plotSize.put(world, size);
@@ -136,7 +139,7 @@ public class PlotMeConverter {
                     while (r.next()) {
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         final String name = r.getString("player");
-                        final String world = r.getString("world");
+                        final String world = getWorld(r.getString("world"));
                         UUID helper = UUIDHandler.getUUID(name);
                         if (helper == null) {
                             if (name.equals("*")) {
@@ -155,7 +158,7 @@ public class PlotMeConverter {
                     while (r.next()) {
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                         final String name = r.getString("player");
-                        final String world = r.getString("world");
+                        final String world = getWorld(r.getString("world"));
                         UUID denied = UUIDHandler.getUUID(name);
                         if (denied == null) {
                             if (name.equals("*")) {
@@ -175,25 +178,29 @@ public class PlotMeConverter {
                     for (final String world : plots.keySet()) {
                         sendMessage("Copying config for: " + world);
                         try {
-                            final Integer pathwidth = plotConfig.getInt("worlds." + world + ".PathWidth"); //
+                            String plotMeWorldName = world.toLowerCase();
+                            final Integer pathwidth = plotConfig.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
                             PlotMain.config.set("worlds." + world + ".road.width", pathwidth);
                             
-                            final Integer plotsize = plotConfig.getInt("worlds." + world + ".PlotSize"); //
+                            final Integer plotsize = plotConfig.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
                             PlotMain.config.set("worlds." + world + ".plot.size", plotsize);
                             
-                            final String wallblock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
+                            final String wallblock = plotConfig.getString("worlds." + plotMeWorldName + ".WallBlockId"); //
                             PlotMain.config.set("worlds." + world + ".wall.block", wallblock);
                             
-                            final String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
+                            final String floor = plotConfig.getString("worlds." + plotMeWorldName + ".PlotFloorBlockId"); //
                             PlotMain.config.set("worlds." + world + ".plot.floor", Arrays.asList(floor));
                             
-                            final String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
+                            final String filling = plotConfig.getString("worlds." + plotMeWorldName + ".PlotFillingBlockId"); //
                             PlotMain.config.set("worlds." + world + ".plot.filling", Arrays.asList(filling));
                             
-                            final String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
+                            final String road = plotConfig.getString("worlds." + plotMeWorldName + ".RoadMainBlockId");
                             PlotMain.config.set("worlds." + world + ".road.block", road);
                             
-                            final Integer height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
+                            Integer height = plotConfig.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                            if (height == null) {
+                                height = 64;
+                            }
                             PlotMain.config.set("worlds." + world + ".road.height", height);
                         } catch (final Exception e) {
                             sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
@@ -205,26 +212,53 @@ public class PlotMeConverter {
                         final YamlConfiguration PLOTME_DG_YML = YamlConfiguration.loadConfiguration(PLOTME_DG_FILE);
                         try {
                             for (final String world : plots.keySet()) {
-                                final Integer pathwidth = PLOTME_DG_YML.getInt("worlds." + world + ".PathWidth"); //
+                                String plotMeWorldName = world.toLowerCase();
+                                Integer pathwidth = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
+                                if (pathwidth == null) {
+                                    pathwidth = 7;
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.width", pathwidth);
                                 
-                                final Integer plotsize = PLOTME_DG_YML.getInt("worlds." + world + ".PlotSize"); //
+                                Integer plotsize = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
+                                if (plotsize == null) {
+                                    plotsize = 32;
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.size", plotsize);
                                 
-                                final String wallblock = PLOTME_DG_YML.getString("worlds." + world + ".WallBlock"); //
+                                String wallblock = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".WallBlock"); //
+                                if (wallblock == null) {
+                                    wallblock = "44";
+                                }
                                 PlotMain.config.set("worlds." + world + ".wall.block", wallblock);
                                 
-                                final String floor = PLOTME_DG_YML.getString("worlds." + world + ".PlotFloorBlock"); //
+                                String floor = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".PlotFloorBlock"); //
+                                if (floor == null) {
+                                    floor = "2";
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.floor", Arrays.asList(floor));
                                 
-                                final String filling = PLOTME_DG_YML.getString("worlds." + world + ".FillBlock"); //
+                                String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock"); //
+                                if (filling == null) {
+                                    filling = "3";
+                                }
                                 PlotMain.config.set("worlds." + world + ".plot.filling", Arrays.asList(filling));
                                 
-                                final String road = PLOTME_DG_YML.getString("worlds." + world + ".RoadMainBlock");
+                                String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock");
+                                if (road == null) {
+                                    road = "5";
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.block", road);
                                 
-                                final Integer height = PLOTME_DG_YML.getInt("worlds." + world + ".RoadHeight"); //
+                                Integer height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                                if (height == null || height == 0) {
+                                    height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".GroundHeight"); //
+                                    if (height == null || height == 0) {
+                                        height = 64;
+                                    }
+                                }
                                 PlotMain.config.set("worlds." + world + ".road.height", height);
+                                PlotMain.config.set("worlds." + world + ".plot.height", height);
+                                PlotMain.config.set("worlds." + world + ".wall.height", height);
                             }
                         } catch (final Exception e) {
                             
@@ -270,34 +304,35 @@ public class PlotMeConverter {
                                 }
                                 
                                 for (final String worldname : worlds) {
-                                    final World world = Bukkit.getWorld(worldname);
-                                    sendMessage("Reloading generator for world: '" + worldname + "'...");
+                                    final World world = Bukkit.getWorld(getWorld(worldname));
+                                    final String actualWorldName = world.getName();
+                                    sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
                                     
-                                    PlotMain.removePlotWorld(worldname);
+                                    PlotMain.removePlotWorld(actualWorldName);
                                     
                                     if (MV) {
                                         // unload
-                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + worldname);
+                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + actualWorldName);
                                         try {
                                             Thread.sleep(1000);
                                         } catch (final InterruptedException ex) {
                                             Thread.currentThread().interrupt();
                                         }
                                         // load
-                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + worldname + " normal -g PlotSquared");
+                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + actualWorldName + " normal -g PlotSquared");
                                     } else if (MW) {
                                         // unload
-                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + worldname);
+                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + actualWorldName);
                                         try {
                                             Thread.sleep(1000);
                                         } catch (final InterruptedException ex) {
                                             Thread.currentThread().interrupt();
                                         }
                                         // load
-                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + worldname + " plugin:PlotSquared");
+                                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + actualWorldName + " plugin:PlotSquared");
                                     } else {
                                         Bukkit.getServer().unloadWorld(world, true);
-                                        final World myworld = WorldCreator.name(worldname).generator(new HybridGen(worldname)).createWorld();
+                                        final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen(actualWorldName)).createWorld();
                                         myworld.save();
                                     }
                                 }
@@ -316,6 +351,16 @@ public class PlotMeConverter {
             }
         }, 20);
     }
+    
+    public String getWorld(String world) {
+        for (World newworld : Bukkit.getWorlds()) {
+            if (newworld.getName().equalsIgnoreCase(world)) {
+                return newworld.getName();
+            }
+        }
+        return world;
+    }
+    
     private UUID uuidFromBytes(byte[] byteArray) {
         ByteBuffer wrapped = ByteBuffer.wrap(byteArray);
         long minor = wrapped.getLong();

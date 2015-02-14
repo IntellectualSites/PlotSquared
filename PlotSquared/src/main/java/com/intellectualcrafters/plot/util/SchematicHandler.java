@@ -192,7 +192,7 @@ public class SchematicHandler {
             return getSchematic(tag, file);
 
         } catch (final Exception e) {
-            e.printStackTrace();
+            PlotMain.sendConsoleSenderMessage(file.toString() + " is not in GZIP format");
             return null;
         }
     }

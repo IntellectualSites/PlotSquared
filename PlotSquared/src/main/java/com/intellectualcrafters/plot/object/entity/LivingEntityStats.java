@@ -1,6 +1,9 @@
 package com.intellectualcrafters.plot.object.entity;
 
+import java.util.Collection;
+
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class LivingEntityStats {
 
@@ -22,5 +25,6 @@ public class LivingEntityStats {
     public ItemStack boots;
     public ItemStack leggings;
     public ItemStack chestplate;
+    public Collection<PotionEffect> potions;
     
 }

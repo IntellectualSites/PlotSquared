@@ -173,7 +173,7 @@ import java.util.*;
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "greeting") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s() + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
         }
         if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
@@ -210,7 +210,7 @@ import java.util.*;
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s() + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
         if (feedRunnable.containsKey(event.getPlayer().getName())) {
             feedRunnable.remove(event.getPlayer().getName());

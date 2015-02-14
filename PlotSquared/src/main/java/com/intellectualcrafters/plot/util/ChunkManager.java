@@ -8,10 +8,13 @@ import java.util.HashSet;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.SkullType;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,14 +31,14 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -49,6 +52,12 @@ public class ChunkManager {
     public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     public static MutableInt index = new MutableInt(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
+    
+    public static ChunkLoc getChunkChunk(Location loc) {
+        int x = loc.getBlockX() >> 9;
+        int z = loc.getBlockZ() >> 9;
+        return new ChunkLoc(x, z);
+    }
     
     public static ArrayList<ChunkLoc> getChunkChunks(World world) {
         File[] regionFiles = new File(world.getName() + File.separator + "region").listFiles();
@@ -71,7 +80,7 @@ public class ChunkManager {
             public void run() {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 File file = new File(directory);
-                PlotMain.sendConsoleSenderMessage("&6 - Deleted region "+file.getName()+" (max 256 chunks)");
+                PlotMain.sendConsoleSenderMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
                 }
@@ -114,6 +123,8 @@ public class ChunkManager {
     private static HashMap<BlockLoc, String> cmdData;
     private static HashMap<BlockLoc, String[]> signContents;
     private static HashMap<BlockLoc, Note> noteBlockContents;
+    private static HashMap<BlockLoc, ArrayList<Byte[]>> bannerColors;
+    private static HashMap<BlockLoc, Byte> bannerBase;
     
     private static HashSet<EntityWrapper> entities;
     
@@ -231,6 +242,8 @@ public class ChunkManager {
         noteBlockContents = new HashMap<>();
         signContents = new HashMap<>();
         cmdData = new HashMap<>();
+        bannerBase= new HashMap<>();
+        bannerColors = new HashMap<>();
         
         entities = new HashSet<>();
     }
@@ -261,6 +274,7 @@ public class ChunkManager {
                 entity.spawn(world, x_offset, z_offset);
             }
             catch (Exception e) {
+                System.out.print("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id);
                 e.printStackTrace();
             }
         }
@@ -338,7 +352,10 @@ public class ChunkManager {
                     ((Skull) (state)).setOwner((String) data[0]);
                 }
                 if (((Integer) data[1]) != 0) {
-                    ((Skull) (state)).setRotation(getRotation((Integer) data[1]));
+                    ((Skull) (state)).setRotation(BlockFace.values()[(int) data[1]]);
+                }
+                if (((Integer) data[2]) != 0) {
+                    ((Skull) (state)).setSkullType(SkullType.values()[(int) data[2]]);
                 }
                 state.update(true);
             }
@@ -418,6 +435,22 @@ public class ChunkManager {
             }
             else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate furnace: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
+        
+        for (BlockLoc loc: bannerBase.keySet()) {
+            Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+            BlockState state = block.getState();
+            if (state instanceof Banner) {
+                Banner banner = (Banner) state;
+                byte base = bannerBase.get(loc);
+                ArrayList<Byte[]> colors = bannerColors.get(loc);
+                banner.setBaseColor(DyeColor.values()[base]);
+                for (Byte[] color : colors) {
+                    banner.addPattern(new Pattern(DyeColor.getByDyeData(color[1]), PatternType.values()[color[0]]));
+                }
+                state.update(true);
+            }
+            else { PlotMain.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate banner: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+        }
     }
     
     public static void saveBlock(World world, int maxY, int x, int z) {
@@ -436,8 +469,8 @@ public class ChunkManager {
                 switch (id) {
                     case 54:
                         bl = new BlockLoc(x, y, z);
-                        Chest chest = (Chest) block.getState();
-                        ItemStack[] inventory = chest.getBlockInventory().getContents().clone();
+                        InventoryHolder chest = (InventoryHolder) block.getState();
+                        ItemStack[] inventory = chest.getInventory().getContents().clone();
                         chestContents.put(bl, inventory);
                         break;
                     case 52:
@@ -525,8 +558,23 @@ public class ChunkManager {
                         bl = new BlockLoc(x, y, z);
                         Skull skull = (Skull) block.getState();
                         String o = skull.getOwner();
-                        short rot = (short) skull.getRotation().ordinal();
-                        skullData.put(bl, new Object[] {o, rot});
+                        byte skulltype = getOrdinal(SkullType.values(),skull.getSkullType());
+                        BlockFace te = skull.getRotation();
+                        short rot = (short) getOrdinal(BlockFace.values(), skull.getRotation());
+                        skullData.put(bl, new Object[] {o, rot, skulltype});
+                        break;
+                    case 176:
+                    case 177:
+                        bl = new BlockLoc(x, y, z);
+                        Banner banner = (Banner) block.getState();
+                        byte base = getOrdinal(DyeColor.values(), banner.getBaseColor());
+                        ArrayList<Byte[]> types = new ArrayList<>();
+                        
+                        for (Pattern pattern : banner.getPatterns()) {  
+                            types.add(new Byte[] {getOrdinal(PatternType.values(), pattern.getPattern()), pattern.getColor().getDyeData() });
+                        }
+                        bannerBase.put(bl, base);
+                        bannerColors.put(bl, types);
                         break;
                 }
             }
@@ -536,59 +584,12 @@ public class ChunkManager {
         GENERATE_DATA.put(loc, datas);
     }
     
-    public static BlockFace getRotation(int ordinal) {
-        switch (ordinal) {
-            case 0: {
-                return BlockFace.NORTH;
-            } 
-            case 1: {
-                return BlockFace.NORTH_NORTH_EAST;
-            } 
-            case 2: {
-                return BlockFace.NORTH_EAST;
-            } 
-            case 3: {
-                return BlockFace.EAST_NORTH_EAST;
-            } 
-            case 4: {
-                return BlockFace.EAST;
-            } 
-            case 5: {
-                return BlockFace.EAST_SOUTH_EAST;
-            } 
-            case 6: {
-                return BlockFace.SOUTH_EAST;
-            } 
-            case 7: {
-                return BlockFace.SOUTH_SOUTH_EAST;
-            } 
-            case 8: {
-                return BlockFace.SOUTH;
-            } 
-            case 9: {
-                return BlockFace.SOUTH_SOUTH_WEST;
-            } 
-            case 10: {
-                return BlockFace.SOUTH_WEST;
-            } 
-            case 11: {
-                return BlockFace.WEST_SOUTH_WEST;
-            } 
-            case 12: {
-                return BlockFace.WEST;
-            } 
-            case 13: {
-                return BlockFace.WEST_NORTH_WEST;
-            } 
-            case 14: {
-                return BlockFace.NORTH_WEST;
-            } 
-            case 15: {
-                return BlockFace.NORTH_NORTH_WEST;
-            }
-            default: {
-                return BlockFace.NORTH;
+    private static byte getOrdinal(Object[] list, Object value) {
+        for (byte i = 0; i < list.length; i++) {
+            if (list[i].equals(value)) {
+                return i;
             }
         }
+        return 0;
     }
 }
