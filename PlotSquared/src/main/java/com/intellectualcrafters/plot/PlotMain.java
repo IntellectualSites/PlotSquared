@@ -1021,7 +1021,7 @@ public class PlotMain extends JavaPlugin implements Listener {
                     }
                 }
                 catch (Exception e) {
-                    System.out.print("ERRRRRRRRRRRRRR 6");
+                    PlotMain.sendConsoleSenderMessage("&d=== Oh no! Please set the generator for the " + world + " ===");
                     e.printStackTrace();
                     LOADING_WORLD = false;
                     removePlotWorld(world);
@@ -1594,7 +1594,7 @@ public class PlotMain extends JavaPlugin implements Listener {
                 try {
                     AbstractSetBlock.setBlockManager = new SetBlockFast_1_8();
                 }
-                catch (Exception e) {
+                catch (Throwable e) {
                     e.printStackTrace();
                     AbstractSetBlock.setBlockManager = new SetBlockSlow();
                 }
@@ -1602,7 +1602,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             else {
                 try {
                     AbstractSetBlock.setBlockManager = new SetBlockFast();
-                } catch (NoSuchMethodException e) {
+                } catch (Throwable e) {
                     AbstractSetBlock.setBlockManager = new SetBlockSlow();
                 }
             }
@@ -1619,7 +1619,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         // Handle UUIDS
         {
-            boolean checkVersion = checkVersion(1, 7, 5);
+            boolean checkVersion = checkVersion(1, 7, 6);
             if (!checkVersion) {
                 sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
                 Settings.TITLES = false;

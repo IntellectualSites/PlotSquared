@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -287,16 +288,15 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if (populator == null || plotworld.TYPE == 0) {
+                        AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
-                        chunk.unload();
-                        chunk.load();
+                        chunk.unload(true, false);
                     }
                     else {
                         populator.populate(world, rand, chunk);
                     }
                 }
             }, i);
-	        
 	    }
 	}
 }

@@ -45,14 +45,23 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class Move extends SubCommand {
 
     public Move() {
-        super("move", "plots.admin", "plot moving debug test", "move", "condense", CommandCategory.DEBUG, false);
+        super("move", "plots.admin", "plot moving debug test", "move", "condense", CommandCategory.DEBUG, true);
     }
 
     @Override
     public boolean execute(final Player plr, final String... args) {
+        if (plr == null) {
+            PlayerFunctions.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
+        }
         World world = plr.getWorld();
         PlotId plot1 = PlotHelper.parseId(args[0]);
         PlotId plot2 = PlotHelper.parseId(args[1]);
+        if (plot1 == null || plot2 == null) {
+            PlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
+        }
+        if (plot1 == plot2) {
+            PlayerFunctions.sendMessage(plr, "DUPLICATE ID");
+        }
         if (move(world, plot1, plot2, null)) {
             PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
         }
@@ -63,9 +72,9 @@ public class Move extends SubCommand {
     }
     
     public boolean move(final World world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
-        Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
+        final Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
         Location bot2 = PlotHelper.getPlotBottomLoc(world, newPlot);
-        Location top = PlotHelper.getPlotTopLoc(world, current);
+        final Location top = PlotHelper.getPlotTopLoc(world, current);
         final Plot currentPlot = PlotHelper.getPlot(world, current);
         if (currentPlot.owner == null) {
             return false;
@@ -79,7 +88,7 @@ public class Move extends SubCommand {
         
         int offset_x = newPlot.x - current.x;
         int offset_y = newPlot.y - current.y;
-        ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
+        final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
         String worldname = world.getName();
         for (PlotId id : selection) { 
             DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
@@ -92,10 +101,8 @@ public class Move extends SubCommand {
         ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {
-                PlotHelper.clear(null, world, PlotHelper.getPlot(world, current), true);
-                if (whenDone != null) {
-                    TaskManager.runTaskLater(whenDone, 1);
-                }
+                ChunkManager.regenerateRegion(bot1, top, null);
+                TaskManager.runTaskLater(whenDone, 1);
             }
         });
         return true;

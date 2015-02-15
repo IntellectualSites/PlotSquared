@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -129,8 +131,8 @@ public class AugmentedPopulator extends BlockPopulator {
                 @Override
                 public void run() {
                     populateBiome(world, x, z);
-                    chunk.unload();
-                    chunk.load();
+                    chunk.unload(true, false);
+                    AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
             }, 20);
         }
@@ -146,8 +148,8 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
-                    chunk.unload();
-                    chunk.load();
+                    chunk.unload(true, false);
+                    AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
             }, 40 + rand.nextInt(40));
 		}

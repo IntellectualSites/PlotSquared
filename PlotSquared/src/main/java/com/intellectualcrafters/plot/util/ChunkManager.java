@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -129,6 +130,9 @@ public class ChunkManager {
     
     private static HashSet<EntityWrapper> entities;
     
+    /**
+     * Copy a region to a new location (in the same world)
+     */
     public static boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         int relX = newPos.getBlockX() - pos1.getBlockX();
         int relZ = newPos.getBlockZ() - pos1.getBlockZ();
@@ -137,6 +141,9 @@ public class ChunkManager {
         final World world = pos1.getWorld();
         Chunk c1 = world.getChunkAt(pos1);
         Chunk c2 = world.getChunkAt(pos2);
+        
+        Chunk c3 = world.getChunkAt(pos1.getBlockX() + relX, pos1.getBlockZ() + relZ);
+        Chunk c4 = world.getChunkAt(pos2.getBlockX() + relX, pos2.getBlockZ() + relZ);
         
         final int sx = pos1.getBlockX();
         final int sz = pos1.getBlockZ();
@@ -148,14 +155,30 @@ public class ChunkManager {
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
         
+        final int c3x = c3.getX();
+        final int c3z = c3.getZ();
+        final int c4x = c4.getX();
+        final int c4z = c4.getZ();
+        
         // Copy entities
+        ArrayList<Chunk> chunks = new ArrayList<>();
         initMaps();
-        for (int x = c1x; x <= c2x; x ++) {
-            for (int z = c1z; z <= c2z; z ++) {
+        for (int x = c3x; x <= c4x; x ++) {
+            for (int z = c3z; z <= c4z; z ++) {
                 Chunk chunk = world.getChunkAt(x, z);
+                chunks.add(chunk);
                 chunk.load(false);
                 saveEntitiesIn(chunk, region);
                 restoreEntities(world, relX, relZ);
+            }
+        }
+        
+        // Load chunks
+        for (int x = c1x; x <= c2x; x ++) {
+            for (int z = c1z; z <= c2z; z ++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                chunk.load(true);
+                chunks.add(chunk);
             }
         }
         
@@ -173,9 +196,11 @@ public class ChunkManager {
             }
         }
         restoreBlocks(world, relX, relZ);
-        
         TaskManager.runTaskLater(whenDone, 1);
-        
+        AbstractSetBlock.setBlockManager.update(chunks);
+        for (Chunk chunk : chunks) {
+            chunk.unload(true, false);
+        }
         return true;
     }
     
@@ -264,8 +289,8 @@ public class ChunkManager {
                         restoreBlocks(world, 0, 0);
                         restoreEntities(world, 0, 0);
                     }
-                    chunk.unload();
-                    chunk.load();
+                    chunk.unload(true, false);
+                    AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
                 CURRENT_PLOT_CLEAR = null;
             }
