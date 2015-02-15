@@ -44,7 +44,7 @@ public class ExpireManager {
         long now = System.currentTimeMillis();
         if (now > getTimeStamp(world)) {
             timestamp.put(world, now + 86400000l);
-            TaskManager.runTask(new Runnable() {
+            TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
                     HashMap<Plot, Long> plots = getOldPlots(world);

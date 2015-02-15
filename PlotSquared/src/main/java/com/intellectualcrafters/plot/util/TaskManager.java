@@ -8,8 +8,12 @@ public class TaskManager {
     
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
     
-    public static void runTask(final Runnable r) {
+    public static void runTaskAsync(final Runnable r) {
         PlotMain.getMain().getServer().getScheduler().runTaskAsynchronously(PlotMain.getMain(), r);
+    }
+    
+    public static void runTask(final Runnable r) {
+        PlotMain.getMain().getServer().getScheduler().runTask(PlotMain.getMain(), r);
     }
     
     public static void runTaskLater(final Runnable r, int delay) {

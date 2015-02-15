@@ -68,8 +68,12 @@ public class Move extends SubCommand {
             PlayerFunctions.sendMessage(plr, "DUPLICATE ID");
             return false;
         }
-        if (move(world, plot1, plot2, null)) {
-            PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+        if (move(world, plot1, plot2, new Runnable() {
+            @Override
+            public void run() {
+                PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+            }
+        })) {
             return true;
         }
         else {

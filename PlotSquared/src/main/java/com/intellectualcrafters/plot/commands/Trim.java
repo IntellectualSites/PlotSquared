@@ -122,7 +122,7 @@ public class Trim extends SubCommand {
         if (Trim.TASK) {
             return false;
         }
-        TaskManager.runTask(new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 String directory = world.getName() + File.separator + "region";
@@ -169,7 +169,7 @@ public class Trim extends SubCommand {
                     }
                 }
                 Trim.TASK = false;
-                TaskManager.runTask(whenDone);
+                TaskManager.runTaskAsync(whenDone);
             }
         });
         Trim.TASK = true;
@@ -197,7 +197,7 @@ public class Trim extends SubCommand {
                         empty.addAll(chunks);
                         System.out.print("DONE!");
                         Trim.TASK = false;
-                        TaskManager.runTask(whenDone);
+                        TaskManager.runTaskAsync(whenDone);
                         Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
                         return;
                     }
