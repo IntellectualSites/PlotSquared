@@ -131,7 +131,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 @Override
                 public void run() {
                     populateBiome(world, x, z);
-                    chunk.unload(true, false);
+                    chunk.unload(true, true);
                     AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
             }, 20);
@@ -148,7 +148,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
-                    chunk.unload(true, false);
+                    chunk.unload(true, true);
                     AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
             }, 40 + rand.nextInt(40));

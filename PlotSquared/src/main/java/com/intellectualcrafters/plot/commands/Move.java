@@ -53,22 +53,29 @@ public class Move extends SubCommand {
         if (plr == null) {
             PlayerFunctions.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
         }
+        if (args.length != 2) {
+            PlayerFunctions.sendMessage(plr, "/plot move <pos1> <pos2>");
+            return false;
+        }
         World world = plr.getWorld();
         PlotId plot1 = PlotHelper.parseId(args[0]);
         PlotId plot2 = PlotHelper.parseId(args[1]);
         if (plot1 == null || plot2 == null) {
             PlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
+            return false;
         }
         if (plot1 == plot2) {
             PlayerFunctions.sendMessage(plr, "DUPLICATE ID");
+            return false;
         }
         if (move(world, plot1, plot2, null)) {
             PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+            return true;
         }
         else {
             PlayerFunctions.sendMessage(plr, "MOVE FAILED");
+            return false;
         }
-        return true;
     }
     
     public boolean move(final World world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
@@ -101,7 +108,8 @@ public class Move extends SubCommand {
         ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {
-                ChunkManager.regenerateRegion(bot1, top, null);
+                Location bot = bot1.clone().add(1, 0, 1);
+                ChunkManager.regenerateRegion(bot, top, null);
                 TaskManager.runTaskLater(whenDone, 1);
             }
         });

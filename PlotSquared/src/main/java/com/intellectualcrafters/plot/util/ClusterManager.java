@@ -290,7 +290,7 @@ public class ClusterManager {
                     if (populator == null || plotworld.TYPE == 0) {
                         AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
-                        chunk.unload(true, false);
+                        chunk.unload(true, true);
                     }
                     else {
                         populator.populate(world, rand, chunk);

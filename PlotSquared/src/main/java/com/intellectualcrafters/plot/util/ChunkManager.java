@@ -134,8 +134,10 @@ public class ChunkManager {
      * Copy a region to a new location (in the same world)
      */
     public static boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
-        int relX = newPos.getBlockX() - pos1.getBlockX();
-        int relZ = newPos.getBlockZ() - pos1.getBlockZ();
+        index.increment();
+        final int relX = newPos.getBlockX() - pos1.getBlockX();
+        final int relZ = newPos.getBlockZ() - pos1.getBlockZ();
+        System.out.print(relX + "," + relZ);
         RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
         
         final World world = pos1.getWorld();
@@ -161,7 +163,7 @@ public class ChunkManager {
         final int c4z = c4.getZ();
         
         // Copy entities
-        ArrayList<Chunk> chunks = new ArrayList<>();
+        final ArrayList<Chunk> chunks = new ArrayList<>();
         initMaps();
         for (int x = c3x; x <= c4x; x ++) {
             for (int z = c3z; z <= c4z; z ++) {
@@ -183,24 +185,41 @@ public class ChunkManager {
         }
         
         // Copy blocks
-        int maxY = world.getMaxHeight(); 
-        for (int x = sx; x <= ex; x++) {
-            for (int z = sz; z <= ez; z++) {
-                saveBlocks(world, maxY, x, z);
-                for (int y = 1; y <= maxY; y++) {
-                    Block block = world.getBlockAt(x, y, z);
-                    int id = block.getTypeId();
-                    byte data = block.getData();
-                    AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
+        final MutableInt mx = new MutableInt(sx);
+        final Plugin plugin = (Plugin) PlotMain.getMain();
+        final Integer currentIndex = index.toInteger();
+        final int maxY = world.getMaxHeight();
+        final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 20) {
+                    int x = mx.intValue();
+                    System.out.print(x);
+                    for (int z = sz; z <= ez; z++) {
+                        saveBlocks(world, maxY, x, z);
+                        for (int y = 1; y <= maxY; y++) {
+                            Block block = world.getBlockAt(x, y, z);
+                            int id = block.getTypeId();
+                            byte data = block.getData();
+                            AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
+                        }
+                    }
+                    mx.increment();
+                    if (x + 1 == ex) { // done!
+                        restoreBlocks(world, relX, relZ);
+                        AbstractSetBlock.setBlockManager.update(chunks);
+                        for (Chunk chunk : chunks) {
+                            chunk.unload(true, true);
+                        }
+                        TaskManager.runTaskLater(whenDone, 1);
+                        Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
+                        return;
+                    }
                 }
-            }
-        }
-        restoreBlocks(world, relX, relZ);
-        TaskManager.runTaskLater(whenDone, 1);
-        AbstractSetBlock.setBlockManager.update(chunks);
-        for (Chunk chunk : chunks) {
-            chunk.unload(true, false);
-        }
+            };
+        }, 1, 1);
+        tasks.put(currentIndex, task);
         return true;
     }
     
@@ -289,7 +308,7 @@ public class ChunkManager {
                         restoreBlocks(world, 0, 0);
                         restoreEntities(world, 0, 0);
                     }
-                    chunk.unload(true, false);
+                    chunk.unload(true, true);
                     AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
                 }
                 CURRENT_PLOT_CLEAR = null;
