@@ -137,7 +137,6 @@ public class ChunkManager {
         index.increment();
         final int relX = newPos.getBlockX() - pos1.getBlockX();
         final int relZ = newPos.getBlockZ() - pos1.getBlockZ();
-        System.out.print(relX + "," + relZ);
         final RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
         
         final World world = pos1.getWorld();
@@ -177,72 +176,71 @@ public class ChunkManager {
         final int loadTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                if (toGenerate.size() == 0) {
-                    Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
-                    tasks.remove(currentIndex);
-                    TaskManager.runTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.print("================== SETTING BLOCKS ===================");
-                            index.increment();
-                            // Copy entities
-                            initMaps();
-                            for (int x = c3x; x <= c4x; x ++) {
-                                for (int z = c3z; z <= c4z; z ++) {
-                                    Chunk chunk = world.getChunkAt(x, z);
-                                    System.out.print("SAVING ENTITIES: " + chunk);
-                                    chunks.add(chunk);
-                                    chunk.load(false);
-                                    saveEntitiesIn(chunk, region);
-                                    restoreEntities(world, relX, relZ);
-                                }
-                            }
-                            // Copy blocks
-                            final MutableInt mx = new MutableInt(sx);
-                            final Integer currentIndex = index.toInteger();
-                            final int maxY = world.getMaxHeight();
-                            final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    System.out.print(" - " + mx.intValue());
-                                    long start = System.currentTimeMillis();
-                                    while (System.currentTimeMillis() - start < 20) {
-                                        int x = mx.intValue();
-                                        System.out.print(x);
-                                        for (int z = sz; z <= ez; z++) {
-                                            saveBlocks(world, maxY, x, z);
-                                            for (int y = 1; y <= maxY; y++) {
-                                                Block block = world.getBlockAt(x, y, z);
-                                                int id = block.getTypeId();
-                                                byte data = block.getData();
-                                                AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
-                                            }
-                                        }
-                                        mx.increment();
-                                        if (x + 1 == ex) { // done!
-                                            restoreBlocks(world, relX, relZ);
-                                            AbstractSetBlock.setBlockManager.update(chunks);
-                                            for (Chunk chunk : chunks) {
-                                                chunk.unload(true, true);
-                                            }
-                                            TaskManager.runTaskLater(whenDone, 1);
-                                            Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
-                                            tasks.remove(currentIndex);
-                                            return;
-                                        }
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 25) {
+                    if (toGenerate.size() == 0) {
+                        Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
+                        tasks.remove(currentIndex);
+                        TaskManager.runTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                index.increment();
+                                // Copy entities
+                                initMaps();
+                                for (int x = c3x; x <= c4x; x ++) {
+                                    for (int z = c3z; z <= c4z; z ++) {
+                                        Chunk chunk = world.getChunkAt(x, z);
+                                        chunks.add(chunk);
+                                        chunk.load(false);
+                                        saveEntitiesIn(chunk, region);
+                                        restoreEntities(world, relX, relZ);
                                     }
-                                };
-                            }, 1, 1);
-                            tasks.put(currentIndex, task);
-                        }
-                    });
-                    return;
+                                }
+                                // Copy blocks
+                                final MutableInt mx = new MutableInt(sx);
+                                final Integer currentIndex = index.toInteger();
+                                final int maxY = world.getMaxHeight();
+                                final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        long start = System.currentTimeMillis();
+                                        while (System.currentTimeMillis() - start < 25) {
+                                            int x = mx.intValue();
+                                            for (int z = sz; z <= ez; z++) {
+                                                saveBlocks(world, maxY, x, z);
+                                                for (int y = 1; y <= maxY; y++) {
+                                                    Block block = world.getBlockAt(x, y, z);
+                                                    int id = block.getTypeId();
+                                                    byte data = block.getData();
+                                                    AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
+                                                }
+                                            }
+                                            mx.increment();
+                                            if (x == ex) { // done!
+                                                restoreBlocks(world, relX, relZ);
+                                                AbstractSetBlock.setBlockManager.update(chunks);
+                                                for (Chunk chunk : chunks) {
+                                                    chunk.unload(true, true);
+                                                }
+                                                TaskManager.runTaskLater(whenDone, 1);
+                                                Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
+                                                tasks.remove(currentIndex);
+                                                return;
+                                            }
+                                        }
+                                    };
+                                }, 1, 1);
+                                
+                                tasks.put(currentIndex, task);
+                            }
+                        });
+                        return;
+                    }
+                    Chunk chunk = toGenerate.get(0);
+                    toGenerate.remove(0);
+                    chunk.load(true);
+                    chunks.add(chunk);
                 }
-                Chunk chunk = toGenerate.get(0);
-                toGenerate.remove(0);
-                chunk.load(true);
-                chunks.add(chunk);
-                System.out.print("GENERATING CHUNK: " + chunk);
             }
         }, 1l, 1l);
         tasks.put(currentIndex, loadTask);
