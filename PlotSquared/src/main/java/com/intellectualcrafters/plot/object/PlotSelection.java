@@ -29,7 +29,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
 
 /**
  * Created 2014-10-12 for PlotSquared

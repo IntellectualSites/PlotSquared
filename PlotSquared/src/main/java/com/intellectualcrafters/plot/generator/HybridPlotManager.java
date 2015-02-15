@@ -21,14 +21,10 @@
 
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SchematicHandler;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -37,10 +33,18 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
 
@@ -174,18 +178,16 @@ import java.util.HashSet;
         int sx = loc.x << 5;
         int sz = loc.z << 5;
         
-        HashSet<Chunk> chunks = new HashSet<Chunk>();
-        
         for (int x = sx; x < sx + 32; x++) {
             for (int z = sz; z < sz + 32; z++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 chunk.load(false);
-                chunks.add(chunk);
             }
         }
+        
         ArrayList<Chunk> chunks2 = new ArrayList<>();
-        for (int x = sx; x < sx + 16; x++) {
-            for (int z = sz; z < sz + 16; z++) {
+        for (int x = sx; x < sx + 32; x++) {
+            for (int z = sz; z < sz + 32; z++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
                 regenerateRoad(chunk);
@@ -265,10 +267,8 @@ import java.util.HashSet;
     
     public boolean regenerateRoad(Chunk chunk) {
         World world = chunk.getWorld();
-        
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
-        
         int ex = x + 15;
         int ez = z + 15;
         

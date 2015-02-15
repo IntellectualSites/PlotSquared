@@ -220,7 +220,7 @@ public class Auto extends SubCommand {
                     lastPlot = false;
                 }
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
-                if (isUnowned(world, start, end)) {
+                if (PlotHelper.isUnowned(world, start, end)) {
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             final Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
@@ -246,17 +246,4 @@ public class Auto extends SubCommand {
     	return PlotHelper.lastPlot.get(world);
     }
     
-    public boolean isUnowned(final World world, final PlotId pos1, final PlotId pos2) {
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final PlotId id = new PlotId(x, y);
-                if (PlotMain.getPlots(world).get(id) != null) {
-                    if (PlotMain.getPlots(world).get(id).owner != null) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
 }

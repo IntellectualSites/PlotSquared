@@ -21,10 +21,10 @@
 
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.StringComparison;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,9 +32,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.StringComparison;
 
 /**
  * PlotMain command class
@@ -48,7 +49,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
      */
     public static final String MAIN_PERMISSION = "plots.use";
 
-    private final static SubCommand[] _subCommands = new SubCommand[]{new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags() };
+    private final static SubCommand[] _subCommands = new SubCommand[]{new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move() };
 
     public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {

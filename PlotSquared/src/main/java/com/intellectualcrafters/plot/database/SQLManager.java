@@ -787,6 +787,28 @@ public class SQLManager implements AbstractDB {
                 }
         );
     }
+    
+    @Override
+    public void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
+        TaskManager.runTask(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            int id = getId(world, originalPlot);
+                            PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
+                            stmt.setInt(1, newPlot.x);
+                            stmt.setInt(2, newPlot.y);
+                            stmt.setInt(3, id);
+                            stmt.executeUpdate();
+                            stmt.close();
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+    }
 
     @Override
     public void setFlags(final String world, final Plot plot, final Set<Flag> flags) {

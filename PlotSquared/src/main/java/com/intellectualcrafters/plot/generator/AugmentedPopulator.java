@@ -6,12 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.BlockWrapper;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;

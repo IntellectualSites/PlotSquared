@@ -52,6 +52,10 @@ public class DBFunc {
      */
     public static AbstractDB dbManager;
 
+    public static void movePlot(String world, PlotId originalPlot, PlotId newPlot) {
+        dbManager.movePlot(world, originalPlot, newPlot);
+    }
+    
     /**
      * Set the owner of a plot
      *

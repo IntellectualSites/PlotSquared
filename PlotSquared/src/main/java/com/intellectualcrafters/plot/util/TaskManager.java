@@ -13,6 +13,9 @@ public class TaskManager {
     }
     
     public static void runTaskLater(final Runnable r, int delay) {
+        if (r == null) {
+            return;
+        }
         PlotMain.getMain().getServer().getScheduler().runTaskLater(PlotMain.getMain(), r, delay);
     }
 }

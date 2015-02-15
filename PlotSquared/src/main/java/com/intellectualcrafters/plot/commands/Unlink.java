@@ -35,10 +35,8 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
@@ -71,7 +69,7 @@ public class Unlink extends SubCommand {
             return false;
         }
         try {
-            PlotHelper.update(plr);
+            PlotHelper.update(plr.getLocation());
         } catch (final Exception e) {
             // execute(final Player plr, final String... args) {
             try {

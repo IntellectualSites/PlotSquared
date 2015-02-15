@@ -34,6 +34,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -128,6 +129,56 @@ public class ChunkManager {
     
     private static HashSet<EntityWrapper> entities;
     
+    public static boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
+        int relX = newPos.getBlockX() - pos1.getBlockX();
+        int relZ = newPos.getBlockZ() - pos1.getBlockZ();
+        RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
+        
+        final World world = pos1.getWorld();
+        Chunk c1 = world.getChunkAt(pos1);
+        Chunk c2 = world.getChunkAt(pos2);
+        
+        final int sx = pos1.getBlockX();
+        final int sz = pos1.getBlockZ();
+        final int ex = pos2.getBlockX();
+        final int ez = pos2.getBlockZ();
+
+        final int c1x = c1.getX();
+        final int c1z = c1.getZ();
+        final int c2x = c2.getX();
+        final int c2z = c2.getZ();
+        
+        // Copy entities
+        initMaps();
+        for (int x = c1x; x <= c2x; x ++) {
+            for (int z = c1z; z <= c2z; z ++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                chunk.load(false);
+                saveEntitiesIn(chunk, region);
+                restoreEntities(world, relX, relZ);
+            }
+        }
+        
+        // Copy blocks
+        int maxY = world.getMaxHeight(); 
+        for (int x = sx; x <= ex; x++) {
+            for (int z = sz; z <= ez; z++) {
+                saveBlocks(world, maxY, x, z);
+                for (int y = 1; y <= maxY; y++) {
+                    Block block = world.getBlockAt(x, y, z);
+                    int id = block.getTypeId();
+                    byte data = block.getData();
+                    AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
+                }
+            }
+        }
+        restoreBlocks(world, relX, relZ);
+        
+        TaskManager.runTaskLater(whenDone, 1);
+        
+        return true;
+    }
+    
     public static boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
         index.increment();
         final Plugin plugin = (Plugin) PlotMain.getMain();
@@ -190,7 +241,7 @@ public class ChunkManager {
                         for (int X = 0; X < 16; X++) {
                             for (int Z = 0; Z < 16; Z++) {
                                 if ((X + absX < sx || Z + absZ < sz) || (X + absX > ex || Z + absZ > ez)) {
-                                    saveBlock(world, maxY, X + absX, Z + absZ);
+                                    saveBlocks(world, maxY, X + absX, Z + absZ);
                                 }
                             }
                         }
@@ -200,13 +251,13 @@ public class ChunkManager {
                             save = true;
                             for (int Z = 0; Z < 16; Z++) {
                                 if ((X + absX > ex || Z + absZ > ez) || (X + absX < sx || Z + absZ < sz)) {
-                                    saveBlock(world, maxY, X + absX, Z + absZ);
+                                    saveBlocks(world, maxY, X + absX, Z + absZ);
                                 }
                             }
                         }
                     }
                     if (save) {
-                        saveEntities(chunk, CURRENT_PLOT_CLEAR);
+                        saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
                     }
                     world.regenerateChunk(x, z);
                     if (save) {
@@ -252,12 +303,28 @@ public class ChunkManager {
         return (x >= region.minX && x <= region.maxX && z >= region.minZ && z <= region.maxZ);
     }
     
-    public static void saveEntities(Chunk chunk, RegionWrapper region) {
+    public static void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
         for (Entity entity : chunk.getEntities()) {
             Location loc = entity.getLocation();
             int x = loc.getBlockX();
             int z = loc.getBlockZ();
             if (isIn(region, x, z)) {
+                continue;
+            }
+            if (entity.getVehicle() != null) {
+                continue;
+            }
+            EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+            entities.add(wrap);
+        }
+    }
+    
+    public static void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
+        for (Entity entity : chunk.getEntities()) {
+            Location loc = entity.getLocation();
+            int x = loc.getBlockX();
+            int z = loc.getBlockZ();
+            if (!isIn(region, x, z)) {
                 continue;
             }
             if (entity.getVehicle() != null) {
@@ -274,7 +341,7 @@ public class ChunkManager {
                 entity.spawn(world, x_offset, z_offset);
             }
             catch (Exception e) {
-                System.out.print("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id);
+                System.out.print("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id +" : " + EntityType.fromId(entity.id));
                 e.printStackTrace();
             }
         }
@@ -453,7 +520,7 @@ public class ChunkManager {
         }
     }
     
-    public static void saveBlock(World world, int maxY, int x, int z) {
+    public static void saveBlocks(World world, int maxY, int x, int z) {
         HashMap<Short, Short> ids = new HashMap<>();
         HashMap<Short, Byte> datas = new HashMap<>();
         for (short y = 1; y < maxY; y++) {

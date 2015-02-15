@@ -28,10 +28,8 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
 
 public class CreateRoadSchematic extends SubCommand {
 
@@ -56,7 +54,7 @@ public class CreateRoadSchematic extends SubCommand {
         HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(player.getWorld());
         
         manager.setupRoadSchematic(plot);
-        PlotHelper.update(player);
+        PlotHelper.update(player.getLocation());
         PlayerFunctions.sendMessage(player, "&6Saved new road schematic");
         
         return true;

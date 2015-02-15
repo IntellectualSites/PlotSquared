@@ -36,13 +36,11 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
-import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class Schematic extends SubCommand {
@@ -141,7 +139,7 @@ public class Schematic extends SubCommand {
                                     final int start = Schematic.this.counter * 5000;
                                     if (start > blen) {
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-                                        PlotHelper.update(plr);
+                                        PlotHelper.update(plr.getLocation());
                                         Schematic.this.running = false;
                                         Bukkit.getScheduler().cancelTask(Schematic.this.task);
                                         return;

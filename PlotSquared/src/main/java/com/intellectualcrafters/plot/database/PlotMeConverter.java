@@ -42,7 +42,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.UUIDHandler;

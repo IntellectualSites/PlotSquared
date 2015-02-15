@@ -34,7 +34,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -42,11 +41,9 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.sk89q.worldedit.regions.Region;
 
 public class DebugExec extends SubCommand {
 

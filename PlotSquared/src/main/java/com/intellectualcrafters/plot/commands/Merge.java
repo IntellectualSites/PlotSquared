@@ -36,10 +36,8 @@ import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SetBlockFast;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
@@ -176,10 +174,10 @@ public class Merge extends SubCommand {
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
-        PlotHelper.mergePlots(world, plots);
+        PlotHelper.mergePlots(world, plots, true);
 
         PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
-        PlotHelper.update(plr);
+        PlotHelper.update(plr.getLocation());
         return true;
     }
 }

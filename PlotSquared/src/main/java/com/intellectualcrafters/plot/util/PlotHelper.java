@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.logging.log4j.core.pattern.IntegerPatternConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -51,6 +52,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
 /**
@@ -146,7 +148,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                 PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        return mergePlots(world, plotIds);
+        return mergePlots(world, plotIds, true);
     }
 
     /**
@@ -160,7 +162,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return boolean (success)
      */
-    public static boolean mergePlots(final World world, final ArrayList<PlotId> plotIds) {
+    public static boolean mergePlots(final World world, final ArrayList<PlotId> plotIds, boolean removeRoads) {
         if (plotIds.size() < 2) {
             return false;
         }
@@ -188,19 +190,22 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
                 Plot plot2 = null;
 
-                removeSign(world, plot);
-
+                if (removeRoads) {
+                    removeSign(world, plot);
+                }
                 if (lx) {
                     if (ly) {
                         if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
                             changed = true;
-                            manager.removeRoadSouthEast(plotworld, plot);
+                            if (removeRoads) {
+                                manager.removeRoadSouthEast(plotworld, plot);
+                            }
                         }
                     }
                     if (!plot.settings.getMerged(1)) {
                         changed = true;
                         plot2 = PlotMain.getPlots(world).get(new PlotId(x + 1, y));
-                        mergePlot(world, plot, plot2);
+                        mergePlot(world, plot, plot2, removeRoads);
                         plot.settings.setMerged(1, true);
                         plot2.settings.setMerged(3, true);
                     }
@@ -209,7 +214,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                     if (!plot.settings.getMerged(2)) {
                         changed = true;
                         plot2 = PlotMain.getPlots(world).get(new PlotId(x, y + 1));
-                        mergePlot(world, plot, plot2);
+                        mergePlot(world, plot, plot2, removeRoads);
                         plot.settings.setMerged(2, true);
                         plot2.settings.setMerged(0, true);
                     }
@@ -239,7 +244,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param lesserPlot
      * @param greaterPlot
      */
-    public static void mergePlot(final World world, final Plot lesserPlot, final Plot greaterPlot) {
+    public static void mergePlot(final World world, final Plot lesserPlot, final Plot greaterPlot, boolean removeRoads) {
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
@@ -247,13 +252,17 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             if (!lesserPlot.settings.getMerged(2)) {
                 lesserPlot.settings.setMerged(2, true);
                 greaterPlot.settings.setMerged(0, true);
-                manager.removeRoadSouth(plotworld, lesserPlot);
+                if (removeRoads) {
+                    manager.removeRoadSouth(plotworld, lesserPlot);
+                }
             }
         } else {
             if (!lesserPlot.settings.getMerged(1)) {
                 lesserPlot.settings.setMerged(1, true);
                 greaterPlot.settings.setMerged(3, true);
-                manager.removeRoadEast(plotworld, lesserPlot);
+                if (removeRoads) {
+                    manager.removeRoadEast(plotworld, lesserPlot);
+                }
             }
         }
     }
@@ -387,15 +396,15 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
         manager.setWall(world, plotworld, plot.id, block);
-        update(player);
+        update(player.getLocation());
     }
     
-    public static void update(Player player) {
+    public static void update(Location loc) {
         ArrayList<Chunk> chunks = new ArrayList<>();
         final int distance = Bukkit.getViewDistance();
         for (int cx = -distance; cx < distance; cx++) {
             for (int cz = -distance; cz < distance; cz++) {
-                final Chunk chunk = player.getWorld().getChunkAt(player.getLocation().getChunk().getX() + cx, player.getLocation().getChunk().getZ() + cz);
+                final Chunk chunk = loc.getWorld().getChunkAt(loc.getChunk().getX() + cx, loc.getChunk().getZ() + cz);
                 chunks.add(chunk);
             }
         }
@@ -425,7 +434,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
             plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, player, 0)) {
-                final boolean result = mergePlots(world, plots);
+                final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
@@ -433,7 +442,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
             plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
             if (ownsPlots(world, plots, player, 1)) {
-                final boolean result = mergePlots(world, plots);
+                final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
@@ -441,7 +450,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
             plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
             if (ownsPlots(world, plots, player, 2)) {
-                final boolean result = mergePlots(world, plots);
+                final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
@@ -449,7 +458,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
             plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, player, 3)) {
-                final boolean result = mergePlots(world, plots);
+                final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
@@ -457,7 +466,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
             merge = false;
         }
-        update(player);
+        update(player.getLocation());
     }
 
     private static boolean ownsPlots(final World world, final ArrayList<PlotId> plots, final Player player, final int dir) {
@@ -498,20 +507,32 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 		}
     }
 
+    /**
+     * Create a plot and notify the world border and plot merger
+     */
     public static boolean createPlot(final Player player, final Plot plot) {
-    	if (PlotHelper.worldBorder.containsKey(plot.world)) {
-    		updateWorldBorder(plot);
-    	}
-        final World w = plot.getWorld();
-        final Plot p = new Plot(plot.id, UUIDHandler.getUUID(player), plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
-        PlotMain.updatePlot(p);
-        DBFunc.createPlotAndSettings(p);
+        if (PlotHelper.worldBorder.containsKey(plot.world)) {
+            updateWorldBorder(plot);
+        }
+        World w = player.getWorld();
+        UUID uuid = UUIDHandler.getUUID(player);
+        Plot p = createPlotAbs(uuid, plot);
         final PlotWorld plotworld = PlotMain.getWorldSettings(w);
         if (plotworld.AUTO_MERGE) {
             autoMerge(w, p, player);
         }
-
         return true;
+    }
+    
+    /**
+     * Create a plot without notifying the merge function or world border manager 
+     */
+    public static Plot createPlotAbs(final UUID uuid, final Plot plot) {
+        final World w = plot.getWorld();
+        final Plot p = new Plot(plot.id, uuid, plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
+        PlotMain.updatePlot(p);
+        DBFunc.createPlotAndSettings(p);
+        return p;
     }
 
     public static int getLoadedChunks(final World world) {
@@ -553,7 +574,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         manager.setWallFilling(world, plotworld, plot.id, block);
         PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-        update(requester);
+        update(requester.getLocation());
     }
 
     public static void setFloor(final Player requester, final Plot plot, final PlotBlock[] blocks) {
@@ -567,7 +588,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
         manager.setFloor(world, plotworld, plot.id, blocks);
-        update(requester);
+        update(requester.getLocation());
     }
 
     public static int square(final int x) {
@@ -622,7 +643,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         state = h;
         
         final long start = System.currentTimeMillis();
-        
+        final Location location = PlotHelper.getPlotHomeDefault(plot);
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (plotworld.TERRAIN != 0) {
             runners.put(plot, 1);
@@ -649,7 +670,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                 if (player != null && player.isOnline()) {
                     PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
                 }
-                update(player);
+                update(location);
             }
         }, 90L);
     }
@@ -940,6 +961,30 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final PlotManager manager = PlotMain.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
+    }
+    
+    public static boolean isUnowned(final World world, final PlotId pos1, final PlotId pos2) {
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                final PlotId id = new PlotId(x, y);
+                if (PlotMain.getPlots(world).get(id) != null) {
+                    if (PlotMain.getPlots(world).get(id).owner != null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    public static PlotId getSize(World world, Plot plot) {
+        PlotSettings settings = plot.settings;
+        if (!settings.isMerged()) {
+            return new PlotId(1,1);
+        }
+        Plot top = PlayerFunctions.getTopPlot(world, plot);
+        Plot bot = PlayerFunctions.getBottomPlot(world, plot);
+        return new PlotId(top.id.x - bot.id.x + 1, top.id.y - bot.id.y + 1);
     }
     
     /**

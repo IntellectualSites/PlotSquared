@@ -49,7 +49,6 @@ import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 
 /**

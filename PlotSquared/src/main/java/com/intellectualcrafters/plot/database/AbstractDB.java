@@ -21,11 +21,20 @@
 
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.*;
-
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.UUID;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotClusterId;
+import com.intellectualcrafters.plot.object.PlotComment;
+import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * @author Citymonstret
@@ -321,4 +330,6 @@ public interface AbstractDB {
     public void createCluster(PlotCluster cluster);
     
     public void resizeCluster(PlotCluster current, PlotClusterId resize);
+
+    public void movePlot(String world, PlotId originalPlot, PlotId newPlot);
 }

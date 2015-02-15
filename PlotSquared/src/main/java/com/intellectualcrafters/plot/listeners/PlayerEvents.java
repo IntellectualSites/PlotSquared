@@ -550,13 +550,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         final PlotWorld pW = getPlotWorld(world);
         final CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
-        if (!(reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) && pW.SPAWN_EGGS) {
+        if ((reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) && pW.SPAWN_EGGS) {
             event.setCancelled(true);
             return;
-        } else if (!(reason == CreatureSpawnEvent.SpawnReason.BREEDING) && pW.SPAWN_BREEDING) {
+        } else if ((reason == CreatureSpawnEvent.SpawnReason.BREEDING) && pW.SPAWN_BREEDING) {
             event.setCancelled(true);
             return;
-        } else if (!(reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM && !(event.getEntityType().getTypeId() == 30)) {
+        } else if ((reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && pW.SPAWN_CUSTOM && !(event.getEntityType().getTypeId() == 30)) {
             event.setCancelled(true);
             return;
         }

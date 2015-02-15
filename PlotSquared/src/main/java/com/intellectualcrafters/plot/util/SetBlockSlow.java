@@ -1,11 +1,10 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 public class SetBlockSlow extends AbstractSetBlock {
 
@@ -27,7 +26,7 @@ public class SetBlockSlow extends AbstractSetBlock {
     }
 
     @Override
-    public void update(ArrayList<Chunk> chunks) {
+    public void update(List<Chunk> chunks) {
         // TODO Auto-generated method stub
         
     }

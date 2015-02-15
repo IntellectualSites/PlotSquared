@@ -21,6 +21,8 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Arrays;
+
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -28,6 +30,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 
 public class DebugRoadRegen extends SubCommand {
@@ -45,6 +48,9 @@ public class DebugRoadRegen extends SubCommand {
         
         Chunk chunk = player.getLocation().getChunk();
         boolean result = manager.regenerateRoad(chunk);
+        if (result) {
+            AbstractSetBlock.setBlockManager.update(Arrays.asList(new Chunk[] {chunk}));
+        }
         PlayerFunctions.sendMessage(player, "&6Regenerating chunk: "+chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }

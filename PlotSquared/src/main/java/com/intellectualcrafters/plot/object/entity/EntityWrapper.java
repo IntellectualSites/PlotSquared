@@ -15,15 +15,15 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.Rabbit.Type;
-import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
@@ -375,15 +375,24 @@ public class EntityWrapper {
         final Location loc = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
         loc.setYaw(this.yaw);
         loc.setPitch(this.pitch);
-        EntityType type = EntityType.fromId(this.id);
-        if (type == EntityType.DROPPED_ITEM) {
-            return world.dropItem(loc, this.stack);
-        }
-        if (type == EntityType.LEASH_HITCH) {
+        if (this.id == -1) {
             return null;
         }
+        EntityType type = EntityType.fromId(this.id);
+        Entity entity;
+        switch (type) {
+            case DROPPED_ITEM: {
+                return world.dropItem(loc, this.stack);
+            }
+            case PLAYER:
+            case LEASH_HITCH: {
+                return null;
+            }
+            default:
+                entity = world.spawnEntity(loc, type);
+                break;
+        }
         
-        final Entity entity = world.spawnEntity(loc, type);
         if (this.depth == 0) {
             return entity;
         }

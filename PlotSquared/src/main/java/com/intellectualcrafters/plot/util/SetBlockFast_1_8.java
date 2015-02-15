@@ -23,9 +23,8 @@ package com.intellectualcrafters.plot.util;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
@@ -101,7 +100,7 @@ public class SetBlockFast_1_8 extends AbstractSetBlock {
      * @param player Player whose chunks we're updating
      */
     @Override
-    public void update(ArrayList<Chunk> chunks) {
+    public void update(List<Chunk> chunks) {
         if (chunks.size() == 0) {
             return;
         }

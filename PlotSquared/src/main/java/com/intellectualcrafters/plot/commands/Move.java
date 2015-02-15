@@ -21,79 +21,83 @@
 
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotSelection;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * Created 2014-08-01 for PlotSquared
  *
  * @author Empire92
  */
-public class Swap extends SubCommand {
+public class Move extends SubCommand {
 
-    public Swap() {
-        super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
+    public Move() {
+        super("move", "plots.admin", "plot moving debug test", "move", "condense", CommandCategory.DEBUG, false);
     }
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
-            PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
+        World world = plr.getWorld();
+        PlotId plot1 = PlotHelper.parseId(args[0]);
+        PlotId plot2 = PlotHelper.parseId(args[1]);
+        if (move(world, plot1, plot2, null)) {
+            PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+        }
+        else {
+            PlayerFunctions.sendMessage(plr, "MOVE FAILED");
+        }
+        return true;
+    }
+    
+    public boolean move(final World world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
+        Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
+        Location bot2 = PlotHelper.getPlotBottomLoc(world, newPlot);
+        Location top = PlotHelper.getPlotTopLoc(world, current);
+        final Plot currentPlot = PlotHelper.getPlot(world, current);
+        if (currentPlot.owner == null) {
             return false;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        Plot pos1 = PlayerFunctions.getBottomPlot(world, currentPlot); 
+        Plot pos2 = PlayerFunctions.getTopPlot(world, currentPlot);
+        PlotId size = PlotHelper.getSize(world, currentPlot);
+        if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.swap")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
-            return false;
+        
+        int offset_x = newPlot.x - current.x;
+        int offset_y = newPlot.y - current.y;
+        ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
+        String worldname = world.getName();
+        for (PlotId id : selection) { 
+            DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
+            Plot plot = PlotMain.getPlots(worldname).get(id);
+            PlotMain.getPlots(worldname).remove(id);
+            plot.id.x += offset_x;
+            plot.id.y += offset_y;
+            PlotMain.getPlots(worldname).put(plot.id, plot);
         }
-        if ((plot != null) && plot.settings.isMerged()) {
-            PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
-            return false;
-        }
-        final String id = args[0];
-        PlotId plotid;
-        final World world = plr.getWorld();
-        try {
-            plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            final Plot plot2 = PlotMain.getPlots(world).get(plotid);
-            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.swap")) {
-                PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
-                return false;
+        ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
+            @Override
+            public void run() {
+                PlotHelper.clear(null, world, PlotHelper.getPlot(world, current), true);
+                if (whenDone != null) {
+                    TaskManager.runTaskLater(whenDone, 1);
+                }
             }
-        } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
-            return false;
-        }
-        assert plot != null;
-        if (plot.id.equals(plotid)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            PlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
-            return false;
-        }
-        PlotSelection.swap(world, plot.id, plotid);
-
-        // TODO Requires testing!!
-        DBFunc.dbManager.swapPlots(plot, PlotHelper.getPlot(world, plotid));
-        // TODO Requires testing!!
-
-        PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
-        PlotHelper.update(plr.getLocation());
+        });
         return true;
     }
 }

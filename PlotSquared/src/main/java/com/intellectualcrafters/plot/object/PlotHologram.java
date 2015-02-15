@@ -1,13 +1,14 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.Collection;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Collection;
 
 /**
  * Created 2015-02-14 for PlotSquared
