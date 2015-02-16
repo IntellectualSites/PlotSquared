@@ -21,36 +21,37 @@
 
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.commands.Buy;
+import com.intellectualcrafters.plot.commands.Cluster;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.*;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.titles.DefaultTitle;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
+import org.bukkit.*;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -64,64 +65,15 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.commands.Buy;
-import com.intellectualcrafters.plot.commands.Cluster;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.WE_Anywhere;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.MySQL;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.listeners.ForceFieldListener;
-import com.intellectualcrafters.plot.listeners.InventoryListener;
-import com.intellectualcrafters.plot.listeners.PlayerEvents;
-import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.listeners.WorldGuardListener;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.titles.AbstractTitle;
-import com.intellectualcrafters.plot.titles.DefaultTitle;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.Lag;
-import com.intellectualcrafters.plot.util.Logger;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.Metrics;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SendChunk;
-import com.intellectualcrafters.plot.util.SetBlockFast;
-import com.intellectualcrafters.plot.util.SetBlockFast_1_8;
-import com.intellectualcrafters.plot.util.SetBlockSlow;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * PlotMain class.
@@ -146,6 +98,11 @@ public class PlotMain extends JavaPlugin implements Listener {
      * All world managers
      */
     private final static HashMap<String, PlotManager> managers = new HashMap<>();
+    /**
+     * style
+     */
+    public static File styleFile;
+    public static YamlConfiguration styleConfig;
     /**
      * settings.properties
      */
@@ -711,6 +668,19 @@ public class PlotMain extends JavaPlugin implements Listener {
             sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
+            styleFile = new File(getMain().getDataFolder() + File.separator + "translations" + File.separator + "style.yml");
+            if (!styleFile.exists()) {
+                if (!styleFile.createNewFile()) {
+                    sendConsoleSenderMessage("Could not create the style file, please create \"translations/style.yml\" manually");
+                }
+            }
+            styleConfig = YamlConfiguration.loadConfiguration(styleFile);
+            setupStyle();
+        } catch (final Exception err) {
+            Logger.add(LogLevel.DANGER, "Failed to save style.yml");
+            System.out.println("failed to save style.yml");
+        }
+        try {
             configFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "settings.yml");
             if (!configFile.exists()) {
                 if (!configFile.createNewFile()) {
@@ -737,6 +707,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             System.out.println("Failed to save storage.yml");
         }
         try {
+            styleConfig.save(styleFile);
             config.save(configFile);
             storage.save(storageFile);
         } catch (final IOException e) {
@@ -760,6 +731,11 @@ public class PlotMain extends JavaPlugin implements Listener {
             Settings.API_URL = config.getString("uuid.api.location");
             Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
             Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
+
+            C.COLOR_1 = ChatColor.getByChar(styleConfig.getString("color.1"));
+            C.COLOR_2 = ChatColor.getByChar(styleConfig.getString("color.2"));
+            C.COLOR_3 = ChatColor.getByChar(styleConfig.getString("color.3"));
+            C.COLOR_4 = ChatColor.getByChar(styleConfig.getString("color.4"));
         }
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
@@ -932,24 +908,6 @@ public class PlotMain extends JavaPlugin implements Listener {
     }
     
     @EventHandler
-    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
-        String message = event.getMessage();
-        if (message.toLowerCase().startsWith("/plotme")) {
-            Plugin plotme = Bukkit.getPluginManager().getPlugin("PlotMe");
-            if (plotme == null) {
-                Player player = event.getPlayer();
-                if (Settings.USE_PLOTME_ALIAS) {
-                    player.performCommand(message.replace("/plotme", "plots"));
-                }
-                else {
-                    PlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
-                }
-                event.setCancelled(true);
-            }
-        }
-    }
-    
-    @EventHandler
     public static void worldLoad(WorldLoadEvent event) {
         if (!UUIDHandler.CACHED) {
             UUIDHandler.cacheAll();
@@ -968,7 +926,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             }
         }
     }
-    
+
     public static void loadWorld(final String world, final ChunkGenerator generator) {
         if (getWorldSettings(world) != null) {
             return;
@@ -1015,22 +973,18 @@ public class PlotMain extends JavaPlugin implements Listener {
                     Plugin gen_plugin = gen_string == null ? null : Bukkit.getPluginManager().getPlugin(gen_string);
                     if (gen_plugin != null && gen_plugin.isEnabled()) {
                         gen_plugin.getDefaultWorldGenerator(world, "");
-                    }
-                    else {
+                    } else {
                         new HybridGen(world);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     PlotMain.sendConsoleSenderMessage("&d=== Oh no! Please set the generator for the " + world + " ===");
                     e.printStackTrace();
                     LOADING_WORLD = false;
                     removePlotWorld(world);
-                }
-                finally {
+                } finally {
                     LOADING_WORLD = false;
                 }
-            }
-            else {
+            } else {
                 PlotGenerator gen_class = (PlotGenerator) generator;
                 plotWorld = gen_class.getNewPlotWorld(world);
                 plotManager = gen_class.getPlotManager();
@@ -1057,14 +1011,13 @@ public class PlotMain extends JavaPlugin implements Listener {
                             new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
-                }
-                else if (plotWorld.TYPE == 1) {
+                } else if (plotWorld.TYPE == 1) {
                     new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                 }
             }
         }
     }
-
+    
     /**
      * Adds an external world as a recognized PlotSquared world - The PlotWorld class created is based off the
      * configuration in the settings.yml - Do not use this method unless the required world is preconfigured in the
@@ -1078,6 +1031,20 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
         final ChunkGenerator generator = world.getGenerator();
         loadWorld(world.getName(), generator);
+    }
+
+    public static void setupStyle() {
+        styleConfig.set("version", 0);
+        final Map<String, Object> o = new HashMap<>();
+        o.put("color.1", C.COLOR_1.getChar());
+        o.put("color.2", C.COLOR_2.getChar());
+        o.put("color.3", C.COLOR_3.getChar());
+        o.put("color.4", C.COLOR_4.getChar());
+        for (final Entry<String, Object> node : o.entrySet()) {
+            if (!styleConfig.contains(node.getKey())) {
+                styleConfig.set(node.getKey(), node.getValue());
+            }
+        }
     }
 
     /**
@@ -1120,27 +1087,27 @@ public class PlotMain extends JavaPlugin implements Listener {
     private static void defaultFlags() {
         addPlusFlags();
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("animal-attack", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
-        
+
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
@@ -1171,7 +1138,7 @@ public class PlotMain extends JavaPlugin implements Listener {
                 return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
             }
         });
-        
+
         FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
 
         FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
@@ -1225,11 +1192,11 @@ public class PlotMain extends JavaPlugin implements Listener {
         managers.remove(world);
         worlds.remove(world);
     }
-    
+
     public static void removePlots(final String world) {
         plots.put(world, new HashMap<PlotId, Plot>());
     }
-
+    
     /**
      * Get all plots
      *
@@ -1242,6 +1209,15 @@ public class PlotMain extends JavaPlugin implements Listener {
     /**
      * Set all plots
      *
+     * @param plots New Plot LinkedHashMap
+     */
+    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        PlotMain.plots = plots;
+    }
+
+    /**
+     * Set all plots
+     *
      * @param plots New Plot HashMap
      */
     public static void setAllPlotsRaw(final HashMap<String, HashMap<PlotId, Plot>> plots) {
@@ -1249,13 +1225,39 @@ public class PlotMain extends JavaPlugin implements Listener {
         // PlotMain.plots.putAll(plots);
     }
 
-    /**
-     * Set all plots
-     *
-     * @param plots New Plot LinkedHashMap
-     */
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotMain.plots = plots;
+    public static boolean checkVersion(int major, int minor, int minor2) {
+        try {
+            String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            int a = Integer.parseInt(version[0]);
+            int b = Integer.parseInt(version[1]);
+            int c = 0;
+            if (version.length == 3) {
+                c = Integer.parseInt(version[2]);
+            }
+            if (a > major || (a == major && b > minor) || (a == major && b == minor && c >= minor2)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @EventHandler
+    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+        String message = event.getMessage();
+        if (message.toLowerCase().startsWith("/plotme")) {
+            Plugin plotme = Bukkit.getPluginManager().getPlugin("PlotMe");
+            if (plotme == null) {
+                Player player = event.getPlayer();
+                if (Settings.USE_PLOTME_ALIAS) {
+                    player.performCommand(message.replace("/plotme", "plots"));
+                } else {
+                    PlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
+                }
+                event.setCancelled(true);
+            }
+        }
     }
 
     /**
@@ -1269,7 +1271,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             // save configuration
             String[] split = id.split(",");
             HybridPlotWorld plotworld = new HybridPlotWorld(world);
-            
+
             int width = HybridPlotWorld.PLOT_WIDTH_DEFAULT;
             int gap = HybridPlotWorld.ROAD_WIDTH_DEFAULT;
             int height = HybridPlotWorld.PLOT_HEIGHT_DEFAULT;
@@ -1277,7 +1279,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             PlotBlock[] main = HybridPlotWorld.MAIN_BLOCK_DEFAULT;
             PlotBlock wall = HybridPlotWorld.WALL_FILLING_DEFAULT;
             PlotBlock border = HybridPlotWorld.WALL_BLOCK_DEFAULT;
-            
+
             for (String element : split) {
                 String[] pair = element.split("=");
                 if (pair.length != 2) {
@@ -1308,7 +1310,7 @@ public class PlotMain extends JavaPlugin implements Listener {
                         case "f":
                         case "floor": {
                             HybridPlotWorld.TOP_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
-                            break;   
+                            break;
                         }
                         case "m":
                         case "main": {
@@ -1438,8 +1440,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         }
 
         // Add tables to this one, if we create more :D
-        
-        
+
 
         // Use mysql?
         if (Settings.DB.USE_MYSQL) {
@@ -1529,7 +1530,7 @@ public class PlotMain extends JavaPlugin implements Listener {
             plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
             plotCommand.setTabCompleter(command);
         }
-        
+
         // Main event handler
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         if (checkVersion(1, 8, 0)) {
@@ -1650,25 +1651,6 @@ public class PlotMain extends JavaPlugin implements Listener {
         // Now we're finished :D
         if (C.ENABLED.s().length() > 0) {
             Broadcast(C.ENABLED);
-        }
-    }
-    
-    public static boolean checkVersion(int major, int minor, int minor2) {
-        try {
-            String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            int a = Integer.parseInt(version[0]);
-            int b = Integer.parseInt(version[1]);
-            int c = 0;
-            if (version.length == 3) {
-                c = Integer.parseInt(version[2]);
-            }
-            if (a > major || (a == major && b > minor) || (a == major && b == minor && c >= minor2)) {
-                return true;
-            }
-            return false;
-        }
-        catch (Exception e) {
-            return false;
         }
     }
 

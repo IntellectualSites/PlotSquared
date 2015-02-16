@@ -21,15 +21,10 @@
 
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import org.bukkit.ChatColor;
 
 /**
  * Captions class.
@@ -452,30 +447,32 @@ public enum C {
      * @see com.intellectualsites.translation.TranslationLanguage
      */
     protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-
+    public static ChatColor COLOR_1 = ChatColor.RED, COLOR_2 = ChatColor.YELLOW, COLOR_3 = ChatColor.AQUA, COLOR_4 = ChatColor.GRAY;
     /**
      * The TranslationManager
      *
      * @see com.intellectualsites.translation.TranslationManager
      */
     private static TranslationManager manager;
-
     /**
      * The default file
      *
      * @see com.intellectualsites.translation.TranslationFile
      */
     private static TranslationFile defaultFile;
-
     /**
      * Default
      */
     private String d;
-
     /**
      * Translated
      */
     private String s;
+    /**
+     * Should the string be prefixed?
+     */
+    private boolean prefix;
+    private ChatColor[] sColors = null;
 
     /**
      * Constructor for custom strings.
@@ -490,12 +487,23 @@ public enum C {
      * Constructor
      *
      * @param d default
+     * @param prefix use prefix
      */
-    C(final String d) {
+    C(final String d, final boolean prefix) {
         this.d = d;
         if (this.s == null) {
             this.s = "";
         }
+        this.prefix = prefix;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param d default
+     */
+    C(final String d) {
+        this(d, true);
     }
 
     public static void setupTranslations() {
@@ -530,7 +538,8 @@ public enum C {
      * @return translated if exists else default
      */
     public String s() {
-        return manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        return s.replace("$1", COLOR_1.toString()).replace("$2", COLOR_2.toString()).replace("$3", COLOR_3.toString()).replace("$4", COLOR_4.toString());
         /*
          * if (PlotMain.translations != null) {
          * final String t = PlotMain.translations.getString(this.toString());
@@ -543,6 +552,10 @@ public enum C {
          * }
          * return this.s.replace("\\n", "\n");
          */
+    }
+
+    public boolean usePrefix() {
+        return this.prefix;
     }
 
     /**

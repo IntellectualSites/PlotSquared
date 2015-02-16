@@ -21,17 +21,6 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
-
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -39,6 +28,16 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Functions involving players, plots and locations.
@@ -275,6 +274,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(final Player plr, final String msg) {
+        return sendMessage(plr, msg, true);
+    }
+
+    public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
                 PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
@@ -283,17 +286,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
         }
         return true;
-        /*
-         * if ((msg.length() == 0) || msg.equalsIgnoreCase("")) {
-         * return ;
-         * }
-         * if (plr == null) {
-         * PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
-         * return;
-         * }
-         * sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&',
-         * C.PREFIX.s() + msg));
-         */
     }
 
     /**
@@ -318,30 +310,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                 PlotMain.sendConsoleSenderMessage(msg);
             }
             else {
-                sendMessage(plr, msg);
+                sendMessage(plr, msg, c.usePrefix());
             }
         }
         return true;
-        /*
-         * if (plr == null) {
-         * PlotMain.sendConsoleSenderMessage(c);
-         * return;
-         * }
-         * >>>>>>> origin/master
-         * if (c.s().length() < 1) {
-         * return;
-         * }
-         * String msg = c.s();
-         * if ((args != null) && (args.length > 0)) {
-         * for (final String str : args) {
-         * msg = msg.replaceFirst("%s", str);
-         * }
-         * }
-         * if (plr == null) {
-         * PlotMain.sendConsoleSenderMessage(c);
-         * return;
-         * }
-         * sendMessage(plr, msg);
-         */
     }
 }
