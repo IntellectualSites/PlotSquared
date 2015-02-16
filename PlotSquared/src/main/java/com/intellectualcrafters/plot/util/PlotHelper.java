@@ -977,6 +977,44 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return true;
     }
     
+    public static boolean move(final World world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
+        final Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
+        Location bot2 = PlotHelper.getPlotBottomLoc(world, newPlot);
+        final Location top = PlotHelper.getPlotTopLoc(world, current);
+        final Plot currentPlot = PlotHelper.getPlot(world, current);
+        if (currentPlot.owner == null) {
+            return false;
+        }
+        Plot pos1 = PlayerFunctions.getBottomPlot(world, currentPlot);
+        Plot pos2 = PlayerFunctions.getTopPlot(world, currentPlot);
+        PlotId size = PlotHelper.getSize(world, currentPlot);
+        if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
+            return false;
+        }
+        
+        int offset_x = newPlot.x - pos1.id.x;
+        int offset_y = newPlot.y - pos1.id.y;
+        final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
+        String worldname = world.getName();
+        for (PlotId id : selection) { 
+            DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
+            Plot plot = PlotMain.getPlots(worldname).get(id);
+            PlotMain.getPlots(worldname).remove(id);
+            plot.id.x += offset_x;
+            plot.id.y += offset_y;
+            PlotMain.getPlots(worldname).put(plot.id, plot);
+        }
+        ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
+            @Override
+            public void run() {
+                Location bot = bot1.clone().add(1, 0, 1);
+                ChunkManager.regenerateRegion(bot, top, null);
+                TaskManager.runTaskLater(whenDone, 1);
+            }
+        });
+        return true;
+    }
+    
     public static PlotId getSize(World world, Plot plot) {
         PlotSettings settings = plot.settings;
         if (!settings.isMerged()) {

@@ -29,6 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,7 @@ public class Condense extends SubCommand {
             return false;
         }
         String worldname = args[0];
-        World world = Bukkit.getWorld(worldname);
+        final World world = Bukkit.getWorld(worldname);
         if (world == null || !PlotMain.isPlotWorld(worldname)) {
             PlayerFunctions.sendMessage(plr, "INVALID WORLD");
             return false;
@@ -81,11 +82,92 @@ public class Condense extends SubCommand {
                     PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
-                PlayerFunctions.sendMessage(plr, "NOT IMPLEMENTED");
+                if (TASK) {
+                    PlayerFunctions.sendMessage(plr, "TASK ALREADY STARTED");
+                    return false;
+                }
+                if (args.length == 2) {
+                    PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+                    return false;
+                }
+                if (!StringUtils.isNumeric(args[2])) {
+                    PlayerFunctions.sendMessage(plr, "INVALID RADIUS");
+                    return false;
+                }
+                int radius = Integer.parseInt(args[2]);
+                Collection<Plot> plots = PlotMain.getPlots(worldname).values();
+                int size = plots.size();
+                int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
+                if (radius < minimum_radius) {
+                    PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
+                    return false;
+                }
+                final List<PlotId> to_move = new ArrayList<>(getPlots(plots, radius));
+                final List<PlotId> free = new ArrayList<>();
+                PlotId start = new PlotId(0,0);
+                while (start.x <= minimum_radius && start.y <= minimum_radius) {
+                    Plot plot = PlotHelper.getPlot(world, start);
+                    if (!plot.hasOwner()) {
+                        free.add(plot.id);
+                    }
+                    start = Auto.getNextPlot(start, 1);
+                }
+                PlotHelper.move(world, to_move.get(0), free.get(0), new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!TASK) {
+                            sendMessage("CONDENSE TASK CANCELLED");
+                            return;
+                        }
+                        to_move.remove(0);
+                        free.remove(0);
+                        int index = 0;
+                        for (PlotId id : to_move) {
+                            Plot plot = PlotHelper.getPlot(world, id);
+                            if (plot.hasOwner()) {
+                                break;
+                            }
+                            index++;
+                        }
+                        for (int i = 0; i<index; i++) {
+                            to_move.remove(0);
+                        }
+                        index = 0;
+                        for (PlotId id : free) {
+                            Plot plot = PlotHelper.getPlot(world, id);
+                            if (!plot.hasOwner()) {
+                                break;
+                            }
+                            index++;
+                        }
+                        for (int i = 0; i<index; i++) {
+                            free.remove(0);
+                        }
+                        if (to_move.size() == 0) {
+                            sendMessage("TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                            TASK = false;
+                            return;
+                        }
+                        if (free.size() == 0) {
+                            sendMessage("TASK FAILED. NO FREE PLOTS FOUND!");
+                            TASK = false;
+                            return;
+                        }
+                        sendMessage("MOVING " + to_move.get(0) +" to " + free.get(0));
+                        PlotHelper.move(world, to_move.get(0), free.get(0), this);
+                    }
+                });
+                TASK = true;
+                PlayerFunctions.sendMessage(plr, "TASK STARTED...");
                 return true;
             }
             case "stop": {
-                PlayerFunctions.sendMessage(plr, "NOT IMPLEMENTED");
+                if (!TASK) {
+                    PlayerFunctions.sendMessage(plr, "TASK ALREADY STOPPED");
+                    return false;
+                }
+                TASK = false;
+                PlayerFunctions.sendMessage(plr, "TASK STOPPED");
                 return true;
             }
             case "info": {
@@ -101,6 +183,10 @@ public class Condense extends SubCommand {
                 Collection<Plot> plots = PlotMain.getPlots(worldname).values();
                 int size = plots.size();
                 int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
+                if (radius < minimum_radius) {
+                    PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
+                    return false;
+                }
                 int max_move = getPlots(plots, minimum_radius).size();
                 int user_move = getPlots(plots, radius).size();
                 PlayerFunctions.sendMessage(plr, "=== DEFAULT EVAL ===");
@@ -109,6 +195,7 @@ public class Condense extends SubCommand {
                 PlayerFunctions.sendMessage(plr, "=== INPUT EVAL ===");
                 PlayerFunctions.sendMessage(plr, "INPUT RADIUS: " + radius);
                 PlayerFunctions.sendMessage(plr, "ESTIMATED MOVES: " + user_move);
+                PlayerFunctions.sendMessage(plr, "ESTIMATED TIME: " + (user_move * 16) +" seconds");
                 PlayerFunctions.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
             }
@@ -117,11 +204,11 @@ public class Condense extends SubCommand {
         return false;
     }
     
-    public Set<Plot> getPlots(Collection<Plot> plots, int radius) {
-        HashSet<Plot> outside = new HashSet<>();
+    public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
+        HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
             if (plot.id.x > radius || plot.id.x < -radius || plot.id.y > radius || plot.id.y < -radius) {
-                outside.add(plot);
+                outside.add(plot.id);
             }
         }
         return outside;
