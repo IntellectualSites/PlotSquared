@@ -161,6 +161,7 @@ public class SQLManager implements AbstractDB {
                     }
                     stored.get(world).put(new PlotId(idx, idz), id);
                 }
+                stmt.close();
             } catch (final SQLException e) {
                 e.printStackTrace();
             }

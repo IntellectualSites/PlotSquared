@@ -45,7 +45,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class Move extends SubCommand {
 
     public Move() {
-        super("move", "plots.admin", "plot moving debug test", "move", "condense", CommandCategory.DEBUG, true);
+        super("debugmove", "plots.admin", "plot moving debug test", "debugmove", "move", CommandCategory.DEBUG, true);
     }
 
     @Override
