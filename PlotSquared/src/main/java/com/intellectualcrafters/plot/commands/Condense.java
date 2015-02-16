@@ -113,7 +113,7 @@ public class Condense extends SubCommand {
                 return true;
             }
         }
-        PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+        PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
         return false;
     }
     
