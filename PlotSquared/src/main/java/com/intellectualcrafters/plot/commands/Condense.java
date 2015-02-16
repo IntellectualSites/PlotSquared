@@ -195,7 +195,7 @@ public class Condense extends SubCommand {
                 PlayerFunctions.sendMessage(plr, "=== INPUT EVAL ===");
                 PlayerFunctions.sendMessage(plr, "INPUT RADIUS: " + radius);
                 PlayerFunctions.sendMessage(plr, "ESTIMATED MOVES: " + user_move);
-                PlayerFunctions.sendMessage(plr, "ESTIMATED TIME: " + (user_move * 16) +" seconds");
+                PlayerFunctions.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
                 PlayerFunctions.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
             }
