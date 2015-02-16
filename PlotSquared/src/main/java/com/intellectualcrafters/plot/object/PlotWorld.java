@@ -72,7 +72,7 @@ public abstract class PlotWorld {
     static {
         BLOCKS = new ArrayList<>();
         for (final Material material : Material.values()) {
-            if (material.isBlock() && material.isSolid() && !material.hasGravity() && !material.isTransparent() && material.isOccluding() && (material != Material.DROPPER)) {
+            if (material.isBlock() && material.isSolid() && !material.hasGravity() && !material.isTransparent() && material.isOccluding() && (material != Material.DROPPER) && (material != Material.COMMAND)) {
                 BLOCKS.add(material);
             }
         }
