@@ -1592,7 +1592,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         {
             if (checkVersion(1, 8, 0)) {
                 try {
-                    AbstractSetBlock.setBlockManager = new SetBlockFast_1_8();
+                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
                 }
                 catch (Throwable e) {
                     e.printStackTrace();
