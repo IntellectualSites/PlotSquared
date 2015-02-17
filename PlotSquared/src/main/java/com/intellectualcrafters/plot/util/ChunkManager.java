@@ -62,17 +62,34 @@ public class ChunkManager {
     }
     
     public static ArrayList<ChunkLoc> getChunkChunks(World world) {
-        File[] regionFiles = new File(world.getName() + File.separator + "region").listFiles();
+        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+        
+        File folder = new File(directory);
+        File[] regionFiles = folder.listFiles();
+        
         ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        
         for (File file : regionFiles) {
             String name = file.getName();
             if (name.endsWith("mca")) {
                 String[] split = name.split("\\.");
                 try {
-                    chunks.add(new ChunkLoc(Integer.parseInt(split[1]), Integer.parseInt(split[2])));
-                } catch (Exception e) {  }
+                    int x = Integer.parseInt(split[1]);
+                    int z = Integer.parseInt(split[2]);
+                    ChunkLoc loc = new ChunkLoc(x, z);
+                    chunks.add(loc);
+                }
+                catch (Exception e) {  }
             }
         }
+        
+        for (Chunk chunk : world.getLoadedChunks()) {
+            ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
+            if (!chunks.contains(loc)) {
+                chunks.add(loc);
+            }
+        }
+        
         return chunks;
     }
     

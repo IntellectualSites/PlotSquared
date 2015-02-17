@@ -587,8 +587,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final long start = System.currentTimeMillis();
         final Location location = PlotHelper.getPlotHomeDefault(plot);
         PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        runners.put(plot, 1);
         if (plotworld.TERRAIN != 0) {
-            runners.put(plot, 1);
             final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
             ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
@@ -601,20 +601,18 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             });
             return;
         }
-        
-        manager.clearPlot(world, plotworld, plot, isDelete);
-        
-        final Plugin plugin = PlotMain.getMain();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        Runnable run = new Runnable() {
             @Override
             public void run() {
                 PlotHelper.setBiome(world, plot, Biome.FOREST);
+                runners.remove(plot);
                 if (player != null && player.isOnline()) {
                     PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
                 }
                 update(location);
             }
-        }, 90L);
+        };
+        manager.clearPlot(world, plotworld, plot, isDelete, run);
     }
 
     /**

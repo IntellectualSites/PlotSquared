@@ -29,121 +29,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
-public class HybridPlotWorld extends PlotWorld {
-    
-    /*
-     * These variables are set to ensure fast access to config settings Strings
-     * are used as little as possible to optimize math performance in many of
-     * the functions/algorithms
-     */
-    /**
-     * Default Road Height: 64
-     */
-    public static int ROAD_HEIGHT_DEFAULT = 64;
-    /**
-     * Default plot height: 64
-     */
-    public static int PLOT_HEIGHT_DEFAULT = 64;
-    /**
-     * Default Wall Height: 64
-     */
-    public static int WALL_HEIGHT_DEFAULT = 64;
-    /**
-     * Default plot width: 32
-     */
-    public static int PLOT_WIDTH_DEFAULT = 32;
-    /**
-     * Default road width: 7
-     */
-    public static int ROAD_WIDTH_DEFAULT = 7;
-    /**
-     * Default main block: 1
-     */
-    public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
-    /**
-     * Default top blocks: {"2"}
-     */
-    public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
-    /**
-     * Default wall block: 44
-     */
-    public static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
-    public final static PlotBlock CLAIMED_WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 1);
-    /**
-     * Default wall filling: 1
-     */
-    public static PlotBlock WALL_FILLING_DEFAULT = new PlotBlock((short) 1, (byte) 0);
-    /**
-     * Default road block: 155
-     */
-    public final static PlotBlock ROAD_BLOCK_DEFAULT = new PlotBlock((short) 155, (byte) 0);
-    /**
-     * Road Height
-     */
-    public int ROAD_HEIGHT;
-    /**
-     * plot height
-     */
-    public int PLOT_HEIGHT;
-    /**
-     * Wall height
-     */
-    public int WALL_HEIGHT;
-    /**
-     * plot width
-     */
-    public int PLOT_WIDTH;
-    /**
-     * Road width
-     */
-    public int ROAD_WIDTH;
-    /**
-     * Plot main block
-     */
-    public PlotBlock[] MAIN_BLOCK;
-    /**
-     * Top blocks
-     */
-    public PlotBlock[] TOP_BLOCK;
-    /**
-     * Wall block
-     */
-    public PlotBlock WALL_BLOCK;
-    public PlotBlock CLAIMED_WALL_BLOCK;
-    /**
-     * Wall filling
-     */
-    public PlotBlock WALL_FILLING;
-    /**
-     * enable road stripes
-     */
+public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean ROAD_SCHEMATIC_ENABLED;
-    /**
-     * Road block
-     */
-    public PlotBlock ROAD_BLOCK;
-    /**
-     * If bedrock is enabled
-     */
-    public boolean PLOT_BEDROCK;
-    
-    public short PATH_WIDTH_LOWER;
-    public short PATH_WIDTH_UPPER;
-    public short SIZE;
-    public short OFFSET;
     public short SCHEMATIC_HEIGHT;
-    
     public boolean PLOT_SCHEMATIC = false;
-    
     public short REQUIRED_CHANGES = 0;
     
     /*
@@ -155,20 +51,6 @@ public class HybridPlotWorld extends PlotWorld {
     
     public HashMap<ChunkLoc, HashMap<Short, Short>> G_SCH;
     public HashMap<ChunkLoc, HashMap<Short, Byte>> G_SCH_DATA;
-    
-    /**
-     * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
-     * <p/>
-     * Set the last boolean to false if you do not require a specific config node to be set while using the setup
-     * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
-     * world generation
-     */
-    @Override
-    public ConfigurationNode[] getSettingNodes() {
-        // TODO return a set of configuration nodes (used for setup command)
-        return new ConfigurationNode[] { new ConfigurationNode("plot.height", HybridPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", HybridPlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", HybridPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", HybridPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", HybridPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", HybridPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", HybridPlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
-                new ConfigurationNode("road.height", HybridPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", HybridPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", HybridPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", HybridPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), new ConfigurationNode("plot.bedrock", true, "Plot bedrock generation", Configuration.BOOLEAN, true) };
-    }
     
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the

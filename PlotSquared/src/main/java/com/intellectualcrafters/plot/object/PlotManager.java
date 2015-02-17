@@ -46,7 +46,7 @@ public abstract class PlotManager {
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, boolean isDelete);
+    public abstract boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, boolean isDelete, Runnable whenDone);
 
     public abstract boolean claimPlot(final World world, final PlotWorld plotworld, final Plot plot);
     

@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 public class RegenAllRoads extends SubCommand {
 
@@ -63,7 +64,7 @@ public class RegenAllRoads extends SubCommand {
         HybridPlotManager hpm = (HybridPlotManager) manager;
         
         World world = Bukkit.getWorld(name);
-        ArrayList<ChunkLoc> chunks = hpm.getChunkChunks(world);
+        ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         
         PlotMain.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
         PlotMain.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");

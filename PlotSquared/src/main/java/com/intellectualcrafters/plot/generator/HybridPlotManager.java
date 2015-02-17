@@ -42,9 +42,11 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractSetBlock;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
@@ -201,7 +203,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         if (HybridPlotManager.UPDATE) {
             return false;
         }
-        final ArrayList<ChunkLoc> chunks = getChunkChunks(world);
+        final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         
         final Plugin plugin = (Plugin) PlotMain.getMain();
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -233,38 +235,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         return true;
     }
     
-    public ArrayList<ChunkLoc> getChunkChunks(World world) {
-        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
-        
-        File folder = new File(directory);
-        File[] regionFiles = folder.listFiles();
-        
-        ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                String[] split = name.split("\\.");
-                
-                try {
-                    int x = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    ChunkLoc loc = new ChunkLoc(x, z);
-                    chunks.add(loc);
-                }
-                catch (Exception e) {  }
-            }
-        }
-        
-        for (Chunk chunk : world.getLoadedChunks()) {
-            ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
-            if (!chunks.contains(loc)) {
-                chunks.add(loc);
-            }
-        }
-        
-        return chunks;
-    }
     
     public boolean regenerateRoad(Chunk chunk) {
         World world = chunk.getWorld();
@@ -366,176 +336,52 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         return false;
     }
     
-    /**
-     * Default implementation of getting a plot at a given location For a simplified explanation of the math involved: -
-     * Get the current coords - shift these numbers down to something relatable for a single plot (similar to reducing
-     * trigonometric functions down to the first quadrant) - e.g. If the plot size is 20 blocks, and we are at x=25,
-     * it's equivalent to x=5 for that specific plot From this, and knowing how thick the road is, we can say whether
-     * x=5 is road, or plot. The number of shifts done, is also counted, and this number gives us the PlotId
-     */
     @Override
-    public PlotId getPlotIdAbs(final PlotWorld plotworld, final Location loc) {
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
-        // get x,z loc
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
-
-        // get plot size
-        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
-
-        // get size of path on bottom part, and top part of plot
-        // (As 0,0 is in the middle of a road, not the very start)
-        int pathWidthLower;
-        if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        } else {
-            pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
+    public boolean finishPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        if (hpw.ROAD_SCHEMATIC_ENABLED) {
+            for (PlotId id : plotIds) {
+                Location bottom = getPlotBottomLocAbs(plotworld, id);
+                int sx = bottom.getBlockX() - hpw.PATH_WIDTH_LOWER;
+                int sz = bottom.getBlockZ() - hpw.PATH_WIDTH_LOWER;
+                int sy = hpw.ROAD_HEIGHT + hpw.OFFSET;
+                for (ChunkLoc loc : hpw.G_SCH.keySet()) {
+                    HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
+                    HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
+                    if (datas == null) {
+                        for (Short y : blocks.keySet()) {
+                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), (byte) 0);
+                        }
+                    }
+                    else {
+                        for (Short y : blocks.keySet()) {
+                            Byte data = datas.get(y);
+                            if (data == null) {
+                                data = 0;
+                            }
+                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), data);
+                        }
+                    }
+                }
+                
+            }
         }
-
-        // calulating how many shifts need to be done
-        int dx = x / size;
-        int dz = z / size;
-        if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
+        PlotBlock block = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+        if (block.id != 0) {
+            for (PlotId id : plotIds) {
+                setWall(world, plotworld, id, new PlotBlock[] {(( ClassicPlotWorld) plotworld).WALL_BLOCK });
+                Plot plot = PlotHelper.getPlot(world, id);
+                if (plot.hasOwner()) {
+                    String name = UUIDHandler.getName(plot.owner);
+                    if (name != null) {
+                        PlotHelper.setSign(world, name, plot);
+                    }
+                }
+            }
         }
-        if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
-        }
-
-        // reducing to first plot
-        final int rx = (x) % size;
-        final int rz = (z) % size;
-
-        // checking if road (return null if so)
-        final int end = pathWidthLower + dpw.PLOT_WIDTH;
-        final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-        if (northSouth || eastWest) {
-            return null;
-        }
-        // returning the plot id (based on the number of shifts required)
-        return new PlotId(dx + 1, dz + 1);
+        return true;
     }
-
-    /**
-     * Some complex stuff for traversing mega plots (return getPlotIdAbs if you do not support mega plots)
-     */
-    @Override
-    public PlotId getPlotId(final PlotWorld plotworld, final Location loc) {
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
-
-        if (plotworld == null) {
-            return null;
-        }
-        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
-        int pathWidthLower;
-        if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
-        } else {
-            pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
-        }
-
-        int dx = x / size;
-        int dz = z / size;
-
-        if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
-        }
-        if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
-        }
-
-        final int rx = (x) % size;
-        final int rz = (z) % size;
-
-        final int end = pathWidthLower + dpw.PLOT_WIDTH;
-
-        final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-        if (northSouth && eastWest) {
-            // This means you are in the intersection
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if ((plot.settings.getMerged(0) && plot.settings.getMerged(3))) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        if (northSouth) {
-            // You are on a road running West to East (yeah, I named the var
-            // poorly)
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.settings.getMerged(0)) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        if (eastWest) {
-            // This is the road separating an Eastern and Western plot
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.settings.getMerged(3)) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
-            }
-            return null;
-        }
-        final PlotId id = new PlotId(dx + 1, dz + 1);
-        final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
-        if (plot == null) {
-            return id;
-        }
-        return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
-    }
-
-    /**
-     * Get the bottom plot loc (some basic math)
-     */
-    @Override
-    public Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid) {
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
-        final int px = plotid.x;
-        final int pz = plotid.y;
-
-        final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(Bukkit.getWorld(plotworld.worldname), x, 1, z);
-    }
-
-    /**
-     * Get the top plot loc (some basic math)
-     */
-    @Override
-    public Location getPlotTopLocAbs(final PlotWorld plotworld, final PlotId plotid) {
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
-        final int px = plotid.x;
-        final int pz = plotid.y;
-
-        final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-
-        return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
-    }
+    
 
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the SetCuboid
@@ -544,7 +390,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      * to have 512x512 sized plots
      */
     @Override
-    public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete) {
+    public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         PlotHelper.runners.put(plot, 1);
         final Plugin plugin = PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -887,6 +733,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                                                         @Override
                                                         public void run() {
                                                             PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
+                                                            TaskManager.runTask(whenDone);
                                                         }
                                                     }, 1L);
                                                 }
@@ -902,378 +749,4 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }, 20L);
         return true;
     }
-    
-    /**
-     * Remove sign for a plot
-     */
-    @Override
-    public Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
-    }
-    
-    @Override
-    public boolean setComponent(World world, PlotWorld plotworld, PlotId plotid, String component, PlotBlock[] blocks) {
-        switch(component) {
-            case "floor": {
-                setFloor(world, plotworld, plotid, blocks);
-                return true;
-            }
-            case "wall": {
-                setWallFilling(world, plotworld, plotid, blocks);
-                return true;
-            }
-            case "border": {
-                setWall(world, plotworld, plotid, blocks);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean setFloor(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
-        PlotHelper.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), blocks);
-        return true;
-    }
-
-    public boolean setWallFilling(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        if (dpw.ROAD_WIDTH == 0) {
-            return false;
-        }
-        final Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
-        final Location top = PlotHelper.getPlotTopLoc(w, plotid);
-
-        int x, z;
-        z = bottom.getBlockZ();
-        for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-            for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, blocks);
-            }
-        }
-
-        x = top.getBlockX() + 1;
-        for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-            for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, blocks);
-            }
-        }
-
-        z = top.getBlockZ() + 1;
-        for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-            for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, blocks);
-            }
-        }
-        x = bottom.getBlockX();
-        for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-            for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, blocks);
-            }
-        }
-        return true;
-    }
-
-    public boolean setWall(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        if (dpw.ROAD_WIDTH == 0) {
-            return false;
-        }
-        final Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
-        final Location top = PlotHelper.getPlotTopLoc(w, plotid);
-
-        int x, z;
-
-        z = bottom.getBlockZ();
-        for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
-        }
-        x = top.getBlockX() + 1;
-        for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
-        }
-        z = top.getBlockZ() + 1;
-        for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
-        }
-        x = bottom.getBlockX();
-        for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
-        }
-        return true;
-    }
-
-    /**
-     * Set a plot biome
-     */
-    @Override
-    public boolean setBiome(final World world, final Plot plot, final Biome biome) {
-
-        final int bottomX = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
-        final int topX = PlotHelper.getPlotTopLoc(world, plot.id).getBlockX() + 1;
-        final int bottomZ = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
-        final int topZ = PlotHelper.getPlotTopLoc(world, plot.id).getBlockZ() + 1;
-
-        final Block block = world.getBlockAt(PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 1, 1));
-        final Biome current = block.getBiome();
-        if (biome.equals(current)) {
-            return false;
-        }
-
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                final Block blk = world.getBlockAt(x, 0, z);
-                final Biome c = blk.getBiome();
-                if (c.equals(biome)) {
-                    x += 15;
-                    continue;
-                }
-                blk.setBiome(biome);
-            }
-        }
-        return true;
-    }
-
-    /**
-     * PLOT MERGING
-     */
-
-    @Override
-    public boolean createRoadEast(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World w = Bukkit.getWorld(plot.world);
-
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
-
-        final int sx = pos2.getBlockX() + 1;
-        final int ex = (sx + dpw.ROAD_WIDTH) - 1;
-        final int sz = pos1.getBlockZ() - 1;
-        final int ez = pos2.getBlockZ() + 2;
-
-        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257 + 1, ez), new PlotBlock((short) 0, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz + 1), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez), new PlotBlock((short) 7, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
-        PlotHelper.setCuboid(w, new Location(w, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, sx + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
-
-        PlotHelper.setCuboid(w, new Location(w, ex, 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 1, ez), dpw.WALL_FILLING);
-        PlotHelper.setCuboid(w, new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), new Location(w, ex + 1, dpw.WALL_HEIGHT + 2, ez), dpw.WALL_BLOCK);
-
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
-
-        return true;
-    }
-
-    @Override
-    public boolean createRoadSouth(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World w = Bukkit.getWorld(plot.world);
-
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
-
-        final int sz = pos2.getBlockZ() + 1;
-        final int ez = (sz + dpw.ROAD_WIDTH) - 1;
-        final int sx = pos1.getBlockX() - 1;
-        final int ex = pos2.getBlockX() + 2;
-
-        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 0, sz), new Location(w, ex, 1, ez + 1), new PlotBlock((short) 7, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 1, sz + 1), dpw.WALL_FILLING);
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, sz), new Location(w, ex, dpw.WALL_HEIGHT + 2, sz + 1), dpw.WALL_BLOCK);
-
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 1, ez + 1), dpw.WALL_FILLING);
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, dpw.WALL_HEIGHT + 1, ez), new Location(w, ex, dpw.WALL_HEIGHT + 2, ez + 1), dpw.WALL_BLOCK);
-
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
-
-        return true;
-    }
-
-    @Override
-    public boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World w = Bukkit.getWorld(plot.world);
-
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
-
-        final int sx = pos2.getBlockX() + 1;
-        final int ex = (sx + dpw.ROAD_WIDTH) - 1;
-        final int sz = pos2.getBlockZ() + 1;
-        final int ez = (sz + dpw.ROAD_WIDTH) - 1;
-
-        PlotHelper.setSimpleCuboid(w, new Location(w, sx, dpw.ROAD_HEIGHT + 1, sz + 1), new Location(w, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 0, sz + 1), new Location(w, ex, 1, ez), new PlotBlock((short) 7, (byte) 0));
-        PlotHelper.setCuboid(w, new Location(w, sx + 1, 1, sz + 1), new Location(w, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
-
-        return true;
-    }
-
-    @Override
-    public boolean removeRoadEast(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World w = Bukkit.getWorld(plot.world);
-
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
-
-        final int sx = pos2.getBlockX() + 1;
-        final int ex = (sx + dpw.ROAD_WIDTH) - 1;
-        final int sz = pos1.getBlockZ();
-        final int ez = pos2.getBlockZ() + 1;
-
-        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
-        PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
-
-        return true;
-    }
-
-    @Override
-    public boolean removeRoadSouth(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World w = Bukkit.getWorld(plot.world);
-
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
-
-        final int sz = pos2.getBlockZ() + 1;
-        final int ez = (sz + dpw.ROAD_WIDTH) - 1;
-        final int sx = pos1.getBlockX();
-        final int ex = pos2.getBlockX() + 1;
-
-        PlotHelper.setSimpleCuboid(w, new Location(w, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(w, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
-
-        PlotHelper.setCuboid(w, new Location(w, sx, 1, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT, ez + 1), dpw.MAIN_BLOCK);
-        PlotHelper.setCuboid(w, new Location(w, sx, dpw.PLOT_HEIGHT, sz), new Location(w, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
-
-        return true;
-    }
-
-    @Override
-    public boolean removeRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final World world = Bukkit.getWorld(plot.world);
-
-        final Location loc = getPlotTopLocAbs(dpw, plot.id);
-
-        final int sx = loc.getBlockX() + 1;
-        final int ex = (sx + dpw.ROAD_WIDTH) - 1;
-        final int sz = loc.getBlockZ() + 1;
-        final int ez = (sz + dpw.ROAD_WIDTH) - 1;
-
-        PlotHelper.setSimpleCuboid(world, new Location(world, sx, dpw.ROAD_HEIGHT + 1, sz), new Location(world, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
-
-        PlotHelper.setCuboid(world, new Location(world, sx + 1, 1, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT, ez), dpw.MAIN_BLOCK);
-        PlotHelper.setCuboid(world, new Location(world, sx + 1, dpw.ROAD_HEIGHT, sz + 1), new Location(world, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.TOP_BLOCK);
-        return true;
-    }
-
-    /**
-     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED)
-     */
-    @Override
-    public boolean finishPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-        final PlotId pos1 = plotIds.get(0);
-        PlotBlock block = ((HybridPlotWorld) plotworld).WALL_BLOCK;
-        if (block.id != 0) {
-            setWall(world, plotworld, pos1, new PlotBlock[] {(( HybridPlotWorld) plotworld).WALL_BLOCK });
-        }
-        return true;
-    }
-
-    @Override
-    public boolean finishPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (hpw.ROAD_SCHEMATIC_ENABLED) {
-            for (PlotId id : plotIds) {
-                Location bottom = getPlotBottomLocAbs(plotworld, id);
-                int sx = bottom.getBlockX() - hpw.PATH_WIDTH_LOWER;
-                int sz = bottom.getBlockZ() - hpw.PATH_WIDTH_LOWER;
-                int sy = hpw.ROAD_HEIGHT + hpw.OFFSET;
-                for (ChunkLoc loc : hpw.G_SCH.keySet()) {
-                    HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
-                    HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
-                    if (datas == null) {
-                        for (Short y : blocks.keySet()) {
-                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), (byte) 0);
-                        }
-                    }
-                    else {
-                        for (Short y : blocks.keySet()) {
-                            Byte data = datas.get(y);
-                            if (data == null) {
-                                data = 0;
-                            }
-                            PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), data);
-                        }
-                    }
-                }
-                
-            }
-        }
-        PlotBlock block = ((HybridPlotWorld) plotworld).WALL_BLOCK;
-        if (block.id != 0) {
-            for (PlotId id : plotIds) {
-                setWall(world, plotworld, id, new PlotBlock[] {(( HybridPlotWorld) plotworld).WALL_BLOCK });
-                Plot plot = PlotHelper.getPlot(world, id);
-                if (plot.hasOwner()) {
-                    String name = UUIDHandler.getName(plot.owner);
-                    if (name != null) {
-                        PlotHelper.setSign(world, name, plot);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean startPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        return true;
-    }
-
-    @Override
-    public boolean startPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        return true;
-    }
-
-    @Override
-    public boolean claimPlot(World world, final PlotWorld plotworld, Plot plot) {
-        PlotBlock unclaim = ((HybridPlotWorld) plotworld).WALL_BLOCK;
-        PlotBlock claim = ((HybridPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (claim != unclaim) {
-            setWall(world, plotworld, plot.id, new PlotBlock[] {claim});
-        }
-        return true;
-    }
-
-    @Override
-    public boolean unclaimPlot(World world, final PlotWorld plotworld, Plot plot) {
-        PlotBlock unclaim = ((HybridPlotWorld) plotworld).WALL_BLOCK;
-        PlotBlock claim = ((HybridPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (claim != unclaim) {
-            setWall(world, plotworld, plot.id, new PlotBlock[] {unclaim});
-        }
-        return true;
-    }
-
-    @Override
-    public String[] getPlotComponents(World world, PlotWorld plotworld, PlotId plotid) {
-        return new String[] {
-                "floor",
-                "wall",
-                "border"
-        };
-    }
-
 }

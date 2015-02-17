@@ -114,7 +114,7 @@ public class ExpireManager {
                         Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
                     }
                     PlotWorld plotworld = PlotMain.getWorldSettings(world);
-                    manager.clearPlot(worldobj, plotworld, plot, false);
+                    manager.clearPlot(worldobj, plotworld, plot, false, null);
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);
                     PlotMain.removePlot(world, plot.id, true);
