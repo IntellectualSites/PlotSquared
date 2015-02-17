@@ -356,46 +356,16 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
     
-//    public static boolean setBlock(final Block block, final PlotBlock plotblock) {
-//        if (canSetFast) {
-//            if ((block.getTypeId() != plotblock.id) || (plotblock.data != block.getData())) {
-//                try {
-//                    SetBlockFast.set(block.getWorld(), block.getX(), block.getY(), block.getZ(), plotblock.id, plotblock.data);
-//                    return true;
-//                } catch (final Throwable e) {
-//                    canSetFast = false;
-//                }
-//            }
-//            return false;
-//        }
-//        if (block.getData() == plotblock.data) {
-//            if (block.getTypeId() != plotblock.id) {
-//                block.setTypeId(plotblock.id);
-//            }
-//        } else {
-//            if (block.getTypeId() == plotblock.id) {
-//                block.setData(plotblock.data);
-//            } else {
-//                block.setTypeIdAndData(plotblock.id, plotblock.data, false);
-//            }
-//        }
-//        return false;
-//    }
-
-    /**
-     * Adjusts a plot wall
-     *
-     * @param player
-     * @param plot
-     * @param block
-     */
-    public static void adjustWall(final Player player, final Plot plot, final PlotBlock block) {
-        final World world = player.getWorld();
-        final PlotManager manager = PlotMain.getPlotManager(world);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-
-        manager.setWall(world, plotworld, plot.id, block);
-        update(player.getLocation());
+    public static boolean setBlock(World world, int x, int y, int z, PlotBlock[] blocks) {
+        final int i = random(blocks.length);
+        final PlotBlock newblock = blocks[i];
+        try {
+            return AbstractSetBlock.setBlockManager.set(world, x, y, z, newblock.id, newblock.data);
+        }
+        catch (Throwable e) {
+            AbstractSetBlock.setBlockManager = new SetBlockSlow();
+            return AbstractSetBlock.setBlockManager.set(world, x, y, z, newblock.id, newblock.data);
+        }
     }
     
     public static void update(Location loc) {
@@ -563,33 +533,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return x + ";" + z;
     }
 
-    public static void adjustWallFilling(final Player requester, final Plot plot, final PlotBlock block) {
-        if (runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
-            return;
-        }
-        final World world = requester.getWorld();
-        final PlotManager manager = PlotMain.getPlotManager(world);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        manager.setWallFilling(world, plotworld, plot.id, block);
-        PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-        update(requester.getLocation());
-    }
-
-    public static void setFloor(final Player requester, final Plot plot, final PlotBlock[] blocks) {
-        if (runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
-            return;
-        }
-
-        final World world = requester.getWorld();
-        final PlotManager manager = PlotMain.getPlotManager(world);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        PlayerFunctions.sendMessage(requester, C.SET_BLOCK_ACTION_FINISHED);
-        manager.setFloor(world, plotworld, plot.id, blocks);
-        update(requester.getLocation());
-    }
-
     public static int square(final int x) {
         return x * x;
     }
@@ -659,7 +602,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             return;
         }
         
-        manager.clearPlot(world, plot, isDelete);
+        manager.clearPlot(world, plotworld, plot, isDelete);
         
         final Plugin plugin = PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {

@@ -45,6 +45,7 @@ import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
 
@@ -505,16 +506,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
     }
 
     /**
-     * Check if a location is inside a specific plot(non-Javadoc) - For this implementation, we don't need to do
-     * anything fancier than referring to getPlotIdAbs(...)
-     */
-    @Override
-    public boolean isInPlotAbs(final PlotWorld plotworld, final Location loc, final PlotId plotid) {
-        final PlotId result = getPlotIdAbs(plotworld, loc);
-        return (result != null) && (result == plotid);
-    }
-
-    /**
      * Get the bottom plot loc (some basic math)
      */
     @Override
@@ -553,7 +544,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
      * to have 512x512 sized plots
      */
     @Override
-    public boolean clearPlot(final World world, final Plot plot, final boolean isDelete) {
+    public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete) {
         PlotHelper.runners.put(plot, 1);
         final Plugin plugin = PlotMain.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -563,7 +554,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
             }
         }, 90L);
 
-        final HybridPlotWorld dpw = ((HybridPlotWorld) PlotMain.getWorldSettings(world));
+        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
 
         final Location pos1 = PlotHelper.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLocAbs(world, plot.id);
@@ -584,7 +575,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 
         final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, 1, pos1.getBlockZ()));
         if ((block.getTypeId() != wall_filling.id) || (block.getData() != wall_filling.data)) {
-            setWallFilling(world, dpw, plot.id, wall_filling);
+            setWallFilling(world, dpw, plot.id, new PlotBlock[] {wall_filling});
         }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -593,7 +584,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 
                 final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, dpw.WALL_HEIGHT + 1, pos1.getBlockZ()));
                 if ((block.getTypeId() != wall.id) || (block.getData() != wall.data)) {
-                    setWall(world, dpw, plot.id, wall);
+                    setWall(world, dpw, plot.id, new PlotBlock[] {wall});
                 }
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -920,8 +911,26 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
         final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
         return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
     }
-
+    
     @Override
+    public boolean setComponent(World world, PlotWorld plotworld, PlotId plotid, String component, PlotBlock[] blocks) {
+        switch(component) {
+            case "floor": {
+                setFloor(world, plotworld, plotid, blocks);
+                return true;
+            }
+            case "wall": {
+                setWallFilling(world, plotworld, plotid, blocks);
+                return true;
+            }
+            case "border": {
+                setWall(world, plotworld, plotid, blocks);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean setFloor(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
@@ -930,8 +939,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
         return true;
     }
 
-    @Override
-    public boolean setWallFilling(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock plotblock) {
+    public boolean setWallFilling(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
@@ -943,34 +951,33 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
         z = bottom.getBlockZ();
         for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
+                PlotHelper.setBlock(w, x, y, z, blocks);
             }
         }
 
         x = top.getBlockX() + 1;
         for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
+                PlotHelper.setBlock(w, x, y, z, blocks);
             }
         }
 
         z = top.getBlockZ() + 1;
         for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
+                PlotHelper.setBlock(w, x, y, z, blocks);
             }
         }
         x = bottom.getBlockX();
         for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                PlotHelper.setBlock(w, x, y, z, plotblock.id, plotblock.data);
+                PlotHelper.setBlock(w, x, y, z, blocks);
             }
         }
         return true;
     }
 
-    @Override
-    public boolean setWall(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock plotblock) {
+    public boolean setWall(final World w, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
@@ -982,19 +989,19 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 
         z = bottom.getBlockZ();
         for (x = bottom.getBlockX(); x < (top.getBlockX() + 1); x++) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
         }
         x = top.getBlockX() + 1;
         for (z = bottom.getBlockZ(); z < (top.getBlockZ() + 1); z++) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
         }
         z = top.getBlockZ() + 1;
         for (x = top.getBlockX() + 1; x > (bottom.getBlockX() - 1); x--) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
         }
         x = bottom.getBlockX();
         for (z = top.getBlockZ() + 1; z > (bottom.getBlockZ() - 1); z--) {
-            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, plotblock.id, plotblock.data);
+            PlotHelper.setBlock(w, x, dpw.WALL_HEIGHT + 1, z, blocks);
         }
         return true;
     }
@@ -1175,24 +1182,11 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
      */
     @Override
     public boolean finishPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-
-        // TODO set plot wall
-
         final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
-
         final PlotId pos1 = plotIds.get(0);
-        final PlotId pos2 = plotIds.get(plotIds.size() - 1);
-
-        final PlotBlock block = dpw.WALL_BLOCK;
-
-        final Location megaPlotBot = PlotHelper.getPlotBottomLoc(world, pos1);
-        final Location megaPlotTop = PlotHelper.getPlotTopLoc(world, pos2).add(1, 0, 1);
-        for (int x = megaPlotBot.getBlockX(); x <= megaPlotTop.getBlockX(); x++) {
-            for (int z = megaPlotBot.getBlockZ(); z <= megaPlotTop.getBlockZ(); z++) {
-                if ((z == megaPlotBot.getBlockZ()) || (z == megaPlotTop.getBlockZ()) || (x == megaPlotBot.getBlockX()) || (x == megaPlotTop.getBlockX())) {
-                    world.getBlockAt(x, dpw.WALL_HEIGHT + 1, z).setTypeIdAndData(block.id, block.data, false);
-                }
-            }
+        PlotBlock block = ((HybridPlotWorld) plotworld).WALL_BLOCK;
+        if (block.id != 0) {
+            setWall(world, plotworld, pos1, new PlotBlock[] {(( HybridPlotWorld) plotworld).WALL_BLOCK });
         }
         return true;
     }
@@ -1227,7 +1221,19 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
                 
             }
         }
-        
+        PlotBlock block = ((HybridPlotWorld) plotworld).WALL_BLOCK;
+        if (block.id != 0) {
+            for (PlotId id : plotIds) {
+                setWall(world, plotworld, id, new PlotBlock[] {(( HybridPlotWorld) plotworld).WALL_BLOCK });
+                Plot plot = PlotHelper.getPlot(world, id);
+                if (plot.hasOwner()) {
+                    String name = UUIDHandler.getName(plot.owner);
+                    if (name != null) {
+                        PlotHelper.setSign(world, name, plot);
+                    }
+                }
+            }
+        }
         return true;
     }
 
@@ -1240,4 +1246,34 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
     public boolean startPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
         return true;
     }
+
+    @Override
+    public boolean claimPlot(World world, final PlotWorld plotworld, Plot plot) {
+        PlotBlock unclaim = ((HybridPlotWorld) plotworld).WALL_BLOCK;
+        PlotBlock claim = ((HybridPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+        if (claim != unclaim) {
+            setWall(world, plotworld, plot.id, new PlotBlock[] {claim});
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unclaimPlot(World world, final PlotWorld plotworld, Plot plot) {
+        PlotBlock unclaim = ((HybridPlotWorld) plotworld).WALL_BLOCK;
+        PlotBlock claim = ((HybridPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+        if (claim != unclaim) {
+            setWall(world, plotworld, plot.id, new PlotBlock[] {unclaim});
+        }
+        return true;
+    }
+
+    @Override
+    public String[] getPlotComponents(World world, PlotWorld plotworld, PlotId plotid) {
+        return new String[] {
+                "floor",
+                "wall",
+                "border"
+        };
+    }
+
 }

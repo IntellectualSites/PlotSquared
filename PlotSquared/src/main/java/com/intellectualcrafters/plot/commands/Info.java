@@ -58,6 +58,10 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         Plot plot;
         if (player != null) {
             world = player.getWorld();
+            if (!PlotMain.isPlotWorld(world)) {
+                PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT_WORLD);
+                return false;
+            }
             if (!PlayerFunctions.isInPlot(player)) {
                 PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
                 return false;
@@ -132,8 +136,8 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
 
         info = format(info, world, plot, player);
-
-        PlayerFunctions.sendMessage(player, info);
+        PlayerFunctions.sendMessage(player, C.PLOT_INFO_HEADER);
+        PlayerFunctions.sendMessage(player, info, false);
         return true;
     }
 

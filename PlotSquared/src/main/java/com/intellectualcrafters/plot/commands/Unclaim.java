@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
@@ -63,7 +64,10 @@ public class Unclaim extends SubCommand {
         }
         final boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {
-            DBFunc.delete(plr.getWorld().getName(), plot);
+            World world = plr.getWorld();
+            String worldname = world.getName();
+            PlotMain.getPlotManager(world).unclaimPlot(world, pWorld, plot);
+            DBFunc.delete(worldname, plot);
             // TODO set wall block
         } else {
             PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");

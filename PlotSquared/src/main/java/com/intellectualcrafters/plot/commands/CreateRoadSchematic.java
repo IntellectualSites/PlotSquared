@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 public class CreateRoadSchematic extends SubCommand {
 
     public CreateRoadSchematic() {
-        super(Command.CREATEROADSCHEMATIC, "Add a road schematic to your world using the road around your current plot", "createroadschematic", CommandCategory.DEBUG, true);
+        super(Command.CREATEROADSCHEMATIC, "Add a road schematic to your world using the road around your current plot", "crs", CommandCategory.DEBUG, true);
     }
 
     @Override

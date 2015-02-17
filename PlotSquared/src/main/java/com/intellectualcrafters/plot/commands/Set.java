@@ -35,14 +35,18 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Configuration.SettingValue;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -247,152 +251,34 @@ public class Set extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
             return true;
         }
-        if (args[0].equalsIgnoreCase("wall")) {
-            final PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-            if (plotworld == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return true;
-            }
-            if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
-                return true;
-            }
-            if (args[1].length() < 2) {
-                sendMessage(plr, C.NAME_LITTLE, "Material", args[1].length() + "", "2");
-                return true;
-            }
-            Material material;
-            try {
-                material = getMaterial(args[1], PlotWorld.BLOCKS);
-            } catch (final NullPointerException e) {
-                material = null;
-            }
-            /*
-             * for (Material m : PlotWorld.BLOCKS) {
-             * if (m.toString().equalsIgnoreCase(args[1])) {
-             * material = m;
-             * break;
-             * }
-             * }
-             */
-            if (material == null) {
-                PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
-                return true;
-            }
-            byte data = 0;
-
-            if (args.length > 2) {
+        
+        // Get components
+        World world = plr.getWorld();
+        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlotManager manager = PlotMain.getPlotManager(world);
+        String[] components = manager.getPlotComponents(world, plotworld, plot.id);
+        for (String component : components) {
+            if (component.equalsIgnoreCase(args[0])) {
+                if (args.length < 2) {
+                    PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                    return true;
+                }
+                PlotBlock[] blocks;
                 try {
-                    data = (byte) Integer.parseInt(args[2]);
-                } catch (final Exception e) {
-                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-                    return true;
+                    blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseObject(args[2]);
                 }
-            }
-            PlayerFunctions.sendMessage(plr, C.GENERATING_WALL);
-            PlotHelper.adjustWall(plr, plot, new PlotBlock((short) material.getId(), data));
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("floor")) {
-            if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
-                return true;
-            }
-            final PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-            if (plotworld == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return true;
-            }
-            //
-            @SuppressWarnings("unchecked") final ArrayList<Material> materials = (ArrayList<Material>) ((ArrayList<Material>) PlotWorld.BLOCKS).clone();
-            materials.add(Material.AIR);
-            //
-            final String[] strings = args[1].split(",");
-            //
-            int index = 0;
-            //
-            Material m;
-            //
-            final PlotBlock[] blocks = new PlotBlock[strings.length];
-
-            for (String s : strings) {
-                s = s.replaceAll(",", "");
-                final String[] ss = s.split(";");
-                ss[0] = ss[0].replaceAll(";", "");
-                if (ss[0].length() < 2) {
-                    sendMessage(plr, C.NAME_LITTLE, "Material", ss[0].length() + "", "2");
-                    return true;
-                }
-                m = getMaterial(ss[0], materials);
-                /*
-                 * for (Material ma : materials) {
-                 * if (ma.toString().equalsIgnoreCase(ss[0])) {
-                 * m = ma;
-                 * }
-                 * }
-                 */
-                if (m == null) {
-                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
-                    return true;
-                }
-                if (ss.length == 1) {
-
-                    blocks[index] = new PlotBlock((short) m.getId(), (byte) 0);
-                } else {
-                    byte b;
+                catch (Exception e) {
                     try {
-                        b = (byte) Integer.parseInt(ss[1]);
-                    } catch (final Exception e) {
-                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-                        return true;
-                    }
-                    blocks[index] = new PlotBlock((short) m.getId(), b);
+                        blocks = new PlotBlock[] {new PlotBlock((short) getMaterial(args[1], PlotWorld.BLOCKS).getId(), (byte) 0)};
+                  } catch (Exception e2) {
+                      PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
+                      return false;
+                  }
                 }
-                index++;
-            }
-            PlotHelper.setFloor(plr, plot, blocks);
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("wall_filling")) {
-            if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                manager.setComponent(world, plotworld, plot.id, component, blocks);
+                PlayerFunctions.sendMessage(plr, C.GENERATING_COMPONENT);
                 return true;
             }
-            final PlotWorld plotworld = PlotMain.getWorldSettings(plr.getWorld());
-            if (plotworld == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return true;
-            }
-            if (args[1].length() < 2) {
-                sendMessage(plr, C.NAME_LITTLE, "Material", args[1].length() + "", "2");
-                return true;
-            }
-            final Material material = getMaterial(args[1], PlotWorld.BLOCKS);
-            /*
-             * for (Material m : PlotWorld.BLOCKS) {
-             * if (m.toString().equalsIgnoreCase(args[1])) {
-             * material = m;
-             * break;
-             * }
-             * }
-             */
-
-            if (material == null) {
-                PlayerFunctions.sendMessage(plr, getBlockList(PlotWorld.BLOCKS));
-                return true;
-            }
-            byte data = 0;
-
-            if (args.length > 2) {
-                try {
-                    data = (byte) Integer.parseInt(args[2]);
-                } catch (final Exception e) {
-                    PlayerFunctions.sendMessage(plr, C.NOT_VALID_DATA);
-                    return true;
-                }
-            }
-            PlotHelper.adjustWallFilling(plr, plot, new PlotBlock((short) material.getId(), data));
-            return true;
         }
         {
             AbstractFlag af;

@@ -38,19 +38,20 @@ public abstract class PlotManager {
 
     public abstract PlotId getPlotId(final PlotWorld plotworld, final Location loc);
 
-    public abstract boolean isInPlotAbs(final PlotWorld plotworld, final Location loc, final PlotId plotid);
-
     // If you have a circular plot, just return the corner if it were a square
     public abstract Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid);
 
     // the same applies here
     public abstract Location getPlotTopLocAbs(final PlotWorld plotworld, final PlotId plotid);
-
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(final World world, final Plot plot, boolean isDelete);
+    public abstract boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, boolean isDelete);
 
+    public abstract boolean claimPlot(final World world, final PlotWorld plotworld, final Plot plot);
+    
+    public abstract boolean unclaimPlot(final World world, final PlotWorld plotworld, final Plot plot);
+    
     public abstract Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot);
 
     /*
@@ -58,11 +59,9 @@ public abstract class PlotManager {
      * method)
      */
 
-    public abstract boolean setWallFilling(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock block);
-
-    public abstract boolean setWall(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock block);
-
-    public abstract boolean setFloor(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] block);
+    public abstract String[] getPlotComponents(final World world, final PlotWorld plotworld, final PlotId plotid);
+    
+    public abstract boolean setComponent(final World world, final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
 
     public abstract boolean setBiome(final World world, final Plot plot, final Biome biome);
 

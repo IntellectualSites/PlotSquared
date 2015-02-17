@@ -150,7 +150,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                return PlayerFunctions.sendMessage(player, builder.toString());
+                return PlayerFunctions.sendMessage(player, builder.toString(), false);
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;

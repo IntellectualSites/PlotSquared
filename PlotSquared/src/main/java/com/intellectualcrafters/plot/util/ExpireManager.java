@@ -21,6 +21,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
 
 public class ExpireManager {
     
@@ -112,7 +113,8 @@ public class ExpireManager {
                     if (plot.settings.isMerged()) {
                         Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
                     }
-                    manager.clearPlot(worldobj, plot, false);
+                    PlotWorld plotworld = PlotMain.getWorldSettings(world);
+                    manager.clearPlot(worldobj, plotworld, plot, false);
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);
                     PlotMain.removePlot(world, plot.id, true);

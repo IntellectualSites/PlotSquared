@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 public class RegenAllRoads extends SubCommand {
 
     public RegenAllRoads() {
-        super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "regenallroads", CommandCategory.DEBUG, false);
+        super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
     }
 
     @Override
