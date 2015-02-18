@@ -928,7 +928,9 @@ public class PlotMain extends JavaPlugin implements Listener {
     }
 
     public static void loadWorld(final String world, final ChunkGenerator generator) {
+        System.out.print(2);
         if (getWorldSettings(world) != null) {
+            System.out.print(3);
             return;
         }
 
@@ -940,6 +942,7 @@ public class PlotMain extends JavaPlugin implements Listener {
         final String path = "worlds." + world;
 
         if (!LOADING_WORLD && (generator != null) && (generator instanceof PlotGenerator)) {
+            System.out.print(4);
             plotGenerator = (PlotGenerator) generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
@@ -963,7 +966,9 @@ public class PlotMain extends JavaPlugin implements Listener {
             addPlotWorld(world, plotWorld, plotManager);
             PlotHelper.setupBorder(world);
         } else {
+            System.out.print(5 + " | " + (generator instanceof PlotGenerator));
             if (!worlds.contains(world)) {
+                System.out.print(6);
                 return;
             }
             if (!LOADING_WORLD) {

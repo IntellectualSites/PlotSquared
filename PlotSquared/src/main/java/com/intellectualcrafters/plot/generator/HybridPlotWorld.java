@@ -92,6 +92,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             PlotMain.sendConsoleSenderMessage("&c - road schematics are disabled for this world.");
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
+        System.out.print("LOADED!");
     }
     
     public void setupSchematics() {
@@ -118,6 +119,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
+            
+            int center_shift_x = 0;
+            int center_shift_z = 0;
+            if (l3  < PLOT_WIDTH) {
+                center_shift_z = (int) ((PLOT_WIDTH - l3)/2);
+            }
+            if (w3  < PLOT_WIDTH) {
+                center_shift_x = (int) ((PLOT_WIDTH - w3)/2);
+            }
+            
+            
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
@@ -125,7 +137,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         short id = blocks3[index].getBlock();
                         byte data = blocks3[index].getData();
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift), (short) (y), (short) (z + shift + oddshift), id, data, false);
+                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (short) (y), (short) (z + shift + oddshift + center_shift_z), id, data, false);
                         }
                     }
                 }
