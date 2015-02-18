@@ -12,8 +12,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public static int ROAD_HEIGHT_DEFAULT = 64;
     public static int PLOT_HEIGHT_DEFAULT = 64;
     public static int WALL_HEIGHT_DEFAULT = 64;
-    public static int PLOT_WIDTH_DEFAULT = 32;
-    public static int ROAD_WIDTH_DEFAULT = 7;
     public static PlotBlock[] MAIN_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
     public static PlotBlock[] TOP_BLOCK_DEFAULT = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
     public static PlotBlock WALL_BLOCK_DEFAULT = new PlotBlock((short) 44, (byte) 0);
@@ -24,8 +22,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT;
     public int PLOT_HEIGHT;
     public int WALL_HEIGHT;
-    public int PLOT_WIDTH;
-    public int ROAD_WIDTH;
     public PlotBlock[] MAIN_BLOCK;
     public PlotBlock[] TOP_BLOCK;
     public PlotBlock WALL_BLOCK;
@@ -33,11 +29,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public PlotBlock WALL_FILLING;
     public PlotBlock ROAD_BLOCK;
     public boolean PLOT_BEDROCK;
-    
-    public short PATH_WIDTH_LOWER;
-    public short PATH_WIDTH_UPPER;
-    public short SIZE;
-    public short OFFSET;
     
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
@@ -75,14 +66,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.CLAIMED_WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
         
         this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
-        
-        if ((this.ROAD_WIDTH % 2) == 0) {
-            PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
-        } else {
-            PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2));
-        }
-        
-        this.PATH_WIDTH_UPPER = (short) (this.PATH_WIDTH_LOWER + this.PLOT_WIDTH + 1);
     }
     
     public ClassicPlotWorld(String worldname) {

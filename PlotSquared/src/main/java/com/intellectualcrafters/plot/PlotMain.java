@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.listeners.*;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
@@ -48,8 +49,10 @@ import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.*;
 import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
@@ -594,7 +597,6 @@ public class PlotMain extends JavaPlugin implements Listener {
      *
      * @param c message
      */
-    @SuppressWarnings("unused")
     public static void sendConsoleSenderMessage(final C c) {
         sendConsoleSenderMessage(c.s());
     }
@@ -661,7 +663,6 @@ public class PlotMain extends JavaPlugin implements Listener {
     /**
      * Load configuration files
      */
-    @SuppressWarnings("deprecation")
     public static void configs() {
         final File folder = new File(getMain().getDataFolder() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -758,7 +759,6 @@ public class PlotMain extends JavaPlugin implements Listener {
     /**
      * Kill all entities on roads
      */
-    @SuppressWarnings("deprecation")
     public static void killAllEntities() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getMain(), new Runnable() {
             long ticked = 0l;
@@ -1000,8 +1000,8 @@ public class PlotMain extends JavaPlugin implements Listener {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                if (plotWorld.TYPE == 2 && !Settings.ENABLE_CLUSTERS) {
-                    sendConsoleSenderMessage("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please enable plot custers or delete this world from your settings.yml!");
+                if ((plotWorld.TYPE == 2 && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
+                    sendConsoleSenderMessage("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
                 addPlotWorld(world, plotWorld, plotManager);

@@ -40,6 +40,7 @@ import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 
@@ -74,7 +75,10 @@ public class Setup extends SubCommand {
                     PlotMain.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
                     if (generator instanceof PlotGenerator) {
-                        generators.put(name, (PlotGenerator) generator);
+                        PlotGenerator pgen = (PlotGenerator) generator;
+                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
+                            generators.put(name, pgen);
+                        }
                     }
                 }
             }

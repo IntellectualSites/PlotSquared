@@ -42,6 +42,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean PLOT_SCHEMATIC = false;
     public short REQUIRED_CHANGES = 0;
     
+    public short PATH_WIDTH_LOWER;
+    public short PATH_WIDTH_UPPER;
+
     /*
      * Here we are just calling the super method, nothing special
      */
@@ -94,7 +97,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void setupSchematics() {
         G_SCH_DATA = new HashMap<>();
         G_SCH = new HashMap<>();
-        this.OFFSET = -1 + 1;
         String schem1Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad";
         String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/intersection";
         String schem3Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/plot";
@@ -123,7 +125,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         short id = blocks3[index].getBlock();
                         byte data = blocks3[index].getData();
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
+                            addOverlayBlock((short) (x + shift + oddshift), (short) (y), (short) (z + shift + oddshift), id, data, false);
                         }
                     }
                 }
@@ -160,8 +162,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     byte data = blocks1[index].getData();
                     
                     if (id != 0) {
-                        addOverlayBlock((short) (x - (shift)), (short) (y + this.OFFSET), (short) (z + shift + oddshift), id, data, false);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + this.OFFSET), (short) (x - shift), id, data, true);
+                        addOverlayBlock((short) (x - (shift)), (short) (y), (short) (z + shift + oddshift), id, data, false);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y), (short) (x - shift), id, data, true);
                     }
                 }
             }
@@ -174,7 +176,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     short id = blocks2[index].getBlock();
                     byte data = blocks2[index].getData();
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + this.OFFSET), (short) (z - shift), id, data, false);
+                        addOverlayBlock((short) (x - shift), (short) (y), (short) (z - shift), id, data, false);
                     }
                 }
             }

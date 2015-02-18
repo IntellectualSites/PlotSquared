@@ -140,6 +140,15 @@ public class Unlink extends SubCommand {
             }
         }
         manager.finishPlotUnlink(world, plotworld, ids);
+        for (PlotId id : ids) {
+            Plot myPlot = PlotHelper.getPlot(world, id);
+            if (plot.hasOwner()) {
+                String name = UUIDHandler.getName(myPlot.owner);
+                if (name != null) {
+                    PlotHelper.setSign(world, name, myPlot);
+                }
+            }
+        }
         return true;
     }
 }

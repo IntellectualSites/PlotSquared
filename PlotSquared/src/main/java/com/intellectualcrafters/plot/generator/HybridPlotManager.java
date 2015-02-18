@@ -304,7 +304,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                         else { condition = (!gx || !gz || !lx || !lz); }
                         
                         if (condition) {
-                            int sy = plotworld.ROAD_HEIGHT + plotworld.OFFSET;
+                            int sy = plotworld.ROAD_HEIGHT;
                             ChunkLoc loc = new ChunkLoc(absX, absZ);
                             HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                             for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT; y++) {
@@ -344,7 +344,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 Location bottom = getPlotBottomLocAbs(plotworld, id);
                 int sx = bottom.getBlockX() - hpw.PATH_WIDTH_LOWER;
                 int sz = bottom.getBlockZ() - hpw.PATH_WIDTH_LOWER;
-                int sy = hpw.ROAD_HEIGHT + hpw.OFFSET;
+                int sy = hpw.ROAD_HEIGHT;
                 for (ChunkLoc loc : hpw.G_SCH.keySet()) {
                     HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
                     HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
@@ -420,6 +420,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         final PlotBlock wall_filling = dpw.WALL_FILLING;
 
         final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, 1, pos1.getBlockZ()));
+        
         if ((block.getTypeId() != wall_filling.id) || (block.getData() != wall_filling.data)) {
             setWallFilling(world, dpw, plot.id, new PlotBlock[] {wall_filling});
         }
