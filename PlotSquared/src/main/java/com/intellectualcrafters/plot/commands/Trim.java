@@ -37,8 +37,8 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -222,36 +222,36 @@ public class Trim extends SubCommand {
     
     public static ArrayList<Plot> expired = null;
     
-    public static void updateUnmodifiedPlots(final World world) {
-        final HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(world);
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
-        final ArrayList<Plot> expired = new ArrayList<>();
-        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
-        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
-        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
-            @Override
-            public void run() {
-                if (manager != null && plots.size() > 0) {
-                    Plot plot = plots.iterator().next();
-                    if (plot.hasOwner()) {
-                        HybridPlotManager.checkModified(plot, 0);
-                    }
-                    if (plot.owner == null || !HybridPlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
-                        expired.add(plot);
-                        sendMessage("found expired: " + plot);
-                    }
-                }
-                else {
-                    Trim.expired = expired;
-                    Trim.TASK = false;
-                    sendMessage("Done!");
-                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
-                    return;
-                }
-            }
-        }, 1, 1);
-    }
-    
+//    public static void updateUnmodifiedPlots(final World world) {
+//        final SquarePlotManager manager = (SquarePlotManager) PlotMain.getPlotManager(world);
+//        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotMain.getWorldSettings(world);
+//        final ArrayList<Plot> expired = new ArrayList<>();
+//        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
+//        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
+//        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+//            @Override
+//            public void run() {
+//                if (manager != null && plots.size() > 0) {
+//                    Plot plot = plots.iterator().next();
+//                    if (plot.hasOwner()) {
+//                        SquarePlotManager.checkModified(plot, 0);
+//                    }
+//                    if (plot.owner == null || !SquarePlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
+//                        expired.add(plot);
+//                        sendMessage("found expired: " + plot);
+//                    }
+//                }
+//                else {
+//                    Trim.expired = expired;
+//                    Trim.TASK = false;
+//                    sendMessage("Done!");
+//                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+//                    return;
+//                }
+//            }
+//        }, 1, 1);
+//    }
+//    
     public static void deleteChunks(World world, ArrayList<ChunkLoc> chunks) {
         String worldname = world.getName();
         for (ChunkLoc loc : chunks) {

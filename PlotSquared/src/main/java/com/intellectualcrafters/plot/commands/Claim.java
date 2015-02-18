@@ -24,11 +24,13 @@ package com.intellectualcrafters.plot.commands;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -62,29 +64,25 @@ public class Claim extends SubCommand {
             if (teleport) {
                 PlotMain.teleportPlayer(player, player.getLocation(), plot);
             }
-            final PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
+            World world = plot.getWorld();
+            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
             final Plot plot2 = PlotMain.getPlots(player.getWorld()).get(plot.id);
 
-            if (world.SCHEMATIC_ON_CLAIM) {
+            if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
-                    sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
+                    sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
                 } else {
                     sch = SchematicHandler.getSchematic(schematic);
                     if (sch == null) {
-                        sch = SchematicHandler.getSchematic(world.SCHEMATIC_FILE);
+                        sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
-            if (world instanceof HybridPlotWorld) {
-                final HybridPlotWorld pW = (HybridPlotWorld) world;
-                if (!(pW.CLAIMED_WALL_BLOCK.equals(pW.WALL_BLOCK))) {
-                    PlotMain.getPlotManager(plot.getWorld()).claimPlot(player.getWorld(), world, plot);
-                    PlotHelper.update(player.getLocation());
-                }
-            }
+            PlotMain.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
+            PlotHelper.update(player.getLocation());
         }
         return event.isCancelled();
     }

@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -54,7 +54,7 @@ public class DebugClear extends SubCommand {
                 if (id == null) {
                     PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotMain.isPlotWorld(world) || !(PlotMain.getWorldSettings(world) instanceof HybridPlotWorld)) {
+                    if (!PlotMain.isPlotWorld(world) || !(PlotMain.getWorldSettings(world) instanceof SquarePlotWorld)) {
                         PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
                     } else {
                         final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
@@ -84,7 +84,7 @@ public class DebugClear extends SubCommand {
             return true;
         }
 
-        if (!PlayerFunctions.isInPlot(plr) || !(PlotMain.getWorldSettings(plr.getWorld()) instanceof HybridPlotWorld)) {
+        if (!PlayerFunctions.isInPlot(plr) || !(PlotMain.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
