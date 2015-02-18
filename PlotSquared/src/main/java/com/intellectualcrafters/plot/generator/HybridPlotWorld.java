@@ -129,7 +129,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 center_shift_x = (int) ((PLOT_WIDTH - w3)/2);
             }
             
-            
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
