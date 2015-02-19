@@ -32,9 +32,9 @@ public abstract class BlockManager {
         return (int) r;
     }
     
-    public abstract void functionSetBlock(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data);
+    public abstract void functionSetBlocks(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data);
     
-    public abstract void setSign(String worldname, int x, int y, int z, String[] lines);
+    public abstract void functionSetSign(String worldname, int x, int y, int z, String[] lines);
     
     
     public static void setBlocks(String worldname, int[] x, int y[], int z[], PlotBlock[][] blocks) {
@@ -60,6 +60,11 @@ public abstract class BlockManager {
         setBlocks(worldname, x, y, z, id, data);
     }
     
+    public static void setSign(String worldname, int x, int y, int z, String[] lines) {
+        manager.functionSetSign(worldname, x, y, z, lines);
+    }
+    
     public static void setBlocks(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data) {
+        manager.functionSetBlocks(worldname, x, y, z, id, data);
     }
 }

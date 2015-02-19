@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -26,12 +25,11 @@ import com.intellectualcrafters.plot.commands.Buy;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
@@ -39,8 +37,8 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.Metrics;
@@ -53,6 +51,7 @@ import com.intellectualcrafters.plot.util.SetBlockSlow;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
@@ -60,6 +59,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     public static BukkitMain THIS = null;
     public static PlotSquared MAIN = null;
 
+    // TODO restructure this
     public static boolean hasPermission(final Player player, final String perm) {
         if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
             return true;
@@ -76,6 +76,50 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
             }
         }
         return false;
+    }
+    
+    // TODO restructure this
+    public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
+        Plot bot = PlayerFunctions.getBottomPlot(player.getWorld().getName(), plot);
+        final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            final Location location = PlotHelper.getPlotHome(Bukkit.getWorld(bot.world), bot);
+            
+            int x = location.getX();
+            int z = location.getZ();
+            
+            
+            if ((x >= 29999999) || (x <= -29999999) || (z >= 299999999) || (z <= -29999999)) {
+                event.setCancelled(true);
+                return false;
+            }
+            if (Settings.TELEPORT_DELAY == 0 || hasPermission(player, "plots.teleport.delay.bypass")) {
+                PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                BukkitUtil.teleportPlayer(player, location);
+                return true;
+            }
+            PlayerFunctions.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
+            final String name = player.getName();
+            TaskManager.TELEPORT_QUEUE.add(name);
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
+                        PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
+                        return;
+                    }
+                    TaskManager.TELEPORT_QUEUE.remove(name);
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                    BukkitUtil.teleportPlayer(player, location);
+                }
+            }, Settings.TELEPORT_DELAY * 20);
+            return true;
+        }
+        return !event.isCancelled();
     }
     
     @EventHandler

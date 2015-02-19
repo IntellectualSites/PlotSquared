@@ -90,6 +90,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
     }
 
+    public Location add(int x, int y, int z) {
         this.x += x;
         this.y += y;
         this.z += z;
@@ -128,6 +129,7 @@ public class Location implements Cloneable, Comparable<Location> {
                 y <= max.getY() && z >= min.getX() && z < max.getZ();
     }
 
+    public void lookTowards(int x, int y) {
         double l = this.x - x;
         double w = this.z - z;
         double c = Math.sqrt(l * l + w * w);
@@ -139,6 +141,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
     }
 
+    public Location subtract(int x, int y, int z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;

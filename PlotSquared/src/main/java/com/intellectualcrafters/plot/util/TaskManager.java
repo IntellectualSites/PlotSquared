@@ -6,7 +6,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class TaskManager {
     
-    public HashSet<String> TELEPORT_QUEUE = new HashSet<>(); 
+    public static HashSet<String> TELEPORT_QUEUE = new HashSet<>(); 
     
     public abstract void taskRepeat(final Runnable r, int interval);
     

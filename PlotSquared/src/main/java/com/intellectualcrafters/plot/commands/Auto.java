@@ -160,11 +160,11 @@ public class Auto extends SubCommand {
             }
             // }
         }
-        
-        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        String worldname = world.getName();
+        PlotWorld plotworld = PlotSquared.getWorldSettings(worldname);
         if (plotworld.TYPE == 2) {
         	Location loc = plr.getLocation();
-        	Plot plot = PlotHelper.getCurrentPlot(loc);
+        	Plot plot = PlotHelper.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         	if (plot == null) {
         		return sendMessage(plr, C.NOT_IN_PLOT);
         	}
@@ -183,7 +183,7 @@ public class Auto extends SubCommand {
         	//
         	for (int i = 0; i <= max; i++) {
         	    PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
-        	    Plot current = PlotHelper.getPlot(world, currentId);
+        	    Plot current = PlotHelper.getPlot(worldname, currentId);
         	    if (current != null && (current.hasOwner() == false) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
         	        Claim.claimPlot(plr, current, true, true);
         	        return true;
@@ -197,10 +197,9 @@ public class Auto extends SubCommand {
         }
         
         boolean br = false;
-        String worldname = world.getName();
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
-                final Plot plot = PlotHelper.getPlot(world, getLastPlot(worldname));
+                final Plot plot = PlotHelper.getPlot(worldname, getLastPlot(worldname));
                 if ((plot.owner == null)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
@@ -215,21 +214,21 @@ public class Auto extends SubCommand {
                 PlotHelper.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
-                if ((PlotSquared.getPlots(world).get(start) != null) && (PlotSquared.getPlots(world).get(start).owner != null)) {
+                if ((PlotSquared.getPlots(worldname).get(start) != null) && (PlotSquared.getPlots(worldname).get(start).owner != null)) {
                     continue;
                 } else {
                     lastPlot = false;
                 }
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
-                if (PlotHelper.isUnowned(world, start, end)) {
+                if (PlotHelper.isUnowned(worldname, start, end)) {
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
-                            final Plot plot = PlotHelper.getPlot(world, new PlotId(i, j));
+                            final Plot plot = PlotHelper.getPlot(worldname, new PlotId(i, j));
                             final boolean teleport = ((i == end.x) && (j == end.y));
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!PlotHelper.mergePlots(plr, world, PlayerFunctions.getPlotSelectionIds(start, end))) {
+                    if (!PlotHelper.mergePlots(plr, worldname, PlayerFunctions.getPlotSelectionIds(start, end))) {
                         return false;
                     }
                     br = true;
