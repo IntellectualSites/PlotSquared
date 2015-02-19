@@ -644,16 +644,21 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
     public static int getHeighestBlock(final String world, final int x, final int z) {
         boolean safe = false;
         int id;
-        for (int i = 1; i < world.getMaxHeight(); i++) {
-            id = world.getBlockAt(x, i, z).getTypeId();
-            if (id == 0) {
-                if (safe) {
-                    return i;
-                }
-                safe = true;
-            }
+        int result = BukkitUtil.getHeighestBlock(world, x, z);
+        if (result == 0) {
+            return 64;
         }
-        return 64;
+        return result;
+//        for (int i = 1; i < world.getMaxHeight(); i++) {
+//            id = world.getBlockAt(x, i, z).getTypeId();
+//            if (id == 0) {
+//                if (safe) {
+//                    return i;
+//                }
+//                safe = true;
+//            }
+//        }
+//        return 64;
     }
 
     /**
@@ -664,7 +669,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
      *
      * @return Home Location
      */
-    public static Location getPlotHome(final World w, final PlotId plotid) {
+    public static Location getPlotHome(final String w, final PlotId plotid) {
         Plot plot = getPlot(w, plotid);
         BlockLoc home = plot.settings.getPosition();
         final Location bot = getPlotBottomLoc(w, plotid);
@@ -673,7 +678,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             final Location top = getPlotTopLoc(w, plotid);
             final int x = ((top.getX() - bot.getX())/2) + bot.getX();
             final int z = ((top.getZ() - bot.getZ())/2) + bot.getZ();
-            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotSquared.getWorldSettings(w), plot).getY());
+            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(PlotSquared.getWorldSettings(w), plot).getY());
             return new Location(w, x, y, z);
         }
         else {
@@ -705,7 +710,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
      *
      * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
      */
-    public static Location getPlotHome(final World w, final Plot plot) {
+    public static Location getPlotHome(final String w, final Plot plot) {
         return getPlotHome(w, plot.id);
     }
 
@@ -732,10 +737,10 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 if (canSendChunk) {
-                    final Chunk chunk = world.getChunkAt(x, z);
+                    final Chunk chunk = BukkitUtil.getChunkAt(world, x, z);
                     chunks.add(chunk);
                 } else {
-                    world.refreshChunk(x, z);
+                    BukkitUtil.refreshChunk(world, x, z);
                 }
             }
         }
@@ -745,7 +750,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             canSendChunk = false;
             for (int x = minChunkX; x <= maxChunkX; x++) {
                 for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                    world.refreshChunk(x, z);
+                    BukkitUtil.refreshChunk(world, x, z);
                 }
             }
         }
@@ -852,16 +857,15 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
     }
     
     public static boolean move(final String world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
-        String worldname = world.getName();
-        final com.intellectualcrafters.plot.object.Location bot1 = PlotHelper.getPlotBottomLoc(worldname, current);
-        com.intellectualcrafters.plot.object.Location bot2 = PlotHelper.getPlotBottomLoc(worldname, newPlot);
-        final Location top = PlotHelper.getPlotTopLoc(worldname, current);
-        final Plot currentPlot = PlotHelper.getPlot(worldname, current);
+        final com.intellectualcrafters.plot.object.Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
+        com.intellectualcrafters.plot.object.Location bot2 = PlotHelper.getPlotBottomLoc(world, newPlot);
+        final Location top = PlotHelper.getPlotTopLoc(world, current);
+        final Plot currentPlot = PlotHelper.getPlot(world, current);
         if (currentPlot.owner == null) {
             return false;
         }
-        Plot pos1 = PlayerFunctions.getBottomPlot(worldname, currentPlot);
-        Plot pos2 = PlayerFunctions.getTopPlot(worldname, currentPlot);
+        Plot pos1 = PlayerFunctions.getBottomPlot(world, currentPlot);
+        Plot pos2 = PlayerFunctions.getTopPlot(world, currentPlot);
 
         PlotId size = PlotHelper.getSize(world, currentPlot);
         if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
@@ -871,14 +875,13 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         int offset_x = newPlot.x - pos1.id.x;
         int offset_y = newPlot.y - pos1.id.y;
         final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
-        String worldname = world.getName();
         for (PlotId id : selection) { 
-            DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
-            Plot plot = PlotSquared.getPlots(worldname).get(id);
-            PlotSquared.getPlots(worldname).remove(id);
+            DBFunc.movePlot(world, new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
+            Plot plot = PlotSquared.getPlots(world).get(id);
+            PlotSquared.getPlots(world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
-            PlotSquared.getPlots(worldname).put(plot.id, plot);
+            PlotSquared.getPlots(world).put(plot.id, plot);
         }
         ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
@@ -918,7 +921,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         if (PlotSquared.getPlots(world).containsKey(id)) {
             return PlotSquared.getPlots(world).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
+        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }
 
     /**
@@ -936,6 +939,6 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         if (PlotSquared.getPlots(loc.getWorld()).containsKey(id)) {
             return PlotSquared.getPlots(loc.getWorld()).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
+        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
     }
 }

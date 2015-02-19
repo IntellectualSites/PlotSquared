@@ -85,7 +85,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            final Location location = PlotHelper.getPlotHome(Bukkit.getWorld(bot.world), bot);
+            final Location location = PlotHelper.getPlotHome(bot.world, bot);
             
             int x = location.getX();
             int z = location.getZ();

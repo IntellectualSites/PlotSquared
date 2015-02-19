@@ -17,6 +17,10 @@ public class Location implements Cloneable, Comparable<Location> {
     private boolean built;
     private Object o;
 
+    public Location clone() {
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+    
     public Location(final String world, final int x, final int y, final int z, final float yaw, final float pitch) {
         this.world = world;
         this.x = x;
