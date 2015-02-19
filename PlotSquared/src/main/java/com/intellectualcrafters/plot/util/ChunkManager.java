@@ -10,7 +10,6 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.SkullType;
@@ -43,10 +42,12 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class ChunkManager {
     
@@ -57,8 +58,8 @@ public class ChunkManager {
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
     
     public static ChunkLoc getChunkChunk(Location loc) {
-        int x = loc.getBlockX() >> 9;
-        int z = loc.getBlockZ() >> 9;
+        int x = loc.getX() >> 9;
+        int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
     
@@ -153,21 +154,21 @@ public class ChunkManager {
      */
     public static boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         index.increment();
-        final int relX = newPos.getBlockX() - pos1.getBlockX();
-        final int relZ = newPos.getBlockZ() - pos1.getBlockZ();
-        final RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
+        final int relX = newPos.getX() - pos1.getX();
+        final int relZ = newPos.getZ() - pos1.getZ();
+        final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         
         final World world = pos1.getWorld();
         Chunk c1 = world.getChunkAt(pos1);
         Chunk c2 = world.getChunkAt(pos2);
         
-        Chunk c3 = world.getChunkAt((pos1.getBlockX() + relX) >> 4, (pos1.getBlockZ() + relZ) >> 4);
-        Chunk c4 = world.getChunkAt((pos2.getBlockX() + relX) >> 4, (pos2.getBlockZ() + relZ) >> 4);
+        Chunk c3 = world.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
+        Chunk c4 = world.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
         
-        final int sx = pos1.getBlockX();
-        final int sz = pos1.getBlockZ();
-        final int ex = pos2.getBlockX();
-        final int ez = pos2.getBlockZ();
+        final int sx = pos1.getX();
+        final int sz = pos1.getZ();
+        final int ex = pos2.getX();
+        final int ez = pos2.getZ();
 
         final int c1x = c1.getX();
         final int c1z = c1.getZ();
@@ -275,10 +276,10 @@ public class ChunkManager {
         Chunk c1 = world.getChunkAt(pos1);
         Chunk c2 = world.getChunkAt(pos2);
         
-        final int sx = pos1.getBlockX();
-        final int sz = pos1.getBlockZ();
-        final int ex = pos2.getBlockX();
-        final int ez = pos2.getBlockZ();
+        final int sx = pos1.getX();
+        final int sz = pos1.getZ();
+        final int ex = pos2.getX();
+        final int ez = pos2.getZ();
 
         final int c1x = c1.getX();
         final int c1z = c1.getZ();
@@ -304,7 +305,7 @@ public class ChunkManager {
                     tasks.remove(currentIndex);
                     return;
                 }
-                CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
+                CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                 Chunk chunk = chunks.get(0);
                 chunks.remove(0);
                 int x = chunk.getX();
@@ -396,8 +397,8 @@ public class ChunkManager {
     public static void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
         for (Entity entity : chunk.getEntities()) {
             Location loc = entity.getLocation();
-            int x = loc.getBlockX();
-            int z = loc.getBlockZ();
+            int x = loc.getX();
+            int z = loc.getZ();
             if (isIn(region, x, z)) {
                 continue;
             }
@@ -411,9 +412,9 @@ public class ChunkManager {
     
     public static void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
         for (Entity entity : chunk.getEntities()) {
-            Location loc = entity.getLocation();
-            int x = loc.getBlockX();
-            int z = loc.getBlockZ();
+            Location loc = BukkitUtil.getLocation(entity);
+            int x = loc.getX();
+            int z = loc.getZ();
             if (!isIn(region, x, z)) {
                 continue;
             }

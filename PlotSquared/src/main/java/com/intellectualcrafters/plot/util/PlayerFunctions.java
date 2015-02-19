@@ -172,7 +172,7 @@ import java.util.UUID;
         if (!PlotSquared.isPlotWorld(player.getWorld())) {
             return null;
         }
-        final PlotId id = getPlot(player.getLocation());
+        final PlotId id = getPlot(BukkitUtil.getLocation(entity));
         final World world = player.getWorld();
         if (id == null) {
             return null;

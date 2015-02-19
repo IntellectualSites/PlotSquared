@@ -383,7 +383,7 @@ public class _PlotSquared {
                 return true;
             }
             PlayerFunctions.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
-            Location loc = player.getLocation();
+            Location loc = BukkitUtil.getLocation(entity);
             final String world = player.getWorld();
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
@@ -398,7 +398,7 @@ public class _PlotSquared {
                     if (!player.isOnline()) {
                         return;
                     }
-                    Location loc = player.getLocation();
+                    Location loc = BukkitUtil.getLocation(entity);
                     if (!loc.getWorld().equals(world)) {
                         PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
                         return;

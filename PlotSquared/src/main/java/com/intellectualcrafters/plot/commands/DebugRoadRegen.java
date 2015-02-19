@@ -30,8 +30,8 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.util.SetBlockManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.SetBlockManager;
 
 public class DebugRoadRegen extends SubCommand {
 
@@ -46,7 +46,7 @@ public class DebugRoadRegen extends SubCommand {
         }
         HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         
-        Chunk chunk = player.getLocation().getChunk();
+        Chunk chunk = BukkitUtil.getLocation(entity).getChunk();
         boolean result = manager.regenerateRoad(chunk);
         if (result) {
             SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] {chunk}));

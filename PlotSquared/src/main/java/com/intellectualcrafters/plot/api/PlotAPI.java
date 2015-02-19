@@ -21,31 +21,6 @@
 
 package com.intellectualcrafters.plot.api;
 
-import java.util.ArrayList;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.SubCommand;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.PlotSquaredException;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * PlotSquared API
@@ -423,7 +398,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 //     * @see com.intellectualcrafters.plot.object.Plot
 //     */
 //    public Plot getPlot(final Player player) {
-//        return this.getPlot(player.getLocation());
+//        return this.getPlot(BukkitUtil.getLocation(entity));
 //    }
 //
 //    /**

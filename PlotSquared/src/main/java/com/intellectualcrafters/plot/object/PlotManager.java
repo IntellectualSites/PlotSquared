@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
 
-import org.bukkit.World;
 import org.bukkit.block.Biome;
 
 public abstract class PlotManager {

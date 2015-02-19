@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.BukkitMain;
 
 /**
  * Created by Citymonstret on 2014-08-03.

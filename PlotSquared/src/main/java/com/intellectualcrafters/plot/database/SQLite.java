@@ -30,8 +30,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.plot.PlotSquared;
 
 /**

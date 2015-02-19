@@ -2,12 +2,8 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 
-import org.bukkit.entity.Player;
-
 import net.milkbowl.vault.economy.Economy;
 
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.TaskManager;
 

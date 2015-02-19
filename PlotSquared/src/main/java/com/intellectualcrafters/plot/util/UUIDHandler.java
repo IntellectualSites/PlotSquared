@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;

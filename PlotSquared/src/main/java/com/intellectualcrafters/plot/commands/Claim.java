@@ -27,11 +27,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -62,7 +61,7 @@ public class Claim extends SubCommand {
             PlotHelper.setSign(player, plot);
             PlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
-                PlotSquared.teleportPlayer(player, player.getLocation(), plot);
+                PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
             World world = plot.getWorld();
             final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
@@ -79,10 +78,10 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
+                SchematicHandler.paste(BukkitUtil.getLocation(entity), sch, plot2, 0, 0);
             }
             PlotSquared.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
-            PlotHelper.update(player.getLocation());
+            PlotHelper.update(BukkitUtil.getLocation(entity));
         }
         return event.isCancelled();
     }

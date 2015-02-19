@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.World;
-
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 

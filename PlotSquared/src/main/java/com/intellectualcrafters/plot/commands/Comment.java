@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;

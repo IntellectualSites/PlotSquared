@@ -88,7 +88,7 @@ public class Home extends SubCommand {
     }
     
     public void teleportPlayer(Player player, Plot plot) {
-    	PlotSquared.teleportPlayer(player, player.getLocation(), plot);
+    	PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
     }
     
 }

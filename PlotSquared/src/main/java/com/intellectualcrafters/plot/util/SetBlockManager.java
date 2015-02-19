@@ -3,9 +3,6 @@ package com.intellectualcrafters.plot.util;
 import java.util.List;
 
 import org.bukkit.Chunk;
-import org.bukkit.World;
-
-import com.intellectualcrafters.plot.object.PlotBlock;
 
 public abstract class SetBlockManager {
     public static SetBlockManager setBlockManager = null;

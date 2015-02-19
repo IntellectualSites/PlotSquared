@@ -54,7 +54,7 @@ public class CreateRoadSchematic extends SubCommand {
         HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         
         manager.setupRoadSchematic(plot);
-        PlotHelper.update(player.getLocation());
+        PlotHelper.update(BukkitUtil.getLocation(entity));
         PlayerFunctions.sendMessage(player, "&6Saved new road schematic");
         
         return true;

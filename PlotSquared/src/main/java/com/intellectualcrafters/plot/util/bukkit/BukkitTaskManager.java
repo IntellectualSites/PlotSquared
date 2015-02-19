@@ -1,9 +1,6 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitTaskManager extends TaskManager {
@@ -21,9 +18,11 @@ public class BukkitTaskManager extends TaskManager {
     }
     
     public void taskLater(final Runnable r, int delay) {
-        if (r == null) {
-            return;
-        }
         BukkitMain.THIS.getServer().getScheduler().runTaskLater(BukkitMain.THIS, r, delay);
+    }
+
+    @Override
+    public void taskLaterAsync(Runnable r, int delay) {
+        BukkitMain.THIS.getServer().getScheduler().runTaskLaterAsynchronously(BukkitMain.THIS, r, delay);
     }
 }

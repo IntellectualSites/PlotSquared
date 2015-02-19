@@ -25,8 +25,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.plot.PlotSquared;
 
 /**
