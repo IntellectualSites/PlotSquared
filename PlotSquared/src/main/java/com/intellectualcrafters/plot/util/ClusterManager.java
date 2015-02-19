@@ -9,7 +9,6 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.BlockPopulator;
@@ -18,6 +17,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
@@ -25,6 +25,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class ClusterManager {
 	public static HashMap<String, HashSet<PlotCluster>> clusters;
@@ -50,25 +51,24 @@ public class ClusterManager {
 	}
 	
 	public static Location getHome(PlotCluster cluster) {
-	    World world = Bukkit.getWorld(cluster.world);
 	    BlockLoc home = cluster.settings.getPosition();
 	    Location toReturn;
 	    if (home.y == 0) {
 	        // default pos
 	        PlotId center = getCenterPlot(cluster);
-	        toReturn = PlotHelper.getPlotHome(world, center); 
-	        if (toReturn.getBlockY() == 0) {
-	            final PlotManager manager = PlotSquared.getPlotManager(world);
-	            final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-	            final Location loc = manager.getSignLoc(world, plotworld, PlotHelper.getPlot(world, center));
+	        toReturn = PlotHelper.getPlotHome(cluster.world, center); 
+	        if (toReturn.getY() == 0) {
+	            final PlotManager manager = PlotSquared.getPlotManager(cluster.world);
+	            final PlotWorld plotworld = PlotSquared.getWorldSettings(cluster.world);
+	            final Location loc = manager.getSignLoc(plotworld, PlotHelper.getPlot(cluster.world, center));
 	            toReturn.setY(loc.getY());
 	        }
 	    }
 	    else {
 	        toReturn = getClusterBottom(cluster).add(home.x, home.y, home.z);
 	    }
-	    int max = world.getHighestBlockAt(toReturn).getY();
-	    if (max > toReturn.getBlockY()) {
+	    int max = BukkitUtil.getHeighestBlock(cluster.world, toReturn.getX(), toReturn.getZ());
+	    if (max > toReturn.getY()) {
 	        toReturn.setY(max);
 	    }
 	    return toReturn;
@@ -107,12 +107,12 @@ public class ClusterManager {
 	}
 	
 	public static boolean contains(PlotCluster cluster, Location loc) {
-        String world = loc.getWorld().getName();
+        String world = loc.getWorld();
         PlotManager manager = PlotSquared.getPlotManager(world);
         PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
         Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
-        if (bot.getBlockX() < loc.getBlockX() && bot.getBlockZ() < loc.getBlockZ() && top.getBlockX() > loc.getBlockX() && top.getBlockZ() > loc.getBlockZ()) {
+        if (bot.getX() < loc.getX() && bot.getZ() < loc.getZ() && top.getX() > loc.getX() && top.getZ() > loc.getZ()) {
             return true;
         }
         return false;
@@ -145,7 +145,7 @@ public class ClusterManager {
 	}
 	
 	public static PlotCluster getCluster(Location loc) {
-		String world = loc.getWorld().getName();
+		String world = loc.getWorld();
 		if (last != null && last.world.equals(world)) {
 			if (contains(last, loc)) {
 				return last;
@@ -222,7 +222,7 @@ public class ClusterManager {
 	    int xw;
 	    int zw;
 	    	    
-	    String world = loc.getWorld().getName();
+	    String world = loc.getWorld();
 	    PlotWorld plotworld = PlotSquared.getWorldSettings(world);
 	    if (plotworld == null) {
 	        xw = 39;
@@ -233,12 +233,12 @@ public class ClusterManager {
 	        Location al = manager.getPlotBottomLocAbs(plotworld, a);
 	        Location bl = manager.getPlotBottomLocAbs(plotworld, b);
 	        
-	        xw = bl.getBlockX() - al.getBlockX();
-	        zw = bl.getBlockZ() - al.getBlockZ();
+	        xw = bl.getX() - al.getX();
+	        zw = bl.getZ() - al.getZ();
 	    }
 	    
-	    int x = loc.getBlockX();
-	    int z = loc.getBlockZ();
+	    int x = loc.getX();
+	    int z = loc.getZ();
 	    
 	    return new PlotId((x/xw) + 1,(z/zw) + 1);
 	}
@@ -257,10 +257,10 @@ public class ClusterManager {
 	    Location bot = getClusterBottom(cluster);
 	    Location top = getClusterTop(cluster);
 	    
-	    int minChunkX = bot.getBlockX() >> 4;
-	    int maxChunkX = (top.getBlockX() >> 4) + 1;
-	    int minChunkZ = bot.getBlockZ() >> 4;
-        int maxChunkZ = (top.getBlockZ() >> 4) + 1;
+	    int minChunkX = bot.getX() >> 4;
+	    int maxChunkX = (top.getX() >> 4) + 1;
+	    int minChunkZ = bot.getZ() >> 4;
+        int maxChunkZ = (top.getZ() >> 4) + 1;
 	    
 	    final AugmentedPopulator populator = getPopulator(cluster);
 	    final ArrayList<Chunk> chunks = new ArrayList<>();
