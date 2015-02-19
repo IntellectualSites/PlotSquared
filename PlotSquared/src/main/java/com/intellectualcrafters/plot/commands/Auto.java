@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class Auto extends SubCommand {
     public Auto() {
@@ -163,7 +164,7 @@ public class Auto extends SubCommand {
         String worldname = world.getName();
         PlotWorld plotworld = PlotSquared.getWorldSettings(worldname);
         if (plotworld.TYPE == 2) {
-        	Location loc = plr.getLocation();
+        	Location loc = BukkitUtil.getLocation(plr);
         	Plot plot = PlotHelper.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         	if (plot == null) {
         		return sendMessage(plr, C.NOT_IN_PLOT);

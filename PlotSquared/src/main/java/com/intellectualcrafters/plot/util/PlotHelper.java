@@ -542,7 +542,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
                 update(location);
             }
         };
-        manager.clearPlot(world, plotworld, plot, isDelete, run);
+        manager.clearPlot(plotworld, plot, isDelete, run);
     }
 
     /**
@@ -555,7 +555,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         if (requester == null) {
             clearAllEntities(plot.world, plot, false);
             clear(requester, plot.world, plot, isDelete);
-            removeSign(plot.world, plot);
+            removeSign(plot);
             return;
         }
         if (runners.containsKey(plot)) {
@@ -569,72 +569,79 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
         clearAllEntities(world, plot, false);
         clear(requester, world, plot, isDelete);
-        removeSign(world, plot);
+        removeSign(plot);
     }
 
     public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
-
         if (blocks.length == 1) {
-            setCuboid(world, pos1, pos2, blocks[0]);
+            setSimpleCuboid(world, pos1, pos2, blocks[0]);
             return;
         }
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+        int length = (pos2.getX() - pos1.getX()) * (pos2.getY() - pos1.getY()) * (pos2.getZ() - pos1.getZ());
+        int[] xl = new int[length];
+        int[] yl = new int[length];
+        int[] zl = new int[length];
+        
+        int[] ids = new int[length];
+        byte[] data = new byte[length];
+        
+        int index = 0;
+        
+        for (int y = pos1.getY(); y < pos2.getY(); y++) {
             for (int x = pos1.getX(); x < pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final int i = random(blocks.length);
-                    final PlotBlock newblock = blocks[i];
-                    final Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
-                        setBlock(world, x, y, z, newblock.id, newblock.data);
-                    }
+                    int i = BlockManager.random(blocks.length);
+                    xl[index] = x;
+                    yl[index] = y;
+                    zl[index] = z;
+                    
+                    PlotBlock block = blocks[i];
+                    ids[index] = block.id;
+                    data[index] = block.data;
+                    index++;
                 }
             }
         }
+        BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
 
     public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
-
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+        int length = (pos2.getX() - pos1.getX()) * (pos2.getY() - pos1.getY()) * (pos2.getZ() - pos1.getZ());
+        int[] xl = new int[length];
+        int[] yl = new int[length];
+        int[] zl = new int[length];
+        
+        int[] ids = new int[length];
+        byte[] data = new byte[length];
+        
+        int index = 0;
+        
+        for (int y = pos1.getY(); y < pos2.getY(); y++) {
             for (int x = pos1.getX(); x < pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == newblock.id))) {
-                        setBlock(world, x, y, z, newblock.id, (byte) 0);
-                    }
+                    xl[index] = x;
+                    yl[index] = y;
+                    zl[index] = z;
+                    
+                    ids[index] = newblock.id;
+                    data[index] = newblock.data;
+                    index++;
                 }
             }
         }
+        BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
 
     public static void setBiome(final String world, final Plot plot, final Biome b) {
 
-        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
-        final int topX = getPlotTopLoc(world, plot.id).getX() + 1;
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
-        final int topZ = getPlotTopLoc(world, plot.id).getZ() + 1;
-
-        final Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
-        final Biome biome = block.getBiome();
-
-        if (biome.equals(b)) {
-            return;
-        }
-
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                final Block blk = world.getBlockAt(x, 0, z);
-                final Biome c = blk.getBiome();
-                if (c.equals(b)) {
-                    x += 15;
-                    continue;
-                }
-                blk.setBiome(b);
-            }
-        }
+        final int bottomX = getPlotBottomLoc(world, plot.id).getX() + 1;
+        final int topX = getPlotTopLoc(world, plot.id).getX();
+        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
+        final int topZ = getPlotTopLoc(world, plot.id).getZ();
+        BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, b);
     }
 
     public static int getHeighestBlock(final String world, final int x, final int z) {
-
         boolean safe = false;
         int id;
         for (int i = 1; i < world.getMaxHeight(); i++) {
@@ -666,7 +673,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             final Location top = getPlotTopLoc(w, plotid);
             final int x = ((top.getX() - bot.getX())/2) + bot.getX();
             final int z = ((top.getZ() - bot.getZ())/2) + bot.getZ();
-            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotSquared.getWorldSettings(w), plot).getBlockY());
+            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotSquared.getWorldSettings(w), plot).getY());
             return new Location(w, x, y, z);
         }
         else {

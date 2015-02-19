@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -83,6 +84,21 @@ public class BukkitUtil extends BlockManager {
         catch (Throwable e) {
             SetBlockManager.setBlockManager = new SetBlockSlow();
             SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
+        }
+    }
+    
+    public static void setBiome(String worldname, int pos1_x, int pos1_z, int pos2_x, int pos2_z, Biome b) {
+        World world = getWorld(worldname); 
+        for (int x = pos1_x; x<= pos2_x; x++) {
+            for (int z = pos1_z; z<= pos2_z; z++) {
+                final Block blk = world.getBlockAt(x, 0, z);
+                final Biome c = blk.getBiome();
+                if (c.equals(b)) {
+                    x += 15;
+                    continue;
+                }
+                blk.setBiome(b);
+            }
         }
     }
     
