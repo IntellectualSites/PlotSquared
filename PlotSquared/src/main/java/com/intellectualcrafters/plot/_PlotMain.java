@@ -1158,30 +1158,6 @@ public class _PlotSquared {
     }
 
     /**
-     * Check a range of permissions e.g. 'plots.plot.<0-100>'<br> Returns highest integer in range.
-     *
-     * @param player to check
-     * @param stub   to check
-     * @param range  tp check
-     *
-     * @return permitted range
-     */
-    public int hasPermissionRange(final Player player, final String stub, final int range) {
-        if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
-            return Byte.MAX_VALUE;
-        }
-        if (player.hasPermission(stub + ".*")) {
-            return Byte.MAX_VALUE;
-        }
-        for (int i = range; i > 0; i--) {
-            if (player.hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    
-    /**
      * Check a player for a permission<br> - Op has all permissions <br> - checks for '*' nodes
      *
      * @param player to check

@@ -21,6 +21,7 @@
 
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -29,6 +30,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -127,7 +129,7 @@ import java.util.UUID;
      * @return
      */
     public static PlotId getPlotAbs(final Location loc) {
-        final String world = loc.getWorld().getName();
+        final String world = loc.getWorld();
         final PlotManager manager = PlotSquared.getPlotManager(world);
         if (manager == null) {
             return null;
@@ -145,7 +147,7 @@ import java.util.UUID;
      * @return
      */
     public static PlotId getPlot(final Location loc) {
-        final String world = loc.getWorld().getName();
+        final String world = loc.getWorld();
         final PlotManager manager = PlotSquared.getPlotManager(world);
         if (manager == null) {
             return null;
@@ -169,18 +171,18 @@ import java.util.UUID;
      * @return
      */
     public static Plot getCurrentPlot(final Player player) {
-        if (!PlotSquared.isPlotWorld(player.getWorld())) {
+        if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
             return null;
         }
-        final PlotId id = getPlot(BukkitUtil.getLocation(entity));
-        final World world = player.getWorld();
+        final PlotId id = getPlot(BukkitUtil.getLocation(player));
+        final String world = player.getWorld().getName();
         if (id == null) {
             return null;
         }
         if (PlotSquared.getPlots(world).containsKey(id)) {
                 return PlotSquared.getPlots(world).get(id);
         }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
+        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
 
     }
 
@@ -203,8 +205,8 @@ import java.util.UUID;
      *
      * @return
      */
-    public static Set<Plot> getPlayerPlots(final World world, final Player plr) {
-        final Set<Plot> p = PlotSquared.getPlots(world, plr);
+    public static Set<Plot> getPlayerPlots(final String world, final Player plr) {
+        final Set<Plot> p = PlotSquared.getPlots(world, plr.getName());
         if (p == null) {
             return new HashSet<>();
         }
@@ -218,7 +220,7 @@ import java.util.UUID;
      *
      * @return
      */
-    public static int getPlayerPlotCount(final World world, final Player plr) {
+    public static int getPlayerPlotCount(final String world, final Player plr) {
         final UUID uuid = UUIDHandler.getUUID(plr);
         int count = 0;
         for (final Plot plot : PlotSquared.getPlots(world).values()) {
@@ -237,7 +239,7 @@ import java.util.UUID;
      * @return
      */
     public static int getAllowedPlots(final Player p) {
-        return PlotSquared.MAIN_IMP.(p, "plots.plot", Settings.MAX_PLOTS);
+        return BukkitMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     /**
@@ -286,7 +288,7 @@ import java.util.UUID;
     public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotSquared.MAIN_IMP.log(C.PREFIX.s() + msg);
+                PlotSquared.log(C.PREFIX.s() + msg);
             } else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }

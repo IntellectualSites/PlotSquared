@@ -80,6 +80,22 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     }
     
     // TODO restructure this
+    public static int hasPermissionRange(final Player player, final String stub, final int range) {
+        if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
+            return Byte.MAX_VALUE;
+        }
+        if (player.hasPermission(stub + ".*")) {
+            return Byte.MAX_VALUE;
+        }
+        for (int i = range; i > 0; i--) {
+            if (player.hasPermission(stub + "." + i)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    
+    // TODO restructure this
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
         Plot bot = PlayerFunctions.getBottomPlot(player.getWorld().getName(), plot);
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);

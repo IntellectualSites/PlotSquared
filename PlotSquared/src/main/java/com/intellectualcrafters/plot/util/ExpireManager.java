@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.commands.Unlink;
 import com.intellectualcrafters.plot.config.C;
@@ -23,6 +24,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class ExpireManager {
     
@@ -64,7 +66,7 @@ public class ExpireManager {
     }
     
     public static void runTask() {
-        ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
+        ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, new Runnable() {
             @Override
             public void run() {
                 for (String world : PlotSquared.getPlotWorldsString()) {
@@ -109,14 +111,13 @@ public class ExpireManager {
                             PlayerFunctions.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
                         }
                     }
-                    final World worldobj = Bukkit.getWorld(world);
                     final PlotManager manager = PlotSquared.getPlotManager(world);
                     if (plot.settings.isMerged()) {
                         Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
                     }
                     PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-                    manager.clearPlot(worldobj, plotworld, plot, false, null);
-                    PlotHelper.removeSign(worldobj, plot);
+                    manager.clearPlot(plotworld, plot, false, null);
+                    PlotHelper.removeSign(plot);
                     DBFunc.delete(world, plot);
                     PlotSquared.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(plot);
@@ -186,7 +187,7 @@ public class ExpireManager {
                     String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
                     String filename = null;
-                    if (PlotSquared.checkVersion(1, 7, 5)) {
+                    if (BukkitMain.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
                             filename = op.getUniqueId() +".dat";
