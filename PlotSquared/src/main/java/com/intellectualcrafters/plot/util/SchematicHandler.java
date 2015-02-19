@@ -34,7 +34,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -48,6 +47,7 @@ import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
@@ -81,9 +81,9 @@ public class SchematicHandler {
 
             final DataCollection[] blocks = schematic.getBlockCollection();
 
-            Location l1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
+            Location l1 = PlotHelper.getPlotBottomLoc(plot.world, plot.getId());
 
-            final int sy = location.getWorld().getHighestBlockYAt(l1.getBlockX() + 1, l1.getBlockZ() + 1);
+            final int sy = location.getWorld().getHighestBlockYAt(l1.getX() + 1, l1.getZ() + 1);
 
             l1 = l1.add(1, sy - 1, 1);
 
@@ -93,7 +93,7 @@ public class SchematicHandler {
             if (HEIGHT == location.getWorld().getMaxHeight()) {
                 y_offset = 0;
             } else {
-                y_offset = l1.getBlockY();
+                y_offset = l1.getY();
             }
 
             for (int x = 0; x < WIDTH; x++) {
@@ -107,12 +107,12 @@ public class SchematicHandler {
                         final byte data = block.getData();
 
                         // if (block.tag != null) {
-                        // WorldEditUtils.setNBT(world, id, data, l1.getBlockX()
-                        // + x + x_offset, y + y_offset, l1.getBlockZ() + z +
+                        // WorldEditUtils.setNBT(world, id, data, l1.getX()
+                        // + x + x_offset, y + y_offset, l1.getZ() + z +
                         // z_offset, block.tag);
                         // }
                         // else {
-                        PlotHelper.setBlock(world, l1.getBlockX() + x + x_offset, y + y_offset, l1.getBlockZ() + z + z_offset, id, data);
+                        PlotHelper.setBlock(world, l1.getX() + x + x_offset, y + y_offset, l1.getZ() + z + z_offset, id, data);
                         // }
                     }
                 }
@@ -252,8 +252,8 @@ public class SchematicHandler {
         int i = 0;
         int j = 0;
         try {
-            for (i = (pos1.getBlockX() / 16) * 16; i < (16 + ((pos2.getBlockX() / 16) * 16)); i += 16) {
-                for (j = (pos1.getBlockZ() / 16) * 16; j < (16 + ((pos2.getBlockZ() / 16) * 16)); j += 16) {
+            for (i = (pos1.getX() / 16) * 16; i < (16 + ((pos2.getX() / 16) * 16)); i += 16) {
+                for (j = (pos1.getZ() / 16) * 16; j < (16 + ((pos2.getZ() / 16) * 16)); j += 16) {
                     final Chunk chunk = world.getChunkAt(i, j);
                     final boolean result = chunk.load(false);
                     if (!result) {
@@ -268,9 +268,9 @@ public class SchematicHandler {
             PlotSquared.log("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
-        final int width = (pos2.getBlockX() - pos1.getBlockX()) + 1;
-        final int height = pos2.getBlockY() - pos1.getBlockY() + 1;
-        final int length = (pos2.getBlockZ() - pos1.getBlockZ()) + 1;
+        final int width = (pos2.getX() - pos1.getX()) + 1;
+        final int height = pos2.getY() - pos1.getY() + 1;
+        final int length = (pos2.getZ() - pos1.getZ()) + 1;
 
         final HashMap<String, Tag> schematic = new HashMap<>();
         schematic.put("Width", new ShortTag("Width", (short) width));
@@ -287,14 +287,14 @@ public class SchematicHandler {
         byte[] addBlocks = null;
         final byte[] blockData = new byte[width * height * length];
 
-        int sx = pos1.getBlockX();
-        int ex = pos2.getBlockX();
+        int sx = pos1.getX();
+        int ex = pos2.getX();
         
-        int sz = pos1.getBlockZ();
-        int ez = pos2.getBlockZ();
+        int sz = pos1.getZ();
+        int ez = pos2.getZ();
 
-        int sy = pos1.getBlockY();
-        int ey = pos2.getBlockY();
+        int sy = pos1.getY();
+        int ey = pos2.getY();
         
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
@@ -334,30 +334,38 @@ public class SchematicHandler {
         return new CompoundTag("Schematic", schematic);
     }
 
-    public static boolean pastePart(final World world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
-        boolean result = false;
+    public static boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
+        int[] xl = new int[i2];
+        int[] yl = new int[i2];
+        int[] zl = new int[i2];
+        int[] ids = new int[i2];
+        byte[] data = new byte[i2];
+        
         for (int i = i1; i <= i2; i++) {
-            final short id = blocks[i].getBlock();
-            final byte data = blocks[i].getData();
+            final short id = blocks[i].block;
             if (id == 0) {
                 continue;
             }
-
+            
             final int area = WIDTH * LENGTH;
             final int r = i % (area);
             final int x = r % WIDTH;
             final int y = i / area;
             final int z = r / WIDTH;
+            
+            xl[i] = x;
+            yl[i] = y;
+            zl[i] = z;
+            
+            ids[i] = id;
+            data[i] = blocks[i].data;
 
             if (y > 256) {
                 break;
             }
-            final boolean set = PlotHelper.setBlock(world, l1.getBlockX() + x + x_offset, l1.getBlockY() + y, l1.getBlockZ() + z + z_offset, id, data);
-            if (!result && set) {
-                result = true;
-            }
         }
-        return result;
+        BlockManager.setBlocks(world, xl, yl, zl, ids, data);
+        return true;
     }
 
     /**

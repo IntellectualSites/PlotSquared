@@ -46,6 +46,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SendChunk;
 import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.SetBlockFast_1_8;
 import com.intellectualcrafters.plot.util.SetBlockManager;
 import com.intellectualcrafters.plot.util.SetBlockSlow;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -337,7 +338,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     public void initSetBlockManager() {
         if (checkVersion(1, 8, 0)) {
             try {
-                SetBlockManager.setBlockManager = new SetBlockSlow();
+                SetBlockManager.setBlockManager = new SetBlockFast_1_8();
             }
             catch (Throwable e) {
                 e.printStackTrace();
