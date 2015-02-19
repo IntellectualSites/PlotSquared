@@ -192,13 +192,13 @@ public class WorldGuardListener implements Listener {
         try {
             final Player player = event.getPlayer();
             final Plot plot = event.getPlot();
-            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(plot.getWorld());
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(plot.world);
 
-            final Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
-            final Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
+            final Location location1 = PlotHelper.getPlotBottomLoc(plot.world, plot.getId());
+            final Location location2 = PlotHelper.getPlotTopLoc(plot.world, plot.getId());
 
             final BlockVector vector1 = new BlockVector(location1.getBlockX(), 1, location1.getBlockZ());
-            final BlockVector vector2 = new BlockVector(location2.getBlockX(), plot.getWorld().getMaxHeight(), location2.getBlockZ());
+            final BlockVector vector2 = new BlockVector(location2.getBlockX(), plot.world.getMaxHeight(), location2.getBlockZ());
 
             final ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
 

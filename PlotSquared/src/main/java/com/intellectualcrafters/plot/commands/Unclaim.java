@@ -54,7 +54,7 @@ public class Unclaim extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getWorldSettings(plot.getWorld());
+        final PlotWorld pWorld = PlotSquared.getWorldSettings(plot.world);
         if (PlotSquared.useEconomy && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {

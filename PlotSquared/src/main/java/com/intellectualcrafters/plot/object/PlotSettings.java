@@ -106,7 +106,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
      * @return biome at plot loc
      */
     public Biome getBiome() {
-        return PlotHelper.getPlotBottomLoc(this.plot.getWorld(), this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
+        return PlotHelper.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
     }
 
     public BlockLoc getPosition() {

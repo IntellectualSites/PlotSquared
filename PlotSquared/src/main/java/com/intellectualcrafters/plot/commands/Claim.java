@@ -63,7 +63,7 @@ public class Claim extends SubCommand {
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
-            World world = plot.getWorld();
+            World world = plot.world;
             final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
 
             final Plot plot2 = PlotSquared.getPlots(player.getWorld()).get(plot.id);
@@ -102,7 +102,7 @@ public class Claim extends SubCommand {
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotSquared.getWorldSettings(plot.getWorld());
+        final PlotWorld world = PlotSquared.getWorldSettings(plot.world);
         if (PlotSquared.useEconomy && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

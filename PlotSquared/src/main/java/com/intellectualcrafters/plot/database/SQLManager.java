@@ -1078,7 +1078,7 @@ public class SQLManager implements AbstractDB {
             String comparison = below ? ">=" : "=";
             if (plot != null) {
             	statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` " + comparison + " ?");
-            	statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
+            	statement.setInt(1, getId(plot.world.getName(), plot.id));
                 statement.setInt(2, tier);
             }
             else {
@@ -1284,7 +1284,7 @@ public class SQLManager implements AbstractDB {
     public double getRatings(final Plot plot) {
         try {
             final PreparedStatement statement = this.connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + this.prefix + "plot_ratings` WHERE `plot_plot_id` = ? ");
-            statement.setInt(1, getId(plot.getWorld().getName(), plot.id));
+            statement.setInt(1, getId(plot.world.getName(), plot.id));
             final ResultSet set = statement.executeQuery();
             double rating = 0;
             while (set.next()) {

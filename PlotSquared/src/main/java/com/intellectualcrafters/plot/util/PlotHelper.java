@@ -452,7 +452,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
      * Create a plot without notifying the merge function or world border manager 
      */
     public static Plot createPlotAbs(final UUID uuid, final Plot plot) {
-        final World w = plot.getWorld();
+        final World w = plot.world;
         final Plot p = new Plot(plot.id, uuid, plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w.getName());
         PlotSquared.updatePlot(p);
         DBFunc.createPlotAndSettings(p);
@@ -531,7 +531,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             });
             return;
         }
-        Runnable run = new Runnable() {
+        Runnable run = new Runnable() { 
             @Override
             public void run() {
                 PlotHelper.setBiome(world, plot, Biome.FOREST);
@@ -553,9 +553,9 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
      */
     public static void clear(final Player requester, final Plot plot, final boolean isDelete) {
         if (requester == null) {
-            clearAllEntities(plot.getWorld(), plot, false);
-            clear(requester, plot.getWorld(), plot, isDelete);
-            removeSign(plot.getWorld(), plot);
+            clearAllEntities(plot.world, plot, false);
+            clear(requester, plot.world, plot, isDelete);
+            removeSign(plot.world, plot);
             return;
         }
         if (runners.containsKey(plot)) {
@@ -571,376 +571,376 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         clear(requester, world, plot, isDelete);
         removeSign(world, plot);
     }
-
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
-                        setBlock(world, x, y, z, newblock.id, newblock.data);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
-
-        if (blocks.length == 1) {
-            setCuboid(world, pos1, pos2, blocks[0]);
-            return;
-        }
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final int i = random(blocks.length);
-                    final PlotBlock newblock = blocks[i];
-                    final Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
-                        setBlock(world, x, y, z, newblock.id, newblock.data);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
-
-        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final Block block = world.getBlockAt(x, y, z);
-                    if (!((block.getTypeId() == newblock.id))) {
-                        setBlock(world, x, y, z, newblock.id, (byte) 0);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void setBiome(final String world, final Plot plot, final Biome b) {
-
-        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
-        final int topX = getPlotTopLoc(world, plot.id).getX() + 1;
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
-        final int topZ = getPlotTopLoc(world, plot.id).getZ() + 1;
-
-        final Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
-        final Biome biome = block.getBiome();
-
-        if (biome.equals(b)) {
-            return;
-        }
-
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                final Block blk = world.getBlockAt(x, 0, z);
-                final Biome c = blk.getBiome();
-                if (c.equals(b)) {
-                    x += 15;
-                    continue;
-                }
-                blk.setBiome(b);
-            }
-        }
-    }
-
-    public static int getHeighestBlock(final String world, final int x, final int z) {
-
-        boolean safe = false;
-        int id;
-        for (int i = 1; i < world.getMaxHeight(); i++) {
-            id = world.getBlockAt(x, i, z).getTypeId();
-            if (id == 0) {
-                if (safe) {
-                    return i;
-                }
-                safe = true;
-            }
-        }
-        return 64;
-    }
-
-    /**
-     * Get plot home
-     *
-     * @param w      World in which the plot is located
-     * @param plotid Plot ID
-     *
-     * @return Home Location
-     */
-    public static Location getPlotHome(final World w, final PlotId plotid) {
-        Plot plot = getPlot(w, plotid);
-        BlockLoc home = plot.settings.getPosition();
-        final Location bot = getPlotBottomLoc(w, plotid);
-    	PlotManager manager = PlotSquared.getPlotManager(w);
-        if (home == null || (home.x == 0 && home.z == 0)) {
-            final Location top = getPlotTopLoc(w, plotid);
-            final int x = ((top.getX() - bot.getX())/2) + bot.getX();
-            final int z = ((top.getZ() - bot.getZ())/2) + bot.getZ();
-            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotSquared.getWorldSettings(w), plot).getBlockY());
-            return new Location(w, x, y, z);
-        }
-        else {
-        	final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
-            return bot.add(home.x, y, home.z);
-        }
-    }
-
-    /**
-     * Retrieve the location of the default plot home position
-     *
-     * @param plot Plot
-     *
-     * @return the location
-     */
-    public static Location getPlotHomeDefault(final Plot plot) {
-        final Location l = getPlotBottomLoc(plot.getWorld(), plot.getId()).subtract(0, 0, 0);
-        l.setY(getHeighestBlock(plot.getWorld(), l.getX(), l.getZ()));
-        return l;
-    }
-
-    /**
-     * Get the plot home
-     *
-     * @param w    World
-     * @param plot Plot Object
-     *
-     * @return Plot Home Location
-     *
-     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
-     */
-    public static Location getPlotHome(final World w, final Plot plot) {
-        return getPlotHome(w, plot.id);
-    }
-
-    /**
-     * Refresh the plot chunks
-     *
-     * @param world World in which the plot is located
-     * @param plot  Plot Object
-     */
-    public static void refreshPlotChunks(final String world, final Plot plot) {
-
-        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
-        final int topX = getPlotTopLoc(world, plot.id).getX();
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
-        final int topZ = getPlotTopLoc(world, plot.id).getZ();
-
-        final int minChunkX = (int) Math.floor((double) bottomX / 16);
-        final int maxChunkX = (int) Math.floor((double) topX / 16);
-        final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
-        final int maxChunkZ = (int) Math.floor((double) topZ / 16);
-
-        final ArrayList<Chunk> chunks = new ArrayList<>();
-
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                if (canSendChunk) {
-                    final Chunk chunk = world.getChunkAt(x, z);
-                    chunks.add(chunk);
-                } else {
-                    world.refreshChunk(x, z);
-                }
-            }
-        }
-        try {
-            SendChunk.sendChunk(chunks);
-        } catch (final Throwable e) {
-            canSendChunk = false;
-            for (int x = minChunkX; x <= maxChunkX; x++) {
-                for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                    world.refreshChunk(x, z);
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the top plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega plot
-     * use getPlotTopLoc(...)
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static Location getPlotTopLocAbs(final String world, final PlotId id) {
-
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        return manager.getPlotTopLocAbs(plotworld, id);
-    }
-
-    /**
-     * Gets the bottom plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega
-     * plot use getPlotBottomLoc(...)
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
-
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        return manager.getPlotBottomLocAbs(plotworld, id);
-    }
-
-    /**
-     * Obtains the width of a plot (x width)
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static int getPlotWidth(final String world, final PlotId id) {
-
-        return getPlotTopLoc(world, id).getX() - getPlotBottomLoc(world, id).getX();
-    }
-
-    /**
-     * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
-     * a small plot use getPlotTopLocAbs(...)
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static Location getPlotTopLoc(final String world, PlotId id) {
-
-        final Plot plot = PlotSquared.getPlots(world).get(id);
-        if (plot != null) {
-            id = PlayerFunctions.getTopPlot(world, plot).id;
-        }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        return manager.getPlotTopLocAbs(plotworld, id);
-    }
-
-    /**
-     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega plot) - If you would like each plot
-     * treated as a small plot use getPlotBottomLocAbs(...)
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static Location getPlotBottomLoc(final String world, PlotId id) {
-
-        final Plot plot = PlotSquared.getPlots(world).get(id);
-        if (plot != null) {
-            id = PlayerFunctions.getBottomPlot(world, plot).id;
-        }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        return manager.getPlotBottomLocAbs(plotworld, id);
-    }
-    
-    public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
-
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final PlotId id = new PlotId(x, y);
-                if (PlotSquared.getPlots(world).get(id) != null) {
-                    if (PlotSquared.getPlots(world).get(id).owner != null) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    
-    public static boolean move(final String world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
-        String worldname = world.getName();
-        final com.intellectualcrafters.plot.object.Location bot1 = PlotHelper.getPlotBottomLoc(worldname, current);
-        com.intellectualcrafters.plot.object.Location bot2 = PlotHelper.getPlotBottomLoc(worldname, newPlot);
-        final Location top = PlotHelper.getPlotTopLoc(worldname, current);
-        final Plot currentPlot = PlotHelper.getPlot(worldname, current);
-        if (currentPlot.owner == null) {
-            return false;
-        }
-        Plot pos1 = PlayerFunctions.getBottomPlot(worldname, currentPlot);
-        Plot pos2 = PlayerFunctions.getTopPlot(worldname, currentPlot);
-
-        PlotId size = PlotHelper.getSize(world, currentPlot);
-        if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
-            return false;
-        }
-        
-        int offset_x = newPlot.x - pos1.id.x;
-        int offset_y = newPlot.y - pos1.id.y;
-        final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
-        String worldname = world.getName();
-        for (PlotId id : selection) { 
-            DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
-            Plot plot = PlotSquared.getPlots(worldname).get(id);
-            PlotSquared.getPlots(worldname).remove(id);
-            plot.id.x += offset_x;
-            plot.id.y += offset_y;
-            PlotSquared.getPlots(worldname).put(plot.id, plot);
-        }
-        ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
-            @Override
-            public void run() {
-                Location bot = bot1.clone().add(1, 0, 1);
-                ChunkManager.regenerateRegion(bot, top, null);
-                TaskManager.runTaskLater(whenDone, 1);
-            }
-        });
-        return true;
-    }
-    
-    public static PlotId getSize(String world, Plot plot) {
-
-        PlotSettings settings = plot.settings;
-        if (!settings.isMerged()) {
-            return new PlotId(1,1);
-        }
-        Plot top = PlayerFunctions.getTopPlot(world, plot);
-        Plot bot = PlayerFunctions.getBottomPlot(world, plot);
-        return new PlotId(top.id.x - bot.id.x + 1, top.id.y - bot.id.y + 1);
-    }
-    
-    /**
-     * Fetches the plot from the main class
-     *
-     * @param world
-     * @param id
-     *
-     * @return
-     */
-    public static Plot getPlot(final String world, final PlotId id) {
-
-        if (id == null) {
-            return null;
-        }
-        if (PlotSquared.getPlots(world).containsKey(id)) {
-            return PlotSquared.getPlots(world).get(id);
-        }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
-    }
-
-    /**
-     * Returns the plot at a given location
-     *
-     * @param loc
-     *
-     * @return
-     */
-    public static Plot getCurrentPlot(final Location loc) {
-        final PlotId id = PlayerFunctions.getPlot(loc);
-        if (id == null) {
-            return null;
-        }
-        if (PlotSquared.getPlots(loc.getWorld()).containsKey(id)) {
-            return PlotSquared.getPlots(loc.getWorld()).get(id);
-        }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
-    }
+//
+//        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+//            for (int x = pos1.getX(); x < pos2.getX(); x++) {
+//                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+//                    final Block block = world.getBlockAt(x, y, z);
+//                    if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+//                        setBlock(world, x, y, z, newblock.id, newblock.data);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
+//
+//        if (blocks.length == 1) {
+//            setCuboid(world, pos1, pos2, blocks[0]);
+//            return;
+//        }
+//        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+//            for (int x = pos1.getX(); x < pos2.getX(); x++) {
+//                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+//                    final int i = random(blocks.length);
+//                    final PlotBlock newblock = blocks[i];
+//                    final Block block = world.getBlockAt(x, y, z);
+//                    if (!((block.getTypeId() == newblock.id) && (block.getData() == newblock.data))) {
+//                        setBlock(world, x, y, z, newblock.id, newblock.data);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+//
+//        for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
+//            for (int x = pos1.getX(); x < pos2.getX(); x++) {
+//                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+//                    final Block block = world.getBlockAt(x, y, z);
+//                    if (!((block.getTypeId() == newblock.id))) {
+//                        setBlock(world, x, y, z, newblock.id, (byte) 0);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    public static void setBiome(final String world, final Plot plot, final Biome b) {
+//
+//        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
+//        final int topX = getPlotTopLoc(world, plot.id).getX() + 1;
+//        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
+//        final int topZ = getPlotTopLoc(world, plot.id).getZ() + 1;
+//
+//        final Block block = world.getBlockAt(getPlotBottomLoc(world, plot.id).add(1, 1, 1));
+//        final Biome biome = block.getBiome();
+//
+//        if (biome.equals(b)) {
+//            return;
+//        }
+//
+//        for (int x = bottomX; x <= topX; x++) {
+//            for (int z = bottomZ; z <= topZ; z++) {
+//                final Block blk = world.getBlockAt(x, 0, z);
+//                final Biome c = blk.getBiome();
+//                if (c.equals(b)) {
+//                    x += 15;
+//                    continue;
+//                }
+//                blk.setBiome(b);
+//            }
+//        }
+//    }
+//
+//    public static int getHeighestBlock(final String world, final int x, final int z) {
+//
+//        boolean safe = false;
+//        int id;
+//        for (int i = 1; i < world.getMaxHeight(); i++) {
+//            id = world.getBlockAt(x, i, z).getTypeId();
+//            if (id == 0) {
+//                if (safe) {
+//                    return i;
+//                }
+//                safe = true;
+//            }
+//        }
+//        return 64;
+//    }
+//
+//    /**
+//     * Get plot home
+//     *
+//     * @param w      World in which the plot is located
+//     * @param plotid Plot ID
+//     *
+//     * @return Home Location
+//     */
+//    public static Location getPlotHome(final World w, final PlotId plotid) {
+//        Plot plot = getPlot(w, plotid);
+//        BlockLoc home = plot.settings.getPosition();
+//        final Location bot = getPlotBottomLoc(w, plotid);
+//    	PlotManager manager = PlotSquared.getPlotManager(w);
+//        if (home == null || (home.x == 0 && home.z == 0)) {
+//            final Location top = getPlotTopLoc(w, plotid);
+//            final int x = ((top.getX() - bot.getX())/2) + bot.getX();
+//            final int z = ((top.getZ() - bot.getZ())/2) + bot.getZ();
+//            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(w, PlotSquared.getWorldSettings(w), plot).getBlockY());
+//            return new Location(w, x, y, z);
+//        }
+//        else {
+//        	final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
+//            return bot.add(home.x, y, home.z);
+//        }
+//    }
+//
+//    /**
+//     * Retrieve the location of the default plot home position
+//     *
+//     * @param plot Plot
+//     *
+//     * @return the location
+//     */
+//    public static Location getPlotHomeDefault(final Plot plot) {
+//        final Location l = getPlotBottomLoc(plot.world, plot.getId()).subtract(0, 0, 0);
+//        l.setY(getHeighestBlock(plot.world, l.getX(), l.getZ()));
+//        return l;
+//    }
+//
+//    /**
+//     * Get the plot home
+//     *
+//     * @param w    World
+//     * @param plot Plot Object
+//     *
+//     * @return Plot Home Location
+//     *
+//     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+//     */
+//    public static Location getPlotHome(final World w, final Plot plot) {
+//        return getPlotHome(w, plot.id);
+//    }
+//
+//    /**
+//     * Refresh the plot chunks
+//     *
+//     * @param world World in which the plot is located
+//     * @param plot  Plot Object
+//     */
+//    public static void refreshPlotChunks(final String world, final Plot plot) {
+//
+//        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
+//        final int topX = getPlotTopLoc(world, plot.id).getX();
+//        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
+//        final int topZ = getPlotTopLoc(world, plot.id).getZ();
+//
+//        final int minChunkX = (int) Math.floor((double) bottomX / 16);
+//        final int maxChunkX = (int) Math.floor((double) topX / 16);
+//        final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
+//        final int maxChunkZ = (int) Math.floor((double) topZ / 16);
+//
+//        final ArrayList<Chunk> chunks = new ArrayList<>();
+//
+//        for (int x = minChunkX; x <= maxChunkX; x++) {
+//            for (int z = minChunkZ; z <= maxChunkZ; z++) {
+//                if (canSendChunk) {
+//                    final Chunk chunk = world.getChunkAt(x, z);
+//                    chunks.add(chunk);
+//                } else {
+//                    world.refreshChunk(x, z);
+//                }
+//            }
+//        }
+//        try {
+//            SendChunk.sendChunk(chunks);
+//        } catch (final Throwable e) {
+//            canSendChunk = false;
+//            for (int x = minChunkX; x <= maxChunkX; x++) {
+//                for (int z = minChunkZ; z <= maxChunkZ; z++) {
+//                    world.refreshChunk(x, z);
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Gets the top plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega plot
+//     * use getPlotTopLoc(...)
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static Location getPlotTopLocAbs(final String world, final PlotId id) {
+//
+//        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+//        final PlotManager manager = PlotSquared.getPlotManager(world);
+//        return manager.getPlotTopLocAbs(plotworld, id);
+//    }
+//
+//    /**
+//     * Gets the bottom plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega
+//     * plot use getPlotBottomLoc(...)
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
+//
+//        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+//        final PlotManager manager = PlotSquared.getPlotManager(world);
+//        return manager.getPlotBottomLocAbs(plotworld, id);
+//    }
+//
+//    /**
+//     * Obtains the width of a plot (x width)
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static int getPlotWidth(final String world, final PlotId id) {
+//
+//        return getPlotTopLoc(world, id).getX() - getPlotBottomLoc(world, id).getX();
+//    }
+//
+//    /**
+//     * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
+//     * a small plot use getPlotTopLocAbs(...)
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static Location getPlotTopLoc(final String world, PlotId id) {
+//
+//        final Plot plot = PlotSquared.getPlots(world).get(id);
+//        if (plot != null) {
+//            id = PlayerFunctions.getTopPlot(world, plot).id;
+//        }
+//        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+//        final PlotManager manager = PlotSquared.getPlotManager(world);
+//        return manager.getPlotTopLocAbs(plotworld, id);
+//    }
+//
+//    /**
+//     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega plot) - If you would like each plot
+//     * treated as a small plot use getPlotBottomLocAbs(...)
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static Location getPlotBottomLoc(final String world, PlotId id) {
+//
+//        final Plot plot = PlotSquared.getPlots(world).get(id);
+//        if (plot != null) {
+//            id = PlayerFunctions.getBottomPlot(world, plot).id;
+//        }
+//        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+//        final PlotManager manager = PlotSquared.getPlotManager(world);
+//        return manager.getPlotBottomLocAbs(plotworld, id);
+//    }
+//    
+//    public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
+//
+//        for (int x = pos1.x; x <= pos2.x; x++) {
+//            for (int y = pos1.y; y <= pos2.y; y++) {
+//                final PlotId id = new PlotId(x, y);
+//                if (PlotSquared.getPlots(world).get(id) != null) {
+//                    if (PlotSquared.getPlots(world).get(id).owner != null) {
+//                        return false;
+//                    }
+//                }
+//            }
+//        }
+//        return true;
+//    }
+//    
+//    public static boolean move(final String world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
+//        String worldname = world.getName();
+//        final com.intellectualcrafters.plot.object.Location bot1 = PlotHelper.getPlotBottomLoc(worldname, current);
+//        com.intellectualcrafters.plot.object.Location bot2 = PlotHelper.getPlotBottomLoc(worldname, newPlot);
+//        final Location top = PlotHelper.getPlotTopLoc(worldname, current);
+//        final Plot currentPlot = PlotHelper.getPlot(worldname, current);
+//        if (currentPlot.owner == null) {
+//            return false;
+//        }
+//        Plot pos1 = PlayerFunctions.getBottomPlot(worldname, currentPlot);
+//        Plot pos2 = PlayerFunctions.getTopPlot(worldname, currentPlot);
+//
+//        PlotId size = PlotHelper.getSize(world, currentPlot);
+//        if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
+//            return false;
+//        }
+//        
+//        int offset_x = newPlot.x - pos1.id.x;
+//        int offset_y = newPlot.y - pos1.id.y;
+//        final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
+//        String worldname = world.getName();
+//        for (PlotId id : selection) { 
+//            DBFunc.movePlot(world.getName(), new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
+//            Plot plot = PlotSquared.getPlots(worldname).get(id);
+//            PlotSquared.getPlots(worldname).remove(id);
+//            plot.id.x += offset_x;
+//            plot.id.y += offset_y;
+//            PlotSquared.getPlots(worldname).put(plot.id, plot);
+//        }
+//        ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
+//            @Override
+//            public void run() {
+//                Location bot = bot1.clone().add(1, 0, 1);
+//                ChunkManager.regenerateRegion(bot, top, null);
+//                TaskManager.runTaskLater(whenDone, 1);
+//            }
+//        });
+//        return true;
+//    }
+//    
+//    public static PlotId getSize(String world, Plot plot) {
+//
+//        PlotSettings settings = plot.settings;
+//        if (!settings.isMerged()) {
+//            return new PlotId(1,1);
+//        }
+//        Plot top = PlayerFunctions.getTopPlot(world, plot);
+//        Plot bot = PlayerFunctions.getBottomPlot(world, plot);
+//        return new PlotId(top.id.x - bot.id.x + 1, top.id.y - bot.id.y + 1);
+//    }
+//    
+//    /**
+//     * Fetches the plot from the main class
+//     *
+//     * @param world
+//     * @param id
+//     *
+//     * @return
+//     */
+//    public static Plot getPlot(final String world, final PlotId id) {
+//
+//        if (id == null) {
+//            return null;
+//        }
+//        if (PlotSquared.getPlots(world).containsKey(id)) {
+//            return PlotSquared.getPlots(world).get(id);
+//        }
+//        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
+//    }
+//
+//    /**
+//     * Returns the plot at a given location
+//     *
+//     * @param loc
+//     *
+//     * @return
+//     */
+//    public static Plot getCurrentPlot(final Location loc) {
+//        final PlotId id = PlayerFunctions.getPlot(loc);
+//        if (id == null) {
+//            return null;
+//        }
+//        if (PlotSquared.getPlots(loc.getWorld()).containsKey(id)) {
+//            return PlotSquared.getPlots(loc.getWorld()).get(id);
+//        }
+//        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
+//    }
 }
