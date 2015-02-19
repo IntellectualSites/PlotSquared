@@ -145,7 +145,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
         CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
         
-        String dir = PlotSquared.getMain().getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
+        String dir = PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
         
         SchematicHandler.save(sideroad, dir + "sideroad.schematic");
         SchematicHandler.save(intersection, dir + "intersection.schematic");

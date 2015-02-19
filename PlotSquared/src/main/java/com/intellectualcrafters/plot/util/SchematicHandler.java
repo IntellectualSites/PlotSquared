@@ -50,6 +50,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * Schematic Handler
@@ -83,40 +84,38 @@ public class SchematicHandler {
 
             Location l1 = PlotHelper.getPlotBottomLoc(plot.world, plot.getId());
 
-            final int sy = location.getWorld().getHighestBlockYAt(l1.getX() + 1, l1.getZ() + 1);
+            final int sy = BukkitUtil.getHeighestBlock(location.getWorld(), l1.getX() + 1, l1.getZ() + 1);
 
             l1 = l1.add(1, sy - 1, 1);
 
-            final World world = location.getWorld();
-
             int y_offset;
-            if (HEIGHT == location.getWorld().getMaxHeight()) {
+            if (HEIGHT == BukkitUtil.getMaxHeight(location.getWorld())) {
                 y_offset = 0;
             } else {
                 y_offset = l1.getY();
             }
+            
+            int[] xl = new int[blocks.length];
+            int[] yl = new int[blocks.length];
+            int[] zl = new int[blocks.length];
+            int[] ids = new int[blocks.length];
+            byte[] data = new byte[blocks.length];
 
             for (int x = 0; x < WIDTH; x++) {
                 for (int z = 0; z < LENGTH; z++) {
                     for (int y = 0; y < HEIGHT; y++) {
                         final int index = (y * WIDTH * LENGTH) + (z * WIDTH) + x;
-
                         final DataCollection block = blocks[index];
-
-                        final short id = block.getBlock();
-                        final byte data = block.getData();
-
-                        // if (block.tag != null) {
-                        // WorldEditUtils.setNBT(world, id, data, l1.getX()
-                        // + x + x_offset, y + y_offset, l1.getZ() + z +
-                        // z_offset, block.tag);
-                        // }
-                        // else {
-                        PlotHelper.setBlock(world, l1.getX() + x + x_offset, y + y_offset, l1.getZ() + z + z_offset, id, data);
-                        // }
+                        xl[index] = x;
+                        yl[index] = y;
+                        zl[index] = z;
+                        ids[index] = block.block;
+                        data[index] = block.data;
                     }
                 }
             }
+            BlockManager.setBlocks(plot.world, xl, yl, zl, ids, data);
+            
         } catch (final Exception e) {
             return false;
         }
@@ -170,14 +169,14 @@ public class SchematicHandler {
      */
     public static Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotSquared.getMain().getDirectory() + File.separator + "schematics");
+            final File parent = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotSquared.getMain().getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         if (!file.exists()) {
             PlotSquared.log(file.toString() + " doesn't exist");
             return null;
@@ -244,17 +243,14 @@ public class SchematicHandler {
     }
     
     @SuppressWarnings("deprecation")
-    public static CompoundTag getCompoundTag(final World world, Location pos1, Location pos2) {
-
-        
-
+    public static CompoundTag getCompoundTag(final String world, Location pos1, Location pos2) {
         // loading chunks
         int i = 0;
         int j = 0;
         try {
             for (i = (pos1.getX() / 16) * 16; i < (16 + ((pos2.getX() / 16) * 16)); i += 16) {
                 for (j = (pos1.getZ() / 16) * 16; j < (16 + ((pos2.getZ() / 16) * 16)); j += 16) {
-                    final Chunk chunk = world.getChunkAt(i, j);
+                    final Chunk chunk = BukkitUtil.getChunkAt(world, i, j);
                     final boolean result = chunk.load(false);
                     if (!result) {
 
@@ -301,8 +297,7 @@ public class SchematicHandler {
                 for (int y = 0; y < height; y++) {
                     final int index = (y * width * length) + (z * width) + x;
 
-                    final Block block = world.getBlockAt(new Location(world, sx + x, sy + y, sz + z));
-
+                    block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
                     @SuppressWarnings("deprecation") final int id2 = block.getTypeId();
 
                     if (id2 > 255) {
@@ -335,17 +330,25 @@ public class SchematicHandler {
     }
 
     public static boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
-        int[] xl = new int[i2];
-        int[] yl = new int[i2];
-        int[] zl = new int[i2];
-        int[] ids = new int[i2];
-        byte[] data = new byte[i2];
-        
+        int length = 0;
+        for (int i = i1; i <= i2; i++) {
+            if (blocks[i].block == 0) {
+                length++;
+            }
+        }
+        length = i2 - length;
+        int[] xl = new int[length];
+        int[] yl = new int[length];
+        int[] zl = new int[length];
+        int[] ids = new int[length];
+        byte[] data = new byte[length];
+        int count = 0;
         for (int i = i1; i <= i2; i++) {
             final short id = blocks[i].block;
             if (id == 0) {
                 continue;
             }
+            count++;
             
             final int area = WIDTH * LENGTH;
             final int r = i % (area);
@@ -353,13 +356,12 @@ public class SchematicHandler {
             final int y = i / area;
             final int z = r / WIDTH;
             
-            xl[i] = x;
-            yl[i] = y;
-            zl[i] = z;
+            xl[count] = x;
+            yl[count] = y;
+            zl[count] = z;
             
-            ids[i] = id;
-            data[i] = blocks[i].data;
-
+            ids[count] = id;
+            data[count] = blocks[i].data;
             if (y > 256) {
                 break;
             }

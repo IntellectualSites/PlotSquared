@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SetBlockManager;
 import com.intellectualcrafters.plot.util.SetBlockSlow;
@@ -35,6 +36,14 @@ public class BukkitUtil extends BlockManager {
             worlds.put(string, world);
         }
         return world;
+    }
+    
+    public static int getMaxHeight(String world) {
+        return getWorld(world).getMaxHeight();
+    }
+    
+    public static int getHeighestBlock(String world, int x, int z) {
+        return getWorld(world).getHighestBlockYAt(x, z);
     }
     
     public static Chunk getChunkAt(String worldname, int x, int z) {
@@ -75,6 +84,15 @@ public class BukkitUtil extends BlockManager {
             SetBlockManager.setBlockManager = new SetBlockSlow();
             SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
         }
+    }
+    
+    public static PlotBlock getBlock(Location loc) {
+        World world = getWorld(loc.getWorld());
+        Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());
+        if (block == null) {
+            return new PlotBlock((short) 0 , (byte) 0);
+        }
+        return new PlotBlock((short) block.getTypeId(), block.getData());
     }
 
     public static Location getLocation(Entity entity) {
