@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 public class Trim extends SubCommand {
 
@@ -122,7 +122,7 @@ public class Trim extends SubCommand {
         if (Trim.TASK) {
             return false;
         }
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 String directory = world.getName() + File.separator + "region";
@@ -169,7 +169,7 @@ public class Trim extends SubCommand {
                     }
                 }
                 Trim.TASK = false;
-                TaskManager.runTaskAsync(whenDone);
+                BukkitTaskManager.runTaskAsync(whenDone);
             }
         });
         Trim.TASK = true;
@@ -197,7 +197,7 @@ public class Trim extends SubCommand {
                         empty.addAll(chunks);
                         System.out.print("DONE!");
                         Trim.TASK = false;
-                        TaskManager.runTaskAsync(whenDone);
+                        BukkitTaskManager.runTaskAsync(whenDone);
                         Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
                         return;
                     }

@@ -46,8 +46,8 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 @SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
 
@@ -147,7 +147,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
         CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
         
-        String dir = PlotMain.getMain().getDataFolder() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
+        String dir = PlotMain.getMain().getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
         
         SchematicHandler.save(sideroad, dir + "sideroad.schematic");
         SchematicHandler.save(intersection, dir + "intersection.schematic");
@@ -734,7 +734,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                                                         @Override
                                                         public void run() {
                                                             PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
-                                                            TaskManager.runTask(whenDone);
+                                                            BukkitTaskManager.runTask(whenDone);
                                                         }
                                                     }, 1L);
                                                 }

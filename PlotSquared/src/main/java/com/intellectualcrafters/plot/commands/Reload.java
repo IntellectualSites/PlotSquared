@@ -46,7 +46,7 @@ public class Reload extends SubCommand {
                 final PlotWorld plotworld = PlotMain.getWorldSettings(pw);
                 plotworld.loadDefaultConfiguration(PlotMain.config.getConfigurationSection("worlds." + pw));
             }
-            PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
+            MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
             PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
         }

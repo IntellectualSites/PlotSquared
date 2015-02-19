@@ -27,6 +27,8 @@ import java.sql.SQLException;
 
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.plot.PlotSquared;
+
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
  *
@@ -38,15 +40,15 @@ public abstract class Database {
     /**
      * Plugin instance, use for plugin.getDataFolder()
      */
-    protected final Plugin plugin;
+    protected final PlotSquared plotsquared;
 
     /**
      * Creates a new Database
      *
-     * @param plugin Plugin instance
+     * @param plotsquared Plugin instance
      */
-    protected Database(final Plugin plugin) {
-        this.plugin = plugin;
+    protected Database(final PlotSquared plotsquared) {
+        this.plotsquared = plotsquared;
     }
 
     /**

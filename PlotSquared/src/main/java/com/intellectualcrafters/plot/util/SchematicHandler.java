@@ -170,14 +170,14 @@ public class SchematicHandler {
      */
     public static Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotMain.getMain().getDataFolder() + File.separator + "schematics");
+            final File parent = new File(PlotMain.getMain().getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotMain.getMain().getDataFolder() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PlotMain.getMain().getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         if (!file.exists()) {
             PlotMain.sendConsoleSenderMessage(file.toString() + " doesn't exist");
             return null;

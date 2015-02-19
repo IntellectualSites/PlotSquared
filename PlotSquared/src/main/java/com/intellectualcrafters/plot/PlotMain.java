@@ -45,6 +45,7 @@ import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.bukkit.TaskManager;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -63,6 +64,11 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
 /**
  * PlotMain class.
  *
@@ -70,6 +76,23 @@ import java.util.Map.Entry;
  * @author Empire92
  */
 public class PlotMain {
+    
+    /**
+     * style
+     */
+    public static File styleFile;
+    public static YamlConfiguration styleConfig;
+    /**
+     * The main configuration file
+     */
+    public static YamlConfiguration config;
+    /**
+     * Contains storage options
+     */
+    public static YamlConfiguration storage;
+    
+    public static IPlotMain MAIN_IMP = new BukkitMain();
+    
     /**
      * Permission that allows for "everything"
      */
@@ -87,26 +110,14 @@ public class PlotMain {
      */
     private final static HashMap<String, PlotManager> managers = new HashMap<>();
     /**
-     * style
-     */
-    public static File styleFile;
-    public static YamlConfiguration styleConfig;
-    /**
      * settings.properties
      */
     public static File configFile;
-    /**
-     * The main configuration file
-     */
-    public static YamlConfiguration config;
+
     /**
      * storage.properties
      */
     public static File storageFile;
-    /**
-     * Contains storage options
-     */
-    public static YamlConfiguration storage;
     /**
      * MySQL Connection
      */
@@ -152,92 +163,6 @@ public class PlotMain {
     public static MySQL getMySQL() {
         return mySQL;
     }
-    /**
-     * Check a range of permissions e.g. 'plots.plot.<0-100>'<br> Returns highest integer in range.
-     *
-     * @param player to check
-     * @param stub   to check
-     * @param range  tp check
-     *
-     * @return permitted range
-     */
-    public static int hasPermissionRange(final Player player, final String stub, final int range) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
-            return Byte.MAX_VALUE;
-        }
-        if (player.hasPermission(stub + ".*")) {
-            return Byte.MAX_VALUE;
-        }
-        for (int i = range; i > 0; i--) {
-            if (player.hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Check a player for a permission<br> - Op has all permissions <br> - checks for '*' nodes
-     *
-     * @param player to check
-     * @param perms  to check
-     *
-     * @return true of player has permissions
-     */
-    public static boolean hasPermissions(final Player player, final String[] perms) {
-        // Assumes null player is console.
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
-            return true;
-        }
-        for (final String perm : perms) {
-            boolean permitted = false;
-            if (player.hasPermission(perm)) {
-                permitted = true;
-            } else {
-                final String[] nodes = perm.split("\\.");
-                final StringBuilder n = new StringBuilder();
-                for (int i = 0; i < (nodes.length - 1); i++) {
-                    n.append(nodes[i]).append(".");
-                    if (player.hasPermission(n + "*")) {
-                        permitted = true;
-                        break;
-                    }
-                }
-            }
-            if (!permitted) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check a player for a permission<br> - Op has all permissions <br> - checks for '*' nodes
-     *
-     * @param player to check
-     * @param perm   to check
-     *
-     * @return true if player has the permission
-     */
-    public static boolean hasPermission(final Player player, final String perm) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN_PERMISSION)) {
-            return true;
-        }
-        if (player.hasPermission(perm)) {
-            return true;
-        }
-        final String[] nodes = perm.split("\\.");
-        final StringBuilder n = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + "*")) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Get all plots
@@ -266,35 +191,12 @@ public class PlotMain {
     }
 
     /**
-     * @param player player
-     *
-     * @return Set Containing the players plots
-     *  - ignores non plot worlds
-     */
-    public static Set<Plot> getPlots(final Player player) {
-        final UUID uuid = UUIDHandler.getUUID(player);
-        final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final String world : plots.keySet()) {
-            if (isPlotWorld(world)) {
-                for (final Plot plot : plots.get(world).values()) {
-                    if (plot.hasOwner()) {
-                        if (plot.getOwner().equals(uuid)) {
-                            myplots.add(plot);
-                        }
-                    }
-                }
-            }
-        }
-        return new HashSet<>(myplots);
-    }
-
-    /**
      * @param world  plot world
      * @param player plot owner
      *
      * @return players plots
      */
-    public static Set<Plot> getPlots(final World world, final Player player) {
+    public static Set<Plot> getPlots(final String world, final String player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         return getPlots(world, uuid);
     }
@@ -305,7 +207,7 @@ public class PlotMain {
      *
      * @return players plots
      */
-    public static Set<Plot> getPlots(final World world, final UUID uuid) {
+    public static Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
@@ -318,27 +220,13 @@ public class PlotMain {
     }
 
     /**
-     * Get plots for the specified world
-     *
-     * @param world A world, in which you want to search for plots
-     *
-     * @return HashMap containing Plot IDs and Plot Objects
-     */
-    public static HashMap<PlotId, Plot> getPlots(final String world) {
-        if (plots.containsKey(world)) {
-            return plots.get(world);
-        }
-        return new HashMap<>();
-    }
-
-    /**
      * @param world plot world
      *
      * @return plots in world
      */
-    public static HashMap<PlotId, Plot> getPlots(final World world) {
-        if (plots.containsKey(world.getName())) {
-            return plots.get(world.getName());
+    public static HashMap<PlotId, Plot> getPlots(final String world) {
+        if (plots.containsKey(world)) {
+            return plots.get(world);
         }
         return new HashMap<>();
     }
@@ -364,33 +252,12 @@ public class PlotMain {
      *
      * @return true if the world is a plotworld
      */
-    public static boolean isPlotWorld(final World world) {
-        return (worlds.containsKey(world.getName()));
-    }
-
-    /**
-     * @param world plotworld(?)
-     *
-     * @return true if the world is a plotworld
-     */
     public static boolean isPlotWorld(final String world) {
         return (worlds.containsKey(world));
     }
 
     /**
-     * @param world World to get manager for
-     *
-     * @return manager for world
-     */
-    public static PlotManager getPlotManager(final World world) {
-        if (managers.containsKey(world.getName())) {
-            return managers.get(world.getName());
-        }
-        return null;
-    }
-
-    /**
-     * @param world world
+     * @param String world
      *
      * @return PlotManager
      */
@@ -401,17 +268,6 @@ public class PlotMain {
         return null;
     }
 
-    /**
-     * @param world to search
-     *
-     * @return PlotWorld object
-     */
-    public static PlotWorld getWorldSettings(final World world) {
-        if (worlds.containsKey(world.getName())) {
-            return worlds.get(world.getName());
-        }
-        return null;
-    }
 
     /**
      * @param world to search
@@ -426,12 +282,12 @@ public class PlotMain {
     }
 
     /**
-     * @param world world to search
+     * @param String world to search
      *
      * @return set containing the plots for a world
      */
-    public static Plot[] getWorldPlots(final World world) {
-        final Collection<Plot> values = plots.get(world.getName()).values();
+    public static Plot[] getWorldPlots(final String world) {
+        final Collection<Plot> values = plots.get(world).values();
         return (values.toArray(new Plot[values.size()]));
     }
 
@@ -446,15 +302,11 @@ public class PlotMain {
      */
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         if (callEvent) {
-            final PlotDeleteEvent event = new PlotDeleteEvent(world, id);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                event.setCancelled(true);
+            if (!MAIN_IMP.callRemovePlot(world, id)) {
                 return false;
             }
         }
         plots.get(world).remove(id);
-        
         if (PlotHelper.lastPlot.containsKey(world)) {
         	PlotId last = PlotHelper.lastPlot.get(world);
         	int last_max = Math.max(last.x, last.y);
@@ -464,7 +316,6 @@ public class PlotMain {
         		PlotHelper.lastPlot.put(world, id);
         	}
         }
-        
         return true;
     }
 
@@ -500,22 +351,6 @@ public class PlotMain {
         return connection;
     }
 
-    /**
-     * Send a message to the console.
-     *
-     * @param string message
-     */
-    public static void sendConsoleSenderMessage(final String string) {
-        if (PlotMain.main == null || getMain().getServer().getConsoleSender() == null) {
-            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
-        } else {
-        	String message = ChatColor.translateAlternateColorCodes('&', string);
-        	if (!Settings.CONSOLE_COLOR) {
-        		message = ChatColor.stripColor(message);
-        	}
-            getMain().getServer().getConsoleSender().sendMessage(message);
-        }
-    }
 
     /**
      * Teleport a player to a plot
@@ -526,26 +361,30 @@ public class PlotMain {
      *
      * @return true if successful
      */
-    public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
-    	Plot bot = PlayerFunctions.getBottomPlot(player.getWorld(), plot);
+    public boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
+        Plot bot = PlayerFunctions.getBottomPlot(player.getWorld().getName(), plot);
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             final Location location = PlotHelper.getPlotHome(Bukkit.getWorld(bot.world), bot);
-            if ((location.getBlockX() >= 29999999) || (location.getBlockX() <= -29999999) || (location.getBlockZ() >= 299999999) || (location.getBlockZ() <= -29999999)) {
+            
+            int x = location.getX();
+            int z = location.getZ();
+            
+            
+            if ((x >= 29999999) || (x <= -29999999) || (z >= 299999999) || (z <= -29999999)) {
                 event.setCancelled(true);
                 return false;
             }
             if (Settings.TELEPORT_DELAY == 0 || hasPermission(player, "plots.teleport.delay.bypass")) {
+                Location bukkitLoc = new org.bukkit.Location(player.getWorld(), x, y, z)
                 PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
                 player.teleport(location);
                 return true;
             }
             PlayerFunctions.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
             Location loc = player.getLocation();
-            final World world = player.getWorld();
-            final int x = loc.getBlockX();
-            final int z = loc.getBlockZ();
+            final String world = player.getWorld();
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(new Runnable() {
@@ -576,25 +415,7 @@ public class PlotMain {
         }
         return !event.isCancelled();
     }
-
-    /**
-     * Send a message to the console
-     *
-     * @param c message
-     */
-    public static void sendConsoleSenderMessage(final C c) {
-        sendConsoleSenderMessage(c.s());
-    }
-
-    /**
-     * Broadcast publicly
-     *
-     * @param c message
-     */
-    public static void Broadcast(final C c) {
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + c.s()));
-    }
-
+    
     /**
      * Returns the main class.
      *
@@ -762,7 +583,7 @@ public class PlotMain {
                     }
                     this.error = 0l;
                 }
-                World world;
+                String world;
                 for (final String w : getPlotWorlds()) {
                     getWorldSettings(w);
                     world = Bukkit.getServer().getWorld(w);
@@ -803,7 +624,6 @@ public class PlotMain {
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
-//        options.put("worldguard.enabled", Settings.WORLDGUARD);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("console.color", Settings.CONSOLE_COLOR);
@@ -815,14 +635,9 @@ public class PlotMain {
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-//        options.put("uuid.api.location", Settings.API_URL);
-//        options.put("uuid.api.custom", Settings.CUSTOM_API);
-//        options.put("uuid.fecthing", Settings.UUID_FECTHING);
         options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
-//        options.put("perm-based-mob-cap.enabled", Settings.MOB_CAP_ENABLED);
-//        options.put("perm-based-mob-cap.max", Settings.MOB_CAP);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
 
         for (final Entry<String, Object> node : options.entrySet()) {
@@ -841,7 +656,6 @@ public class PlotMain {
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
-//        Settings.WORLDGUARD = config.getBoolean("worldguard.enabled");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf"
         		+ "inding");
         Settings.METRICS = config.getBoolean("metrics");
@@ -850,15 +664,11 @@ public class PlotMain {
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.TITLES = config.getBoolean("titles");
-//        Settings.MOB_CAP_ENABLED = config.getBoolean("perm-based-mob-cap.enabled");
-//        Settings.MOB_CAP = config.getInt("perm-based-mob-cap.max");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         if (Settings.MAX_PLOTS > 32767) {
             sendConsoleSenderMessage("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
             Settings.MAX_PLOTS = 32767;
         }
-        
-        
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
 
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
@@ -870,7 +680,7 @@ public class PlotMain {
     /**
      * Create a plotworld config section
      *
-     * @param plotworld World to create the section for
+     * @param plotString world to create the section for
      */
     public static void createConfiguration(final PlotWorld plotworld) {
         final Map<String, Object> options = new HashMap<>();
@@ -1010,12 +820,12 @@ public class PlotMain {
      *
      * @param world to load
      */
-    public static void loadWorld(final World world) {
+    public static void loadWorld(final String world) {
         if (world == null) {
             return;
         }
         final ChunkGenerator generator = world.getGenerator();
-        loadWorld(world.getName(), generator);
+        loadWorld(world, generator);
     }
 
     public static void setupStyle() {
@@ -1170,7 +980,7 @@ public class PlotMain {
     /**
      * Remove a plot world
      *
-     * @param world World to remove
+     * @param String world to remove
      */
     public static void removePlotWorld(final String world) {
         plots.remove(world);
@@ -1348,34 +1158,117 @@ public class PlotMain {
     }
 
     /**
-     * Setup the logger mechanics
+     * Check a range of permissions e.g. 'plots.plot.<0-100>'<br> Returns highest integer in range.
+     *
+     * @param player to check
+     * @param stub   to check
+     * @param range  tp check
+     *
+     * @return permitted range
      */
-    private void setupLogger() {
-        final File log = new File(getMain().getDataFolder() + File.separator + "logs" + File.separator + "plots.log");
-        if (!log.exists()) {
-            try {
-                if (!new File(getMain().getDataFolder() + File.separator + "logs").mkdirs()) {
-                    sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create logs folder. Do it manually.");
-                }
-                if (log.createNewFile()) {
-                    final FileWriter writer = new FileWriter(log);
-                    writer.write("Created at: " + new Date().toString() + "\n\n\n");
-                    writer.close();
-                }
-            } catch (final IOException e) {
-
-                e.printStackTrace();
+    public int hasPermissionRange(final Player player, final String stub, final int range) {
+        if ((player == null) || player.isOp() || player.hasPermission(PlotMain.ADMIN_PERMISSION)) {
+            return Byte.MAX_VALUE;
+        }
+        if (player.hasPermission(stub + ".*")) {
+            return Byte.MAX_VALUE;
+        }
+        for (int i = range; i > 0; i--) {
+            if (player.hasPermission(stub + "." + i)) {
+                return i;
             }
         }
-        Logger.setup(log);
-        Logger.add(LogLevel.GENERAL, "Logger enabled");
+        return 0;
+    }
+    
+    /**
+     * Check a player for a permission<br> - Op has all permissions <br> - checks for '*' nodes
+     *
+     * @param player to check
+     * @param perms  to check
+     *
+     * @return true of player has permissions
+     */
+    public boolean hasPermissions(final Player player, final String[] perms) {
+        if ((player == null) || player.isOp() || player.hasPermission(PlotMain.ADMIN_PERMISSION)) {
+            return true;
+        }
+        for (final String perm : perms) {
+            boolean permitted = false;
+            if (player.hasPermission(perm)) {
+                permitted = true;
+            } else {
+                final String[] nodes = perm.split("\\.");
+                final StringBuilder n = new StringBuilder();
+                for (int i = 0; i < (nodes.length - 1); i++) {
+                    n.append(nodes[i]).append(".");
+                    if (player.hasPermission(n + "*")) {
+                        permitted = true;
+                        break;
+                    }
+                }
+            }
+            if (!permitted) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Check a player for a permission<br> - Op has all permissions <br> - checks for '*' nodes
+     *
+     * @param player to check
+     * @param perm   to check
+     *
+     * @return true if player has the permission
+     */
+    public boolean hasPermission(final Player player, final String perm) {
+        if ((player == null) || player.isOp() || player.hasPermission(PlotMain.ADMIN_PERMISSION)) {
+            return true;
+        }
+        if (player.hasPermission(perm)) {
+            return true;
+        }
+        final String[] nodes = perm.split("\\.");
+        final StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i] + ("."));
+            if (player.hasPermission(n + "*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean callRemovePlot(String world, PlotId id) {
+        final PlotDeleteEvent event = new PlotDeleteEvent(world, id);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            event.setCancelled(true);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void sendConsoleSenderMessage(String string) {
+        if (BukkitMain.plugin == null || Bukkit.getServer().getConsoleSender() == null) {
+            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
+        } else {
+            String message = ChatColor.translateAlternateColorCodes('&', string);
+            if (!Settings.CONSOLE_COLOR) {
+                message = ChatColor.stripColor(message);
+            }
+            Bukkit.getServer().getConsoleSender().sendMessage(message);
+        }
     }
     
     /**
      * On Load.
      */
-    @Override
-    final public void onEnable() {
+    public PlotMain() {
         PlotMain.main = this;
         // Setup the logger mechanics
         setupLogger();
@@ -1638,12 +1531,10 @@ public class PlotMain {
             Broadcast(C.ENABLED);
         }
     }
-
     /**
      * On unload
      */
-    @Override
-    final public void onDisable() {
+    public void disable() {
         Logger.add(LogLevel.GENERAL, "Logger disabled");
         try {
             Logger.write();

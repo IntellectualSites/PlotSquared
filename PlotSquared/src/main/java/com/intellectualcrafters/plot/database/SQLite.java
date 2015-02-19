@@ -32,6 +32,8 @@ import java.util.logging.Level;
 
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.plot.PlotSquared;
+
 /**
  * Connects to and uses a SQLite database
  *
@@ -49,8 +51,8 @@ public class SQLite extends Database {
      * @param plugin     Plugin instance
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(final Plugin plugin, final String dbLocation) {
-        super(plugin);
+    public SQLite(final PlotSquared plotsquared, final String dbLocation) {
+        super(plotsquared);
         this.dbLocation = dbLocation;
     }
 
@@ -59,7 +61,7 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!this.plugin.getDataFolder().exists()) {
+        if (!this.plotsquared.IMP.getDirectory().exists()) {
             this.plugin.getDataFolder().mkdirs();
         }
         final File file = new File(this.dbLocation);

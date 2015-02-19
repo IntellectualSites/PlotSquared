@@ -20,7 +20,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.SetBlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 public class AugmentedPopulator extends BlockPopulator {
 
@@ -127,7 +127,7 @@ public class AugmentedPopulator extends BlockPopulator {
 		if (this.o) {
 		    chunk.load(true);
 		    populateBlocks(world, rand, X, Z, x, z, check);
-		    TaskManager.runTaskLater(new Runnable() {
+		    BukkitTaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     populateBiome(world, x, z);
@@ -137,13 +137,13 @@ public class AugmentedPopulator extends BlockPopulator {
             }, 20);
         }
 		else {
-		    TaskManager.runTaskLater(new Runnable() {
+		    BukkitTaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     populateBiome(world, x, z);
                 }
             }, 20 + rand.nextInt(10));
-            TaskManager.runTaskLater(new Runnable() {
+            BukkitTaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     chunk.load(true);

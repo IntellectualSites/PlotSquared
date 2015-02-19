@@ -46,6 +46,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 public class ChunkManager {
     
@@ -94,7 +95,7 @@ public class ChunkManager {
     }
     
     public static void deleteRegionFile(final String world, final ChunkLoc loc) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
@@ -198,7 +199,7 @@ public class ChunkManager {
                     if (toGenerate.size() == 0) {
                         Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
                         tasks.remove(currentIndex);
-                        TaskManager.runTask(new Runnable() {
+                        BukkitTaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
                                 index.increment();
@@ -241,7 +242,7 @@ public class ChunkManager {
                                                 for (Chunk chunk : chunks) {
                                                     chunk.unload(true, true);
                                                 }
-                                                TaskManager.runTaskLater(whenDone, 1);
+                                                BukkitTaskManager.runTaskLater(whenDone, 1);
                                                 Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
                                                 tasks.remove(currentIndex);
                                                 return;
@@ -298,7 +299,7 @@ public class ChunkManager {
             @Override
             public void run() {
                 if (chunks.size() == 0) {
-                    TaskManager.runTaskLater(whenDone, 1);
+                    BukkitTaskManager.runTaskLater(whenDone, 1);
                     Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
                     tasks.remove(currentIndex);
                     return;

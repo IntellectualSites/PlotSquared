@@ -74,7 +74,6 @@ public class Lag implements Runnable {
      *
      * @return number of ticks since $tI
      */
-    @SuppressWarnings("unused")
     public static long getElapsed(final int tI) {
         final long t = T[tI % T.length];
         return System.currentTimeMillis() - t;

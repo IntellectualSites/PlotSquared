@@ -99,8 +99,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 /**
  * Player Events involving plots
@@ -161,10 +161,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Location t = event.getTo();
             final Location q = new Location(t.getWorld(), t.getBlockX(), 0, t.getZ());
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
-                if (Settings.TELEPORT_DELAY != 0 && TaskManager.TELEPORT_QUEUE.size() > 0) {
+                if (Settings.TELEPORT_DELAY != 0 && BukkitTaskManager.TELEPORT_QUEUE.size() > 0) {
                     String name = player.getName();
-                    if (TaskManager.TELEPORT_QUEUE.contains(name)) {
-                        TaskManager.TELEPORT_QUEUE.remove(name);
+                    if (BukkitTaskManager.TELEPORT_QUEUE.contains(name)) {
+                        BukkitTaskManager.TELEPORT_QUEUE.remove(name);
                     }
                 }
                 if (!isPlotWorld(player.getWorld())) {
@@ -925,11 +925,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Entity d = e.getDamager();
         final Entity a = e.getEntity();
         
-        if (Settings.TELEPORT_DELAY != 0 && TaskManager.TELEPORT_QUEUE.size() > 0 && a instanceof Player) {
+        if (Settings.TELEPORT_DELAY != 0 && BukkitTaskManager.TELEPORT_QUEUE.size() > 0 && a instanceof Player) {
             Player player = (Player) a;
             String name = player.getName();
-            if (TaskManager.TELEPORT_QUEUE.contains(name)) {
-                TaskManager.TELEPORT_QUEUE.remove(name);
+            if (BukkitTaskManager.TELEPORT_QUEUE.contains(name)) {
+                BukkitTaskManager.TELEPORT_QUEUE.remove(name);
             }
         }
         

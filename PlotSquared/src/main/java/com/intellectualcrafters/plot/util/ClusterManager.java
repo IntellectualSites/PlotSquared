@@ -24,6 +24,7 @@ import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 public class ClusterManager {
 	public static HashMap<String, HashSet<PlotCluster>> clusters;
@@ -264,7 +265,7 @@ public class ClusterManager {
 	    final AugmentedPopulator populator = getPopulator(cluster);
 	    final ArrayList<Chunk> chunks = new ArrayList<>();
 	    
-	    TaskManager.runTaskLater(new Runnable() {
+	    BukkitTaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
                 ClusterManager.regenerating.remove(cluster.world + ":" + cluster.getName());
@@ -284,7 +285,7 @@ public class ClusterManager {
         }
 	    for (final Chunk chunk : chunks) {
 	        i+=interval;
-	        TaskManager.runTaskLater(new Runnable() {
+	        BukkitTaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     if (populator == null || plotworld.TYPE == 0) {

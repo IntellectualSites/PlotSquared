@@ -146,7 +146,7 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - MCA #: " + empty.size());
                             Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
-                            final File file = new File(PlotMain.getMain().getDataFolder() + File.separator + "trim.txt");
+                            final File file = new File(PlotMain.getMain().getDirectory() + File.separator + "trim.txt");
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);

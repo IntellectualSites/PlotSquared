@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.util;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class BlockManager {
     
@@ -33,7 +34,7 @@ public abstract class BlockManager {
     
     public abstract void functionSetBlock(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data);
     
-    public abstract void setSign(String worldname, int x, int y, int z);
+    public abstract void setSign(String worldname, int x, int y, int z, String[] lines);
     
     
     public static void setBlocks(String worldname, int[] x, int y[], int z[], PlotBlock[][] blocks) {

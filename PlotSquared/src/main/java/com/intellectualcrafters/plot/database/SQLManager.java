@@ -49,7 +49,7 @@ import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 /**
  * @author Citymonstret
@@ -114,7 +114,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setOwner(final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -310,7 +310,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlot(final Plot plot) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -332,7 +332,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void createPlotAndSettings(final Plot plot) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -412,7 +412,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void delete(final String world, final Plot plot) {
         PlotMain.removePlot(world, plot.id, false);
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -453,7 +453,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlotSettings(final int id, final Plot plot) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -735,7 +735,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void setMerged(final String world, final Plot plot, final boolean[] merged) {
         plot.settings.setMerged(merged);
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -758,7 +758,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void swapPlots(final Plot p1, final Plot p2) {
-        TaskManager.runTaskAsync(
+        BukkitTaskManager.runTaskAsync(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -795,7 +795,7 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
-        TaskManager.runTaskAsync(
+        BukkitTaskManager.runTaskAsync(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -826,7 +826,7 @@ public class SQLManager implements AbstractDB {
             flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
             i++;
         }
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -851,7 +851,7 @@ public class SQLManager implements AbstractDB {
             }
         }
         final String flag_string = StringUtils.join(newflags, ",");
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -875,7 +875,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void setAlias(final String world, final Plot plot, final String alias) {
         plot.settings.setAlias(alias);
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -969,7 +969,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setPosition(final String world, final Plot plot, final String position) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1042,7 +1042,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void removeComment(final String world, final Plot plot, final PlotComment comment) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1104,7 +1104,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setComment(final String world, final Plot plot, final PlotComment comment) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1130,7 +1130,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeHelper(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1153,7 +1153,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1176,7 +1176,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setHelper(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1194,7 +1194,7 @@ public class SQLManager implements AbstractDB {
     }
     
     public void setHelper(final int id, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1217,7 +1217,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setTrusted(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1240,7 +1240,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void removeDenied(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1263,7 +1263,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void setDenied(final String world, final Plot plot, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1303,7 +1303,7 @@ public class SQLManager implements AbstractDB {
 	@Override
 	public void delete(final PlotCluster cluster) {
 		ClusterManager.removeCluster(cluster);
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1560,7 +1560,7 @@ public class SQLManager implements AbstractDB {
             flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
             i++;
         }
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1581,7 +1581,7 @@ public class SQLManager implements AbstractDB {
 	@Override
 	public void setClusterName(final PlotCluster cluster, final String name) {
 		cluster.settings.setAlias(name);
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1602,7 +1602,7 @@ public class SQLManager implements AbstractDB {
 
 	@Override
 	public void removeHelper(final PlotCluster cluster, final UUID uuid) {
-		TaskManager.runTaskAsync(new Runnable() {
+		BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1621,7 +1621,7 @@ public class SQLManager implements AbstractDB {
 
 	@Override
 	public void setHelper(final PlotCluster cluster, final UUID uuid) {
-		TaskManager.runTaskAsync(new Runnable() {
+		BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1640,7 +1640,7 @@ public class SQLManager implements AbstractDB {
 
 	@Override
 	public void createCluster(final PlotCluster cluster) {
-		TaskManager.runTaskAsync(new Runnable() {
+		BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1675,7 +1675,7 @@ public class SQLManager implements AbstractDB {
 		final PlotId pos2 = new PlotId(current.getP2().x, current.getP2().y);
 		current.setP1(resize.pos1);
 		current.setP2(resize.pos2);
-		TaskManager.runTaskAsync(new Runnable() {
+		BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1698,7 +1698,7 @@ public class SQLManager implements AbstractDB {
 
 	@Override
 	public void setPosition(final PlotCluster cluster, final String position) {
-		TaskManager.runTaskAsync(new Runnable() {
+		BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
@@ -1766,7 +1766,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void removeInvited(final PlotCluster cluster, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1786,7 +1786,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setInvited(String world, final PlotCluster cluster, final UUID uuid) {
-        TaskManager.runTaskAsync(new Runnable() {
+        BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {

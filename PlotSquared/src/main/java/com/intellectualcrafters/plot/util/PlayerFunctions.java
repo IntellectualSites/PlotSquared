@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -236,7 +237,7 @@ import java.util.UUID;
      * @return
      */
     public static int getAllowedPlots(final Player p) {
-        return PlotMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
+        return PlotMain.MAIN_IMP.(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     /**
@@ -248,7 +249,7 @@ import java.util.UUID;
     public static Set<Plot> getPlots() {
         return PlotMain.getPlots();
     }
-
+    
     /**
      * \\previous\\
      *
@@ -285,7 +286,7 @@ import java.util.UUID;
     public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + msg);
+                PlotMain.MAIN_IMP.sendConsoleSenderMessage(C.PREFIX.s() + msg);
             } else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }
@@ -320,4 +321,5 @@ import java.util.UUID;
         }
         return true;
     }
+
 }

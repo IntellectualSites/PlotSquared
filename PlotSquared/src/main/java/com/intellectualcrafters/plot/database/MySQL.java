@@ -29,6 +29,8 @@ import java.sql.Statement;
 
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.plot.PlotSquared;
+
 /**
  * Connects to and uses a MySQL database
  *
@@ -54,8 +56,8 @@ public class MySQL extends Database {
      * @param username Username
      * @param password Password
      */
-    public MySQL(final Plugin plugin, final String hostname, final String port, final String database, final String username, final String password) {
-        super(plugin);
+    public MySQL(final PlotSquared plotsquared, final String hostname, final String port, final String database, final String username, final String password) {
+        super(plotsquared);
         this.hostname = hostname;
         this.port = port;
         this.database = database;
@@ -63,6 +65,7 @@ public class MySQL extends Database {
         this.password = password;
         this.connection = null;
     }
+
 
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");

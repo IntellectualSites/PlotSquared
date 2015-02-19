@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 public class ExpireManager {
     
@@ -45,7 +46,7 @@ public class ExpireManager {
         long now = System.currentTimeMillis();
         if (now > getTimeStamp(world)) {
             timestamp.put(world, now + 86400000l);
-            TaskManager.runTaskAsync(new Runnable() {
+            BukkitTaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
                     HashMap<Plot, Long> plots = getOldPlots(world);
