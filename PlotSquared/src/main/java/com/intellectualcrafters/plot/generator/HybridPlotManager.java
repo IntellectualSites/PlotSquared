@@ -41,11 +41,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-<<<<<<< Updated upstream
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
-=======
 import com.intellectualcrafters.plot.util.SetBlockManager;
->>>>>>> Stashed changes
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
@@ -200,11 +196,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 regenerateRoad(chunk);
             }
         }
-<<<<<<< Updated upstream
-        AbstractSetBlock.setBlockManager.update(chunks2);
-=======
         SetBlockManager.setBlockManager.update(chunks2);
->>>>>>> Stashed changes
     }
     
     public boolean scheduleRoadUpdate(final World world) {

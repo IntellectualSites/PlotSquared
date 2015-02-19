@@ -36,11 +36,8 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
-<<<<<<< Updated upstream
-public class SetBlockFast extends AbstractSetBlock {
-=======
 public class SetBlockFast extends SetBlockManager {
->>>>>>> Stashed changes
+
 
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
@@ -77,20 +74,11 @@ public class SetBlockFast extends SetBlockManager {
      * @return true
      */
     @Override
-<<<<<<< Updated upstream
-    public boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
-
-=======
     public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
->>>>>>> Stashed changes
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
-<<<<<<< Updated upstream
-        return true;
-=======
->>>>>>> Stashed changes
     }
 
     /**

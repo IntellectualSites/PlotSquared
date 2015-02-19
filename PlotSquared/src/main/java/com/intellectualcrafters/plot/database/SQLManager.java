@@ -161,10 +161,7 @@ public class SQLManager implements AbstractDB {
                     }
                     stored.get(world).put(new PlotId(idx, idz), id);
                 }
-<<<<<<< Updated upstream
-=======
                 result.close();
->>>>>>> Stashed changes
                 stmt.close();
             } catch (final SQLException e) {
                 e.printStackTrace();
@@ -486,10 +483,7 @@ public class SQLManager implements AbstractDB {
             while (r.next()) {
                 id = r.getInt("id");
             }
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
             stmt.close();
             return id;
         } catch (final SQLException e) {
@@ -523,10 +517,7 @@ public class SQLManager implements AbstractDB {
                 final Statement statement = this.connection.createStatement();
                 statement.addBatch("ALTER TABLE `" + this.prefix + "plot_settings` ADD `merged` int(11) DEFAULT NULL");
                 statement.executeBatch();
-<<<<<<< Updated upstream
-=======
                 rs.close();
->>>>>>> Stashed changes
                 statement.close();
             }
         } catch (final Exception e) {
@@ -718,10 +709,7 @@ public class SQLManager implements AbstractDB {
                 }
             }
             stmt.close();
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
             for (final Plot plot : plots.values()) {
                 final String world = plot.world;
                 if (!newplots.containsKey(world)) {
@@ -967,11 +955,8 @@ public class SQLManager implements AbstractDB {
                 }
             }
             purgeIds(world, ids);
-<<<<<<< Updated upstream
-=======
             stmt.close();
             r.close();
->>>>>>> Stashed changes
         } catch (SQLException e) {
             e.printStackTrace();
             PlotMain.sendConsoleSenderMessage("&c[ERROR] "+"FAILED TO PURGE WORLD '" + world + "'!");
@@ -1047,10 +1032,7 @@ public class SQLManager implements AbstractDB {
                 h.put(var, val);
             }
             stmt.close();
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
         } catch (final SQLException e) {
             PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load settings for plot: " + id);
             e.printStackTrace();
@@ -1112,10 +1094,7 @@ public class SQLManager implements AbstractDB {
                 comments.add(comment);
             }
             statement.close();
-<<<<<<< Updated upstream
-=======
             set.close();
->>>>>>> Stashed changes
         } catch (final SQLException e) {
             PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch comment");
             e.printStackTrace();
@@ -1312,10 +1291,7 @@ public class SQLManager implements AbstractDB {
                 rating = set.getDouble("rating");
             }
             statement.close();
-<<<<<<< Updated upstream
-=======
             set.close();
->>>>>>> Stashed changes
             return rating;
         } catch (final SQLException e) {
             PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to fetch rating for plot " + plot.getId().toString());
@@ -1371,10 +1347,7 @@ public class SQLManager implements AbstractDB {
             	c_id = r.getInt("id");
             }
             stmt.close();
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
             return c_id;
         } catch (final SQLException e) {
             e.printStackTrace();
@@ -1553,10 +1526,7 @@ public class SQLManager implements AbstractDB {
                 }
             }
             stmt.close();
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
             for (final PlotCluster c : clusters.values()) {
                 final String world = c.world;
                 if (!newClusters.containsKey(world)) {
@@ -1786,10 +1756,7 @@ public class SQLManager implements AbstractDB {
                 h.put(var, val);
             }
             stmt.close();
-<<<<<<< Updated upstream
-=======
             r.close();
->>>>>>> Stashed changes
         } catch (final SQLException e) {
             PlotMain.sendConsoleSenderMessage("&7[WARN] "+"Failed to load settings for cluster: " + id);
             e.printStackTrace();

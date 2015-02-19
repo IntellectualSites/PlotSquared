@@ -53,24 +53,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
 
-<<<<<<< Updated upstream
-import org.bukkit.*;
-import org.bukkit.Location;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
-=======
->>>>>>> Stashed changes
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -87,11 +69,7 @@ import java.util.Map.Entry;
  * @author Citymonstret
  * @author Empire92
  */
-<<<<<<< Updated upstream
-public class PlotMain extends JavaPlugin implements Listener {
-=======
 public class PlotMain {
->>>>>>> Stashed changes
     /**
      * Permission that allows for "everything"
      */
@@ -935,13 +913,7 @@ public class PlotMain {
     }
 
     public static void loadWorld(final String world, final ChunkGenerator generator) {
-<<<<<<< Updated upstream
-        System.out.print(2);
         if (getWorldSettings(world) != null) {
-            System.out.print(3);
-=======
-        if (getWorldSettings(world) != null) {
->>>>>>> Stashed changes
             return;
         }
 
@@ -953,10 +925,6 @@ public class PlotMain {
         final String path = "worlds." + world;
 
         if (!LOADING_WORLD && (generator != null) && (generator instanceof PlotGenerator)) {
-<<<<<<< Updated upstream
-            System.out.print(4);
-=======
->>>>>>> Stashed changes
             plotGenerator = (PlotGenerator) generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
@@ -980,13 +948,7 @@ public class PlotMain {
             addPlotWorld(world, plotWorld, plotManager);
             PlotHelper.setupBorder(world);
         } else {
-<<<<<<< Updated upstream
-            System.out.print(5 + " | " + (generator instanceof PlotGenerator));
             if (!worlds.contains(world)) {
-                System.out.print(6);
-=======
-            if (!worlds.contains(world)) {
->>>>>>> Stashed changes
                 return;
             }
             if (!LOADING_WORLD) {
@@ -1616,32 +1578,18 @@ public class PlotMain {
         {
             if (checkVersion(1, 8, 0)) {
                 try {
-<<<<<<< Updated upstream
-                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
-=======
                     SetBlockManager.setBlockManager = new SetBlockSlow();
                 }
                 catch (Throwable e) {
                     e.printStackTrace();
                     SetBlockManager.setBlockManager = new SetBlockSlow();
->>>>>>> Stashed changes
                 }
             }
             else {
                 try {
-<<<<<<< Updated upstream
-                    AbstractSetBlock.setBlockManager = new SetBlockFast();
-                } catch (Throwable e) {
-                    AbstractSetBlock.setBlockManager = new SetBlockSlow();
-=======
                     SetBlockManager.setBlockManager = new SetBlockFast();
                 } catch (Throwable e) {
                     SetBlockManager.setBlockManager = new SetBlockSlow();
->>>>>>> Stashed changes
                 }
             }
             try {

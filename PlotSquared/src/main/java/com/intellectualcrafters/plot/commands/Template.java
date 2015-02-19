@@ -21,19 +21,6 @@
 
 package com.intellectualcrafters.plot.commands;
 
-<<<<<<< Updated upstream
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-
-public class Template extends SubCommand {
-
-    public Template() {
-        super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
-    }
-
-=======
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,15 +41,12 @@ public class Template extends SubCommand {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
     }
     
->>>>>>> Stashed changes
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length != 2) {
             PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
-<<<<<<< Updated upstream
-=======
         World world = Bukkit.getWorld(args[1]);
         PlotWorld plotworld = PlotMain.getWorldSettings(args[1]);
         if (world == null || plotworld == null) {
@@ -79,7 +63,6 @@ public class Template extends SubCommand {
                 PlayerFunctions.sendMessage(plr, "TODO");
             }
         }
->>>>>>> Stashed changes
         
         // TODO allow world settings (including schematics to be packed into a single file)
         
@@ -87,8 +70,6 @@ public class Template extends SubCommand {
         
         return true;
     }
-<<<<<<< Updated upstream
-=======
     
     public void gzipIt(String output, String input) {
         byte[] buffer = new byte[1024];
@@ -106,5 +87,4 @@ public class Template extends SubCommand {
             ex.printStackTrace();
         }
     }
->>>>>>> Stashed changes
 }

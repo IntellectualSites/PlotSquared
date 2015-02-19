@@ -65,11 +65,8 @@ import java.util.UUID;
         return myplots;
     }
 
-<<<<<<< Updated upstream
-    public static ArrayList<PlotId> getMaxPlotSelectionIds(final World world, PlotId pos1, PlotId pos2) {
-=======
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
->>>>>>> Stashed changes
+
 
         final Plot plot1 = PlotMain.getPlots(world).get(pos1);
         final Plot plot2 = PlotMain.getPlots(world).get(pos2);
@@ -91,11 +88,8 @@ import java.util.UUID;
         return myplots;
     }
 
-<<<<<<< Updated upstream
-    public static Plot getBottomPlot(final World world, final Plot plot) {
-=======
     public static Plot getBottomPlot(final String world, final Plot plot) {
->>>>>>> Stashed changes
+
         if (plot.settings.getMerged(0)) {
             final Plot p = PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
             if (p == null) {
@@ -113,11 +107,8 @@ import java.util.UUID;
         return plot;
     }
 
-<<<<<<< Updated upstream
-    public static Plot getTopPlot(final World world, final Plot plot) {
-=======
     public static Plot getTopPlot(final String world, final Plot plot) {
->>>>>>> Stashed changes
+
         if (plot.settings.getMerged(2)) {
             return getTopPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
         }
@@ -141,11 +132,8 @@ import java.util.UUID;
             return null;
         }
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-<<<<<<< Updated upstream
-        return manager.getPlotIdAbs(plotworld, loc);
-=======
         return manager.getPlotIdAbs(plotworld, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
->>>>>>> Stashed changes
+
     }
 
     /**
@@ -162,11 +150,8 @@ import java.util.UUID;
             return null;
         }
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-<<<<<<< Updated upstream
-        PlotId id = manager.getPlotId(plotworld, loc);
-=======
         PlotId id = manager.getPlotId(plotworld, loc.getBlockX(),loc.getBlockY(), loc.getBlockZ());
->>>>>>> Stashed changes
+
         if (id!=null && plotworld.TYPE == 2) {
         	if (ClusterManager.getCluster(world, id) == null) {
         		return null;

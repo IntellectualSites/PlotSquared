@@ -23,10 +23,6 @@ package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
 
-<<<<<<< Updated upstream
-import org.bukkit.Location;
-=======
->>>>>>> Stashed changes
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
@@ -37,15 +33,9 @@ public abstract class PlotManager {
      * plots)
      */
 
-<<<<<<< Updated upstream
-    public abstract PlotId getPlotIdAbs(final PlotWorld plotworld, final Location loc);
-
-    public abstract PlotId getPlotId(final PlotWorld plotworld, final Location loc);
-=======
     public abstract PlotId getPlotIdAbs(final PlotWorld plotworld, final int x, final int y, final int z);
 
     public abstract PlotId getPlotId(final PlotWorld plotworld, final int x, final int y, final int z);
->>>>>>> Stashed changes
 
     // If you have a circular plot, just return the corner if it were a square
     public abstract Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid);
@@ -55,15 +45,6 @@ public abstract class PlotManager {
     /*
      * Plot clearing (return false if you do not support some method)
      */
-<<<<<<< Updated upstream
-    public abstract boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, boolean isDelete, Runnable whenDone);
-
-    public abstract boolean claimPlot(final World world, final PlotWorld plotworld, final Plot plot);
-    
-    public abstract boolean unclaimPlot(final World world, final PlotWorld plotworld, final Plot plot);
-    
-    public abstract Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot);
-=======
     public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, boolean isDelete, Runnable whenDone);
 
     public abstract boolean claimPlot(final PlotWorld plotworld, final Plot plot);
@@ -71,26 +52,17 @@ public abstract class PlotManager {
     public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot);
     
     public abstract Location getSignLoc(final PlotWorld plotworld, final Plot plot);
->>>>>>> Stashed changes
 
     /*
      * Plot set functions (return false if you do not support the specific set
      * method)
      */
 
-<<<<<<< Updated upstream
-    public abstract String[] getPlotComponents(final World world, final PlotWorld plotworld, final PlotId plotid);
-    
-    public abstract boolean setComponent(final World world, final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
-
-    public abstract boolean setBiome(final World world, final Plot plot, final Biome biome);
-=======
     public abstract String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid);
     
     public abstract boolean setComponent(final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
 
     public abstract boolean setBiome(final Plot plot, final Biome biome);
->>>>>>> Stashed changes
 
     /*
      * PLOT MERGING (return false if your generator does not support plot
@@ -108,15 +80,6 @@ public abstract class PlotManager {
 
     public abstract boolean removeRoadSouthEast(final PlotWorld plotworld, final Plot plot);
 
-<<<<<<< Updated upstream
-    public abstract boolean startPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
-    public abstract boolean startPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
-    public abstract boolean finishPlotMerge(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
-    public abstract boolean finishPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-=======
     public abstract boolean startPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
 
     public abstract boolean startPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
@@ -124,6 +87,5 @@ public abstract class PlotManager {
     public abstract boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
 
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
->>>>>>> Stashed changes
 
 }

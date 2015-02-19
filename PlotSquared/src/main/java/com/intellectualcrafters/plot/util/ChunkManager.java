@@ -229,21 +229,15 @@ public class ChunkManager {
                                                     Block block = world.getBlockAt(x, y, z);
                                                     int id = block.getTypeId();
                                                     byte data = block.getData();
-<<<<<<< Updated upstream
-                                                    AbstractSetBlock.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
-=======
                                                     SetBlockManager.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
->>>>>>> Stashed changes
+
                                                 }
                                             }
                                             mx.increment();
                                             if (x == ex) { // done!
                                                 restoreBlocks(world, relX, relZ);
-<<<<<<< Updated upstream
-                                                AbstractSetBlock.setBlockManager.update(chunks);
-=======
                                                 SetBlockManager.setBlockManager.update(chunks);
->>>>>>> Stashed changes
+
                                                 for (Chunk chunk : chunks) {
                                                     chunk.unload(true, true);
                                                 }
@@ -359,11 +353,8 @@ public class ChunkManager {
                         restoreEntities(world, 0, 0);
                     }
                     chunk.unload(true, true);
-<<<<<<< Updated upstream
-                    AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
-=======
                     SetBlockManager.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
->>>>>>> Stashed changes
+
                 }
                 CURRENT_PLOT_CLEAR = null;
             }
