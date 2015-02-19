@@ -49,6 +49,7 @@ import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
@@ -231,7 +232,7 @@ public class SchematicHandler {
      *
      * @return tag
      */
-    public static CompoundTag getCompoundTag(final World world, PlotId id) {
+    public static CompoundTag getCompoundTag(final String world, PlotId id) {
         if (!PlotSquared.getPlots(world).containsKey(id)) {
             return null;
         }
@@ -297,19 +298,18 @@ public class SchematicHandler {
                 for (int y = 0; y < height; y++) {
                     final int index = (y * width * length) + (z * width) + x;
 
-                    block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
-                    @SuppressWarnings("deprecation") final int id2 = block.getTypeId();
+                    PlotBlock block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
 
-                    if (id2 > 255) {
+                    if (block.id > 255) {
                         if (addBlocks == null) {
                             addBlocks = new byte[(blocks.length >> 1) + 1];
                         }
 
-                        addBlocks[index >> 1] = (byte) (((index & 1) == 0) ? (addBlocks[index >> 1] & 0xF0) | ((id2 >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((id2 >> 8) & 0xF) << 4));
+                        addBlocks[index >> 1] = (byte) (((index & 1) == 0) ? (addBlocks[index >> 1] & 0xF0) | ((block.id >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((block.id >> 8) & 0xF) << 4));
                     }
 
-                    blocks[index] = (byte) id2;
-                    blockData[index] = block.getData();
+                    blocks[index] = (byte) block.id;
+                    blockData[index] = block.data;
 
                     // We need worldedit to save tileentity data or entities
                     // - it uses NMS and CB internal code, which changes every

@@ -127,7 +127,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     public static void worldLoad(WorldLoadEvent event) {
         UUIDHandler.cacheAll();
     }
-    
+
     @EventHandler
     public void PlayerCommand(PlayerCommandPreprocessEvent event) {
         String message = event.getMessage();
@@ -308,9 +308,8 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     @Override
     public void registerWorldEditEvents() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            WorldEditPlugin worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-
-            final String version = worldEdit.getDescription().getVersion();
+            PlotSquared.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            final String version = PlotSquared.worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
                 log("&cThis version of WorldEdit does not support PlotSquared.");
                 log("&cPlease use WorldEdit 6+ for masking support");

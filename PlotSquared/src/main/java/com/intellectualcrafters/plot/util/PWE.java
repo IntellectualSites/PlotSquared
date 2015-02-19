@@ -21,7 +21,6 @@
 
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -29,6 +28,7 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.sk89q.worldedit.LocalSession;
@@ -44,7 +44,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("ALL") public class PWE {
+public class PWE {
 
     public static void setMask(final Player p, final Location l, boolean force) {
         try {
@@ -54,7 +54,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
             } else {
                 s = PlotSquared.worldEdit.getSession(p);
             }
-            if (!PlotSquared.isPlotWorld(p.getWorld())) {
+            if (!PlotSquared.isPlotWorld(p.getWorld().getName())) {
                 removeMask(p);
             }
             final PlotId id = PlayerFunctions.getPlot(l);
@@ -66,13 +66,13 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                 	}
                     boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
                     if (r) {
-                        final World w = l.getWorld();
+                        final String w = l.getWorld();
 
                         final Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
                         final Location tloc = PlotHelper.getPlotTopLoc(w, plot.id);
 
-                        final Vector bvec = new Vector(bloc.getBlockX() + 1, bloc.getBlockY(), bloc.getBlockZ() + 1);
-                        final Vector tvec = new Vector(tloc.getBlockX(), tloc.getBlockY(), tloc.getBlockZ());
+                        final Vector bvec = new Vector(bloc.getX() + 1, bloc.getY(), bloc.getZ() + 1);
+                        final Vector tvec = new Vector(tloc.getX(), tloc.getY(), tloc.getZ());
 
                         final LocalWorld lw = PlotSquared.worldEdit.wrapPlayer(p).getWorld();
 

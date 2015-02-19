@@ -53,6 +53,7 @@ import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class PlotSquared {
     
@@ -74,6 +75,7 @@ public class PlotSquared {
     public static TaskManager TASK = null;
     private static boolean LOADING_WORLD = false;
     public static Economy economy = null;
+    public static WorldEditPlugin worldEdit = null;
     
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
