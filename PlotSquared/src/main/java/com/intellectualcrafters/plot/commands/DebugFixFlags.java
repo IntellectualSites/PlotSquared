@@ -28,7 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -54,12 +54,12 @@ public class DebugFixFlags extends SubCommand {
             return false;
         }
         World world = Bukkit.getWorld(args[0]);
-        if (world == null || !PlotMain.isPlotWorld(world)) {
+        if (world == null || !PlotSquared.isPlotWorld(world)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (Plot plot : PlotMain.getPlots(world).values()) {
+        for (Plot plot : PlotSquared.getPlots(world).values()) {
             Set<Flag> flags = plot.settings.flags;
             ArrayList<Flag> toRemove = new ArrayList<Flag>();
             for (Flag flag : flags) {

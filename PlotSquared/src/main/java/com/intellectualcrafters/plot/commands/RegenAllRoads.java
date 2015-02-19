@@ -27,7 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -54,7 +54,7 @@ public class RegenAllRoads extends SubCommand {
         }
         
         String name = args[0];
-        PlotManager manager = PlotMain.getPlotManager(name);
+        PlotManager manager = PlotSquared.getPlotManager(name);
         
         if (manager == null || !(manager instanceof HybridPlotManager)) {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
@@ -66,15 +66,15 @@ public class RegenAllRoads extends SubCommand {
         World world = Bukkit.getWorld(name);
         ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         
-        PlotMain.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
-        PlotMain.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotMain.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
-        PlotMain.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
+        PlotSquared.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
+        PlotSquared.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        PlotSquared.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
+        PlotSquared.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
         
         boolean result = hpm.scheduleRoadUpdate(world);
         
         if (!result) {
-            PlotMain.sendConsoleSenderMessage("&cCannot schedule mass schematic update! (Is one already in progress?)");
+            PlotSquared.sendConsoleSenderMessage("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
         

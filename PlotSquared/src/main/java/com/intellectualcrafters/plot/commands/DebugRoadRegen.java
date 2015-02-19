@@ -26,7 +26,7 @@ import java.util.Arrays;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
@@ -41,10 +41,10 @@ public class DebugRoadRegen extends SubCommand {
 
     @Override
     public boolean execute(final Player player, final String... args) {
-        if (!(PlotMain.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PlotSquared.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(player.getWorld());
+        HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         
         Chunk chunk = player.getLocation().getChunk();
         boolean result = manager.regenerateRoad(chunk);

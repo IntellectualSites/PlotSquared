@@ -12,7 +12,8 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -80,7 +81,10 @@ public class UUIDHandler {
     }
     
     public static void cacheAll() {
-    	PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Starting player data caching");
+        if (CACHED) {
+            return;
+        }
+    	PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching");
         UUIDHandler.CACHED = true;
         HashSet<String> worlds = new HashSet<>();
         worlds.add(Bukkit.getWorlds().get(0).getName());
@@ -105,7 +109,7 @@ public class UUIDHandler {
                         uuids.add(uuid);
                     }
                     catch (Exception e) {
-                        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
+                        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
                     }
                 }
             }
@@ -132,7 +136,7 @@ public class UUIDHandler {
                 add(name, uuid);
             }
             catch (Throwable e) {
-                PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Invalid playerdata: "+uuid.toString() + ".dat");
+                PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&6Invalid playerdata: "+uuid.toString() + ".dat");
             }
         }
         for (String name : names) {
@@ -145,7 +149,7 @@ public class UUIDHandler {
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         
-        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
     public static UUID getUUID(Player player) {

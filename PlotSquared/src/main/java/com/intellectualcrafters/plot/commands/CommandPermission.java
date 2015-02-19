@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 
 /**
  * Created by Citymonstret on 2014-08-03.
@@ -50,6 +50,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final Player player) {
-        return PlotMain.hasPermission(player, this.permission);
+        return PlotSquared.hasPermission(player, this.permission);
     }
 }

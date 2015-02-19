@@ -38,7 +38,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ExpireManager;
@@ -135,7 +135,7 @@ public class DebugExec extends SubCommand {
 	        	        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
 	        	    }
 	        	    final World world = Bukkit.getWorld(args[1]);
-	        	    if (world == null || !PlotMain.isPlotWorld(args[1])) {
+	        	    if (world == null || !PlotSquared.isPlotWorld(args[1])) {
                         return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
                     }
 	        	    final ArrayList<ChunkLoc> empty = new ArrayList<>();
@@ -146,7 +146,7 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - MCA #: " + empty.size());
                             Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
-                            final File file = new File(PlotMain.getMain().getDirectory() + File.separator + "trim.txt");
+                            final File file = new File(PlotSquared.getMain().getDirectory() + File.separator + "trim.txt");
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);

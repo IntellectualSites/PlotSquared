@@ -33,7 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
@@ -62,7 +62,7 @@ public class WorldGuardListener implements Listener {
     public final ArrayList<String> str_flags;
     public final ArrayList<Flag<?>> flags;
 
-    public WorldGuardListener(final PlotMain plugin) {
+    public WorldGuardListener(final PlotSquared plugin) {
         this.str_flags = new ArrayList<>();
         this.flags = new ArrayList<>();
         for (final Flag<?> flag : DefaultFlag.getFlags()) {
@@ -73,7 +73,7 @@ public class WorldGuardListener implements Listener {
     
     public void changeOwner(final Player requester, final UUID owner, final World world, final Plot plot) {
         try {
-        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
         ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
         DefaultDomain owners = new DefaultDomain();
         owners.addPlayer(UUIDHandler.getName(owner));
@@ -86,7 +86,7 @@ public class WorldGuardListener implements Listener {
         final boolean op = requester.isOp();
         requester.setOp(true);
         try {
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
             manager.getRegion(plot.id.x + "-" + plot.id.y);
             for (final Flag<?> flag : this.flags) {
                 if (flag.getName().equalsIgnoreCase(key)) {
@@ -104,7 +104,7 @@ public class WorldGuardListener implements Listener {
         final boolean op = requester.isOp();
         requester.setOp(true);
         try {
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
             manager.getRegion(plot.id.x + "-" + plot.id.y);
             for (final Flag<?> flag : this.flags) {
                 if (flag.getName().equalsIgnoreCase(key)) {
@@ -123,7 +123,7 @@ public class WorldGuardListener implements Listener {
         final Plot main = event.getPlot();
         final ArrayList<PlotId> plots = event.getPlots();
         final World world = event.getWorld();
-        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
         for (final PlotId plot : plots) {
             if (!plot.equals(main.getId())) {
                 manager.removeRegion(plot.x + "-" + plot.y);
@@ -156,9 +156,9 @@ public class WorldGuardListener implements Listener {
         try {
             final World w = event.getWorld();
             final ArrayList<PlotId> plots = event.getPlots();
-            final Plot main = PlotMain.getPlots(w).get(plots.get(0));
+            final Plot main = PlotSquared.getPlots(w).get(plots.get(0));
 
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(w);
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(w);
             final ProtectedRegion region = manager.getRegion(main.id.x + "-" + main.id.y);
 
             final DefaultDomain owner = region.getOwners();
@@ -192,7 +192,7 @@ public class WorldGuardListener implements Listener {
         try {
             final Player player = event.getPlayer();
             final Plot plot = event.getPlot();
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(plot.getWorld());
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(plot.getWorld());
 
             final Location location1 = PlotHelper.getPlotBottomLoc(plot.getWorld(), plot.getId());
             final Location location2 = PlotHelper.getPlotTopLoc(plot.getWorld(), plot.getId());
@@ -203,7 +203,7 @@ public class WorldGuardListener implements Listener {
             final ProtectedRegion region = new ProtectedCuboidRegion(plot.getId().x + "-" + plot.getId().y, vector1, vector2);
 
             final DefaultDomain owner = new DefaultDomain();
-            owner.addPlayer(PlotMain.worldGuard.wrapPlayer(player));
+            owner.addPlayer(PlotSquared.worldGuard.wrapPlayer(player));
 
             region.setOwners(owner);
 
@@ -218,14 +218,14 @@ public class WorldGuardListener implements Listener {
             final PlotId plot = event.getPlotId();
             final World world = Bukkit.getWorld(event.getWorld());
 
-            final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+            final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
             manager.removeRegion(plot.x + "-" + plot.y);
         } catch (final Exception e) {
         }
     }
     
     public void addUser(final Player requester, final UUID user, final World world, final Plot plot) {
-        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
         ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
         DefaultDomain members = region.getMembers();
         members.addPlayer(UUIDHandler.getName(user));
@@ -233,7 +233,7 @@ public class WorldGuardListener implements Listener {
     }
     
     public void removeUser(final Player requester, final UUID user, final World world, final Plot plot) {
-        final RegionManager manager = PlotMain.worldGuard.getRegionManager(world);
+        final RegionManager manager = PlotSquared.worldGuard.getRegionManager(world);
         ProtectedRegion region = manager.getRegion(plot.id.x + "-" + plot.id.y);
         DefaultDomain members = region.getMembers();
         members.removePlayer(UUIDHandler.getName(user));

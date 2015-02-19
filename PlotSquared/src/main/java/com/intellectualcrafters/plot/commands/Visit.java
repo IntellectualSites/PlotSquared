@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -39,7 +39,7 @@ public class Visit extends SubCommand {
 
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
-        for (final Plot p : PlotMain.getPlots()) {
+        for (final Plot p : PlotSquared.getPlots()) {
             if (p.hasOwner() && p.owner.equals(uuid)) {
                 plots.add(p);
             }
@@ -62,7 +62,7 @@ public class Visit extends SubCommand {
             return sendMessage(plr, C.FOUND_NO_PLOTS);
         }
         if (args.length < 2) {
-            PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(0));
+            PlotSquared.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
         }
         int i;
@@ -74,7 +74,7 @@ public class Visit extends SubCommand {
         if ((i < 0) || (i >= plots.size())) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(i));
+        PlotSquared.teleportPlayer(plr, plr.getLocation(), plots.get(i));
         return true;
     }
 }

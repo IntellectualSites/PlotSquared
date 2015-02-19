@@ -46,7 +46,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
@@ -195,7 +195,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
-                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
+                if (PlotSquared.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
@@ -238,7 +238,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
-                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
+                if (PlotSquared.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {

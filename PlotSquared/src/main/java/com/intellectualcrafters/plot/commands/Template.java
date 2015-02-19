@@ -30,7 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -48,7 +48,7 @@ public class Template extends SubCommand {
             return false;
         }
         World world = Bukkit.getWorld(args[1]);
-        PlotWorld plotworld = PlotMain.getWorldSettings(args[1]);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(args[1]);
         if (world == null || plotworld == null) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;

@@ -33,7 +33,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Configuration.SettingValue;
@@ -78,7 +78,7 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.hasRights(plr) && !PlotMain.hasPermission(plr, "plots.admin.command.set")) {
+        if (!plot.hasRights(plr) && !PlotSquared.hasPermission(plr, "plots.admin.command.set")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -94,7 +94,7 @@ public class Set extends SubCommand {
         }
         /* TODO: Implement option */
         // final boolean advanced_permissions = true;
-        if (!PlotMain.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
+        if (!PlotSquared.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
         }
@@ -102,11 +102,11 @@ public class Set extends SubCommand {
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
                 String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
-                if (PlotMain.worldGuardListener != null) {
+                if (PlotSquared.worldGuardListener != null) {
                     if (message.equals("")) {
-                        message = StringUtils.join(PlotMain.worldGuardListener.str_flags, "&c, &6");
+                        message = StringUtils.join(PlotSquared.worldGuardListener.str_flags, "&c, &6");
                     } else {
-                        message += "," + StringUtils.join(PlotMain.worldGuardListener.str_flags, "&c, &6");
+                        message += "," + StringUtils.join(PlotSquared.worldGuardListener.str_flags, "&c, &6");
                     }
                 }
                 PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
@@ -121,19 +121,19 @@ public class Set extends SubCommand {
                 af = new AbstractFlag(args[1].toLowerCase());
             }
 
-            if (!FlagManager.getFlags().contains(af) && ((PlotMain.worldGuardListener == null) || !PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
+            if (!FlagManager.getFlags().contains(af) && ((PlotSquared.worldGuardListener == null) || !PlotSquared.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
-            if (!PlotMain.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
+            if (!PlotSquared.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 return false;
             }
             if (args.length == 2) {
                 if (FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase()) == null) {
-                    if (PlotMain.worldGuardListener != null) {
-                        if (PlotMain.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
-                            PlotMain.worldGuardListener.removeFlag(plr, plr.getWorld(), plot, args[1]);
+                    if (PlotSquared.worldGuardListener != null) {
+                        if (PlotSquared.worldGuardListener.str_flags.contains(args[1].toLowerCase())) {
+                            PlotSquared.worldGuardListener.removeFlag(plr, plr.getWorld(), plot, args[1]);
                             return false;
                         }
                     }
@@ -159,8 +159,8 @@ public class Set extends SubCommand {
                     return false;
                 }
 
-                if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotMain.worldGuardListener != null)) {
-                    PlotMain.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], af.toString(parsed_value));
+                if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotSquared.worldGuardListener != null)) {
+                    PlotSquared.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], af.toString(parsed_value));
                     return false;
                 }
 
@@ -209,7 +209,7 @@ public class Set extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
-            for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
+            for (final Plot p : PlotSquared.getPlots(plr.getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
@@ -254,8 +254,8 @@ public class Set extends SubCommand {
         
         // Get components
         World world = plr.getWorld();
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-        PlotManager manager = PlotMain.getPlotManager(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        PlotManager manager = PlotSquared.getPlotManager(world);
         String[] components = manager.getPlotComponents(world, plotworld, plot.id);
         for (String component : components) {
             if (component.equalsIgnoreCase(args[0])) {

@@ -26,7 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -56,19 +56,19 @@ public class TP extends SubCommand {
                 world = Bukkit.getWorld(args[1]);
             }
         }
-        if (!PlotMain.isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot temp;
         if ((temp = isAlias(world, id)) != null) {
-            PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
+            PlotSquared.teleportPlayer(plr, plr.getLocation(), temp);
             return true;
         }
 
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
+            PlotSquared.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
@@ -87,14 +87,14 @@ public class TP extends SubCommand {
         }
         @SuppressWarnings("deprecation") final Player player = Bukkit.getPlayer(a);
         if (player != null) {
-            final java.util.Set<Plot> plotMainPlots = PlotMain.getPlots(world, player);
+            final java.util.Set<Plot> plotMainPlots = PlotSquared.getPlots(world, player);
             final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
             if (plots.length > index) {
                 return plots[index];
             }
             return null;
         }
-        for (final Plot p : PlotMain.getPlots(world).values()) {
+        for (final Plot p : PlotSquared.getPlots(world).values()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }

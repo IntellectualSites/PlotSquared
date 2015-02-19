@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
@@ -69,8 +69,8 @@ import java.util.UUID;
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
 
 
-        final Plot plot1 = PlotMain.getPlots(world).get(pos1);
-        final Plot plot2 = PlotMain.getPlots(world).get(pos2);
+        final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
+        final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
 
         if (plot1 != null) {
             pos1 = getBottomPlot(world, plot1).id;
@@ -92,14 +92,14 @@ import java.util.UUID;
     public static Plot getBottomPlot(final String world, final Plot plot) {
 
         if (plot.settings.getMerged(0)) {
-            final Plot p = PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
+            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
             if (p == null) {
                 return plot;
             }
             return getBottomPlot(world, p);
         }
         if (plot.settings.getMerged(3)) {
-            final Plot p = PlotMain.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y));
+            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y));
             if (p == null) {
                 return plot;
             }
@@ -111,10 +111,10 @@ import java.util.UUID;
     public static Plot getTopPlot(final String world, final Plot plot) {
 
         if (plot.settings.getMerged(2)) {
-            return getTopPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
+            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
         }
         if (plot.settings.getMerged(1)) {
-            return getTopPlot(world, PlotMain.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
+            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
         }
         return plot;
     }
@@ -128,11 +128,11 @@ import java.util.UUID;
      */
     public static PlotId getPlotAbs(final Location loc) {
         final String world = loc.getWorld().getName();
-        final PlotManager manager = PlotMain.getPlotManager(world);
+        final PlotManager manager = PlotSquared.getPlotManager(world);
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         return manager.getPlotIdAbs(plotworld, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
     }
@@ -146,11 +146,11 @@ import java.util.UUID;
      */
     public static PlotId getPlot(final Location loc) {
         final String world = loc.getWorld().getName();
-        final PlotManager manager = PlotMain.getPlotManager(world);
+        final PlotManager manager = PlotSquared.getPlotManager(world);
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         PlotId id = manager.getPlotId(plotworld, loc.getBlockX(),loc.getBlockY(), loc.getBlockZ());
 
         if (id!=null && plotworld.TYPE == 2) {
@@ -169,7 +169,7 @@ import java.util.UUID;
      * @return
      */
     public static Plot getCurrentPlot(final Player player) {
-        if (!PlotMain.isPlotWorld(player.getWorld())) {
+        if (!PlotSquared.isPlotWorld(player.getWorld())) {
             return null;
         }
         final PlotId id = getPlot(player.getLocation());
@@ -177,8 +177,8 @@ import java.util.UUID;
         if (id == null) {
             return null;
         }
-        if (PlotMain.getPlots(world).containsKey(id)) {
-                return PlotMain.getPlots(world).get(id);
+        if (PlotSquared.getPlots(world).containsKey(id)) {
+                return PlotSquared.getPlots(world).get(id);
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world.getName());
 
@@ -193,7 +193,7 @@ import java.util.UUID;
      */
     @Deprecated
     public static void set(final Plot plot) {
-        PlotMain.updatePlot(plot);
+        PlotSquared.updatePlot(plot);
     }
 
     /**
@@ -204,7 +204,7 @@ import java.util.UUID;
      * @return
      */
     public static Set<Plot> getPlayerPlots(final World world, final Player plr) {
-        final Set<Plot> p = PlotMain.getPlots(world, plr);
+        final Set<Plot> p = PlotSquared.getPlots(world, plr);
         if (p == null) {
             return new HashSet<>();
         }
@@ -221,7 +221,7 @@ import java.util.UUID;
     public static int getPlayerPlotCount(final World world, final Player plr) {
         final UUID uuid = UUIDHandler.getUUID(plr);
         int count = 0;
-        for (final Plot plot : PlotMain.getPlots(world).values()) {
+        for (final Plot plot : PlotSquared.getPlots(world).values()) {
             if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
                 count++;
             }
@@ -237,17 +237,17 @@ import java.util.UUID;
      * @return
      */
     public static int getAllowedPlots(final Player p) {
-        return PlotMain.MAIN_IMP.(p, "plots.plot", Settings.MAX_PLOTS);
+        return PlotSquared.MAIN_IMP.(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     /**
-     * @return PlotMain.getPlots();
+     * @return PlotSquared.getPlots();
      *
      * @deprecated
      */
     @Deprecated
     public static Set<Plot> getPlots() {
-        return PlotMain.getPlots();
+        return PlotSquared.getPlots();
     }
     
     /**
@@ -286,7 +286,7 @@ import java.util.UUID;
     public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotMain.MAIN_IMP.sendConsoleSenderMessage(C.PREFIX.s() + msg);
+                PlotSquared.MAIN_IMP.sendConsoleSenderMessage(C.PREFIX.s() + msg);
             } else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }
@@ -313,7 +313,7 @@ import java.util.UUID;
                 }
             }
             if (plr == null) {
-                PlotMain.sendConsoleSenderMessage(msg);
+                PlotSquared.sendConsoleSenderMessage(msg);
             }
             else {
                 sendMessage(plr, msg, c.usePrefix());

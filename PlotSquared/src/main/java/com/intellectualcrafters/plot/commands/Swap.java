@@ -24,7 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -57,7 +57,7 @@ public class Swap extends SubCommand {
             return false;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.swap")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotSquared.hasPermission(plr, "plots.admin.command.swap")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -70,8 +70,8 @@ public class Swap extends SubCommand {
         final World world = plr.getWorld();
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            final Plot plot2 = PlotMain.getPlots(world).get(plotid);
-            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.swap")) {
+            final Plot plot2 = PlotSquared.getPlots(world).get(plotid);
+            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !PlotSquared.hasPermission(plr, "plots.admin.command.swap")) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
                 return false;
             }

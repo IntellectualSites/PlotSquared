@@ -30,7 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -137,7 +137,7 @@ public abstract class PlotWorld {
                 this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
             }
             catch (Exception e) {
-                PlotMain.sendConsoleSenderMessage("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
+                PlotSquared.sendConsoleSenderMessage("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
                 this.DEFAULT_FLAGS = new Flag[]{};
             }
         }

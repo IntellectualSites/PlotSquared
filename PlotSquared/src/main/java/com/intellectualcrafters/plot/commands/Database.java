@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
@@ -33,7 +33,7 @@ public class Database extends SubCommand {
 
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
-            PlotMain.sendConsoleSenderMessage(msg);
+            PlotSquared.sendConsoleSenderMessage(msg);
         } else {
             final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
@@ -46,8 +46,8 @@ public class Database extends SubCommand {
     }
 
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
-        final Plugin p = PlotMain.getMain();
-        final java.util.Set<Plot> plots = PlotMain.getPlots();
+        final Plugin p = PlotSquared.getMain();
+        final java.util.Set<Plot> plots = PlotSquared.getPlots();
         p.getServer().getScheduler().runTaskAsynchronously(p, new Runnable() {
             @Override
             public void run() {
@@ -94,7 +94,7 @@ public class Database extends SubCommand {
                 }
                 Connection n;
                 try {
-                    n = new MySQL(PlotMain.getMain(), host, port, database, username, password).openConnection();
+                    n = new MySQL(PlotSquared.getMain(), host, port, database, username, password).openConnection();
                     // Connection
                     if (n.isClosed()) {
                         return sendMessage(plr, "Failed to open connection");
@@ -141,7 +141,7 @@ public class Database extends SubCommand {
 
     private boolean sendMessage(final Player player, final String msg) {
         if (player == null) {
-            PlotMain.sendConsoleSenderMessage(msg);
+            PlotSquared.sendConsoleSenderMessage(msg);
         } else {
             PlayerFunctions.sendMessage(player, msg);
         }

@@ -29,7 +29,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -63,7 +63,7 @@ public class Inbox extends SubCommand {
 
         Integer tier;
         final UUID uuid = UUIDHandler.getUUID(plr);
-        if (PlotMain.hasPermission(plr, "plots.comment.admin")) {
+        if (PlotSquared.hasPermission(plr, "plots.comment.admin")) {
             tier = 0;
         } else if (plot != null && plot.owner.equals(uuid)) {
             tier = 1;
@@ -138,7 +138,7 @@ public class Inbox extends SubCommand {
         final String world = plr.getWorld().getName();
         final int tier2 = tier;
 
-        Bukkit.getScheduler().runTaskAsynchronously(PlotMain.getMain(), new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {
             	ArrayList<PlotComment> comments = null;

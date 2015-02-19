@@ -13,7 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.commands.Unlink;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -50,7 +50,7 @@ public class ExpireManager {
                 @Override
                 public void run() {
                     HashMap<Plot, Long> plots = getOldPlots(world);
-                    PlotMain.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots for " + world + "!");
+                    PlotSquared.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots for " + world + "!");
                     expiredPlots.put(world, plots);
                     updatingPlots.put(world, false);
                 }
@@ -64,10 +64,10 @@ public class ExpireManager {
     }
     
     public static void runTask() {
-        ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+        ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {
-                for (String world : PlotMain.getPlotWorldsString()) {
+                for (String world : PlotSquared.getPlotWorldsString()) {
                     if (!ExpireManager.updatingPlots.containsKey(world)) {
                         ExpireManager.updatingPlots.put(world, false);
                     }
@@ -110,23 +110,23 @@ public class ExpireManager {
                         }
                     }
                     final World worldobj = Bukkit.getWorld(world);
-                    final PlotManager manager = PlotMain.getPlotManager(world);
+                    final PlotManager manager = PlotSquared.getPlotManager(world);
                     if (plot.settings.isMerged()) {
                         Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
                     }
-                    PlotWorld plotworld = PlotMain.getWorldSettings(world);
+                    PlotWorld plotworld = PlotSquared.getWorldSettings(world);
                     manager.clearPlot(worldobj, plotworld, plot, false, null);
                     PlotHelper.removeSign(worldobj, plot);
                     DBFunc.delete(world, plot);
-                    PlotMain.removePlot(world, plot.id, true);
+                    PlotSquared.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(plot);
-                    PlotMain.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
-                    PlotMain.sendConsoleSenderMessage("&3 - World: "+plot.world);
+                    PlotSquared.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
+                    PlotSquared.sendConsoleSenderMessage("&3 - World: "+plot.world);
                     if (plot.hasOwner()) {
-                    	PlotMain.sendConsoleSenderMessage("&3 - Owner: "+UUIDHandler.getName(plot.owner));
+                    	PlotSquared.sendConsoleSenderMessage("&3 - Owner: "+UUIDHandler.getName(plot.owner));
                     }
                     else {
-                    	PlotMain.sendConsoleSenderMessage("&3 - Owner: Unowned");
+                    	PlotSquared.sendConsoleSenderMessage("&3 - Owner: Unowned");
                     }
                     return;
                 }
@@ -150,7 +150,7 @@ public class ExpireManager {
     }
     
     public static HashMap<Plot, Long> getOldPlots(String world) {
-        final Collection<Plot> plots = PlotMain.getPlots(world).values();
+        final Collection<Plot> plots = PlotSquared.getPlots(world).values();
         final HashMap<Plot, Long> toRemove = new HashMap<>();
         HashMap<UUID, Long> remove = new HashMap<>();
         Set<UUID> keep = new HashSet<>();
@@ -186,7 +186,7 @@ public class ExpireManager {
                     String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
                     String filename = null;
-                    if (PlotMain.checkVersion(1, 7, 5)) {
+                    if (PlotSquared.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
                             filename = op.getUniqueId() +".dat";
@@ -205,7 +205,7 @@ public class ExpireManager {
                     if (filename != null) {
                         File playerFile = new File(worldname + File.separator + foldername + File.separator + filename);
                         if (!playerFile.exists()) {
-                            PlotMain.sendConsoleSenderMessage("Could not find file: " + filename);
+                            PlotSquared.sendConsoleSenderMessage("Could not find file: " + filename);
                         }
                         else {
                             try {
@@ -217,7 +217,7 @@ public class ExpireManager {
                                 }
                             }
                             catch (Exception e) {
-                                PlotMain.sendConsoleSenderMessage("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
+                                PlotSquared.sendConsoleSenderMessage("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
                             }
                         }
                     }

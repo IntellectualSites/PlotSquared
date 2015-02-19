@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
 import org.bukkit.ChatColor;
@@ -506,7 +506,7 @@ public enum C {
 
     public static void setupTranslations() {
         manager = new TranslationManager();
-        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager).read();
+        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
         // register everything in this class
         for (final C c : values()) {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
@@ -539,8 +539,8 @@ public enum C {
         String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         return s.replace("$1", COLOR_1.toString()).replace("$2", COLOR_2.toString()).replace("$3", COLOR_3.toString()).replace("$4", COLOR_4.toString());
         /*
-         * if (PlotMain.translations != null) {
-         * final String t = PlotMain.translations.getString(this.toString());
+         * if (PlotSquared.translations != null) {
+         * final String t = PlotSquared.translations.getString(this.toString());
          * if (t != null) {
          * this.s = t;
          * }

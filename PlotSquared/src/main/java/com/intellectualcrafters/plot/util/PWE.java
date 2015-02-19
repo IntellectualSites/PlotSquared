@@ -25,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
@@ -48,17 +48,17 @@ import com.sk89q.worldedit.regions.CuboidRegion;
     public static void setMask(final Player p, final Location l, boolean force) {
         try {
             LocalSession s;
-            if (PlotMain.worldEdit == null) {
+            if (PlotSquared.worldEdit == null) {
                 s = WorldEdit.getInstance().getSession(p.getName());
             } else {
-                s = PlotMain.worldEdit.getSession(p);
+                s = PlotSquared.worldEdit.getSession(p);
             }
-            if (!PlotMain.isPlotWorld(p.getWorld())) {
+            if (!PlotSquared.isPlotWorld(p.getWorld())) {
                 removeMask(p);
             }
             final PlotId id = PlayerFunctions.getPlot(l);
             if (id != null) {
-                final Plot plot = PlotMain.getPlots(l.getWorld()).get(id);
+                final Plot plot = PlotSquared.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
                 	if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
                 		return;
@@ -73,7 +73,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                         final Vector bvec = new Vector(bloc.getBlockX() + 1, bloc.getBlockY(), bloc.getBlockZ() + 1);
                         final Vector tvec = new Vector(tloc.getBlockX(), tloc.getBlockY(), tloc.getBlockZ());
 
-                        final LocalWorld lw = PlotMain.worldEdit.wrapPlayer(p).getWorld();
+                        final LocalWorld lw = PlotSquared.worldEdit.wrapPlayer(p).getWorld();
 
                         final CuboidRegion region = new CuboidRegion(lw, bvec, tvec);
                         final RegionMask mask = new RegionMask(region);
@@ -82,8 +82,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                     }
                 }
             }
-            if (force ^ (noMask(s) && !PlotMain.hasPermission(p, "plots.worldedit.bypass"))) {
-                final BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
+            if (force ^ (noMask(s) && !PlotSquared.hasPermission(p, "plots.worldedit.bypass"))) {
+                final BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(p);
                 final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
                 s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
             }
@@ -97,10 +97,10 @@ import com.sk89q.worldedit.regions.CuboidRegion;
     
     public static boolean hasMask(final Player p) {
         LocalSession s;
-        if (PlotMain.worldEdit == null) {
+        if (PlotSquared.worldEdit == null) {
             s = WorldEdit.getInstance().getSession(p.getName());
         } else {
-            s = PlotMain.worldEdit.getSession(p);
+            s = PlotSquared.worldEdit.getSession(p);
         }
         return !noMask(s);
     }
@@ -113,12 +113,12 @@ import com.sk89q.worldedit.regions.CuboidRegion;
     public static void setNoMask(final Player p) {
         try {
             LocalSession s;
-            if (PlotMain.worldEdit == null) {
+            if (PlotSquared.worldEdit == null) {
                 s = WorldEdit.getInstance().getSession(p.getName());
             } else {
-                s = PlotMain.worldEdit.getSession(p);
+                s = PlotSquared.worldEdit.getSession(p);
             }
-            final BukkitPlayer plr = PlotMain.worldEdit.wrapPlayer(p);
+            final BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(p);
             final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
             s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
         } catch (final Exception e) {
@@ -134,10 +134,10 @@ import com.sk89q.worldedit.regions.CuboidRegion;
     public static void removeMask(final Player p) {
         try {
             LocalSession s;
-            if (PlotMain.worldEdit == null) {
+            if (PlotSquared.worldEdit == null) {
                 s = WorldEdit.getInstance().getSession(p.getName());
             } else {
-                s = PlotMain.worldEdit.getSession(p);
+                s = PlotSquared.worldEdit.getSession(p);
             }
             removeMask(p, s);
         } catch (final Exception e) {

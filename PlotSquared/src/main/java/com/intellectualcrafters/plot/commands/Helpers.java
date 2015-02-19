@@ -26,7 +26,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
@@ -55,7 +55,7 @@ public class Helpers extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotMain.hasPermission(plr, "plots.admin.command.helpers")) {
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotSquared.hasPermission(plr, "plots.admin.command.helpers")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }

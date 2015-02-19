@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.util.bukkit;
 import java.util.HashSet;
 
 import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitTaskManager extends TaskManager {

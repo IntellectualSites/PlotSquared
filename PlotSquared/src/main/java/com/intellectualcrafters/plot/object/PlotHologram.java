@@ -7,7 +7,7 @@
 //
 //import com.gmail.filoghost.holographicdisplays.api.Hologram;
 //import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-//import com.intellectualcrafters.plot.PlotMain;
+//import com.intellectualcrafters.plot.PlotSquared;
 //import com.intellectualcrafters.plot.util.PlotHelper;
 //
 ///**
@@ -25,7 +25,7 @@
 //    public PlotHologram(final String world, final PlotId id) {
 //        this.id = id;
 //        this.world = world;
-//        this.hologram = createHologram(PlotMain.getPlotManager(world).getSignLoc(Bukkit.getWorld(world), PlotMain.getWorldSettings(world), PlotHelper.getPlot(Bukkit.getWorld(world), id)));
+//        this.hologram = createHologram(PlotSquared.getPlotManager(world).getSignLoc(Bukkit.getWorld(world), PlotSquared.getWorldSettings(world), PlotHelper.getPlot(Bukkit.getWorld(world), id)));
 //    }
 //
 //    public static Hologram createHologram(final org.bukkit.Location location) {
@@ -34,7 +34,7 @@
 //
 //    public static JavaPlugin getPlugin() {
 //        if (plugin == null) {
-//            plugin = JavaPlugin.getPlugin(PlotMain.class);
+//            plugin = JavaPlugin.getPlugin(PlotSquared.class);
 //        }
 //        return plugin;
 //    }

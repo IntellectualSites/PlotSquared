@@ -32,7 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -60,7 +60,7 @@ public class Condense extends SubCommand {
         }
         String worldname = args[0];
         final World world = Bukkit.getWorld(worldname);
-        if (world == null || !PlotMain.isPlotWorld(worldname)) {
+        if (world == null || !PlotSquared.isPlotWorld(worldname)) {
             PlayerFunctions.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -83,7 +83,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-                Collection<Plot> plots = PlotMain.getPlots(worldname).values();
+                Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
                 int size = plots.size();
                 int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
                 if (radius < minimum_radius) {
@@ -168,7 +168,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-                Collection<Plot> plots = PlotMain.getPlots(worldname).values();
+                Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
                 int size = plots.size();
                 int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
                 if (radius < minimum_radius) {
@@ -203,7 +203,7 @@ public class Condense extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PlotMain.sendConsoleSenderMessage("&3PlotSquared -> Plot condense&8: &7" + message);
+        PlotSquared.sendConsoleSenderMessage("&3PlotSquared -> Plot condense&8: &7" + message);
     }
     
 }

@@ -3,8 +3,8 @@ package com.intellectualsites.translation.bukkit;
 import java.io.File;
 
 import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
@@ -36,8 +36,8 @@ public class BukkitTranslation {
      *
      * @return parent folder
      */
-    public static File getParent(final JavaPlugin plugin) {
-        return new File(plugin.getDataFolder() + File.separator + "translations");
+    public static File getParent() {
+        return new File(PlotSquared.IMP.getDirectory() + File.separator + "translations");
     }
 
     /**

@@ -30,7 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -96,7 +96,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return false;
         }
         World world = Bukkit.getWorld(args[1]);
-        if (world == null || !PlotMain.isPlotWorld(world)) {
+        if (world == null || !PlotSquared.isPlotWorld(world)) {
             PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
@@ -114,7 +114,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         UUID uuid = UUIDHandler.getUUID(args[0]);
         if (uuid != null) {
-            Set<Plot> plots = PlotMain.getPlots(world,uuid);
+            Set<Plot> plots = PlotSquared.getPlots(world,uuid);
             Set<PlotId> ids = new HashSet<>();
             for (Plot plot : plots) {
                 ids.add(plot.id);
@@ -123,7 +123,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return finishPurge(ids.size());
         }
         if (arg.equals("all")) {
-            Set<PlotId> ids = PlotMain.getPlots(world).keySet();
+            Set<PlotId> ids = PlotSquared.getPlots(world).keySet();
             if (ids.size() == 0) {
             	return PlayerFunctions.sendMessage(null, "&cNo plots found");
             }
@@ -131,7 +131,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return finishPurge(ids.size());
         }
         if (arg.equals("unknown")) {
-            Collection<Plot> plots = PlotMain.getPlots(world).values();
+            Collection<Plot> plots = PlotSquared.getPlots(world).values();
             Set<PlotId> ids = new HashSet<>();
             for (Plot plot : plots) {
                 if (plot.owner != null) {
@@ -148,7 +148,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return finishPurge(ids.size());
         }
         if (arg.equals("unowned")) {
-            Collection<Plot> plots = PlotMain.getPlots(world).values();
+            Collection<Plot> plots = PlotSquared.getPlots(world).values();
             Set<PlotId> ids = new HashSet<>();
             for (Plot plot : plots) {
                 if (plot.owner == null) {

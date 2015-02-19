@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 
 /**
  * Created 2014-09-29 for PlotSquared
@@ -32,11 +32,11 @@ public class PlotSquaredException extends RuntimeException {
 
     public PlotSquaredException(final PlotError error, final String details) {
         super("PlotError >> " + error.getHeader() + ": " + details);
-        PlotMain.sendConsoleSenderMessage("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
+        PlotSquared.sendConsoleSenderMessage("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
     }
 
     public static enum PlotError {
-        PLOTMAIN_NULL("The PlotMain instance was null"),
+        PLOTMAIN_NULL("The PlotSquared instance was null"),
         MISSING_DEPENDENCY("Missing Dependency");
         private final String errorHeader;
 

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -43,7 +43,7 @@ public class DebugSaveTest extends SubCommand {
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
-            plots.addAll(PlotMain.getPlots());
+            plots.addAll(PlotSquared.getPlots());
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
         } else {

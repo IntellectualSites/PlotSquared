@@ -27,7 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
@@ -62,12 +62,12 @@ public class Claim extends SubCommand {
             PlotHelper.setSign(player, plot);
             PlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
-                PlotMain.teleportPlayer(player, player.getLocation(), plot);
+                PlotSquared.teleportPlayer(player, player.getLocation(), plot);
             }
             World world = plot.getWorld();
-            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+            final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
 
-            final Plot plot2 = PlotMain.getPlots(player.getWorld()).get(plot.id);
+            final Plot plot2 = PlotSquared.getPlots(player.getWorld()).get(plot.id);
 
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
@@ -81,7 +81,7 @@ public class Claim extends SubCommand {
                 }
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
-            PlotMain.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
+            PlotSquared.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
             PlotHelper.update(player.getLocation());
         }
         return event.isCancelled();
@@ -103,11 +103,11 @@ public class Claim extends SubCommand {
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && world.USE_ECONOMY) {
+        final PlotWorld world = PlotSquared.getWorldSettings(plot.getWorld());
+        if (PlotSquared.useEconomy && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
+                final Economy economy = PlotSquared.economy;
                 if (economy.getBalance(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
@@ -120,7 +120,7 @@ public class Claim extends SubCommand {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+                if (!PlotSquared.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                     return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }

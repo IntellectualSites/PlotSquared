@@ -30,7 +30,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
@@ -63,10 +63,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @return success?
      */
     public static boolean addFlag(final AbstractFlag af) {
-        PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
         String key = af.getKey();
-        if (PlotMain.getAllPlotsRaw() != null) {
-            for (Plot plot : PlotMain.getPlots()) {
+        if (PlotSquared.getAllPlotsRaw() != null) {
+            for (Plot plot : PlotSquared.getPlots()) {
                 for (Flag flag : plot.settings.flags) {
                     if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
                         flag.setKey(af);
@@ -82,7 +82,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         if (settings.flags != null && settings.flags.size() > 0) {
         	flags.addAll(settings.flags);
         }
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
             flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
         }
@@ -179,7 +179,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     
     public static Set<Flag> getSettingFlags(String world, PlotSettings settings) {
         Set<Flag> plotflags = settings.flags;
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
             HashSet<String> flagStrings = new HashSet<>();
             for (Flag flag : plotflags) {

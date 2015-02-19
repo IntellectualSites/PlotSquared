@@ -27,7 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
@@ -56,7 +56,7 @@ public class Unlink extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.unlink")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotSquared.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
@@ -73,7 +73,7 @@ public class Unlink extends SubCommand {
         } catch (final Exception e) {
             // execute(final Player plr, final String... args) {
             try {
-                PlotMain.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
+                PlotSquared.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
             } catch (final Exception ex) {
                 ex.printStackTrace();
             }
@@ -95,13 +95,13 @@ public class Unlink extends SubCommand {
             return false;
         }
 
-        final PlotManager manager = PlotMain.getPlotManager(world);
-        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final PlotManager manager = PlotSquared.getPlotManager(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
 
         manager.startPlotUnlink(world, plotworld, ids);
 
         for (final PlotId id : ids) {
-            final Plot myplot = PlotMain.getPlots(world).get(id);
+            final Plot myplot = PlotSquared.getPlots(world).get(id);
 
             if (plot == null) {
                 continue;

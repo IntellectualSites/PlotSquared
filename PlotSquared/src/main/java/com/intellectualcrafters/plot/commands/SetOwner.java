@@ -27,7 +27,7 @@ import java.util.UUID;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -64,7 +64,7 @@ public class SetOwner extends SubCommand {
             return false;
         }
         
-        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !PlotMain.hasPermission(plr, "plots.admin.command.setowner")) {
+        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !PlotSquared.hasPermission(plr, "plots.admin.command.setowner")) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
         }
@@ -73,7 +73,7 @@ public class SetOwner extends SubCommand {
         final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
         final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
-            final Plot current = PlotMain.getPlots(world).get(id);
+            final Plot current = PlotSquared.getPlots(world).get(id);
             
             UUID uuid = getUUID(args[0]);
             
@@ -83,11 +83,11 @@ public class SetOwner extends SubCommand {
             }
             
             current.owner = uuid;
-            PlotMain.updatePlot(current);
+            PlotSquared.updatePlot(current);
             DBFunc.setOwner(current, current.owner);
 
-            if (PlotMain.worldGuardListener != null) {
-                PlotMain.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
+            if (PlotSquared.worldGuardListener != null) {
+                PlotSquared.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
             }
         }
         PlotHelper.setSign(world, args[0], plot);

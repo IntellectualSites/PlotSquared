@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.milkbowl.vault.economy.Economy;
 
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public interface IPlotMain {
@@ -32,4 +33,12 @@ public interface IPlotMain {
     public void registerWorldEditEvents();
     
     public Economy getEconomy();
+    
+    public void initSetBlockManager();
+    
+    public boolean initPlotMeConverter();
+    
+    public void getGenerator(String world, String name);
+    
+    public boolean callRemovePlot(String world, PlotId id);
 }

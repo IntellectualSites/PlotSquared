@@ -26,7 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
@@ -47,19 +47,19 @@ public class DebugClear extends SubCommand {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+                PlotSquared.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                    PlotSquared.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotMain.isPlotWorld(world) || !(PlotMain.getWorldSettings(world) instanceof SquarePlotWorld)) {
-                        PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
+                    if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getWorldSettings(world) instanceof SquarePlotWorld)) {
+                        PlotSquared.sendConsoleSenderMessage("Invalid plot world: " + world);
                     } else {
                         final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
-                            PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                            PlotSquared.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             World bukkitWorld = Bukkit.getWorld(world);
                             Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
@@ -73,8 +73,8 @@ public class DebugClear extends SubCommand {
                                 @Override
                                 public void run() {
                                     PlotHelper.runners.remove(plot);
-                                    PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
-                                    PlotMain.sendConsoleSenderMessage("&aDone!");
+                                    PlotSquared.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                                    PlotSquared.sendConsoleSenderMessage("&aDone!");
                                 }
                             });
                         }
@@ -84,14 +84,14 @@ public class DebugClear extends SubCommand {
             return true;
         }
 
-        if (!PlayerFunctions.isInPlot(plr) || !(PlotMain.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
+        if (!PlayerFunctions.isInPlot(plr) || !(PlotSquared.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.debugclear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotSquared.hasPermission(plr, "plots.admin.command.debugclear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;

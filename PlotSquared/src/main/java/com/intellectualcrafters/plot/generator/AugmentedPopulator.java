@@ -8,7 +8,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.BlockWrapper;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -54,7 +54,7 @@ public class AugmentedPopulator extends BlockPopulator {
 	public AugmentedPopulator(String world, PlotGenerator generator, PlotCluster cluster, boolean p, boolean b) {
 	    this.cluster = cluster;
 		this.generator = generator;
-		this.plotworld = PlotMain.getWorldSettings(world);
+		this.plotworld = PlotSquared.getWorldSettings(world);
 		this.manager = generator.getPlotManager();
 		this.p = p;
 		this.b = b;

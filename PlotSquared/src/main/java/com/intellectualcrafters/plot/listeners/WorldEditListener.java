@@ -40,7 +40,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -68,14 +68,14 @@ public class WorldEditListener implements Listener {
     public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
 
     private boolean isPlotWorld(final Location l) {
-        return (PlotMain.isPlotWorld(l.getWorld()));
+        return (PlotSquared.isPlotWorld(l.getWorld()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onDelete(final PlotDeleteEvent e) {
         final String world = e.getWorld();
         final PlotId id = e.getPlotId();
-        final Plot plot = PlotMain.getPlots(world).get(id);
+        final Plot plot = PlotSquared.getPlots(world).get(id);
         if ((plot == null) || (plot.owner == null)) {
             return;
         }
@@ -86,7 +86,7 @@ public class WorldEditListener implements Listener {
         if (!world.equals(player.getWorld().getName())) {
             return;
         }
-        if (PlotMain.hasPermission(player, "plots.worldedit.bypass")) {
+        if (PlotSquared.hasPermission(player, "plots.worldedit.bypass")) {
             return;
         }
         PWE.setNoMask(player);
@@ -118,7 +118,7 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
-        if (!PlotMain.isPlotWorld(p.getWorld()) || PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+        if (!PlotSquared.isPlotWorld(p.getWorld()) || PlotSquared.hasPermission(p, "plots.worldedit.bypass")) {
             return;
         }
         String cmd = e.getMessage().toLowerCase();
@@ -141,14 +141,14 @@ public class WorldEditListener implements Listener {
         }
         for (final String c : this.monitored) {
             if (cmd.equals("//" + c) || cmd.equals("/" + c) || cmd.equals("/worldedit:/" + c)) {
-                final Selection selection = PlotMain.worldEdit.getSelection(p);
+                final Selection selection = PlotSquared.worldEdit.getSelection(p);
                 if (selection == null) {
                     return;
                 }
                 final BlockVector pos1 = selection.getNativeMinimumPoint().toBlockVector();
                 final BlockVector pos2 = selection.getNativeMaximumPoint().toBlockVector();
 
-                final LocalSession session = PlotMain.worldEdit.getSession(p);
+                final LocalSession session = PlotSquared.worldEdit.getSession(p);
                 final Mask mask = session.getMask();
                 if (mask == null) {
                     PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
@@ -171,7 +171,7 @@ public class WorldEditListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent e) {
         final Player p = e.getPlayer();
         final Location l = p.getLocation();
-        if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+        if (PlotSquared.hasPermission(p, "plots.worldedit.bypass")) {
             if (isPlotWorld(l)) {
                 PWE.removeMask(p);
             }
@@ -192,7 +192,7 @@ public class WorldEditListener implements Listener {
         }
         final Location f = e.getFrom();
         final Player p = e.getPlayer();
-        if (PlotMain.hasPermission(p, "plots.worldedit.bypass")) {
+        if (PlotSquared.hasPermission(p, "plots.worldedit.bypass")) {
             if (!PWE.hasMask(p)) {
                 return;
             }
@@ -208,7 +208,7 @@ public class WorldEditListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPortal(final PlayerPortalEvent e) {
-        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+        if (PlotSquared.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
             return;
         }
         final Player p = e.getPlayer();
@@ -230,7 +230,7 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent e) {
         final Player p = e.getPlayer();
-        if (PlotMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+        if (PlotSquared.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
             if (!PWE.hasMask(p)) {
                 return;
             }

@@ -30,7 +30,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 
 public class EntityWrapper {
 
@@ -227,7 +227,7 @@ public class EntityWrapper {
                 return;
             }
             default: {
-                PlotMain.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return;
             }
 
@@ -443,7 +443,7 @@ public class EntityWrapper {
                 return entity;
             }
             default: {
-                PlotMain.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             }
 

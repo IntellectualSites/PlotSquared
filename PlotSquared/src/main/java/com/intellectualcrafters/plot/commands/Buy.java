@@ -26,7 +26,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -49,11 +49,11 @@ public class Buy extends SubCommand {
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlotMain.useEconomy) {
+        if (!PlotSquared.useEconomy) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
         World world = plr.getWorld();
-        if (!PlotMain.isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
         Plot plot;
@@ -91,13 +91,13 @@ public class Buy extends SubCommand {
         PlotId id = plot.id;
         PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
         int size = PlayerFunctions.getPlotSelectionIds(id, id2).size();
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
         }
         if (price > 0d) {
-            final Economy economy = PlotMain.economy;
+            final Economy economy = PlotSquared.economy;
             if (economy.getBalance(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }

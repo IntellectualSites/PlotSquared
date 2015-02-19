@@ -47,7 +47,7 @@ import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
@@ -69,7 +69,7 @@ public class SchematicHandler {
      */
     public static boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotMain.sendConsoleSenderMessage("Schematic == null :|");
+            PlotSquared.sendConsoleSenderMessage("Schematic == null :|");
             return false;
         }
         try {
@@ -170,16 +170,16 @@ public class SchematicHandler {
      */
     public static Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotMain.getMain().getDirectory() + File.separator + "schematics");
+            final File parent = new File(PlotSquared.getMain().getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotMain.getMain().getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PlotSquared.getMain().getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         if (!file.exists()) {
-            PlotMain.sendConsoleSenderMessage(file.toString() + " doesn't exist");
+            PlotSquared.sendConsoleSenderMessage(file.toString() + " doesn't exist");
             return null;
         }
 
@@ -191,7 +191,7 @@ public class SchematicHandler {
             return getSchematic(tag, file);
 
         } catch (final Exception e) {
-            PlotMain.sendConsoleSenderMessage(file.toString() + " is not in GZIP format");
+            PlotSquared.sendConsoleSenderMessage(file.toString() + " is not in GZIP format");
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class SchematicHandler {
      */
     public static boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
-            PlotMain.sendConsoleSenderMessage("&cCannot save empty tag");
+            PlotSquared.sendConsoleSenderMessage("&cCannot save empty tag");
             return false;
         }
         try {
@@ -233,7 +233,7 @@ public class SchematicHandler {
      * @return tag
      */
     public static CompoundTag getCompoundTag(final World world, PlotId id) {
-        if (!PlotMain.getPlots(world).containsKey(id)) {
+        if (!PlotSquared.getPlots(world).containsKey(id)) {
             return null;
         }
         
@@ -265,7 +265,7 @@ public class SchematicHandler {
                 }
             }
         } catch (final Exception e) {
-            PlotMain.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
+            PlotSquared.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
         final int width = (pos2.getBlockX() - pos1.getBlockX()) + 1;

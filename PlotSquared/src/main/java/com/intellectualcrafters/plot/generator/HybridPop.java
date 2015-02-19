@@ -8,7 +8,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -132,7 +132,7 @@ public class HybridPop extends BlockPopulator {
         this.X = cx << 4;
         this.Z = cz << 4;
         
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(w);
+        HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(w);
         RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             short sx = (short) ((X) % this.size);

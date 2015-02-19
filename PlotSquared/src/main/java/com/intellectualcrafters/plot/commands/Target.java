@@ -24,7 +24,7 @@ package com.intellectualcrafters.plot.commands;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -38,7 +38,7 @@ public class Target extends SubCommand {
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlotMain.isPlotWorld(plr.getWorld())) {
+        if (!PlotSquared.isPlotWorld(plr.getWorld())) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }

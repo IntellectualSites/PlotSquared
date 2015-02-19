@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 
 public class MainUtil {
@@ -12,6 +12,6 @@ public class MainUtil {
      * @param c message
      */
     public static void sendConsoleSenderMessage(final C c) {
-        PlotMain.MAIN_IMP.sendConsoleSenderMessage(c.s());
+        PlotSquared.MAIN_IMP.sendConsoleSenderMessage(c.s());
     }
 }

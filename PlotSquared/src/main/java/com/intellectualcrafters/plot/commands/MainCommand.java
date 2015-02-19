@@ -32,13 +32,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.BukkitMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
 
 /**
- * PlotMain command class
+ * PlotSquared command class
  *
  * @author Citymonstret
  */
@@ -47,8 +48,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     /**
      * Main Permission Node
      */
-    public static final String MAIN_PERMISSION = "plots.use";
-
     private final static SubCommand[] _subCommands = new SubCommand[]{new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
 
     public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
@@ -122,8 +121,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(final CommandSender sender, final Command cmd, final String commandLabel, final String[] args) {
         final Player player = (sender instanceof Player) ? (Player) sender : null;
 
-        if (!PlotMain.hasPermission(player, MAIN_PERMISSION)) {
-            return no_permission(player, MAIN_PERMISSION);
+        if (!BukkitMain.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
+            return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
 
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {

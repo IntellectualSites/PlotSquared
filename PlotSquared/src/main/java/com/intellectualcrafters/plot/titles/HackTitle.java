@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.titles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;
 
 public class HackTitle extends AbstractTitle {
@@ -16,7 +16,7 @@ public class HackTitle extends AbstractTitle {
 			title.send(player);
 		}
 		catch (Throwable e) {
-			PlotMain.sendConsoleSenderMessage("&cYour server version does not support titles!");
+			PlotSquared.sendConsoleSenderMessage("&cYour server version does not support titles!");
 			Settings.TITLES = false;
 			AbstractTitle.TITLE_CLASS = null;
 		}

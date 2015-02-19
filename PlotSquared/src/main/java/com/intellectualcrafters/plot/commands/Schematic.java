@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
@@ -67,10 +67,10 @@ public class Schematic extends SubCommand {
         switch (arg) {
             case "paste":
                 if (plr == null) {
-                    PlotMain.sendConsoleSenderMessage(C.IS_CONSOLE);
+                    PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
                     return false;
                 }
-                if (!PlotMain.hasPermission(plr, "plots.schematic.paste")) {
+                if (!PlotSquared.hasPermission(plr, "plots.schematic.paste")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;
                 }
@@ -131,7 +131,7 @@ public class Schematic extends SubCommand {
                         final int LENGTH = schematic.getSchematicDimension().getZ();
                         final int blen = b.length - 1;
 
-                        Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+                        Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
                             @Override
                             public void run() {
                                 boolean result = false;
@@ -155,10 +155,10 @@ public class Schematic extends SubCommand {
                 break;
             case "test":
                 if (plr == null) {
-                    PlotMain.sendConsoleSenderMessage(C.IS_CONSOLE);
+                    PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
                     return false;
                 }
-                if (!PlotMain.hasPermission(plr, "plots.schematic.test")) {
+                if (!PlotSquared.hasPermission(plr, "plots.schematic.test")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
                     return false;
                 }
@@ -195,7 +195,7 @@ public class Schematic extends SubCommand {
                     PlayerFunctions.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                final HashMap<PlotId, Plot> plotmap = PlotMain.getPlots(args[1]);
+                final HashMap<PlotId, Plot> plotmap = PlotSquared.getPlots(args[1]);
                 if ((plotmap == null) || (plotmap.size() == 0)) {
                     PlayerFunctions.sendMessage(null, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;
@@ -205,8 +205,8 @@ public class Schematic extends SubCommand {
                     return false;
                 }
 
-                PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
-                PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
+                PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
+                PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
                 final World worldObj = Bukkit.getWorld(args[1]);
                 final String worldname = Bukkit.getWorld(args[1]).getName();
 
@@ -221,7 +221,7 @@ public class Schematic extends SubCommand {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
-                            PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                            PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
                             Bukkit.getScheduler().cancelTask(Schematic.this.task);
                             return;
@@ -252,7 +252,7 @@ public class Schematic extends SubCommand {
                 break;
             case "export":
             case "save":
-                if (!PlotMain.hasPermission(plr, "plots.schematic.save")) {
+                if (!PlotSquared.hasPermission(plr, "plots.schematic.save")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }
@@ -280,11 +280,11 @@ public class Schematic extends SubCommand {
                             world = args[0];
                             final String[] split = args[2].split(";");
                             final PlotId i = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                            if ((PlotMain.getPlots(world) == null) || (PlotMain.getPlots(world).get(i) == null)) {
+                            if ((PlotSquared.getPlots(world) == null) || (PlotSquared.getPlots(world).get(i) == null)) {
                                 PlayerFunctions.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                                 return false;
                             }
-                            p2 = PlotMain.getPlots(world).get(i);
+                            p2 = PlotSquared.getPlots(world).get(i);
                         } catch (final Exception e) {
                             PlayerFunctions.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                             return false;
@@ -305,7 +305,7 @@ public class Schematic extends SubCommand {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
-                            PlotMain.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                            PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
                             Bukkit.getScheduler().cancelTask(Schematic.this.task);
                             return;

@@ -28,7 +28,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.BukkitMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
@@ -80,10 +81,10 @@ public class Auto extends SubCommand {
         int size_x = 1;
         int size_z = 1;
         String schematic = "";
-        if (PlotMain.getPlotWorlds().length == 1) {
-            world = Bukkit.getWorld(PlotMain.getPlotWorlds()[0]);
+        if (PlotSquared.getPlotWorlds().size() == 1) {
+            world = Bukkit.getWorld(PlotSquared.getPlotWorlds().iterator().next());
         } else {
-            if (PlotMain.isPlotWorld(plr.getWorld())) {
+            if (PlotSquared.isPlotWorld(plr.getWorld().getName())) {
                 world = plr.getWorld();
             } else {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
@@ -91,7 +92,7 @@ public class Auto extends SubCommand {
             }
         }
         if (args.length > 0) {
-            if (PlotMain.hasPermission(plr, "plots.auto.mega")) {
+            if (BukkitMain.hasPermission(plr, "plots.auto.mega")) {
                 try {
                     final String[] split = args[0].split(",");
                     size_x = Integer.parseInt(split[0]);
@@ -133,12 +134,12 @@ public class Auto extends SubCommand {
             }
             return false;
         }
-        final PlotWorld pWorld = PlotMain.getWorldSettings(world);
-        if (PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+        final PlotWorld pWorld = PlotSquared.getWorldSettings(world.getName());
+        if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
+                final Economy economy = PlotSquared.economy;
                 if (economy.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
@@ -153,14 +154,14 @@ public class Auto extends SubCommand {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+            if (!PlotSquared.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                 PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
             // }
         }
         
-        PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if (plotworld.TYPE == 2) {
         	Location loc = plr.getLocation();
         	Plot plot = PlotHelper.getCurrentPlot(loc);
@@ -214,7 +215,7 @@ public class Auto extends SubCommand {
                 PlotHelper.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
-                if ((PlotMain.getPlots(world).get(start) != null) && (PlotMain.getPlots(world).get(start).owner != null)) {
+                if ((PlotSquared.getPlots(world).get(start) != null) && (PlotSquared.getPlots(world).get(start).owner != null)) {
                     continue;
                 } else {
                     lastPlot = false;

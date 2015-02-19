@@ -31,7 +31,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -58,7 +58,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         Plot plot;
         if (player != null) {
             world = player.getWorld();
-            if (!PlotMain.isPlotWorld(world)) {
+            if (!PlotSquared.isPlotWorld(world)) {
                 PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
@@ -72,7 +72,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 PlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
-            final PlotWorld plotworld = PlotMain.getWorldSettings(args[0]);
+            final PlotWorld plotworld = PlotSquared.getWorldSettings(args[0]);
             if (plotworld == null) {
                 PlayerFunctions.sendMessage(player, C.NOT_VALID_WORLD);
                 return false;

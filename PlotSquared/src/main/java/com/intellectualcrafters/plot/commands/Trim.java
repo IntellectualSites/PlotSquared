@@ -35,7 +35,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
@@ -97,7 +97,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
-        if (world == null || PlotMain.getWorldSettings(world) == null) {
+        if (world == null || PlotSquared.getWorldSettings(world) == null) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
@@ -183,12 +183,12 @@ public class Trim extends SubCommand {
         final long startOld = System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotMain.getPlots(world).values());
+        plots.addAll(PlotSquared.getPlots(world).values());
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) +" (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size()/1200) +" minutes");
-        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
@@ -223,12 +223,12 @@ public class Trim extends SubCommand {
     public static ArrayList<Plot> expired = null;
     
 //    public static void updateUnmodifiedPlots(final World world) {
-//        final SquarePlotManager manager = (SquarePlotManager) PlotMain.getPlotManager(world);
-//        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotMain.getWorldSettings(world);
+//        final SquarePlotManager manager = (SquarePlotManager) PlotSquared.getPlotManager(world);
+//        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getWorldSettings(world);
 //        final ArrayList<Plot> expired = new ArrayList<>();
 //        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
 //        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
-//        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotMain.getMain(), new Runnable() {
+//        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
 //            @Override
 //            public void run() {
 //                if (manager != null && plots.size() > 0) {
@@ -260,7 +260,7 @@ public class Trim extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PlotMain.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: &7" + message);
+        PlotSquared.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: &7" + message);
     }
     
 }

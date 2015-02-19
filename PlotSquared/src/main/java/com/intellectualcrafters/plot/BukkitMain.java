@@ -6,12 +6,19 @@ import java.util.Arrays;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,7 +26,12 @@ import com.intellectualcrafters.plot.commands.Buy;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
@@ -27,8 +39,19 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.Metrics;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.SendChunk;
+import com.intellectualcrafters.plot.util.SetBlockFast;
+import com.intellectualcrafters.plot.util.SetBlockManager;
+import com.intellectualcrafters.plot.util.SetBlockSlow;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -37,6 +60,46 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
     public static BukkitMain THIS = null;
     public static PlotSquared MAIN = null;
 
+    public static boolean hasPermission(final Player player, final String perm) {
+        if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
+            return true;
+        }
+        if (player.hasPermission(perm)) {
+            return true;
+        }
+        final String[] nodes = perm.split("\\.");
+        final StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i] + ("."));
+            if (player.hasPermission(n + "*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @EventHandler
+    public static void worldLoad(WorldLoadEvent event) {
+        UUIDHandler.cacheAll();
+    }
+    
+    @EventHandler
+    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+        String message = event.getMessage();
+        if (message.toLowerCase().startsWith("/plotme")) {
+            Plugin plotme = Bukkit.getPluginManager().getPlugin("PlotMe");
+            if (plotme == null) {
+                Player player = event.getPlayer();
+                if (Settings.USE_PLOTME_ALIAS) {
+                    player.performCommand(message.replace("/plotme", "plots"));
+                } else {
+                    PlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
+                }
+                event.setCancelled(true);
+            }
+        }
+    }
+    
     @Override
     public void onEnable() {
         MAIN = new PlotSquared(this);
@@ -54,7 +117,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
         
-        // TODO world load event
+        getServer().getPluginManager().registerEvents(this, this);
     }
     
     @Override
@@ -66,7 +129,15 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
 
     @Override
     public void log(String message) {
-        // TODO Auto-generated method stub
+        if (THIS == null || Bukkit.getServer().getConsoleSender() == null) {
+            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(message)));
+        } else {
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            if (!Settings.CONSOLE_COLOR) {
+                message = ChatColor.stripColor(message);
+            }
+            Bukkit.getServer().getConsoleSender().sendMessage(message);
+        }
     }
 
     @Override
@@ -139,6 +210,14 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
         }, 20);
     }
     
+    @Override
+    final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+        if (!PlotSquared.setupPlotWorld(world, id)) {
+            return null;
+        }
+        return new HybridGen(world);
+    }
+    
     public static boolean checkVersion(int major, int minor, int minor2) {
         try {
             String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
@@ -208,5 +287,65 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
             }
         }
         return null;
+    }
+
+    @Override
+    public void initSetBlockManager() {
+        if (checkVersion(1, 8, 0)) {
+            try {
+                SetBlockManager.setBlockManager = new SetBlockSlow();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+                SetBlockManager.setBlockManager = new SetBlockSlow();
+            }
+        }
+        else {
+            try {
+                SetBlockManager.setBlockManager = new SetBlockFast();
+            } catch (Throwable e) {
+                SetBlockManager.setBlockManager = new SetBlockSlow();
+            }
+        }
+        try {
+            new SendChunk();
+            PlotHelper.canSendChunk = true;
+        } catch (final Throwable e) {
+            PlotHelper.canSendChunk = false;
+        }
+    }
+
+    @Override
+    public boolean initPlotMeConverter() {
+        try {
+            new PlotMeConverter().runAsync();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void getGenerator(String world, String name) {
+        Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
+        if (gen_plugin != null && gen_plugin.isEnabled()) {
+            gen_plugin.getDefaultWorldGenerator(world, "");
+        } else {
+            new HybridGen(world);
+        }
+    }
+
+    @Override
+    public boolean callRemovePlot(String world, PlotId id) {
+        final PlotDeleteEvent event = new PlotDeleteEvent(world, id);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            event.setCancelled(true);
+            return false;
+        }
+        return true;
     }
 }

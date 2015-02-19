@@ -33,7 +33,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
@@ -68,7 +68,7 @@ public class DebugClaimTest extends SubCommand {
             PlotHelper.setSign(player, plot);
             PlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
-                PlotMain.teleportPlayer(player, player.getLocation(), plot);
+                PlotSquared.teleportPlayer(player, player.getLocation(), plot);
             }
         }
         return event.isCancelled();
@@ -81,7 +81,7 @@ public class DebugClaimTest extends SubCommand {
                 return !PlayerFunctions.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
             final World world = Bukkit.getWorld(args[0]);
-            if ((world == null) || !PlotMain.isPlotWorld(world)) {
+            if ((world == null) || !PlotSquared.isPlotWorld(world)) {
                 return !PlayerFunctions.sendMessage(null, "&cInvalid plot world!");
             }
 
@@ -99,14 +99,14 @@ public class DebugClaimTest extends SubCommand {
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
 
-            final PlotManager manager = PlotMain.getPlotManager(world);
-            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+            final PlotManager manager = PlotSquared.getPlotManager(world);
+            final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
 
             final ArrayList<Plot> plots = new ArrayList<>();
 
             for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
                 final Plot plot = PlotHelper.getPlot(world, id);
-                final boolean contains = PlotMain.getPlots(world).containsKey(plot.id);
+                final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
                 if (contains) {
                     PlayerFunctions.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
@@ -165,7 +165,7 @@ public class DebugClaimTest extends SubCommand {
                 DBFunc.createAllSettingsAndHelpers(plots);
 
                 for (final Plot plot : plots) {
-                    PlotMain.updatePlot(plot);
+                    PlotSquared.updatePlot(plot);
                 }
 
                 PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");

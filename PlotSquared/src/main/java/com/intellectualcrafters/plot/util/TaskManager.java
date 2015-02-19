@@ -16,6 +16,8 @@ public abstract class TaskManager {
     
     public abstract void taskLater(final Runnable r, int delay);
     
+    public abstract void taskLaterAsync(final Runnable r, int delay);
+    
     public static void runTaskRepeat(final Runnable r, int interval) {
         if (r != null)
             PlotSquared.TASK.taskRepeat(r, interval);
@@ -34,5 +36,10 @@ public abstract class TaskManager {
     public static void runTaskLater(final Runnable r, int delay) {
         if (r != null)
             PlotSquared.TASK.taskLater(r, delay);
+    }
+    
+    public static void runTaskLaterAsync(final Runnable r, int delay) {
+        if (r != null)
+            PlotSquared.TASK.taskLaterAsync(r, delay);
     }
 }

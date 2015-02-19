@@ -34,7 +34,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
@@ -82,11 +82,11 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     }
 
     public static boolean isPlotWorld(final World world) {
-        return PlotMain.isPlotWorld(world);
+        return PlotSquared.isPlotWorld(world);
     }
     
     public static boolean isPlotArea(Location location) {
-        PlotWorld plotworld = PlotMain.getWorldSettings(location.getWorld());
+        PlotWorld plotworld = PlotSquared.getWorldSettings(location.getWorld());
         if (plotworld.TYPE == 2) {
             return ClusterManager.getCluster(location) != null;
         }
@@ -94,7 +94,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     }
 
     public static PlotWorld getPlotWorld(final World world) {
-        return PlotMain.getWorldSettings(world);
+        return PlotSquared.getWorldSettings(world);
     }
 
     private static String getName(final UUID id) {
@@ -126,7 +126,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     }
 
     public static boolean isPlotWorld(final Location l) {
-        return PlotMain.isPlotWorld(l.getWorld());
+        return PlotSquared.isPlotWorld(l.getWorld());
     }
 
     public static boolean isInPlot(final Location loc) {
@@ -139,8 +139,8 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return null;
         }
         final World world = loc.getWorld();
-        if (PlotMain.getPlots(world).containsKey(id)) {
-            return PlotMain.getPlots(world).get(id);
+        if (PlotSquared.getPlots(world).containsKey(id)) {
+            return PlotSquared.getPlots(world).get(id);
         }
         return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
     }

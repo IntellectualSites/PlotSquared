@@ -36,7 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -72,7 +72,7 @@ public class Setup extends SubCommand {
             if (plugin.isEnabled()) {
                 ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
-                    PlotMain.removePlotWorld(testWorld);
+                    PlotSquared.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
                     if (generator instanceof PlotGenerator) {
                         PlotGenerator pgen = (PlotGenerator) generator;
@@ -299,15 +299,15 @@ public class Setup extends SubCommand {
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
         for (final ConfigurationNode step : steps) {
-            PlotMain.config.set("worlds." + world + "." + step.getConstant(), step.getValue());
+            PlotSquared.config.set("worlds." + world + "." + step.getConstant(), step.getValue());
         }
         if (object.type != 0) {
-            PlotMain.config.set("worlds." + world + "." + "generator.type", object.type);
-            PlotMain.config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PlotMain.config.set("worlds." + world + "." + "generator.plugin", object.generator);
+            PlotSquared.config.set("worlds." + world + "." + "generator.type", object.type);
+            PlotSquared.config.set("worlds." + world + "." + "generator.terrain", object.terrain);
+            PlotSquared.config.set("worlds." + world + "." + "generator.plugin", object.generator);
         }
         try {
-            PlotMain.config.save(PlotMain.configFile);
+            PlotSquared.config.save(PlotSquared.configFile);
         } catch (final IOException e) {
             e.printStackTrace();
         }

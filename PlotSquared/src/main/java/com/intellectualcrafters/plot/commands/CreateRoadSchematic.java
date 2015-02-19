@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
@@ -45,13 +45,13 @@ public class CreateRoadSchematic extends SubCommand {
             return false;
         }
         
-        if (!(PlotMain.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PlotSquared.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
 
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(player.getWorld());
+        HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         
         manager.setupRoadSchematic(plot);
         PlotHelper.update(player.getLocation());

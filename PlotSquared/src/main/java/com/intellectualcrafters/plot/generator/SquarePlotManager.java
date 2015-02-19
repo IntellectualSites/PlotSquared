@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -127,7 +127,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         if (northSouth && eastWest) {
             // This means you are in the intersection
             final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
@@ -140,7 +140,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             // You are on a road running West to East (yeah, I named the var
             // poorly)
             final PlotId id = PlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
@@ -152,7 +152,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         if (eastWest) {
             // This is the road separating an Eastern and Western plot
             final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
-            final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+            final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
@@ -162,7 +162,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             return null;
         }
         final PlotId id = new PlotId(dx + 1, dz + 1);
-        final Plot plot = PlotMain.getPlots(loc.getWorld()).get(id);
+        final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
         if (plot == null) {
             return id;
         }

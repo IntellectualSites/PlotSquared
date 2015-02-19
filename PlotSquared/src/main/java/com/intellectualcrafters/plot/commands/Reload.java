@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
@@ -39,12 +39,12 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PlotMain.config.load(PlotMain.configFile);
-            PlotMain.setupConfig();
+            PlotSquared.config.load(PlotSquared.configFile);
+            PlotSquared.setupConfig();
             C.setupTranslations();
-            for (final String pw : PlotMain.getPlotWorlds()) {
-                final PlotWorld plotworld = PlotMain.getWorldSettings(pw);
-                plotworld.loadDefaultConfiguration(PlotMain.config.getConfigurationSection("worlds." + pw));
+            for (final String pw : PlotSquared.getPlotWorlds()) {
+                final PlotWorld plotworld = PlotSquared.getWorldSettings(pw);
+                plotworld.loadDefaultConfiguration(PlotSquared.config.getConfigurationSection("worlds." + pw));
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {

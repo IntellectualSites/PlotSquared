@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.util.PWE;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 
@@ -35,12 +35,12 @@ public class WE_Anywhere extends SubCommand {
 
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (PlotMain.worldEdit == null) {
+        if (PlotSquared.worldEdit == null) {
             PlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
         
-        if (PlotMain.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
+        if (PlotSquared.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
             PWE.removeMask(plr);
             PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
         }

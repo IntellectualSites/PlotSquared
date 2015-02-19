@@ -34,7 +34,7 @@ import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -65,7 +65,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         int topx = top.getBlockX();
         int topz = top.getBlockZ();
         
-        HybridPlotWorld hpw = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+        HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
         
         PlotBlock[] air = new PlotBlock[] {new PlotBlock((short) 0, (byte) 0)};
         
@@ -120,7 +120,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         Location bot = PlotHelper.getPlotBottomLoc(world, plot.id);
         Location top = PlotHelper.getPlotTopLoc(world, plot.id);
 
-        HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+        HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
         
         int sx = bot.getBlockX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getBlockZ() + 1;
@@ -147,7 +147,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
         CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
         
-        String dir = PlotMain.getMain().getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
+        String dir = PlotSquared.getMain().getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
         
         SchematicHandler.save(sideroad, dir + "sideroad.schematic");
         SchematicHandler.save(intersection, dir + "intersection.schematic");
@@ -205,29 +205,29 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         }
         final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         
-        final Plugin plugin = (Plugin) PlotMain.getMain();
+        final Plugin plugin = (Plugin) PlotSquared.getMain();
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
                 if (chunks.size() == 0) {
                     HybridPlotManager.UPDATE = false;
-                    PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "Finished road conversion");
+                    PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(task);
                     return;
                 }
                 else {
                     try {
                         ChunkLoc loc = chunks.get(0);
-                        PlotMain.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
-                        PlotMain.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
+                        PlotSquared.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
+                        PlotSquared.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
                         regenerateChunkChunk(world, loc);
                         chunks.remove(0);
                     }
                     catch (Exception e) {
                         ChunkLoc loc = chunks.get(0);
-                        PlotMain.sendConsoleSenderMessage("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
-                        PlotMain.sendConsoleSenderMessage("&d - Potentially skipping 256 chunks");
-                        PlotMain.sendConsoleSenderMessage("&d - TODO: recommend chunkster if corrupt");
+                        PlotSquared.sendConsoleSenderMessage("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        PlotSquared.sendConsoleSenderMessage("&d - Potentially skipping 256 chunks");
+                        PlotSquared.sendConsoleSenderMessage("&d - TODO: recommend chunkster if corrupt");
                     }
                 }
             }
@@ -246,7 +246,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
         Location bot = new Location(world, x, 0, z);
         Location top = new Location(world, ex, 0, ez);
         
-        HybridPlotWorld plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+        HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
@@ -392,7 +392,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
     @Override
     public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         PlotHelper.runners.put(plot, 1);
-        final Plugin plugin = PlotMain.getMain();
+        final Plugin plugin = PlotSquared.getMain();
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             @Override
             public void run() {

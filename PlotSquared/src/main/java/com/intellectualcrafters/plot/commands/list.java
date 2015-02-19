@@ -27,7 +27,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -71,13 +71,13 @@ public class list extends SubCommand {
             return true;
         }
         if (args[0].equalsIgnoreCase("forsale") && (plr != null)) {
-            if (PlotMain.economy == null) {
+            if (PlotSquared.economy == null) {
                 return sendMessage(plr, C.ECON_DISABLED);
             }
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "buyable")).append("\n");
             int idx = 0;
-            for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
+            for (final Plot p : PlotSquared.getPlots(plr.getWorld()).values()) {
                 Flag price = FlagManager.getPlotFlag(p, "price");
                 if (price != null) {
                     string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValueString()).replaceAll("%owner", getName(p.owner))).append("\n");
@@ -96,7 +96,7 @@ public class list extends SubCommand {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your")).append("\n");
             int idx = 0;
-            for (final Plot p : PlotMain.getPlots(plr)) {
+            for (final Plot p : PlotSquared.getPlots(plr)) {
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
                 idx++;
             }
@@ -110,12 +110,12 @@ public class list extends SubCommand {
         } else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
-            for (final Plot p : PlotMain.getPlotsSorted()) {
+            for (final Plot p : PlotSquared.getPlotsSorted()) {
                 if (p.helpers.contains(UUIDHandler.getUUID(plr))) {
                     string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
                 }
             }
-            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("all")) {
@@ -137,8 +137,8 @@ public class list extends SubCommand {
 
             // Get the total pages
             // int totalPages = ((int) Math.ceil(12 *
-            // (PlotMain.getPlotsSorted().size()) / 100));
-            final int totalPages = (int) Math.ceil(PlotMain.getPlotsSorted().size() / 12);
+            // (PlotSquared.getPlotsSorted().size()) / 100));
+            final int totalPages = (int) Math.ceil(PlotSquared.getPlotsSorted().size() / 12);
 
             if (page > totalPages) {
                 page = totalPages;
@@ -147,8 +147,8 @@ public class list extends SubCommand {
             // Only display 12!
             int max = (page * 12) + 12;
 
-            if (max > PlotMain.getPlotsSorted().size()) {
-                max = PlotMain.getPlotsSorted().size();
+            if (max > PlotSquared.getPlotsSorted().size()) {
+                max = PlotSquared.getPlotsSorted().size();
             }
 
             final StringBuilder string = new StringBuilder();
@@ -158,17 +158,17 @@ public class list extends SubCommand {
 
             // This might work xD
             for (int x = (page * 12); x < max; x++) {
-                p = (Plot) PlotMain.getPlotsSorted().toArray()[x];
+                p = (Plot) PlotSquared.getPlotsSorted().toArray()[x];
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
 
-            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
             PlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
-            final HashMap<PlotId, Plot> plots = PlotMain.getPlots(plr.getWorld());
+            final HashMap<PlotId, Plot> plots = PlotSquared.getPlots(plr.getWorld());
             for (final Plot p : plots.values()) {
                 string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }

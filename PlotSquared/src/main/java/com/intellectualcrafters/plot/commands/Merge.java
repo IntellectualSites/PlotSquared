@@ -30,7 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.object.Plot;
@@ -85,7 +85,7 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        boolean admin = PlotMain.hasPermission(plr, "plots.admin.command.merge");
+        boolean admin = PlotSquared.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
@@ -143,19 +143,19 @@ public class Merge extends SubCommand {
         plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
         
         for (final PlotId myid : plots) {
-            final Plot myplot = PlotMain.getPlots(world).get(myid);
+            final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
         }
 
-        final PlotWorld plotWorld = PlotMain.getWorldSettings(world);
-        if (PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
+        final PlotWorld plotWorld = PlotSquared.getWorldSettings(world);
+        if (PlotSquared.useEconomy && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;
             if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
+                final Economy economy = PlotSquared.economy;
                 if (economy.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;

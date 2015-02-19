@@ -32,7 +32,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -92,7 +92,7 @@ public class HybridGen extends PlotGenerator {
     public HybridGen(final String world) {
         super(world);
         if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) PlotMain.getWorldSettings(world);
+            this.plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
         }
         this.plotsize = this.plotworld.PLOT_WIDTH;
 
