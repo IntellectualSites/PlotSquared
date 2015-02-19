@@ -16,7 +16,7 @@ public class HackTitle extends AbstractTitle {
 			title.send(player);
 		}
 		catch (Throwable e) {
-			PlotSquared.sendConsoleSenderMessage("&cYour server version does not support titles!");
+			PlotSquared.log("&cYour server version does not support titles!");
 			Settings.TITLES = false;
 			AbstractTitle.TITLE_CLASS = null;
 		}

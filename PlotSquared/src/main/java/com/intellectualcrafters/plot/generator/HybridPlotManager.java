@@ -211,23 +211,23 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
             public void run() {
                 if (chunks.size() == 0) {
                     HybridPlotManager.UPDATE = false;
-                    PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "Finished road conversion");
+                    PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(task);
                     return;
                 }
                 else {
                     try {
                         ChunkLoc loc = chunks.get(0);
-                        PlotSquared.sendConsoleSenderMessage("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
-                        PlotSquared.sendConsoleSenderMessage("Remaining regions: "+chunks.size());
+                        PlotSquared.log("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
+                        PlotSquared.log("Remaining regions: "+chunks.size());
                         regenerateChunkChunk(world, loc);
                         chunks.remove(0);
                     }
                     catch (Exception e) {
                         ChunkLoc loc = chunks.get(0);
-                        PlotSquared.sendConsoleSenderMessage("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
-                        PlotSquared.sendConsoleSenderMessage("&d - Potentially skipping 256 chunks");
-                        PlotSquared.sendConsoleSenderMessage("&d - TODO: recommend chunkster if corrupt");
+                        PlotSquared.log("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        PlotSquared.log("&d - Potentially skipping 256 chunks");
+                        PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
                     }
                 }
             }

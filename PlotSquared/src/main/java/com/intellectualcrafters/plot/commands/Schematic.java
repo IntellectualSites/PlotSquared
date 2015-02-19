@@ -67,7 +67,7 @@ public class Schematic extends SubCommand {
         switch (arg) {
             case "paste":
                 if (plr == null) {
-                    PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
+                    PlotSquared.log(C.IS_CONSOLE);
                     return false;
                 }
                 if (!BukkitMain.hasPermission(plr, "plots.schematic.paste")) {
@@ -155,7 +155,7 @@ public class Schematic extends SubCommand {
                 break;
             case "test":
                 if (plr == null) {
-                    PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
+                    PlotSquared.log(C.IS_CONSOLE);
                     return false;
                 }
                 if (!BukkitMain.hasPermission(plr, "plots.schematic.test")) {
@@ -205,8 +205,8 @@ public class Schematic extends SubCommand {
                     return false;
                 }
 
-                PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
-                PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
+                PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
+                PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
                 final World worldObj = Bukkit.getWorld(args[1]);
                 final String worldname = Bukkit.getWorld(args[1]).getName();
 
@@ -221,7 +221,7 @@ public class Schematic extends SubCommand {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
-                            PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                            PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
                             Bukkit.getScheduler().cancelTask(Schematic.this.task);
                             return;
@@ -305,7 +305,7 @@ public class Schematic extends SubCommand {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
-                            PlotSquared.sendConsoleSenderMessage("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
+                            PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
                             Bukkit.getScheduler().cancelTask(Schematic.this.task);
                             return;

@@ -11,7 +11,7 @@ public class MainUtil {
      *
      * @param c message
      */
-    public static void sendConsoleSenderMessage(final C c) {
-        PlotSquared.MAIN_IMP.sendConsoleSenderMessage(c.s());
+    public static void log(final C c) {
+        PlotSquared.MAIN_IMP.log(c.s());
     }
 }

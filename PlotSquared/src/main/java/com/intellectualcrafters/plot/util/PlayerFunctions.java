@@ -286,7 +286,7 @@ import java.util.UUID;
     public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotSquared.MAIN_IMP.sendConsoleSenderMessage(C.PREFIX.s() + msg);
+                PlotSquared.MAIN_IMP.log(C.PREFIX.s() + msg);
             } else {
                 sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
             }
@@ -313,7 +313,7 @@ import java.util.UUID;
                 }
             }
             if (plr == null) {
-                PlotSquared.sendConsoleSenderMessage(msg);
+                PlotSquared.log(msg);
             }
             else {
                 sendMessage(plr, msg, c.usePrefix());

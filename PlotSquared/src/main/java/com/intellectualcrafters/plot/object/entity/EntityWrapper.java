@@ -227,7 +227,7 @@ public class EntityWrapper {
                 return;
             }
             default: {
-                PlotSquared.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return;
             }
 
@@ -443,7 +443,7 @@ public class EntityWrapper {
                 return entity;
             }
             default: {
-                PlotSquared.sendConsoleSenderMessage("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             }
 

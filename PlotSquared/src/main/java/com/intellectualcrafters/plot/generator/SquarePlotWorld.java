@@ -15,7 +15,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.ROAD_WIDTH = config.getInt("road.width");

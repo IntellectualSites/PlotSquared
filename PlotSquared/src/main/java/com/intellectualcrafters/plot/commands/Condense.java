@@ -203,7 +203,7 @@ public class Condense extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PlotSquared.sendConsoleSenderMessage("&3PlotSquared -> Plot condense&8: &7" + message);
+        PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
     
 }

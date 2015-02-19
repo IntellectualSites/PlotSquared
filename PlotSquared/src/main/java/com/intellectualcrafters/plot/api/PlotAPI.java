@@ -340,10 +340,10 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 //     *
 //     * @param msg Message that should be sent to the console
 //     *
-//     * @see PlotSquared#sendConsoleSenderMessage(String)
+//     * @see PlotSquared#log(String)
 //     */
 //    public void sendConsoleMessage(final String msg) {
-//        PlotSquared.sendConsoleSenderMessage(msg);
+//        PlotSquared.log(msg);
 //    }
 //
 //    /**

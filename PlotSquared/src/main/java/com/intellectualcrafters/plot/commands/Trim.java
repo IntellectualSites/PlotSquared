@@ -260,7 +260,7 @@ public class Trim extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PlotSquared.sendConsoleSenderMessage("&3PlotSquared -> World trim&8: &7" + message);
+        PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
     }
     
 }

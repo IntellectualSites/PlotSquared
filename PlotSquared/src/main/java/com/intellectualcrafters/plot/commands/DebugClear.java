@@ -47,19 +47,19 @@ public class DebugClear extends SubCommand {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotSquared.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotSquared.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                    PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
                     if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getWorldSettings(world) instanceof SquarePlotWorld)) {
-                        PlotSquared.sendConsoleSenderMessage("Invalid plot world: " + world);
+                        PlotSquared.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
-                            PlotSquared.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             World bukkitWorld = Bukkit.getWorld(world);
                             Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
@@ -73,8 +73,8 @@ public class DebugClear extends SubCommand {
                                 @Override
                                 public void run() {
                                     PlotHelper.runners.remove(plot);
-                                    PlotSquared.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
-                                    PlotSquared.sendConsoleSenderMessage("&aDone!");
+                                    PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
+                                    PlotSquared.log("&aDone!");
                                 }
                             });
                         }

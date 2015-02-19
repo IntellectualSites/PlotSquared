@@ -73,7 +73,7 @@ public class Unlink extends SubCommand {
         } catch (final Exception e) {
             // execute(final Player plr, final String... args) {
             try {
-                PlotSquared.sendConsoleSenderMessage("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
+                PlotSquared.log("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
             } catch (final Exception ex) {
                 ex.printStackTrace();
             }

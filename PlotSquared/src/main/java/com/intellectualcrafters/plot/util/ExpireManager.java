@@ -50,7 +50,7 @@ public class ExpireManager {
                 @Override
                 public void run() {
                     HashMap<Plot, Long> plots = getOldPlots(world);
-                    PlotSquared.sendConsoleSenderMessage("&cFound " + plots.size() + " expired plots for " + world + "!");
+                    PlotSquared.log("&cFound " + plots.size() + " expired plots for " + world + "!");
                     expiredPlots.put(world, plots);
                     updatingPlots.put(world, false);
                 }
@@ -120,13 +120,13 @@ public class ExpireManager {
                     DBFunc.delete(world, plot);
                     PlotSquared.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(plot);
-                    PlotSquared.sendConsoleSenderMessage("&cDeleted expired plot: " + plot.id);
-                    PlotSquared.sendConsoleSenderMessage("&3 - World: "+plot.world);
+                    PlotSquared.log("&cDeleted expired plot: " + plot.id);
+                    PlotSquared.log("&3 - World: "+plot.world);
                     if (plot.hasOwner()) {
-                    	PlotSquared.sendConsoleSenderMessage("&3 - Owner: "+UUIDHandler.getName(plot.owner));
+                    	PlotSquared.log("&3 - Owner: "+UUIDHandler.getName(plot.owner));
                     }
                     else {
-                    	PlotSquared.sendConsoleSenderMessage("&3 - Owner: Unowned");
+                    	PlotSquared.log("&3 - Owner: Unowned");
                     }
                     return;
                 }
@@ -205,7 +205,7 @@ public class ExpireManager {
                     if (filename != null) {
                         File playerFile = new File(worldname + File.separator + foldername + File.separator + filename);
                         if (!playerFile.exists()) {
-                            PlotSquared.sendConsoleSenderMessage("Could not find file: " + filename);
+                            PlotSquared.log("Could not find file: " + filename);
                         }
                         else {
                             try {
@@ -217,7 +217,7 @@ public class ExpireManager {
                                 }
                             }
                             catch (Exception e) {
-                                PlotSquared.sendConsoleSenderMessage("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
+                                PlotSquared.log("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
                             }
                         }
                     }

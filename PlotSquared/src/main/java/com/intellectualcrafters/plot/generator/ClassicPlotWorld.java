@@ -50,7 +50,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));

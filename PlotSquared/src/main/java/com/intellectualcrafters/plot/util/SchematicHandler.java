@@ -69,7 +69,7 @@ public class SchematicHandler {
      */
     public static boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotSquared.sendConsoleSenderMessage("Schematic == null :|");
+            PlotSquared.log("Schematic == null :|");
             return false;
         }
         try {
@@ -179,7 +179,7 @@ public class SchematicHandler {
         }
         final File file = new File(PlotSquared.getMain().getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         if (!file.exists()) {
-            PlotSquared.sendConsoleSenderMessage(file.toString() + " doesn't exist");
+            PlotSquared.log(file.toString() + " doesn't exist");
             return null;
         }
 
@@ -191,7 +191,7 @@ public class SchematicHandler {
             return getSchematic(tag, file);
 
         } catch (final Exception e) {
-            PlotSquared.sendConsoleSenderMessage(file.toString() + " is not in GZIP format");
+            PlotSquared.log(file.toString() + " is not in GZIP format");
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class SchematicHandler {
      */
     public static boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
-            PlotSquared.sendConsoleSenderMessage("&cCannot save empty tag");
+            PlotSquared.log("&cCannot save empty tag");
             return false;
         }
         try {
@@ -265,7 +265,7 @@ public class SchematicHandler {
                 }
             }
         } catch (final Exception e) {
-            PlotSquared.sendConsoleSenderMessage("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
+            PlotSquared.log("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
         final int width = (pos2.getBlockX() - pos1.getBlockX()) + 1;

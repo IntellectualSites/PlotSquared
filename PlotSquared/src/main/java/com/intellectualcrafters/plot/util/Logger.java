@@ -53,7 +53,7 @@ public class Logger {
             }
             reader.close();
         } catch (final IOException e) {
-            PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "File setup error Logger#setup");
+            PlotSquared.log(C.PREFIX.s() + "File setup error Logger#setup");
         }
     }
 

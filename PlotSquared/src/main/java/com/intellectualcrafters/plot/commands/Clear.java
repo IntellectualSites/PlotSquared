@@ -43,22 +43,22 @@ public class Clear extends SubCommand {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotSquared.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotSquared.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                    PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
                     if (!PlotSquared.isPlotWorld(world)) {
-                        PlotSquared.sendConsoleSenderMessage("Invalid plot world: " + world);
+                        PlotSquared.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
-                            PlotSquared.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             plot.clear(null, false);
-                            PlotSquared.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                            PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                         }
                     }
                 }

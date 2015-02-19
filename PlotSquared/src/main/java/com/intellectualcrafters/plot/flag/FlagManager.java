@@ -63,7 +63,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @return success?
      */
     public static boolean addFlag(final AbstractFlag af) {
-        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
         String key = af.getKey();
         if (PlotSquared.getAllPlotsRaw() != null) {
             for (Plot plot : PlotSquared.getPlots()) {

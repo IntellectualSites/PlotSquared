@@ -66,15 +66,15 @@ public class RegenAllRoads extends SubCommand {
         World world = Bukkit.getWorld(name);
         ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         
-        PlotSquared.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
-        PlotSquared.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotSquared.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
-        PlotSquared.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
+        PlotSquared.log("&cIf no schematic is set, the following will not do anything");
+        PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        PlotSquared.log("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
+        PlotSquared.log("&6Estimated time: &7"+ (chunks.size()) + " seconds");
         
         boolean result = hpm.scheduleRoadUpdate(world);
         
         if (!result) {
-            PlotSquared.sendConsoleSenderMessage("&cCannot schedule mass schematic update! (Is one already in progress?)");
+            PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
         

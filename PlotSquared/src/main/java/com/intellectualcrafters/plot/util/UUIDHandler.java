@@ -109,7 +109,7 @@ public class UUIDHandler {
                         uuids.add(uuid);
                     }
                     catch (Exception e) {
-                        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "Invalid playerdata: "+current);
+                        PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: "+current);
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class UUIDHandler {
                 add(name, uuid);
             }
             catch (Throwable e) {
-                PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&6Invalid playerdata: "+uuid.toString() + ".dat");
+                PlotSquared.log(C.PREFIX.s() + "&6Invalid playerdata: "+uuid.toString() + ".dat");
             }
         }
         for (String name : names) {
@@ -149,7 +149,7 @@ public class UUIDHandler {
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         
-        PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+        PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
     public static UUID getUUID(Player player) {

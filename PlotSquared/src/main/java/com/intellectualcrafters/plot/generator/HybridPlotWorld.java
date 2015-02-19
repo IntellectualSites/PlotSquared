@@ -62,7 +62,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.sendConsoleSenderMessage(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
@@ -89,7 +89,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         try {
             setupSchematics();
         } catch (Exception e) {
-            PlotSquared.sendConsoleSenderMessage("&c - road schematics are disabled for this world.");
+            PlotSquared.log("&c - road schematics are disabled for this world.");
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
         System.out.print("LOADED!");
@@ -144,7 +144,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         
         if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
-            PlotSquared.sendConsoleSenderMessage(C.PREFIX.s() + "&3 - schematic: &7false");
+            PlotSquared.log(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
         // Do not populate road if using schematic population

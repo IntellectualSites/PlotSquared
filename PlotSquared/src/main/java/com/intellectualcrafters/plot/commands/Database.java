@@ -33,7 +33,7 @@ public class Database extends SubCommand {
 
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
-            PlotSquared.sendConsoleSenderMessage(msg);
+            PlotSquared.log(msg);
         } else {
             final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
@@ -141,7 +141,7 @@ public class Database extends SubCommand {
 
     private boolean sendMessage(final Player player, final String msg) {
         if (player == null) {
-            PlotSquared.sendConsoleSenderMessage(msg);
+            PlotSquared.log(msg);
         } else {
             PlayerFunctions.sendMessage(player, msg);
         }

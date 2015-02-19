@@ -137,7 +137,7 @@ public abstract class PlotWorld {
                 this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
             }
             catch (Exception e) {
-                PlotSquared.sendConsoleSenderMessage("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
+                PlotSquared.log("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
                 this.DEFAULT_FLAGS = new Flag[]{};
             }
         }

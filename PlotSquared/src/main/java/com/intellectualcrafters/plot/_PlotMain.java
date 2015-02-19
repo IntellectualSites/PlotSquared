@@ -472,13 +472,13 @@ public class _PlotSquared {
     public static void configs() {
         final File folder = new File(getMain().getDataFolder() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
+            log(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
             styleFile = new File(getMain().getDataFolder() + File.separator + "translations" + File.separator + "style.yml");
             if (!styleFile.exists()) {
                 if (!styleFile.createNewFile()) {
-                    sendConsoleSenderMessage("Could not create the style file, please create \"translations/style.yml\" manually");
+                    log("Could not create the style file, please create \"translations/style.yml\" manually");
                 }
             }
             styleConfig = YamlConfiguration.loadConfiguration(styleFile);
@@ -491,7 +491,7 @@ public class _PlotSquared {
             configFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "settings.yml");
             if (!configFile.exists()) {
                 if (!configFile.createNewFile()) {
-                    sendConsoleSenderMessage("Could not create the settings file, please create \"settings.yml\" manually.");
+                    log("Could not create the settings file, please create \"settings.yml\" manually.");
                 }
             }
             config = YamlConfiguration.loadConfiguration(configFile);
@@ -504,7 +504,7 @@ public class _PlotSquared {
             storageFile = new File(getMain().getDataFolder() + File.separator + "config" + File.separator + "storage.yml");
             if (!storageFile.exists()) {
                 if (!storageFile.createNewFile()) {
-                    sendConsoleSenderMessage("Could not the storage settings file, please create \"storage.yml\" manually.");
+                    log("Could not the storage settings file, please create \"storage.yml\" manually.");
                 }
             }
             storage = YamlConfiguration.loadConfiguration(storageFile);
@@ -557,7 +557,7 @@ public class _PlotSquared {
             settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
             settings.put("API Location", "" + Settings.API_URL);
             for (final Entry<String, String> setting : settings.entrySet()) {
-                sendConsoleSenderMessage(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+                log(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
             }
         }
     }
@@ -571,7 +571,7 @@ public class _PlotSquared {
             long error = 0l;
 
             {
-                sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities started.");
+                log(C.PREFIX.s() + "KillAllEntities started.");
             }
 
             @Override
@@ -579,7 +579,7 @@ public class _PlotSquared {
                 if (this.ticked > 36_000L) {
                     this.ticked = 0l;
                     if (this.error > 0) {
-                        sendConsoleSenderMessage(C.PREFIX.s() + "KillAllEntities has been running for 6 hours. Errors: " + this.error);
+                        log(C.PREFIX.s() + "KillAllEntities has been running for 6 hours. Errors: " + this.error);
                     }
                     this.error = 0l;
                 }
@@ -648,7 +648,7 @@ public class _PlotSquared {
         Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
         Settings.DEBUG = config.getBoolean("debug");
         if (Settings.DEBUG) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
+            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
@@ -666,7 +666,7 @@ public class _PlotSquared {
         Settings.TITLES = config.getBoolean("titles");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         if (Settings.MAX_PLOTS > 32767) {
-            sendConsoleSenderMessage("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
+            log("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
             Settings.MAX_PLOTS = 32767;
         }
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
@@ -698,7 +698,7 @@ public class _PlotSquared {
         try {
             config.save(PlotSquared.configFile);
         } catch (final IOException e) {
-            PlotSquared.sendConsoleSenderMessage("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
+            PlotSquared.log("&c[Warning] PlotSquared failed to save the configuration&7 (settings.yml may differ from the one in memory)\n - To force a save from console use /plots save");
         }
     }
     
@@ -708,10 +708,10 @@ public class _PlotSquared {
             UUIDHandler.cacheAll();
             if (Settings.CONVERT_PLOTME) {
                 if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
-                    sendConsoleSenderMessage("&c[IMPORTANT] THIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                    sendConsoleSenderMessage("&c[IMPORTANT] - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
+                    log("&c[IMPORTANT] THIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                    log("&c[IMPORTANT] - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                    log("&c[IMPORTANT] - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                    log("&c[IMPORTANT] - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
                 }
                 try {
                     new PlotMeConverter(PlotSquared.getMain()).runAsync();
@@ -739,10 +739,10 @@ public class _PlotSquared {
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
             if (!world.equals("CheckingPlotSquaredGenerator")) {
-                sendConsoleSenderMessage(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
-                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
-                sendConsoleSenderMessage(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+                log(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
+                log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
+                log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
             }
             if (!config.contains(path)) {
                 config.createSection(path);
@@ -772,7 +772,7 @@ public class _PlotSquared {
                         new HybridGen(world);
                     }
                 } catch (Exception e) {
-                    PlotSquared.sendConsoleSenderMessage("&d=== Oh no! Please set the generator for the " + world + " ===");
+                    PlotSquared.log("&d=== Oh no! Please set the generator for the " + world + " ===");
                     e.printStackTrace();
                     LOADING_WORLD = false;
                     removePlotWorld(world);
@@ -796,7 +796,7 @@ public class _PlotSquared {
                     e.printStackTrace();
                 }
                 if ((plotWorld.TYPE == 2 && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
-                    sendConsoleSenderMessage("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
+                    log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
                 addPlotWorld(world, plotWorld, plotManager);
@@ -1078,7 +1078,7 @@ public class _PlotSquared {
             for (String element : split) {
                 String[] pair = element.split("=");
                 if (pair.length != 2) {
-                    sendConsoleSenderMessage("&cNo value provided for: &7" + element);
+                    log("&cNo value provided for: &7" + element);
                     return null;
                 }
                 String key = pair[0].toLowerCase();
@@ -1123,14 +1123,14 @@ public class _PlotSquared {
                             break;
                         }
                         default: {
-                            sendConsoleSenderMessage("&cKey not found: &7" + element);
+                            log("&cKey not found: &7" + element);
                             return null;
                         }
                     }
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    sendConsoleSenderMessage("&cInvalid value: &7" + value + " in arg " + element);
+                    log("&cInvalid value: &7" + value + " in arg " + element);
                     return null;
                 }
             }
@@ -1253,7 +1253,7 @@ public class _PlotSquared {
     }
 
     @Override
-    public void sendConsoleSenderMessage(String string) {
+    public void log(String string) {
         if (BukkitMain.plugin == null || Bukkit.getServer().getConsoleSender() == null) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(string)));
         } else {
@@ -1277,13 +1277,13 @@ public class _PlotSquared {
         C.saveTranslations();
         // Check for outdated java version.
         if (getJavaVersion() < 1.7) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
             // Didn't know of any other link :D
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else if (getJavaVersion() < 1.8) {
-            sendConsoleSenderMessage(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
+            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
         // Setup configuration
         configs();
@@ -1293,20 +1293,20 @@ public class _PlotSquared {
             try {
                 final Metrics metrics = new Metrics(this);
                 metrics.start();
-                sendConsoleSenderMessage(C.PREFIX.s() + "&6Metrics enabled.");
+                log(C.PREFIX.s() + "&6Metrics enabled.");
             } catch (final Exception e) {
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to load up metrics.");
+                log(C.PREFIX.s() + "&cFailed to load up metrics.");
             }
         } else {
             // We should at least make them feel bad.
-            sendConsoleSenderMessage("Using metrics will allow us to improve the plugin\nPlease consider it :)");
+            log("Using metrics will allow us to improve the plugin\nPlease consider it :)");
         }
         // Kill mobs on roads?
         if (Settings.KILL_ROAD_MOBS) {
             killAllEntities();
         }
         if (C.ENABLED.s().length() > 0) {
-            sendConsoleSenderMessage(C.ENABLED);
+            log(C.ENABLED);
         }
         final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
@@ -1345,12 +1345,12 @@ public class _PlotSquared {
                 }
             } catch (final Exception e) {
                 Logger.add(LogLevel.DANGER, "MySQL connection failed.");
-                sendConsoleSenderMessage("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
+                log("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
                 if ((config == null) || config.getBoolean("debug")) {
-                    sendConsoleSenderMessage("&d==== Here is an ugly stacktrace if you are interested in those things ====");
+                    log("&d==== Here is an ugly stacktrace if you are interested in those things ====");
                     e.printStackTrace();
-                    sendConsoleSenderMessage("&d==== End of stacktrace ====");
-                    sendConsoleSenderMessage("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
+                    log("&d==== End of stacktrace ====");
+                    log("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
                 }
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
@@ -1363,7 +1363,7 @@ public class _PlotSquared {
         // TODO: Implement mongo
         else if (Settings.DB.USE_MONGO) {
             // DBFunc.dbManager = new MongoManager();
-            sendConsoleSenderMessage(C.PREFIX.s() + "MongoDB is not yet implemented");
+            log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
                 connection = new SQLite(this, this.getDataFolder() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
@@ -1384,8 +1384,8 @@ public class _PlotSquared {
                 }
             } catch (final Exception e) {
                 Logger.add(LogLevel.DANGER, "SQLite connection failed");
-                sendConsoleSenderMessage(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
-                sendConsoleSenderMessage("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
+                log(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
+                log("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
                 e.printStackTrace();
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
@@ -1396,7 +1396,7 @@ public class _PlotSquared {
             }
         } else {
             Logger.add(LogLevel.DANGER, "No storage type is set.");
-            sendConsoleSenderMessage(C.PREFIX + "&cNo storage type is set!");
+            log(C.PREFIX + "&cNo storage type is set!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -1434,9 +1434,9 @@ public class _PlotSquared {
 
             final String version = worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
-                PlotSquared.sendConsoleSenderMessage("&cThis version of WorldEdit does not support PlotSquared.");
-                PlotSquared.sendConsoleSenderMessage("&cPlease use WorldEdit 6+ for masking support");
-                PlotSquared.sendConsoleSenderMessage("&c - http://builds.enginehub.org/job/worldedit");
+                PlotSquared.log("&cThis version of WorldEdit does not support PlotSquared.");
+                PlotSquared.log("&cPlease use WorldEdit 6+ for masking support");
+                PlotSquared.log("&c - http://builds.enginehub.org/job/worldedit");
             } else {
                 getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
                 MainCommand.subCommands.add(new WE_Anywhere());
@@ -1500,7 +1500,7 @@ public class _PlotSquared {
         {
             boolean checkVersion = checkVersion(1, 7, 6);
             if (!checkVersion) {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+                log(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
                 Settings.TITLES = false;
                 FlagManager.removeFlag(FlagManager.getFlag("titles"));
             }
@@ -1520,10 +1520,10 @@ public class _PlotSquared {
                 Settings.OFFLINE_MODE = true;
             }
             if (Settings.OFFLINE_MODE) {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
+                log(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
             }
             else {
-                sendConsoleSenderMessage(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");
+                log(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");
             }
         }
         // Now we're finished :D

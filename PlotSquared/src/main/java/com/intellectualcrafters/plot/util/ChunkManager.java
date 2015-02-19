@@ -100,7 +100,7 @@ public class ChunkManager {
             public void run() {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 File file = new File(directory);
-                PlotSquared.sendConsoleSenderMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
                 }
@@ -446,7 +446,7 @@ public class ChunkManager {
                 chest.getInventory().setContents(chestContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate chest: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate chest: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         
         for (BlockLoc loc: signContents.keySet()) {
@@ -461,7 +461,7 @@ public class ChunkManager {
                 }
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate sign: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate sign: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         
         for (BlockLoc loc: dispenserContents.keySet()) {
@@ -471,7 +471,7 @@ public class ChunkManager {
                 ((Dispenser) (state)).getInventory().setContents(dispenserContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: dropperContents.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -480,7 +480,7 @@ public class ChunkManager {
                 ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: beaconContents.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -489,7 +489,7 @@ public class ChunkManager {
                 ((Beacon) (state)).getInventory().setContents(beaconContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate beacon: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate beacon: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: jukeDisc.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -498,7 +498,7 @@ public class ChunkManager {
                 ((Jukebox) (state)).setPlaying(Material.getMaterial(jukeDisc.get(loc)));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore jukebox: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore jukebox: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: skullData.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -516,7 +516,7 @@ public class ChunkManager {
                 }
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore jukebox: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore jukebox: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: hopperContents.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -525,7 +525,7 @@ public class ChunkManager {
                 ((Hopper) (state)).getInventory().setContents(hopperContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate hopper: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate hopper: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         
         for (BlockLoc loc: noteBlockContents.keySet()) {
@@ -535,7 +535,7 @@ public class ChunkManager {
                 ((NoteBlock) (state)).setNote(noteBlockContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate note block: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate note block: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: brewTime.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -543,7 +543,7 @@ public class ChunkManager {
             if (state instanceof BrewingStand) {
                 ((BrewingStand) (state)).setBrewingTime(brewTime.get(loc));
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore brewing stand cooking: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore brewing stand cooking: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         
         for (BlockLoc loc: spawnerData.keySet()) {
@@ -553,7 +553,7 @@ public class ChunkManager {
                 ((CreatureSpawner) (state)).setCreatureTypeId(spawnerData.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore spawner type: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore spawner type: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: cmdData.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -562,7 +562,7 @@ public class ChunkManager {
                 ((CommandBlock) (state)).setCommand(cmdData.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore command block: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore command block: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: brewingStandContents.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -571,7 +571,7 @@ public class ChunkManager {
                 ((BrewingStand) (state)).getInventory().setContents(brewingStandContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate brewing stand: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate brewing stand: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: furnaceTime.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -581,7 +581,7 @@ public class ChunkManager {
                 ((Furnace) (state)).setBurnTime(time[0]);
                 ((Furnace) (state)).setCookTime(time[1]);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to restore furnace cooking: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to restore furnace cooking: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         for (BlockLoc loc: furnaceContents.keySet()) {
             Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -590,7 +590,7 @@ public class ChunkManager {
                 ((Furnace) (state)).getInventory().setContents(furnaceContents.get(loc));
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate furnace: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate furnace: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
         
         for (BlockLoc loc: bannerBase.keySet()) {
@@ -606,7 +606,7 @@ public class ChunkManager {
                 }
                 state.update(true);
             }
-            else { PlotSquared.sendConsoleSenderMessage("&c[WARN] Plot clear failed to regenerate banner: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
+            else { PlotSquared.log("&c[WARN] Plot clear failed to regenerate banner: "+loc.x + x_offset+","+loc.y+","+loc.z + z_offset); }
         }
     }
     

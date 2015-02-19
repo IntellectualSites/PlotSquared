@@ -46,9 +46,9 @@ public class DebugLoadTest extends SubCommand {
                 fPlots.setAccessible(true);
                 fPlots.set(null, DBFunc.getPlots());
             } catch (final Exception e) {
-                PlotSquared.sendConsoleSenderMessage("&3===FAILED&3===");
+                PlotSquared.log("&3===FAILED&3===");
                 e.printStackTrace();
-                PlotSquared.sendConsoleSenderMessage("&3===END OF STACKTRACE===");
+                PlotSquared.log("&3===END OF STACKTRACE===");
             }
         } else {
             PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
