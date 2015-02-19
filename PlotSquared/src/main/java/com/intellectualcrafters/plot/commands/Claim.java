@@ -120,7 +120,7 @@ public class Claim extends SubCommand {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!PlotSquared.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+                if (!BukkitMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                     return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }

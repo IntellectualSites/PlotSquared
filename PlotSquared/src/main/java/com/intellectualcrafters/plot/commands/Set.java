@@ -78,7 +78,7 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.hasRights(plr) && !PlotSquared.hasPermission(plr, "plots.admin.command.set")) {
+        if (!plot.hasRights(plr) && !BukkitMain.hasPermission(plr, "plots.admin.command.set")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -94,7 +94,7 @@ public class Set extends SubCommand {
         }
         /* TODO: Implement option */
         // final boolean advanced_permissions = true;
-        if (!PlotSquared.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
+        if (!BukkitMain.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
         }
@@ -125,7 +125,7 @@ public class Set extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
-            if (!PlotSquared.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
+            if (!BukkitMain.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
                 PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 return false;
             }

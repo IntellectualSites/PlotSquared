@@ -40,7 +40,7 @@ public class WE_Anywhere extends SubCommand {
             return false;
         }
         
-        if (PlotSquared.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
+        if (BukkitMain.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
             PWE.removeMask(plr);
             PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
         }

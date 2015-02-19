@@ -54,7 +54,7 @@ public class Comment extends SubCommand {
 
         if ((args.length > 1) && recipients.contains(args[0].toLowerCase())) {
 
-            if (PlotSquared.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
+            if (BukkitMain.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
                 final String text = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                 final PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));
                 plot.settings.addComment(comment);

@@ -216,7 +216,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      * @return true if the player is added as a helper or is the owner
      */
     public boolean hasRights(final Player player) {
-        return PlotSquared.hasPermission(player, "plots.admin.build.other") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.uuidWrapper.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
+        return BukkitMain.hasPermission(player, "plots.admin.build.other") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.uuidWrapper.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
     }
 
     /**

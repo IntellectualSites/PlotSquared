@@ -55,7 +55,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotSquared.hasPermission(plr, "plots.admin.command.denied")) {
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.denied")) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }

@@ -85,7 +85,7 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        boolean admin = PlotSquared.hasPermission(plr, "plots.admin.command.merge");
+        boolean admin = BukkitMain.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;

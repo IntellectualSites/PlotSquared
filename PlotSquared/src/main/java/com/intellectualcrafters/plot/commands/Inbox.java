@@ -63,7 +63,7 @@ public class Inbox extends SubCommand {
 
         Integer tier;
         final UUID uuid = UUIDHandler.getUUID(plr);
-        if (PlotSquared.hasPermission(plr, "plots.comment.admin")) {
+        if (BukkitMain.hasPermission(plr, "plots.comment.admin")) {
             tier = 0;
         } else if (plot != null && plot.owner.equals(uuid)) {
             tier = 1;

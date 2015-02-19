@@ -67,13 +67,13 @@ public class FlagCmd extends SubCommand {
             sendMessage(player, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.hasRights(player) && !PlotSquared.hasPermission(player, "plots.set.flag.other")) {
+        if (!plot.hasRights(player) && !BukkitMain.hasPermission(player, "plots.set.flag.other")) {
             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "info": {
-                if (!PlotSquared.hasPermission(player, "plots.set.flag")) {
+                if (!BukkitMain.hasPermission(player, "plots.set.flag")) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.info");
                     return false;
                 }
@@ -96,7 +96,7 @@ public class FlagCmd extends SubCommand {
                 PlayerFunctions.sendMessage(player, "&cNot implemented.");
             }
             case "set": {
-                if (!PlotSquared.hasPermission(player, "plots.set.flag")) {
+                if (!BukkitMain.hasPermission(player, "plots.set.flag")) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag");
                     return false;
                 }
@@ -109,7 +109,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!PlotSquared.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -130,7 +130,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "remove": {
-                if (!PlotSquared.hasPermission(player, "plots.flag.remove")) {
+                if (!BukkitMain.hasPermission(player, "plots.flag.remove")) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
                     return false;
                 }
@@ -143,7 +143,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!PlotSquared.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -169,7 +169,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "add": {
-                if (!PlotSquared.hasPermission(player, "plots.flag.add")) {
+                if (!BukkitMain.hasPermission(player, "plots.flag.add")) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
                     return false;
                 }
@@ -182,7 +182,7 @@ public class FlagCmd extends SubCommand {
                     PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!PlotSquared.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -210,7 +210,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "list": {
-                if (!PlotSquared.hasPermission(player, "plots.flag.list")) {
+                if (!BukkitMain.hasPermission(player, "plots.flag.list")) {
                     PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
                 }

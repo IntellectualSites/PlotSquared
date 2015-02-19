@@ -50,6 +50,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final Player player) {
-        return PlotSquared.hasPermission(player, this.permission);
+        return BukkitMain.hasPermission(player, this.permission);
     }
 }

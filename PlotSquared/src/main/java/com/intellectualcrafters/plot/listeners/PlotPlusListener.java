@@ -195,7 +195,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
-                if (PlotSquared.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
+                if (BukkitMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
@@ -238,7 +238,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
-                if (PlotSquared.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
+                if (BukkitMain.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {

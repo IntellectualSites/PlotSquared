@@ -82,7 +82,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
                     }
                 }
             }
-            if (force ^ (noMask(s) && !PlotSquared.hasPermission(p, "plots.worldedit.bypass"))) {
+            if (force ^ (noMask(s) && !BukkitMain.hasPermission(p, "plots.worldedit.bypass"))) {
                 final BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(p);
                 final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
                 s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));

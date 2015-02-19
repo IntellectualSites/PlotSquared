@@ -64,7 +64,7 @@ public class SetOwner extends SubCommand {
             return false;
         }
         
-        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !PlotSquared.hasPermission(plr, "plots.admin.command.setowner")) {
+        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.setowner")) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
         }

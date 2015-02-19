@@ -70,7 +70,7 @@ public class Schematic extends SubCommand {
                     PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
                     return false;
                 }
-                if (!PlotSquared.hasPermission(plr, "plots.schematic.paste")) {
+                if (!BukkitMain.hasPermission(plr, "plots.schematic.paste")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;
                 }
@@ -158,7 +158,7 @@ public class Schematic extends SubCommand {
                     PlotSquared.sendConsoleSenderMessage(C.IS_CONSOLE);
                     return false;
                 }
-                if (!PlotSquared.hasPermission(plr, "plots.schematic.test")) {
+                if (!BukkitMain.hasPermission(plr, "plots.schematic.test")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
                     return false;
                 }
@@ -252,7 +252,7 @@ public class Schematic extends SubCommand {
                 break;
             case "export":
             case "save":
-                if (!PlotSquared.hasPermission(plr, "plots.schematic.save")) {
+                if (!BukkitMain.hasPermission(plr, "plots.schematic.save")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }
