@@ -31,7 +31,10 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+<<<<<<< Updated upstream
 import org.bukkit.Location;
+=======
+>>>>>>> Stashed changes
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -47,6 +50,10 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
+<<<<<<< Updated upstream
+=======
+import com.intellectualcrafters.plot.object.Location;
+>>>>>>> Stashed changes
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -133,7 +140,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static boolean mergePlots(final Player plr, final World world, final ArrayList<PlotId> plotIds) {
+=======
+    public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
+>>>>>>> Stashed changes
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         if (PlotMain.useEconomy && plotworld.USE_ECONOMY) {
             final double cost = plotIds.size() * plotworld.MERGE_PRICE;
@@ -161,7 +172,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return boolean (success)
      */
+<<<<<<< Updated upstream
     public static boolean mergePlots(final World world, final ArrayList<PlotId> plotIds, boolean removeRoads) {
+=======
+    public static boolean mergePlots(final String world, final ArrayList<PlotId> plotIds, boolean removeRoads) {
+>>>>>>> Stashed changes
         if (plotIds.size() < 2) {
             return false;
         }
@@ -171,7 +186,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
+<<<<<<< Updated upstream
         manager.startPlotMerge(world, plotworld, plotIds);
+=======
+        manager.startPlotMerge(plotworld, plotIds);
+>>>>>>> Stashed changes
 
         boolean result = false;
 
@@ -190,7 +209,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
                 Plot plot2 = null;
 
                 if (removeRoads) {
+<<<<<<< Updated upstream
                     removeSign(world, plot);
+=======
+                    removeSign(plot);
+>>>>>>> Stashed changes
                 }
                 if (lx) {
                     if (ly) {
@@ -225,12 +248,20 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
                 final Plot plot = PlotMain.getPlots(world).get(id);
+<<<<<<< Updated upstream
                 DBFunc.setMerged(world.getName(), plot, plot.settings.getMerged());
+=======
+                DBFunc.setMerged(world, plot, plot.settings.getMerged());
+>>>>>>> Stashed changes
             }
         }
 
 
+<<<<<<< Updated upstream
         manager.finishPlotMerge(world, plotworld, plotIds);
+=======
+        manager.finishPlotMerge(plotworld, plotIds);
+>>>>>>> Stashed changes
 
         return result;
     }
@@ -243,7 +274,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param lesserPlot
      * @param greaterPlot
      */
+<<<<<<< Updated upstream
     public static void mergePlot(final World world, final Plot lesserPlot, final Plot greaterPlot, boolean removeRoads) {
+=======
+    public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, boolean removeRoads) {
+>>>>>>> Stashed changes
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
 
@@ -265,6 +300,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
             }
         }
     }
+<<<<<<< Updated upstream
 
     /*
      * Random number gen section
@@ -310,12 +346,30 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
     @SuppressWarnings("deprecation")
     public static void setSign(final World world, String name, final Plot p) {
+=======
+    
+    
+
+    public static void removeSign(final Plot p) {
+        String world = p.world;
+        final PlotManager manager = PlotMain.getPlotManager(world);
+        final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+        final Location loc = manager.getSignLoc(plotworld, p);
+        BlockManager.setBlocks(world, new int[] { loc.getX()}, new int[] { loc.getY()}, new int[] { loc.getZ()}, new int[] { 0 }, new byte[] { 0 });
+    }
+
+    public static void setSign(String name, final Plot p) {
+>>>>>>> Stashed changes
         if (name == null) {
             name = "unknown";
         }
         final PlotManager manager = PlotMain.getPlotManager(world);
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
+<<<<<<< Updated upstream
         final Location loc = manager.getSignLoc(world, plotworld, p);
+=======
+        final Location loc = manager.getSignLoc(plotworld, p);
+>>>>>>> Stashed changes
         final Block bs = loc.getBlock();
         bs.setType(Material.AIR);
         bs.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
@@ -346,6 +400,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return string;
     }
 
+<<<<<<< Updated upstream
     public static boolean setBlock(World world, int x, int y, int z, int id, byte data) {
         try {
             return AbstractSetBlock.setBlockManager.set(world, x, y, z, id, data);
@@ -381,6 +436,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     }
 
     public static void autoMerge(final World world, final Plot plot, final Player player) {
+=======
+    public static void autoMerge(final String world, final Plot plot, final Player player) {
+>>>>>>> Stashed changes
         if (plot == null) {
             return;
         }
@@ -438,7 +496,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         update(player.getLocation());
     }
 
+<<<<<<< Updated upstream
     private static boolean ownsPlots(final World world, final ArrayList<PlotId> plots, final Player player, final int dir) {
+=======
+    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final Player player, final int dir) {
+>>>>>>> Stashed changes
         final PlotId id_min = plots.get(0);
         final PlotId id_max = plots.get(plots.size() - 1);
         for (final PlotId myid : plots) {
@@ -504,16 +566,28 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return p;
     }
 
+<<<<<<< Updated upstream
     public static int getLoadedChunks(final World world) {
         return world.getLoadedChunks().length;
     }
 
     public static int getEntities(final World world) {
+=======
+    public static int getLoadedChunks(final String world) {
+        return world.getLoadedChunks().length;
+    }
+
+    public static int getEntities(final String world) {
+>>>>>>> Stashed changes
         return world.getEntities().size();
     }
 
 
+<<<<<<< Updated upstream
     public static int getTileEntities(final World world) {
+=======
+    public static int getTileEntities(final String world) {
+>>>>>>> Stashed changes
         PlotMain.getWorldSettings(world);
         int x = 0;
         for (final Chunk chunk : world.getLoadedChunks()) {
@@ -522,7 +596,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return x;
     }
 
+<<<<<<< Updated upstream
     public static double getWorldFolderSize(final World world) {
+=======
+    public static double getWorldFolderSize(final String world) {
+>>>>>>> Stashed changes
         // long size = FileUtil.sizeOfDirectory(world.getWorldFolder());
         final File folder = world.getWorldFolder();
         final long size = folder.length();
@@ -545,7 +623,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return new short[]{Short.parseShort(block), 0};
     }
 
+<<<<<<< Updated upstream
     public static void clearAllEntities(final World world, final Plot plot, final boolean tile) {
+=======
+    public static void clearAllEntities(final String world, final Plot plot, final boolean tile) {
+>>>>>>> Stashed changes
 
         final List<Entity> entities = world.getEntities();
         for (final Entity entity : entities) {
@@ -569,7 +651,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param plot
      * @param isDelete
      */
+<<<<<<< Updated upstream
     public static void clear(final Player player, final World world, final Plot plot, final boolean isDelete) {
+=======
+    public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
+>>>>>>> Stashed changes
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return;
@@ -635,7 +721,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 
         PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
 
+<<<<<<< Updated upstream
         final World world;
+=======
+        final String world;
+>>>>>>> Stashed changes
         world = requester.getWorld();
 
         clearAllEntities(world, plot, false);
@@ -643,7 +733,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         removeSign(world, plot);
     }
 
+<<<<<<< Updated upstream
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+=======
+    public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+>>>>>>> Stashed changes
         for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
             for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                 for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
@@ -656,7 +750,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
 
+<<<<<<< Updated upstream
     public static void setCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
+=======
+    public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
+>>>>>>> Stashed changes
         if (blocks.length == 1) {
             setCuboid(world, pos1, pos2, blocks[0]);
             return;
@@ -675,7 +773,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
 
+<<<<<<< Updated upstream
     public static void setSimpleCuboid(final World world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+=======
+    public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+>>>>>>> Stashed changes
         for (int y = pos1.getBlockY(); y < pos2.getBlockY(); y++) {
             for (int x = pos1.getBlockX(); x < pos2.getBlockX(); x++) {
                 for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); z++) {
@@ -688,7 +790,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
 
+<<<<<<< Updated upstream
     public static void setBiome(final World world, final Plot plot, final Biome b) {
+=======
+    public static void setBiome(final String world, final Plot plot, final Biome b) {
+>>>>>>> Stashed changes
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
         final int topX = getPlotTopLoc(world, plot.id).getBlockX() + 1;
         final int bottomZ = getPlotBottomLoc(world, plot.id).getBlockZ();
@@ -714,7 +820,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
     }
 
+<<<<<<< Updated upstream
     public static int getHeighestBlock(final World world, final int x, final int z) {
+=======
+    public static int getHeighestBlock(final String world, final int x, final int z) {
+>>>>>>> Stashed changes
         boolean safe = false;
         int id;
         for (int i = 1; i < world.getMaxHeight(); i++) {
@@ -788,7 +898,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param world World in which the plot is located
      * @param plot  Plot Object
      */
+<<<<<<< Updated upstream
     public static void refreshPlotChunks(final World world, final Plot plot) {
+=======
+    public static void refreshPlotChunks(final String world, final Plot plot) {
+>>>>>>> Stashed changes
         final int bottomX = getPlotBottomLoc(world, plot.id).getBlockX();
         final int topX = getPlotTopLoc(world, plot.id).getBlockX();
         final int bottomZ = getPlotBottomLoc(world, plot.id).getBlockZ();
@@ -832,7 +946,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static Location getPlotTopLocAbs(final World world, final PlotId id) {
+=======
+    public static Location getPlotTopLocAbs(final String world, final PlotId id) {
+>>>>>>> Stashed changes
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final PlotManager manager = PlotMain.getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, id);
@@ -847,7 +965,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static Location getPlotBottomLocAbs(final World world, final PlotId id) {
+=======
+    public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
+>>>>>>> Stashed changes
         final PlotWorld plotworld = PlotMain.getWorldSettings(world);
         final PlotManager manager = PlotMain.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
@@ -861,7 +983,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static int getPlotWidth(final World world, final PlotId id) {
+=======
+    public static int getPlotWidth(final String world, final PlotId id) {
+>>>>>>> Stashed changes
         return getPlotTopLoc(world, id).getBlockX() - getPlotBottomLoc(world, id).getBlockX();
     }
 
@@ -874,7 +1000,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static Location getPlotTopLoc(final World world, PlotId id) {
+=======
+    public static Location getPlotTopLoc(final String world, PlotId id) {
+>>>>>>> Stashed changes
         final Plot plot = PlotMain.getPlots(world).get(id);
         if (plot != null) {
             id = PlayerFunctions.getTopPlot(world, plot).id;
@@ -893,7 +1023,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static Location getPlotBottomLoc(final World world, PlotId id) {
+=======
+    public static Location getPlotBottomLoc(final String world, PlotId id) {
+>>>>>>> Stashed changes
         final Plot plot = PlotMain.getPlots(world).get(id);
         if (plot != null) {
             id = PlayerFunctions.getBottomPlot(world, plot).id;
@@ -903,7 +1037,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
     
+<<<<<<< Updated upstream
     public static boolean isUnowned(final World world, final PlotId pos1, final PlotId pos2) {
+=======
+    public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
+>>>>>>> Stashed changes
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
@@ -917,6 +1055,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return true;
     }
     
+<<<<<<< Updated upstream
     public static boolean move(final World world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
         final Location bot1 = PlotHelper.getPlotBottomLoc(world, current);
         Location bot2 = PlotHelper.getPlotBottomLoc(world, newPlot);
@@ -927,6 +1066,19 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         Plot pos1 = PlayerFunctions.getBottomPlot(world, currentPlot);
         Plot pos2 = PlayerFunctions.getTopPlot(world, currentPlot);
+=======
+    public static boolean move(final String world, final PlotId current, PlotId newPlot, final Runnable whenDone) {
+        String worldname = world.getName();
+        final com.intellectualcrafters.plot.object.Location bot1 = PlotHelper.getPlotBottomLoc(worldname, current);
+        com.intellectualcrafters.plot.object.Location bot2 = PlotHelper.getPlotBottomLoc(worldname, newPlot);
+        final Location top = PlotHelper.getPlotTopLoc(worldname, current);
+        final Plot currentPlot = PlotHelper.getPlot(worldname, current);
+        if (currentPlot.owner == null) {
+            return false;
+        }
+        Plot pos1 = PlayerFunctions.getBottomPlot(worldname, currentPlot);
+        Plot pos2 = PlayerFunctions.getTopPlot(worldname, currentPlot);
+>>>>>>> Stashed changes
         PlotId size = PlotHelper.getSize(world, currentPlot);
         if (!PlotHelper.isUnowned(world, newPlot, new PlotId(newPlot.x + size.x - 1, newPlot.y + size.y - 1))) {
             return false;
@@ -955,7 +1107,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return true;
     }
     
+<<<<<<< Updated upstream
     public static PlotId getSize(World world, Plot plot) {
+=======
+    public static PlotId getSize(String world, Plot plot) {
+>>>>>>> Stashed changes
         PlotSettings settings = plot.settings;
         if (!settings.isMerged()) {
             return new PlotId(1,1);
@@ -973,7 +1129,11 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      *
      * @return
      */
+<<<<<<< Updated upstream
     public static Plot getPlot(final World world, final PlotId id) {
+=======
+    public static Plot getPlot(final String world, final PlotId id) {
+>>>>>>> Stashed changes
         if (id == null) {
             return null;
         }

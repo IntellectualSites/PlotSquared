@@ -21,6 +21,7 @@
 
 package com.intellectualcrafters.plot.commands;
 
+<<<<<<< Updated upstream
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
@@ -32,12 +33,53 @@ public class Template extends SubCommand {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
     }
 
+=======
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.PlayerFunctions;
+
+public class Template extends SubCommand {
+    
+    public Template() {
+        super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
+    }
+    
+>>>>>>> Stashed changes
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length != 2) {
             PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
+<<<<<<< Updated upstream
+=======
+        World world = Bukkit.getWorld(args[1]);
+        PlotWorld plotworld = PlotMain.getWorldSettings(args[1]);
+        if (world == null || plotworld == null) {
+            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+            return false;
+        }
+        switch (args[0].toLowerCase()) {
+            case "import": {
+                // TODO import template
+                PlayerFunctions.sendMessage(plr, "TODO");
+                return true;
+            }
+            case "export": {
+                PlayerFunctions.sendMessage(plr, "TODO");
+            }
+        }
+>>>>>>> Stashed changes
         
         // TODO allow world settings (including schematics to be packed into a single file)
         
@@ -45,4 +87,24 @@ public class Template extends SubCommand {
         
         return true;
     }
+<<<<<<< Updated upstream
+=======
+    
+    public void gzipIt(String output, String input) {
+        byte[] buffer = new byte[1024];
+        try {
+            GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(output));
+            FileInputStream in = new FileInputStream(input);
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                gzos.write(buffer, 0, len);
+            }
+            in.close();
+            gzos.finish();
+            gzos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+>>>>>>> Stashed changes
 }

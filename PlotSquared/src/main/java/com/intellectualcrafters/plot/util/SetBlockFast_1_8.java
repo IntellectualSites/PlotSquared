@@ -37,7 +37,11 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
+<<<<<<< Updated upstream
 public class SetBlockFast_1_8 extends AbstractSetBlock {
+=======
+public class SetBlockFast_1_8 extends SetBlockManager {
+>>>>>>> Stashed changes
 
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
@@ -85,13 +89,20 @@ public class SetBlockFast_1_8 extends AbstractSetBlock {
      * @return true
      */
     @Override
+<<<<<<< Updated upstream
     public boolean set(final World world, final int x, final int y, final int z, final int blockId, final byte data) {
+=======
+    public void set(final World world, final int x, final int y, final int z, final int blockId, final byte data) {
+>>>>>>> Stashed changes
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object pos = constructorBlockPosition.create((int) (x & 0x0f), y, (int) (z & 0x0f));
         final Object id = methodGetByCombinedId.of(null).call(blockId + (data << 12));
         methodA.of(chunk).call(pos, id);
+<<<<<<< Updated upstream
         return true;
+=======
+>>>>>>> Stashed changes
     }
 
     /**

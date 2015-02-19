@@ -5,19 +5,30 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+<<<<<<< Updated upstream
 import org.bukkit.Location;
+=======
+>>>>>>> Stashed changes
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.object.BlockWrapper;
+<<<<<<< Updated upstream
+=======
+import com.intellectualcrafters.plot.object.Location;
+>>>>>>> Stashed changes
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+<<<<<<< Updated upstream
 import com.intellectualcrafters.plot.util.AbstractSetBlock;
+=======
+import com.intellectualcrafters.plot.util.SetBlockManager;
+>>>>>>> Stashed changes
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -38,7 +49,11 @@ public class AugmentedPopulator extends BlockPopulator {
 	private final int tx;
 	private final int tz;
 	
+<<<<<<< Updated upstream
 	public BlockWrapper getBlock(int X, int Z, int i, int j, short[][] r, boolean c) {
+=======
+	public BlockWrapper get(int X, int Z, int i, int j, short[][] r, boolean c) {
+>>>>>>> Stashed changes
 		int y = (i << 4) + (j >> 8);
 		int a = (j - ((y & 0xF) << 8));
 		int z = (a >> 4);
@@ -66,11 +81,19 @@ public class AugmentedPopulator extends BlockPopulator {
     		Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
     		Location tl = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1,0,1);
     		
+<<<<<<< Updated upstream
     		this.bx = bl.getBlockX();
     		this.bz = bl.getBlockZ();
     		
     		this.tx = tl.getBlockX();
     		this.tz = tl.getBlockZ();
+=======
+    		this.bx = bl.getX();
+    		this.bz = bl.getZ();
+    		
+    		this.tx = tl.getX();
+    		this.tz = tl.getZ();
+>>>>>>> Stashed changes
 		}
 		else {
 		    this.bx = Integer.MIN_VALUE;
@@ -118,8 +141,13 @@ public class AugmentedPopulator extends BlockPopulator {
 			check = false;
 		}
 		if (plotworld.TERRAIN == 2) {
+<<<<<<< Updated upstream
 		    PlotId plot1 = manager.getPlotIdAbs(plotworld, new Location(world, x, 0, z));
 		    PlotId plot2 = manager.getPlotIdAbs(plotworld, new Location(world, x2, 0, z2));
+=======
+		    PlotId plot1 = manager.getPlotIdAbs(plotworld, x, 0, z);
+		    PlotId plot2 = manager.getPlotIdAbs(plotworld, x2, 0, z2);
+>>>>>>> Stashed changes
 		    if (plot1 != null && plot2 != null && plot1.equals(plot2)) {
 		        return;
 		    }
@@ -132,7 +160,11 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     populateBiome(world, x, z);
                     chunk.unload(true, true);
+<<<<<<< Updated upstream
                     AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+=======
+                    SetBlockManager.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+>>>>>>> Stashed changes
                 }
             }, 20);
         }
@@ -149,7 +181,11 @@ public class AugmentedPopulator extends BlockPopulator {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
                     chunk.unload(true, true);
+<<<<<<< Updated upstream
                     AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+=======
+                    SetBlockManager.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+>>>>>>> Stashed changes
                 }
             }, 40 + rand.nextInt(40));
 		}
@@ -170,7 +206,11 @@ public class AugmentedPopulator extends BlockPopulator {
         int length = result[0].length;
         for(int i = 0; i < result.length; i++) {
             for(int j = 0; j < length; j++) {
+<<<<<<< Updated upstream
                 BlockWrapper blockInfo = getBlock(x, z, i, j, result, check);
+=======
+                BlockWrapper blockInfo = get(x, z, i, j, result, check);
+>>>>>>> Stashed changes
                 if (blockInfo == null) {
                     continue;
                 }
@@ -182,7 +222,11 @@ public class AugmentedPopulator extends BlockPopulator {
                             continue;
                         }
                     }
+<<<<<<< Updated upstream
                     else if (manager.getPlotIdAbs(plotworld, new Location(world, xx, 0, zz)) != null) {
+=======
+                    else if (manager.getPlotIdAbs(plotworld, xx, 0, zz) != null) {
+>>>>>>> Stashed changes
                         continue;
                     }
                 }

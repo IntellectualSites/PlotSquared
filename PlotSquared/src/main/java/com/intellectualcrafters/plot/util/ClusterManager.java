@@ -288,7 +288,11 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if (populator == null || plotworld.TYPE == 0) {
+<<<<<<< Updated upstream
                         AbstractSetBlock.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+=======
+                        SetBlockManager.setBlockManager.update(Arrays.asList( new Chunk[] {chunk}));
+>>>>>>> Stashed changes
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
                         chunk.unload(true, true);
                     }

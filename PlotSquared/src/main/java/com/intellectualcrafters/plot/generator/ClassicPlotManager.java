@@ -48,7 +48,11 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
 
     public boolean setFloor(final World world, final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+<<<<<<< Updated upstream
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plotid).add(1, 0, 1);
+=======
+        final Location pos1 = PlotHelper.getPlotBottomLoc(plotworld.worldname, plotid).add(1, 0, 1);
+>>>>>>> Stashed changes
         final Location pos2 = PlotHelper.getPlotTopLoc(world, plotid);
         PlotHelper.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), blocks);
         return true;
@@ -59,7 +63,11 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
+<<<<<<< Updated upstream
         final Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
+=======
+        final Location bottom = PlotHelper.getPlotBottomLoc(plotworld.worldname, plotid);
+>>>>>>> Stashed changes
         final Location top = PlotHelper.getPlotTopLoc(w, plotid);
 
         int x, z;
@@ -97,7 +105,11 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
+<<<<<<< Updated upstream
         final Location bottom = PlotHelper.getPlotBottomLoc(w, plotid);
+=======
+        final Location bottom = PlotHelper.getPlotBottomLoc(plotworld.worldname, plotid);
+>>>>>>> Stashed changes
         final Location top = PlotHelper.getPlotTopLoc(w, plotid);
 
         int x, z;
@@ -318,7 +330,11 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override
+<<<<<<< Updated upstream
     public String[] getPlotComponents(World world, PlotWorld plotworld, PlotId plotid) {
+=======
+    public String[] getPlotComponents(PlotWorld plotworld, PlotId plotid) {
+>>>>>>> Stashed changes
         return new String[] {
                 "floor",
                 "wall",
@@ -330,8 +346,15 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
      * Remove sign for a plot
      */
     @Override
+<<<<<<< Updated upstream
     public Location getSignLoc(final World world, final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         return new Location(world, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX(), dpw.ROAD_HEIGHT + 1, PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1);
+=======
+    public com.intellectualcrafters.plot.object.Location getSignLoc(final PlotWorld plotworld, final Plot plot) {
+        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location bot = PlotHelper.getPlotBottomLoc(plotworld.worldname, plot.id);
+        return new com.intellectualcrafters.plot.object.Location(plotworld.worldname, bot.getBlockX(), dpw.ROAD_HEIGHT + 1, bot.getBlockZ() - 1);
+>>>>>>> Stashed changes
     }
 }

@@ -11,13 +11,21 @@ import java.lang.reflect.Method;
  */
 public class Location implements Cloneable, Comparable<Location> {
 
+<<<<<<< Updated upstream
     private double x, y, z;
+=======
+    private int x, y, z;
+>>>>>>> Stashed changes
     private float yaw, pitch;
     private String world;
     private boolean built;
     private Object o;
 
+<<<<<<< Updated upstream
     public Location(final String world, final double x, final double y, final double z, final float yaw, final float pitch) {
+=======
+    public Location(final String world, final int x, final int y, final int z, final float yaw, final float pitch) {
+>>>>>>> Stashed changes
         this.world = world;
         this.x = x;
         this.y = y;
@@ -29,6 +37,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Location() {
+<<<<<<< Updated upstream
         this("", 0d, 0d, 0d, 0f, 0f);
     }
 
@@ -41,24 +50,54 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public void setX(final double x) {
+=======
+        this("", 0, 0, 0, 0, 0);
+    }
+
+    public Location(final String world, final int x, final int y, final int z) {
+        this(world, x, y, z, 0f, 0f);
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public void setX(final int x) {
+>>>>>>> Stashed changes
         this.x = x;
         this.built = false;
     }
 
+<<<<<<< Updated upstream
     public double getY() {
         return this.y;
     }
 
     public void setY(final double y) {
+=======
+    public int getY() {
+        return this.y;
+    }
+
+    public void setY(final int y) {
+>>>>>>> Stashed changes
         this.y = y;
         this.built = false;
     }
 
+<<<<<<< Updated upstream
     public double getZ() {
         return this.z;
     }
 
     public void setZ(final double z) {
+=======
+    public int getZ() {
+        return this.z;
+    }
+
+    public void setZ(final int z) {
+>>>>>>> Stashed changes
         this.z = z;
         this.built = false;
     }
@@ -90,11 +129,19 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
     }
 
+<<<<<<< Updated upstream
     public void add(double x, double y, double z) {
+=======
+    public Location add(int x, int y, int z) {
+>>>>>>> Stashed changes
         this.x += x;
         this.y += y;
         this.z += z;
         this.built = false;
+<<<<<<< Updated upstream
+=======
+        return this;
+>>>>>>> Stashed changes
     }
 
     public double getEuclideanDistanceSquared(final Location l2) {
@@ -128,7 +175,11 @@ public class Location implements Cloneable, Comparable<Location> {
                 y <= max.getY() && z >= min.getX() && z < max.getZ();
     }
 
+<<<<<<< Updated upstream
     public void lookTowards(double x, double y) {
+=======
+    public void lookTowards(int x, int y) {
+>>>>>>> Stashed changes
         double l = this.x - x;
         double w = this.z - z;
         double c = Math.sqrt(l * l + w * w);
@@ -140,17 +191,34 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
     }
 
+<<<<<<< Updated upstream
     public void subtract(double x, double y, double z) {
+=======
+    public Location subtract(int x, int y, int z) {
+>>>>>>> Stashed changes
         this.x -= x;
         this.y -= y;
         this.z -= z;
         this.built = false;
+<<<<<<< Updated upstream
+=======
+        return this;
+>>>>>>> Stashed changes
     }
 
     @Override
     public boolean equals(Object o) {
+<<<<<<< Updated upstream
         if (!(o instanceof Location))
             return false;
+=======
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof Location)) {
+            return false;
+        }
+>>>>>>> Stashed changes
         Location l = (Location) o;
         return x == l.getX() && y == l.getY() &&
                 z == l.getZ() && world.equals(l.getWorld()) &&
@@ -183,6 +251,12 @@ public class Location implements Cloneable, Comparable<Location> {
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Please use utility class as this is not efficient
+     */
+>>>>>>> Stashed changes
     public Object toBukkitLocation() {
         if (built) {
             return o;
@@ -196,6 +270,12 @@ public class Location implements Cloneable, Comparable<Location> {
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Please use utility class as this is not efficient
+     */
+>>>>>>> Stashed changes
     public void teleport(final Object o) throws Exception {
         if (o.getClass().getName().contains("org.bukkit.entity")) {
             Method m = o.getClass().getMethod("teleport", Class.forName("org.bukkit.Location"));

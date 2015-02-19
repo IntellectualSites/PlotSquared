@@ -160,8 +160,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Location f = event.getFrom();
             final Location t = event.getTo();
             final Location q = new Location(t.getWorld(), t.getBlockX(), 0, t.getZ());
+<<<<<<< Updated upstream
 
             if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
+=======
+            if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
+                System.out.print("=========================");
+                System.out.print("4. " + f);
+>>>>>>> Stashed changes
                 if (Settings.TELEPORT_DELAY != 0 && TaskManager.TELEPORT_QUEUE.size() > 0) {
                     String name = player.getName();
                     if (TaskManager.TELEPORT_QUEUE.contains(name)) {
@@ -192,6 +198,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 		passed = true;
                 	}
                 	if (passed) {
+<<<<<<< Updated upstream
+=======
+                	    q.setY(t.getBlockY());
+>>>>>>> Stashed changes
                 		event.setTo(q);
                 		PlayerFunctions.sendMessage(player, C.BORDER);
                 		return;
@@ -199,6 +209,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 Plot plot = getCurrentPlot(q);
                 if (plot != null) {
+<<<<<<< Updated upstream
                 	if (!plot.equals(getCurrentPlot(f))) {
                 		if (plot.deny_entry(player)) {
     	                	if (!PlotMain.hasPermission(player, "plots.admin.entry.denied")) {
@@ -207,6 +218,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     	                        return;
     	                	}
     	                }
+=======
+                    if (plot.deny_entry(player)) {
+                        if (!PlotMain.hasPermission(player, "plots.admin.entry.denied")) {
+                            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.entry.denied");
+                            System.out.print("DENY ENTRY");
+                            System.out.print("5. " + f);
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                    System.out.print("6. " + f);
+                	if (!plot.equals(getCurrentPlot(f))) {
+                	    System.out.print("7. " + f);
+>>>>>>> Stashed changes
                 		plotEntry(player, plot);
                 	}
                 } else if (leftPlot(f, event.getTo())) {
