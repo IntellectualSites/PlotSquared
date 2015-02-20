@@ -256,7 +256,7 @@ public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {
                             final Entity[] entities = chunk.getEntities();
                             Entity entity;
                             for (int i = entities.length - 1; i >= 0; i--) {
-                                if (!((entity = entities[i]) instanceof Player) && !PlotListener.isInPlot(entity.getLocation())) {
+                                if (!((entity = entities[i]) instanceof Player) && !.isInPlot(entity.getLocation())) {
                                     entity.remove();
                                 }
                             }

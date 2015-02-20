@@ -27,19 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+
+import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
@@ -126,33 +117,16 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         return id;
     }
 
-    /**
-     * Merges all plots in the arraylist (with cost)
-     *
-     * @param plr
-     * @param world
-     * @param plotIds
-     *
-     * @return
-     */
-    public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
-
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        if ((PlotSquared.economy != null) && plotworld.USE_ECONOMY) {
-            final double cost = plotIds.size() * plotworld.MERGE_PRICE;
-            if (cost > 0d) {
-                final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr) < cost) {
-                    PlayerFunctions.sendMessage(plr, C.CANNOT_AFFORD_MERGE, "" + cost);
-                    return false;
-                }
-                economy.withdrawPlayer(plr, cost);
-                PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+    public static ArrayList<PlotId> getPlotSelectionIds(PlotId pos1, final PlotId pos2) {
+        final ArrayList<PlotId> myplots = new ArrayList<>();
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                myplots.add(new PlotId(x, y));
             }
         }
-        return mergePlots(world, plotIds, true);
+        return myplots;
     }
-
+    
     /**
      * Completely merges a set of plots<br> <b>(There are no checks to make sure you supply the correct
      * arguments)</b><br> - Misuse of this method can result in unusable plots<br> - the set of plots must belong to one
@@ -303,17 +277,6 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         BukkitUtil.setSign(p.world, loc.getX(), loc.getY(), loc.getZ(), lines);
     }
 
-    public static String getPlayerName(final UUID uuid) {
-        if (uuid == null) {
-            return "unknown";
-        }
-        final OfflinePlayer plr = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-        if (!plr.hasPlayedBefore()) {
-            return "unknown";
-        }
-        return plr.getName();
-    }
-
     public static String getStringSized(final int max, final String string) {
         if (string.length() > max) {
             return string.substring(0, max);
@@ -321,18 +284,16 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         return string;
     }
 
-    public static void autoMerge(final String world, final Plot plot, final Player player) {
-
+    public static void autoMerge(final String world, final Plot plot, final UUID uuid) {
         if (plot == null) {
             return;
         }
         if (plot.owner == null) {
             return;
         }
-        if (!plot.owner.equals(UUIDHandler.getUUID(player))) {
+        if (!plot.owner.equals(uuid)) {
             return;
         }
-
         ArrayList<PlotId> plots;
         boolean merge = true;
         int count = 0;
@@ -343,32 +304,32 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             count++;
             final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
             final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
-            if (ownsPlots(world, plots, player, 0)) {
+            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+            if (ownsPlots(world, plots, uuid, 0)) {
                 final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
-            if (ownsPlots(world, plots, player, 1)) {
+            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+            if (ownsPlots(world, plots, uuid, 1)) {
                 final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
-            if (ownsPlots(world, plots, player, 2)) {
+            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+            if (ownsPlots(world, plots, uuid, 2)) {
                 final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
-            plots = PlayerFunctions.getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
-            if (ownsPlots(world, plots, player, 3)) {
+            plots = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+            if (ownsPlots(world, plots, uuid, 3)) {
                 final boolean result = mergePlots(world, plots, true);
                 if (result) {
                     merge = true;
@@ -377,16 +338,16 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             }
             merge = false;
         }
-        update(BukkitUtil.getLocation(player));
+        AChunkManager.manager.update(getPlotHome(world, plot));
     }
 
-    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final Player player, final int dir) {
+    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
 
         final PlotId id_min = plots.get(0);
         final PlotId id_max = plots.get(plots.size() - 1);
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(player)))) {
+            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(uuid))) {
                 return false;
             }
             final PlotId top = PlayerFunctions.getTopPlot(world, myplot).id;
@@ -399,18 +360,6 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             }
         }
         return true;
-    }
-    
-    public static void update(Location loc) {
-        ArrayList<Chunk> chunks = new ArrayList<>();
-        final int distance = Bukkit.getViewDistance();
-        for (int cx = -distance; cx < distance; cx++) {
-            for (int cz = -distance; cz < distance; cz++) {
-                Chunk chunk = BukkitUtil.getChunkAt(loc.getWorld(), loc.getX(), loc.getZ());
-                chunks.add(chunk);
-            }
-        }
-        AbstractSetBlock.setBlockManager.update(chunks);
     }
     
     public static void updateWorldBorder(Plot plot) {
@@ -434,16 +383,14 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
     /**
      * Create a plot and notify the world border and plot merger
      */
-    public static boolean createPlot(final Player player, final Plot plot) {
+    public static boolean createPlot(final UUID uuid, final Plot plot) {
         if (PlotHelper.worldBorder.containsKey(plot.world)) {
             updateWorldBorder(plot);
         }
-        String w = BukkitUtil.getWorld(player);
-        UUID uuid = UUIDHandler.getUUID(player);
         Plot p = createPlotAbs(uuid, plot);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(w);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(plot.world);
         if (plotworld.AUTO_MERGE) {
-            autoMerge(w, p, player);
+            autoMerge(plot.world, p, uuid);
         }
         return true;
     }
@@ -475,39 +422,25 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         return new short[]{Short.parseShort(block), 0};
     }
 
-    public static void clearAllEntities(final String world, final Plot plot, final boolean tile) {
-        final List<Entity> entities = BukkitUtil.getEntities(world);
-        for (final Entity entity : entities) {
-            final PlotId id = PlayerFunctions.getPlot(BukkitUtil.getLocation(entity));
-            if (plot.id.equals(id)) {
-                if (entity instanceof Player) {
-                    final Player player = (Player) entity;
-                    BukkitMain.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
-                    PlotListener.plotExit(player, plot);
-                } else {
-                    entity.remove();
-                }
-            }
-        }
-    }
-
     /**
-     * Clear a plot. Use null player if no player is present
-     * @param player
-     * @param world
+     * Clear a plot and associated sections: [sign, entities, border]
+     *
+     * @param requester
      * @param plot
-     * @param isDelete
      */
-    public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
-
+    public static boolean clear(UUID uuid, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         if (runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
-            return;
+            return false;
         }
+        AChunkManager.manager.clearAllEntities(plot);
+        clear(plot.world, plot, isDelete, whenDone);
+        removeSign(plot);
+        return true;
+    }
+    
+    public static void clear(final String world, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         final PlotManager manager = PlotSquared.getPlotManager(world);
-
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-
         final int prime = 31;
         int h = 1;
         h = (prime * h) + pos1.getX();
@@ -523,10 +456,8 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
-                    if (player != null && player.isOnline()) {
-                        PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
-                    }
                     runners.remove(plot);
+                    TaskManager.runTask(whenDone);
                 }
             });
             return;
@@ -536,40 +467,11 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             public void run() {
                 PlotHelper.setBiome(world, plot, Biome.FOREST);
                 runners.remove(plot);
-                if (player != null && player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
-                }
-                update(location);
+                TaskManager.runTask(whenDone);
+                AChunkManager.manager.update(location);
             }
         };
         manager.clearPlot(plotworld, plot, isDelete, run);
-    }
-
-    /**
-     * Clear a plot and associated sections: [sign, entities, border]
-     *
-     * @param requester
-     * @param plot
-     */
-    public static void clear(final Player requester, final Plot plot, final boolean isDelete) {
-        if (requester == null) {
-            clearAllEntities(plot.world, plot, false);
-            clear(requester, plot.world, plot, isDelete);
-            removeSign(plot);
-            return;
-        }
-        if (runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(requester, C.WAIT_FOR_TIMER);
-            return;
-        }
-
-        PlayerFunctions.sendMessage(requester, C.CLEARING_PLOT);
-
-        String world = requester.getWorld().getName();
-
-        clearAllEntities(world, plot, false);
-        clear(requester, world, plot, isDelete);
-        removeSign(plot);
     }
 
     public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
@@ -874,7 +776,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         
         int offset_x = newPlot.x - pos1.id.x;
         int offset_y = newPlot.y - pos1.id.y;
-        final ArrayList<PlotId> selection = PlayerFunctions.getPlotSelectionIds(pos1.id, pos2.id);
+        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
         for (PlotId id : selection) { 
             DBFunc.movePlot(world, new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
             Plot plot = PlotSquared.getPlots(world).get(id);

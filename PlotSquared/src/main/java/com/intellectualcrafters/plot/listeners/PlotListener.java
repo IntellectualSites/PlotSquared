@@ -25,15 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -41,6 +32,7 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -56,7 +48,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 @SuppressWarnings({"unused", "deprecation"}) public class PlotListener {
 
     public static void textures(final Player p) {
-        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld())) {
+        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld().getName())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }
@@ -73,15 +65,11 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     	return defaultValue;
     }
 
-    public static boolean isInPlot(final Player player) {
-        return PlayerFunctions.isInPlot(player);
+    public static boolean isInPlot(String world, int x, int y, int z) {
+        return (PlayerFunctions.getPlot(new Location(world, x, y, z)) != null);
     }
 
-    public static Plot getPlot(final Player player) {
-        return PlayerFunctions.getCurrentPlot(player);
-    }
-
-    public static boolean isPlotWorld(final World world) {
+    public static boolean isPlotWorld(final String world) {
         return PlotSquared.isPlotWorld(world);
     }
     
@@ -91,10 +79,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return ClusterManager.getCluster(location) != null;
         }
         return true;
-    }
-
-    public static PlotWorld getPlotWorld(final World world) {
-        return PlotSquared.getWorldSettings(world);
     }
 
     private static String getName(final UUID id) {
@@ -113,15 +97,15 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     }
 
     public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 0, l1.getBlockZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 0, l2.getBlockZ()));
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getX(), 0, l1.getZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getX(), 0, l2.getZ()));
         return (p2 != null) && ((p1 == null) || !p1.equals(p2));
 
     }
 
     public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getBlockX(), 0, l1.getBlockZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getBlockX(), 0, l2.getBlockZ()));
+        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getX(), 0, l1.getZ()));
+        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getX(), 0, l2.getZ()));
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
 
@@ -138,11 +122,11 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         if (id == null) {
             return null;
         }
-        final World world = loc.getWorld();
+        final String world = loc.getWorld();
         if (PlotSquared.getPlots(world).containsKey(id)) {
             return PlotSquared.getPlots(world).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld().getName());
+        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
     }
 
     private static WeatherType getWeatherType(String str) {

@@ -118,6 +118,10 @@ public class PlotSquared {
         plotworlds.remove(world);
     }
     
+    public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
+        return plots;
+    }
+    
     public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotSquared.plots = plots;
     }

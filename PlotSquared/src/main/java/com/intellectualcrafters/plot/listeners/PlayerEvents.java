@@ -21,6 +21,7 @@
 
 package com.intellectualcrafters.plot.listeners;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +83,7 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
@@ -93,6 +95,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -101,6 +104,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * Player Events involving plots
@@ -112,7 +116,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onWorldInit(final WorldInitEvent event) {
-        PlotSquared.loadWorld(event.getWorld());
+        World world = event.getWorld();
+        ChunkGenerator gen = world.getGenerator();
+        if (gen instanceof PlotGenerator) {
+            PlotSquared.loadWorld(world.getName(), (PlotGenerator) gen);
+        }
+        else {
+            PlotSquared.loadWorld(world.getName(), null);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -145,7 +156,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         // textures(event.getPlayer());
         if (isInPlot(event.getPlayer().getLocation())) {
             if (Settings.TELEPORT_ON_LOGIN) {
-                event.getPlayer().teleport(PlotHelper.getPlotHomeDefault(getPlot(event.getPlayer())));
+                BukkitUtil.teleportPlayer(player, PlotHelper.getPlotHomeDefault(getPlot(event.getPlayer())));
                 PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
             } else {
                 plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
@@ -225,7 +236,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!isPlotWorld(world)) {
             return;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world.getName());
         if (!plotworld.PLOT_CHAT) {
             return;
         }
@@ -700,19 +711,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler
     public static void onLeave(final PlayerQuitEvent event) {
-        if (PlotSelection.currentSelection.containsKey(event.getPlayer().getName())) {
-            PlotSelection.currentSelection.remove(event.getPlayer().getName());
-        }
         if (Setup.setupMap.containsKey(event.getPlayer().getName())) {
             Setup.setupMap.remove(event.getPlayer().getName());
         }
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            final Set<Plot> plots = PlotSquared.getPlots(event.getPlayer());
+            final Collection<Plot> plots = PlotSquared.getPlots(event.getPlayer().getName()).values();
             for (final Plot plot : plots) {
                 PlotWorld plotworld = PlotSquared.getWorldSettings(plot.world);
                 final PlotManager manager = PlotSquared.getPlotManager(plot.world);
-                manager.clearPlot(null, plotworld, plot, true, null);
-                DBFunc.delete(plot.world.getName(), plot);
+                manager.clearPlot(plotworld, plot, true, null);
+                DBFunc.delete(plot.world, plot);
                 PlotSquared.log(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }

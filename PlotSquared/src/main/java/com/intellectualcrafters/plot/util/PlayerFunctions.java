@@ -32,10 +32,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
+import net.milkbowl.vault.economy.Economy;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,6 +46,99 @@ import java.util.UUID;
  */
 @SuppressWarnings("javadoc") public class PlayerFunctions {
 
+    
+    /**
+     * Clear a plot. Use null player if no player is present
+     * @param player
+     * @param world
+     * @param plot
+     * @param isDelete
+     */
+    public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
+
+        if (runners.containsKey(plot)) {
+            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+            return;
+        }
+        final PlotManager manager = PlotSquared.getPlotManager(world);
+
+        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+
+        final int prime = 31;
+        int h = 1;
+        h = (prime * h) + pos1.getX();
+        h = (prime * h) + pos1.getZ();
+        state = h;
+        
+        final long start = System.currentTimeMillis();
+        final Location location = PlotHelper.getPlotHomeDefault(plot);
+        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        runners.put(plot, 1);
+        if (plotworld.TERRAIN != 0) {
+            final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+            AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
+                @Override
+                public void run() {
+                    if (player != null && player.isOnline()) {
+                        PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
+                    }
+                    runners.remove(plot);
+                }
+            });
+            return;
+        }
+        Runnable run = new Runnable() { 
+            @Override
+            public void run() {
+                PlotHelper.setBiome(world, plot, Biome.FOREST);
+                runners.remove(plot);
+                if (player != null && player.isOnline()) {
+                    PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
+                }
+                update(location);
+            }
+        };
+        manager.clearPlot(plotworld, plot, isDelete, run);
+    }
+    
+    /**
+     * Merges all plots in the arraylist (with cost)
+     *
+     * @param plr
+     * @param world
+     * @param plotIds
+     *
+     * @return
+     */
+    public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
+
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        if ((PlotSquared.economy != null) && plotworld.USE_ECONOMY) {
+            final double cost = plotIds.size() * plotworld.MERGE_PRICE;
+            if (cost > 0d) {
+                final Economy economy = PlotSquared.economy;
+                if (economy.getBalance(plr) < cost) {
+                    PlayerFunctions.sendMessage(plr, C.CANNOT_AFFORD_MERGE, "" + cost);
+                    return false;
+                }
+                economy.withdrawPlayer(plr, cost);
+                PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+        return mergePlots(world, plotIds, true);
+    }
+    
+    public static String getPlayerName(final UUID uuid) {
+        if (uuid == null) {
+            return "unknown";
+        }
+        final OfflinePlayer plr = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+        if (!plr.hasPlayedBefore()) {
+            return "unknown";
+        }
+        return plr.getName();
+    }
+    
     /**
      * @param player player
      *
@@ -56,16 +146,6 @@ import java.util.UUID;
      */
     public static boolean isInPlot(final Player player) {
         return getCurrentPlot(player) != null;
-    }
-
-    public static ArrayList<PlotId> getPlotSelectionIds(PlotId pos1, final PlotId pos2) {
-        final ArrayList<PlotId> myplots = new ArrayList<>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                myplots.add(new PlotId(x, y));
-            }
-        }
-        return myplots;
     }
 
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {

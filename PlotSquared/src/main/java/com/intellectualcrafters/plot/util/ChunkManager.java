@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
@@ -35,16 +36,19 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
@@ -740,5 +744,34 @@ public class ChunkManager extends AChunkManager {
             }
         }
         return 0;
+    }
+    
+    public void clearAllEntities(final Plot plot) {
+        final List<Entity> entities = BukkitUtil.getEntities(plot.world);
+        for (final Entity entity : entities) {
+            final PlotId id = PlayerFunctions.getPlot(BukkitUtil.getLocation(entity));
+            if (plot.id.equals(id)) {
+                if (entity instanceof Player) {
+                    final Player player = (Player) entity;
+                    BukkitMain.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+                    PlotListener.plotExit(player, plot);
+                } else {
+                    entity.remove();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void update(Location loc) {
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        final int distance = Bukkit.getViewDistance();
+        for (int cx = -distance; cx < distance; cx++) {
+            for (int cz = -distance; cz < distance; cz++) {
+                Chunk chunk = BukkitUtil.getChunkAt(loc.getWorld(), loc.getX(), loc.getZ());
+                chunks.add(chunk);
+            }
+        }
+        AbstractSetBlock.setBlockManager.update(chunks);
     }
 }
