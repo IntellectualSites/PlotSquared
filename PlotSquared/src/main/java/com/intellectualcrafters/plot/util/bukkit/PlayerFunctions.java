@@ -142,7 +142,7 @@ public class PlayerFunctions {
         if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
             return null;
         }
-        final PlotId id = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final PlotId id = PlotHelper.getPlotId(BukkitUtil.getLocation(player));
         final String world = player.getWorld().getName();
         if (id == null) {
             return null;

@@ -813,7 +813,7 @@ public class PlotHelper {
      * @param loc
      * @return
      */
-    public static PlotId getPlot(final Location loc) {
+    public static PlotId getPlotId(final Location loc) {
         final String world = loc.getWorld();
         final PlotManager manager = PlotSquared.getPlotManager(world);
         if (manager == null) {
@@ -827,5 +827,13 @@ public class PlotHelper {
             }
         }
         return id;
+    }
+    
+    public static Plot getPlot(final Location loc) {
+        PlotId id = getPlotId(loc);
+        if (id == null) {
+            return null;
+        }
+        return getPlot(loc.getWorld(), id);
     }
 }

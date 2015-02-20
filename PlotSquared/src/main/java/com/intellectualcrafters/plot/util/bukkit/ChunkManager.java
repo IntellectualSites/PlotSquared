@@ -110,12 +110,12 @@ public class ChunkManager extends AChunkManager {
         final int z2 = z1 + 15;
         final Location bot = new Location(world, x1, 0, z1);
         Plot plot;
-        plot = PlotHelper.getCurrentPlot(bot);
+        plot = PlotHelper.getPlot(bot);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
         final Location top = new Location(world, x2, 0, z2);
-        plot = PlotHelper.getCurrentPlot(top);
+        plot = PlotHelper.getPlot(top);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
@@ -743,7 +743,7 @@ public class ChunkManager extends AChunkManager {
     public void clearAllEntities(final Plot plot) {
         final List<Entity> entities = BukkitUtil.getEntities(plot.world);
         for (final Entity entity : entities) {
-            final PlotId id = PlayerFunctions.getPlot(BukkitUtil.getLocation(entity));
+            final PlotId id = PlotHelper.getPlotId(BukkitUtil.getLocation(entity));
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
