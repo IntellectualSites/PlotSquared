@@ -562,7 +562,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Location loc = BukkitUtil.getLocation(event.getLocation());
-        final String world = loc.getWorld().getName();
+        final String world = loc.getWorld();
         if (!isPlotWorld(world)) {
             return;
         }
@@ -621,12 +621,15 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (!plot.isAdded(p)) {
-                        if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
-                            if (isPlotArea(loc)) {
-                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                                e.setCancelled(true);
-                                return;
+                    } else {
+                        UUID uuid = UUIDHandler.getUUID(p);
+                        if (!plot.isAdded(uuid)) 
+                            if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
+                                if (isPlotArea(loc)) {
+                                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
+                                    e.setCancelled(true);
+                                    return;
+                                }
                             }
                         }
                     }

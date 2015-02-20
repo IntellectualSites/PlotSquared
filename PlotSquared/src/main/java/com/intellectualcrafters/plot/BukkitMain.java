@@ -81,7 +81,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     // TODO restructure this
     public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
-        final Plot bot = PlayerFunctions.getBottomPlot(player.getWorld().getName(), plot);
+        final Plot bot = PlotHelper.getBottomPlot(player.getWorld().getName(), plot);
         final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
@@ -253,7 +253,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                             final Entity[] entities = chunk.getEntities();
                             Entity entity;
                             for (int i = entities.length - 1; i >= 0; i--) {
-                                if (!((entity = entities[i]) instanceof Player) && !.isInPlot(entity.getLocation())) {
+                                if (!((entity = entities[i]) instanceof Player) && (PlotHelper.getPlot(BukkitUtil.getLocation(entity)) == null)) {
                                     entity.remove();
                                 }
                             }
