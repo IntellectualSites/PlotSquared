@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -19,7 +20,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.*;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -76,7 +79,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 if (Settings.USE_PLOTME_ALIAS) {
                     player.performCommand(message.replace("/plotme", "plots"));
                 } else {
-                    BukkitPlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
+                    MainUtil.sendMessage(new BukkitPlayer(player), C.NOT_USING_PLOTME);
                 }
                 event.setCancelled(true);
             }

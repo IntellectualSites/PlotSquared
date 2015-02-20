@@ -48,6 +48,19 @@ import java.util.UUID;
  * Functions involving players, plots and locations.
  */
 public class BukkitPlayerFunctions {
+    
+    /*
+     * =========== NOTICE ================
+     *  - We will try to move as many functions as we can out of this class and into the MainUtil class
+     */
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Clear a plot. Use null player if no player is present
      * @param player
