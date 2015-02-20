@@ -169,7 +169,7 @@ public class AugmentedPopulator extends BlockPopulator {
                         continue;
                     }
                 }
-                PlotHelper.setBlock(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
+                SetBlockManager.setBlockManager.set(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
             }
         }
         for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {
