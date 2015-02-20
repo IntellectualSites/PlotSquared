@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -634,12 +635,12 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
         final int maxChunkZ = (int) Math.floor((double) topZ / 16);
 
-        final ArrayList<Chunk> chunks = new ArrayList<>();
+        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 if (canSendChunk) {
-                    final Chunk chunk = BukkitUtil.getChunkAt(world, x, z);
+                    final ChunkLoc chunk = new ChunkLoc(x, z);
                     chunks.add(chunk);
                 } else {
                     BukkitUtil.refreshChunk(world, x, z);
@@ -647,7 +648,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             }
         }
         try {
-            SendChunk.sendChunk(chunks);
+            SendChunk.sendChunk(world, chunks);
         } catch (final Throwable e) {
             canSendChunk = false;
             for (int x = minChunkX; x <= maxChunkX; x++) {

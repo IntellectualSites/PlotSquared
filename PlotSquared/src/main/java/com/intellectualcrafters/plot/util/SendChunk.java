@@ -2,11 +2,15 @@ package com.intellectualcrafters.plot.util;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
@@ -57,7 +61,12 @@ public class SendChunk {
         ChunkCoordIntPairCon = classChunkCoordIntPair.getConstructor(int.class, int.class);
     }
 
-    public static void sendChunk(final List<Chunk> chunks) {
+    public static void sendChunk(String worldname, List<ChunkLoc> locs) {
+        World myworld = Bukkit.getWorld(worldname);
+        HashSet<Chunk> chunks = new HashSet<>();
+        for (ChunkLoc loc : locs) {
+            chunks.add(myworld.getChunkAt(loc.x, loc.z));
+        }
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
         for (final Chunk chunk : chunks) {
