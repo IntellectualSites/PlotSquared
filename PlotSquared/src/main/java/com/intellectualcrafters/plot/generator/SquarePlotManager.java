@@ -1,19 +1,14 @@
 package com.intellectualcrafters.plot.generator;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.MainUtil;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -167,30 +162,25 @@ public abstract class SquarePlotManager extends GridPlotManager {
      * Set a plot biome
      */
     @Override
-    public boolean setBiome(final String world, final Plot plot, final Biome biome) {
-        final int bottomX = MainUtil.getPlotBottomLoc(world, plot.id).getX() - 1;
-        final int topX = MainUtil.getPlotTopLoc(world, plot.id).getX() + 1;
-        final int bottomZ = MainUtil.getPlotBottomLoc(world, plot.id).getZ() - 1;
-        final int topZ = MainUtil.getPlotTopLoc(world, plot.id).getZ() + 1;
-        final Block block = world.getBlockAt(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 1, 1));
-        final Biome current = block.getBiome();
-        
-        
-        
-        if (biome.equals(current)) {
-            return false;
-        }
+    public boolean setBiome(final Plot plot, final int biome) {
+        final int bottomX = MainUtil.getPlotBottomLoc(plot.world, plot.id).getX() - 1;
+        final int topX = MainUtil.getPlotTopLoc(plot.world, plot.id).getX() + 1;
+        final int bottomZ = MainUtil.getPlotBottomLoc(plot.world, plot.id).getZ() - 1;
+        final int topZ = MainUtil.getPlotTopLoc(plot.world, plot.id).getZ() + 1;
+        int size = (topX - bottomX + 1) * (topZ - bottomZ + 1);
+        int[] xb = new int[size];
+        int[] zb = new int[size];
+        int[] biomes = new int[size];
+        int index = 0;
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                final Block blk = world.getBlockAt(x, 0, z);
-                final Biome c = blk.getBiome();
-                if (c.equals(biome)) {
-                    x += 15;
-                    continue;
-                }
-                blk.setBiome(biome);
+                xb[index] = x;
+                zb[index] = z;
+                biomes[index] = biome;
+                index++;
             }
         }
+        BlockManager.setBiomes(plot.world, xb, zb, biomes);
         return true;
     }
 }

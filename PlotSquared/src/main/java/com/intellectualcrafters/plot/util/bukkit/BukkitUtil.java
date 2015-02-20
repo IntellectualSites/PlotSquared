@@ -152,4 +152,13 @@ public class BukkitUtil extends BlockManager {
     public static int getViewDistance() {
         return Bukkit.getViewDistance();
     }
+
+    @Override
+    public void functionSetBiomes(String worldname, int[] x, int[] z, int[] biome) {
+        World world = getWorld(worldname);
+        Biome[] biomes = Biome.values();
+        for (int i = 0; i < x.length; i++) {
+            world.setBiome(x[i], z[i], biomes[biome[i]]);
+        }
+    }
 }

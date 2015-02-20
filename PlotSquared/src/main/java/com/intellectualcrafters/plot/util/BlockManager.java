@@ -32,6 +32,12 @@ public abstract class BlockManager {
     
     public abstract void functionSetSign(String worldname, int x, int y, int z, String[] lines);
     
+    public abstract void functionSetBiomes(final String worldname, final int[] x, final int z[], final int[] biome);
+    
+    public static void setBiomes(final String worldname, final int[] x, final int z[], final int[] biome) {
+        manager.functionSetBiomes(worldname, x, z, biome);
+    }
+    
     public static void setBlocks(final String worldname, final int[] x, final int y[], final int z[], final PlotBlock[][] blocks) {
         final int[] id = new int[blocks.length];
         final byte[] data = new byte[blocks.length];
