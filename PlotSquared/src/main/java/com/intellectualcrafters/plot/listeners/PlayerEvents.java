@@ -492,18 +492,29 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onStructureGrow(final StructureGrowEvent e) {
+        if (!isPlotWorld(e.getWorld().getName())) {
+            return;
+        }
         final List<BlockState> blocks = e.getBlocks();
         boolean remove = false;
         for (int i = blocks.size() - 1; i >= 0; i--) {
-            if (remove || isPlotWorld(blocks.get(i).getLocation())) {
+            if (remove) {
+                e.getBlocks().remove(i);
                 remove = true;
-                final Location loc = blocks.get(i).getLocation();
                 if (!isInPlot(loc)) {
                     if (isPlotArea(loc)) {
                         e.getBlocks().remove(i);
                     }
                 }
             }
+            else {
+                final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
+                if (!isPlotArea(loc)) {
+                    remove = true;
+                    e.getBlocks().remove(i);
+                }
+            }
+            
         }
     }
 
