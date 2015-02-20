@@ -55,7 +55,7 @@ public class PWE {
             if (!PlotSquared.isPlotWorld(p.getWorld().getName())) {
                 removeMask(p);
             }
-            final PlotId id = PlayerFunctions.getPlot(l);
+            final PlotId id = PlotHelper.getPlotId(l);
             if (id != null) {
                 final Plot plot = PlotSquared.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
