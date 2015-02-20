@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class plugin extends SubCommand {
 

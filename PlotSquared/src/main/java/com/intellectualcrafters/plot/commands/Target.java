@@ -27,8 +27,8 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Target extends SubCommand {
 

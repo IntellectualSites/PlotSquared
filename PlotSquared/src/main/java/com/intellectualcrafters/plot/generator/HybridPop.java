@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 /**
  * @author Citymonstret

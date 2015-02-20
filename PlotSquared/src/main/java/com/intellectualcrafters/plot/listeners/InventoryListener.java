@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.intellectualcrafters.plot.object.InfoInventory;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
  * Created 2014-11-18 for PlotSquared

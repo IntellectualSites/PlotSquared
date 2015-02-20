@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import java.util.List;
 

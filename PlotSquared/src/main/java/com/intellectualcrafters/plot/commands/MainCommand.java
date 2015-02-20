@@ -35,8 +35,8 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
  * PlotSquared command class

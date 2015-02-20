@@ -41,18 +41,18 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.Metrics;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.SendChunk;
-import com.intellectualcrafters.plot.util.SetBlockFast;
-import com.intellectualcrafters.plot.util.SetBlockFast_1_8;
-import com.intellectualcrafters.plot.util.SetBlockManager;
-import com.intellectualcrafters.plot.util.SetBlockSlow;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.Metrics;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.SendChunk;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener,IPlotMain {

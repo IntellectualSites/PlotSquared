@@ -3,12 +3,6 @@ package com.intellectualcrafters.plot.util;
 import java.util.HashMap;
 import java.util.List;
 
-
-
-
-
-
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -36,8 +30,6 @@ public abstract class AChunkManager {
     public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
     
     public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
-    
-    public abstract void update(Location loc);
     
     public abstract void clearAllEntities(final Plot plot);
 }

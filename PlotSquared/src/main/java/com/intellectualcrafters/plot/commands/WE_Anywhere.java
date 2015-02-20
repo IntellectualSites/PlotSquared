@@ -25,8 +25,8 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.util.PWE;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PWE;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class WE_Anywhere extends SubCommand {
 

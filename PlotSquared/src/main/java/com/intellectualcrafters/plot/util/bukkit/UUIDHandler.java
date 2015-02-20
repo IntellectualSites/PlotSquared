@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -175,16 +174,6 @@ public class UUIDHandler {
         if (name != null) {
             return name.value;
         }
-        
-        // check drive
-        if (Settings.UUID_FROM_DISK) {
-            OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            String string = op.getName();
-            StringWrapper sw = new StringWrapper(string);
-            add(sw, uuid);
-            return string;
-        }
-        
         return null;
     }
 

@@ -1,8 +1,8 @@
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -59,13 +59,8 @@ public class SendChunk {
 
         ChunkCoordIntPairCon = classChunkCoordIntPair.getConstructor(int.class, int.class);
     }
-
-    public static void sendChunk(String worldname, List<ChunkLoc> locs) {
-        World myworld = Bukkit.getWorld(worldname);
-        HashSet<Chunk> chunks = new HashSet<>();
-        for (ChunkLoc loc : locs) {
-            chunks.add(myworld.getChunkAt(loc.x, loc.z));
-        }
+    
+    public static void sendChunk(List<Chunk> chunks) {
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
         for (final Chunk chunk : chunks) {
@@ -86,5 +81,14 @@ public class SendChunk {
                 }
             }
         }
+    }
+
+    public static void sendChunk(String worldname, List<ChunkLoc> locs) {
+        World myworld = Bukkit.getWorld(worldname);
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        for (ChunkLoc loc : locs) {
+            chunks.add(myworld.getChunkAt(loc.x, loc.z));
+        }
+        sendChunk(chunks);
     }
 }

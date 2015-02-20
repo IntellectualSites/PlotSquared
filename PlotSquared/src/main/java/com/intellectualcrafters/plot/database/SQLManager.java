@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PlotSquared;

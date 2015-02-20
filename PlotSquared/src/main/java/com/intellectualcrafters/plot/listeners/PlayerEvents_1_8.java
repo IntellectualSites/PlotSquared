@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
 

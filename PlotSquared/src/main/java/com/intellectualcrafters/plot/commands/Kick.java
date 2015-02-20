@@ -27,8 +27,8 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings({"unused", "deprecation", "javadoc"}) public class Kick extends SubCommand {
 

@@ -21,19 +21,13 @@
 
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.Economy;
-
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -44,6 +38,8 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 
 /**
  * plot functions
@@ -77,6 +73,19 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
     	for (Plot plot : PlotSquared.getPlots(world).values()) {
     		updateWorldBorder(plot);
     	}
+    }
+    
+    public static void update(Location loc) {
+        String world = loc.getWorld();
+        ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        final int distance = BukkitUtil.getViewDistance();
+        for (int cx = -distance; cx < distance; cx++) {
+            for (int cz = -distance; cz < distance; cz++) {
+                ChunkLoc chunk = new ChunkLoc(cx, cz);
+                chunks.add(chunk);
+            }
+        }
+        AbstractSetBlock.setBlockManager.update(world, chunks);
     }
     
     public static void createWorld(String world, String generator) {
@@ -336,7 +345,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             }
             merge = false;
         }
-        AChunkManager.manager.update(getPlotHome(world, plot));
+        update(getPlotHome(world, plot));
     }
 
     private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
@@ -398,7 +407,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
      */
     public static Plot createPlotAbs(final UUID uuid, final Plot plot) {
         final String w = plot.world;
-        final Plot p = new Plot(plot.id, uuid, plot.settings.getBiome(), new ArrayList<UUID>(), new ArrayList<UUID>(), w);
+        final Plot p = new Plot(plot.id, uuid, new ArrayList<UUID>(), new ArrayList<UUID>(), w);
         PlotSquared.updatePlot(p);
         DBFunc.createPlotAndSettings(p);
         return p;
@@ -466,7 +475,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
                 PlotHelper.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
-                AChunkManager.manager.update(location);
+                update(location);
             }
         };
         manager.clearPlot(plotworld, plot, isDelete, run);
@@ -821,7 +830,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         if (PlotSquared.getPlots(world).containsKey(id)) {
             return PlotSquared.getPlots(world).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }
 
     /**
@@ -839,6 +848,6 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         if (PlotSquared.getPlots(loc.getWorld()).containsKey(id)) {
             return PlotSquared.getPlots(loc.getWorld()).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
+        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
     }
 }

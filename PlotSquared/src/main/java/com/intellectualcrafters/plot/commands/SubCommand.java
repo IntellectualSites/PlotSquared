@@ -27,7 +27,7 @@ import java.util.Arrays;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
  * SubCommand class
@@ -146,7 +146,7 @@ import com.intellectualcrafters.plot.util.PlayerFunctions;
      * @param c    Caption
      * @param args Arguments (%s's)
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
+     * @see com.intellectualcrafters.plot.util.bukkit.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
      * com.intellectualcrafters.plot.config.C, String...)
      */
     public boolean sendMessage(final Player plr, final C c, final String... args) {

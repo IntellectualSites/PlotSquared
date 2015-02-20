@@ -32,7 +32,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {

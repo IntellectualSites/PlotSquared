@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
  * Created 2014-11-09 for PlotSquared

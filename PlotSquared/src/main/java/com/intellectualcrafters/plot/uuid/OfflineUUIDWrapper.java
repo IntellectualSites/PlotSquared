@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
 

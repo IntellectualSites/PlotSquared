@@ -19,7 +19,7 @@
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

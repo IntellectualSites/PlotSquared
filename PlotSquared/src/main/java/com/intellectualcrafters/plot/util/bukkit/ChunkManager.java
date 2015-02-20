@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,8 +51,8 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
-import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.PlotHelper;
 
 public class ChunkManager extends AChunkManager {
     
@@ -760,18 +760,5 @@ public class ChunkManager extends AChunkManager {
                 }
             }
         }
-    }
-
-    @Override
-    public void update(Location loc) {
-        ArrayList<Chunk> chunks = new ArrayList<>();
-        final int distance = Bukkit.getViewDistance();
-        for (int cx = -distance; cx < distance; cx++) {
-            for (int cz = -distance; cz < distance; cz++) {
-                Chunk chunk = BukkitUtil.getChunkAt(loc.getWorld(), loc.getX(), loc.getZ());
-                chunks.add(chunk);
-            }
-        }
-        AbstractSetBlock.setBlockManager.update(chunks);
     }
 }

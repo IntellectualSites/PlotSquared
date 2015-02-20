@@ -26,11 +26,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * The plot class

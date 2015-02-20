@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 public class RegenAllRoads extends SubCommand {
 

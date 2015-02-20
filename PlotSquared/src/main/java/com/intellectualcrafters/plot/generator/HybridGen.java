@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -

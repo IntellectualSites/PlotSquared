@@ -18,8 +18,6 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.SetBlockManager;
-import com.intellectualcrafters.plot.util.SetBlockSlow;
 
 public class BukkitUtil extends BlockManager {
     
@@ -147,6 +145,10 @@ public class BukkitUtil extends BlockManager {
             }
             ((Sign) blockstate).update(true);
         }
+    }
+
+    public static int getViewDistance() {
+        return Bukkit.getViewDistance();
     }
     
 }
