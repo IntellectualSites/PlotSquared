@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -46,11 +45,10 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Unlink extends SubCommand {
-
     public Unlink() {
         super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -63,7 +61,6 @@ public class Unlink extends SubCommand {
         if (PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
-
         final World world = plr.getWorld();
         if (!unlinkPlot(world, plot)) {
             PlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
@@ -83,31 +80,24 @@ public class Unlink extends SubCommand {
         return true;
     }
     
-    public static boolean unlinkPlot(World world, Plot plot) {
+    public static boolean unlinkPlot(final World world, final Plot plot) {
         final PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
         final PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
         final ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(pos1, pos2);
-
         final PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
-
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
             return false;
         }
-
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-
         manager.startPlotUnlink(world, plotworld, ids);
-
         for (final PlotId id : ids) {
             final Plot myplot = PlotSquared.getPlots(world).get(id);
-
             if (plot == null) {
                 continue;
             }
-
             if (plot.helpers != null) {
                 myplot.helpers = plot.helpers;
             }
@@ -115,25 +105,20 @@ public class Unlink extends SubCommand {
                 myplot.denied = plot.denied;
             }
             myplot.deny_entry = plot.deny_entry;
-            myplot.settings.setMerged(new boolean[]{false, false, false, false});
+            myplot.settings.setMerged(new boolean[] { false, false, false, false });
             DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
         }
-
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
                 final boolean ly = y < pos2.y;
-
                 final Plot p = PlotHelper.getPlot(world, new PlotId(x, y));
-
                 if (lx) {
                     manager.createRoadEast(plotworld, p);
                     if (ly) {
                         manager.createRoadSouthEast(plotworld, p);
                     }
-
                 }
-
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
@@ -141,10 +126,10 @@ public class Unlink extends SubCommand {
             }
         }
         manager.finishPlotUnlink(world, plotworld, ids);
-        for (PlotId id : ids) {
-            Plot myPlot = PlotHelper.getPlot(world, id);
+        for (final PlotId id : ids) {
+            final Plot myPlot = PlotHelper.getPlot(world, id);
             if (plot.hasOwner()) {
-                String name = UUIDHandler.getName(myPlot.owner);
+                final String name = UUIDHandler.getName(myPlot.owner);
                 if (name != null) {
                     PlotHelper.setSign(world, name, myPlot);
                 }

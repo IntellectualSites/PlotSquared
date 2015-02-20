@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
@@ -34,24 +33,22 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 
 public class DebugRoadRegen extends SubCommand {
-
     public DebugRoadRegen() {
         super(Command.DEBUGROADREGEN, "Regenerate all road schematic in your current chunk", "debugroadregen", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
     public boolean execute(final Player player, final String... args) {
         if (!(PlotSquared.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
-        
-        Chunk chunk = BukkitUtil.getLocation(entity).getChunk();
-        boolean result = manager.regenerateRoad(chunk);
+        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
+        final Chunk chunk = BukkitUtil.getLocation(entity).getChunk();
+        final boolean result = manager.regenerateRoad(chunk);
         if (result) {
-            SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] {chunk}));
+            SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
         }
-        PlayerFunctions.sendMessage(player, "&6Regenerating chunk: "+chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+        PlayerFunctions.sendMessage(player, "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }
 }

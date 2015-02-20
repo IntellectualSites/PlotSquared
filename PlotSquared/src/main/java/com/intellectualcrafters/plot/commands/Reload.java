@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -29,11 +28,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Reload extends SubCommand {
-
     public Reload() {
         super("reload", "plots.admin.command.reload", "Reload configurations", "", "reload", CommandCategory.INFO, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         try {
@@ -52,5 +50,4 @@ public class Reload extends SubCommand {
         }
         return true;
     }
-
 }

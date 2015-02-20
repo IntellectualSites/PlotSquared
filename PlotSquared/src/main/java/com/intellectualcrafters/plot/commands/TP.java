@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,11 +36,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class TP extends SubCommand {
-
     public TP() {
         super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
@@ -65,7 +63,6 @@ public class TP extends SubCommand {
             PlotSquared.teleportPlayer(plr, plr.getLocation(), temp);
             return true;
         }
-
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
             PlotSquared.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
@@ -75,7 +72,7 @@ public class TP extends SubCommand {
         }
         return false;
     }
-
+    
     private Plot isAlias(final World world, String a) {
         int index = 0;
         if (a.contains(";")) {
@@ -85,7 +82,8 @@ public class TP extends SubCommand {
             }
             a = split[0];
         }
-        @SuppressWarnings("deprecation") final Player player = Bukkit.getPlayer(a);
+        @SuppressWarnings("deprecation")
+        final Player player = Bukkit.getPlayer(a);
         if (player != null) {
             final java.util.Set<Plot> plotMainPlots = PlotSquared.getPlots(world, player);
             final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);

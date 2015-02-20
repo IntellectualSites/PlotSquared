@@ -9,15 +9,14 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public abstract class AChunkManager {
-    
     public static AChunkManager manager = null;
     public static RegionWrapper CURRENT_PLOT_CLEAR = null;
     public static HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
     public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     
-    public static ChunkLoc getChunkChunk(Location loc) {
-        int x = loc.getX() >> 9;
-        int z = loc.getZ() >> 9;
+    public static ChunkLoc getChunkChunk(final Location loc) {
+        final int x = loc.getX() >> 9;
+        final int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
     

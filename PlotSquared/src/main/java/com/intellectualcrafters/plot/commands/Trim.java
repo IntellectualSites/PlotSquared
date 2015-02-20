@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.io.File;
@@ -40,25 +39,23 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Trim extends SubCommand {
-
     public static boolean TASK = false;
     private static int TASK_ID = 0;
     
     public Trim() {
         super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
     }
-
-    public PlotId getId(String id) {
+    
+    public PlotId getId(final String id) {
         try {
-            String[] split = id.split(";");
+            final String[] split = id.split(";");
             return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -70,8 +67,8 @@ public class Trim extends SubCommand {
             return false;
         }
         if (args.length == 1) {
-            String arg = args[0].toLowerCase();
-            PlotId id = getId(arg);
+            final String arg = args[0].toLowerCase();
+            final PlotId id = getId(arg);
             if (id != null) {
                 PlayerFunctions.sendMessage(plr, "/plot trim x;z &l<world>");
                 return false;
@@ -87,22 +84,20 @@ public class Trim extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
-        String arg = args[0].toLowerCase();
+        final String arg = args[0].toLowerCase();
         if (!arg.equals("all")) {
             PlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
-        if (world == null || PlotSquared.getWorldSettings(world) == null) {
+        if ((world == null) || (PlotSquared.getWorldSettings(world) == null)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
-        
         if (Trim.TASK) {
             sendMessage(C.TRIM_IN_PROGRESS.s());
             return false;
         }
-        
         sendMessage(C.TRIM_START.s());
         final ArrayList<ChunkLoc> empty = new ArrayList<>();
         getTrimRegions(empty, world, new Runnable() {
@@ -118,54 +113,50 @@ public class Trim extends SubCommand {
         if (Trim.TASK) {
             return false;
         }
-        BukkitTaskManager.runTaskAsync(new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                String directory = world.getName() + File.separator + "region";
-                File folder = new File(directory);
-                File[] regionFiles = folder.listFiles();
-                for (File file : regionFiles) {
-                    String name = file.getName();
+                final String directory = world.getName() + File.separator + "region";
+                final File folder = new File(directory);
+                final File[] regionFiles = folder.listFiles();
+                for (final File file : regionFiles) {
+                    final String name = file.getName();
                     if (name.endsWith("mca")) {
                         if (file.getTotalSpace() <= 8192) {
                             try {
-                                String[] split = name.split("\\.");
-                                int x = Integer.parseInt(split[1]);
-                                int z = Integer.parseInt(split[2]);
-                                ChunkLoc loc = new ChunkLoc(x, z);
+                                final String[] split = name.split("\\.");
+                                final int x = Integer.parseInt(split[1]);
+                                final int z = Integer.parseInt(split[2]);
+                                final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
-                            }
-                            catch (Exception e) {
+                            } catch (final Exception e) {
                                 System.out.print("INVALID MCA: " + name);
                             }
-                        }
-                        else {
-                            Path path = Paths.get(file.getPath());
+                        } else {
+                            final Path path = Paths.get(file.getPath());
                             try {
-                                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                                long creation = attr.creationTime().toMillis();
-                                long modification = file.lastModified();
-                                long diff = Math.abs(creation - modification);
+                                final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                                final long creation = attr.creationTime().toMillis();
+                                final long modification = file.lastModified();
+                                final long diff = Math.abs(creation - modification);
                                 if (diff < 10000) {
                                     try {
-                                        String[] split = name.split("\\.");
-                                        int x = Integer.parseInt(split[1]);
-                                        int z = Integer.parseInt(split[2]);
-                                        ChunkLoc loc = new ChunkLoc(x, z);
+                                        final String[] split = name.split("\\.");
+                                        final int x = Integer.parseInt(split[1]);
+                                        final int z = Integer.parseInt(split[2]);
+                                        final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
-                                    }
-                                    catch (Exception e) {
+                                    } catch (final Exception e) {
                                         System.out.print("INVALID MCA: " + name);
                                     }
                                 }
-                            } catch (Exception e) {
-                                
+                            } catch (final Exception e) {
                             }
                         }
                     }
                 }
                 Trim.TASK = false;
-                BukkitTaskManager.runTaskAsync(whenDone);
+                TaskManager.runTaskAsync(whenDone);
             }
         });
         Trim.TASK = true;
@@ -182,29 +173,27 @@ public class Trim extends SubCommand {
         plots.addAll(PlotSquared.getPlots(world).values());
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
-        sendMessage(" - CHUNKS: " + (chunks.size() * 1024) +" (max)");
-        sendMessage(" - TIME ESTIMATE: " + (chunks.size()/1200) +" minutes");
+        sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
+        sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");
         Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {
-                long start = System.currentTimeMillis();
-                while (System.currentTimeMillis() - start < 50) {
+                final long start = System.currentTimeMillis();
+                while ((System.currentTimeMillis() - start) < 50) {
                     if (plots.size() == 0) {
                         empty.addAll(chunks);
                         System.out.print("DONE!");
                         Trim.TASK = false;
-                        BukkitTaskManager.runTaskAsync(whenDone);
+                        TaskManager.runTaskAsync(whenDone);
                         Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
                         return;
                     }
-                    Plot plot = plots.get(0);
+                    final Plot plot = plots.get(0);
                     plots.remove(0);
-                    Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id);
-                    Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
-                    
-                    Location pos3 = new Location(world, pos1.getBlockX(), 64, pos2.getBlockZ());
-                    Location pos4 = new Location(world, pos2.getBlockX(), 64, pos1.getBlockZ());
-                    
+                    final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id);
+                    final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+                    final Location pos3 = new Location(world, pos1.getBlockX(), 64, pos2.getBlockZ());
+                    final Location pos4 = new Location(world, pos2.getBlockX(), 64, pos1.getBlockZ());
                     chunks.remove(ChunkManager.getChunkChunk(pos1));
                     chunks.remove(ChunkManager.getChunkChunk(pos2));
                     chunks.remove(ChunkManager.getChunkChunk(pos3));
@@ -218,39 +207,39 @@ public class Trim extends SubCommand {
     
     public static ArrayList<Plot> expired = null;
     
-//    public static void updateUnmodifiedPlots(final World world) {
-//        final SquarePlotManager manager = (SquarePlotManager) PlotSquared.getPlotManager(world);
-//        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getWorldSettings(world);
-//        final ArrayList<Plot> expired = new ArrayList<>();
-//        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
-//        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
-//        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
-//            @Override
-//            public void run() {
-//                if (manager != null && plots.size() > 0) {
-//                    Plot plot = plots.iterator().next();
-//                    if (plot.hasOwner()) {
-//                        SquarePlotManager.checkModified(plot, 0);
-//                    }
-//                    if (plot.owner == null || !SquarePlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
-//                        expired.add(plot);
-//                        sendMessage("found expired: " + plot);
-//                    }
-//                }
-//                else {
-//                    Trim.expired = expired;
-//                    Trim.TASK = false;
-//                    sendMessage("Done!");
-//                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
-//                    return;
-//                }
-//            }
-//        }, 1, 1);
-//    }
-//    
-    public static void deleteChunks(World world, ArrayList<ChunkLoc> chunks) {
-        String worldname = world.getName();
-        for (ChunkLoc loc : chunks) {
+    //    public static void updateUnmodifiedPlots(final World world) {
+    //        final SquarePlotManager manager = (SquarePlotManager) PlotSquared.getPlotManager(world);
+    //        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getWorldSettings(world);
+    //        final ArrayList<Plot> expired = new ArrayList<>();
+    //        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
+    //        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
+    //        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
+    //            @Override
+    //            public void run() {
+    //                if (manager != null && plots.size() > 0) {
+    //                    Plot plot = plots.iterator().next();
+    //                    if (plot.hasOwner()) {
+    //                        SquarePlotManager.checkModified(plot, 0);
+    //                    }
+    //                    if (plot.owner == null || !SquarePlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
+    //                        expired.add(plot);
+    //                        sendMessage("found expired: " + plot);
+    //                    }
+    //                }
+    //                else {
+    //                    Trim.expired = expired;
+    //                    Trim.TASK = false;
+    //                    sendMessage("Done!");
+    //                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+    //                    return;
+    //                }
+    //            }
+    //        }, 1, 1);
+    //    }
+    //
+    public static void deleteChunks(final World world, final ArrayList<ChunkLoc> chunks) {
+        final String worldname = world.getName();
+        for (final ChunkLoc loc : chunks) {
             ChunkManager.deleteRegionFile(worldname, loc);
         }
     }
@@ -258,5 +247,4 @@ public class Trim extends SubCommand {
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
     }
-    
 }

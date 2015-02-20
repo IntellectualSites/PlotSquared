@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -50,16 +49,15 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class DebugClaimTest extends SubCommand {
-
     public DebugClaimTest() {
         super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "debugclaimtest", CommandCategory.DEBUG, false);
     }
-
+    
     @SuppressWarnings("unused")
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
         return claimPlot(player, plot, teleport, "");
     }
-
+    
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, true);
         Bukkit.getPluginManager().callEvent(event);
@@ -73,7 +71,7 @@ public class DebugClaimTest extends SubCommand {
         }
         return event.isCancelled();
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
@@ -84,13 +82,10 @@ public class DebugClaimTest extends SubCommand {
             if ((world == null) || !PlotSquared.isPlotWorld(world)) {
                 return !PlayerFunctions.sendMessage(null, "&cInvalid plot world!");
             }
-
             PlotId min, max;
-
             try {
                 final String[] split1 = args[1].split(";");
                 final String[] split2 = args[2].split(";");
-
                 min = new PlotId(Integer.parseInt(split1[0]), Integer.parseInt(split1[1]));
                 max = new PlotId(Integer.parseInt(split2[0]), Integer.parseInt(split2[1]));
             } catch (final Exception e) {
@@ -98,12 +93,9 @@ public class DebugClaimTest extends SubCommand {
             }
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
-
             final PlotManager manager = PlotSquared.getPlotManager(world);
             final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-
             final ArrayList<Plot> plots = new ArrayList<>();
-
             for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
                 final Plot plot = PlotHelper.getPlot(world, id);
                 final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
@@ -111,18 +103,14 @@ public class DebugClaimTest extends SubCommand {
                     PlayerFunctions.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
                 }
-
                 final Location loc = manager.getSignLoc(world, plotworld, plot);
-
                 final Chunk chunk = world.getChunkAt(loc);
-
                 if (!chunk.isLoaded()) {
                     final boolean result = chunk.load(false);
                     if (!result) {
                         continue;
                     }
                 }
-
                 final Block block = world.getBlockAt(loc);
                 if (block != null) {
                     if (block.getState() instanceof Sign) {
@@ -130,11 +118,8 @@ public class DebugClaimTest extends SubCommand {
                         String line = sign.getLine(2);
                         if ((line != null) && (line.length() > 2)) {
                             line = line.substring(2);
-
                             final BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-
                             UUID uuid = (map.get(new StringWrapper(line)));
-
                             if (uuid == null) {
                                 for (final StringWrapper string : map.keySet()) {
                                     if (string.value.toLowerCase().startsWith(line.toLowerCase())) {
@@ -158,22 +143,17 @@ public class DebugClaimTest extends SubCommand {
                     }
                 }
             }
-
             if (plots.size() > 0) {
                 PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
                 DBFunc.createPlots(plots);
                 DBFunc.createAllSettingsAndHelpers(plots);
-
                 for (final Plot plot : plots) {
                     PlotSquared.updatePlot(plot);
                 }
-
                 PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
-
             } else {
                 PlayerFunctions.sendMessage(null, "No plots were found for the given search.");
             }
-
         } else {
             PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused.");
         }

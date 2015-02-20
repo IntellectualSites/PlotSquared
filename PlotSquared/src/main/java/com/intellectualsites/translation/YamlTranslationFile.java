@@ -17,7 +17,6 @@ import org.yaml.snakeyaml.Yaml;
  * @author Citymonstret
  */
 public class YamlTranslationFile extends TranslationFile {
-
     final private TranslationLanguage language;
     final private String name;
     final private TranslationManager manager;
@@ -30,7 +29,7 @@ public class YamlTranslationFile extends TranslationFile {
      * YAML Object
      */
     private Yaml yaml;
-
+    
     /**
      * Constructor
      *
@@ -60,7 +59,7 @@ public class YamlTranslationFile extends TranslationFile {
         this.instance = this;
         this.instance = this;
     }
-
+    
     /**
      * Reload
      */
@@ -68,7 +67,7 @@ public class YamlTranslationFile extends TranslationFile {
         this.map = new HashMap<String, String>();
         this.read();
     }
-
+    
     /**
      * Set the header
      *
@@ -81,7 +80,7 @@ public class YamlTranslationFile extends TranslationFile {
         this.fancyHead = false;
         return this.instance;
     }
-
+    
     /**
      * Set a fancy header
      *
@@ -107,7 +106,7 @@ public class YamlTranslationFile extends TranslationFile {
         this.fancyHead = true;
         return this.instance;
     }
-
+    
     /**
      * Add a translation
      *
@@ -121,7 +120,7 @@ public class YamlTranslationFile extends TranslationFile {
         }
         this.map.put(key, value);
     }
-
+    
     /**
      * Get the translation language
      *
@@ -131,7 +130,7 @@ public class YamlTranslationFile extends TranslationFile {
     public TranslationLanguage getLanguage() {
         return this.language;
     }
-
+    
     /**
      * Save the file
      */
@@ -167,7 +166,7 @@ public class YamlTranslationFile extends TranslationFile {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Get the YAML object
      *
@@ -185,7 +184,7 @@ public class YamlTranslationFile extends TranslationFile {
         }
         return this.yaml;
     }
-
+    
     /**
      * Read the file
      *

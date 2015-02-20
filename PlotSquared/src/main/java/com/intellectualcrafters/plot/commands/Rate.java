@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -29,17 +28,16 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Rate extends SubCommand {
-
+@SuppressWarnings({ "unused", "deprecated", "javadoc" })
+public class Rate extends SubCommand {
     /*
      * String cmd, String permission, String description, String usage, String
      * alias, CommandCategory category
      */
-
     public Rate() {
         super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
@@ -82,7 +80,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         } catch (final Exception e) {
             rated = false;
         }
-
         if (rated) {
             sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
         }

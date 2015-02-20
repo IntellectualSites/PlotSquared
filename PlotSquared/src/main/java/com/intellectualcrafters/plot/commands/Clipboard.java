@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -28,28 +27,22 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Clipboard extends SubCommand {
-
     public Clipboard() {
         super(Command.CLIPBOARD, "View information about your current copy", "clipboard", CommandCategory.INFO, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!currentSelection.containsKey(plr.getName())) {
             return sendMessage(plr, C.NO_CLIPBOARD);
         }
         final PlotSelection selection = currentSelection.get(plr.getName());
-
         final PlotId plotId = selection.getPlot().getId();
         final int width = selection.getWidth();
         final int total = selection.getBlocks().length;
-
         String message = C.CLIPBOARD_INFO.s();
-
         message = message.replace("%id", plotId.toString()).replace("%width", width + "").replace("%total", total + "");
-
         PlayerFunctions.sendMessage(plr, message);
-
         return true;
     }
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.Arrays;
@@ -62,16 +61,14 @@ import com.sk89q.worldedit.function.mask.Mask;
  * @author Empire92
  */
 public class WorldEditListener implements Listener {
-
-    final List<String> monitored = Arrays.asList(new String[]{"set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", ""});
-
+    final List<String> monitored = Arrays.asList(new String[] { "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "move", "stack", "naturalize", "paste", "count", "regen", "copy", "cut", "" });
     public final Set<String> blockedcmds = new HashSet<>(Arrays.asList("/gmask", "//gmask", "/worldedit:gmask"));
     public final Set<String> restrictedcmds = new HashSet<>(Arrays.asList("/up", "//up", "/worldedit:up"));
-
+    
     private boolean isPlotWorld(final Location l) {
         return (PlotSquared.isPlotWorld(l.getWorld()));
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onDelete(final PlotDeleteEvent e) {
         final String world = e.getWorld();
@@ -92,7 +89,7 @@ public class WorldEditListener implements Listener {
         }
         PWE.setNoMask(player);
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent e) {
         final Block b = e.getClickedBlock();
@@ -115,7 +112,7 @@ public class WorldEditListener implements Listener {
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
@@ -123,7 +120,6 @@ public class WorldEditListener implements Listener {
             return;
         }
         String cmd = e.getMessage().toLowerCase();
-
         if (cmd.contains(" ")) {
             cmd = cmd.substring(0, cmd.indexOf(" "));
         }
@@ -148,7 +144,6 @@ public class WorldEditListener implements Listener {
                 }
                 final BlockVector pos1 = selection.getNativeMinimumPoint().toBlockVector();
                 final BlockVector pos2 = selection.getNativeMaximumPoint().toBlockVector();
-
                 final LocalSession session = PlotSquared.worldEdit.getSession(p);
                 final Mask mask = session.getMask();
                 if (mask == null) {
@@ -165,9 +160,8 @@ public class WorldEditListener implements Listener {
                 }
             }
         }
-
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
         final Player p = e.getPlayer();
@@ -184,7 +178,7 @@ public class WorldEditListener implements Listener {
             PWE.removeMask(p);
         }
     }
-
+    
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent e) {
         final Location t = e.getTo();
@@ -206,7 +200,7 @@ public class WorldEditListener implements Listener {
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPortal(final PlayerPortalEvent e) {
         if (BukkitMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
@@ -227,7 +221,7 @@ public class WorldEditListener implements Listener {
             PWE.removeMask(p);
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent e) {
         final Player p = e.getPlayer();

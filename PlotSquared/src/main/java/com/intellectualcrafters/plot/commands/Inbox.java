@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -39,51 +38,49 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Inbox extends SubCommand {
-
     public Inbox() {
         super(Command.INBOX, "Review the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
-    	boolean report = false;
-    	if (args.length == 1){
-    		if (args[0].equalsIgnoreCase("reports")) {
-    			report = true;
-    		}
-    	}
+        boolean report = false;
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("reports")) {
+                report = true;
+            }
+        }
         if (!PlayerFunctions.isInPlot(plr) && !report) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (plot != null && !plot.hasOwner()) {
+        if ((plot != null) && !plot.hasOwner()) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-
         Integer tier;
         final UUID uuid = UUIDHandler.getUUID(plr);
         if (BukkitMain.hasPermission(plr, "plots.comment.admin")) {
             tier = 0;
-        } else if (plot != null && plot.owner.equals(uuid)) {
+        } else if ((plot != null) && plot.owner.equals(uuid)) {
             tier = 1;
-        } else if (plot != null && plot.helpers.contains(uuid)) {
+        } else if ((plot != null) && plot.helpers.contains(uuid)) {
             tier = 2;
-        } else if (plot != null && plot.trusted.contains(uuid)) {
+        } else if ((plot != null) && plot.trusted.contains(uuid)) {
             tier = 3;
         } else {
             tier = 4;
         }
         final boolean below;
         if (args.length > 0) {
-        	below = false;
+            below = false;
             switch (args[0].toLowerCase()) {
                 case "admin":
                     if (tier <= 0) {
                         tier = 0;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
                         return false;
                     }
                     break;
@@ -91,7 +88,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 1) {
                         tier = 1;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.owner");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.owner");
                         return false;
                     }
                     break;
@@ -99,7 +96,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 2) {
                         tier = 2;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.helper");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.helper");
                         return false;
                     }
                     break;
@@ -107,7 +104,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 3) {
                         tier = 3;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.trusted");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.trusted");
                         return false;
                     }
                     break;
@@ -115,45 +112,40 @@ public class Inbox extends SubCommand {
                     if (tier <= 4) {
                         tier = 4;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.everyone");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.everyone");
                         return false;
                     }
                     break;
                 case "reports":
-                	if (tier <= 0) {
+                    if (tier <= 0) {
                         tier = -1;
                     } else {
-                    	PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
+                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
                         return false;
                     }
-                	break;
+                    break;
                 default:
-                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[]{"admin", "owner", "helper", "trusted", "everyone"}, Math.max(0, tier), 4));
+                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] { "admin", "owner", "helper", "trusted", "everyone" }, Math.max(0, tier), 4));
                     return false;
             }
+        } else {
+            below = true;
         }
-        else {
-        	below = true;
-        }
-
         final String world = plr.getWorld().getName();
         final int tier2 = tier;
-
         Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {
-            	ArrayList<PlotComment> comments = null;
-            	if (tier2 == -1) {
-            		comments = DBFunc.getComments(world, null, 0, false);
-            	}
-            	else {
-            		comments = plot.settings.getComments(tier2); 
-            	}
+                ArrayList<PlotComment> comments = null;
+                if (tier2 == -1) {
+                    comments = DBFunc.getComments(world, null, 0, false);
+                } else {
+                    comments = plot.settings.getComments(tier2);
+                }
                 if (comments == null) {
                     comments = DBFunc.getComments(world, plot, tier2, below);
                     plot.settings.setComments(comments);
                 }
-
                 if (args.length == 2) {
                     final String[] split = args[1].toLowerCase().split(":");
                     if (!split[0].equals("clear")) {

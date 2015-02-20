@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 /**
@@ -27,12 +26,12 @@ package com.intellectualcrafters.plot.object;
 public class PlotBlock {
     public final short id;
     public final byte data;
-
+    
     public PlotBlock(final short id, final byte data) {
         this.id = id;
         this.data = data;
     }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -45,12 +44,12 @@ public class PlotBlock {
             return false;
         }
         final PlotBlock other = (PlotBlock) obj;
-        return (this.id == other.id && (this.data == other.data || this.data == -1 || other.data == -1));
+        return ((this.id == other.id) && ((this.data == other.data) || (this.data == -1) || (other.data == -1)));
     }
-
+    
     @Override
     public int hashCode() {
-        return id;
+        return this.id;
     }
     
     @Override

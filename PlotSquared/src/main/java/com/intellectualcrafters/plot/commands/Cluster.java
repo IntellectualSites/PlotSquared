@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -47,21 +46,19 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Cluster extends SubCommand {
-
     public Cluster() {
         super(Command.CLUSTER, "Manage a plot cluster", "cluster", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
-        
         if (args.length == 0) {
             // return arguments
             PlayerFunctions.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
             return false;
         }
-        String sub = args[0].toLowerCase();
+        final String sub = args[0].toLowerCase();
         switch (sub) {
             case "l":
             case "list": {
@@ -73,21 +70,18 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster list");
                     return false;
                 }
-                HashSet<PlotCluster> clusters = ClusterManager.getClusters(plr.getWorld());
+                final HashSet<PlotCluster> clusters = ClusterManager.getClusters(plr.getWorld());
                 PlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_HEADING, clusters.size() + "");
-                for (PlotCluster cluster : clusters) {
+                for (final PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
-                    String name = "'" + cluster.getName() + "' : " + cluster.toString();
+                    final String name = "'" + cluster.getName() + "' : " + cluster.toString();
                     if (UUIDHandler.getUUID(plr).equals(cluster.owner)) {
                         PlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&a" + name);
-                    }
-                    else if (cluster.helpers.contains(UUIDHandler.getUUID(plr))) {
+                    } else if (cluster.helpers.contains(UUIDHandler.getUUID(plr))) {
                         PlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&3" + name);
-                    }
-                    else if (cluster.invited.contains(UUIDHandler.getUUID(plr))) {
+                    } else if (cluster.invited.contains(UUIDHandler.getUUID(plr))) {
                         PlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&9" + name);
-                    }
-                    else {
+                    } else {
                         PlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, cluster.toString());
                     }
                 }
@@ -100,36 +94,36 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (args.length != 4) {
-                    PlotId id = ClusterManager.estimatePlotId(plr.getLocation());
+                    final PlotId id = ClusterManager.estimatePlotId(plr.getLocation());
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
                     PlayerFunctions.sendMessage(plr, C.CLUSTER_CURRENT_PLOTID, "" + id);
                     return false;
                 }
                 // check pos1 / pos2
-                PlotId pos1 = PlotHelper.parseId(args[2]);
-                PlotId pos2 = PlotHelper.parseId(args[3]);
-                if (pos1 == null || pos2 == null) {
+                final PlotId pos1 = PlotHelper.parseId(args[2]);
+                final PlotId pos2 = PlotHelper.parseId(args[3]);
+                if ((pos1 == null) || (pos2 == null)) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
                 // check if name is taken
-                String name = args[1];
-                for (PlotCluster cluster : ClusterManager.getClusters(plr.getWorld())) {
+                final String name = args[1];
+                for (final PlotCluster cluster : ClusterManager.getClusters(plr.getWorld())) {
                     if (name.equals(cluster.getName())) {
                         PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
-                        return false; 
+                        return false;
                     }
                 }
                 //check if overlap
-                PlotClusterId id = new PlotClusterId(pos1, pos2);
-                HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
-                if (intersects.size() > 0 || pos2.x < pos1.x || pos2.y < pos1.y) {
+                final PlotClusterId id = new PlotClusterId(pos1, pos2);
+                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
+                if ((intersects.size() > 0) || (pos2.x < pos1.x) || (pos2.y < pos1.y)) {
                     PlayerFunctions.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
-                    return false; 
+                    return false;
                 }
                 // create cluster
-                String world = plr.getWorld().getName();
-                PlotCluster cluster = new PlotCluster(world, pos1, pos2, UUIDHandler.getUUID(plr));
+                final String world = plr.getWorld().getName();
+                final PlotCluster cluster = new PlotCluster(world, pos1, pos2, UUIDHandler.getUUID(plr));
                 cluster.settings.setAlias(name);
                 DBFunc.createCluster(world, cluster);
                 if (!ClusterManager.clusters.containsKey(world)) {
@@ -137,8 +131,8 @@ public class Cluster extends SubCommand {
                 }
                 ClusterManager.clusters.get(world).add(cluster);
                 // Add any existing plots to the current cluster
-                for (Plot plot : PlotSquared.getPlots(plr.getWorld()).values()) {
-                    PlotCluster current = ClusterManager.getCluster(plot);
+                for (final Plot plot : PlotSquared.getPlots(plr.getWorld()).values()) {
+                    final PlotCluster current = ClusterManager.getCluster(plot);
                     if (cluster.equals(current) && !cluster.hasRights(plot.owner)) {
                         cluster.invited.add(plot.owner);
                         DBFunc.setInvited(world, cluster, plot.owner);
@@ -158,7 +152,7 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete");
                     return false;
                 }
-                if (args.length != 1 && args.length != 2) {
+                if ((args.length != 1) && (args.length != 2)) {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster delete [name]");
                     return false;
                 }
@@ -169,8 +163,7 @@ public class Cluster extends SubCommand {
                         PlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
-                }
-                else {
+                } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
                         PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
@@ -183,23 +176,23 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                PlotWorld plotworld = PlotSquared.getWorldSettings(plr.getWorld());
+                final PlotWorld plotworld = PlotSquared.getWorldSettings(plr.getWorld());
                 if (plotworld.TYPE == 2) {
-                    ArrayList<Plot> toRemove = new ArrayList<>();
-                    for (Plot plot : PlotSquared.getPlots(plr.getWorld()).values()) {
-                        PlotCluster other = ClusterManager.getCluster(plot);
+                    final ArrayList<Plot> toRemove = new ArrayList<>();
+                    for (final Plot plot : PlotSquared.getPlots(plr.getWorld()).values()) {
+                        final PlotCluster other = ClusterManager.getCluster(plot);
                         if (cluster.equals(other)) {
                             toRemove.add(plot);
                         }
                     }
-                    for (Plot plot : toRemove) {
+                    for (final Plot plot : toRemove) {
                         DBFunc.delete(plot.world, plot);
                     }
                 }
                 DBFunc.delete(cluster);
                 if (plotworld.TYPE == 2) {
-                    for (Iterator<BlockPopulator> iterator = plr.getWorld().getPopulators().iterator(); iterator.hasNext();) {
-                        BlockPopulator populator = iterator.next();
+                    for (final Iterator<BlockPopulator> iterator = plr.getWorld().getPopulators().iterator(); iterator.hasNext();) {
+                        final BlockPopulator populator = iterator.next();
                         if (populator instanceof AugmentedPopulator) {
                             if (((AugmentedPopulator) populator).cluster.equals(cluster)) {
                                 iterator.remove();
@@ -207,7 +200,7 @@ public class Cluster extends SubCommand {
                         }
                     }
                 }
-                for (String set : ClusterManager.clusters.keySet()) {
+                for (final String set : ClusterManager.clusters.keySet()) {
                 }
                 ClusterManager.last = null;
                 ClusterManager.clusters.get(cluster.world).remove(cluster);
@@ -226,14 +219,14 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                PlotId pos1 = PlotHelper.parseId(args[1]);
-                PlotId pos2 = PlotHelper.parseId(args[2]);
-                if (pos1 == null || pos2 == null) {
+                final PlotId pos1 = PlotHelper.parseId(args[1]);
+                final PlotId pos2 = PlotHelper.parseId(args[2]);
+                if ((pos1 == null) || (pos2 == null)) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
                 // check if in cluster
-                PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -245,11 +238,11 @@ public class Cluster extends SubCommand {
                     }
                 }
                 //check if overlap
-                PlotClusterId id = new PlotClusterId(pos1, pos2);
-                HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
+                final PlotClusterId id = new PlotClusterId(pos1, pos2);
+                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
                 if (intersects.size() > 1) {
                     PlayerFunctions.sendMessage(plr, C.CLUSTER_INTERSECTION, (intersects.size() - 1) + "");
-                    return false; 
+                    return false;
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, id);
@@ -263,7 +256,7 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen");
                     return false;
                 }
-                if (args.length != 1 && args.length != 2) {
+                if ((args.length != 1) && (args.length != 2)) {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster regen [name]");
                     return false;
                 }
@@ -274,8 +267,7 @@ public class Cluster extends SubCommand {
                         PlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
-                }
-                else {
+                } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
                         PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
@@ -292,8 +284,8 @@ public class Cluster extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.CLUSTER_REGENERATED);
                 return true;
             }
-            case "add": 
-            case "inv": 
+            case "add":
+            case "inv":
             case "invite": {
                 if (!BukkitMain.hasPermission(plr, "plots.cluster.invite")) {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite");
@@ -304,7 +296,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check if in cluster
-                PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -316,7 +308,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 // check uuid
-                UUID uuid = UUIDHandler.getUUID(args[1]);
+                final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
                     PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
@@ -324,9 +316,9 @@ public class Cluster extends SubCommand {
                 if (!cluster.hasRights(uuid)) {
                     // add the user if not added
                     cluster.invited.add(uuid);
-                    String world = plr.getWorld().getName();
+                    final String world = plr.getWorld().getName();
                     DBFunc.setInvited(world, cluster, uuid);
-                    Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+                    final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
                     if (player != null) {
                         PlayerFunctions.sendMessage(player, C.CLUSTER_INVITED, cluster.getName());
                     }
@@ -345,7 +337,7 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster kick <player>");
                     return false;
                 }
-                PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -357,7 +349,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 // check uuid
-                UUID uuid = UUIDHandler.getUUID(args[1]);
+                final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
                     PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
@@ -373,14 +365,14 @@ public class Cluster extends SubCommand {
                 }
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
-                Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+                final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
                 if (player != null) {
                     PlayerFunctions.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 }
-                for (Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
-                    PlotCluster current = ClusterManager.getCluster(plot);
-                    if (current != null && current.equals(cluster)) {
-                        String world = plr.getWorld().getName();
+                for (final Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
+                    final PlotCluster current = ClusterManager.getCluster(plot);
+                    if ((current != null) && current.equals(cluster)) {
+                        final String world = plr.getWorld().getName();
                         DBFunc.delete(world, plot);
                     }
                 }
@@ -393,7 +385,7 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.leave");
                     return false;
                 }
-                if (args.length != 1 && args.length != 2) {
+                if ((args.length != 1) && (args.length != 2)) {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster leave [name]");
                     return false;
                 }
@@ -404,15 +396,14 @@ public class Cluster extends SubCommand {
                         PlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
-                }
-                else {
+                } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
                         PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
-                UUID uuid = UUIDHandler.getUUID(plr);
+                final UUID uuid = UUIDHandler.getUUID(plr);
                 if (!cluster.hasRights(uuid)) {
                     PlayerFunctions.sendMessage(plr, C.CLUSTER_NOT_ADDED);
                     return false;
@@ -428,10 +419,10 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 PlayerFunctions.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
-                for (Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
-                    PlotCluster current = ClusterManager.getCluster(plot);
-                    if (current != null && current.equals(cluster)) {
-                        String world = plr.getWorld().getName();
+                for (final Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
+                    final PlotCluster current = ClusterManager.getCluster(plot);
+                    if ((current != null) && current.equals(cluster)) {
+                        final String world = plr.getWorld().getName();
                         DBFunc.delete(world, plot);
                     }
                 }
@@ -448,12 +439,12 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
                     return false;
                 }
-                PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
-                UUID uuid = UUIDHandler.getUUID(args[2]);
+                final UUID uuid = UUIDHandler.getUUID(args[2]);
                 if (uuid == null) {
                     PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
@@ -480,12 +471,12 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster tp <name>");
                     return false;
                 }
-                PlotCluster cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                     return false;
                 }
-                UUID uuid = UUIDHandler.getUUID(plr);
+                final UUID uuid = UUIDHandler.getUUID(plr);
                 if (!cluster.hasRights(uuid)) {
                     if (!BukkitMain.hasPermission(plr, "plots.cluster.tp.other")) {
                         PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp.other");
@@ -503,7 +494,7 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.info");
                     return false;
                 }
-                if (args.length != 1 && args.length != 2) {
+                if ((args.length != 1) && (args.length != 2)) {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster info [name]");
                     return false;
                 }
@@ -514,30 +505,27 @@ public class Cluster extends SubCommand {
                         PlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
-                }
-                else {
+                } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
                         PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
-                String id = cluster.toString();
+                final String id = cluster.toString();
                 String owner = UUIDHandler.getName(cluster.owner);
                 if (owner == null) {
                     owner = "unknown";
                 }
-                String name = cluster.getName();
-                String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (cluster.getP2().y - cluster.getP1().y + 1);
-                String rights = cluster.hasRights(UUIDHandler.getUUID(plr)) + "";
-                
+                final String name = cluster.getName();
+                final String size = ((cluster.getP2().x - cluster.getP1().x) + 1) + "x" + ((cluster.getP2().y - cluster.getP1().y) + 1);
+                final String rights = cluster.hasRights(UUIDHandler.getUUID(plr)) + "";
                 String message = C.CLUSTER_INFO.s();
                 message = message.replaceAll("%id%", id);
                 message = message.replaceAll("%owner%", owner);
                 message = message.replaceAll("%name%", name);
                 message = message.replaceAll("%size%", size);
                 message = message.replaceAll("%rights%", rights);
-                
                 PlayerFunctions.sendMessage(plr, message);
                 return true;
             }
@@ -548,11 +536,11 @@ public class Cluster extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
                 }
-                if (args.length != 1 && args.length != 2) {
+                if ((args.length != 1) && (args.length != 2)) {
                     PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster sethome");
                     return false;
                 }
-                PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
                     PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -563,10 +551,10 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                Location base = ClusterManager.getClusterBottom(cluster);
+                final Location base = ClusterManager.getClusterBottom(cluster);
                 base.setY(0);
-                Location relative = plr.getLocation().subtract(base);
-                BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+                final Location relative = plr.getLocation().subtract(base);
+                final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
                 cluster.settings.setPosition(blockloc);
                 DBFunc.setPosition(cluster, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
                 return PlayerFunctions.sendMessage(plr, C.POSITION_SET);

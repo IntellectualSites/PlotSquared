@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -38,11 +37,10 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class DebugFixFlags extends SubCommand {
-
     public DebugFixFlags() {
         super(Command.DEBUGFIXFLAGS, "Attempt to fix all flags for a world", "debugclear", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
@@ -53,22 +51,22 @@ public class DebugFixFlags extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
             return false;
         }
-        World world = Bukkit.getWorld(args[0]);
-        if (world == null || !PlotSquared.isPlotWorld(world)) {
+        final World world = Bukkit.getWorld(args[0]);
+        if ((world == null) || !PlotSquared.isPlotWorld(world)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (Plot plot : PlotSquared.getPlots(world).values()) {
-            Set<Flag> flags = plot.settings.flags;
-            ArrayList<Flag> toRemove = new ArrayList<Flag>();
-            for (Flag flag : flags) {
-                AbstractFlag af = FlagManager.getFlag(flag.getKey());
+        for (final Plot plot : PlotSquared.getPlots(world).values()) {
+            final Set<Flag> flags = plot.settings.flags;
+            final ArrayList<Flag> toRemove = new ArrayList<Flag>();
+            for (final Flag flag : flags) {
+                final AbstractFlag af = FlagManager.getFlag(flag.getKey());
                 if (af == null) {
                     toRemove.add(flag);
                 }
             }
-            for (Flag flag : toRemove) {
+            for (final Flag flag : toRemove) {
                 plot.settings.flags.remove(flag);
             }
             if (toRemove.size() > 0) {
@@ -76,7 +74,6 @@ public class DebugFixFlags extends SubCommand {
             }
         }
         PlayerFunctions.sendMessage(plr, "&aDone!");
-        
         return true;
     }
 }

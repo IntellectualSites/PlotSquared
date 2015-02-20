@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -40,27 +39,25 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Condense extends SubCommand {
-
     public static boolean TASK = false;
-    private static int TASK_ID = 0;
     
     public Condense() {
         super("condense", "plots.admin", "Condense a plotworld", "condense", "", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
             PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
-        if (args.length != 2 && args.length != 3) {
+        if ((args.length != 2) && (args.length != 3)) {
             PlayerFunctions.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
             return false;
         }
-        String worldname = args[0];
+        final String worldname = args[0];
         final World world = Bukkit.getWorld(worldname);
-        if (world == null || !PlotSquared.isPlotWorld(worldname)) {
+        if ((world == null) || !PlotSquared.isPlotWorld(worldname)) {
             PlayerFunctions.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -82,19 +79,19 @@ public class Condense extends SubCommand {
                     PlayerFunctions.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
-                int radius = Integer.parseInt(args[2]);
-                Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
-                int size = plots.size();
-                int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
+                final int radius = Integer.parseInt(args[2]);
+                final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
+                final int size = plots.size();
+                final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
                     PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
                 final List<PlotId> to_move = new ArrayList<>(getPlots(plots, radius));
                 final List<PlotId> free = new ArrayList<>();
-                PlotId start = new PlotId(0,0);
-                while (start.x <= minimum_radius && start.y <= minimum_radius) {
-                    Plot plot = PlotHelper.getPlot(world, start);
+                PlotId start = new PlotId(0, 0);
+                while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
+                    final Plot plot = PlotHelper.getPlot(world, start);
                     if (!plot.hasOwner()) {
                         free.add(plot.id);
                     }
@@ -110,25 +107,25 @@ public class Condense extends SubCommand {
                         to_move.remove(0);
                         free.remove(0);
                         int index = 0;
-                        for (PlotId id : to_move) {
-                            Plot plot = PlotHelper.getPlot(world, id);
+                        for (final PlotId id : to_move) {
+                            final Plot plot = PlotHelper.getPlot(world, id);
                             if (plot.hasOwner()) {
                                 break;
                             }
                             index++;
                         }
-                        for (int i = 0; i<index; i++) {
+                        for (int i = 0; i < index; i++) {
                             to_move.remove(0);
                         }
                         index = 0;
-                        for (PlotId id : free) {
-                            Plot plot = PlotHelper.getPlot(world, id);
+                        for (final PlotId id : free) {
+                            final Plot plot = PlotHelper.getPlot(world, id);
                             if (!plot.hasOwner()) {
                                 break;
                             }
                             index++;
                         }
-                        for (int i = 0; i<index; i++) {
+                        for (int i = 0; i < index; i++) {
                             free.remove(0);
                         }
                         if (to_move.size() == 0) {
@@ -141,7 +138,7 @@ public class Condense extends SubCommand {
                             TASK = false;
                             return;
                         }
-                        sendMessage("MOVING " + to_move.get(0) +" to " + free.get(0));
+                        sendMessage("MOVING " + to_move.get(0) + " to " + free.get(0));
                         PlotHelper.move(world, to_move.get(0), free.get(0), this);
                     }
                 });
@@ -167,16 +164,16 @@ public class Condense extends SubCommand {
                     PlayerFunctions.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
-                int radius = Integer.parseInt(args[2]);
-                Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
-                int size = plots.size();
-                int minimum_radius = (int) Math.ceil((Math.sqrt(size)/2) + 1);
+                final int radius = Integer.parseInt(args[2]);
+                final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
+                final int size = plots.size();
+                final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
                     PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
-                int max_move = getPlots(plots, minimum_radius).size();
-                int user_move = getPlots(plots, radius).size();
+                final int max_move = getPlots(plots, minimum_radius).size();
+                final int user_move = getPlots(plots, radius).size();
                 PlayerFunctions.sendMessage(plr, "=== DEFAULT EVAL ===");
                 PlayerFunctions.sendMessage(plr, "MINIMUM RADIUS: " + minimum_radius);
                 PlayerFunctions.sendMessage(plr, "MAXIMUM MOVES: " + max_move);
@@ -192,10 +189,10 @@ public class Condense extends SubCommand {
         return false;
     }
     
-    public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
-        HashSet<PlotId> outside = new HashSet<>();
-        for (Plot plot : plots) {
-            if (plot.id.x > radius || plot.id.x < -radius || plot.id.y > radius || plot.id.y < -radius) {
+    public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
+        final HashSet<PlotId> outside = new HashSet<>();
+        for (final Plot plot : plots) {
+            if ((plot.id.x > radius) || (plot.id.x < -radius) || (plot.id.y > radius) || (plot.id.y < -radius)) {
                 outside.add(plot.id);
             }
         }
@@ -205,5 +202,4 @@ public class Condense extends SubCommand {
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
-    
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -31,11 +30,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Copy extends SubCommand {
-
     public Copy() {
         super(Command.COPY, "Copy a plot", "copy", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {

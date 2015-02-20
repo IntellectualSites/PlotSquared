@@ -6,13 +6,12 @@ import java.util.Map;
  * A class which contains NBT-related utility methods.
  */
 public final class NBTUtils {
-
     /**
      * Default private constructor.
      */
     private NBTUtils() {
     }
-
+    
     /**
      * Gets the type name of a tag.
      *
@@ -49,7 +48,7 @@ public final class NBTUtils {
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
         }
     }
-
+    
     /**
      * Gets the type code of a tag class.
      *
@@ -88,7 +87,7 @@ public final class NBTUtils {
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
         }
     }
-
+    
     /**
      * Gets the class of a type of tag.
      *
@@ -128,7 +127,7 @@ public final class NBTUtils {
                 throw new IllegalArgumentException("Invalid tag type : " + type + ".");
         }
     }
-
+    
     /**
      * Get child tag of a NBT structure.
      *
@@ -148,5 +147,4 @@ public final class NBTUtils {
         }
         return expected.cast(tag);
     }
-
 }

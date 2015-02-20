@@ -12,11 +12,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class Ban extends SubCommand {
-
     public Ban() {
         super(Command.BAN, "Alias for /plot denied add", "/plot ban [player]", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {

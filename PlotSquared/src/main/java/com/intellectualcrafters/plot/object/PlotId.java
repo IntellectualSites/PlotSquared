@@ -18,11 +18,9 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 public class PlotId {
-
     /**
      * x value
      */
@@ -31,7 +29,7 @@ public class PlotId {
      * y value
      */
     public Integer y;
-
+    
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
      *
@@ -42,7 +40,7 @@ public class PlotId {
         this.x = x;
         this.y = y;
     }
-
+    
     /**
      * Get a Plot Id based on a string
      *
@@ -64,7 +62,7 @@ public class PlotId {
         }
         return new PlotId(x, y);
     }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -79,12 +77,12 @@ public class PlotId {
         final PlotId other = (PlotId) obj;
         return ((this.x.equals(other.x)) && (this.y.equals(other.y)));
     }
-
+    
     @Override
     public String toString() {
         return this.x + ";" + this.y;
     }
-
+    
     @Override
     public int hashCode() {
         if (this.x >= 0) {

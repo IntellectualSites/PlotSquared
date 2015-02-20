@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util.bukkit;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
@@ -38,18 +37,15 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  * @author Empire92
  */
 public class SetBlockFast extends SetBlockManager {
-
-
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
     private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-
     private static RefMethod methodGetHandle;
     private static RefMethod methodGetChunkAt;
     private static RefMethod methodA;
     private static RefMethod methodGetById;
-
+    
     /**
      * Constructor
      *
@@ -61,7 +57,7 @@ public class SetBlockFast extends SetBlockManager {
         methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
         methodGetById = classBlock.getMethod("getById", int.class);
     }
-
+    
     /**
      * Set the block at the location
      *
@@ -81,20 +77,20 @@ public class SetBlockFast extends SetBlockManager {
         final Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
     }
-
+    
     /**
      * Update chunks
      *
      * @param player Player whose chunks we're updating
      */
     @Override
-    public void update(List<Chunk> chunks) {
+    public void update(final List<Chunk> chunks) {
         if (chunks.size() == 0) {
             return;
         }
         if (!PlotHelper.canSendChunk) {
-            World world = chunks.get(0).getWorld();
-            for (Chunk chunk : chunks) {
+            final World world = chunks.get(0).getWorld();
+            for (final Chunk chunk : chunks) {
                 world.refreshChunk(chunk.getX(), chunk.getZ());
             }
             return;

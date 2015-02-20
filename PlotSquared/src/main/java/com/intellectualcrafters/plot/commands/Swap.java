@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.World;
@@ -40,11 +39,10 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Empire92
  */
 public class Swap extends SubCommand {
-
     public Swap() {
         super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
@@ -87,11 +85,9 @@ public class Swap extends SubCommand {
             return false;
         }
         PlotSelection.swap(world, plot.id, plotid);
-
         // TODO Requires testing!!
         DBFunc.dbManager.swapPlots(plot, PlotHelper.getPlot(world, plotid));
         // TODO Requires testing!!
-
         PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
         PlotHelper.update(plr.getLocation());
         return true;

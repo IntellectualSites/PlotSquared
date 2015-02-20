@@ -5,8 +5,7 @@ import java.util.HashSet;
 import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class TaskManager {
-    
-    public static HashSet<String> TELEPORT_QUEUE = new HashSet<>(); 
+    public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
     
     public abstract void taskRepeat(final Runnable r, int interval);
     
@@ -18,28 +17,33 @@ public abstract class TaskManager {
     
     public abstract void taskLaterAsync(final Runnable r, int delay);
     
-    public static void runTaskRepeat(final Runnable r, int interval) {
-        if (r != null)
+    public static void runTaskRepeat(final Runnable r, final int interval) {
+        if (r != null) {
             PlotSquared.TASK.taskRepeat(r, interval);
+        }
     }
     
     public static void runTaskAsync(final Runnable r) {
-        if (r != null)
+        if (r != null) {
             PlotSquared.TASK.taskAsync(r);
+        }
     }
     
     public static void runTask(final Runnable r) {
-        if (r != null)
+        if (r != null) {
             PlotSquared.TASK.task(r);
+        }
     }
     
-    public static void runTaskLater(final Runnable r, int delay) {
-        if (r != null)
+    public static void runTaskLater(final Runnable r, final int delay) {
+        if (r != null) {
             PlotSquared.TASK.taskLater(r, delay);
+        }
     }
     
-    public static void runTaskLaterAsync(final Runnable r, int delay) {
-        if (r != null)
+    public static void runTaskLaterAsync(final Runnable r, final int delay) {
+        if (r != null) {
             PlotSquared.TASK.taskLaterAsync(r, delay);
+        }
     }
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -38,25 +37,23 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class SetOwner extends SubCommand {
-
     public SetOwner() {
         super("setowner", "plots.set.owner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
     }
-
+    
     /*
      * private UUID getUUID(String string) { OfflinePlayer player =
      * Bukkit.getOfflinePlayer(string); return ((player != null) &&
      * player.hasPlayedBefore()) ? UUIDHandler.getUUID(player) : null; }
      */
-
     private UUID getUUID(final String string) {
         return UUIDHandler.getUUID(string);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
-        Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (plot == null || plot.owner == null) {
+        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        if ((plot == null) || (plot.owner == null)) {
             PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
@@ -64,7 +61,6 @@ public class SetOwner extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NEED_USER);
             return false;
         }
-        
         if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.setowner")) {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
@@ -75,18 +71,14 @@ public class SetOwner extends SubCommand {
         final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);
-            
-            UUID uuid = getUUID(args[0]);
-            
+            final UUID uuid = getUUID(args[0]);
             if (uuid == null) {
                 PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
-            
             current.owner = uuid;
             PlotSquared.updatePlot(current);
             DBFunc.setOwner(current, current.owner);
-
             if (PlotSquared.worldGuardListener != null) {
                 PlotSquared.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
             }

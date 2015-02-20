@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -34,8 +33,8 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"deprecation", "unused"}) public abstract class SubCommand {
-
+@SuppressWarnings({ "deprecation", "unused" })
+public abstract class SubCommand {
     /**
      * Command
      */
@@ -64,7 +63,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
      * Is this a player-online command?
      */
     public final boolean isPlayer;
-
+    
     /**
      * @param cmd         Command /plot {cmd} <-- That!
      * @param permission  Permission Node
@@ -83,7 +82,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
         this.category = category;
         this.isPlayer = isPlayer;
     }
-
+    
     /**
      * @param cmd         Command /plot {cmd} <-- That!
      * @param permission  Permission Node
@@ -102,7 +101,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
         this.category = category;
         this.isPlayer = isPlayer;
     }
-
+    
     /**
      * @param command     Command /plot {cmd} <-- That!
      * @param description Simple description
@@ -119,7 +118,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
         this.category = category;
         this.isPlayer = isPlayer;
     }
-
+    
     /**
      * Execute.
      *
@@ -129,7 +128,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
      * @return true on success, false on failure
      */
     public abstract boolean execute(final Player plr, final String... args);
-
+    
     /**
      * Execute the command as console
      *
@@ -138,7 +137,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
     public void executeConsole(final String... args) {
         this.execute(null, args);
     }
-
+    
     /**
      * Send a message
      *
@@ -153,7 +152,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
         PlayerFunctions.sendMessage(plr, c, args);
         return true;
     }
-
+    
     /**
      * CommandCategory
      *
@@ -191,12 +190,11 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
          * Such as: /plot debug
          */
         DEBUG("Debug");
-
         /**
          * The category name (Readable)
          */
         private final String name;
-
+        
         /**
          * Constructor
          *
@@ -205,7 +203,7 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
         CommandCategory(final String name) {
             this.name = name;
         }
-
+        
         @Override
         public String toString() {
             return this.name;

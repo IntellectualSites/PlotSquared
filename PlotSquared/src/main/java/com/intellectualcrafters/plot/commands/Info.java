@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -46,12 +45,12 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 /**
  * @author Citymonstret
  */
-@SuppressWarnings({"javadoc"}) public class Info extends SubCommand {
-
+@SuppressWarnings({ "javadoc" })
+public class Info extends SubCommand {
     public Info() {
         super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
     }
-
+    
     @Override
     public boolean execute(final Player player, String... args) {
         World world;
@@ -87,7 +86,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 }
                 world = Bukkit.getWorld(args[0]);
                 if (args.length == 3) {
-                    args = new String[]{args[2]};
+                    args = new String[] { args[2] };
                 } else {
                     args = new String[0];
                 }
@@ -96,28 +95,23 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 return false;
             }
         }
-
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
             new InfoInventory(plot, player).build().display();
             return true;
         }
-
         final boolean hasOwner = plot.hasOwner();
         boolean containsEveryone;
         boolean trustedEveryone;
-
         // Wildcard player {added}
         {
             containsEveryone = (plot.helpers != null) && plot.helpers.contains(DBFunc.everyone);
             trustedEveryone = (plot.trusted != null) && plot.trusted.contains(DBFunc.everyone);
         }
-
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             PlayerFunctions.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
             return true;
         }
-
         String owner = "none";
         if (plot.owner != null) {
             owner = UUIDHandler.getName(plot.owner);
@@ -126,7 +120,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             owner = plot.owner.toString();
         }
         String info = C.PLOT_INFO.s();
-
         if (args.length == 1) {
             info = getCaption(args[0].toLowerCase());
             if (info == null) {
@@ -134,13 +127,12 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 return false;
             }
         }
-
         info = format(info, world, plot, player);
         PlayerFunctions.sendMessage(player, C.PLOT_INFO_HEADER);
         PlayerFunctions.sendMessage(player, info, false);
         return true;
     }
-
+    
     private String getCaption(final String string) {
         switch (string) {
             case "helpers":
@@ -167,9 +159,8 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 return null;
         }
     }
-
+    
     private String format(String info, final World world, final Plot plot, final Player player) {
-
         final PlotId id = plot.id;
         final PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
         final int num = PlayerFunctions.getPlotSelectionIds(id, id2).size();
@@ -181,7 +172,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.hasRights(player);
-
         String owner = "none";
         if (plot.owner != null) {
             owner = UUIDHandler.getName(plot.owner);
@@ -189,7 +179,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         if (owner == null) {
             owner = plot.owner.toString();
         }
-
         info = info.replaceAll("%alias%", alias);
         info = info.replaceAll("%id%", id.toString());
         info = info.replaceAll("%id2%", id2.toString());
@@ -203,10 +192,9 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         info = info.replaceAll("%flags%", flags);
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
-
         return info;
     }
-
+    
     private String getPlayerList(final ArrayList<UUID> l) {
         if ((l == null) || (l.size() < 1)) {
             return " none";
@@ -222,7 +210,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         }
         return list.toString();
     }
-
+    
     private String getPlayerName(final UUID uuid) {
         if (uuid == null) {
             return "unknown";
@@ -230,13 +218,13 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
             return "everyone";
         }
-        String name = UUIDHandler.getName(uuid);
+        final String name = UUIDHandler.getName(uuid);
         if (name == null) {
             return "unknown";
         }
         return name;
     }
-
+    
     private Biome getBiomeAt(final Plot plot) {
         final World w = Bukkit.getWorld(plot.world);
         final Location bl = PlotHelper.getPlotTopLoc(w, plot.id);

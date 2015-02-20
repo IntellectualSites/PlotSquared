@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.generator;
 
 import java.io.File;
@@ -29,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
@@ -42,31 +42,26 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings("deprecation") public class HybridPlotManager extends ClassicPlotManager {
-
+@SuppressWarnings("deprecation")
+public class HybridPlotManager extends ClassicPlotManager {
     private static boolean UPDATE = false;
     private int task;
     
-    public static boolean checkModified(Plot plot, int requiredChanges) {
-        World world = Bukkit.getWorld(plot.world);
-        Location bottom = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        Location top = PlotHelper.getPlotTopLoc(world, plot.id);
-        
-        int botx = bottom.getBlockX();
-        int botz = bottom.getBlockZ();
-        
-        int topx = top.getBlockX();
-        int topz = top.getBlockZ();
-        
-        HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
-        
-        PlotBlock[] air = new PlotBlock[] {new PlotBlock((short) 0, (byte) 0)};
-        
+    public static boolean checkModified(final Plot plot, int requiredChanges) {
+        final World world = Bukkit.getWorld(plot.world);
+        final Location bottom = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        final Location top = PlotHelper.getPlotTopLoc(world, plot.id);
+        final int botx = bottom.getBlockX();
+        final int botz = bottom.getBlockZ();
+        final int topx = top.getBlockX();
+        final int topz = top.getBlockZ();
+        final HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+        final PlotBlock[] air = new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) };
         int changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT, hpw.PLOT_HEIGHT, botz, topz, hpw.TOP_BLOCK);
         if (changes == -1) {
             return true;
@@ -86,15 +81,15 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         return changes == -1;
     }
     
-    public static int checkModified(int threshhold, World world, int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock[] blocks) {
+    public static int checkModified(final int threshhold, final World world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
-                    Block block = world.getBlockAt(x,  y, z);
-                    int id = block.getTypeId();
+                    final Block block = world.getBlockAt(x, y, z);
+                    final int id = block.getTypeId();
                     boolean same = false;
-                    for (PlotBlock p : blocks) {
+                    for (final PlotBlock p : blocks) {
                         if (id == p.id) {
                             same = true;
                             break;
@@ -112,59 +107,46 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         return count;
     }
     
-    public boolean setupRoadSchematic(Plot plot) {
-        World world = Bukkit.getWorld(plot.world);
-        
-        Location bot = PlotHelper.getPlotBottomLoc(world, plot.id);
-        Location top = PlotHelper.getPlotTopLoc(world, plot.id);
-
-        HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
-        
-        int sx = bot.getBlockX() - plotworld.ROAD_WIDTH + 1;
-        int sz = bot.getBlockZ() + 1;
-        int sy = plotworld.ROAD_HEIGHT;
-        
-        int ex = bot.getBlockX();
-        int ez = top.getBlockZ();
-        int ey = get_ey(world, sx, ex, sz, ez, sy);
-        
-        Location pos1 = new Location(world, sx, sy, sz);
-        Location pos2 = new Location(world, ex, ey, ez);
-        
-        int bx = sx;
-        int bz = sz - plotworld.ROAD_WIDTH;
-        int by = sy;
-        
-        int tx = ex;
-        int tz = sz - 1;
-        int ty = get_ey(world, bx, tx, bz, tz, by);
-        
-        Location pos3 = new Location(world, bx, by, bz);
-        Location pos4 = new Location(world, tx, ty, tz);
-        
-        CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
-        CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
-        
-        String dir = PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
-        
+    public boolean setupRoadSchematic(final Plot plot) {
+        final World world = Bukkit.getWorld(plot.world);
+        final Location bot = PlotHelper.getPlotBottomLoc(world, plot.id);
+        final Location top = PlotHelper.getPlotTopLoc(world, plot.id);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+        final int sx = (bot.getBlockX() - plotworld.ROAD_WIDTH) + 1;
+        final int sz = bot.getBlockZ() + 1;
+        final int sy = plotworld.ROAD_HEIGHT;
+        final int ex = bot.getBlockX();
+        final int ez = top.getBlockZ();
+        final int ey = get_ey(world, sx, ex, sz, ez, sy);
+        final Location pos1 = new Location(world, sx, sy, sz);
+        final Location pos2 = new Location(world, ex, ey, ez);
+        final int bx = sx;
+        final int bz = sz - plotworld.ROAD_WIDTH;
+        final int by = sy;
+        final int tx = ex;
+        final int tz = sz - 1;
+        final int ty = get_ey(world, bx, tx, bz, tz, by);
+        final Location pos3 = new Location(world, bx, by, bz);
+        final Location pos4 = new Location(world, tx, ty, tz);
+        final CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
+        final CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
+        final String dir = PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
         SchematicHandler.save(sideroad, dir + "sideroad.schematic");
         SchematicHandler.save(intersection, dir + "intersection.schematic");
-        
         plotworld.ROAD_SCHEMATIC_ENABLED = true;
         plotworld.setupSchematics();
-        
         return true;
     }
     
-    public int get_ey(World world, int sx, int ex, int sz, int ez, int sy) {
-        int maxY = world.getMaxHeight();
+    public int get_ey(final World world, final int sx, final int ex, final int sz, final int ez, final int sy) {
+        final int maxY = world.getMaxHeight();
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
-            for (int z = sz; z <= ez; z++) { 
+            for (int z = sz; z <= ez; z++) {
                 for (int y = sy; y < maxY; y++) {
                     if (y > ey) {
-                        Block block = world.getBlockAt(new Location(world, x, y, z));
-                        if (block.getTypeId() !=0) {
+                        final Block block = world.getBlockAt(new Location(world, x, y, z));
+                        if (block.getTypeId() != 0) {
                             ey = y;
                         }
                     }
@@ -174,22 +156,19 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         return ey;
     }
     
-    public void regenerateChunkChunk(World world, ChunkLoc loc) {
-        
-        int sx = loc.x << 5;
-        int sz = loc.z << 5;
-        
-        for (int x = sx; x < sx + 32; x++) {
-            for (int z = sz; z < sz + 32; z++) {
-                Chunk chunk = world.getChunkAt(x, z);
+    public void regenerateChunkChunk(final World world, final ChunkLoc loc) {
+        final int sx = loc.x << 5;
+        final int sz = loc.z << 5;
+        for (int x = sx; x < (sx + 32); x++) {
+            for (int z = sz; z < (sz + 32); z++) {
+                final Chunk chunk = world.getChunkAt(x, z);
                 chunk.load(false);
             }
         }
-        
-        ArrayList<Chunk> chunks2 = new ArrayList<>();
-        for (int x = sx; x < sx + 32; x++) {
-            for (int z = sz; z < sz + 32; z++) {
-                Chunk chunk = world.getChunkAt(x, z);
+        final ArrayList<Chunk> chunks2 = new ArrayList<>();
+        for (int x = sx; x < (sx + 32); x++) {
+            for (int z = sz; z < (sz + 32); z++) {
+                final Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
                 regenerateRoad(chunk);
             }
@@ -202,7 +181,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             return false;
         }
         final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
-        
         final Plugin plugin = (Plugin) PlotSquared.getMain();
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
@@ -210,20 +188,18 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 if (chunks.size() == 0) {
                     HybridPlotManager.UPDATE = false;
                     PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
-                    Bukkit.getScheduler().cancelTask(task);
+                    Bukkit.getScheduler().cancelTask(HybridPlotManager.this.task);
                     return;
-                }
-                else {
+                } else {
                     try {
-                        ChunkLoc loc = chunks.get(0);
-                        PlotSquared.log("Updating .mcr: " + loc.x + ", "+loc.z + " (aprrox 256 chunks)");
-                        PlotSquared.log("Remaining regions: "+chunks.size());
+                        final ChunkLoc loc = chunks.get(0);
+                        PlotSquared.log("Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 256 chunks)");
+                        PlotSquared.log("Remaining regions: " + chunks.size());
                         regenerateChunkChunk(world, loc);
                         chunks.remove(0);
-                    }
-                    catch (Exception e) {
-                        ChunkLoc loc = chunks.get(0);
-                        PlotSquared.log("&c[ERROR]&7 Could not update '"+world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                    } catch (final Exception e) {
+                        final ChunkLoc loc = chunks.get(0);
+                        PlotSquared.log("&c[ERROR]&7 Could not update '" + world.getName() + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                         PlotSquared.log("&d - Potentially skipping 256 chunks");
                         PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
                     }
@@ -233,90 +209,76 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         return true;
     }
     
-    
-    public boolean regenerateRoad(Chunk chunk) {
-        World world = chunk.getWorld();
-        int x = chunk.getX() << 4;
-        int z = chunk.getZ() << 4;
-        int ex = x + 15;
-        int ez = z + 15;
-        
-        Location bot = new Location(world, x, 0, z);
-        Location top = new Location(world, ex, 0, ez);
-        
-        HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+    public boolean regenerateRoad(final Chunk chunk) {
+        final World world = chunk.getWorld();
+        final int x = chunk.getX() << 4;
+        final int z = chunk.getZ() << 4;
+        final int ex = x + 15;
+        final int ez = z + 15;
+        final Location bot = new Location(world, x, 0, z);
+        final Location top = new Location(world, ex, 0, ez);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
-        
-        PlotId id1 = getPlotId(plotworld, bot);
-        PlotId id2 = getPlotId(plotworld, top);
-
+        final PlotId id1 = getPlotId(plotworld, bot);
+        final PlotId id2 = getPlotId(plotworld, top);
         boolean toCheck = false;
-        
-        
-        if (id1 == null || id2 == null || id1 != id2) {
-            boolean result = chunk.load(false);
+        if ((id1 == null) || (id2 == null) || (id1 != id2)) {
+            final boolean result = chunk.load(false);
             if (result) {
-                
                 while (!chunk.isLoaded()) {
                     chunk.load(false);
                 }
-                
                 if (id1 != null) {
-                    Plot p1 = PlotHelper.getPlot(world, id1);
-                    if (p1 != null && p1.hasOwner() && p1.settings.isMerged()) {
+                    final Plot p1 = PlotHelper.getPlot(world, id1);
+                    if ((p1 != null) && p1.hasOwner() && p1.settings.isMerged()) {
                         toCheck = true;
                     }
                 }
-                if (id2 != null && !toCheck) {
-                    Plot p2 = PlotHelper.getPlot(world, id2);
-                    if (p2 != null && p2.hasOwner() && p2.settings.isMerged()) {
+                if ((id2 != null) && !toCheck) {
+                    final Plot p2 = PlotHelper.getPlot(world, id2);
+                    if ((p2 != null) && p2.hasOwner() && p2.settings.isMerged()) {
                         toCheck = true;
                     }
                 }
-                int size = plotworld.SIZE;
+                final int size = plotworld.SIZE;
                 for (int X = 0; X < 16; X++) {
                     for (int Z = 0; Z < 16; Z++) {
-                        
                         short absX = (short) ((x + X) % size);
                         short absZ = (short) ((z + Z) % size);
-                        
                         if (absX < 0) {
                             absX += size;
                         }
                         if (absZ < 0) {
                             absZ += size;
                         }
-                        
-                        boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
-                        boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
-                        boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
-                        boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
+                        final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
+                        final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
+                        final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
+                        final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
                         boolean condition;
-                        
                         if (toCheck) {
-                            Location l = new Location(world, x + X, 1, z + Z);
+                            final Location l = new Location(world, x + X, 1, z + Z);
                             condition = getPlotId(plotworld, l) == null;
+                        } else {
+                            condition = (!gx || !gz || !lx || !lz);
                         }
-                        else { condition = (!gx || !gz || !lx || !lz); }
-                        
                         if (condition) {
-                            int sy = plotworld.ROAD_HEIGHT;
-                            ChunkLoc loc = new ChunkLoc(absX, absZ);
-                            HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
-                            for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT; y++) {
+                            final int sy = plotworld.ROAD_HEIGHT;
+                            final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                            final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
+                            for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT); y++) {
                                 PlotHelper.setBlock(world, x + X, sy + y, z + Z, 0, (byte) 0);
                             }
                             if (blocks != null) {
-                                HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);
+                                final HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);
                                 if (datas == null) {
-                                    for (Short y : blocks.keySet()) {
+                                    for (final Short y : blocks.keySet()) {
                                         PlotHelper.setBlock(world, x + X, sy + y, z + Z, blocks.get(y), (byte) 0);
                                     }
-                                }
-                                else {
-                                    for (Short y : blocks.keySet()) {
+                                } else {
+                                    for (final Short y : blocks.keySet()) {
                                         Byte data = datas.get(y);
                                         if (data == null) {
                                             data = 0;
@@ -336,23 +298,22 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
     
     @Override
     public boolean finishPlotUnlink(final World world, final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-            for (PlotId id : plotIds) {
-                Location bottom = getPlotBottomLocAbs(plotworld, id);
-                int sx = bottom.getBlockX() - hpw.PATH_WIDTH_LOWER;
-                int sz = bottom.getBlockZ() - hpw.PATH_WIDTH_LOWER;
-                int sy = hpw.ROAD_HEIGHT;
-                for (ChunkLoc loc : hpw.G_SCH.keySet()) {
-                    HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
-                    HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
+            for (final PlotId id : plotIds) {
+                final Location bottom = getPlotBottomLocAbs(plotworld, id);
+                final int sx = bottom.getBlockX() - hpw.PATH_WIDTH_LOWER;
+                final int sz = bottom.getBlockZ() - hpw.PATH_WIDTH_LOWER;
+                final int sy = hpw.ROAD_HEIGHT;
+                for (final ChunkLoc loc : hpw.G_SCH.keySet()) {
+                    final HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
+                    final HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
                     if (datas == null) {
-                        for (Short y : blocks.keySet()) {
+                        for (final Short y : blocks.keySet()) {
                             PlotHelper.setBlock(world, sx + loc.x, sy + y, sz + loc.z, blocks.get(y), (byte) 0);
                         }
-                    }
-                    else {
-                        for (Short y : blocks.keySet()) {
+                    } else {
+                        for (final Short y : blocks.keySet()) {
                             Byte data = datas.get(y);
                             if (data == null) {
                                 data = 0;
@@ -361,16 +322,15 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                         }
                     }
                 }
-                
             }
         }
-        PlotBlock block = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+        final PlotBlock block = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         if (block.id != 0) {
-            for (PlotId id : plotIds) {
-                setWall(world, plotworld, id, new PlotBlock[] {(( ClassicPlotWorld) plotworld).WALL_BLOCK });
-                Plot plot = PlotHelper.getPlot(world, id);
+            for (final PlotId id : plotIds) {
+                setWall(world, plotworld, id, new PlotBlock[] { ((ClassicPlotWorld) plotworld).WALL_BLOCK });
+                final Plot plot = PlotHelper.getPlot(world, id);
                 if (plot.hasOwner()) {
-                    String name = UUIDHandler.getName(plot.owner);
+                    final String name = UUIDHandler.getName(plot.owner);
                     if (name != null) {
                         PlotHelper.setSign(world, name, plot);
                     }
@@ -380,7 +340,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
         return true;
     }
     
-
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the SetCuboid
      * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
@@ -397,41 +356,30 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 PlotHelper.runners.remove(plot);
             }
         }, 90L);
-
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
         final Location pos1 = PlotHelper.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLocAbs(world, plot.id);
-
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
-
         // PlotBlock wall = dpw.WALL_BLOCK;
         final PlotBlock wall;
-
         if (isDelete) {
             wall = dpw.WALL_BLOCK;
         } else {
             wall = dpw.CLAIMED_WALL_BLOCK;
         }
-
         final PlotBlock wall_filling = dpw.WALL_FILLING;
-
         final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, 1, pos1.getBlockZ()));
-        
         if ((block.getTypeId() != wall_filling.id) || (block.getData() != wall_filling.data)) {
-            setWallFilling(world, dpw, plot.id, new PlotBlock[] {wall_filling});
+            setWallFilling(world, dpw, plot.id, new PlotBlock[] { wall_filling });
         }
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             @Override
             public void run() {
-
                 final Block block = world.getBlockAt(new Location(world, pos1.getBlockX() - 1, dpw.WALL_HEIGHT + 1, pos1.getBlockZ()));
                 if ((block.getTypeId() != wall.id) || (block.getData() != wall.data)) {
-                    setWall(world, dpw, plot.id, new PlotBlock[] {wall});
+                    setWall(world, dpw, plot.id, new PlotBlock[] { wall });
                 }
-
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -457,7 +405,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                             }, 5L);
                             return;
                         }
-
                         final int startX = (pos1.getBlockX() / 16) * 16;
                         final int startZ = (pos1.getBlockZ() / 16) * 16;
                         final int chunkX = 16 + pos2.getBlockX();
@@ -501,10 +448,8 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                 world.regenerateChunk(i / 16, j / 16);
                             }
                         }
-
                         final Location max = mx;
                         final Location min = mn;
-
                         if (min == null) {
                             PlotHelper.setSimpleCuboid(world, new Location(world, pos1.getBlockX(), 0, pos1.getBlockZ()), new Location(world, pos2.getBlockX() + 1, 1, pos2.getBlockZ() + 1), new PlotBlock((short) 7, (byte) 0));
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -527,7 +472,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                             }, 5L);
                             return;
                         } else {
-
                             if (min.getBlockX() < plotMinX) {
                                 min.setX(plotMinX);
                             }
@@ -540,7 +484,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                             if (max.getBlockZ() > plotMaxZ) {
                                 max.setZ(plotMaxZ);
                             }
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -565,7 +508,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 21L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -590,7 +532,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 25L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -615,7 +556,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 29L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -640,7 +580,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 33L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -665,7 +604,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 37L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -690,7 +628,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 41L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -715,7 +652,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                     }, 1L);
                                 }
                             }, 45L);
-
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
@@ -732,7 +668,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                                                         @Override
                                                         public void run() {
                                                             PlotHelper.setCuboid(world, new Location(world, max.getBlockX(), dpw.PLOT_HEIGHT, max.getBlockZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
-                                                            BukkitTaskManager.runTask(whenDone);
+                                                            TaskManager.runTask(whenDone);
                                                         }
                                                     }, 1L);
                                                 }
@@ -747,5 +683,71 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             }
         }, 20L);
         return true;
+    }
+    
+    @Override
+    public PlotId getPlotIdAbs(PlotWorld plotworld, int x, int y, int z) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public PlotId getPlotId(PlotWorld plotworld, int x, int y, int z) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public boolean clearPlot(PlotWorld plotworld, Plot plot, boolean isDelete, Runnable whenDone) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean claimPlot(PlotWorld plotworld, Plot plot) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean unclaimPlot(PlotWorld plotworld, Plot plot) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean setComponent(PlotWorld plotworld, PlotId plotid, String component, PlotBlock[] blocks) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean setBiome(Plot plot, Biome biome) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean startPlotMerge(PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean startPlotUnlink(PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean finishPlotMerge(PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean finishPlotUnlink(PlotWorld plotworld, ArrayList<PlotId> plotIds) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

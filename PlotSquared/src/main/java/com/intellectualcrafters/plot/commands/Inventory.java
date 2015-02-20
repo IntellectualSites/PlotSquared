@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -31,11 +30,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Inventory extends SubCommand {
-
     public Inventory() {
         super("inventory", "plots.inventory", "Open a command inventory", "inventory", "inv", CommandCategory.INFO, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         final ArrayList<SubCommand> cmds = new ArrayList<>();
@@ -52,7 +50,7 @@ public class Inventory extends SubCommand {
         plr.openInventory(inventory);
         return true;
     }
-
+    
     private ItemStack getItem(final SubCommand cmd) {
         final ItemStack stack = new ItemStack(Material.COMMAND);
         final ItemMeta meta = stack.getItemMeta();

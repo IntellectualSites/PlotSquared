@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
@@ -34,12 +33,12 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings("deprecation") public class Trusted extends SubCommand {
-
+@SuppressWarnings("deprecation")
+public class Trusted extends SubCommand {
     public Trusted() {
         super(Command.TRUSTED, "Manage trusted users for a plot", "trusted {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 2) {
@@ -63,7 +62,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             UUID uuid;
             if (args[1].equalsIgnoreCase("*")) {
                 uuid = DBFunc.everyone;
-
             } else {
                 uuid = UUIDHandler.getUUID(args[1]);
             }

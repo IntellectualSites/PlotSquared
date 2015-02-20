@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
@@ -56,14 +55,13 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Set extends SubCommand {
-
-    public final static String[] values = new String[]{"biome", "wall", "wall_filling", "floor", "alias", "home", "flag"};
-    public final static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
-
+    public final static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "flag" };
+    public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
+    
     public Set() {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
     }
-
+    
     @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final Player plr, final String... args) {
@@ -96,7 +94,6 @@ public class Set extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
         }
-
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
                 String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
@@ -110,15 +107,12 @@ public class Set extends SubCommand {
                 PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
                 return false;
             }
-
             AbstractFlag af;
-
             try {
                 af = FlagManager.getFlag(args[1].toLowerCase());
             } catch (final Exception e) {
                 af = new AbstractFlag(args[1].toLowerCase());
             }
-
             if (!FlagManager.getFlags().contains(af) && ((PlotSquared.worldGuardListener == null) || !PlotSquared.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
@@ -138,9 +132,7 @@ public class Set extends SubCommand {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
-                
-                boolean result = FlagManager.removePlotFlag(plot, args[1].toLowerCase());
-                
+                final boolean result = FlagManager.removePlotFlag(plot, args[1].toLowerCase());
                 if (!result) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
                     return false;
@@ -150,20 +142,18 @@ public class Set extends SubCommand {
                 return true;
             }
             try {
-                String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                Object parsed_value = af.parseValueRaw(value);
+                final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                final Object parsed_value = af.parseValueRaw(value);
                 if (parsed_value == null) {
                     PlayerFunctions.sendMessage(plr, af.getValueDesc());
                     return false;
                 }
-
                 if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotSquared.worldGuardListener != null)) {
                     PlotSquared.worldGuardListener.addFlag(plr, plr.getWorld(), plot, args[1], af.toString(parsed_value));
                     return false;
                 }
-
                 final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed_value);
-                boolean result = FlagManager.addPlotFlag(plot, flag);
+                final boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
                     PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
                     return false;
@@ -176,7 +166,6 @@ public class Set extends SubCommand {
                 return false;
             }
         }
-
         if (args[0].equalsIgnoreCase("home")) {
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("none")) {
@@ -187,16 +176,15 @@ public class Set extends SubCommand {
                 return PlayerFunctions.sendMessage(plr, C.HOME_ARGUMENT);
             }
             //set to current location
-            World world = plr.getWorld();
-            Location base = PlotHelper.getPlotBottomLoc(world, plot.id);
+            final World world = plr.getWorld();
+            final Location base = PlotHelper.getPlotBottomLoc(world, plot.id);
             base.setY(0);
-            Location relative = plr.getLocation().subtract(base);
-            BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+            final Location relative = plr.getLocation().subtract(base);
+            final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
             plot.settings.setPosition(blockloc);
             DBFunc.setPosition(plr.getWorld().getName(), plot, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
             return PlayerFunctions.sendMessage(plr, C.POSITION_SET);
         }
-
         if (args[0].equalsIgnoreCase("alias")) {
             if (args.length < 2) {
                 PlayerFunctions.sendMessage(plr, C.MISSING_ALIAS);
@@ -230,7 +218,6 @@ public class Set extends SubCommand {
                 sendMessage(plr, C.NAME_LITTLE, "Biome", args[1].length() + "", "2");
                 return true;
             }
-
             final Biome biome = Biome.valueOf(new StringComparison(args[1], Biome.values()).getBestMatch());
             /*
              * for (Biome b : Biome.values()) {
@@ -240,7 +227,6 @@ public class Set extends SubCommand {
              * }
              * }
              */
-
             if (biome == null) {
                 PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
                 return true;
@@ -249,13 +235,12 @@ public class Set extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
             return true;
         }
-        
         // Get components
-        World world = plr.getWorld();
+        final World world = plr.getWorld();
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        PlotManager manager = PlotSquared.getPlotManager(world);
-        String[] components = manager.getPlotComponents(world, plotworld, plot.id);
-        for (String component : components) {
+        final PlotManager manager = PlotSquared.getPlotManager(world);
+        final String[] components = manager.getPlotComponents(world, plotworld, plot.id);
+        for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
                 if (args.length < 2) {
                     PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
@@ -264,14 +249,13 @@ public class Set extends SubCommand {
                 PlotBlock[] blocks;
                 try {
                     blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseObject(args[2]);
-                }
-                catch (Exception e) {
+                } catch (final Exception e) {
                     try {
-                        blocks = new PlotBlock[] {new PlotBlock((short) getMaterial(args[1], PlotWorld.BLOCKS).getId(), (byte) 0)};
-                  } catch (Exception e2) {
-                      PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
-                      return false;
-                  }
+                        blocks = new PlotBlock[] { new PlotBlock((short) getMaterial(args[1], PlotWorld.BLOCKS).getId(), (byte) 0) };
+                    } catch (final Exception e2) {
+                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
+                        return false;
+                    }
                 }
                 manager.setComponent(world, plotworld, plot.id, component, blocks);
                 PlayerFunctions.sendMessage(plr, C.GENERATING_COMPONENT);
@@ -299,19 +283,19 @@ public class Set extends SubCommand {
         PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
         return false;
     }
-
+    
     private String getMaterial(final Material m) {
         return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", m.toString().toLowerCase()));
     }
-
+    
     private String getBiome(final Biome b) {
         return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", b.toString().toLowerCase()));
     }
-
+    
     private String getString(final String s) {
         return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
     }
-
+    
     private String getArgumentList(final String[] strings) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {
@@ -319,7 +303,7 @@ public class Set extends SubCommand {
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
     }
-
+    
     private String getBiomeList(final List<Biome> biomes) {
         final StringBuilder builder = new StringBuilder();
         builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
@@ -328,18 +312,8 @@ public class Set extends SubCommand {
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
     }
-
+    
     private Material getMaterial(final String input, final List<Material> blocks) {
         return Material.valueOf(new StringComparison(input, blocks.toArray()).getBestMatch());
     }
-
-    private String getBlockList(final List<Material> blocks) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(ChatColor.translateAlternateColorCodes('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
-        for (final Material b : blocks) {
-            builder.append(getMaterial(b));
-        }
-        return builder.toString().substring(1, builder.toString().length() - 1);
-    }
-
 }

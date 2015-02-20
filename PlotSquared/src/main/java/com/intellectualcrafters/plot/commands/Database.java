@@ -24,13 +24,12 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Database extends SubCommand {
-
-    final String[] tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
-
+    final String[] tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
+    
     public Database() {
         super(Command.DATABASE, "Convert/Backup Storage", "database [type] [...details]", CommandCategory.DEBUG, false);
     }
-
+    
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
             PlotSquared.log(msg);
@@ -44,7 +43,7 @@ public class Database extends SubCommand {
         }
         return true;
     }
-
+    
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
         final java.util.Set<Plot> plots = PlotSquared.getPlots();
         TaskManager.runTaskAsync(new Runnable() {
@@ -70,13 +69,13 @@ public class Database extends SubCommand {
             }
         });
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
             return sendMessage(plr, "/plot database [sqlite/mysql]");
         }
-        final String type = new StringComparison(args[0], new String[]{"mysql", "sqlite"}).getBestMatch().toLowerCase();
+        final String type = new StringComparison(args[0], new String[] { "mysql", "sqlite" }).getBestMatch().toLowerCase();
         switch (type) {
             case "mysql":
                 if (args.length < 6) {
@@ -137,7 +136,7 @@ public class Database extends SubCommand {
         }
         return false;
     }
-
+    
     private boolean sendMessage(final Player player, final String msg) {
         if (player == null) {
             PlotSquared.log(msg);

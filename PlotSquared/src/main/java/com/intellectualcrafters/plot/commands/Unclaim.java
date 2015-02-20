@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
@@ -36,11 +35,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Unclaim extends SubCommand {
-
     public Unclaim() {
         super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -65,8 +63,8 @@ public class Unclaim extends SubCommand {
         }
         final boolean result = PlotSquared.removePlot(plr.getWorld().getName(), plot.id, true);
         if (result) {
-            World world = plr.getWorld();
-            String worldname = world.getName();
+            final World world = plr.getWorld();
+            final String worldname = world.getName();
             PlotSquared.getPlotManager(world).unclaimPlot(world, pWorld, plot);
             DBFunc.delete(worldname, plot);
             // TODO set wall block

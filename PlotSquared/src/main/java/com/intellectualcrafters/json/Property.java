@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 import java.util.Enumeration;
@@ -52,7 +51,7 @@ public class Property {
         }
         return jo;
     }
-
+    
     /**
      * Converts the JSONObject into a property file object.
      *

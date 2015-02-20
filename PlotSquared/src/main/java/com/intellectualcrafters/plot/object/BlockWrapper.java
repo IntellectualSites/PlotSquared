@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 import org.bukkit.World;
@@ -33,32 +32,27 @@ import org.bukkit.block.Block;
  * @author Citymonstret
  */
 public class BlockWrapper {
-
     /**
      * X Coordinate
      */
     public final int x;
-
     /**
      * Y Coordinate
      */
     public final int y;
-
     /**
      * Z Coordinate
      */
     public final int z;
-
     /**
      * Block ID
      */
     public final int id;
-
     /**
      * Block Data Value
      */
     public final byte data;
-
+    
     /**
      * Constructor
      *
@@ -75,13 +69,13 @@ public class BlockWrapper {
         this.id = id;
         this.data = data;
     }
-
+    
     /**
      * Alternative Constructor Uses block data, rather than typed data
      *
      * @param block Block from which we get the data
      */
-    @SuppressWarnings({"deprecation", "unused"})
+    @SuppressWarnings({ "deprecation", "unused" })
     public BlockWrapper(final Block block) {
         this.x = block.getX();
         this.y = block.getY();
@@ -89,7 +83,7 @@ public class BlockWrapper {
         this.id = block.getTypeId();
         this.data = block.getData();
     }
-
+    
     /**
      * Get a block based on the block wrapper
      *
@@ -97,7 +91,7 @@ public class BlockWrapper {
      *
      * @return block created/fetched from settings
      */
-    @SuppressWarnings({"unused", "deprecation"})
+    @SuppressWarnings({ "unused", "deprecation" })
     public Block toBlock(final World world) {
         final Block block = world.getBlockAt(this.x, this.y, this.z);
         block.setTypeIdAndData(this.id, this.data, true);

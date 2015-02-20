@@ -12,11 +12,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class DEOP extends SubCommand {
-
     public DEOP() {
         super(Command.DEOP, "Alias for /plot trusted remove", "/plot deop  [player]", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {

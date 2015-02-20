@@ -12,11 +12,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class OP extends SubCommand {
-
     public OP() {
         super(Command.OP, "Alias for /plot trusted add", "/plot op [player]", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.World;
@@ -34,11 +33,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Empire92
  */
 public class Move extends SubCommand {
-
     public Move() {
         super("debugmove", "plots.admin", "plot moving debug test", "debugmove", "move", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
@@ -48,10 +46,10 @@ public class Move extends SubCommand {
             PlayerFunctions.sendMessage(plr, "/plot move <pos1> <pos2>");
             return false;
         }
-        World world = plr.getWorld();
-        PlotId plot1 = PlotHelper.parseId(args[0]);
-        PlotId plot2 = PlotHelper.parseId(args[1]);
-        if (plot1 == null || plot2 == null) {
+        final World world = plr.getWorld();
+        final PlotId plot1 = PlotHelper.parseId(args[0]);
+        final PlotId plot2 = PlotHelper.parseId(args[1]);
+        if ((plot1 == null) || (plot2 == null)) {
             PlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
             return false;
         }
@@ -66,8 +64,7 @@ public class Move extends SubCommand {
             }
         })) {
             return true;
-        }
-        else {
+        } else {
             PlayerFunctions.sendMessage(plr, "MOVE FAILED");
             return false;
         }

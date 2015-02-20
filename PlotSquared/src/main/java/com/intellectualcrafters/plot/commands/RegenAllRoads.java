@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -35,49 +34,38 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 public class RegenAllRoads extends SubCommand {
-
     public RegenAllRoads() {
         super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player player, final String... args) {
-        
         if (player != null) {
             sendMessage(player, C.NOT_CONSOLE);
             return false;
         }
-        
         if (args.length != 1) {
             sendMessage(player, C.NEED_PLOT_WORLD);
             return false;
         }
-        
-        String name = args[0];
-        PlotManager manager = PlotSquared.getPlotManager(name);
-        
-        if (manager == null || !(manager instanceof HybridPlotManager)) {
+        final String name = args[0];
+        final PlotManager manager = PlotSquared.getPlotManager(name);
+        if ((manager == null) || !(manager instanceof HybridPlotManager)) {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-
-        HybridPlotManager hpm = (HybridPlotManager) manager;
-        
-        World world = Bukkit.getWorld(name);
-        ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
-        
+        final HybridPlotManager hpm = (HybridPlotManager) manager;
+        final World world = Bukkit.getWorld(name);
+        final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
         PlotSquared.log("&cIf no schematic is set, the following will not do anything");
         PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotSquared.log("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
-        PlotSquared.log("&6Estimated time: &7"+ (chunks.size()) + " seconds");
-        
-        boolean result = hpm.scheduleRoadUpdate(world);
-        
+        PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        PlotSquared.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
+        final boolean result = hpm.scheduleRoadUpdate(world);
         if (!result) {
             PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
-        
         return true;
     }
 }

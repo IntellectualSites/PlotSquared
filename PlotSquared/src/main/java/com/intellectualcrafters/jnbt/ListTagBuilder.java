@@ -11,10 +11,9 @@ import java.util.List;
  * Helps create list tags.
  */
 public class ListTagBuilder {
-
     private final Class<? extends Tag> type;
     private final List<Tag> entries;
-
+    
     /**
      * Create a new instance.
      *
@@ -25,7 +24,7 @@ public class ListTagBuilder {
         this.type = type;
         this.entries = new ArrayList<Tag>();
     }
-
+    
     /**
      * Create a new builder instance.
      *
@@ -34,7 +33,7 @@ public class ListTagBuilder {
     public static ListTagBuilder create(final Class<? extends Tag> type) {
         return new ListTagBuilder(type);
     }
-
+    
     /**
      * Create a new builder instance.
      *
@@ -43,23 +42,20 @@ public class ListTagBuilder {
     @SafeVarargs
     public static <T extends Tag> ListTagBuilder createWith(final T... entries) {
         checkNotNull(entries);
-
         if (entries.length == 0) {
             throw new IllegalArgumentException("This method needs an array of at least one entry");
         }
-
         final Class<? extends Tag> type = entries[0].getClass();
         for (int i = 1; i < entries.length; i++) {
             if (!type.isInstance(entries[i])) {
                 throw new IllegalArgumentException("An array of different tag types was provided");
             }
         }
-
         final ListTagBuilder builder = new ListTagBuilder(type);
         builder.addAll(Arrays.asList(entries));
         return builder;
     }
-
+    
     /**
      * Add the given tag.
      *
@@ -75,7 +71,7 @@ public class ListTagBuilder {
         this.entries.add(value);
         return this;
     }
-
+    
     /**
      * Add all the tags in the given list.
      *
@@ -90,7 +86,7 @@ public class ListTagBuilder {
         }
         return this;
     }
-
+    
     /**
      * Build an unnamed list tag with this builder's entries.
      *
@@ -99,7 +95,7 @@ public class ListTagBuilder {
     public ListTag build() {
         return new ListTag(this.type, new ArrayList<Tag>(this.entries));
     }
-
+    
     /**
      * Build a new list tag with this builder's entries.
      *
@@ -110,5 +106,4 @@ public class ListTagBuilder {
     public ListTag build(final String name) {
         return new ListTag(name, this.type, new ArrayList<Tag>(this.entries));
     }
-
 }

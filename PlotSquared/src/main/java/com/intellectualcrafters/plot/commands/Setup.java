@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.io.IOException;
@@ -45,7 +44,6 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Setup extends SubCommand {
-
     public final static Map<String, SetupObject> setupMap = new HashMap<>();
     public HashMap<String, PlotGenerator> generators = new HashMap<>();
     
@@ -62,22 +60,22 @@ public class Setup extends SubCommand {
         int terrain = 0;
         ConfigurationNode[] step = null;
     }
-
+    
     public void updateGenerators() {
-        if (generators.size() > 0) {
+        if (this.generators.size() > 0) {
             return;
         }
-        String testWorld = "CheckingPlotSquaredGenerator";
+        final String testWorld = "CheckingPlotSquaredGenerator";
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin.isEnabled()) {
-                ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
+                final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
                     PlotSquared.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
                     if (generator instanceof PlotGenerator) {
-                        PlotGenerator pgen = (PlotGenerator) generator;
+                        final PlotGenerator pgen = (PlotGenerator) generator;
                         if (pgen.getPlotManager() instanceof SquarePlotManager) {
-                            generators.put(name, pgen);
+                            this.generators.put(name, pgen);
                         }
                     }
                 }
@@ -88,15 +86,14 @@ public class Setup extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         // going through setup
-        
-        String name = plr.getName();
+        final String name = plr.getName();
         if (!setupMap.containsKey(name)) {
-            SetupObject object = new SetupObject();
+            final SetupObject object = new SetupObject();
             setupMap.put(name, object);
             updateGenerators();
-            String prefix = "\n&8 - &7";
+            final String prefix = "\n&8 - &7";
             sendMessage(plr, C.SETUP_INIT);
-            PlayerFunctions.sendMessage(plr, "&6What generator do you want?" + prefix + StringUtils.join(generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
+            PlayerFunctions.sendMessage(plr, "&6What generator do you want?" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
             return false;
         }
         if (args.length == 1) {
@@ -106,86 +103,70 @@ public class Setup extends SubCommand {
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
-                SetupObject object = setupMap.get(plr.getName());
+                final SetupObject object = setupMap.get(plr.getName());
                 if (object.setup_index > 0) {
                     object.setup_index--;
-                    ConfigurationNode node = object.step[object.current];
+                    final ConfigurationNode node = object.step[object.current];
                     sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", node.getDescription(), node.getType().getType(), node.getDefaultValue() + "");
                     return false;
-                }
-                else if (object.current > 0 ){
+                } else if (object.current > 0) {
                     object.current--;
                 }
             }
         }
-        SetupObject object = setupMap.get(name);
-        int index = object.current;
-        switch(index) {
+        final SetupObject object = setupMap.get(name);
+        final int index = object.current;
+        switch (index) {
             case 0: { // choose generator
-                if (args.length != 1 || !generators.containsKey(args[0])) {
-                    String prefix = "\n&8 - &7";
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringUtils.join(generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
+                if ((args.length != 1) || !this.generators.containsKey(args[0])) {
+                    final String prefix = "\n&8 - &7";
+                    PlayerFunctions.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
                     sendMessage(plr, C.SETUP_INIT);
                     return false;
                 }
                 object.generator = args[0];
                 object.current++;
-                
-                String partial = Settings.ENABLE_CLUSTERS ? "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots" : "";  
-                PlayerFunctions.sendMessage(plr, "&6What world type do you want?"
-                + "\n&8 - &2DEFAULT&8 - &7Standard plot generation"
-                + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain"
-                + partial);
+                final String partial = Settings.ENABLE_CLUSTERS ? "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots" : "";
+                PlayerFunctions.sendMessage(plr, "&6What world type do you want?" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
             }
             case 1: { // choose world type
                 List<String> types;
                 if (Settings.ENABLE_CLUSTERS) {
-                    types = Arrays.asList(new String[] {"default", "augmented", "partial"});
+                    types = Arrays.asList(new String[] { "default", "augmented", "partial" });
+                } else {
+                    types = Arrays.asList(new String[] { "default", "augmented" });
                 }
-                else {
-                    types = Arrays.asList(new String[] {"default", "augmented"});
-                }
-                if (args.length != 1 || !types.contains(args[0].toLowerCase())) {
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose a world type!"
-                    + "\n&8 - &2DEFAULT&8 - &7Standard plot generation"
-                    + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain"
-                    + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
+                if ((args.length != 1) || !types.contains(args[0].toLowerCase())) {
+                    PlayerFunctions.sendMessage(plr, "&cYou must choose a world type!" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
                     return false;
                 }
                 object.type = types.indexOf(args[0].toLowerCase());
                 if (object.type == 0) {
                     object.current++;
                     if (object.step == null) {
-                        object.step = generators.get(object.generator).getNewPlotWorld(null).getSettingNodes();
+                        object.step = this.generators.get(object.generator).getNewPlotWorld(null).getSettingNodes();
                     }
-                    ConfigurationNode step = object.step[object.setup_index];
+                    final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
-                }
-                else {
-                    PlayerFunctions.sendMessage(plr, "&6What terrain would you like in plots?"
-                    + "\n&8 - &2NONE&8 - &7No terrain at all"
-                    + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                } else {
+                    PlayerFunctions.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
                 object.current++;
                 break;
             }
             case 2: { // Choose terrain
-                List<String> terrain = Arrays.asList(new String[] {"none", "ore", "all"});
-                if (args.length != 1 || !terrain.contains(args[0].toLowerCase())) {
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose the terrain!"
-                    + "\n&8 - &2NONE&8 - &7No terrain at all"
-                    + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "all" });
+                if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
+                    PlayerFunctions.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
                 object.current++;
                 if (object.step == null) {
-                    object.step = generators.get(object.generator).getNewPlotWorld(null).getSettingNodes();
+                    object.step = this.generators.get(object.generator).getNewPlotWorld(null).getSettingNodes();
                 }
-                ConfigurationNode step = object.step[object.setup_index];
+                final ConfigurationNode step = object.step[object.setup_index];
                 sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 break;
             }
@@ -229,11 +210,10 @@ public class Setup extends SubCommand {
                 }
                 object.world = args[0];
                 setupMap.remove(plr.getName());
-                World world = setupWorld(object);
+                final World world = setupWorld(object);
                 try {
                     plr.teleport(world.getSpawnLocation());
-                }
-                catch (Exception e) {
+                } catch (final Exception e) {
                     plr.sendMessage("&cAn error occured. See console for more information");
                     e.printStackTrace();
                 }
@@ -252,20 +232,20 @@ public class Setup extends SubCommand {
          * 2.2 augmented partial world with ore
          * 2.3 augmented partial world with terrain
          * 3.0 no generation + normal manager
-         * 
+         *
          * generator.TYPE: PlotSquared, augmented, partial
          * generator.TERRAIN
-         * 
+         *
          * WORLD.TYPE: hybrid, augmented, partial
          * if (augmented/partial)
-         * WORLD.TERRAIN: 
-         * 
-         * 
+         * WORLD.TERRAIN:
+         *
+         *
          * types (0, 1, 2, 3)
          * 0: no options
-         * 1: 
-         * 
-         *  
+         * 1:
+         *
+         *
          *  - return null
          *  - schedule task to create world later
          *  - externalize multiverse/world hooks to separate class
@@ -286,15 +266,15 @@ public class Setup extends SubCommand {
          *    = square generator
          *    = square plot generator (must have plot section and road section) (plot height, road height)
          *    = hybrid generator
-         *    
+         *
          *  - All will support whole world augmentation
          *  - Only grid will support partial plot worlds
-         * 
+         *
          */
         return false;
     }
     
-    public World setupWorld(SetupObject object) {
+    public World setupWorld(final SetupObject object) {
         // Configuration
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
@@ -318,14 +298,13 @@ public class Setup extends SubCommand {
                 if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.generator);
                 } else {
-                    WorldCreator wc = new WorldCreator(object.world);
+                    final WorldCreator wc = new WorldCreator(object.world);
                     wc.generator(object.generator);
                     wc.environment(Environment.NORMAL);
-                    World newWorld = Bukkit.createWorld(wc);
+                    Bukkit.createWorld(wc);
                 }
             }
-        }
-        else {
+        } else {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal");
             } else {

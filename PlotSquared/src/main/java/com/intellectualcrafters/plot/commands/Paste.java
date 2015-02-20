@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -31,11 +30,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Paste extends SubCommand {
-
     public Paste() {
         super(Command.PASTE, "Paste a plot", "paste", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -53,7 +51,6 @@ public class Paste extends SubCommand {
         }
         assert plot != null;
         final int size = (PlotHelper.getPlotTopLocAbs(plr.getWorld(), plot.getId()).getBlockX() - PlotHelper.getPlotBottomLocAbs(plr.getWorld(), plot.getId()).getBlockX());
-
         if (PlotSelection.currentSelection.containsKey(plr.getName())) {
             final PlotSelection selection = PlotSelection.currentSelection.get(plr.getName());
             if (size != selection.getWidth()) {

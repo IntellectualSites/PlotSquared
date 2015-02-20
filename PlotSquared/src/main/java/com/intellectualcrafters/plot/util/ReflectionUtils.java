@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
 import java.lang.reflect.Constructor;
@@ -36,8 +35,8 @@ import org.bukkit.Server;
  * @author DPOH-VAR
  * @version 1.0
  */
-@SuppressWarnings({"UnusedDeclaration", "rawtypes"}) public class ReflectionUtils {
-
+@SuppressWarnings({ "UnusedDeclaration", "rawtypes" })
+public class ReflectionUtils {
     /**
      * prefix of bukkit classes
      */
@@ -50,7 +49,6 @@ import org.bukkit.Server;
      * boolean value, TRUE if server uses forge or MCPC+
      */
     private static boolean forge = false;
-
     /** check server version and class names */
     static {
         if (Bukkit.getServer() != null) {
@@ -77,14 +75,14 @@ import org.bukkit.Server;
             }
         }
     }
-
+    
     /**
      * @return true if server has forge classes
      */
     public static boolean isForge() {
         return forge;
     }
-
+    
     /**
      * Get class for name. Replace {nms} to net.minecraft.server.V*. Replace {cb} to org.bukkit.craftbukkit.V*. Replace
      * {nm} to net.minecraft
@@ -105,7 +103,7 @@ import org.bukkit.Server;
         }
         throw new RuntimeException("no class found");
     }
-
+    
     /**
      * get RefClass object by real class
      *
@@ -116,17 +114,17 @@ import org.bukkit.Server;
     public static RefClass getRefClass(final Class clazz) {
         return new RefClass(clazz);
     }
-
+    
     /**
      * RefClass - utility to simplify work with reflections.
      */
     public static class RefClass {
         private final Class<?> clazz;
-
+        
         private RefClass(final Class<?> clazz) {
             this.clazz = clazz;
         }
-
+        
         /**
          * get passed class
          *
@@ -135,7 +133,7 @@ import org.bukkit.Server;
         public Class<?> getRealClass() {
             return this.clazz;
         }
-
+        
         /**
          * see {@link Class#isInstance(Object)}
          *
@@ -146,7 +144,7 @@ import org.bukkit.Server;
         public boolean isInstance(final Object object) {
             return this.clazz.isInstance(object);
         }
-
+        
         /**
          * get existing method by name and types
          *
@@ -179,7 +177,7 @@ import org.bukkit.Server;
                 throw new RuntimeException(e);
             }
         }
-
+        
         /**
          * get existing constructor by types
          *
@@ -211,7 +209,7 @@ import org.bukkit.Server;
                 throw new RuntimeException(e);
             }
         }
-
+        
         /**
          * find method by type parameters
          *
@@ -236,22 +234,21 @@ import org.bukkit.Server;
             final List<Method> methods = new ArrayList<>();
             Collections.addAll(methods, this.clazz.getMethods());
             Collections.addAll(methods, this.clazz.getDeclaredMethods());
-            findMethod:
-            for (final Method m : methods) {
-                final Class<?>[] methodTypes = m.getParameterTypes();
-                if (methodTypes.length != classes.length) {
-                    continue;
-                }
-                for (final Class aClass : classes) {
-                    if (!Arrays.equals(classes, methodTypes)) {
-                        continue findMethod;
+            findMethod: for (final Method m : methods) {
+                    final Class<?>[] methodTypes = m.getParameterTypes();
+                    if (methodTypes.length != classes.length) {
+                        continue;
                     }
-                    return new RefMethod(m);
+                    for (final Class aClass : classes) {
+                        if (!Arrays.equals(classes, methodTypes)) {
+                            continue findMethod;
+                        }
+                        return new RefMethod(m);
+                    }
                 }
-            }
             throw new RuntimeException("no such method");
         }
-
+        
         /**
          * find method by name
          *
@@ -274,7 +271,7 @@ import org.bukkit.Server;
             }
             throw new RuntimeException("no such method");
         }
-
+        
         /**
          * find method by return value
          *
@@ -287,7 +284,7 @@ import org.bukkit.Server;
         public RefMethod findMethodByReturnType(final RefClass type) {
             return findMethodByReturnType(type.clazz);
         }
-
+        
         /**
          * find method by return value
          *
@@ -311,7 +308,7 @@ import org.bukkit.Server;
             }
             throw new RuntimeException("no such method");
         }
-
+        
         /**
          * find constructor by number of arguments
          *
@@ -332,7 +329,7 @@ import org.bukkit.Server;
             }
             throw new RuntimeException("no such constructor");
         }
-
+        
         /**
          * get field by name
          *
@@ -353,7 +350,7 @@ import org.bukkit.Server;
                 throw new RuntimeException(e);
             }
         }
-
+        
         /**
          * find field by type
          *
@@ -366,7 +363,7 @@ import org.bukkit.Server;
         public RefField findField(final RefClass type) {
             return findField(type.clazz);
         }
-
+        
         /**
          * find field by type
          *
@@ -391,39 +388,39 @@ import org.bukkit.Server;
             throw new RuntimeException("no such field");
         }
     }
-
+    
     /**
      * Method wrapper
      */
     public static class RefMethod {
         private final Method method;
-
+        
         private RefMethod(final Method method) {
             this.method = method;
             method.setAccessible(true);
         }
-
+        
         /**
          * @return passed method
          */
         public Method getRealMethod() {
             return this.method;
         }
-
+        
         /**
          * @return owner class of method
          */
         public RefClass getRefClass() {
             return new RefClass(this.method.getDeclaringClass());
         }
-
+        
         /**
          * @return class of method return type
          */
         public RefClass getReturnRefClass() {
             return new RefClass(this.method.getReturnType());
         }
-
+        
         /**
          * apply method to object
          *
@@ -434,7 +431,7 @@ import org.bukkit.Server;
         public RefExecutor of(final Object e) {
             return new RefExecutor(e);
         }
-
+        
         /**
          * call static method
          *
@@ -449,14 +446,14 @@ import org.bukkit.Server;
                 throw new RuntimeException(e);
             }
         }
-
+        
         public class RefExecutor {
             final Object e;
-
+            
             public RefExecutor(final Object e) {
                 this.e = e;
             }
-
+            
             /**
              * apply method for selected object
              *
@@ -475,32 +472,32 @@ import org.bukkit.Server;
             }
         }
     }
-
+    
     /**
      * Constructor wrapper
      */
     public static class RefConstructor {
         private final Constructor constructor;
-
+        
         private RefConstructor(final Constructor constructor) {
             this.constructor = constructor;
             constructor.setAccessible(true);
         }
-
+        
         /**
          * @return passed constructor
          */
         public Constructor getRealConstructor() {
             return this.constructor;
         }
-
+        
         /**
          * @return owner class of method
          */
         public RefClass getRefClass() {
             return new RefClass(this.constructor.getDeclaringClass());
         }
-
+        
         /**
          * create new instance with constructor
          *
@@ -518,36 +515,36 @@ import org.bukkit.Server;
             }
         }
     }
-
+    
     public static class RefField {
         private final Field field;
-
+        
         private RefField(final Field field) {
             this.field = field;
             field.setAccessible(true);
         }
-
+        
         /**
          * @return passed field
          */
         public Field getRealField() {
             return this.field;
         }
-
+        
         /**
          * @return owner class of field
          */
         public RefClass getRefClass() {
             return new RefClass(this.field.getDeclaringClass());
         }
-
+        
         /**
          * @return type of field
          */
         public RefClass getFieldRefClass() {
             return new RefClass(this.field.getType());
         }
-
+        
         /**
          * apply fiend for object
          *
@@ -558,14 +555,14 @@ import org.bukkit.Server;
         public RefExecutor of(final Object e) {
             return new RefExecutor(e);
         }
-
+        
         public class RefExecutor {
             final Object e;
-
+            
             public RefExecutor(final Object e) {
                 this.e = e;
             }
-
+            
             /**
              * set field value for applied object
              *
@@ -578,7 +575,7 @@ import org.bukkit.Server;
                     throw new RuntimeException(e);
                 }
             }
-
+            
             /**
              * get field value for applied object
              *
@@ -593,5 +590,4 @@ import org.bukkit.Server;
             }
         }
     }
-
 }

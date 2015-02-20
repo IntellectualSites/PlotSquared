@@ -36,9 +36,11 @@ import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -56,19 +58,14 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class PlotSquared {
-    
     public static final String MAIN_PERMISSION = "plots.use";
     public static final String ADMIN_PERMISSION = "plots.admin";
-    
     public static File styleFile;
     public static YamlConfiguration style;
-    
     public static File configFile;
     public static YamlConfiguration config;
-    
     public static File storageFile;
     public static YamlConfiguration storage;
-    
     public static PlotSquared THIS = null; // This class
     public static IPlotMain IMP = null; // Specific implementation of PlotSquared
     public static String VERSION = null;
@@ -76,11 +73,9 @@ public class PlotSquared {
     private static boolean LOADING_WORLD = false;
     public static Economy economy = null;
     public static WorldEditPlugin worldEdit = null;
-    
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    
     private static MySQL mySQL;
     public static Connection connection;
     
@@ -190,10 +185,9 @@ public class PlotSquared {
         }
         plots.get(world).remove(id);
         if (PlotHelper.lastPlot.containsKey(world)) {
-            PlotId last = PlotHelper.lastPlot.get(world);
-            int last_max = Math.max(last.x, last.y);
-            int this_max = Math.max(id.x, id.y);
-            
+            final PlotId last = PlotHelper.lastPlot.get(world);
+            final int last_max = Math.max(last.x, last.y);
+            final int this_max = Math.max(id.x, id.y);
             if (this_max < last_max) {
                 PlotHelper.lastPlot.put(world, id);
             }
@@ -205,16 +199,13 @@ public class PlotSquared {
         if (getWorldSettings(world) != null) {
             return;
         }
-
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-
         final PlotWorld plotWorld;
         final PlotGenerator plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
-
         if (!LOADING_WORLD && (generator != null) && (generator instanceof PlotGenerator)) {
-            plotGenerator = (PlotGenerator) generator;
+            plotGenerator = generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
             if (!world.equals("CheckingPlotSquaredGenerator")) {
@@ -243,14 +234,13 @@ public class PlotSquared {
             if (!LOADING_WORLD) {
                 LOADING_WORLD = true;
                 try {
-                    String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
+                    final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
                     if (gen_string == null) {
                         new HybridGen(world);
-                    }
-                    else {
+                    } else {
                         IMP.getGenerator(world, gen_string);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log("&d=== Oh no! Please set the generator for the " + world + " ===");
                     e.printStackTrace();
                     LOADING_WORLD = false;
@@ -259,7 +249,7 @@ public class PlotSquared {
                     LOADING_WORLD = false;
                 }
             } else {
-                PlotGenerator gen_class = (PlotGenerator) generator;
+                final PlotGenerator gen_class = generator;
                 plotWorld = gen_class.getNewPlotWorld(world);
                 plotManager = gen_class.getPlotManager();
                 if (!config.contains(path)) {
@@ -274,14 +264,14 @@ public class PlotSquared {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                if ((plotWorld.TYPE == 2 && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
+                if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
                 addPlotWorld(world, plotWorld, plotManager);
                 if (plotWorld.TYPE == 2) {
                     if (ClusterManager.getClusters(world).size() > 0) {
-                        for (PlotCluster cluster : ClusterManager.getClusters(world)) {
+                        for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
                             new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
@@ -292,65 +282,63 @@ public class PlotSquared {
         }
     }
     
-    public static boolean setupPlotWorld(String world, String id) {
-        if (id != null && id.length() > 0) {
+    public static boolean setupPlotWorld(final String world, final String id) {
+        if ((id != null) && (id.length() > 0)) {
             // save configuration
-            String[] split = id.split(",");
-            HybridPlotWorld plotworld = new HybridPlotWorld(world);
-
-            int width = HybridPlotWorld.PLOT_WIDTH_DEFAULT;
-            int gap = HybridPlotWorld.ROAD_WIDTH_DEFAULT;
-            int height = HybridPlotWorld.PLOT_HEIGHT_DEFAULT;
-            PlotBlock[] floor = HybridPlotWorld.TOP_BLOCK_DEFAULT;
-            PlotBlock[] main = HybridPlotWorld.MAIN_BLOCK_DEFAULT;
-            PlotBlock wall = HybridPlotWorld.WALL_FILLING_DEFAULT;
-            PlotBlock border = HybridPlotWorld.WALL_BLOCK_DEFAULT;
-
-            for (String element : split) {
-                String[] pair = element.split("=");
+            final String[] split = id.split(",");
+            final HybridPlotWorld plotworld = new HybridPlotWorld(world);
+            final int width = SquarePlotWorld.PLOT_WIDTH_DEFAULT;
+            final int gap = SquarePlotWorld.ROAD_WIDTH_DEFAULT;
+            final int height = ClassicPlotWorld.PLOT_HEIGHT_DEFAULT;
+            final PlotBlock[] floor = ClassicPlotWorld.TOP_BLOCK_DEFAULT;
+            final PlotBlock[] main = ClassicPlotWorld.MAIN_BLOCK_DEFAULT;
+            final PlotBlock wall = ClassicPlotWorld.WALL_FILLING_DEFAULT;
+            final PlotBlock border = ClassicPlotWorld.WALL_BLOCK_DEFAULT;
+            for (final String element : split) {
+                final String[] pair = element.split("=");
                 if (pair.length != 2) {
                     log("&cNo value provided for: &7" + element);
                     return false;
                 }
-                String key = pair[0].toLowerCase();
-                String value = pair[1];
+                final String key = pair[0].toLowerCase();
+                final String value = pair[1];
                 try {
                     switch (key) {
                         case "s":
                         case "size": {
-                            HybridPlotWorld.PLOT_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
                             break;
                         }
                         case "g":
                         case "gap": {
-                            HybridPlotWorld.ROAD_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
                             break;
                         }
                         case "h":
                         case "height": {
-                            HybridPlotWorld.PLOT_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
-                            HybridPlotWorld.ROAD_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
-                            HybridPlotWorld.WALL_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
                             break;
                         }
                         case "f":
                         case "floor": {
-                            HybridPlotWorld.TOP_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
                             break;
                         }
                         case "m":
                         case "main": {
-                            HybridPlotWorld.MAIN_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
                             break;
                         }
                         case "w":
                         case "wall": {
-                            HybridPlotWorld.WALL_FILLING_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            ClassicPlotWorld.WALL_FILLING_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
                             break;
                         }
                         case "b":
                         case "border": {
-                            HybridPlotWorld.WALL_BLOCK_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
                             break;
                         }
                         default: {
@@ -358,30 +346,28 @@ public class PlotSquared {
                             return false;
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     log("&cInvalid value: &7" + value + " in arg " + element);
                     return false;
                 }
             }
             try {
-                String root = "worlds." + world;
+                final String root = "worlds." + world;
                 if (!config.contains(root)) {
                     config.createSection(root);
                 }
                 plotworld.saveConfiguration(config.getConfigurationSection(root));
-                HybridPlotWorld.PLOT_HEIGHT_DEFAULT = height;
-                HybridPlotWorld.ROAD_HEIGHT_DEFAULT = height;
-                HybridPlotWorld.WALL_HEIGHT_DEFAULT = height;
-                HybridPlotWorld.TOP_BLOCK_DEFAULT = floor;
-                HybridPlotWorld.MAIN_BLOCK_DEFAULT = main;
-                HybridPlotWorld.WALL_BLOCK_DEFAULT = border;
-                HybridPlotWorld.WALL_FILLING_DEFAULT = wall;
-                HybridPlotWorld.PLOT_WIDTH_DEFAULT = width;
-                HybridPlotWorld.ROAD_WIDTH_DEFAULT = gap;
-            }
-            catch (Exception e) {
+                ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.WALL_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.TOP_BLOCK_DEFAULT = floor;
+                ClassicPlotWorld.MAIN_BLOCK_DEFAULT = main;
+                ClassicPlotWorld.WALL_BLOCK_DEFAULT = border;
+                ClassicPlotWorld.WALL_FILLING_DEFAULT = wall;
+                SquarePlotWorld.PLOT_WIDTH_DEFAULT = width;
+                SquarePlotWorld.ROAD_WIDTH_DEFAULT = gap;
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -392,14 +378,12 @@ public class PlotSquared {
         return connection;
     }
     
-    public PlotSquared(IPlotMain imp_class) {
+    public PlotSquared(final IPlotMain imp_class) {
         THIS = this;
         IMP = imp_class;
         VERSION = IMP.getVersion();
-        
         C.setupTranslations();
         C.saveTranslations();
-        
         if (getJavaVersion() < 1.7) {
             log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
             // Didn't know of any other link :D
@@ -410,7 +394,6 @@ public class PlotSquared {
         if (getJavaVersion() < 1.8) {
             log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
-        
         TASK = IMP.getTaskManager();
         if (Settings.KILL_ROAD_MOBS) {
             IMP.runEntityTask();
@@ -418,11 +401,9 @@ public class PlotSquared {
         if (C.ENABLED.s().length() > 0) {
             log(C.ENABLED.s());
         }
-        
         setupConfigs();
         setupDefaultFlags();
         setupDatabase();
-        
         // Events
         IMP.registerCommands();
         IMP.registerPlayerEvents();
@@ -430,10 +411,8 @@ public class PlotSquared {
         IMP.registerPlotPlusEvents();
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
-        
         // Set block
         IMP.initSetBlockManager();
-        
         // PlotMe
         TaskManager.runTaskLater(new Runnable() {
             @Override
@@ -447,11 +426,9 @@ public class PlotSquared {
                 }
             }
         }, 200);
-        
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }
-        
         economy = IMP.getEconomy();
     }
     
@@ -466,7 +443,7 @@ public class PlotSquared {
         }
     }
     
-    public static void log(String message) {
+    public static void log(final String message) {
         IMP.log(message);
     }
     
@@ -474,10 +451,9 @@ public class PlotSquared {
         final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.subCommands.add(new Cluster());
-            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments", "cluster"};
-        }
-        else {
-            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
+            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments", "cluster" };
+        } else {
+            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
         }
         if (Settings.DB.USE_MYSQL) {
             try {
@@ -515,12 +491,10 @@ public class PlotSquared {
             if (Settings.ENABLE_CLUSTERS) {
                 ClusterManager.clusters = DBFunc.getClusters();
             }
-        }
-        else if (Settings.DB.USE_MONGO) {
+        } else if (Settings.DB.USE_MONGO) {
             // DBFunc.dbManager = new MongoManager();
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
-        }
-        else if (Settings.DB.USE_SQLITE) {
+        } else if (Settings.DB.USE_SQLITE) {
             try {
                 connection = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
                 {
@@ -554,8 +528,7 @@ public class PlotSquared {
             IMP.disable();
             return;
         }
-    
-        }
+    }
     
     public static void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit");
@@ -571,31 +544,22 @@ public class PlotSquared {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.BooleanValue()));
         }
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("animal-attack", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
-
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
-
         FlagManager.addFlag(new AbstractFlag("gamemode") {
             @Override
             public String parseValueRaw(final String value) {
@@ -616,17 +580,14 @@ public class PlotSquared {
                         return null;
                 }
             }
-
+            
             @Override
             public String getValueDesc() {
                 return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
             }
         });
-
         FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
-
         FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
-
         FlagManager.addFlag(new AbstractFlag("weather") {
             @Override
             public String parseValueRaw(final String value) {
@@ -643,7 +604,7 @@ public class PlotSquared {
                         return null;
                 }
             }
-
+            
             @Override
             public String getValueDesc() {
                 return "Flag value must be weather type: 'clear' or 'rain'";
@@ -676,7 +637,6 @@ public class PlotSquared {
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
-
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -693,8 +653,7 @@ public class PlotSquared {
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
-        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf"
-                + "inding");
+        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
         Settings.METRICS = config.getBoolean("metrics");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
@@ -707,13 +666,11 @@ public class PlotSquared {
             Settings.MAX_PLOTS = 32767;
         }
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
-
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
-
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
-
+    
     public static void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -788,43 +745,42 @@ public class PlotSquared {
     }
     
     public static void showDebug() {
-    Settings.DB.USE_MYSQL = storage.getBoolean("mysql.use");
-    Settings.DB.USER = storage.getString("mysql.user");
-    Settings.DB.PASSWORD = storage.getString("mysql.password");
-    Settings.DB.HOST_NAME = storage.getString("mysql.host");
-    Settings.DB.PORT = storage.getString("mysql.port");
-    Settings.DB.DATABASE = storage.getString("mysql.database");
-    Settings.DB.USE_SQLITE = storage.getBoolean("sqlite.use");
-    Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
-    Settings.DB.PREFIX = storage.getString("prefix");
-    Settings.METRICS = config.getBoolean("metrics");
-    Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
-    Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
-    Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-    Settings.API_URL = config.getString("uuid.api.location");
-    Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
-    Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
-
-    C.COLOR_1 = ChatColor.getByChar(style.getString("color.1"));
-    C.COLOR_2 = ChatColor.getByChar(style.getString("color.2"));
-    C.COLOR_3 = ChatColor.getByChar(style.getString("color.3"));
-    C.COLOR_4 = ChatColor.getByChar(style.getString("color.4"));
-    if (Settings.DEBUG) {
-        final Map<String, String> settings = new HashMap<>();
-        settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
-        settings.put("Use Metrics", "" + Settings.METRICS);
-        settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
-        settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
-        settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
-        settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
-        settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
-        settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
-        settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
-        settings.put("API Location", "" + Settings.API_URL);
-        for (final Entry<String, String> setting : settings.entrySet()) {
-            log(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+        Settings.DB.USE_MYSQL = storage.getBoolean("mysql.use");
+        Settings.DB.USER = storage.getString("mysql.user");
+        Settings.DB.PASSWORD = storage.getString("mysql.password");
+        Settings.DB.HOST_NAME = storage.getString("mysql.host");
+        Settings.DB.PORT = storage.getString("mysql.port");
+        Settings.DB.DATABASE = storage.getString("mysql.database");
+        Settings.DB.USE_SQLITE = storage.getBoolean("sqlite.use");
+        Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
+        Settings.DB.PREFIX = storage.getString("prefix");
+        Settings.METRICS = config.getBoolean("metrics");
+        Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
+        Settings.API_URL = config.getString("uuid.api.location");
+        Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
+        Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
+        C.COLOR_1 = ChatColor.getByChar(style.getString("color.1"));
+        C.COLOR_2 = ChatColor.getByChar(style.getString("color.2"));
+        C.COLOR_3 = ChatColor.getByChar(style.getString("color.3"));
+        C.COLOR_4 = ChatColor.getByChar(style.getString("color.4"));
+        if (Settings.DEBUG) {
+            final Map<String, String> settings = new HashMap<>();
+            settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
+            settings.put("Use Metrics", "" + Settings.METRICS);
+            settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
+            settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
+            settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
+            settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
+            settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
+            settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
+            settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
+            settings.put("API Location", "" + Settings.API_URL);
+            for (final Entry<String, String> setting : settings.entrySet()) {
+                log(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+            }
         }
-    }
     }
     
     private static void setupStyle() {
@@ -840,11 +796,11 @@ public class PlotSquared {
             }
         }
     }
-
+    
     public static double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
-
+    
     public static Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }

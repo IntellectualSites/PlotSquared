@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.events;
 
 import org.bukkit.entity.Player;
@@ -32,12 +31,13 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
+@SuppressWarnings("unused")
+public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
     private final boolean auto;
     private boolean cancelled;
-
+    
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed
      *
@@ -49,11 +49,11 @@ import com.intellectualcrafters.plot.object.Plot;
         this.plot = plot;
         this.auto = auto;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plot involved
      *
@@ -62,24 +62,24 @@ import com.intellectualcrafters.plot.object.Plot;
     public Plot getPlot() {
         return this.plot;
     }
-
+    
     /**
      * @return true if it was an automated claim, else false
      */
     public boolean wasAuto() {
         return this.auto;
     }
-
+    
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-
+    
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -31,19 +30,18 @@ import com.intellectualcrafters.plot.BukkitMain;
  * @author Citymonstret
  */
 public class CommandPermission {
-
     /**
      * Permission Node
      */
     public final String permission;
-
+    
     /**
      * @param permission Command Permission
      */
     public CommandPermission(final String permission) {
         this.permission = permission.toLowerCase();
     }
-
+    
     /**
      * @param player Does the player have the permission?
      *

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.HashSet;
@@ -40,7 +39,6 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class ForceFieldListener implements Listener {
-
     private Set<Player> getNearbyPlayers(final Player player, final Plot plot) {
         final Set<Player> players = new HashSet<>();
         Player oPlayer;
@@ -54,7 +52,7 @@ public class ForceFieldListener implements Listener {
         }
         return players;
     }
-
+    
     private Player hasNearbyPermitted(final Player player, final Plot plot) {
         Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
@@ -67,7 +65,7 @@ public class ForceFieldListener implements Listener {
         }
         return null;
     }
-
+    
     public Vector calculateVelocity(final Player p, final Player e) {
         final Location playerLocation = p.getLocation();
         final Location oPlayerLocation = e.getLocation();
@@ -90,7 +88,7 @@ public class ForceFieldListener implements Listener {
         }
         return new Vector(x, y, z);
     }
-
+    
     @EventHandler
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();

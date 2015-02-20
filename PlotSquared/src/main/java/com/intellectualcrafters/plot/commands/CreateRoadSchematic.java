@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -32,31 +31,24 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class CreateRoadSchematic extends SubCommand {
-
     public CreateRoadSchematic() {
         super(Command.CREATEROADSCHEMATIC, "Add a road schematic to your world using the road around your current plot", "crs", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
     public boolean execute(final Player player, final String... args) {
-        
         if (!PlayerFunctions.isInPlot(player)) {
             PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return false;
         }
-        
         if (!(PlotSquared.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
-
-        HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
-        
+        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         manager.setupRoadSchematic(plot);
         PlotHelper.update(BukkitUtil.getLocation(entity));
         PlayerFunctions.sendMessage(player, "&6Saved new road schematic");
-        
         return true;
     }
 }

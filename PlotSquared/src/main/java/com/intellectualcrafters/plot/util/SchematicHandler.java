@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
@@ -74,32 +73,22 @@ public class SchematicHandler {
         }
         try {
             final Dimension demensions = schematic.getSchematicDimension();
-
             final int WIDTH = demensions.getX();
             final int LENGTH = demensions.getZ();
             final int HEIGHT = demensions.getY();
-
             final DataCollection[] blocks = schematic.getBlockCollection();
-
             Location l1 = PlotHelper.getPlotBottomLoc(plot.world, plot.getId());
-
             final int sy = BukkitUtil.getHeighestBlock(location.getWorld(), l1.getX() + 1, l1.getZ() + 1);
-
             l1 = l1.add(1, sy - 1, 1);
-
-            int y_offset;
             if (HEIGHT == BukkitUtil.getMaxHeight(location.getWorld())) {
-                y_offset = 0;
             } else {
-                y_offset = l1.getY();
+                l1.getY();
             }
-            
-            int[] xl = new int[blocks.length];
-            int[] yl = new int[blocks.length];
-            int[] zl = new int[blocks.length];
-            int[] ids = new int[blocks.length];
-            byte[] data = new byte[blocks.length];
-
+            final int[] xl = new int[blocks.length];
+            final int[] yl = new int[blocks.length];
+            final int[] zl = new int[blocks.length];
+            final int[] ids = new int[blocks.length];
+            final byte[] data = new byte[blocks.length];
             for (int x = 0; x < WIDTH; x++) {
                 for (int z = 0; z < LENGTH; z++) {
                     for (int y = 0; y < HEIGHT; y++) {
@@ -114,16 +103,14 @@ public class SchematicHandler {
                 }
             }
             BlockManager.setBlocks(plot.world, xl, yl, zl, ids, data);
-            
         } catch (final Exception e) {
             return false;
         }
         return true;
     }
-
-    public static Schematic getSchematic(final CompoundTag tag, File file) {
+    
+    public static Schematic getSchematic(final CompoundTag tag, final File file) {
         final Map<String, Tag> tagMap = tag.getValue();
-
         byte[] addId = new byte[0];
         if (tagMap.containsKey("AddBlocks")) {
             addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
@@ -131,13 +118,10 @@ public class SchematicHandler {
         final short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
         final short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
         final short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
-
         final byte[] b = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
         final byte[] d = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
         final short[] blocks = new short[b.length];
-
         final Dimension dimension = new Dimension(width, height, length);
-
         for (int index = 0; index < b.length; index++) {
             if ((index >> 1) >= addId.length) { // No corresponding
                 // AddBlocks index
@@ -150,9 +134,7 @@ public class SchematicHandler {
                 }
             }
         }
-
         final DataCollection[] collection = new DataCollection[b.length];
-
         for (int x = 0; x < b.length; x++) {
             collection[x] = new DataCollection(blocks[x], d[x]);
         }
@@ -180,20 +162,18 @@ public class SchematicHandler {
             PlotSquared.log(file.toString() + " doesn't exist");
             return null;
         }
-
         try {
             final InputStream iStream = new FileInputStream(file);
             final NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
             final CompoundTag tag = (CompoundTag) stream.readTag();
             stream.close();
             return getSchematic(tag, file);
-
         } catch (final Exception e) {
             PlotSquared.log(file.toString() + " is not in GZIP format");
             return null;
         }
     }
-
+    
     /**
      * Saves a schematic to a file path
      *
@@ -208,7 +188,7 @@ public class SchematicHandler {
             return false;
         }
         try {
-            File tmp = new File(path);
+            final File tmp = new File(path);
             tmp.getParentFile().mkdirs();
             final OutputStream stream = new FileOutputStream(path);
             final NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream));
@@ -221,7 +201,7 @@ public class SchematicHandler {
         }
         return true;
     }
-
+    
     /**
      * Gets the schematic of a plot
      *
@@ -230,19 +210,17 @@ public class SchematicHandler {
      *
      * @return tag
      */
-    public static CompoundTag getCompoundTag(final String world, PlotId id) {
+    public static CompoundTag getCompoundTag(final String world, final PlotId id) {
         if (!PlotSquared.getPlots(world).containsKey(id)) {
             return null;
         }
-        
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLoc(world, id);
-        
         return getCompoundTag(world, pos1, pos2);
     }
     
     @SuppressWarnings("deprecation")
-    public static CompoundTag getCompoundTag(final String world, Location pos1, Location pos2) {
+    public static CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2) {
         // loading chunks
         int i = 0;
         int j = 0;
@@ -252,9 +230,7 @@ public class SchematicHandler {
                     final Chunk chunk = BukkitUtil.getChunkAt(world, i, j);
                     final boolean result = chunk.load(false);
                     if (!result) {
-
                         // Plot is not even generated
-
                         return null;
                     }
                 }
@@ -264,9 +240,8 @@ public class SchematicHandler {
             return null;
         }
         final int width = (pos2.getX() - pos1.getX()) + 1;
-        final int height = pos2.getY() - pos1.getY() + 1;
+        final int height = (pos2.getY() - pos1.getY()) + 1;
         final int length = (pos2.getZ() - pos1.getZ()) + 1;
-
         final HashMap<String, Tag> schematic = new HashMap<>();
         schematic.put("Width", new ShortTag("Width", (short) width));
         schematic.put("Length", new ShortTag("Length", (short) length));
@@ -281,34 +256,25 @@ public class SchematicHandler {
         final byte[] blocks = new byte[width * height * length];
         byte[] addBlocks = null;
         final byte[] blockData = new byte[width * height * length];
-
-        int sx = pos1.getX();
-        int ex = pos2.getX();
-        
-        int sz = pos1.getZ();
-        int ez = pos2.getZ();
-
-        int sy = pos1.getY();
-        int ey = pos2.getY();
-        
+        final int sx = pos1.getX();
+        pos2.getX();
+        final int sz = pos1.getZ();
+        pos2.getZ();
+        final int sy = pos1.getY();
+        pos2.getY();
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
                 for (int y = 0; y < height; y++) {
                     final int index = (y * width * length) + (z * width) + x;
-
-                    PlotBlock block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
-
+                    final PlotBlock block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
                     if (block.id > 255) {
                         if (addBlocks == null) {
                             addBlocks = new byte[(blocks.length >> 1) + 1];
                         }
-
                         addBlocks[index >> 1] = (byte) (((index & 1) == 0) ? (addBlocks[index >> 1] & 0xF0) | ((block.id >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((block.id >> 8) & 0xF) << 4));
                     }
-
                     blocks[index] = (byte) block.id;
                     blockData[index] = block.data;
-
                     // We need worldedit to save tileentity data or entities
                     // - it uses NMS and CB internal code, which changes every
                     // update
@@ -319,14 +285,12 @@ public class SchematicHandler {
         schematic.put("Data", new ByteArrayTag("Data", blockData));
         schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
         schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
-
         if (addBlocks != null) {
             schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
         }
-
         return new CompoundTag("Schematic", schematic);
     }
-
+    
     public static boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
         int length = 0;
         for (int i = i1; i <= i2; i++) {
@@ -335,11 +299,11 @@ public class SchematicHandler {
             }
         }
         length = i2 - length;
-        int[] xl = new int[length];
-        int[] yl = new int[length];
-        int[] zl = new int[length];
-        int[] ids = new int[length];
-        byte[] data = new byte[length];
+        final int[] xl = new int[length];
+        final int[] yl = new int[length];
+        final int[] zl = new int[length];
+        final int[] ids = new int[length];
+        final byte[] data = new byte[length];
         int count = 0;
         for (int i = i1; i <= i2; i++) {
             final short id = blocks[i].block;
@@ -347,17 +311,14 @@ public class SchematicHandler {
                 continue;
             }
             count++;
-            
             final int area = WIDTH * LENGTH;
             final int r = i % (area);
             final int x = r % WIDTH;
             final int y = i / area;
             final int z = r / WIDTH;
-            
             xl[count] = x;
             yl[count] = y;
             zl[count] = z;
-            
             ids[count] = id;
             data[count] = blocks[i].data;
             if (y > 256) {
@@ -367,7 +328,7 @@ public class SchematicHandler {
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
         return true;
     }
-
+    
     /**
      * Schematic Class
      *
@@ -377,26 +338,26 @@ public class SchematicHandler {
         private final DataCollection[] blockCollection;
         private final Dimension schematicDimension;
         private final File file;
-
+        
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
             this.blockCollection = blockCollection;
             this.schematicDimension = schematicDimension;
             this.file = file;
         }
-
+        
         public File getFile() {
             return this.file;
         }
-
+        
         public Dimension getSchematicDimension() {
             return this.schematicDimension;
         }
-
+        
         public DataCollection[] getBlockCollection() {
             return this.blockCollection;
         }
     }
-
+    
     /**
      * Schematic Dimensions
      *
@@ -406,26 +367,26 @@ public class SchematicHandler {
         private final int x;
         private final int y;
         private final int z;
-
+        
         public Dimension(final int x, final int y, final int z) {
             this.x = x;
             this.y = y;
             this.z = z;
         }
-
+        
         public int getX() {
             return this.x;
         }
-
+        
         public int getY() {
             return this.y;
         }
-
+        
         public int getZ() {
             return this.z;
         }
     }
-
+    
     /**
      * Schematic Data Collection
      *
@@ -434,18 +395,17 @@ public class SchematicHandler {
     public static class DataCollection {
         private final short block;
         private final byte data;
-
+        
         // public CompoundTag tag;
-
         public DataCollection(final short block, final byte data) {
             this.block = block;
             this.data = data;
         }
-
+        
         public short getBlock() {
             return this.block;
         }
-
+        
         public byte getData() {
             return this.data;
         }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util.bukkit;
 
 import org.bukkit.entity.Player;
@@ -45,8 +44,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  * @author Empire92
  */
 public class PWE {
-
-    public static void setMask(final Player p, final Location l, boolean force) {
+    public static void setMask(final Player p, final Location l, final boolean force) {
         try {
             LocalSession s;
             if (PlotSquared.worldEdit == null) {
@@ -61,21 +59,17 @@ public class PWE {
             if (id != null) {
                 final Plot plot = PlotSquared.getPlots(l.getWorld()).get(id);
                 if (plot != null) {
-                	if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
-                		return;
-                	}
-                    boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
+                    if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
+                        return;
+                    }
+                    final boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(UUIDHandler.getUUID(p))) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p));
                     if (r) {
                         final String w = l.getWorld();
-
                         final Location bloc = PlotHelper.getPlotBottomLoc(w, plot.id);
                         final Location tloc = PlotHelper.getPlotTopLoc(w, plot.id);
-
                         final Vector bvec = new Vector(bloc.getX() + 1, bloc.getY(), bloc.getZ() + 1);
                         final Vector tvec = new Vector(tloc.getX(), tloc.getY(), tloc.getZ());
-
                         final LocalWorld lw = PlotSquared.worldEdit.wrapPlayer(p).getWorld();
-
                         final CuboidRegion region = new CuboidRegion(lw, bvec, tvec);
                         final RegionMask mask = new RegionMask(region);
                         s.setMask(mask);
@@ -105,11 +99,11 @@ public class PWE {
         }
         return !noMask(s);
     }
-
+    
     public static boolean noMask(final LocalSession s) {
         return s.getMask() == null;
     }
-
+    
     @SuppressWarnings("deprecation")
     public static void setNoMask(final Player p) {
         try {
@@ -126,12 +120,12 @@ public class PWE {
             //
         }
     }
-
+    
     public static void removeMask(final Player p, final LocalSession s) {
         final Mask mask = null;
         s.setMask(mask);
     }
-
+    
     public static void removeMask(final Player p) {
         try {
             LocalSession s;

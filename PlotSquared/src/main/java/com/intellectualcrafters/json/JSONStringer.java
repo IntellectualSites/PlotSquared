@@ -40,7 +40,7 @@ public class JSONStringer extends JSONWriter {
     public JSONStringer() {
         super(new StringWriter());
     }
-
+    
     /**
      * Return the JSON text. This method is used to obtain the product of the JSONStringer instance. It will return
      * <code>null</code> if there was a problem in the construction of the JSON text (such as the calls to

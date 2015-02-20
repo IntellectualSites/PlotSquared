@@ -18,9 +18,8 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * A plot manager with a square grid layout, with square shaped plots
  */
 public abstract class SquarePlotManager extends GridPlotManager {
-    
     @Override
-    public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete, Runnable whendone) {
+    public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whendone) {
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
         ChunkManager.regenerateRegion(pos1, pos2, whendone);
@@ -30,27 +29,21 @@ public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public Location getPlotTopLocAbs(final PlotWorld plotworld, final PlotId plotid) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-
         final int px = plotid.x;
         final int pz = plotid.y;
-
         final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-
         return new Location(Bukkit.getWorld(plotworld.worldname), x, 256, z);
     }
     
     @Override
     public PlotId getPlotIdAbs(final PlotWorld plotworld, final Location loc) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-
         // get x,z loc
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
-
         // get plot size
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
-
         // get size of path on bottom part, and top part of plot
         // (As 0,0 is in the middle of a road, not the very start)
         int pathWidthLower;
@@ -59,7 +52,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
-
         // calulating how many shifts need to be done
         int dx = x / size;
         int dz = z / size;
@@ -71,11 +63,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
             dz--;
             z += ((-dz) * size);
         }
-
         // reducing to first plot
         final int rx = (x) % size;
         final int rz = (z) % size;
-
         // checking if road (return null if so)
         final int end = pathWidthLower + dpw.PLOT_WIDTH;
         final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
@@ -90,10 +80,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public PlotId getPlotId(final PlotWorld plotworld, final Location loc) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
-
         if (plotworld == null) {
             return null;
         }
@@ -104,10 +92,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
         } else {
             pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
         }
-
         int dx = x / size;
         int dz = z / size;
-
         if (x < 0) {
             dx--;
             x += ((-dx) * size);
@@ -116,12 +102,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
             dz--;
             z += ((-dz) * size);
         }
-
         final int rx = (x) % size;
         final int rz = (z) % size;
-
         final int end = pathWidthLower + dpw.PLOT_WIDTH;
-
         final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
         if (northSouth && eastWest) {
@@ -175,13 +158,10 @@ public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-
         final int px = plotid.x;
         final int pz = plotid.y;
-
         final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-
         return new Location(Bukkit.getWorld(plotworld.worldname), x, 1, z);
     }
     
@@ -190,18 +170,15 @@ public abstract class SquarePlotManager extends GridPlotManager {
      */
     @Override
     public boolean setBiome(final World world, final Plot plot, final Biome biome) {
-
         final int bottomX = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
         final int topX = PlotHelper.getPlotTopLoc(world, plot.id).getBlockX() + 1;
         final int bottomZ = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
         final int topZ = PlotHelper.getPlotTopLoc(world, plot.id).getBlockZ() + 1;
-
         final Block block = world.getBlockAt(PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 1, 1));
         final Biome current = block.getBiome();
         if (biome.equals(current)) {
             return false;
         }
-
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
                 final Block blk = world.getBlockAt(x, 0, z);

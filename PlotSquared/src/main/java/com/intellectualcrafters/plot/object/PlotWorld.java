@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import com.intellectualcrafters.plot.flag.FlagManager;
  * @author Jesse Boyd
  */
 public abstract class PlotWorld {
-
     public final static boolean AUTO_MERGE_DEFAULT = false;
     public final static boolean MOB_SPAWNING_DEFAULT = false;
     public final static Biome PLOT_BIOME_DEFAULT = Biome.FOREST;
@@ -60,15 +58,11 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
-    
     // are plot clusters enabled
     // require claim in cluster
-    
-    
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     public static List<Material> BLOCKS;
-
     static {
         BLOCKS = new ArrayList<>();
         for (final Material material : Material.values()) {
@@ -77,7 +71,6 @@ public abstract class PlotWorld {
             }
         }
     }
-
     public final String worldname;
     public boolean AUTO_MERGE;
     public boolean MOB_SPAWNING;
@@ -100,21 +93,21 @@ public abstract class PlotWorld {
     public boolean WORLD_BORDER;
     public int TYPE = 0;
     public int TERRAIN = 0;
-
+    
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
     }
-
+    
     /**
      * When a world is created, the following method will be called for each
      *
      * @param config Configuration Section
      */
     public void loadDefaultConfiguration(final ConfigurationSection config) {
-	    if (config.contains("generator.terrain")) {
-    	    this.TERRAIN = config.getInt("generator.terrain");
-    	    this.TYPE = config.getInt("generator.type");
-	    }
+        if (config.contains("generator.terrain")) {
+            this.TERRAIN = config.getInt("generator.terrain");
+            this.TYPE = config.getInt("generator.type");
+        }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.PLOT_BIOME = (Biome) Configuration.BIOME.parseString(config.getString("plot.biome"));
@@ -128,17 +121,15 @@ public abstract class PlotWorld {
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
-        List<String> flags = config.getStringList("flags.default");
+        final List<String> flags = config.getStringList("flags.default");
         if (flags == null) {
             this.DEFAULT_FLAGS = new Flag[] {};
-        }
-        else {
+        } else {
             try {
                 this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
-            }
-            catch (Exception e) {
-                PlotSquared.log("&cInvalid default flags for "+this.worldname+": "+StringUtils.join(flags,","));
-                this.DEFAULT_FLAGS = new Flag[]{};
+            } catch (final Exception e) {
+                PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
+                this.DEFAULT_FLAGS = new Flag[] {};
             }
         }
         this.PVP = config.getBoolean("event.pvp");
@@ -148,9 +139,9 @@ public abstract class PlotWorld {
         this.SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
     }
-
+    
     public abstract void loadConfiguration(final ConfigurationSection config);
-
+    
     /**
      * Saving core plotworld settings
      *
@@ -158,7 +149,6 @@ public abstract class PlotWorld {
      */
     public void saveConfiguration(final ConfigurationSection config) {
         final HashMap<String, Object> options = new HashMap<>();
-
         options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
         options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
         options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
@@ -178,10 +168,10 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
-        if (Settings.ENABLE_CLUSTERS && this.TYPE != 0) {
+        if (Settings.ENABLE_CLUSTERS && (this.TYPE != 0)) {
             options.put("generator.terrain", this.TERRAIN);
             options.put("generator.type", this.TYPE);
-    	}
+        }
         final ConfigurationNode[] settings = getSettingNodes();
         /*
          * Saving generator specific settings
@@ -189,14 +179,13 @@ public abstract class PlotWorld {
         for (final ConfigurationNode setting : settings) {
             options.put(setting.getConstant(), setting.getType().parseObject(setting.getValue()));
         }
-
         for (final String option : options.keySet()) {
             if (!config.contains(option)) {
                 config.set(option, options.get(option));
             }
         }
     }
-
+    
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *

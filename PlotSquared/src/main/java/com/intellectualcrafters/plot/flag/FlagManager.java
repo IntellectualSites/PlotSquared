@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.flag;
 
 import java.util.ArrayList;
@@ -46,15 +45,14 @@ import com.intellectualcrafters.plot.object.PlotWorld;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class FlagManager {
-
+@SuppressWarnings("unused")
+public class FlagManager {
     // TODO add some flags
     // - Plot clear interval
     // - Mob cap
     // - customized plot composition
-
     private final static ArrayList<AbstractFlag> flags = new ArrayList<>();
-
+    
     /**
      * Register an AbstractFlag with PlotSquared
      *
@@ -64,10 +62,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      */
     public static boolean addFlag(final AbstractFlag af) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        String key = af.getKey();
+        af.getKey();
         if (PlotSquared.getAllPlotsRaw() != null) {
-            for (Plot plot : PlotSquared.getPlots()) {
-                for (Flag flag : plot.settings.flags) {
+            for (final Plot plot : PlotSquared.getPlots()) {
+                for (final Flag flag : plot.settings.flags) {
                     if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
                         flag.setKey(af);
                     }
@@ -76,14 +74,14 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return (getFlag(af.getKey()) == null) && flags.add(af);
     }
-
-    public static Flag getSettingFlag(String world, PlotSettings settings, String flag) {
-    	ArrayList<Flag> flags = new ArrayList<>();
-        if (settings.flags != null && settings.flags.size() > 0) {
-        	flags.addAll(settings.flags);
+    
+    public static Flag getSettingFlag(final String world, final PlotSettings settings, final String flag) {
+        final ArrayList<Flag> flags = new ArrayList<>();
+        if ((settings.flags != null) && (settings.flags.size() > 0)) {
+            flags.addAll(settings.flags);
         }
-        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        if ((plotworld != null) && (plotworld.DEFAULT_FLAGS != null) && (plotworld.DEFAULT_FLAGS.length > 0)) {
             flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
         }
         for (final Flag myflag : flags) {
@@ -100,19 +98,19 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param flag
      * @return
      */
-    public static Flag getPlotFlag(Plot plot, String flag) {
+    public static Flag getPlotFlag(final Plot plot, final String flag) {
         return getSettingFlag(plot.world, plot.settings, flag);
     }
     
-    public static boolean isPlotFlagTrue(Plot plot, String strFlag) {
-    	Flag flag = getPlotFlag(plot, strFlag);
-    	if (flag == null) {
-    		return false;
-    	}
-    	if (flag.getValue() instanceof Boolean) {
-    		return (boolean) flag.getValue();
-    	}
-    	return false;
+    public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
+        final Flag flag = getPlotFlag(plot, strFlag);
+        if (flag == null) {
+            return false;
+        }
+        if (flag.getValue() instanceof Boolean) {
+            return (boolean) flag.getValue();
+        }
+        return false;
     }
     
     /**
@@ -121,13 +119,13 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param flag
      * @return
      */
-    public static Flag getPlotFlagAbs(Plot plot, String flag) {
-    	return getSettingFlagAbs(plot.settings, flag);
+    public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
+        return getSettingFlagAbs(plot.settings, flag);
     }
     
-    public static Flag getSettingFlagAbs(PlotSettings settings, String flag) {
-    	if (settings.flags == null || settings.flags.size() == 0) {
-        	return null;
+    public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
+        if ((settings.flags == null) || (settings.flags.size() == 0)) {
+            return null;
         }
         for (final Flag myflag : settings.flags) {
             if (myflag.getKey().equals(flag)) {
@@ -142,7 +140,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
      * @param plot
      * @param flag
      */
-    public static boolean addPlotFlag(Plot plot, final Flag flag) {
+    public static boolean addPlotFlag(final Plot plot, final Flag flag) {
         final PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -157,8 +155,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return true;
     }
     
-    public static boolean addClusterFlag(PlotCluster cluster, final Flag flag) {
-    	//TODO plot cluster flag event
+    public static boolean addClusterFlag(final PlotCluster cluster, final Flag flag) {
+        //TODO plot cluster flag event
         final Flag hasFlag = getSettingFlag(cluster.world, cluster.settings, flag.getKey());
         if (hasFlag != null) {
             cluster.settings.flags.remove(hasFlag);
@@ -169,23 +167,23 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     }
     
     /**
-     * 
+     *
      * @param plot
      * @return
      */
-    public static Set<Flag> getPlotFlags(Plot plot) {
+    public static Set<Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);
     }
     
-    public static Set<Flag> getSettingFlags(String world, PlotSettings settings) {
-        Set<Flag> plotflags = settings.flags;
-        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        if (plotworld != null && plotworld.DEFAULT_FLAGS != null && plotworld.DEFAULT_FLAGS.length > 0) {
-            HashSet<String> flagStrings = new HashSet<>();
-            for (Flag flag : plotflags) {
+    public static Set<Flag> getSettingFlags(final String world, final PlotSettings settings) {
+        final Set<Flag> plotflags = settings.flags;
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        if ((plotworld != null) && (plotworld.DEFAULT_FLAGS != null) && (plotworld.DEFAULT_FLAGS.length > 0)) {
+            final HashSet<String> flagStrings = new HashSet<>();
+            for (final Flag flag : plotflags) {
                 flagStrings.add(flag.getKey());
             }
-            for (Flag newflag : plotworld.DEFAULT_FLAGS) {
+            for (final Flag newflag : plotworld.DEFAULT_FLAGS) {
                 if (!flagStrings.contains(newflag.getKey())) {
                     plotflags.add(newflag);
                 }
@@ -194,10 +192,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return plotflags;
     }
     
-    public static boolean removePlotFlag(Plot plot, String flag) {
+    public static boolean removePlotFlag(final Plot plot, final String flag) {
         final Flag hasFlag = getPlotFlag(plot, flag);
         if (hasFlag != null) {
-            Flag flagObj = FlagManager.getPlotFlagAbs(plot, flag);
+            final Flag flagObj = FlagManager.getPlotFlagAbs(plot, flag);
             if (flagObj != null) {
                 final PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flagObj, plot);
                 Bukkit.getServer().getPluginManager().callEvent(event);
@@ -212,12 +210,12 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         return false;
     }
     
-    public static boolean removeClusterFlag(PlotCluster cluster, String flag) {
+    public static boolean removeClusterFlag(final PlotCluster cluster, final String flag) {
         final Flag hasFlag = getSettingFlag(cluster.world, cluster.settings, flag);
         if (hasFlag != null) {
-            Flag flagObj = FlagManager.getSettingFlagAbs(cluster.settings, flag);
+            final Flag flagObj = FlagManager.getSettingFlagAbs(cluster.settings, flag);
             if (flagObj != null) {
-            	//TODO cluster flag add event
+                //TODO cluster flag add event
                 cluster.settings.flags.remove(hasFlag);
                 DBFunc.setFlags(cluster, cluster.settings.flags);
                 return true;
@@ -225,8 +223,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return false;
     }
-
-    public static void setPlotFlags(Plot plot, Set<Flag> flags) {
+    
+    public static void setPlotFlags(final Plot plot, final Set<Flag> flags) {
         if (flags == null) {
             plot.settings.flags = new HashSet<>();
             DBFunc.setFlags(plot.world, plot, plot.settings.flags);
@@ -236,7 +234,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         DBFunc.setFlags(plot.world, plot, plot.settings.flags);
     }
     
-    public static void setClusterFlags(PlotCluster cluster, Set<Flag> flags) {
+    public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {
         if (flags == null) {
             cluster.settings.flags = new HashSet<>();
             DBFunc.setFlags(cluster, cluster.settings.flags);
@@ -245,7 +243,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         cluster.settings.flags = flags;
         DBFunc.setFlags(cluster, cluster.settings.flags);
     }
-
+    
     public static Flag[] removeFlag(final Flag[] flags, final String r) {
         final Flag[] f = new Flag[flags.length - 1];
         int index = 0;
@@ -256,10 +254,9 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return f;
     }
-
+    
     public static Set<Flag> removeFlag(final Set<Flag> flags, final String r) {
         final HashSet<Flag> newflags = new HashSet<>();
-        int index = 0;
         for (final Flag flag : flags) {
             if (!flag.getKey().equalsIgnoreCase(r)) {
                 newflags.add(flag);
@@ -276,7 +273,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static List<AbstractFlag> getFlags() {
         return flags;
     }
-
+    
     /**
      * Get a list of registerd AbstragFlag objects based on player permissions
      *
@@ -293,7 +290,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return returnFlags;
     }
-
+    
     /**
      * Get an AbstractFlag by a string Returns null if flag does not exist
      *
@@ -309,7 +306,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return null;
     }
-
+    
     /**
      * Get an AbstractFlag by a string
      *
@@ -326,7 +323,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
         }
         return getFlag(string);
     }
-
+    
     /**
      * Remove a registered AbstractFlag
      *
@@ -337,7 +334,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
     public static boolean removeFlag(final AbstractFlag flag) {
         return flags.remove(flag);
     }
-
+    
     public static Flag[] parseFlags(final List<String> flagstrings) {
         final Flag[] flags = new Flag[flagstrings.size()];
         for (int i = 0; i < flagstrings.size(); i++) {

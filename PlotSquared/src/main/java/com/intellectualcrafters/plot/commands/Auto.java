@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
@@ -45,7 +44,7 @@ public class Auto extends SubCommand {
     public Auto() {
         super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
     }
-
+    
     public static PlotId getNextPlot(final PlotId id, final int step) {
         final int absX = Math.abs(id.x);
         final int absY = Math.abs(id.y);
@@ -74,7 +73,7 @@ public class Auto extends SubCommand {
             return new PlotId(id.x + 1, id.y);
         }
     }
-
+    
     // TODO auto claim a mega plot with schematic
     @Override
     public boolean execute(final Player plr, final String... args) {
@@ -121,7 +120,6 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-
         if ((size_x * size_z) > Settings.MAX_AUTO_SIZE) {
             PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
@@ -161,42 +159,40 @@ public class Auto extends SubCommand {
             }
             // }
         }
-        String worldname = world.getName();
-        PlotWorld plotworld = PlotSquared.getWorldSettings(worldname);
+        final String worldname = world.getName();
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(worldname);
         if (plotworld.TYPE == 2) {
-        	Location loc = BukkitUtil.getLocation(plr);
-        	Plot plot = PlotHelper.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-        	if (plot == null) {
-        		return sendMessage(plr, C.NOT_IN_PLOT);
-        	}
-        	PlotCluster cluster = ClusterManager.getCluster(loc);
-        	// Must be standing in a cluster
-        	if (cluster == null) {
+            final Location loc = BukkitUtil.getLocation(plr);
+            final Plot plot = PlotHelper.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+            if (plot == null) {
+                return sendMessage(plr, C.NOT_IN_PLOT);
+            }
+            final PlotCluster cluster = ClusterManager.getCluster(loc);
+            // Must be standing in a cluster
+            if (cluster == null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                 return false;
             }
-        	PlotId bot = cluster.getP1();
-        	PlotId top = cluster.getP2();
-        	PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
-        	PlotId id = new PlotId(0, 0);
-        	int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
-        	int max = width * width;
-        	//
-        	for (int i = 0; i <= max; i++) {
-        	    PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
-        	    Plot current = PlotHelper.getPlot(worldname, currentId);
-        	    if (current != null && (current.hasOwner() == false) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
-        	        Claim.claimPlot(plr, current, true, true);
-        	        return true;
-        	    }
-        	    id = getNextPlot(id, 1);
-        	}
-        	
-        	// no free plots
-        	PlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
-        	return false;
+            final PlotId bot = cluster.getP1();
+            final PlotId top = cluster.getP2();
+            final PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+            PlotId id = new PlotId(0, 0);
+            final int width = Math.max((top.x - bot.x) + 1, (top.y - bot.y) + 1);
+            final int max = width * width;
+            //
+            for (int i = 0; i <= max; i++) {
+                final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
+                final Plot current = PlotHelper.getPlot(worldname, currentId);
+                if ((current != null) && (current.hasOwner() == false) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
+                    Claim.claimPlot(plr, current, true, true);
+                    return true;
+                }
+                id = getNextPlot(id, 1);
+            }
+            // no free plots
+            PlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
+            return false;
         }
-        
         boolean br = false;
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
@@ -239,12 +235,11 @@ public class Auto extends SubCommand {
         PlotHelper.lastPlot.put(worldname, new PlotId(0, 0));
         return true;
     }
-
-    public PlotId getLastPlot(String world) {
-    	if (PlotHelper.lastPlot == null || !PlotHelper.lastPlot.containsKey(world)) {
-    		PlotHelper.lastPlot.put(world, new PlotId(0,0));
-    	}
-    	return PlotHelper.lastPlot.get(world);
-    }
     
+    public PlotId getLastPlot(final String world) {
+        if ((PlotHelper.lastPlot == null) || !PlotHelper.lastPlot.containsKey(world)) {
+            PlotHelper.lastPlot.put(world, new PlotId(0, 0));
+        }
+        return PlotHelper.lastPlot.get(world);
+    }
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -44,35 +43,33 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
-
     /**
      * Main Permission Node
      */
-    private final static SubCommand[] _subCommands = new SubCommand[]{new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
-
+    private final static SubCommand[] _subCommands = new SubCommand[] { new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
     public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {
             addAll(Arrays.asList(_subCommands));
         }
     };
-
+    
     public static boolean no_permission(final Player player, final String permission) {
         PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-
+    
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
-        	if (!c.isPlayer || player != null) {
-	            if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
-	                cmds.add(c);
-	            }
-        	}
+            if (!c.isPlayer || (player != null)) {
+                if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
+                    cmds.add(c);
+                }
+            }
         }
         return cmds;
     }
-
+    
     public static List<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
@@ -91,15 +88,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         if (max > commands.size()) {
             max = commands.size();
         }
-
         final List<String> help = new ArrayList<>();
-
         help.add(C.HELP_HEADER.s());
         // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
         help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages + 1)).replace("%dis%", "" + (commands.size() % perPage)).replace("%total%", "" + commands.size()));
-
         SubCommand cmd;
-
         final int start = page * perPage;
         for (int x = start; x < max; x++) {
             cmd = commands.get(x);
@@ -112,19 +105,17 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
         return help;
     }
-
+    
     private static String t(final String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
-
+    
     @Override
     public boolean onCommand(final CommandSender sender, final Command cmd, final String commandLabel, final String[] args) {
         final Player player = (sender instanceof Player) ? (Player) sender : null;
-
         if (!BukkitMain.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
-
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
             if (args.length < 2) {
                 final StringBuilder builder = new StringBuilder();
@@ -143,7 +134,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     break;
                 }
             }
-            if (cato == null && !cat.equalsIgnoreCase("all")) {
+            if ((cato == null) && !cat.equalsIgnoreCase("all")) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(C.HELP_INFO.s());
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
@@ -153,16 +144,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
-
             boolean digit = true;
-
             String arg2;
             if (args.length > 2) {
                 arg2 = args[2];
             } else {
                 arg2 = "1";
             }
-
             for (final char c : arg2.toCharArray()) {
                 if (!Character.isDigit(c)) {
                     digit = false;
@@ -175,7 +163,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     page = 0;
                 }
             }
-
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
@@ -198,12 +185,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
             }
             PlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
-
             final String[] commands = new String[subCommands.size()];
             for (int x = 0; x < subCommands.size(); x++) {
                 commands[x] = subCommands.get(x).cmd;
             }
-
             /* Let's try to get a proper usage string */
             final String command = new StringComparison(args[0], commands).getBestMatch();
             return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
@@ -212,14 +197,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
         return true;
     }
-
+    
     @Override
     public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
         if (!(commandSender instanceof Player)) {
             return null;
         }
         final Player player = (Player) commandSender;
-
         if (strings.length < 1) {
             if ((strings.length == 0) || "plots".startsWith(s)) {
                 return Arrays.asList("plots");

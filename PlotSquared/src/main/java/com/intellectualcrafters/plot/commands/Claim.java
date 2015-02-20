@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
@@ -41,19 +40,18 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class Claim extends SubCommand {
-
     public Claim() {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
-
+    
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final boolean auto) {
         return claimPlot(player, plot, teleport, "", auto);
     }
-
+    
     public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
-    	if (plot.hasOwner() || plot.settings.isMerged()) {
-    		return false;
-    	}
+        if (plot.hasOwner() || plot.settings.isMerged()) {
+            return false;
+        }
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
@@ -63,11 +61,9 @@ public class Claim extends SubCommand {
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
-            World world = plot.world;
+            final World world = plot.world;
             final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-
             final Plot plot2 = PlotSquared.getPlots(player.getWorld()).get(plot.id);
-
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
@@ -85,7 +81,7 @@ public class Claim extends SubCommand {
         }
         return event.isCancelled();
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         String schematic = "";
@@ -124,7 +120,6 @@ public class Claim extends SubCommand {
                 }
             }
         }
-
         return !claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

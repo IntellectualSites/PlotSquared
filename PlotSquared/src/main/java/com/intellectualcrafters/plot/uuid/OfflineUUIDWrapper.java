@@ -15,16 +15,15 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
-
     private Method getOnline = null;
-    private Object[] arg = new Object[0];
-
+    private final Object[] arg = new Object[0];
+    
     public OfflineUUIDWrapper() {
         try {
             this.getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             e.printStackTrace();
-        } catch (SecurityException e) {
+        } catch (final SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -33,23 +32,23 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     public UUID getUUID(final Player player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-
+    
     @Override
     public UUID getUUID(final OfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-
+    
     @Override
     public OfflinePlayer getOfflinePlayer(final UUID uuid) {
         final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
         String name;
         try {
             name = map.get(uuid).value;
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             name = null;
         }
         if (name != null) {
-            OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+            final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
             if (op.hasPlayedBefore()) {
                 return op;
             }
@@ -61,25 +60,23 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return null;
     }
-
+    
     public Player[] getOnlinePlayers() {
-        if (getOnline == null) {
+        if (this.getOnline == null) {
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }
         try {
-            Object players = getOnline.invoke(Bukkit.getServer(), arg);
+            final Object players = this.getOnline.invoke(Bukkit.getServer(), this.arg);
             if (players instanceof Player[]) {
                 return (Player[]) players;
-            }
-            else {
+            } else {
                 @SuppressWarnings("unchecked")
-                Collection<? extends Player> p = (Collection<? extends Player>) players;
+                final Collection<? extends Player> p = (Collection<? extends Player>) players;
                 return p.toArray(new Player[0]);
             }
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             System.out.print("Failed to resolve online players");
-            getOnline = null;
+            this.getOnline = null;
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }
     }
@@ -93,10 +90,9 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return null;
     }
-
+    
     @Override
-    public UUID getUUID(String name) {
+    public UUID getUUID(final String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
     }
-
 }

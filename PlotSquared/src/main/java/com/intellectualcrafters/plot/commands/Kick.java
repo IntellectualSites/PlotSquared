@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
@@ -30,12 +29,12 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({"unused", "deprecation", "javadoc"}) public class Kick extends SubCommand {
-
+@SuppressWarnings({ "unused", "deprecation", "javadoc" })
+public class Kick extends SubCommand {
     public Kick() {
         super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.entity.Player;
@@ -33,11 +32,10 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Home extends SubCommand {
-
     public Home() {
         super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT, true);
     }
-
+    
     private Plot isAlias(final String a) {
         for (final Plot p : PlotSquared.getPlots()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
@@ -46,7 +44,7 @@ public class Home extends SubCommand {
         }
         return null;
     }
-
+    
     @Override
     public boolean execute(final Player plr, String... args) {
         final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
@@ -55,7 +53,7 @@ public class Home extends SubCommand {
             return true;
         } else if (plots.length > 1) {
             if (args.length < 1) {
-                args = new String[]{"1"};
+                args = new String[] { "1" };
             }
             int id = 0;
             try {
@@ -87,8 +85,7 @@ public class Home extends SubCommand {
         }
     }
     
-    public void teleportPlayer(Player player, Plot plot) {
-    	PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+    public void teleportPlayer(final Player player, final Plot plot) {
+        PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
     }
-    
 }

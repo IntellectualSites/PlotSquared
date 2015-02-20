@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
@@ -34,11 +33,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Clear extends SubCommand {
-
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
@@ -66,7 +64,6 @@ public class Clear extends SubCommand {
             }
             return true;
         }
-
         if (!PlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -79,11 +76,8 @@ public class Clear extends SubCommand {
         }
         assert plot != null;
         plot.clear(plr, false);
-
         // sign
-
         // wall
-
         return true;
     }
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
@@ -60,11 +59,11 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"deprecation", "unused"}) public class PlotPlusListener extends PlotListener implements Listener {
-
+@SuppressWarnings({ "deprecation", "unused" })
+public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
-
+    
     public static void startRunnable(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
@@ -96,7 +95,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             }
         }, 0l, 20l);
     }
-
+    
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
@@ -133,9 +132,8 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
             PlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
-
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
@@ -150,7 +148,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             event.getBlock().breakNaturally();
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(final EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
@@ -164,21 +162,21 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
         if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
         if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
@@ -191,7 +189,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 if (player == null) {
                     return;
                 }
-                Player trespasser = event.getPlayer();
+                final Player trespasser = event.getPlayer();
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
@@ -204,7 +202,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             }
         }
     }
-
+    
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
         if (feedRunnable.containsKey(event.getPlayer().getName())) {
@@ -214,7 +212,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             healRunnable.remove(event.getPlayer().getName());
         }
     }
-
+    
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
         event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
@@ -234,7 +232,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
                 if (player == null) {
                     return;
                 }
-                Player trespasser = event.getPlayer();
+                final Player trespasser = event.getPlayer();
                 if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
                     return;
                 }
@@ -247,20 +245,20 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
             }
         }
     }
-
+    
     public static class Interval {
         public final int interval;
         public final int amount;
         public final int max;
         public int count = 0;
-
+        
         public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
             this.amount = amount;
             this.max = max;
         }
     }
-
+    
     /**
      * Record Meta Class
      *
@@ -268,31 +266,29 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
      */
     public static class RecordMeta {
         public final static List<RecordMeta> metaList = new ArrayList<>();
-
         static {
             for (int x = 3; x < 12; x++) {
                 metaList.add(new RecordMeta(x + "", Material.valueOf("RECORD_" + x)));
             }
         }
-
         private final String name;
         private final Material material;
-
+        
         public RecordMeta(final String name, final Material material) {
             this.name = name;
             this.material = material;
         }
-
+        
         @Override
         public String toString() {
             return this.name;
         }
-
+        
         @Override
         public int hashCode() {
             return this.name.hashCode();
         }
-
+        
         public Material getMaterial() {
             return this.material;
         }

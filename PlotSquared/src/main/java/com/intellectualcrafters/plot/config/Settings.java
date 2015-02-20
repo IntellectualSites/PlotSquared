@@ -18,9 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.config;
-
 
 /**
  * Updater and DB settings
@@ -29,15 +27,15 @@ package com.intellectualcrafters.plot.config;
  * @author Empire92
  */
 public class Settings {
-	public static boolean ENABLE_CLUSTERS = false;
+    public static boolean ENABLE_CLUSTERS = false;
     /**
      * Default UUID_FECTHING: false
      */
     public static boolean UUID_FECTHING = false;
     public static boolean UUID_FROM_DISK = false;
     /**
-    *
-    */
+     *
+     */
     public static boolean CONVERT_PLOTME = true;
     public static boolean USE_PLOTME_ALIAS = false;
     /**
@@ -63,11 +61,11 @@ public class Settings {
     /**
      * Mob Cap Enabled
      */
-//    public static boolean MOB_CAP_ENABLED = false;
+    //    public static boolean MOB_CAP_ENABLED = false;
     /**
      * The Mob Cap
      */
-//    public static int MOB_CAP = 20;
+    //    public static int MOB_CAP = 20;
     /**
      * Display titles
      */
@@ -104,7 +102,6 @@ public class Settings {
      * Delete plots on ban?
      */
     public static boolean DELETE_PLOTS_ON_BAN = false;
-
     /**
      * Verbose?
      */
@@ -113,7 +110,6 @@ public class Settings {
      * Have colored console messages?
      */
     public static boolean CONSOLE_COLOR = true;
-    
     /**
      * The delay (in seconds) before teleportation commences
      */
@@ -122,30 +118,25 @@ public class Settings {
      * Auto clear enabled
      */
     public static boolean AUTO_CLEAR = false;
-
     /**
      * Days until a plot gets cleared
      */
     public static int AUTO_CLEAR_DAYS = 360;
     public static boolean AUTO_CLEAR_CHECK_DISK = false;
-    
     public static int MIN_BLOCKS_CHANGED = -1;
-
     /**
      * API Location
      */
     public static String API_URL = "http://www.intellectualsites.com/minecraft.php";
-
     /**
      * Use the custom API
      */
     public static boolean CUSTOM_API = true;
-
     /**
      * Use offline mode storage
      */
     public static boolean OFFLINE_MODE = false;
-
+    
     /**
      * Database settings
      *
@@ -155,10 +146,10 @@ public class Settings {
         /**
          * MongoDB enabled?
          */
-        public static boolean USE_MONGO = false;      /*
-         * TODO: Implement Mongo
-         * @Brandon
-         */
+        public static boolean USE_MONGO = false; /*
+                                                 * TODO: Implement Mongo
+                                                 * @Brandon
+                                                 */
         /**
          * SQLite enabled?
          */
@@ -166,7 +157,7 @@ public class Settings {
         /**
          * MySQL Enabled?
          */
-        public static boolean USE_MYSQL = true;       /* NOTE: Fixed connector */
+        public static boolean USE_MYSQL = true; /* NOTE: Fixed connector */
         /**
          * SQLite Database name
          */

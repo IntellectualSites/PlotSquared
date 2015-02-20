@@ -6,9 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The {@code TAG_Int_Array} tag.
  */
 public final class IntArrayTag extends Tag {
-
     private final int[] value;
-
+    
     /**
      * Creates the tag with an empty name.
      *
@@ -19,7 +18,7 @@ public final class IntArrayTag extends Tag {
         checkNotNull(value);
         this.value = value;
     }
-
+    
     /**
      * Creates the tag.
      *
@@ -31,12 +30,12 @@ public final class IntArrayTag extends Tag {
         checkNotNull(value);
         this.value = value;
     }
-
+    
     @Override
     public int[] getValue() {
         return this.value;
     }
-
+    
     @Override
     public String toString() {
         final StringBuilder hex = new StringBuilder();
@@ -54,5 +53,4 @@ public final class IntArrayTag extends Tag {
         }
         return "TAG_Int_Array" + append + ": " + hex;
     }
-
 }

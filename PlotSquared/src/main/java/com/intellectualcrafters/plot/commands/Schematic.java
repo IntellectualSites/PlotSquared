@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Collection;
@@ -45,17 +44,16 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Schematic extends SubCommand {
-
     private int counter = 0;
     private boolean running = false;
     private Plot[] plots;
     private int task;
-
+    
     public Schematic() {
         super("schematic", "plots.schematic", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
         // TODO command to fetch schematic from worldedit directory
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
@@ -99,22 +97,17 @@ public class Schematic extends SubCommand {
                             Schematic.this.running = false;
                             return;
                         }
-
                         final int x;
                         final int z;
-
                         final Plot plot2 = PlayerFunctions.getCurrentPlot(plr);
-
                         final Dimension dem = schematic.getSchematicDimension();
                         final Location bot = PlotHelper.getPlotBottomLoc(plr.getWorld(), plot2.id).add(1, 0, 1);
                         final int length2 = PlotHelper.getPlotWidth(plr.getWorld(), plot2.id);
-
                         if ((dem.getX() > length2) || (dem.getZ() > length2)) {
                             sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
                             Schematic.this.running = false;
                             return;
                         }
-
                         if ((dem.getX() != length2) || (dem.getZ() != length2)) {
                             final Location loc = plr.getLocation();
                             x = Math.min(length2 - dem.getX(), loc.getBlockX() - bot.getBlockX());
@@ -123,7 +116,6 @@ public class Schematic extends SubCommand {
                             x = 0;
                             z = 0;
                         }
-
                         final World w = plot2.getWorld();
                         final DataCollection[] b = schematic.getBlockCollection();
                         final int sy = w.getHighestBlockYAt(bot.getBlockX(), bot.getBlockZ());
@@ -131,7 +123,6 @@ public class Schematic extends SubCommand {
                         final int WIDTH = schematic.getSchematicDimension().getX();
                         final int LENGTH = schematic.getSchematicDimension().getZ();
                         final int blen = b.length - 1;
-
                         Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
                             @Override
                             public void run() {
@@ -173,13 +164,10 @@ public class Schematic extends SubCommand {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
                     break;
                 }
-
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
-
                 final Plot plot = PlayerFunctions.getCurrentPlot(plr);
                 final int length = PlotHelper.getPlotWidth(plr.getWorld(), plot.id);
-
                 if ((l1 < length) || (l2 < length)) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
                     break;
@@ -205,19 +193,15 @@ public class Schematic extends SubCommand {
                     PlayerFunctions.sendMessage(null, "&cTask is already running.");
                     return false;
                 }
-
                 PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
                 PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
                 final World worldObj = Bukkit.getWorld(args[1]);
                 final String worldname = Bukkit.getWorld(args[1]).getName();
-
                 final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
-
                 final Collection<Plot> values = plotmap.values();
                 this.plots = values.toArray(new Plot[values.size()]);
                 this.running = true;
                 this.counter = 0;
-
                 this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -295,13 +279,10 @@ public class Schematic extends SubCommand {
                         return false;
                     }
                 }
-
                 final Plugin plugin2 = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
-
-                this.plots = new Plot[]{p2};
+                this.plots = new Plot[] { p2 };
                 this.running = true;
                 this.counter = 0;
-
                 this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin2, new Runnable() {
                     @Override
                     public void run() {

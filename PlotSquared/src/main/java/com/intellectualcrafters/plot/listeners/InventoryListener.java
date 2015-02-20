@@ -16,15 +16,15 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  *
  * @author Citymonstret
  */
-@SuppressWarnings("unused") public class InventoryListener implements Listener {
-
+@SuppressWarnings("unused")
+public class InventoryListener implements Listener {
     @EventHandler
     public void onInventoryAction(final InventoryInteractEvent event) {
         if (event.getInventory().getHolder() instanceof InfoInventory) {
             event.setResult(Event.Result.DENY);
         }
     }
-
+    
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Inventory inventory = event.getInventory();
@@ -43,5 +43,4 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
             }
         }
     }
-
 }

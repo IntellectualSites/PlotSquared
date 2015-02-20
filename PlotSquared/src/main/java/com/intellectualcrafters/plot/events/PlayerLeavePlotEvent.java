@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.events;
 
 import org.bukkit.entity.Player;
@@ -33,9 +32,8 @@ import com.intellectualcrafters.plot.object.Plot;
  */
 public class PlayerLeavePlotEvent extends PlayerEvent {
     private static HandlerList handlers = new HandlerList();
-
     private final Plot plot;
-
+    
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
@@ -46,11 +44,11 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
         super(player);
         this.plot = plot;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plot involved
      *
@@ -59,7 +57,7 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
     public Plot getPlot() {
         return this.plot;
     }
-
+    
     @Override
     public HandlerList getHandlers() {
         return handlers;

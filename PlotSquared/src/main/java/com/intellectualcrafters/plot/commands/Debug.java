@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
@@ -33,11 +32,10 @@ import com.intellectualcrafters.plot.util.RUtils;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Debug extends SubCommand {
-
     public Debug() {
         super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
@@ -90,11 +88,11 @@ public class Debug extends SubCommand {
         }
         return true;
     }
-
+    
     private String getSection(final String line, final String val) {
         return line.replaceAll("%val%", val) + "\n";
     }
-
+    
     private String getLine(final String line, final String var, final Object val) {
         return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }

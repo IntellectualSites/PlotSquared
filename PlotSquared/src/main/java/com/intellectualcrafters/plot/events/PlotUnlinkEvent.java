@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.events;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     private final ArrayList<PlotId> plots;
     private final World world;
     private boolean cancelled;
-
+    
     /**
      * Called when a mega-plot is unlinked.
      *
@@ -49,11 +48,11 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
         this.plots = plots;
         this.world = world;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plots involved
      *
@@ -62,21 +61,21 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     public ArrayList<PlotId> getPlots() {
         return this.plots;
     }
-
+    
     public World getWorld() {
         return this.world;
     }
-
+    
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-
+    
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

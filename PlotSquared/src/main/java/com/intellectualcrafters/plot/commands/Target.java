@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Location;
@@ -31,11 +30,10 @@ import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Target extends SubCommand {
-
     public Target() {
         super(Command.TARGET, "Target a plot with your compass", "target <X;Z>", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlotSquared.isPlotWorld(plr.getWorld())) {
@@ -43,12 +41,12 @@ public class Target extends SubCommand {
             return false;
         }
         if (args.length == 1) {
-            PlotId id = PlotHelper.parseId(args[1]);
+            final PlotId id = PlotHelper.parseId(args[1]);
             if (id == null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
-            Location loc = PlotHelper.getPlotHome(plr.getWorld(), id);
+            final Location loc = PlotHelper.getPlotHome(plr.getWorld(), id);
             plr.setCompassTarget(loc);
             PlayerFunctions.sendMessage(plr, C.COMPASS_TARGET);
             return true;

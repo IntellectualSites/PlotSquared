@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -45,14 +44,13 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Merge extends SubCommand {
-
-    public final static String[] values = new String[]{"north", "east", "south", "west"};
-    public final static String[] aliases = new String[]{"n", "e", "s", "w"};
-
+    public final static String[] values = new String[] { "north", "east", "south", "west" };
+    public final static String[] aliases = new String[] { "n", "e", "s", "w" };
+    
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);
     }
-
+    
     public static String direction(float yaw) {
         yaw = yaw / 90;
         final int i = Math.round(yaw);
@@ -74,7 +72,7 @@ public class Merge extends SubCommand {
                 return "";
         }
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -86,7 +84,7 @@ public class Merge extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        boolean admin = BukkitMain.hasPermission(plr, "plots.admin.command.merge");
+        final boolean admin = BukkitMain.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
             PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
@@ -128,21 +126,15 @@ public class Merge extends SubCommand {
             default:
                 return false;
         }
-        
-        PlotId botId = plots.get(0);
-        PlotId topId = plots.get(plots.size() - 1);
-        
-        PlotId bot1 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, botId)).id;
-        PlotId bot2 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, topId)).id;
-        
-        PlotId top1 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, topId)).id;
-        PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
-        
+        final PlotId botId = plots.get(0);
+        final PlotId topId = plots.get(plots.size() - 1);
+        final PlotId bot1 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, botId)).id;
+        final PlotId bot2 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, topId)).id;
+        final PlotId top1 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, topId)).id;
+        final PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
-        
         plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
-        
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
@@ -150,7 +142,6 @@ public class Merge extends SubCommand {
                 return false;
             }
         }
-
         final PlotWorld plotWorld = PlotSquared.getWorldSettings(world);
         if (PlotSquared.useEconomy && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
@@ -165,9 +156,7 @@ public class Merge extends SubCommand {
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-
         final PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
-
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
@@ -176,7 +165,6 @@ public class Merge extends SubCommand {
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
         PlotHelper.mergePlots(world, plots, true);
-
         PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
         PlotHelper.update(plr.getLocation());
         return true;

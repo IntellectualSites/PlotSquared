@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.io.File;
@@ -46,100 +45,94 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugExec extends SubCommand {
-
-    private ArrayList<ChunkLoc> chunks = null;
-    private World world;
-
     public DebugExec() {
-    	super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
+        super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player player, final String... args) {
-    	List<String> allowed_params = Arrays.asList(new String[]{"stop-expire","start-expire", "show-expired", "update-expired", "seen", "trim-check"});
+        final List<String> allowed_params = Arrays.asList(new String[] { "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
         if (args.length > 0) {
-        	String arg = args[0].toLowerCase();
-        	switch (arg) {
-	        	case "stop-expire": {
-	        		if (ExpireManager.task != -1) {
-	        			Bukkit.getScheduler().cancelTask(ExpireManager.task);
-	        		}
-	        		else {
-	        			return PlayerFunctions.sendMessage(null, "Task already halted");
-	        		}
-	        		ExpireManager.task = -1;
-	        		return PlayerFunctions.sendMessage(null, "Cancelled task.");
-	        	}
-	        	case "start-expire": {
-	        		if (ExpireManager.task == -1) {
-	        			ExpireManager.runTask();
-	        		}
-	        		else {
-	        			return PlayerFunctions.sendMessage(null, "Plot expiry task already started");
-	        		}
-	        		return PlayerFunctions.sendMessage(null, "Started plot expiry task");
-	        	}
-	        	case "update-expired": {
-	        		if (args.length > 1) {
-	        			World world = Bukkit.getWorld(args[1]);
-	        			if (world == null) {
-	        				return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
-	        			}
-	        			PlayerFunctions.sendMessage(null, "Updating expired plot list");
-	        			ExpireManager.updateExpired(args[1]);
-	        			return true;
-	        		}
-	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec update-expired <world>");
-	        	}
-	        	case "show-expired": {
-	        		if (args.length > 1) {
-	        			World world = Bukkit.getWorld(args[1]);
-	        			if (world == null || !ExpireManager.expiredPlots.containsKey(args[1])) {
-	        				return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
-	        			}
-	        			PlayerFunctions.sendMessage(null, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
-	        			for (Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
-	        			    Plot plot = entry.getKey();
-	        			    Long stamp = entry.getValue();
-	        				PlayerFunctions.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) +" : " + stamp);
-	        			}
-	        			return true;
-	        		}
-	        		return PlayerFunctions.sendMessage(null, "Use /plot debugexec show-expired <world>");
-	        	}
-	        	case "seen": {
-	        	    if (args.length != 2) {
-	        	        return PlayerFunctions.sendMessage(null, "Use /plot debugexec seen <player>");
-	        	    }
-	        	    UUID uuid = UUIDHandler.getUUID(args[1]);
-	        	    if (uuid == null) {
-	        	        return PlayerFunctions.sendMessage(null, "player not found: " + args[1]);
-	        	    }
-	        	    OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-	        	    if (op == null || !op.hasPlayedBefore()) {
-	        	        return PlayerFunctions.sendMessage(null, "player hasn't connected before: " + args[1]);
-	        	    }
-	        	    Timestamp stamp = new Timestamp(op.getLastPlayed());
-	        	    Date date = new Date(stamp.getTime());
-	        	    PlayerFunctions.sendMessage(null, "PLAYER: " + args[1]);
-	        	    PlayerFunctions.sendMessage(null, "UUID: " + uuid);
-	        	    PlayerFunctions.sendMessage(null, "Object: " + date.toGMTString());
-	        	    PlayerFunctions.sendMessage(null, "GMT: " + date.toGMTString());
-	        	    PlayerFunctions.sendMessage(null, "Local: " + date.toLocaleString());
-	        	    return true;
-	        	}
-	        	case "trim-check": {
-	        	    if (args.length != 2) {
-	        	        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-check <world>");
-	        	        PlayerFunctions.sendMessage(null, "&7 - Generates a list of regions to trim");
-	        	        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
-	        	    }
-	        	    final World world = Bukkit.getWorld(args[1]);
-	        	    if (world == null || !PlotSquared.isPlotWorld(args[1])) {
-                        return PlayerFunctions.sendMessage(null, "Invalid world: "+args[1]);
+            final String arg = args[0].toLowerCase();
+            switch (arg) {
+                case "stop-expire": {
+                    if (ExpireManager.task != -1) {
+                        Bukkit.getScheduler().cancelTask(ExpireManager.task);
+                    } else {
+                        return PlayerFunctions.sendMessage(null, "Task already halted");
                     }
-	        	    final ArrayList<ChunkLoc> empty = new ArrayList<>();
-	        	    boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
+                    ExpireManager.task = -1;
+                    return PlayerFunctions.sendMessage(null, "Cancelled task.");
+                }
+                case "start-expire": {
+                    if (ExpireManager.task == -1) {
+                        ExpireManager.runTask();
+                    } else {
+                        return PlayerFunctions.sendMessage(null, "Plot expiry task already started");
+                    }
+                    return PlayerFunctions.sendMessage(null, "Started plot expiry task");
+                }
+                case "update-expired": {
+                    if (args.length > 1) {
+                        final World world = Bukkit.getWorld(args[1]);
+                        if (world == null) {
+                            return PlayerFunctions.sendMessage(null, "Invalid world: " + args[1]);
+                        }
+                        PlayerFunctions.sendMessage(null, "Updating expired plot list");
+                        ExpireManager.updateExpired(args[1]);
+                        return true;
+                    }
+                    return PlayerFunctions.sendMessage(null, "Use /plot debugexec update-expired <world>");
+                }
+                case "show-expired": {
+                    if (args.length > 1) {
+                        final World world = Bukkit.getWorld(args[1]);
+                        if ((world == null) || !ExpireManager.expiredPlots.containsKey(args[1])) {
+                            return PlayerFunctions.sendMessage(null, "Invalid world: " + args[1]);
+                        }
+                        PlayerFunctions.sendMessage(null, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
+                        for (final Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
+                            final Plot plot = entry.getKey();
+                            final Long stamp = entry.getValue();
+                            PlayerFunctions.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + stamp);
+                        }
+                        return true;
+                    }
+                    return PlayerFunctions.sendMessage(null, "Use /plot debugexec show-expired <world>");
+                }
+                case "seen": {
+                    if (args.length != 2) {
+                        return PlayerFunctions.sendMessage(null, "Use /plot debugexec seen <player>");
+                    }
+                    final UUID uuid = UUIDHandler.getUUID(args[1]);
+                    if (uuid == null) {
+                        return PlayerFunctions.sendMessage(null, "player not found: " + args[1]);
+                    }
+                    final OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    if ((op == null) || !op.hasPlayedBefore()) {
+                        return PlayerFunctions.sendMessage(null, "player hasn't connected before: " + args[1]);
+                    }
+                    final Timestamp stamp = new Timestamp(op.getLastPlayed());
+                    final Date date = new Date(stamp.getTime());
+                    PlayerFunctions.sendMessage(null, "PLAYER: " + args[1]);
+                    PlayerFunctions.sendMessage(null, "UUID: " + uuid);
+                    PlayerFunctions.sendMessage(null, "Object: " + date.toGMTString());
+                    PlayerFunctions.sendMessage(null, "GMT: " + date.toGMTString());
+                    PlayerFunctions.sendMessage(null, "Local: " + date.toLocaleString());
+                    return true;
+                }
+                case "trim-check": {
+                    if (args.length != 2) {
+                        PlayerFunctions.sendMessage(null, "Use /plot debugexec trim-check <world>");
+                        PlayerFunctions.sendMessage(null, "&7 - Generates a list of regions to trim");
+                        return PlayerFunctions.sendMessage(null, "&7 - Run after plot expiry has run");
+                    }
+                    final World world = Bukkit.getWorld(args[1]);
+                    if ((world == null) || !PlotSquared.isPlotWorld(args[1])) {
+                        return PlayerFunctions.sendMessage(null, "Invalid world: " + args[1]);
+                    }
+                    final ArrayList<ChunkLoc> empty = new ArrayList<>();
+                    final boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
                         @Override
                         public void run() {
                             Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
@@ -150,13 +143,13 @@ public class DebugExec extends SubCommand {
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);
-                                String worldname = world.getName();
-                                for (ChunkLoc loc : empty) {
-                                    writer.println(worldname +"/region/r." + loc.x + "." + loc.z +".mca" );
+                                final String worldname = world.getName();
+                                for (final ChunkLoc loc : empty) {
+                                    writer.println(worldname + "/region/r." + loc.x + "." + loc.z + ".mca");
                                 }
                                 writer.close();
                                 Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
-                            } catch (FileNotFoundException e) {
+                            } catch (final FileNotFoundException e) {
                                 e.printStackTrace();
                                 Trim.sendMessage("File failed to save! :(");
                             }
@@ -166,14 +159,14 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - Add 31 to each number to get the end position");
                         }
                     });
-	        	    if (!result) {
-	        	        PlayerFunctions.sendMessage(null, "Trim task already started!");
-	        	    }
-	        	    return result;
-	        	}
-        	}
+                    if (!result) {
+                        PlayerFunctions.sendMessage(null, "Trim task already started!");
+                    }
+                    return result;
+                }
+            }
         }
-    	PlayerFunctions.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
+        PlayerFunctions.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
         return true;
     }
 }

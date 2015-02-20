@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.io.FileInputStream;
@@ -36,7 +35,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Template extends SubCommand {
-    
     public Template() {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
     }
@@ -47,9 +45,9 @@ public class Template extends SubCommand {
             PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
-        World world = Bukkit.getWorld(args[1]);
-        PlotWorld plotworld = PlotSquared.getWorldSettings(args[1]);
-        if (world == null || plotworld == null) {
+        final World world = Bukkit.getWorld(args[1]);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(args[1]);
+        if ((world == null) || (plotworld == null)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
@@ -63,19 +61,16 @@ public class Template extends SubCommand {
                 PlayerFunctions.sendMessage(plr, "TODO");
             }
         }
-        
         // TODO allow world settings (including schematics to be packed into a single file)
-        
         // TODO allow world created based on these packaged files
-        
         return true;
     }
     
-    public void gzipIt(String output, String input) {
-        byte[] buffer = new byte[1024];
+    public void gzipIt(final String output, final String input) {
+        final byte[] buffer = new byte[1024];
         try {
-            GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(output));
-            FileInputStream in = new FileInputStream(input);
+            final GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(output));
+            final FileInputStream in = new FileInputStream(input);
             int len;
             while ((len = in.read(buffer)) > 0) {
                 gzos.write(buffer, 0, len);
@@ -83,7 +78,7 @@ public class Template extends SubCommand {
             in.close();
             gzos.finish();
             gzos.close();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             ex.printStackTrace();
         }
     }

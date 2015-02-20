@@ -18,7 +18,6 @@ package com.intellectualcrafters.json;
  * @version 2014-05-03
  */
 public class CDL {
-
     /**
      * Get the next value. The value can be wrapped in quotes. The value can be empty.
      *
@@ -42,7 +41,7 @@ public class CDL {
             case '\'':
                 q = c;
                 sb = new StringBuffer();
-                for (; ; ) {
+                for (;;) {
                     c = x.next();
                     if (c == q) {
                         break;
@@ -61,7 +60,7 @@ public class CDL {
                 return x.nextTo(',');
         }
     }
-
+    
     /**
      * Produce a JSONArray of strings from a row of comma delimited values.
      *
@@ -73,14 +72,14 @@ public class CDL {
      */
     public static JSONArray rowToJSONArray(final JSONTokener x) throws JSONException {
         final JSONArray ja = new JSONArray();
-        for (; ; ) {
+        for (;;) {
             final String value = getValue(x);
             char c = x.next();
             if ((value == null) || ((ja.length() == 0) && (value.length() == 0) && (c != ','))) {
                 return null;
             }
             ja.put(value);
-            for (; ; ) {
+            for (;;) {
                 if (c == ',') {
                     break;
                 }
@@ -94,7 +93,7 @@ public class CDL {
             }
         }
     }
-
+    
     /**
      * Produce a JSONObject from a row of comma delimited text, using a parallel JSONArray of strings to provides the
      * names of the elements.
@@ -111,7 +110,7 @@ public class CDL {
         final JSONArray ja = rowToJSONArray(x);
         return ja != null ? ja.toJSONObject(names) : null;
     }
-
+    
     /**
      * Produce a comma delimited text row from a JSONArray. Values containing the comma character will be quoted.
      * Troublesome characters may be removed.
@@ -147,7 +146,7 @@ public class CDL {
         sb.append('\n');
         return sb.toString();
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
@@ -160,7 +159,7 @@ public class CDL {
     public static JSONArray toJSONArray(final String string) throws JSONException {
         return toJSONArray(new JSONTokener(string));
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
@@ -173,7 +172,7 @@ public class CDL {
     public static JSONArray toJSONArray(final JSONTokener x) throws JSONException {
         return toJSONArray(rowToJSONArray(x), x);
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of
      * element names.
@@ -188,7 +187,7 @@ public class CDL {
     public static JSONArray toJSONArray(final JSONArray names, final String string) throws JSONException {
         return toJSONArray(names, new JSONTokener(string));
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of
      * element names.
@@ -205,7 +204,7 @@ public class CDL {
             return null;
         }
         final JSONArray ja = new JSONArray();
-        for (; ; ) {
+        for (;;) {
             final JSONObject jo = rowToJSONObject(names, x);
             if (jo == null) {
                 break;
@@ -217,7 +216,7 @@ public class CDL {
         }
         return ja;
     }
-
+    
     /**
      * Produce a comma delimited text from a JSONArray of JSONObjects. The first row will be a list of names obtained by
      * inspecting the first JSONObject.
@@ -238,7 +237,7 @@ public class CDL {
         }
         return null;
     }
-
+    
     /**
      * Produce a comma delimited text from a JSONArray of JSONObjects using a provided list of names. The list of names
      * is not included in the output.

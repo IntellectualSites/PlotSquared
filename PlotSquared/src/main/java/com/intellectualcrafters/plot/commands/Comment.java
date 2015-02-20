@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
@@ -35,11 +34,10 @@ import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Comment extends SubCommand {
-
     public Comment() {
         super(Command.COMMENT, "Comment on a plot", "comment", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlayerFunctions.isInPlot(plr)) {
@@ -49,11 +47,8 @@ public class Comment extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-
         final List<String> recipients = Arrays.asList("admin", "owner", "helper", "trusted", "everyone");
-
         if ((args.length > 1) && recipients.contains(args[0].toLowerCase())) {
-
             if (BukkitMain.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
                 final String text = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                 final PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));

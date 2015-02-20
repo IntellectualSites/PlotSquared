@@ -12,11 +12,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class Unban extends SubCommand {
-
     public Unban() {
         super(Command.UNBAN, "Alias for /plot denied remove", "/plot unban [player]", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {

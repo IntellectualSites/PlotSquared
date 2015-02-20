@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.lang.reflect.Field;
@@ -33,11 +32,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
  * @author Citymonstret
  */
 public class DebugLoadTest extends SubCommand {
-
     public DebugLoadTest() {
         super(Command.DEBUGLOADTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {

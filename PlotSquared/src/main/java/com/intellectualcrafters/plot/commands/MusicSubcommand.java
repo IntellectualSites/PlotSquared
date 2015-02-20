@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {
         super("music", "plots.music", "Play music in plot", "music", "mus", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
     public boolean execute(final Player player, final String... args) {
         if (!PlayerFunctions.isInPlot(player)) {

@@ -13,7 +13,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractAtEntityEvent e) {
         final Location l = e.getRightClicked().getLocation();
@@ -26,21 +25,20 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 }
             } else {
                 final Plot plot = getCurrentPlot(l);
-                if (plot == null || !plot.hasOwner()) {
+                if ((plot == null) || !plot.hasOwner()) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.interact.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
                     }
                 } else if (!plot.hasRights(p)) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.interact.other")) {
-                        if (isPlotArea(l)) { 
+                        if (isPlotArea(l)) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
-                            e.setCancelled(true); 
+                            e.setCancelled(true);
                         }
                     }
                 }
             }
         }
     }
-
 }

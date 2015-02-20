@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
  *
  * @author Citymonstret
  */
-@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.FIELD) public @interface Translation {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Translation {
     String description() default "";
-
+    
     String creationDescription() default "";
 }

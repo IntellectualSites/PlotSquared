@@ -5,10 +5,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
-    
     public static int PLOT_WIDTH_DEFAULT = 42;
     public static int ROAD_WIDTH_DEFAULT = 7;
-    
     public int PLOT_WIDTH;
     public int ROAD_WIDTH;
     
@@ -22,7 +20,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
         this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
     }
     
-    public SquarePlotWorld(String worldname) {
+    public SquarePlotWorld(final String worldname) {
         super(worldname);
     }
 }

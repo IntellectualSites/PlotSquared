@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
@@ -38,11 +37,10 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugClear extends SubCommand {
-
     public DebugClear() {
         super(Command.DEBUGCLEAR, "Clear a plot using a fast experimental algorithm", "debugclear", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
@@ -62,9 +60,9 @@ public class DebugClear extends SubCommand {
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            World bukkitWorld = Bukkit.getWorld(world);
-                            Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-                            Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
+                            final World bukkitWorld = Bukkit.getWorld(world);
+                            final Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
+                            final Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
                             if (PlotHelper.runners.containsKey(plot)) {
                                 PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
@@ -84,7 +82,6 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-
         if (!PlayerFunctions.isInPlot(plr) || !(PlotSquared.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -96,9 +93,9 @@ public class DebugClear extends SubCommand {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        World bukkitWorld = plr.getWorld();
-        Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-        Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
+        final World bukkitWorld = plr.getWorld();
+        final Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
+        final Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
         if (PlotHelper.runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
@@ -111,11 +108,8 @@ public class DebugClear extends SubCommand {
                 PlayerFunctions.sendMessage(plr, "&aDone!");
             }
         });
-
         // sign
-
         // wall
-
         return true;
     }
 }

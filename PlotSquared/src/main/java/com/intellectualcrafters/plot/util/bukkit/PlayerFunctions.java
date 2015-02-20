@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util.bukkit;
 
 import java.util.ArrayList;
@@ -51,9 +50,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
  *
  * @author Citymonstret
  */
-@SuppressWarnings("javadoc") public class PlayerFunctions {
-
-    
+@SuppressWarnings("javadoc")
+public class PlayerFunctions {
     /**
      * Clear a plot. Use null player if no player is present
      * @param player
@@ -62,31 +60,27 @@ import com.intellectualcrafters.plot.util.PlotHelper;
      * @param isDelete
      */
     public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
-
         if (runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return;
         }
         final PlotManager manager = PlotSquared.getPlotManager(world);
-
         final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-
         final int prime = 31;
         int h = 1;
         h = (prime * h) + pos1.getX();
         h = (prime * h) + pos1.getZ();
         state = h;
-        
         final long start = System.currentTimeMillis();
         final Location location = PlotHelper.getPlotHomeDefault(plot);
-        PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0) {
             final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
             AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
-                    if (player != null && player.isOnline()) {
+                    if ((player != null) && player.isOnline()) {
                         PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
                     }
                     runners.remove(plot);
@@ -94,12 +88,12 @@ import com.intellectualcrafters.plot.util.PlotHelper;
             });
             return;
         }
-        Runnable run = new Runnable() { 
+        final Runnable run = new Runnable() {
             @Override
             public void run() {
                 PlotHelper.setBiome(world, plot, Biome.FOREST);
                 runners.remove(plot);
-                if (player != null && player.isOnline()) {
+                if ((player != null) && player.isOnline()) {
                     PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
                 }
                 update(location);
@@ -118,7 +112,6 @@ import com.intellectualcrafters.plot.util.PlotHelper;
      * @return
      */
     public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
-
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if ((PlotSquared.economy != null) && plotworld.USE_ECONOMY) {
             final double cost = plotIds.size() * plotworld.MERGE_PRICE;
@@ -154,21 +147,16 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public static boolean isInPlot(final Player player) {
         return getCurrentPlot(player) != null;
     }
-
+    
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
-
-
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
         final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
-
         if (plot1 != null) {
             pos1 = getBottomPlot(world, plot1).id;
         }
-
         if (plot2 != null) {
             pos2 = getTopPlot(world, plot2).id;
         }
-
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
@@ -177,9 +165,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return myplots;
     }
-
+    
     public static Plot getBottomPlot(final String world, final Plot plot) {
-
         if (plot.settings.getMerged(0)) {
             final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
             if (p == null) {
@@ -196,9 +183,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return plot;
     }
-
+    
     public static Plot getTopPlot(final String world, final Plot plot) {
-
         if (plot.settings.getMerged(2)) {
             return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
         }
@@ -207,7 +193,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return plot;
     }
-
+    
     /**
      * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
      *
@@ -223,9 +209,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
-
     }
-
+    
     /**
      * Returns the plot id at a location (mega plots are considered)
      *
@@ -240,16 +225,15 @@ import com.intellectualcrafters.plot.util.PlotHelper;
             return null;
         }
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        PlotId id = manager.getPlotId(plotworld, loc.getX(),loc.getY(), loc.getZ());
-
-        if (id!=null && plotworld.TYPE == 2) {
-        	if (ClusterManager.getCluster(world, id) == null) {
-        		return null;
-        	}
+        final PlotId id = manager.getPlotId(plotworld, loc.getX(), loc.getY(), loc.getZ());
+        if ((id != null) && (plotworld.TYPE == 2)) {
+            if (ClusterManager.getCluster(world, id) == null) {
+                return null;
+            }
         }
         return id;
     }
-
+    
     /**
      * Returns the plot a player is currently in.
      *
@@ -267,12 +251,11 @@ import com.intellectualcrafters.plot.util.PlotHelper;
             return null;
         }
         if (PlotSquared.getPlots(world).containsKey(id)) {
-                return PlotSquared.getPlots(world).get(id);
+            return PlotSquared.getPlots(world).get(id);
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
-
     }
-
+    
     /**
      * Updates a given plot with another instance
      *
@@ -284,7 +267,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public static void set(final Plot plot) {
         PlotSquared.updatePlot(plot);
     }
-
+    
     /**
      * Get the plots for a player
      *
@@ -299,7 +282,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return p;
     }
-
+    
     /**
      * Get the number of plots for a player
      *
@@ -317,7 +300,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return count;
     }
-
+    
     /**
      * Get the maximum number of plots a player is allowed
      *
@@ -328,7 +311,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public static int getAllowedPlots(final Player p) {
         return BukkitMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
-
+    
     /**
      * @return PlotSquared.getPlots();
      *
@@ -359,7 +342,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         plr.sendMessage(msg);
     }
-
+    
     /**
      * Send a message to the player
      *
@@ -371,7 +354,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public static boolean sendMessage(final Player plr, final String msg) {
         return sendMessage(plr, msg, true);
     }
-
+    
     public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
@@ -382,7 +365,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return true;
     }
-
+    
     /**
      * Send a message to the player
      *
@@ -403,12 +386,10 @@ import com.intellectualcrafters.plot.util.PlotHelper;
             }
             if (plr == null) {
                 PlotSquared.log(msg);
-            }
-            else {
+            } else {
                 sendMessage(plr, msg, c.usePrefix());
             }
         }
         return true;
     }
-
 }
