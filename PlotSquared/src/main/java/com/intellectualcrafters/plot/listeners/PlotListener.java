@@ -28,7 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.WeatherType;
-import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -43,14 +43,13 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.PlotHelper;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings({ "unused", "deprecation" })
 public class PlotListener {
     public static void textures(final Player p) {
         if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld().getName())) {
@@ -71,7 +70,7 @@ public class PlotListener {
     }
     
     public static boolean isInPlot(final String world, final int x, final int y, final int z) {
-        return (PlayerFunctions.getPlot(new Location(world, x, y, z)) != null);
+        return (PlotHelper.getPlot(new Location(world, x, y, z)) != null);
     }
     
     public static boolean isPlotWorld(final String world) {
@@ -102,14 +101,14 @@ public class PlotListener {
     }
     
     public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getX(), 0, l1.getZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getX(), 0, l2.getZ()));
+        final PlotId p1 = PlotHelper.getPlotId(l1);
+        final PlotId p2 = PlotHelper.getPlotId(l2);
         return (p2 != null) && ((p1 == null) || !p1.equals(p2));
     }
     
     public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlayerFunctions.getPlot(new Location(l1.getWorld(), l1.getX(), 0, l1.getZ()));
-        final PlotId p2 = PlayerFunctions.getPlot(new Location(l2.getWorld(), l2.getX(), 0, l2.getZ()));
+        final PlotId p1 = PlotHelper.getPlotId(l1);
+        final PlotId p2 = PlotHelper.getPlotId(l2);
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
     
@@ -122,7 +121,7 @@ public class PlotListener {
     }
     
     public static Plot getCurrentPlot(final Location loc) {
-        final PlotId id = PlayerFunctions.getPlot(loc);
+        final PlotId id = PlotHelper.getPlotId(loc);
         if (id == null) {
             return null;
         }
@@ -130,7 +129,7 @@ public class PlotListener {
         if (PlotSquared.getPlots(world).containsKey(id)) {
             return PlotSquared.getPlots(world).get(id);
         }
-        return new Plot(id, null, Biome.FOREST, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
+        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
     }
     
     private static WeatherType getWeatherType(String str) {
@@ -181,8 +180,6 @@ public class PlotListener {
             if ((booleanFlag(plot, "titles", false) || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
-                final ChatColor sTitleMainColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s());
-                final ChatColor sTitleSubColor = ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s());
                 if (AbstractTitle.TITLE_CLASS != null) {
                     AbstractTitle.TITLE_CLASS.sendTitle(player, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
                 }
