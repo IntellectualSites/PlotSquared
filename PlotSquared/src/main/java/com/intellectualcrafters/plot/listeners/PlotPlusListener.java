@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,6 +52,8 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -103,18 +106,20 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        if (!isInPlot(player)) {
+        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
             PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return;
         }
-        final Plot plot = getPlot(player);
-        if (!plot.hasRights(player)) {
+        UUID uuid = UUIDHandler.getUUID(player);
+        if (!plot.isAdded(uuid)) {
             PlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
         for (final Player p : player.getWorld().getPlayers()) {
-            if (isInPlot(p) && getPlot(p).equals(plot)) {
+            Plot newPlot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+            if (plot.equals(newPlot)) {
                 plotPlayers.add(p);
             }
         }
@@ -140,10 +145,10 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        if (!isInPlot(player)) {
+        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
             return;
         }
-        final Plot plot = getPlot(player);
         if (booleanFlag(plot, "instabreak", false)) {
             event.getBlock().breakNaturally();
         }
@@ -155,24 +160,37 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final Player player = (Player) event.getEntity();
-        if (!isInPlot(player)) {
+        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
             return;
         }
-        if (booleanFlag(getPlot(player), "invincible", false)) {
+        if (booleanFlag(plot, "invincible", false)) {
             event.setCancelled(true);
         }
     }
     
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection", false)) {
+        final Player player = event.getPlayer();
+        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
+            return;
+        }
+        UUID uuid = UUIDHandler.getUUID(player);
+        if (plot.isAdded(uuid) && booleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
     
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop", false)) {
+        final Player player = event.getPlayer();
+        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
+            return;
+        }
+        UUID uuid = UUIDHandler.getUUID(player);
+        if (plot.isAdded(uuid) && booleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
     }
