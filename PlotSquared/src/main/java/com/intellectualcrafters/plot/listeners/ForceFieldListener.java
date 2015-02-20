@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -34,6 +35,7 @@ import org.bukkit.util.Vector;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -46,7 +48,8 @@ public class ForceFieldListener implements Listener {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            if (!plot.hasRights(oPlayer)) {
+            UUID uuid = UUIDHandler.getUUID(oPlayer);
+            if (!plot.isAdded(uuid)) {
                 players.add(oPlayer);
             }
         }
@@ -59,7 +62,8 @@ public class ForceFieldListener implements Listener {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            if (plot.hasRights(oPlayer)) {
+            UUID uuid = UUIDHandler.getUUID(oPlayer);
+            if (plot.isAdded(uuid)) {
                 return oPlayer;
             }
         }
@@ -98,7 +102,8 @@ public class ForceFieldListener implements Listener {
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
-                if (plot.hasRights(player)) {
+                UUID uuid = UUIDHandler.getUUID(player);
+                if (plot.isAdded(uuid)) {
                     final Set<Player> players = getNearbyPlayers(player, plot);
                     for (final Player oPlayer : players) {
                         oPlayer.setVelocity(calculateVelocity(player, oPlayer));
