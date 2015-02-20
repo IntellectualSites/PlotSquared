@@ -51,7 +51,7 @@ public class Delete extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getWorldSettings(plot.world);
+        final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
         if (PlotSquared.useEconomy && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {

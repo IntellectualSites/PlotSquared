@@ -41,7 +41,7 @@ public class Reload extends SubCommand {
             PlotSquared.setupConfig();
             C.setupTranslations();
             for (final String pw : PlotSquared.getPlotWorlds()) {
-                final PlotWorld plotworld = PlotSquared.getWorldSettings(pw);
+                final PlotWorld plotworld = PlotSquared.getPlotWorld(pw);
                 plotworld.loadDefaultConfiguration(PlotSquared.config.getConfigurationSection("worlds." + pw));
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);

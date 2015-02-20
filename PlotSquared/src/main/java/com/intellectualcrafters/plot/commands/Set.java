@@ -237,7 +237,7 @@ public class Set extends SubCommand {
         }
         // Get components
         final World world = plr.getWorld();
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final String[] components = manager.getPlotComponents(world, plotworld, plot.id);
         for (final String component : components) {

@@ -53,7 +53,7 @@ public class DebugClear extends SubCommand {
                 if (id == null) {
                     PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getWorldSettings(world) instanceof SquarePlotWorld)) {
+                    if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getPlotWorld(world) instanceof SquarePlotWorld)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
@@ -82,7 +82,7 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr) || !(PlotSquared.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
+        if (!PlayerFunctions.isInPlot(plr) || !(PlotSquared.getPlotWorld(plr.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(plr);

@@ -142,7 +142,7 @@ public class Merge extends SubCommand {
                 return false;
             }
         }
-        final PlotWorld plotWorld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
         if (PlotSquared.useEconomy && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;

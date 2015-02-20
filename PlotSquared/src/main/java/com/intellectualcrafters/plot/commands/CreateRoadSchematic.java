@@ -41,7 +41,7 @@ public class CreateRoadSchematic extends SubCommand {
             PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return false;
         }
-        if (!(PlotSquared.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = PlayerFunctions.getCurrentPlot(player);

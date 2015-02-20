@@ -62,7 +62,7 @@ public class Claim extends SubCommand {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
             final World world = plot.world;
-            final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+            final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final Plot plot2 = PlotSquared.getPlots(player.getWorld()).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
@@ -98,7 +98,7 @@ public class Claim extends SubCommand {
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotSquared.getWorldSettings(plot.world);
+        final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
         if (PlotSquared.useEconomy && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

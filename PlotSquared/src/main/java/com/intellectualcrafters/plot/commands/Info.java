@@ -71,7 +71,7 @@ public class Info extends SubCommand {
                 PlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
-            final PlotWorld plotworld = PlotSquared.getWorldSettings(args[0]);
+            final PlotWorld plotworld = PlotSquared.getPlotWorld(args[0]);
             if (plotworld == null) {
                 PlayerFunctions.sendMessage(player, C.NOT_VALID_WORLD);
                 return false;

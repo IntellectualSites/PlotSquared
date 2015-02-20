@@ -52,7 +52,7 @@ public class AugmentedPopulator extends BlockPopulator {
     public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
         this.cluster = cluster;
         this.generator = generator;
-        this.plotworld = PlotSquared.getWorldSettings(world);
+        this.plotworld = PlotSquared.getPlotWorld(world);
         this.manager = generator.getPlotManager();
         this.p = p;
         this.b = b;

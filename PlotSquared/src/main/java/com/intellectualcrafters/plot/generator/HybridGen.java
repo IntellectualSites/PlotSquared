@@ -90,7 +90,7 @@ public class HybridGen extends PlotGenerator {
     public HybridGen(final String world) {
         super(world);
         if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+            this.plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
         }
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;

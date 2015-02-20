@@ -94,7 +94,7 @@ public class DebugClaimTest extends SubCommand {
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
             PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
             final PlotManager manager = PlotSquared.getPlotManager(world);
-            final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+            final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
             for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
                 final Plot plot = PlotHelper.getPlot(world, id);

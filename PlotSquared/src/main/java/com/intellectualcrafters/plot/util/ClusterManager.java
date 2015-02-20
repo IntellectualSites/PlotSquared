@@ -60,7 +60,7 @@ public class ClusterManager {
             toReturn = PlotHelper.getPlotHome(cluster.world, center);
             if (toReturn.getY() == 0) {
                 final PlotManager manager = PlotSquared.getPlotManager(cluster.world);
-                final PlotWorld plotworld = PlotSquared.getWorldSettings(cluster.world);
+                final PlotWorld plotworld = PlotSquared.getPlotWorld(cluster.world);
                 final Location loc = manager.getSignLoc(plotworld, PlotHelper.getPlot(cluster.world, center));
                 toReturn.setY(loc.getY());
             }
@@ -82,14 +82,14 @@ public class ClusterManager {
     
     public static Location getClusterBottom(final PlotCluster cluster) {
         final String world = cluster.world;
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
     }
     
     public static Location getClusterTop(final PlotCluster cluster) {
         final String world = cluster.world;
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, cluster.getP2());
     }
@@ -109,7 +109,7 @@ public class ClusterManager {
     public static boolean contains(final PlotCluster cluster, final Location loc) {
         final String world = loc.getWorld();
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
         final Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1, 0, 1);
         if ((bot.getX() < loc.getX()) && (bot.getZ() < loc.getZ()) && (top.getX() > loc.getX()) && (top.getZ() > loc.getZ())) {
@@ -221,7 +221,7 @@ public class ClusterManager {
         int xw;
         int zw;
         final String world = loc.getWorld();
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (plotworld == null) {
             xw = 39;
             zw = 39;
@@ -246,7 +246,7 @@ public class ClusterManager {
         int i = 0;
         final Random rand = new Random();
         final World world = Bukkit.getWorld(cluster.world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(cluster.world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(cluster.world);
         final Location bot = getClusterBottom(cluster);
         final Location top = getClusterTop(cluster);
         final int minChunkX = bot.getX() >> 4;

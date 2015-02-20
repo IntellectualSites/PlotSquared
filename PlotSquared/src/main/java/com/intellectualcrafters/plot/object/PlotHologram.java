@@ -25,7 +25,7 @@
 //    public PlotHologram(final String world, final PlotId id) {
 //        this.id = id;
 //        this.world = world;
-//        this.hologram = createHologram(PlotSquared.getPlotManager(world).getSignLoc(Bukkit.getWorld(world), PlotSquared.getWorldSettings(world), PlotHelper.getPlot(Bukkit.getWorld(world), id)));
+//        this.hologram = createHologram(PlotSquared.getPlotManager(world).getSignLoc(Bukkit.getWorld(world), PlotSquared.getPlotWorld(world), PlotHelper.getPlot(Bukkit.getWorld(world), id)));
 //    }
 //
 //    public static Hologram createHologram(final org.bukkit.Location location) {

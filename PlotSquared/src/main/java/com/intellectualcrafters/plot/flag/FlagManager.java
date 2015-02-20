@@ -80,7 +80,7 @@ public class FlagManager {
         if ((settings.flags != null) && (settings.flags.size() > 0)) {
             flags.addAll(settings.flags);
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if ((plotworld != null) && (plotworld.DEFAULT_FLAGS != null) && (plotworld.DEFAULT_FLAGS.length > 0)) {
             flags.addAll(Arrays.asList(plotworld.DEFAULT_FLAGS));
         }
@@ -177,7 +177,7 @@ public class FlagManager {
     
     public static Set<Flag> getSettingFlags(final String world, final PlotSettings settings) {
         final Set<Flag> plotflags = settings.flags;
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if ((plotworld != null) && (plotworld.DEFAULT_FLAGS != null) && (plotworld.DEFAULT_FLAGS.length > 0)) {
             final HashSet<String> flagStrings = new HashSet<>();
             for (final Flag flag : plotflags) {

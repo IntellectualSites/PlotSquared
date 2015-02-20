@@ -133,7 +133,7 @@ public class Auto extends SubCommand {
             }
             return false;
         }
-        final PlotWorld pWorld = PlotSquared.getWorldSettings(world.getName());
+        final PlotWorld pWorld = PlotSquared.getPlotWorld(world.getName());
         if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
@@ -160,7 +160,7 @@ public class Auto extends SubCommand {
             // }
         }
         final String worldname = world.getName();
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(worldname);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(worldname);
         if (plotworld.TYPE == 2) {
             final Location loc = BukkitUtil.getLocation(plr);
             final Plot plot = PlotHelper.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));

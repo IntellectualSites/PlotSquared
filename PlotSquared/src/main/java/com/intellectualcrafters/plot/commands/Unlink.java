@@ -91,7 +91,7 @@ public class Unlink extends SubCommand {
             return false;
         }
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         manager.startPlotUnlink(world, plotworld, ids);
         for (final PlotId id : ids) {
             final Plot myplot = PlotSquared.getPlots(world).get(id);

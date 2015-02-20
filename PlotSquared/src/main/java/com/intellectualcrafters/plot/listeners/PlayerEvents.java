@@ -520,8 +520,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!isPlotWorld(world)) {
             return;
         }
-        final Player player = event.getPlayer();
-        final Location loc = event.getClickedBlock().getLocation();
+        final Location loc = BukkitUtil.getLocation(event.getClickedBlock().getLocation());
         if (isInPlot(loc)) {
             final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner()) {
@@ -559,18 +558,18 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void MobSpawn(final CreatureSpawnEvent event) {
-        final World world = event.getLocation().getWorld();
         if (event.getEntity() instanceof Player) {
             return;
         }
+        Location loc = BukkitUtil.getLocation(event.getLocation());
+        final String world = loc.getWorld();
         if (!isPlotWorld(world)) {
             return;
         }
-        final Location loc = event.getLocation();
         if (!isPlotArea(loc)) {
             return;
         }
-        final PlotWorld pW = getPlotWorld(world);
+        final PlotWorld pW = PlotSquared.getPlotWorld(world);
         final CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         if ((reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) && pW.SPAWN_EGGS) {
             event.setCancelled(true);

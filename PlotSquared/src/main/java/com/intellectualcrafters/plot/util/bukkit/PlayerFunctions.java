@@ -77,7 +77,7 @@ public class PlayerFunctions {
      * @return
      */
     public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if ((PlotSquared.economy != null) && plotworld.USE_ECONOMY) {
             final double cost = plotIds.size() * plotworld.MERGE_PRICE;
             if (cost > 0d) {

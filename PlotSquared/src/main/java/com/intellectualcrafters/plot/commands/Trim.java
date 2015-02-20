@@ -90,7 +90,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
-        if ((world == null) || (PlotSquared.getWorldSettings(world) == null)) {
+        if ((world == null) || (PlotSquared.getPlotWorld(world) == null)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
@@ -209,7 +209,7 @@ public class Trim extends SubCommand {
     
     //    public static void updateUnmodifiedPlots(final World world) {
     //        final SquarePlotManager manager = (SquarePlotManager) PlotSquared.getPlotManager(world);
-    //        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getWorldSettings(world);
+    //        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getPlotWorld(world);
     //        final ArrayList<Plot> expired = new ArrayList<>();
     //        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
     //        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");

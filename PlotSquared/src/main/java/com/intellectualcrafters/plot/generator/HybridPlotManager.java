@@ -60,7 +60,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final int botz = bottom.getBlockZ();
         final int topx = top.getBlockX();
         final int topz = top.getBlockZ();
-        final HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+        final HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
         final PlotBlock[] air = new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) };
         int changes = checkModified(requiredChanges, world, botx, topx, hpw.PLOT_HEIGHT, hpw.PLOT_HEIGHT, botz, topz, hpw.TOP_BLOCK);
         if (changes == -1) {
@@ -111,7 +111,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final World world = Bukkit.getWorld(plot.world);
         final Location bot = PlotHelper.getPlotBottomLoc(world, plot.id);
         final Location top = PlotHelper.getPlotTopLoc(world, plot.id);
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
         final int sx = (bot.getBlockX() - plotworld.ROAD_WIDTH) + 1;
         final int sz = bot.getBlockZ() + 1;
         final int sy = plotworld.ROAD_HEIGHT;
@@ -217,7 +217,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final int ez = z + 15;
         final Location bot = new Location(world, x, 0, z);
         final Location top = new Location(world, ex, 0, ez);
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getWorldSettings(world);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }

@@ -55,14 +55,14 @@ public class PlotHelper {
     
     public static int getBorder(final String worldname) {
         if (worldBorder.containsKey(worldname)) {
-            PlotSquared.getWorldSettings(worldname);
+            PlotSquared.getPlotWorld(worldname);
             return worldBorder.get(worldname) + 16;
         }
         return Integer.MAX_VALUE;
     }
     
     public static void setupBorder(final String world) {
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (!plotworld.WORLD_BORDER) {
             return;
         }
@@ -149,7 +149,7 @@ public class PlotHelper {
         final PlotId pos1 = plotIds.get(0);
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         manager.startPlotMerge(plotworld, plotIds);
         final boolean result = false;
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -208,7 +208,7 @@ public class PlotHelper {
      */
     public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, final boolean removeRoads) {
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
             if (!lesserPlot.settings.getMerged(2)) {
                 lesserPlot.settings.setMerged(2, true);
@@ -231,7 +231,7 @@ public class PlotHelper {
     public static void removeSign(final Plot p) {
         final String world = p.world;
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final Location loc = manager.getSignLoc(plotworld, p);
         BlockManager.setBlocks(world, new int[] { loc.getX() }, new int[] { loc.getY() }, new int[] { loc.getZ() }, new int[] { 0 }, new byte[] { 0 });
     }
@@ -241,7 +241,7 @@ public class PlotHelper {
             name = "unknown";
         }
         final PlotManager manager = PlotSquared.getPlotManager(p.world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(p.world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(p.world);
         final Location loc = manager.getSignLoc(plotworld, p);
         final String id = p.id.x + ";" + p.id.y;
         final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", name) };
@@ -338,7 +338,7 @@ public class PlotHelper {
         }
         final String world = plot.world;
         final PlotManager manager = PlotSquared.getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final Location bot = manager.getPlotBottomLocAbs(plotworld, plot.id);
         final Location top = manager.getPlotTopLocAbs(plotworld, plot.id);
         final int border = worldBorder.get(plot.world);
@@ -358,7 +358,7 @@ public class PlotHelper {
             updateWorldBorder(plot);
         }
         final Plot p = createPlotAbs(uuid, plot);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(plot.world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
         if (plotworld.AUTO_MERGE) {
             autoMerge(plot.world, p, uuid);
         }
@@ -418,7 +418,7 @@ public class PlotHelper {
         state = h;
         System.currentTimeMillis();
         final Location location = PlotHelper.getPlotHomeDefault(plot);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0) {
             final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
@@ -538,7 +538,7 @@ public class PlotHelper {
             final Location top = getPlotTopLoc(w, plotid);
             final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
             final int z = ((top.getZ() - bot.getZ()) / 2) + bot.getZ();
-            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(PlotSquared.getWorldSettings(w), plot).getY());
+            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(w), plot).getY());
             return new Location(w, x, y, z);
         } else {
             final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
@@ -621,7 +621,7 @@ public class PlotHelper {
      * @return
      */
     public static Location getPlotTopLocAbs(final String world, final PlotId id) {
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, id);
     }
@@ -636,7 +636,7 @@ public class PlotHelper {
      * @return
      */
     public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
@@ -667,7 +667,7 @@ public class PlotHelper {
         if (plot != null) {
             id = getTopPlot(world, plot).id;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, id);
     }
@@ -686,7 +686,7 @@ public class PlotHelper {
         if (plot != null) {
             id = getBottomPlot(world, plot).id;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
@@ -804,7 +804,7 @@ public class PlotHelper {
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
     }
     
@@ -819,7 +819,7 @@ public class PlotHelper {
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotId id = manager.getPlotId(plotworld, loc.getX(), loc.getY(), loc.getZ());
         if ((id != null) && (plotworld.TYPE == 2)) {
             if (ClusterManager.getCluster(world, id) == null) {

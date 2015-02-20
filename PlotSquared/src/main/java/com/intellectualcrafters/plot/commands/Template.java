@@ -46,7 +46,7 @@ public class Template extends SubCommand {
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(args[1]);
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(args[1]);
         if ((world == null) || (plotworld == null)) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;

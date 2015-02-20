@@ -78,7 +78,7 @@ public class PlotListener {
     }
     
     public static boolean isPlotArea(final Location location) {
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(location.getWorld());
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
             return ClusterManager.getCluster(location) != null;
         }

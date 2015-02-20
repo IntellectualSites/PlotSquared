@@ -176,7 +176,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                final PlotWorld plotworld = PlotSquared.getWorldSettings(plr.getWorld());
+                final PlotWorld plotworld = PlotSquared.getPlotWorld(plr.getWorld());
                 if (plotworld.TYPE == 2) {
                     final ArrayList<Plot> toRemove = new ArrayList<>();
                     for (final Plot plot : PlotSquared.getPlots(plr.getWorld()).values()) {

@@ -92,7 +92,7 @@ public class PlotSquared {
         plots.get(world).put(plot.id, plot);
     }
     
-    public static PlotWorld getWorldSettings(final String world) {
+    public static PlotWorld getPlotWorld(final String world) {
         if (plotworlds.containsKey(world)) {
             return plotworlds.get(world);
         }
@@ -196,7 +196,7 @@ public class PlotSquared {
     }
     
     public static void loadWorld(final String world, final PlotGenerator generator) {
-        if (getWorldSettings(world) != null) {
+        if (getPlotWorld(world) != null) {
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
