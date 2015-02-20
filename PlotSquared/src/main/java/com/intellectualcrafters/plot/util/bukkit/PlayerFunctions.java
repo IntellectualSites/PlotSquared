@@ -25,32 +25,25 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
+import org.bukkit.ChatColor;
+
+import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
 
 /**
  * Functions involving players, plots and locations.
- *
- * @author Citymonstret
  */
-@SuppressWarnings("javadoc")
 public class PlayerFunctions {
     /**
      * Clear a plot. Use null player if no player is present
@@ -60,46 +53,18 @@ public class PlayerFunctions {
      * @param isDelete
      */
     public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
-        if (runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
-            return;
-        }
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final int prime = 31;
-        int h = 1;
-        h = (prime * h) + pos1.getX();
-        h = (prime * h) + pos1.getZ();
-        state = h;
         final long start = System.currentTimeMillis();
-        final Location location = PlotHelper.getPlotHomeDefault(plot);
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        runners.put(plot, 1);
-        if (plotworld.TERRAIN != 0) {
-            final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
-            AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
-                @Override
-                public void run() {
-                    if ((player != null) && player.isOnline()) {
-                        PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
-                    }
-                    runners.remove(plot);
-                }
-            });
-            return;
-        }
-        final Runnable run = new Runnable() {
+        Runnable whenDone = new Runnable() {
             @Override
             public void run() {
-                PlotHelper.setBiome(world, plot, Biome.FOREST);
-                runners.remove(plot);
                 if ((player != null) && player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.CLEARING_DONE.s().replaceAll("%time%", "" + ((System.currentTimeMillis() - start))));
+                    PlayerFunctions.sendMessage(player, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                 }
-                update(location);
             }
         };
-        manager.clearPlot(plotworld, plot, isDelete, run);
+        if (!PlotHelper.clearAsPlayer(plot, isDelete, whenDone)) {
+            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+        }
     }
     
     /**
@@ -125,7 +90,7 @@ public class PlayerFunctions {
                 PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        return mergePlots(world, plotIds, true);
+        return PlotHelper.mergePlots(world, plotIds, true);
     }
     
     public static String getPlayerName(final UUID uuid) {
@@ -152,10 +117,10 @@ public class PlayerFunctions {
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
         final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
         if (plot1 != null) {
-            pos1 = getBottomPlot(world, plot1).id;
+            pos1 = PlotHelper.getBottomPlot(world, plot1).id;
         }
         if (plot2 != null) {
-            pos2 = getTopPlot(world, plot2).id;
+            pos2 = PlotHelper.getTopPlot(world, plot2).id;
         }
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -164,74 +129,6 @@ public class PlayerFunctions {
             }
         }
         return myplots;
-    }
-    
-    public static Plot getBottomPlot(final String world, final Plot plot) {
-        if (plot.settings.getMerged(0)) {
-            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
-            if (p == null) {
-                return plot;
-            }
-            return getBottomPlot(world, p);
-        }
-        if (plot.settings.getMerged(3)) {
-            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y));
-            if (p == null) {
-                return plot;
-            }
-            return getBottomPlot(world, p);
-        }
-        return plot;
-    }
-    
-    public static Plot getTopPlot(final String world, final Plot plot) {
-        if (plot.settings.getMerged(2)) {
-            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
-        }
-        if (plot.settings.getMerged(1)) {
-            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
-        }
-        return plot;
-    }
-    
-    /**
-     * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
-     *
-     * @param loc
-     *
-     * @return
-     */
-    public static PlotId getPlotAbs(final Location loc) {
-        final String world = loc.getWorld();
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        if (manager == null) {
-            return null;
-        }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
-    }
-    
-    /**
-     * Returns the plot id at a location (mega plots are considered)
-     *
-     * @param loc
-     *
-     * @return
-     */
-    public static PlotId getPlot(final Location loc) {
-        final String world = loc.getWorld();
-        final PlotManager manager = PlotSquared.getPlotManager(world);
-        if (manager == null) {
-            return null;
-        }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
-        final PlotId id = manager.getPlotId(plotworld, loc.getX(), loc.getY(), loc.getZ());
-        if ((id != null) && (plotworld.TYPE == 2)) {
-            if (ClusterManager.getCluster(world, id) == null) {
-                return null;
-            }
-        }
-        return id;
     }
     
     /**
@@ -245,7 +142,7 @@ public class PlayerFunctions {
         if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
             return null;
         }
-        final PlotId id = getPlot(BukkitUtil.getLocation(player));
+        final PlotId id = PlotHelper.getPlot(BukkitUtil.getLocation(player));
         final String world = player.getWorld().getName();
         if (id == null) {
             return null;
@@ -254,18 +151,6 @@ public class PlayerFunctions {
             return PlotSquared.getPlots(world).get(id);
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
-    }
-    
-    /**
-     * Updates a given plot with another instance
-     *
-     * @param plot
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public static void set(final Plot plot) {
-        PlotSquared.updatePlot(plot);
     }
     
     /**
@@ -310,16 +195,6 @@ public class PlayerFunctions {
      */
     public static int getAllowedPlots(final Player p) {
         return BukkitMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
-    }
-    
-    /**
-     * @return PlotSquared.getPlots();
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public static Set<Plot> getPlots() {
-        return PlotSquared.getPlots();
     }
     
     /**

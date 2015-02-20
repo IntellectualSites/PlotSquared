@@ -273,8 +273,8 @@ public class PlotHelper {
                 break;
             }
             count++;
-            final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-            final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+            final PlotId bot = getBottomPlot(world, plot).id;
+            final PlotId top = getTopPlot(world, plot).id;
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, uuid, 0)) {
                 final boolean result = mergePlots(world, plots, true);
@@ -320,11 +320,11 @@ public class PlotHelper {
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(uuid))) {
                 return false;
             }
-            final PlotId top = PlayerFunctions.getTopPlot(world, myplot).id;
+            final PlotId top = getTopPlot(world, myplot).id;
             if (((top.x > id_max.x) && (dir != 1)) || ((top.y > id_max.y) && (dir != 2))) {
                 return false;
             }
-            final PlotId bot = PlayerFunctions.getBottomPlot(world, myplot).id;
+            final PlotId bot = getBottomPlot(world, myplot).id;
             if (((bot.x < id_min.x) && (dir != 3)) || ((bot.y < id_min.y) && (dir != 0))) {
                 return false;
             }
@@ -398,7 +398,7 @@ public class PlotHelper {
      * @param requester
      * @param plot
      */
-    public static boolean clear(final UUID uuid, final Plot plot, final boolean isDelete, final Runnable whenDone) {
+    public static boolean clearAsPlayer(final Plot plot, final boolean isDelete, final Runnable whenDone) {
         if (runners.containsKey(plot)) {
             return false;
         }
@@ -665,7 +665,7 @@ public class PlotHelper {
     public static Location getPlotTopLoc(final String world, PlotId id) {
         final Plot plot = PlotSquared.getPlots(world).get(id);
         if (plot != null) {
-            id = PlayerFunctions.getTopPlot(world, plot).id;
+            id = getTopPlot(world, plot).id;
         }
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -684,7 +684,7 @@ public class PlotHelper {
     public static Location getPlotBottomLoc(final String world, PlotId id) {
         final Plot plot = PlotSquared.getPlots(world).get(id);
         if (plot != null) {
-            id = PlayerFunctions.getBottomPlot(world, plot).id;
+            id = getBottomPlot(world, plot).id;
         }
         final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -713,8 +713,8 @@ public class PlotHelper {
         if (currentPlot.owner == null) {
             return false;
         }
-        final Plot pos1 = PlayerFunctions.getBottomPlot(world, currentPlot);
-        final Plot pos2 = PlayerFunctions.getTopPlot(world, currentPlot);
+        final Plot pos1 = getBottomPlot(world, currentPlot);
+        final Plot pos2 = getTopPlot(world, currentPlot);
         final PlotId size = PlotHelper.getSize(world, currentPlot);
         if (!PlotHelper.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
             return false;
@@ -741,23 +741,46 @@ public class PlotHelper {
         return true;
     }
     
+    public static Plot getBottomPlot(final String world, final Plot plot) {
+        if (plot.settings.getMerged(0)) {
+            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y - 1));
+            if (p == null) {
+                return plot;
+            }
+            return getBottomPlot(world, p);
+        }
+        if (plot.settings.getMerged(3)) {
+            final Plot p = PlotSquared.getPlots(world).get(new PlotId(plot.id.x - 1, plot.id.y));
+            if (p == null) {
+                return plot;
+            }
+            return getBottomPlot(world, p);
+        }
+        return plot;
+    }
+    
+    public static Plot getTopPlot(final String world, final Plot plot) {
+        if (plot.settings.getMerged(2)) {
+            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
+        }
+        if (plot.settings.getMerged(1)) {
+            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
+        }
+        return plot;
+    }
+    
     public static PlotId getSize(final String world, final Plot plot) {
         final PlotSettings settings = plot.settings;
         if (!settings.isMerged()) {
             return new PlotId(1, 1);
         }
-        final Plot top = PlayerFunctions.getTopPlot(world, plot);
-        final Plot bot = PlayerFunctions.getBottomPlot(world, plot);
+        final Plot top = getTopPlot(world, plot);
+        final Plot bot = getBottomPlot(world, plot);
         return new PlotId((top.id.x - bot.id.x) + 1, (top.id.y - bot.id.y) + 1);
     }
     
     /**
      * Fetches the plot from the main class
-     *
-     * @param world
-     * @param id
-     *
-     * @return
      */
     public static Plot getPlot(final String world, final PlotId id) {
         if (id == null) {
@@ -769,21 +792,40 @@ public class PlotHelper {
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }
     
+
     /**
-     * Returns the plot at a given location
-     *
+     * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
      * @param loc
-     *
      * @return
      */
-    public static Plot getCurrentPlot(final Location loc) {
-        final PlotId id = PlayerFunctions.getPlot(loc);
-        if (id == null) {
+    public static PlotId getPlotAbs(final Location loc) {
+        final String world = loc.getWorld();
+        final PlotManager manager = PlotSquared.getPlotManager(world);
+        if (manager == null) {
             return null;
         }
-        if (PlotSquared.getPlots(loc.getWorld()).containsKey(id)) {
-            return PlotSquared.getPlots(loc.getWorld()).get(id);
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
+    }
+    
+    /**
+     * Returns the plot id at a location (mega plots are considered)
+     * @param loc
+     * @return
+     */
+    public static PlotId getPlot(final Location loc) {
+        final String world = loc.getWorld();
+        final PlotManager manager = PlotSquared.getPlotManager(world);
+        if (manager == null) {
+            return null;
         }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
+        final PlotId id = manager.getPlotId(plotworld, loc.getX(), loc.getY(), loc.getZ());
+        if ((id != null) && (plotworld.TYPE == 2)) {
+            if (ClusterManager.getCluster(world, id) == null) {
+                return null;
+            }
+        }
+        return id;
     }
 }
