@@ -125,11 +125,7 @@ public class PlotListener {
         if (id == null) {
             return null;
         }
-        final String world = loc.getWorld();
-        if (PlotSquared.getPlots(world).containsKey(id)) {
-            return PlotSquared.getPlots(world).get(id);
-        }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), loc.getWorld());
+        return PlotHelper.getPlot(loc.getWorld(), id);
     }
     
     private static WeatherType getWeatherType(String str) {

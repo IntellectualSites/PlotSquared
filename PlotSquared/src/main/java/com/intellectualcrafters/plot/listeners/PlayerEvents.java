@@ -143,110 +143,96 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!player.hasPlayedBefore()) {
             player.saveData();
         }
-        // UUID stuff
         final String username = player.getName();
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = UUIDHandler.getUUID(player);
         UUIDHandler.add(name, uuid);
         Location loc = BukkitUtil.getLocation(player.getLocation());
-        // textures(event.getPlayer());
         Plot plot = PlotHelper.getPlot(loc);
         if (plot == null) {
             return;
         }
-        
-        
-        if (isInPlot(loc)) {
-            if (Settings.TELEPORT_ON_LOGIN) {
-                BukkitUtil.teleportPlayer(player, PlotHelper.getPlotHomeDefault(getPlot(event.getPlayer())));
-                PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
-            } else {
-                plotEntry(event.getPlayer(), getCurrentPlot(event.getPlayer().getLocation()));
-            }
+        if (Settings.TELEPORT_ON_LOGIN) {
+            BukkitUtil.teleportPlayer(player, PlotHelper.getPlotHomeDefault(plot));
+            PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
         }
+        plotEntry(player, plot);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void PlayerMove(final PlayerMoveEvent event) {
-        try {
+        Location f = BukkitUtil.getLocation(event.getFrom());
+        Location t = BukkitUtil.getLocation(event.getTo());
+        if ((f.getX() != t.getX()) || (f.getZ() != t.getZ())) {
             final Player player = event.getPlayer();
-            final Location f = event.getFrom();
-            final Location t = event.getTo();
-            final Location q = new Location(t.getWorld(), t.getBlockX(), 0, t.getZ());
-            if ((f.getBlockX() != q.getBlockX()) || (f.getBlockZ() != q.getBlockZ())) {
-                if ((Settings.TELEPORT_DELAY != 0) && (TaskManager.TELEPORT_QUEUE.size() > 0)) {
-                    final String name = player.getName();
-                    if (TaskManager.TELEPORT_QUEUE.contains(name)) {
-                        TaskManager.TELEPORT_QUEUE.remove(name);
-                    }
+            if (Settings.TELEPORT_DELAY != 0) {
+                TaskManager.TELEPORT_QUEUE.remove(player.getName());
+            }
+            String worldname = t.getWorld();
+            if (!isPlotWorld(worldname)) {
+                return;
+            }
+            if (PlotHelper.worldBorder.containsKey(worldname)) {
+                final int border = PlotHelper.getBorder(worldname);
+                boolean passed = true;
+                if (t.getX() > border) {
+                    event.getTo().setX(border);
+                } else if (t.getX() < -border) {
+                    event.getTo().setX(-border);
+                } else if (t.getZ() > border) {
+                    event.getTo().setZ(border);
+                } else if (t.getZ() < -border) {
+                    event.getTo().setZ(-border);
                 }
-                if (!isPlotWorld(player.getWorld())) {
+                else {
+                    passed = false;
+                }
+                if (passed) {
+                    PlayerFunctions.sendMessage(player, C.BORDER);
                     return;
                 }
-                final String worldname = q.getWorld().getName();
-                if (PlotHelper.worldBorder.containsKey(worldname)) {
-                    final int border = PlotHelper.getBorder(worldname);
-                    boolean passed = false;
-                    if (t.getBlockX() > border) {
-                        q.setX(border);
-                        passed = true;
-                    } else if (t.getBlockX() < -border) {
-                        q.setX(-border);
-                        passed = true;
-                    }
-                    if (t.getBlockZ() > border) {
-                        q.setZ(border);
-                        passed = true;
-                    } else if (t.getBlockZ() < -border) {
-                        q.setZ(-border);
-                        passed = true;
-                    }
-                    if (passed) {
-                        q.setY(t.getBlockY());
-                        event.setTo(q);
-                        PlayerFunctions.sendMessage(player, C.BORDER);
-                        return;
-                    }
-                }
-                Plot plot = getCurrentPlot(q);
-                if (plot != null) {
-                    if (plot.deny_entry(player)) {
+            }
+            Plot plot = getCurrentPlot(t);
+            if (plot != null) {
+                if (plot.denied.size() > 0) {
+                    UUID uuid = UUIDHandler.getUUID(player);
+                    if (plot.isDenied(uuid)) {
                         if (!BukkitMain.hasPermission(player, "plots.admin.entry.denied")) {
                             PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.admin.entry.denied");
                             event.setCancelled(true);
                             return;
                         }
                     }
-                    if (!plot.equals(getCurrentPlot(f))) {
-                        plotEntry(player, plot);
-                    }
-                } else if (leftPlot(f, event.getTo())) {
-                    plot = getCurrentPlot(f);
-                    plotExit(player, plot);
                 }
+                if (!plot.equals(getCurrentPlot(f))) {
+                    plotEntry(player, plot);
+                }
+            } else if (leftPlot(f, t)) {
+                plot = getCurrentPlot(f);
+                plotExit(player, plot);
             }
-        } catch (final Exception e) {
-            // Gotta catch 'em all.
         }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onChat(final AsyncPlayerChatEvent event) {
-        final World world = event.getPlayer().getWorld();
+        Player player = event.getPlayer();
+        final String world = player.getWorld().getName();
         if (!isPlotWorld(world)) {
             return;
         }
-        final PlotWorld plotworld = PlotSquared.getWorldSettings(world.getName());
+        final PlotWorld plotworld = PlotSquared.getWorldSettings(world);
         if (!plotworld.PLOT_CHAT) {
             return;
         }
-        if (getCurrentPlot(event.getPlayer().getLocation()) == null) {
+        Location loc = BukkitUtil.getLocation(player);
+        if (getCurrentPlot(loc) == null) {
             return;
         }
         final String message = event.getMessage();
         String format = C.PLOT_CHAT_FORMAT.s();
         final String sender = event.getPlayer().getDisplayName();
-        final Plot plot = getCurrentPlot(event.getPlayer().getLocation());
+        final Plot plot = getCurrentPlot(loc);
         final PlotId id = plot.id;
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
@@ -267,7 +253,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Player player = event.getPlayer();
-        final Location loc = event.getBlock().getLocation();
+        final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         final Plot plot = getCurrentPlot(loc);
         if (plot != null) {
             if (event.getBlock().getY() == 0) {
@@ -282,7 +268,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.hasRights(event.getPlayer())) {
+            if (!plot.isAdded(event.getPlayer())) {
                 final Flag destroy = FlagManager.getPlotFlag(plot, "break");
                 final Block block = event.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
@@ -355,7 +341,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         } else {
             final Block b = event.getBlock();
             final Player p = (Player) e;
-            final Location loc = b.getLocation();
+            final Location loc = BukkitUtil.getLocation(b.getLocation());
             if (!isInPlot(loc)) {
                 if (!BukkitMain.hasPermission(p, "plots.admin.build.road")) {
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
@@ -370,7 +356,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         event.setCancelled(true);
                         return;
                     }
-                } else if (!plot.hasRights(p)) {
+                } else if (!plot.isAdded(p)) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
                         if (isPlotArea(loc)) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
@@ -399,7 +385,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -412,7 +398,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -425,7 +411,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBD(final BlockDamageEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -438,7 +424,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -451,7 +437,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -464,7 +450,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -490,7 +476,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
         final Block b = e.getRetractLocation().getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
             if (!isInPlot(loc)) {
                 if (isPlotArea(e.getBlock().getLocation())) {
@@ -546,7 +532,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                 return;
             }
-            if (!plot.hasRights(player)) {
+            if (!plot.isAdded(player)) {
                 if (BukkitMain.hasPermission(player, "plots.admin.interact.other")) {
                     return;
                 }
@@ -613,7 +599,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (b != null) {
             if (e.getPlayer() != null) {
                 final Player p = e.getPlayer();
@@ -631,7 +617,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (!plot.hasRights(p)) {
+                    } else if (!plot.isAdded(p)) {
                         if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
                             if (isPlotArea(loc)) {
                                 PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
@@ -651,9 +637,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onTeleport(final PlayerTeleportEvent event) {
-        final Location f = event.getFrom();
-        final Location t = event.getTo();
-        final Location q = new Location(t.getWorld(), t.getBlockX(), 64, t.getZ());
+        final Location f = BukkitUtil.getLocation(event.getFrom());
+        final Location t = BukkitUtil.getLocation(event.getTo());
+        final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
         if (isPlotWorld(q)) {
             if (isInPlot(q)) {
                 final Plot plot = getCurrentPlot(q);
@@ -672,7 +658,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     plotExit(event.getPlayer(), plot);
                 }
             }
-            if ((q.getBlockX() >= 29999999) || (q.getBlockX() <= -29999999) || (q.getBlockZ() >= 29999999) || (q.getBlockZ() <= -29999999)) {
+            if ((q.getX() >= 29999999) || (q.getX() <= -29999999) || (q.getZ() >= 29999999) || (q.getZ() <= -29999999)) {
                 event.setCancelled(true);
                 return;
             }
@@ -683,7 +669,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public static void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         final BlockFace bf = e.getBlockFace();
         final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             final Player p = e.getPlayer();
             if (!isInPlot(loc)) {
@@ -702,7 +688,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                     e.setCancelled(true);
                     return;
-                } else if (!plot.hasRights(e.getPlayer())) {
+                } else if (!plot.isAdded(e.getPlayer())) {
                     final Flag use = FlagManager.getPlotFlag(plot, "use");
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
                         return;
@@ -748,7 +734,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             final Player p = e.getPlayer();
             if (!isInPlot(loc)) {
@@ -767,7 +753,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
                     e.setCancelled(true);
                     return;
-                } else if (!plot.hasRights(e.getPlayer())) {
+                } else if (!plot.isAdded(e.getPlayer())) {
                     final Flag use = FlagManager.getPlotFlag(plot, "use");
                     final Block block = e.getBlockClicked();
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
@@ -789,7 +775,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
-        final Location loc = b.getLocation();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (isPlotWorld(loc)) {
             final Player p = e.getPlayer();
             if (!isInPlot(loc)) {
@@ -806,7 +792,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         e.setCancelled(true);
                         return;
                     }
-                } else if (!plot.hasRights(p)) {
+                } else if (!plot.isAdded(p)) {
                     if (FlagManager.isPlotFlagTrue(plot, "hanging-place")) {
                         return;
                     }
@@ -843,7 +829,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (!plot.hasRights(p)) {
+                    } else if (!plot.isAdded(p)) {
                         if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
                             return;
                         }
@@ -879,7 +865,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         e.setCancelled(true);
                         return;
                     }
-                } else if (!plot.hasRights(p)) {
+                } else if (!plot.isAdded(p)) {
                     final Entity entity = e.getRightClicked();
                     if ((entity instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-interact")) {
                         return;
@@ -929,7 +915,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                         return;
                     }
-                    if (!plot.hasRights(p)) {
+                    if (!plot.isAdded(p)) {
                         if (FlagManager.isPlotFlagTrue(plot, "vehicle-break")) {
                             return;
                         }
@@ -989,7 +975,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     assert plot != null;
-                    if (!plot.hasRights(p)) {
+                    if (!plot.isAdded(p)) {
                         if ((a instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-attack")) {
                             return;
                         }
@@ -1034,7 +1020,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         e.setHatching(false);
                         return;
                     }
-                } else if (!plot.hasRights(p)) {
+                } else if (!plot.isAdded(p)) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.projectile.other")) {
                         if (isPlotArea(l)) {
                             PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.projectile.other");
@@ -1057,7 +1043,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Player player = event.getPlayer();
-        final Location loc = event.getBlock().getLocation();
+        final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         if (isInPlot(loc)) {
             final Plot plot = getCurrentPlot(loc);
             if (!plot.hasOwner()) {
@@ -1068,7 +1054,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.hasRights(player)) {
+            if (!plot.isAdded(player)) {
                 final Flag place = FlagManager.getPlotFlag(plot, "place");
                 final Block block = event.getBlock();
                 if ((place != null) && ((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
