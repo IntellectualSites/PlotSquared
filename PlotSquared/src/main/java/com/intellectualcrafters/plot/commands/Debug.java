@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.Lag;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.RUtils;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
@@ -71,10 +71,10 @@ public class Debug extends SubCommand {
             // PlotHelper.getWorldFolderSize() + "MB"));
             for (final String worldname : PlotSquared.getPlotWorlds()) {
                 final World world = Bukkit.getWorld(worldname);
-                information.append(getLine(line, "World: " + world.getName() + " size", PlotHelper.getWorldFolderSize(world)));
-                information.append(getLine(line, " - Entities", PlotHelper.getEntities(world)));
-                information.append(getLine(line, " - Loaded Tile Entities", PlotHelper.getTileEntities(world)));
-                information.append(getLine(line, " - Loaded Chunks", PlotHelper.getLoadedChunks(world)));
+                information.append(getLine(line, "World: " + world.getName() + " size", MainUtil.getWorldFolderSize(world)));
+                information.append(getLine(line, " - Entities", MainUtil.getEntities(world)));
+                information.append(getLine(line, " - Loaded Tile Entities", MainUtil.getTileEntities(world)));
+                information.append(getLine(line, " - Loaded Chunks", MainUtil.getLoadedChunks(world)));
             }
             information.append(getSection(section, "RAM"));
             information.append(getLine(line, "Free Ram", RUtils.getFreeRam() + "MB"));

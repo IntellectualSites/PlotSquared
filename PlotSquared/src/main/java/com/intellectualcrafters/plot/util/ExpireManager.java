@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -104,7 +105,7 @@ public class ExpireManager {
                     for (final UUID helper : plot.helpers) {
                         final Player player = UUIDHandler.uuidWrapper.getPlayer(helper);
                         if (player != null) {
-                            PlayerFunctions.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
+                            MainUtil.sendMessage(new BukkitPlayer(player), C.PLOT_REMOVED_HELPER, plot.id.toString());
                         }
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -113,7 +114,7 @@ public class ExpireManager {
                     }
                     final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
                     manager.clearPlot(plotworld, plot, false, null);
-                    PlotHelper.removeSign(plot);
+                    MainUtil.removeSign(plot);
                     DBFunc.delete(world, plot);
                     PlotSquared.removePlot(world, plot.id, true);
                     expiredPlots.get(world).remove(plot);

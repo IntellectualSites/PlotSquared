@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -62,8 +62,8 @@ public class DebugClaimTest extends SubCommand {
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, true);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            PlotHelper.createPlot(player, plot);
-            PlotHelper.setSign(player, plot);
+            MainUtil.createPlot(player, plot);
+            MainUtil.setSign(player, plot);
             PlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
@@ -97,7 +97,7 @@ public class DebugClaimTest extends SubCommand {
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
             for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
-                final Plot plot = PlotHelper.getPlot(world, id);
+                final Plot plot = MainUtil.getPlot(world, id);
                 final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
                 if (contains) {
                     PlayerFunctions.sendMessage(null, " - &cDB Already contains: " + plot.id);

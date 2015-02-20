@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
@@ -65,7 +65,7 @@ public class TP extends SubCommand {
         }
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            PlotSquared.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
+            PlotSquared.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
             PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);

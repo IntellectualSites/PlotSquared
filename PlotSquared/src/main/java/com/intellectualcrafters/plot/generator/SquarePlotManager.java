@@ -10,7 +10,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
@@ -20,8 +20,8 @@ import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public boolean clearPlot(final World world, final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whendone) {
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+        final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
         ChunkManager.regenerateRegion(pos1, pos2, whendone);
         return true;
     }
@@ -170,11 +170,11 @@ public abstract class SquarePlotManager extends GridPlotManager {
      */
     @Override
     public boolean setBiome(final World world, final Plot plot, final Biome biome) {
-        final int bottomX = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
-        final int topX = PlotHelper.getPlotTopLoc(world, plot.id).getBlockX() + 1;
-        final int bottomZ = PlotHelper.getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
-        final int topZ = PlotHelper.getPlotTopLoc(world, plot.id).getBlockZ() + 1;
-        final Block block = world.getBlockAt(PlotHelper.getPlotBottomLoc(world, plot.id).add(1, 1, 1));
+        final int bottomX = MainUtil.getPlotBottomLoc(world, plot.id).getBlockX() - 1;
+        final int topX = MainUtil.getPlotTopLoc(world, plot.id).getBlockX() + 1;
+        final int bottomZ = MainUtil.getPlotBottomLoc(world, plot.id).getBlockZ() - 1;
+        final int topZ = MainUtil.getPlotTopLoc(world, plot.id).getBlockZ() + 1;
+        final Block block = world.getBlockAt(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 1, 1));
         final Biome current = block.getBiome();
         if (biome.equals(current)) {
             return false;

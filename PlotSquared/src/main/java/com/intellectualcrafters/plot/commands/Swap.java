@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -86,10 +86,10 @@ public class Swap extends SubCommand {
         }
         PlotSelection.swap(world, plot.id, plotid);
         // TODO Requires testing!!
-        DBFunc.dbManager.swapPlots(plot, PlotHelper.getPlot(world, plotid));
+        DBFunc.dbManager.swapPlots(plot, MainUtil.getPlot(world, plotid));
         // TODO Requires testing!!
         PlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
-        PlotHelper.update(plr.getLocation());
+        MainUtil.update(plr.getLocation());
         return true;
     }
 }

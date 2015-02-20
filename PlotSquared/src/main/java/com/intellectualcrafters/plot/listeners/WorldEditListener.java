@@ -47,7 +47,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
@@ -107,7 +107,7 @@ public class WorldEditListener implements Listener {
             return;
         }
         com.intellectualcrafters.plot.object.Location loc = BukkitUtil.getLocation(b.getLocation());
-        final Plot plot = PlotHelper.getPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
             if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
                 PWE.setMask(p, loc, false);
@@ -126,7 +126,7 @@ public class WorldEditListener implements Listener {
             cmd = cmd.substring(0, cmd.indexOf(" "));
         }
         if (this.restrictedcmds.contains(cmd)) {
-            final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(p));
+            final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(p));
             if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
                 e.setCancelled(true);
             }
@@ -198,8 +198,8 @@ public class WorldEditListener implements Listener {
         com.intellectualcrafters.plot.object.Location locf = BukkitUtil.getLocation(f);
         com.intellectualcrafters.plot.object.Location loct = BukkitUtil.getLocation(t);
         if ((locf.getX() != loct.getX()) || (locf.getZ() != loct.getZ())) {
-            final PlotId idF = PlotHelper.getPlotId(locf);
-            final PlotId idT = PlotHelper.getPlotId(loct);
+            final PlotId idF = MainUtil.getPlotId(locf);
+            final PlotId idT = MainUtil.getPlotId(loct);
             if ((idT != null) && !(idF == idT)) {
                 PWE.setMask(p, loct, false);
             }

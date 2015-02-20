@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
@@ -101,8 +101,8 @@ public class Schematic extends SubCommand {
                         final int z;
                         final Plot plot2 = PlayerFunctions.getCurrentPlot(plr);
                         final Dimension dem = schematic.getSchematicDimension();
-                        final Location bot = PlotHelper.getPlotBottomLoc(plr.getWorld(), plot2.id).add(1, 0, 1);
-                        final int length2 = PlotHelper.getPlotWidth(plr.getWorld(), plot2.id);
+                        final Location bot = MainUtil.getPlotBottomLoc(plr.getWorld(), plot2.id).add(1, 0, 1);
+                        final int length2 = MainUtil.getPlotWidth(plr.getWorld(), plot2.id);
                         if ((dem.getX() > length2) || (dem.getZ() > length2)) {
                             sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
                             Schematic.this.running = false;
@@ -131,7 +131,7 @@ public class Schematic extends SubCommand {
                                     final int start = Schematic.this.counter * 5000;
                                     if (start > blen) {
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-                                        PlotHelper.update(plr.getLocation());
+                                        MainUtil.update(plr.getLocation());
                                         Schematic.this.running = false;
                                         Bukkit.getScheduler().cancelTask(Schematic.this.task);
                                         return;
@@ -167,7 +167,7 @@ public class Schematic extends SubCommand {
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
                 final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-                final int length = PlotHelper.getPlotWidth(plr.getWorld(), plot.id);
+                final int length = MainUtil.getPlotWidth(plr.getWorld(), plot.id);
                 if ((l1 < length) || (l2 < length)) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
                     break;

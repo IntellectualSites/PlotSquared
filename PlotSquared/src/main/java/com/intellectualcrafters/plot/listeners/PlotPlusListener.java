@@ -52,7 +52,7 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -106,7 +106,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
             PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return;
@@ -118,7 +118,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         final Set<Player> plotPlayers = new HashSet<>();
         for (final Player p : player.getWorld().getPlayers()) {
-            Plot newPlot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+            Plot newPlot = MainUtil.getPlot(BukkitUtil.getLocation(player));
             if (plot.equals(newPlot)) {
                 plotPlayers.add(p);
             }
@@ -145,7 +145,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }
@@ -160,7 +160,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final Player player = (Player) event.getEntity();
-        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }
@@ -172,7 +172,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
-        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }
@@ -185,7 +185,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
-        final Plot plot = PlotHelper.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }

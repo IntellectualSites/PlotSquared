@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
@@ -55,8 +55,8 @@ public class Claim extends SubCommand {
         final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            PlotHelper.createPlot(player, plot);
-            PlotHelper.setSign(player, plot);
+            MainUtil.createPlot(player, plot);
+            MainUtil.setSign(player, plot);
             PlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
@@ -77,7 +77,7 @@ public class Claim extends SubCommand {
                 SchematicHandler.paste(BukkitUtil.getLocation(entity), sch, plot2, 0, 0);
             }
             PlotSquared.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
-            PlotHelper.update(BukkitUtil.getLocation(entity));
+            MainUtil.update(BukkitUtil.getLocation(entity));
         }
         return event.isCancelled();
     }

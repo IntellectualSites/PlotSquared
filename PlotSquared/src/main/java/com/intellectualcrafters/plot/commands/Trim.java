@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
@@ -190,8 +190,8 @@ public class Trim extends SubCommand {
                     }
                     final Plot plot = plots.get(0);
                     plots.remove(0);
-                    final Location pos1 = PlotHelper.getPlotBottomLoc(world, plot.id);
-                    final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
+                    final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
+                    final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
                     final Location pos3 = new Location(world, pos1.getBlockX(), 64, pos2.getBlockZ());
                     final Location pos4 = new Location(world, pos2.getBlockX(), 64, pos1.getBlockZ());
                     chunks.remove(ChunkManager.getChunkChunk(pos1));

@@ -10,34 +10,20 @@ import java.util.UUID;
  *
  * @author Citymonstret
  */
-public class PlotPlayer {
+public interface PlotPlayer {
+    public Location getLocation();
 
-    private final String name;
-    private final Location location;
+    public UUID getUUID();
 
-    public PlotPlayer(final String name, final Location location) {
-        this.name = name;
-        this.location = location;
-    }
+    public boolean hasPermission(final String perm);
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public UUID getUUID() {
-        return UUIDHandler.getUUID(name);
-    }
-
-    public boolean hasPermission(final String perm) {
-        return BukkitMain.hasPermission(this, perm);
-    }
-
-    public void sendMessage(final String message) {
-        return BukkitMain.sendMessage( final PlotPlayer player);
-    }
+    public void sendMessage(final String message);
+    
+    public void teleport(final Location loc);
+    
+    public boolean isOp();
+    
+    public boolean isOnline();
+    
+    public String getName();
 }

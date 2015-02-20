@@ -52,7 +52,7 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -184,12 +184,12 @@ public class PlotSquared {
             }
         }
         plots.get(world).remove(id);
-        if (PlotHelper.lastPlot.containsKey(world)) {
-            final PlotId last = PlotHelper.lastPlot.get(world);
+        if (MainUtil.lastPlot.containsKey(world)) {
+            final PlotId last = MainUtil.lastPlot.get(world);
             final int last_max = Math.max(last.x, last.y);
             final int this_max = Math.max(id.x, id.y);
             if (this_max < last_max) {
-                PlotHelper.lastPlot.put(world, id);
+                MainUtil.lastPlot.put(world, id);
             }
         }
         return true;
@@ -226,7 +226,7 @@ public class PlotSquared {
             }
             // Now add it
             addPlotWorld(world, plotWorld, plotManager);
-            PlotHelper.setupBorder(world);
+            MainUtil.setupBorder(world);
         } else {
             if (!worlds.contains(world)) {
                 return;

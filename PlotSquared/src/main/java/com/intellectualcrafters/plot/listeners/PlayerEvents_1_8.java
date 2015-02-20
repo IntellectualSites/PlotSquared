@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -29,7 +29,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                     e.setCancelled(true);
                 }
             } else {
-                final Plot plot = PlotHelper.getPlot(l);
+                final Plot plot = MainUtil.getPlot(l);
                 if ((plot == null) || !plot.hasOwner()) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.interact.unowned")) {
                         PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");

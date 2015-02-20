@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -59,7 +59,7 @@ public class Buy extends SubCommand {
             try {
                 final String[] split = args[0].split(";");
                 final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = PlotHelper.getPlot(world, id);
+                plot = MainUtil.getPlot(world, id);
             } catch (final Exception e) {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }

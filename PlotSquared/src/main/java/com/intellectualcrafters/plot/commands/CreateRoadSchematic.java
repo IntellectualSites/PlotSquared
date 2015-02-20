@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class CreateRoadSchematic extends SubCommand {
@@ -47,7 +47,7 @@ public class CreateRoadSchematic extends SubCommand {
         final Plot plot = PlayerFunctions.getCurrentPlot(player);
         final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         manager.setupRoadSchematic(plot);
-        PlotHelper.update(BukkitUtil.getLocation(entity));
+        MainUtil.update(BukkitUtil.getLocation(entity));
         PlayerFunctions.sendMessage(player, "&6Saved new road schematic");
         return true;
     }

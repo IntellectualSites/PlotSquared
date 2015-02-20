@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -67,7 +67,7 @@ public class Unlink extends SubCommand {
             return false;
         }
         try {
-            PlotHelper.update(plr.getLocation());
+            MainUtil.update(plr.getLocation());
         } catch (final Exception e) {
             // execute(final Player plr, final String... args) {
             try {
@@ -112,7 +112,7 @@ public class Unlink extends SubCommand {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
                 final boolean ly = y < pos2.y;
-                final Plot p = PlotHelper.getPlot(world, new PlotId(x, y));
+                final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
                 if (lx) {
                     manager.createRoadEast(plotworld, p);
                     if (ly) {
@@ -122,16 +122,16 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-                PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
+                MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
             }
         }
         manager.finishPlotUnlink(world, plotworld, ids);
         for (final PlotId id : ids) {
-            final Plot myPlot = PlotHelper.getPlot(world, id);
+            final Plot myPlot = MainUtil.getPlot(world, id);
             if (plot.hasOwner()) {
                 final String name = UUIDHandler.getName(myPlot.owner);
                 if (name != null) {
-                    PlotHelper.setSign(world, name, myPlot);
+                    MainUtil.setSign(world, name, myPlot);
                 }
             }
         }

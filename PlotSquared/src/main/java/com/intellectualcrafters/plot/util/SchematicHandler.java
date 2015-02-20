@@ -77,7 +77,7 @@ public class SchematicHandler {
             final int LENGTH = demensions.getZ();
             final int HEIGHT = demensions.getY();
             final DataCollection[] blocks = schematic.getBlockCollection();
-            Location l1 = PlotHelper.getPlotBottomLoc(plot.world, plot.getId());
+            Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
             final int sy = BukkitUtil.getHeighestBlock(location.getWorld(), l1.getX() + 1, l1.getZ() + 1);
             l1 = l1.add(1, sy - 1, 1);
             if (HEIGHT == BukkitUtil.getMaxHeight(location.getWorld())) {
@@ -214,8 +214,8 @@ public class SchematicHandler {
         if (!PlotSquared.getPlots(world).containsKey(id)) {
             return null;
         }
-        final Location pos1 = PlotHelper.getPlotBottomLoc(world, id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(world, id);
+        final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(world, id);
         return getCompoundTag(world, pos1, pos2);
     }
     

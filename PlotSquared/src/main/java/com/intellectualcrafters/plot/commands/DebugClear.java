@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -56,22 +56,22 @@ public class DebugClear extends SubCommand {
                     if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getPlotWorld(world) instanceof SquarePlotWorld)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             final World bukkitWorld = Bukkit.getWorld(world);
-                            final Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-                            final Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-                            if (PlotHelper.runners.containsKey(plot)) {
+                            final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
+                            final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
+                            if (MainUtil.runners.containsKey(plot)) {
                                 PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
                             }
-                            PlotHelper.runners.put(plot, 1);
+                            MainUtil.runners.put(plot, 1);
                             ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
                                 @Override
                                 public void run() {
-                                    PlotHelper.runners.remove(plot);
+                                    MainUtil.runners.remove(plot);
                                     PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                                     PlotSquared.log("&aDone!");
                                 }
@@ -94,17 +94,17 @@ public class DebugClear extends SubCommand {
         }
         assert plot != null;
         final World bukkitWorld = plr.getWorld();
-        final Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-        final Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-        if (PlotHelper.runners.containsKey(plot)) {
+        final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
+        if (MainUtil.runners.containsKey(plot)) {
             PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
         }
-        PlotHelper.runners.put(plot, 1);
+        MainUtil.runners.put(plot, 1);
         ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
             @Override
             public void run() {
-                PlotHelper.runners.remove(plot);
+                MainUtil.runners.remove(plot);
                 PlayerFunctions.sendMessage(plr, "&aDone!");
             }
         });

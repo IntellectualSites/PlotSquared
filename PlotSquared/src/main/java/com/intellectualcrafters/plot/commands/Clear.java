@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -52,7 +52,7 @@ public class Clear extends SubCommand {
                     if (!PlotSquared.isPlotWorld(world)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(Bukkit.getWorld(world), id);
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {

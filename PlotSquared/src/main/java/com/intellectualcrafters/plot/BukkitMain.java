@@ -15,7 +15,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.*;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -42,83 +42,6 @@ import java.util.Arrays;
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public static BukkitMain THIS = null;
     public static PlotSquared MAIN = null;
-    
-    // TODO restructure this
-    public static boolean hasPermission(final PlotPlayer p, final String perm) {
-        final Player player = Bukkit.getPlayer(p + "");
-        if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
-            return true;
-        }
-        if (player.hasPermission(perm)) {
-            return true;
-        }
-        final String[] nodes = perm.split("\\.");
-        final StringBuilder n = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + "*")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // TODO restructure this
-    public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
-        if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
-            return Byte.MAX_VALUE;
-        }
-        if (player.hasPermission(stub + ".*")) {
-            return Byte.MAX_VALUE;
-        }
-        for (int i = range; i > 0; i--) {
-            if (player.hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    
-    // TODO restructure this
-    public static boolean teleportPlayer(final Player player, final Location from, final Plot plot) {
-        final Plot bot = PlotHelper.getBottomPlot(player.getWorld().getName(), plot);
-        final PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, bot);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            final Location location = PlotHelper.getPlotHome(bot.world, bot);
-            final int x = location.getX();
-            final int z = location.getZ();
-            if ((x >= 29999999) || (x <= -29999999) || (z >= 299999999) || (z <= -29999999)) {
-                event.setCancelled(true);
-                return false;
-            }
-            if ((Settings.TELEPORT_DELAY == 0) || hasPermission(player, "plots.teleport.delay.bypass")) {
-                PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
-                BukkitUtil.teleportPlayer(player, location);
-                return true;
-            }
-            PlayerFunctions.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
-            final String name = player.getName();
-            TaskManager.TELEPORT_QUEUE.add(name);
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                        PlayerFunctions.sendMessage(player, C.TELEPORT_FAILED);
-                        return;
-                    }
-                    TaskManager.TELEPORT_QUEUE.remove(name);
-                    if (!player.isOnline()) {
-                        return;
-                    }
-                    PlayerFunctions.sendMessage(player, C.TELEPORTED_TO_PLOT);
-                    BukkitUtil.teleportPlayer(player, location);
-                }
-            }, Settings.TELEPORT_DELAY * 20);
-            return true;
-        }
-        return !event.isCancelled();
-    }
     
     @EventHandler
     public static void worldLoad(final WorldLoadEvent event) {
@@ -253,7 +176,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                             final Entity[] entities = chunk.getEntities();
                             Entity entity;
                             for (int i = entities.length - 1; i >= 0; i--) {
-                                if (!((entity = entities[i]) instanceof Player) && (PlotHelper.getPlot(BukkitUtil.getLocation(entity)) == null)) {
+                                if (!((entity = entities[i]) instanceof Player) && (MainUtil.getPlot(BukkitUtil.getLocation(entity)) == null)) {
                                     entity.remove();
                                 }
                             }
@@ -346,9 +269,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         try {
             new SendChunk();
-            PlotHelper.canSendChunk = true;
+            MainUtil.canSendChunk = true;
         } catch (final Throwable e) {
-            PlotHelper.canSendChunk = false;
+            MainUtil.canSendChunk = false;
         }
     }
     

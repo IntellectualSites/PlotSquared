@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -177,7 +177,7 @@ public class Set extends SubCommand {
             }
             //set to current location
             final World world = plr.getWorld();
-            final Location base = PlotHelper.getPlotBottomLoc(world, plot.id);
+            final Location base = MainUtil.getPlotBottomLoc(world, plot.id);
             base.setY(0);
             final Location relative = plr.getLocation().subtract(base);
             final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
@@ -231,7 +231,7 @@ public class Set extends SubCommand {
                 PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
                 return true;
             }
-            PlotHelper.setBiome(plr.getWorld(), plot, biome);
+            MainUtil.setBiome(plr.getWorld(), plot, biome);
             PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
             return true;
         }

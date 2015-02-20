@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -57,11 +58,11 @@ public class ClusterManager {
         if (home.y == 0) {
             // default pos
             final PlotId center = getCenterPlot(cluster);
-            toReturn = PlotHelper.getPlotHome(cluster.world, center);
+            toReturn = MainUtil.getPlotHome(cluster.world, center);
             if (toReturn.getY() == 0) {
                 final PlotManager manager = PlotSquared.getPlotManager(cluster.world);
                 final PlotWorld plotworld = PlotSquared.getPlotWorld(cluster.world);
-                final Location loc = manager.getSignLoc(plotworld, PlotHelper.getPlot(cluster.world, center));
+                final Location loc = manager.getSignLoc(plotworld, MainUtil.getPlot(cluster.world, center));
                 toReturn.setY(loc.getY());
             }
         } else {
@@ -261,7 +262,7 @@ public class ClusterManager {
                 ClusterManager.regenerating.remove(cluster.world + ":" + cluster.getName());
                 final Player owner = UUIDHandler.uuidWrapper.getPlayer(cluster.owner);
                 if (owner != null) {
-                    PlayerFunctions.sendMessage(owner, C.CLEARING_DONE);
+                    MainUtil.sendMessage(new BukkitPlayer(owner), C.CLEARING_DONE);
                 }
             }
         }, (interval * chunks.size()) + 20);

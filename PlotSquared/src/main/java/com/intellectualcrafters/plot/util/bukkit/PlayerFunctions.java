@@ -24,12 +24,16 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -57,12 +61,12 @@ public class PlayerFunctions {
             @Override
             public void run() {
                 if ((player != null) && player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                    MainUtil.sendMessage(new BukkitPlayer(player), C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                 }
             }
         };
-        if (!PlotHelper.clearAsPlayer(plot, isDelete, whenDone)) {
-            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+        if (!MainUtil.clearAsPlayer(plot, isDelete, whenDone)) {
+            MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
         }
     }
     
@@ -82,14 +86,14 @@ public class PlayerFunctions {
             if (cost > 0d) {
                 final Economy economy = PlotSquared.economy;
                 if (economy.getBalance(plr) < cost) {
-                    PlayerFunctions.sendMessage(plr, C.CANNOT_AFFORD_MERGE, "" + cost);
+                    MainUtil.sendMessage(new BukkitPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
                     return false;
                 }
                 economy.withdrawPlayer(plr, cost);
-                PlayerFunctions.sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+                MainUtil.sendMessage(new BukkitPlayer(plr), C.REMOVED_BALANCE, cost + "");
             }
         }
-        return PlotHelper.mergePlots(world, plotIds, true);
+        return MainUtil.mergePlots(world, plotIds, true);
     }
     
     public static String getPlayerName(final UUID uuid) {
@@ -116,10 +120,10 @@ public class PlayerFunctions {
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
         final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
         if (plot1 != null) {
-            pos1 = PlotHelper.getBottomPlot(world, plot1).id;
+            pos1 = MainUtil.getBottomPlot(plot1).id;
         }
         if (plot2 != null) {
-            pos2 = PlotHelper.getTopPlot(world, plot2).id;
+            pos2 = MainUtil.getTopPlot(world, plot2).id;
         }
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -141,7 +145,7 @@ public class PlayerFunctions {
         if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
             return null;
         }
-        final PlotId id = PlotHelper.getPlotId(BukkitUtil.getLocation(player));
+        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(player));
         final String world = player.getWorld().getName();
         if (id == null) {
             return null;
@@ -183,87 +187,5 @@ public class PlayerFunctions {
             }
         }
         return count;
-    }
-    
-    /**
-     * Get the maximum number of plots a player is allowed
-     *
-     * @param p
-     *
-     * @return
-     */
-    public static int getAllowedPlots(final PlotPlayer p) {
-        return BukkitMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
-    }
-    
-    /**
-     * \\previous\\
-     *
-     * @param plr
-     * @param msg Was used to wrap the chat client length (Packets out--)
-     */
-    public static void sendMessageWrapped(final PlotPlayer plr, String msg) {
-        if (msg.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
-            final String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
-            final StringBuilder b = new StringBuilder();
-            for (final String p : ss) {
-                b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
-            }
-            msg = b.toString();
-        }
-        if (msg.endsWith("\n")) {
-            msg = msg.substring(0, msg.length() - 2);
-        }
-        plr.sendMessage(msg);
-    }
-    
-    /**
-     * Send a message to the player
-     *
-     * @param plr Player to recieve message
-     * @param msg Message to send
-     *
-     * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
-     */
-    public static boolean sendMessage(final PlotPlayer plr, final String msg) {
-        return sendMessage(plr, msg, true);
-    }
-
-    public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
-        if ((msg.length() > 0) && !msg.equals("")) {
-            if (plr == null) {
-                PlotSquared.log(C.PREFIX.s() + msg);
-            } else {
-                sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
-            }
-        }
-        return true;
-    }
-    
-    /**
-     * Send a message to the player
-     *
-     * @param plr Player to recieve message
-     * @param c   Caption to send
-     *
-     * @return
-     */
-    public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        if (c.s().length() > 1) {
-            String msg = c.s();
-            if ((args != null) && (args.length > 0)) {
-                for (final String str : args) {
-                    if (msg.contains("%s")) {
-                        msg = msg.replaceFirst("%s", str);
-                    }
-                }
-            }
-            if (plr == null) {
-                PlotSquared.log(msg);
-            } else {
-                sendMessage(plr, msg, c.usePrefix());
-            }
-        }
-        return true;
     }
 }

@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.object.InfoInventory;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -79,7 +79,7 @@ public class Info extends SubCommand {
             try {
                 final String[] split = args[1].split(";");
                 final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = PlotHelper.getPlot(Bukkit.getWorld(plotworld.worldname), id);
+                plot = MainUtil.getPlot(Bukkit.getWorld(plotworld.worldname), id);
                 if (plot == null) {
                     PlayerFunctions.sendMessage(player, C.NOT_VALID_PLOT_ID);
                     return false;
@@ -227,7 +227,7 @@ public class Info extends SubCommand {
     
     private Biome getBiomeAt(final Plot plot) {
         final World w = Bukkit.getWorld(plot.world);
-        final Location bl = PlotHelper.getPlotTopLoc(w, plot.id);
+        final Location bl = MainUtil.getPlotTopLoc(w, plot.id);
         return bl.getBlock().getBiome();
     }
 }

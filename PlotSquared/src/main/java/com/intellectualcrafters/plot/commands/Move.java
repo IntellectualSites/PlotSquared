@@ -24,7 +24,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 /**
@@ -47,8 +47,8 @@ public class Move extends SubCommand {
             return false;
         }
         final World world = plr.getWorld();
-        final PlotId plot1 = PlotHelper.parseId(args[0]);
-        final PlotId plot2 = PlotHelper.parseId(args[1]);
+        final PlotId plot1 = MainUtil.parseId(args[0]);
+        final PlotId plot2 = MainUtil.parseId(args[1]);
         if ((plot1 == null) || (plot2 == null)) {
             PlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
             return false;
@@ -57,7 +57,7 @@ public class Move extends SubCommand {
             PlayerFunctions.sendMessage(plr, "DUPLICATE ID");
             return false;
         }
-        if (PlotHelper.move(world, plot1, plot2, new Runnable() {
+        if (MainUtil.move(world, plot1, plot2, new Runnable() {
             @Override
             public void run() {
                 PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");

@@ -45,6 +45,7 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -52,7 +53,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.AChunkManager;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class ChunkManager extends AChunkManager {
@@ -110,12 +111,12 @@ public class ChunkManager extends AChunkManager {
         final int z2 = z1 + 15;
         final Location bot = new Location(world, x1, 0, z1);
         Plot plot;
-        plot = PlotHelper.getPlot(bot);
+        plot = MainUtil.getPlot(bot);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
         final Location top = new Location(world, x2, 0, z2);
-        plot = PlotHelper.getPlot(top);
+        plot = MainUtil.getPlot(top);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
@@ -743,11 +744,11 @@ public class ChunkManager extends AChunkManager {
     public void clearAllEntities(final Plot plot) {
         final List<Entity> entities = BukkitUtil.getEntities(plot.world);
         for (final Entity entity : entities) {
-            final PlotId id = PlotHelper.getPlotId(BukkitUtil.getLocation(entity));
+            final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
-                    BukkitMain.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+                    MainUtil.teleportPlayer(new BukkitPlayer(player), BukkitUtil.getLocation(entity), plot);
                     PlotListener.plotExit(player, plot);
                 } else {
                     entity.remove();

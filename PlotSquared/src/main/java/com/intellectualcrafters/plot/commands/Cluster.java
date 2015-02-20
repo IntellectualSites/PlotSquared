@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -100,8 +100,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                final PlotId pos1 = PlotHelper.parseId(args[2]);
-                final PlotId pos2 = PlotHelper.parseId(args[3]);
+                final PlotId pos1 = MainUtil.parseId(args[2]);
+                final PlotId pos2 = MainUtil.parseId(args[3]);
                 if ((pos1 == null) || (pos2 == null)) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
@@ -219,8 +219,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                final PlotId pos1 = PlotHelper.parseId(args[1]);
-                final PlotId pos2 = PlotHelper.parseId(args[2]);
+                final PlotId pos1 = MainUtil.parseId(args[1]);
+                final PlotId pos2 = MainUtil.parseId(args[2]);
                 if ((pos1 == null) || (pos2 == null)) {
                     PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;

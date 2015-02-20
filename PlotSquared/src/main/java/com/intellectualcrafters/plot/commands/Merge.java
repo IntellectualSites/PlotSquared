@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.events.PlotMergeEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -128,10 +128,10 @@ public class Merge extends SubCommand {
         }
         final PlotId botId = plots.get(0);
         final PlotId topId = plots.get(plots.size() - 1);
-        final PlotId bot1 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, botId)).id;
-        final PlotId bot2 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, topId)).id;
-        final PlotId top1 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, topId)).id;
-        final PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
+        final PlotId bot1 = PlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, botId)).id;
+        final PlotId bot2 = PlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, topId)).id;
+        final PlotId top1 = PlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
+        final PlotId top2 = PlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
         plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
@@ -164,9 +164,9 @@ public class Merge extends SubCommand {
             return false;
         }
         PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
-        PlotHelper.mergePlots(world, plots, true);
-        PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
-        PlotHelper.update(plr.getLocation());
+        MainUtil.mergePlots(world, plots, true);
+        MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
+        MainUtil.update(plr.getLocation());
         return true;
     }
 }

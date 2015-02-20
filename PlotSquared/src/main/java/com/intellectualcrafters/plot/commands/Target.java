@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Target extends SubCommand {
@@ -41,12 +41,12 @@ public class Target extends SubCommand {
             return false;
         }
         if (args.length == 1) {
-            final PlotId id = PlotHelper.parseId(args[1]);
+            final PlotId id = MainUtil.parseId(args[1]);
             if (id == null) {
                 PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
-            final Location loc = PlotHelper.getPlotHome(plr.getWorld(), id);
+            final Location loc = MainUtil.getPlotHome(plr.getWorld(), id);
             plr.setCompassTarget(loc);
             PlayerFunctions.sendMessage(plr, C.COMPASS_TARGET);
             return true;

@@ -43,7 +43,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -70,7 +70,7 @@ public class PlotListener {
     }
     
     public static boolean isInPlot(final String world, final int x, final int y, final int z) {
-        return (PlotHelper.getPlot(new Location(world, x, y, z)) != null);
+        return (MainUtil.getPlot(new Location(world, x, y, z)) != null);
     }
     
     public static boolean isPlotWorld(final String world) {
@@ -101,14 +101,14 @@ public class PlotListener {
     }
     
     public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlotHelper.getPlotId(l1);
-        final PlotId p2 = PlotHelper.getPlotId(l2);
+        final PlotId p1 = MainUtil.getPlotId(l1);
+        final PlotId p2 = MainUtil.getPlotId(l2);
         return (p2 != null) && ((p1 == null) || !p1.equals(p2));
     }
     
     public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = PlotHelper.getPlotId(l1);
-        final PlotId p2 = PlotHelper.getPlotId(l2);
+        final PlotId p1 = MainUtil.getPlotId(l1);
+        final PlotId p2 = MainUtil.getPlotId(l2);
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
     
@@ -121,11 +121,11 @@ public class PlotListener {
     }
     
     public static Plot getCurrentPlot(final Location loc) {
-        final PlotId id = PlotHelper.getPlotId(loc);
+        final PlotId id = MainUtil.getPlotId(loc);
         if (id == null) {
             return null;
         }
-        return PlotHelper.getPlot(loc.getWorld(), id);
+        return MainUtil.getPlot(loc.getWorld(), id);
     }
     
     private static WeatherType getWeatherType(String str) {

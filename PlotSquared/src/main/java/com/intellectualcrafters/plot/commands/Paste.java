@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -50,7 +50,7 @@ public class Paste extends SubCommand {
             return false;
         }
         assert plot != null;
-        final int size = (PlotHelper.getPlotTopLocAbs(plr.getWorld(), plot.getId()).getBlockX() - PlotHelper.getPlotBottomLocAbs(plr.getWorld(), plot.getId()).getBlockX());
+        final int size = (MainUtil.getPlotTopLocAbs(plr.getWorld(), plot.getId()).getBlockX() - MainUtil.getPlotBottomLocAbs(plr.getWorld(), plot.getId()).getBlockX());
         if (PlotSelection.currentSelection.containsKey(plr.getName())) {
             final PlotSelection selection = PlotSelection.currentSelection.get(plr.getName());
             if (size != selection.getWidth()) {

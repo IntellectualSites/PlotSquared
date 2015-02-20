@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -83,7 +83,7 @@ public class SetOwner extends SubCommand {
                 PlotSquared.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
             }
         }
-        PlotHelper.setSign(world, args[0], plot);
+        MainUtil.setSign(world, args[0], plot);
         PlayerFunctions.sendMessage(plr, C.SET_OWNER);
         return true;
     }

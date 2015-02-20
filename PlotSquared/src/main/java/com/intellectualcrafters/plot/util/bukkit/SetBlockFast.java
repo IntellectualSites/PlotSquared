@@ -27,7 +27,7 @@ import java.util.List;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
@@ -88,7 +88,7 @@ public class SetBlockFast extends SetBlockManager {
         if (chunks.size() == 0) {
             return;
         }
-        if (!PlotHelper.canSendChunk) {
+        if (!MainUtil.canSendChunk) {
             final World world = chunks.get(0).getWorld();
             for (final Chunk chunk : chunks) {
                 world.refreshChunk(chunk.getX(), chunk.getZ());
@@ -98,7 +98,7 @@ public class SetBlockFast extends SetBlockManager {
         try {
             SendChunk.sendChunk(chunks);
         } catch (final Throwable e) {
-            PlotHelper.canSendChunk = false;
+            MainUtil.canSendChunk = false;
         }
     }
 }

@@ -99,7 +99,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
@@ -122,13 +122,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             PlotSquared.loadWorld(world.getName(), null);
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onChunkLoad(final ChunkLoadEvent event) {
         final String worldname = event.getWorld().getName();
         final Chunk chunk = event.getChunk();
-        if (PlotHelper.worldBorder.containsKey(worldname)) {
-            final int border = PlotHelper.getBorder(worldname);
+        if (MainUtil.worldBorder.containsKey(worldname)) {
+            final int border = MainUtil.getBorder(worldname);
             final int x = Math.abs(chunk.getX() << 4);
             final int z = Math.abs(chunk.getZ() << 4);
             if ((x > border) || (z > border)) {
@@ -136,7 +136,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
@@ -148,17 +148,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final UUID uuid = UUIDHandler.getUUID(player);
         UUIDHandler.add(name, uuid);
         final Location loc = BukkitUtil.getLocation(player.getLocation());
-        final Plot plot = PlotHelper.getPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return;
         }
         if (Settings.TELEPORT_ON_LOGIN) {
-            BukkitUtil.teleportPlayer(player, PlotHelper.getPlotHomeDefault(plot));
+            BukkitUtil.teleportPlayer(player, MainUtil.getPlotHomeDefault(plot));
             PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
         }
         plotEntry(player, plot);
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void PlayerMove(final PlayerMoveEvent event) {
         final Location f = BukkitUtil.getLocation(event.getFrom());
@@ -172,8 +172,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (!isPlotWorld(worldname)) {
                 return;
             }
-            if (PlotHelper.worldBorder.containsKey(worldname)) {
-                final int border = PlotHelper.getBorder(worldname);
+            if (MainUtil.worldBorder.containsKey(worldname)) {
+                final int border = MainUtil.getBorder(worldname);
                 boolean passed = true;
                 if (t.getX() > border) {
                     event.getTo().setX(border);
@@ -212,7 +212,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
@@ -244,7 +244,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         format = ChatColor.translateAlternateColorCodes('&', format);
         event.setFormat(format);
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public static void BlockDestroy(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
@@ -292,7 +292,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onBigBoom(final EntityExplodeEvent event) {
         final String world = event.getLocation().getWorld().getName();
@@ -325,7 +325,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
         final String world = event.getBlock().getWorld().getName();
@@ -371,7 +371,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onEntityBlockForm(final EntityBlockFormEvent e) {
         final String world = e.getBlock().getWorld().getName();
@@ -384,7 +384,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
@@ -397,7 +397,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
@@ -410,7 +410,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBD(final BlockDamageEvent e) {
         final Block b = e.getBlock();
@@ -423,7 +423,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
@@ -436,7 +436,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
@@ -449,7 +449,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
@@ -462,7 +462,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonExtend(final BlockPistonExtendEvent e) {
         if (isInPlot(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
@@ -476,7 +476,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
         final Block b = e.getRetractLocation().getBlock();
@@ -489,7 +489,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onStructureGrow(final StructureGrowEvent e) {
         if (!isPlotWorld(e.getWorld().getName())) {
@@ -505,7 +505,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -555,7 +555,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void MobSpawn(final CreatureSpawnEvent event) {
         if (event.getEntity() instanceof Player) {
@@ -582,9 +582,31 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBlockIgnite(final BlockIgniteEvent e) {
+        Player player = e.getPlayer();
+        final Block b = e.getBlock();
+        final Location loc;
+        if (b != null) {
+            loc = BukkitUtil.getLocation(b.getLocation());
+        }
+        else {
+            Entity ent = e.getIgnitingEntity();
+            if (ent != null) {
+                loc = BukkitUtil.getLocation(ent);
+            }
+            else {
+                if (player != null) {
+                    loc = BukkitUtil.getLocation(player);
+                }
+                else {
+                    return;
+                }
+            }
+        }
+            
+            
         final String world;
         if (e.getBlock() != null) {
             world = e.getBlock().getWorld().getName();
@@ -602,46 +624,41 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             e.setCancelled(true);
             return;
         }
-        final Block b = e.getBlock();
-        final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (b != null) {
-            if (e.getPlayer() != null) {
-                final Player p = e.getPlayer();
-                if (!isInPlot(loc)) {
-                    if (!BukkitMain.hasPermission(p, "plots.admin.build.road")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
+        Player player = e.getPlayer();
+        if (player == null) {
+            if (isPlotArea(loc)) {
+                e.setCancelled(true);
+            }
+            return;
+        }
+        final Player p = e.getPlayer();
+        if (!isInPlot(loc)) {
+            if (!BukkitMain.hasPermission(p, "plots.admin.build.road")) {
+                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.road");
+                e.setCancelled(true);
+                return;
+            }
+        } else {
+            final Plot plot = getCurrentPlot(loc);
+            if ((plot == null) || !plot.hasOwner()) {
+                if (!BukkitMain.hasPermission(p, "plots.admin.build.unowned")) {
+                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    e.setCancelled(true);
+                    return;
+                }
+            } else {
+                UUID uuid = UUIDHandler.getUUID(p);
+                if (!plot.isAdded(uuid)) if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
+                    if (isPlotArea(loc)) {
+                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
                         e.setCancelled(true);
                         return;
                     }
-                } else {
-                    final Plot plot = getCurrentPlot(loc);
-                    if ((plot == null) || !plot.hasOwner()) {
-                        if (!BukkitMain.hasPermission(p, "plots.admin.build.unowned")) {
-                            PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.unowned");
-                            e.setCancelled(true);
-                            return;
-                        }
-                    } else {
-                        UUID uuid = UUIDHandler.getUUID(p);
-                        if (!plot.isAdded(uuid)) 
-                            if (!BukkitMain.hasPermission(p, "plots.admin.build.other")) {
-                                if (isPlotArea(loc)) {
-                                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.build.other");
-                                    e.setCancelled(true);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (isPlotArea(loc)) {
-                    e.setCancelled(true);
                 }
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onTeleport(final PlayerTeleportEvent event) {
         final Location f = BukkitUtil.getLocation(event.getFrom());
@@ -650,7 +667,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (isPlotWorld(q)) {
             if (isInPlot(q)) {
                 final Plot plot = getCurrentPlot(q);
-                if (plot.deny_entry(event.getPlayer())) {
+                
+                if (plot.isDenied(event.getPlayer())) {
                     PlayerFunctions.sendMessage(event.getPlayer(), C.YOU_BE_DENIED);
                     event.setCancelled(true);
                     return;
@@ -671,7 +689,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         final BlockFace bf = e.getBlockFace();
@@ -712,7 +730,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onInventoryClick(final InventoryClickEvent event) {
         if (event.getInventory().getName().equalsIgnoreCase("PlotSquared Commands")) {
@@ -720,7 +738,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
     }
-
+    
     @EventHandler
     public static void onLeave(final PlayerQuitEvent event) {
         if (Setup.setupMap.containsKey(event.getPlayer().getName())) {
@@ -737,7 +755,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
@@ -778,7 +796,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
@@ -814,7 +832,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
         final Entity r = e.getRemover();
@@ -852,7 +870,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
         final Location l = e.getRightClicked().getLocation();
@@ -897,7 +915,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onVehicleDestroy(final VehicleDestroyEvent e) {
         final Location l = e.getVehicle().getLocation();
@@ -938,7 +956,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = e.getEntity().getLocation();
@@ -1008,7 +1026,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onPlayerEggThrow(final PlayerEggThrowEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEgg().getLocation());
@@ -1040,7 +1058,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void BlockCreate(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();

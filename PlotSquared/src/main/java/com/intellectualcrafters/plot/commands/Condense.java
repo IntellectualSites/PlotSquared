@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
 
 public class Condense extends SubCommand {
@@ -91,13 +91,13 @@ public class Condense extends SubCommand {
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
                 while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
-                    final Plot plot = PlotHelper.getPlot(world, start);
+                    final Plot plot = MainUtil.getPlot(world, start);
                     if (!plot.hasOwner()) {
                         free.add(plot.id);
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
-                PlotHelper.move(world, to_move.get(0), free.get(0), new Runnable() {
+                MainUtil.move(world, to_move.get(0), free.get(0), new Runnable() {
                     @Override
                     public void run() {
                         if (!TASK) {
@@ -108,7 +108,7 @@ public class Condense extends SubCommand {
                         free.remove(0);
                         int index = 0;
                         for (final PlotId id : to_move) {
-                            final Plot plot = PlotHelper.getPlot(world, id);
+                            final Plot plot = MainUtil.getPlot(world, id);
                             if (plot.hasOwner()) {
                                 break;
                             }
@@ -119,7 +119,7 @@ public class Condense extends SubCommand {
                         }
                         index = 0;
                         for (final PlotId id : free) {
-                            final Plot plot = PlotHelper.getPlot(world, id);
+                            final Plot plot = MainUtil.getPlot(world, id);
                             if (!plot.hasOwner()) {
                                 break;
                             }
@@ -139,7 +139,7 @@ public class Condense extends SubCommand {
                             return;
                         }
                         sendMessage("MOVING " + to_move.get(0) + " to " + free.get(0));
-                        PlotHelper.move(world, to_move.get(0), free.get(0), this);
+                        MainUtil.move(world, to_move.get(0), free.get(0), this);
                     }
                 });
                 TASK = true;
