@@ -1,7 +1,24 @@
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.Arrays;
+import com.intellectualcrafters.plot.commands.Buy;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.*;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,46 +35,17 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.intellectualcrafters.plot.commands.Buy;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.WE_Anywhere;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.listeners.ForceFieldListener;
-import com.intellectualcrafters.plot.listeners.InventoryListener;
-import com.intellectualcrafters.plot.listeners.PlayerEvents;
-import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.Metrics;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
-import com.intellectualcrafters.plot.util.bukkit.SendChunk;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
+import java.io.File;
+import java.util.Arrays;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public static BukkitMain THIS = null;
     public static PlotSquared MAIN = null;
     
     // TODO restructure this
-    public static boolean hasPermission(final Player player, final String perm) {
+    public static boolean hasPermission(final PlotPlayer p, final String perm) {
+        final Player player = Bukkit.getPlayer(p + "");
         if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
             return true;
         }
@@ -74,9 +62,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return false;
     }
-    
+
     // TODO restructure this
-    public static int hasPermissionRange(final Player player, final String stub, final int range) {
+    public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
         if ((player == null) || player.isOp() || player.hasPermission(PlotSquared.ADMIN_PERMISSION)) {
             return Byte.MAX_VALUE;
         }
@@ -135,6 +123,24 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @EventHandler
     public static void worldLoad(final WorldLoadEvent event) {
         UUIDHandler.cacheAll();
+    }
+
+    public static boolean checkVersion(final int major, final int minor, final int minor2) {
+        try {
+            final String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            final int a = Integer.parseInt(version[0]);
+            final int b = Integer.parseInt(version[1]);
+            int c = 0;
+            if (version.length == 3) {
+                c = Integer.parseInt(version[2]);
+            }
+            if ((a > major) || ((a == major) && (b > minor)) || ((a == major) && (b == minor) && (c >= minor2))) {
+                return true;
+            }
+            return false;
+        } catch (final Exception e) {
+            return false;
+        }
     }
     
     @EventHandler
@@ -268,24 +274,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return null;
         }
         return new HybridGen(world);
-    }
-    
-    public static boolean checkVersion(final int major, final int minor, final int minor2) {
-        try {
-            final String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            final int a = Integer.parseInt(version[0]);
-            final int b = Integer.parseInt(version[1]);
-            int c = 0;
-            if (version.length == 3) {
-                c = Integer.parseInt(version[2]);
-            }
-            if ((a > major) || ((a == major) && (b > minor)) || ((a == major) && (b == minor) && (c >= minor2))) {
-                return true;
-            }
-            return false;
-        } catch (final Exception e) {
-            return false;
-        }
     }
     
     @Override

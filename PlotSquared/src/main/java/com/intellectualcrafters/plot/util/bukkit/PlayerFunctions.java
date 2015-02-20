@@ -20,26 +20,25 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
-import org.bukkit.ChatColor;
-
-import net.milkbowl.vault.economy.Economy;
-
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Functions involving players, plots and locations.
@@ -193,7 +192,7 @@ public class PlayerFunctions {
      *
      * @return
      */
-    public static int getAllowedPlots(final Player p) {
+    public static int getAllowedPlots(final PlotPlayer p) {
         return BukkitMain.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
     
@@ -203,7 +202,7 @@ public class PlayerFunctions {
      * @param plr
      * @param msg Was used to wrap the chat client length (Packets out--)
      */
-    public static void sendMessageWrapped(final Player plr, String msg) {
+    public static void sendMessageWrapped(final PlotPlayer plr, String msg) {
         if (msg.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
             final String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
             final StringBuilder b = new StringBuilder();
@@ -226,11 +225,11 @@ public class PlayerFunctions {
      *
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static boolean sendMessage(final Player plr, final String msg) {
+    public static boolean sendMessage(final PlotPlayer plr, final String msg) {
         return sendMessage(plr, msg, true);
     }
-    
-    public static boolean sendMessage(final Player plr, final String msg, final boolean prefix) {
+
+    public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
                 PlotSquared.log(C.PREFIX.s() + msg);
@@ -249,7 +248,7 @@ public class PlayerFunctions {
      *
      * @return
      */
-    public static boolean sendMessage(final Player plr, final C c, final String... args) {
+    public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         if (c.s().length() > 1) {
             String msg = c.s();
             if ((args != null) && (args.length > 0)) {

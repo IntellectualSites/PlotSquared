@@ -20,29 +20,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotSquared command class
  *
  * @author Citymonstret
  */
-public class MainCommand implements CommandExecutor, TabCompleter {
+public class MainCommand {
     /**
      * Main Permission Node
      */
@@ -52,13 +50,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             addAll(Arrays.asList(_subCommands));
         }
     };
-    
-    public static boolean no_permission(final Player player, final String permission) {
+
+    public static boolean no_permission(final PlotPlayer player, final String permission) {
         PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-    
-    public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final Player player) {
+
+    public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final PlotPlayer player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
             if (!c.isPlayer || (player != null)) {
@@ -69,8 +67,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
         return cmds;
     }
-    
-    public static List<String> helpMenu(final Player player, final SubCommand.CommandCategory category, int page) {
+
+    public static List<String> helpMenu(final PlotPlayer player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
             commands = getCommands(category, player);
@@ -109,10 +107,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     private static String t(final String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
-    
-    @Override
-    public boolean onCommand(final CommandSender sender, final Command cmd, final String commandLabel, final String[] args) {
-        final Player player = (sender instanceof Player) ? (Player) sender : null;
+
+    public boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
         if (!BukkitMain.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
@@ -166,7 +162,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
             // return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {
