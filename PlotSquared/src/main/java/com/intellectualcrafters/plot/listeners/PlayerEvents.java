@@ -30,7 +30,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -92,6 +91,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotGenerator;
@@ -148,8 +148,15 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = UUIDHandler.getUUID(player);
         UUIDHandler.add(name, uuid);
+        Location loc = BukkitUtil.getLocation(player.getLocation());
         // textures(event.getPlayer());
-        if (isInPlot(event.getPlayer().getLocation())) {
+        Plot plot = PlotHelper.getPlot(loc);
+        if (plot == null) {
+            return;
+        }
+        
+        
+        if (isInPlot(loc)) {
             if (Settings.TELEPORT_ON_LOGIN) {
                 BukkitUtil.teleportPlayer(player, PlotHelper.getPlotHomeDefault(getPlot(event.getPlayer())));
                 PlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
