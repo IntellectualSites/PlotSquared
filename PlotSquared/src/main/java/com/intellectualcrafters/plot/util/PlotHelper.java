@@ -27,9 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Chunk;
-import org.bukkit.block.Biome;
-
 import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.BukkitMain;
@@ -466,7 +463,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         Runnable run = new Runnable() { 
             @Override
             public void run() {
-                PlotHelper.setBiome(world, plot, Biome.FOREST);
+                PlotHelper.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
                 AChunkManager.manager.update(location);
@@ -535,13 +532,13 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
 
-    public static void setBiome(final String world, final Plot plot, final Biome b) {
+    public static void setBiome(final String world, final Plot plot, final String biome) {
 
         final int bottomX = getPlotBottomLoc(world, plot.id).getX() + 1;
         final int topX = getPlotTopLoc(world, plot.id).getX();
         final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
         final int topZ = getPlotTopLoc(world, plot.id).getZ();
-        BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, b);
+        BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, biome);
     }
 
     public static int getHeighestBlock(final String world, final int x, final int z) {

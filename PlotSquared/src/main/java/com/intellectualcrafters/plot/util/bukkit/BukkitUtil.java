@@ -91,7 +91,8 @@ public class BukkitUtil extends BlockManager {
         }
     }
     
-    public static void setBiome(String worldname, int pos1_x, int pos1_z, int pos2_x, int pos2_z, Biome b) {
+    public static void setBiome(String worldname, int pos1_x, int pos1_z, int pos2_x, int pos2_z, String biome) {
+        Biome b = Biome.valueOf(biome.toUpperCase());
         World world = getWorld(worldname); 
         for (int x = pos1_x; x<= pos2_x; x++) {
             for (int z = pos1_z; z<= pos2_z; z++) {
