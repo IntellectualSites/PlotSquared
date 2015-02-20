@@ -29,6 +29,7 @@ import org.bukkit.block.Biome;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * plot settings
@@ -106,7 +107,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
      * @return biome at plot loc
      */
     public Biome getBiome() {
-        return PlotHelper.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
+        Location loc = PlotHelper.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1);
+        return BukkitUtil.getBiome(loc);
     }
 
     public BlockLoc getPosition() {

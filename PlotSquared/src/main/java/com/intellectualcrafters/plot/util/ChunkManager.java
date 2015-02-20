@@ -39,6 +39,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -49,22 +50,13 @@ import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
-public class ChunkManager {
+public class ChunkManager extends AChunkManager {
     
-    public static RegionWrapper CURRENT_PLOT_CLEAR = null;
-    public static HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
-    public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     public static MutableInt index = new MutableInt(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
     
-    public static ChunkLoc getChunkChunk(Location loc) {
-        int x = loc.getX() >> 9;
-        int z = loc.getZ() >> 9;
-        return new ChunkLoc(x, z);
-    }
-    
-    public static ArrayList<ChunkLoc> getChunkChunks(World world) {
-        String directory = new File(".").getAbsolutePath() + File.separator + world.getName() + File.separator + "region";
+    public ArrayList<ChunkLoc> getChunkChunks(String world) {
+        String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region";
         
         File folder = new File(directory);
         File[] regionFiles = folder.listFiles();
@@ -84,8 +76,7 @@ public class ChunkManager {
                 catch (Exception e) {  }
             }
         }
-        
-        for (Chunk chunk : world.getLoadedChunks()) {
+        for (Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
             ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
             if (!chunks.contains(loc)) {
                 chunks.add(loc);
@@ -95,7 +86,7 @@ public class ChunkManager {
         return chunks;
     }
     
-    public static void deleteRegionFile(final String world, final ChunkLoc loc) {
+    public void deleteRegionFile(final String world, final ChunkLoc loc) {
         BukkitTaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -109,9 +100,9 @@ public class ChunkManager {
         });
     }
     
-    public static Plot hasPlot(World world, Chunk chunk) {
-        int x1 = chunk.getX() << 4;
-        int z1 = chunk.getZ() << 4;
+    public Plot hasPlot(String world, ChunkLoc chunk) {
+        int x1 = chunk.x << 4;
+        int z1 = chunk.z << 4;
         int x2 = x1 + 15;
         int z2 = z1 + 15;
         
@@ -152,18 +143,18 @@ public class ChunkManager {
     /**
      * Copy a region to a new location (in the same world)
      */
-    public static boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
+    public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         index.increment();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         
-        final World world = pos1.getWorld();
-        Chunk c1 = world.getChunkAt(pos1);
-        Chunk c2 = world.getChunkAt(pos2);
-        
-        Chunk c3 = world.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
-        Chunk c4 = world.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
+        final World world = Bukkit.getWorld(pos1.getWorld());
+        Chunk c1 = world.getChunkAt(pos1.getX(), pos1.getZ());
+        Chunk c2 = world.getChunkAt(pos2.getX(), pos2.getZ());
+                   
+        Chunk c3 = world.getChunkAt((pos1.getX() + relX), (pos1.getZ() + relZ));
+        Chunk c4 = world.getChunkAt((pos2.getX() + relX), (pos2.getZ() + relZ));
         
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
@@ -185,12 +176,12 @@ public class ChunkManager {
         // Load chunks
         for (int x = c1x; x <= c2x; x ++) {
             for (int z = c1z; z <= c2z; z ++) {
-                Chunk chunk = world.getChunkAt(x, z);
+                Chunk chunk = world.getChunkAt(x << 4, z << 4);
                 toGenerate.add(chunk);
             }
         }
         
-        final Plugin plugin = (Plugin) PlotSquared.getMain();
+        final Plugin plugin = (Plugin) BukkitMain.THIS;
         final Integer currentIndex = index.toInteger();
         final int loadTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
@@ -268,13 +259,13 @@ public class ChunkManager {
         return true;
     }
     
-    public static boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
+    public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
         index.increment();
-        final Plugin plugin = (Plugin) PlotSquared.getMain();
+        final Plugin plugin = (Plugin) BukkitMain.THIS;
         
-        final World world = pos1.getWorld();
-        Chunk c1 = world.getChunkAt(pos1);
-        Chunk c2 = world.getChunkAt(pos2);
+        final World world = Bukkit.getWorld(pos1.getWorld());
+        Chunk c1 = world.getChunkAt(pos1.getX(), pos1.getZ());
+        Chunk c2 = world.getChunkAt(pos2.getX(), pos2.getZ());
         
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
@@ -396,7 +387,7 @@ public class ChunkManager {
     
     public static void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
         for (Entity entity : chunk.getEntities()) {
-            Location loc = entity.getLocation();
+            Location loc = BukkitUtil.getLocation(entity);
             int x = loc.getX();
             int z = loc.getZ();
             if (isIn(region, x, z)) {

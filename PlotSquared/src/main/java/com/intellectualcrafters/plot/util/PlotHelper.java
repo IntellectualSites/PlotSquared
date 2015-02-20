@@ -520,7 +520,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0) {
             final Location pos2 = PlotHelper.getPlotTopLoc(world, plot.id);
-            ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+            AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
                     if (player != null && player.isOnline()) {
@@ -883,11 +883,11 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
             plot.id.y += offset_y;
             PlotSquared.getPlots(world).put(plot.id, plot);
         }
-        ChunkManager.copyRegion(bot1, top, bot2, new Runnable() {
+        AChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {
                 Location bot = bot1.clone().add(1, 0, 1);
-                ChunkManager.regenerateRegion(bot, top, null);
+                AChunkManager.manager.regenerateRegion(bot, top, null);
                 TaskManager.runTaskLater(whenDone, 1);
             }
         });

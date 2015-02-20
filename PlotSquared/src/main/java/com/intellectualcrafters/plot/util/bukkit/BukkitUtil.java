@@ -27,6 +27,10 @@ public class BukkitUtil extends BlockManager {
     private static String lastString = null;
     private static World lastWorld = null;
     
+    public static Biome getBiome(Location loc) {
+        return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ());
+    }
+    
     public static World getWorld(String string) {
         if (lastString == string) {
             return lastWorld;
