@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Helpers extends SubCommand {
@@ -41,20 +41,20 @@ public class Helpers extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 2) {
-            PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.helpers")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
@@ -65,12 +65,12 @@ public class Helpers extends SubCommand {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.trusted.contains(uuid)) {
@@ -86,21 +86,21 @@ public class Helpers extends SubCommand {
                 final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
-                PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
+            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.helpers.contains(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
+                    BukkitPlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeHelper(uuid);
                 DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
-                PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+                BukkitPlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
@@ -108,9 +108,9 @@ public class Helpers extends SubCommand {
             DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
-            PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
         } else {
-            PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
         return true;

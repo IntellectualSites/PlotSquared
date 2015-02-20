@@ -22,7 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,11 +144,11 @@ public abstract class SubCommand {
      * @param c    Caption
      * @param args Arguments (%s's)
      *
-     * @see com.intellectualcrafters.plot.util.bukkit.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
+     * @see com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions#sendMessage(org.bukkit.entity.Player,
      * com.intellectualcrafters.plot.config.C, String...)
      */
     public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        PlayerFunctions.sendMessage(plr, c, args);
+        BukkitPlayerFunctions.sendMessage(plr, c, args);
         return true;
     }
     

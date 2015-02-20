@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.intellectualcrafters.plot.object.InfoInventory;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * Created 2014-11-18 for PlotSquared
@@ -36,7 +36,7 @@ public class InventoryListener implements Listener {
                 case 4:
                 case 5:
                 case 6:
-                    PlayerFunctions.sendMessage(player, "This is not implemented yet");
+                    BukkitPlayerFunctions.sendMessage(player, "This is not implemented yet");
                     break;
                 default:
                     break;

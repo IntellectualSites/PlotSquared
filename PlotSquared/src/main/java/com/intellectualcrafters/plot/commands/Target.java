@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Target extends SubCommand {
     public Target() {
@@ -37,21 +37,21 @@ public class Target extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (!PlotSquared.isPlotWorld(plr.getWorld())) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         if (args.length == 1) {
             final PlotId id = MainUtil.parseId(args[1]);
             if (id == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
             final Location loc = MainUtil.getPlotHome(plr.getWorld(), id);
             plr.setCompassTarget(loc);
-            PlayerFunctions.sendMessage(plr, C.COMPASS_TARGET);
+            BukkitPlayerFunctions.sendMessage(plr, C.COMPASS_TARGET);
             return true;
         }
-        PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot target <X;Z>");
+        BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot target <X;Z>");
         return false;
     }
 }

@@ -54,7 +54,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -108,12 +108,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
         event.setCancelled(true);
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
-            PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+            BukkitPlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return;
         }
         UUID uuid = UUIDHandler.getUUID(player);
         if (!plot.isAdded(uuid)) {
-            PlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
@@ -135,7 +135,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         for (final Player p : plotPlayers) {
             p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
-            PlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+            BukkitPlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
     }
     
@@ -215,7 +215,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    BukkitPlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
@@ -258,7 +258,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    BukkitPlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }

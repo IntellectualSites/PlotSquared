@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.RUtils;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Debug extends SubCommand {
     public Debug() {
@@ -43,7 +43,7 @@ public class Debug extends SubCommand {
             for (final C c : C.values()) {
                 msg.append(c.s()).append("\n");
             }
-            PlayerFunctions.sendMessage(plr, msg.toString());
+            BukkitPlayerFunctions.sendMessage(plr, msg.toString());
             return true;
         }
         StringBuilder information;
@@ -84,7 +84,7 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "View all captions", "/plot debug msg"));
         }
         {
-            PlayerFunctions.sendMessage(plr, information.toString());
+            BukkitPlayerFunctions.sendMessage(plr, information.toString());
         }
         return true;
     }

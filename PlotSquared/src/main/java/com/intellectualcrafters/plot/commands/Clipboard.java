@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Clipboard extends SubCommand {
     public Clipboard() {
@@ -42,7 +42,7 @@ public class Clipboard extends SubCommand {
         final int total = selection.getBlocks().length;
         String message = C.CLIPBOARD_INFO.s();
         message = message.replace("%id", plotId.toString()).replace("%width", width + "").replace("%total", total + "");
-        PlayerFunctions.sendMessage(plr, message);
+        BukkitPlayerFunctions.sendMessage(plr, message);
         return true;
     }
 }

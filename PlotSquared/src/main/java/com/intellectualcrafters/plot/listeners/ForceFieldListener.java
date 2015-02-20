@@ -34,7 +34,7 @@ import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -45,7 +45,7 @@ public class ForceFieldListener implements Listener {
         final Set<Player> players = new HashSet<>();
         Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
+            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
             UUID uuid = UUIDHandler.getUUID(oPlayer);
@@ -59,7 +59,7 @@ public class ForceFieldListener implements Listener {
     private Player hasNearbyPermitted(final Player player, final Plot plot) {
         Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !PlayerFunctions.isInPlot(oPlayer) || !PlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
+            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
             UUID uuid = UUIDHandler.getUUID(oPlayer);
@@ -96,10 +96,10 @@ public class ForceFieldListener implements Listener {
     @EventHandler
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        if (!PlayerFunctions.isInPlot(player)) {
+        if (!BukkitPlayerFunctions.isInPlot(player)) {
             return;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(player);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
                 UUID uuid = UUIDHandler.getUUID(player);

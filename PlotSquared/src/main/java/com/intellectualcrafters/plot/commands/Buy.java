@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -64,12 +64,12 @@ public class Buy extends SubCommand {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {
-            plot = PlayerFunctions.getCurrentPlot(plr);
+            plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         }
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (PlayerFunctions.getPlayerPlotCount(world, plr) >= PlayerFunctions.getAllowedPlots(plr)) {
+        if (BukkitPlayerFunctions.getPlayerPlotCount(world, plr) >= BukkitPlayerFunctions.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (!plot.hasOwner()) {
@@ -85,8 +85,8 @@ public class Buy extends SubCommand {
         double initPrice = (double) flag.getValue();
         double price = initPrice;
         final PlotId id = plot.id;
-        final PlotId id2 = PlayerFunctions.getTopPlot(world, plot).id;
-        final int size = PlayerFunctions.getPlotSelectionIds(id, id2).size();
+        final PlotId id2 = BukkitPlayerFunctions.getTopPlot(world, plot).id;
+        final int size = BukkitPlayerFunctions.getPlotSelectionIds(id, id2).size();
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
@@ -108,7 +108,7 @@ public class Buy extends SubCommand {
         }
         plot.owner = UUIDHandler.getUUID(plr);
         DBFunc.setOwner(plot, plot.owner);
-        PlayerFunctions.sendMessage(plr, C.CLAIMED);
+        BukkitPlayerFunctions.sendMessage(plr, C.CLAIMED);
         return true;
     }
 }

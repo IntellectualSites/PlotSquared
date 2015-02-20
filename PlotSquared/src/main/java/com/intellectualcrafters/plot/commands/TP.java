@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * @author Citymonstret
@@ -43,7 +43,7 @@ public class TP extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
+            BukkitPlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
             return false;
         }
         final String id = args[0];
@@ -55,7 +55,7 @@ public class TP extends SubCommand {
             }
         }
         if (!PlotSquared.isPlotWorld(world)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot temp;
@@ -68,7 +68,7 @@ public class TP extends SubCommand {
             PlotSquared.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
         }
         return false;
     }

@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Condense extends SubCommand {
     public static boolean TASK = false;
@@ -48,35 +48,35 @@ public class Condense extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
-            PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+            BukkitPlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
         if ((args.length != 2) && (args.length != 3)) {
-            PlayerFunctions.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
+            BukkitPlayerFunctions.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
             return false;
         }
         final String worldname = args[0];
         final World world = Bukkit.getWorld(worldname);
         if ((world == null) || !PlotSquared.isPlotWorld(worldname)) {
-            PlayerFunctions.sendMessage(plr, "INVALID WORLD");
+            BukkitPlayerFunctions.sendMessage(plr, "INVALID WORLD");
             return false;
         }
         switch (args[1].toLowerCase()) {
             case "start": {
                 if (args.length == 2) {
-                    PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+                    BukkitPlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
                 if (TASK) {
-                    PlayerFunctions.sendMessage(plr, "TASK ALREADY STARTED");
+                    BukkitPlayerFunctions.sendMessage(plr, "TASK ALREADY STARTED");
                     return false;
                 }
                 if (args.length == 2) {
-                    PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+                    BukkitPlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
                 if (!StringUtils.isNumeric(args[2])) {
-                    PlayerFunctions.sendMessage(plr, "INVALID RADIUS");
+                    BukkitPlayerFunctions.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
@@ -84,7 +84,7 @@ public class Condense extends SubCommand {
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
-                    PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
+                    BukkitPlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
                 final List<PlotId> to_move = new ArrayList<>(getPlots(plots, radius));
@@ -143,25 +143,25 @@ public class Condense extends SubCommand {
                     }
                 });
                 TASK = true;
-                PlayerFunctions.sendMessage(plr, "TASK STARTED...");
+                BukkitPlayerFunctions.sendMessage(plr, "TASK STARTED...");
                 return true;
             }
             case "stop": {
                 if (!TASK) {
-                    PlayerFunctions.sendMessage(plr, "TASK ALREADY STOPPED");
+                    BukkitPlayerFunctions.sendMessage(plr, "TASK ALREADY STOPPED");
                     return false;
                 }
                 TASK = false;
-                PlayerFunctions.sendMessage(plr, "TASK STOPPED");
+                BukkitPlayerFunctions.sendMessage(plr, "TASK STOPPED");
                 return true;
             }
             case "info": {
                 if (args.length == 2) {
-                    PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " info <radius>");
+                    BukkitPlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " info <radius>");
                     return false;
                 }
                 if (!StringUtils.isNumeric(args[2])) {
-                    PlayerFunctions.sendMessage(plr, "INVALID RADIUS");
+                    BukkitPlayerFunctions.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
@@ -169,23 +169,23 @@ public class Condense extends SubCommand {
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
-                    PlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
+                    BukkitPlayerFunctions.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
                 final int max_move = getPlots(plots, minimum_radius).size();
                 final int user_move = getPlots(plots, radius).size();
-                PlayerFunctions.sendMessage(plr, "=== DEFAULT EVAL ===");
-                PlayerFunctions.sendMessage(plr, "MINIMUM RADIUS: " + minimum_radius);
-                PlayerFunctions.sendMessage(plr, "MAXIMUM MOVES: " + max_move);
-                PlayerFunctions.sendMessage(plr, "=== INPUT EVAL ===");
-                PlayerFunctions.sendMessage(plr, "INPUT RADIUS: " + radius);
-                PlayerFunctions.sendMessage(plr, "ESTIMATED MOVES: " + user_move);
-                PlayerFunctions.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
-                PlayerFunctions.sendMessage(plr, "&e - Radius is measured in plot width");
+                BukkitPlayerFunctions.sendMessage(plr, "=== DEFAULT EVAL ===");
+                BukkitPlayerFunctions.sendMessage(plr, "MINIMUM RADIUS: " + minimum_radius);
+                BukkitPlayerFunctions.sendMessage(plr, "MAXIMUM MOVES: " + max_move);
+                BukkitPlayerFunctions.sendMessage(plr, "=== INPUT EVAL ===");
+                BukkitPlayerFunctions.sendMessage(plr, "INPUT RADIUS: " + radius);
+                BukkitPlayerFunctions.sendMessage(plr, "ESTIMATED MOVES: " + user_move);
+                BukkitPlayerFunctions.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
+                BukkitPlayerFunctions.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
             }
         }
-        PlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
+        BukkitPlayerFunctions.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
         return false;
     }
     

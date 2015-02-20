@@ -37,7 +37,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -75,23 +75,23 @@ public class Merge extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
         final boolean admin = BukkitMain.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            BukkitPlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         int direction = -1;
@@ -102,43 +102,43 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            BukkitPlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         final World world = plr.getWorld();
-        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+        PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
+        PlotId top = BukkitPlayerFunctions.getTopPlot(world, plot).id;
         ArrayList<PlotId> plots;
         switch (direction) {
             case 0: // north = -y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
                 break;
             case 1: // east = +x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
                 break;
             case 2: // south = +y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
                 break;
             case 3: // west = -x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
                 break;
             default:
                 return false;
         }
         final PlotId botId = plots.get(0);
         final PlotId topId = plots.get(plots.size() - 1);
-        final PlotId bot1 = PlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, botId)).id;
-        final PlotId bot2 = PlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top1 = PlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top2 = PlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
+        final PlotId bot1 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, botId)).id;
+        final PlotId bot2 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, topId)).id;
+        final PlotId top1 = BukkitPlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
+        final PlotId top2 = BukkitPlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
-        plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
+        plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
-                PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
+                BukkitPlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
         }
@@ -160,10 +160,10 @@ public class Merge extends SubCommand {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
-            PlayerFunctions.sendMessage(plr, "&cMerge has been cancelled");
+            BukkitPlayerFunctions.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }
-        PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
+        BukkitPlayerFunctions.sendMessage(plr, "&cPlots have been merged");
         MainUtil.mergePlots(world, plots, true);
         MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
         MainUtil.update(plr.getLocation());

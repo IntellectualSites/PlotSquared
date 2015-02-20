@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Comment extends SubCommand {
     public Comment() {
@@ -40,10 +40,10 @@ public class Comment extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }

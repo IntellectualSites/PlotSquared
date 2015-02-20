@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings({ "unused", "deprecation", "javadoc" })
@@ -37,26 +37,26 @@ public class Kick extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, "You're not in a plot.");
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+            BukkitPlayerFunctions.sendMessage(plr, "You're not in a plot.");
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.kick")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (args.length != 1) {
-            PlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
+            BukkitPlayerFunctions.sendMessage(plr, "&c/plot kick <player>");
             return false;
         }
         if (Bukkit.getPlayer(args[0]) == null) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         final Player player = Bukkit.getPlayer(args[0]);
-        if (!player.getWorld().equals(plr.getWorld()) || !PlayerFunctions.isInPlot(player) || (PlayerFunctions.getCurrentPlot(player) == null) || !PlayerFunctions.getCurrentPlot(player).equals(plot)) {
-            PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
+        if (!player.getWorld().equals(plr.getWorld()) || !BukkitPlayerFunctions.isInPlot(player) || (BukkitPlayerFunctions.getCurrentPlot(player) == null) || !BukkitPlayerFunctions.getCurrentPlot(player).equals(plot)) {
+            BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }
         player.teleport(player.getWorld().getSpawnLocation());

@@ -25,7 +25,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -52,7 +52,7 @@ public class MainCommand {
     };
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {
-        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
+        BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
 
@@ -120,7 +120,7 @@ public class MainCommand {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
-                return PlayerFunctions.sendMessage(player, builder.toString());
+                return BukkitPlayerFunctions.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
             SubCommand.CommandCategory cato = null;
@@ -136,7 +136,7 @@ public class MainCommand {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                return PlayerFunctions.sendMessage(player, builder.toString(), false);
+                return BukkitPlayerFunctions.sendMessage(player, builder.toString(), false);
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
@@ -173,21 +173,21 @@ public class MainCommand {
                         if ((player != null) || !command.isPlayer) {
                             return command.execute(player, arguments);
                         } else {
-                            return !PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
+                            return !BukkitPlayerFunctions.sendMessage(null, C.IS_CONSOLE);
                         }
                     } else {
                         return no_permission(player, command.permission.permission.toLowerCase());
                     }
                 }
             }
-            PlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
+            BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
             final String[] commands = new String[subCommands.size()];
             for (int x = 0; x < subCommands.size(); x++) {
                 commands[x] = subCommands.get(x).cmd;
             }
             /* Let's try to get a proper usage string */
             final String command = new StringComparison(args[0], commands).getBestMatch();
-            return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
+            return BukkitPlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             // PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new
             // StringComparsion(args[0], commands).getBestMatch());
         }

@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class WE_Anywhere extends SubCommand {
     public WE_Anywhere() {
@@ -35,15 +35,15 @@ public class WE_Anywhere extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (PlotSquared.worldEdit == null) {
-            PlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
+            BukkitPlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
         if (BukkitMain.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
             PWE.removeMask(plr);
-            PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
+            BukkitPlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
         } else {
             PWE.setMask(plr, plr.getLocation(), true);
-            PlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
+            BukkitPlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
         }
         return true;
     }

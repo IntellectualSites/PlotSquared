@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Reload extends SubCommand {
     public Reload() {
@@ -46,7 +46,7 @@ public class Reload extends SubCommand {
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
+            BukkitPlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
         }
         return true;
     }

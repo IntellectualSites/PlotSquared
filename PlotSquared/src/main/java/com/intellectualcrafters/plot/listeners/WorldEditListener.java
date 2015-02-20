@@ -50,7 +50,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.LocalSession;
@@ -149,16 +149,16 @@ public class WorldEditListener implements Listener {
                 final LocalSession session = PlotSquared.worldEdit.getSession(p);
                 final Mask mask = session.getMask();
                 if (mask == null) {
-                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
+                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
                     return;
                 }
                 if (!mask.test(pos1)) {
                     e.setCancelled(true);
-                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1");
+                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1");
                 }
                 if (!mask.test(pos2)) {
                     e.setCancelled(true);
-                    PlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 2");
+                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 2");
                 }
             }
         }

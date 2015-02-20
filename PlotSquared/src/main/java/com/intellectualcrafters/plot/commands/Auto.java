@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Auto extends SubCommand {
     public Auto() {
@@ -87,7 +87,7 @@ public class Auto extends SubCommand {
             if (PlotSquared.isPlotWorld(plr.getWorld().getName())) {
                 world = plr.getWorld();
             } else {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
         }
@@ -98,10 +98,10 @@ public class Auto extends SubCommand {
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
                     if ((size_x < 1) || (size_z < 1)) {
-                        PlayerFunctions.sendMessage(plr, "&cError: size<=0");
+                        BukkitPlayerFunctions.sendMessage(plr, "&cError: size<=0");
                     }
                     if ((size_x > 4) || (size_z > 4)) {
-                        PlayerFunctions.sendMessage(plr, "&cError: size>4");
+                        BukkitPlayerFunctions.sendMessage(plr, "&cError: size>4");
                     }
                     if (args.length > 1) {
                         schematic = args[1];
@@ -121,15 +121,15 @@ public class Auto extends SubCommand {
             }
         }
         if ((size_x * size_z) > Settings.MAX_AUTO_SIZE) {
-            PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
+            BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        final int diff = PlayerFunctions.getPlayerPlotCount(world, plr) - PlayerFunctions.getAllowedPlots(plr);
+        final int diff = BukkitPlayerFunctions.getPlayerPlotCount(world, plr) - BukkitPlayerFunctions.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
-                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
+                BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
             } else {
-                PlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }
             return false;
         }
@@ -154,7 +154,7 @@ public class Auto extends SubCommand {
                 return true;
             }
             if (!BukkitMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
-                PlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                BukkitPlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
             // }
@@ -170,7 +170,7 @@ public class Auto extends SubCommand {
             final PlotCluster cluster = ClusterManager.getCluster(loc);
             // Must be standing in a cluster
             if (cluster == null) {
-                PlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
                 return false;
             }
             final PlotId bot = cluster.getP1();
@@ -190,7 +190,7 @@ public class Auto extends SubCommand {
                 id = getNextPlot(id, 1);
             }
             // no free plots
-            PlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
             return false;
         }
         boolean br = false;
@@ -225,7 +225,7 @@ public class Auto extends SubCommand {
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!MainUtil.mergePlots(plr, worldname, PlayerFunctions.getPlotSelectionIds(start, end))) {
+                    if (!MainUtil.mergePlots(plr, worldname, BukkitPlayerFunctions.getPlotSelectionIds(start, end))) {
                         return false;
                     }
                     br = true;

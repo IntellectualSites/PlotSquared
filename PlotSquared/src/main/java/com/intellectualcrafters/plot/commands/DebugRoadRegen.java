@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 
 public class DebugRoadRegen extends SubCommand {
@@ -48,7 +48,7 @@ public class DebugRoadRegen extends SubCommand {
         if (result) {
             SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
         }
-        PlayerFunctions.sendMessage(player, "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+        BukkitPlayerFunctions.sendMessage(player, "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }
 }

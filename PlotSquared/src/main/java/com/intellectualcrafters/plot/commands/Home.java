@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -67,20 +67,20 @@ public class Home extends SubCommand {
                             return true;
                         }
                     }
-                    PlayerFunctions.sendMessage(plr, C.NOT_YOUR_PLOT);
+                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_YOUR_PLOT);
                     return false;
                 }
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return true;
             }
             if ((id > (plots.length)) || (id < 1)) {
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
             teleportPlayer(plr, plots[id - 1]);
             return true;
         } else {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOTS);
             return true;
         }
     }

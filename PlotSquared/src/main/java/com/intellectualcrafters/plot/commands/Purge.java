@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings({ "javadoc" })
@@ -55,47 +55,47 @@ public class Purge extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
-            PlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+            BukkitPlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);
             if (id != null) {
-                PlayerFunctions.sendMessage(plr, "/plot purge x;z &l<world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge x;z &l<world>");
                 return false;
             }
             final UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                PlayerFunctions.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
                 return false;
             }
             if (arg.equals("player")) {
-                PlayerFunctions.sendMessage(plr, "/plot purge &l<player> <world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge &l<player> <world>");
                 return false;
             }
             if (arg.equals("unowned")) {
-                PlayerFunctions.sendMessage(plr, "/plot purge unowned &l<world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge unowned &l<world>");
                 return false;
             }
             if (arg.equals("unknown")) {
-                PlayerFunctions.sendMessage(plr, "/plot purge unknown &l<world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge unknown &l<world>");
                 return false;
             }
             if (arg.equals("all")) {
-                PlayerFunctions.sendMessage(plr, "/plot purge all &l<world>");
+                BukkitPlayerFunctions.sendMessage(plr, "/plot purge all &l<world>");
                 return false;
             }
-            PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+            BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
         if (args.length != 2) {
-            PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+            BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
         if ((world == null) || !PlotSquared.isPlotWorld(world)) {
-            PlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
+            BukkitPlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         final String worldname = world.getName();
@@ -123,7 +123,7 @@ public class Purge extends SubCommand {
         if (arg.equals("all")) {
             final Set<PlotId> ids = PlotSquared.getPlots(world).keySet();
             if (ids.size() == 0) {
-                return PlayerFunctions.sendMessage(null, "&cNo plots found");
+                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
@@ -140,7 +140,7 @@ public class Purge extends SubCommand {
                 }
             }
             if (ids.size() == 0) {
-                return PlayerFunctions.sendMessage(null, "&cNo plots found");
+                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
@@ -154,17 +154,17 @@ public class Purge extends SubCommand {
                 }
             }
             if (ids.size() == 0) {
-                return PlayerFunctions.sendMessage(null, "&cNo plots found");
+                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
         }
-        PlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+        BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
         return false;
     }
     
     private boolean finishPurge(final int amount) {
-        PlayerFunctions.sendMessage(null, C.PURGE_SUCCESS, amount + "");
+        BukkitPlayerFunctions.sendMessage(null, C.PURGE_SUCCESS, amount + "");
         return false;
     }
 }

@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
@@ -25,14 +25,14 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             final Player p = e.getPlayer();
             if (!isInPlot(l)) {
                 if (!BukkitMain.hasPermission(p, "plots.admin.interact.road")) {
-                    PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.road");
+                    BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.road");
                     e.setCancelled(true);
                 }
             } else {
                 final Plot plot = MainUtil.getPlot(l);
                 if ((plot == null) || !plot.hasOwner()) {
                     if (!BukkitMain.hasPermission(p, "plots.admin.interact.unowned")) {
-                        PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                        BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
                     }
                 } else {
@@ -40,7 +40,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                     if (!plot.isAdded(uuid)) {
                         if (!BukkitMain.hasPermission(p, "plots.admin.interact.other")) {
                             if (isPlotArea(l)) {
-                                PlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
+                                BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
                                 e.setCancelled(true);
                             }
                         }

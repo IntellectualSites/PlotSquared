@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -109,38 +109,38 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
         if (northSouth && eastWest) {
             // This means you are in the intersection
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
+            final PlotId id = BukkitPlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, dpw.ROAD_WIDTH));
             final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
             if ((plot.settings.getMerged(0) && plot.settings.getMerged(3))) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+                return BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
             }
             return null;
         }
         if (northSouth) {
             // You are on a road running West to East (yeah, I named the var
             // poorly)
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
+            final PlotId id = BukkitPlayerFunctions.getPlotAbs(loc.add(0, 0, dpw.ROAD_WIDTH));
             final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
             if (plot.settings.getMerged(0)) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+                return BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
             }
             return null;
         }
         if (eastWest) {
             // This is the road separating an Eastern and Western plot
-            final PlotId id = PlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
+            final PlotId id = BukkitPlayerFunctions.getPlotAbs(loc.add(dpw.ROAD_WIDTH, 0, 0));
             final Plot plot = PlotSquared.getPlots(loc.getWorld()).get(id);
             if (plot == null) {
                 return null;
             }
             if (plot.settings.getMerged(3)) {
-                return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+                return BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
             }
             return null;
         }
@@ -149,7 +149,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         if (plot == null) {
             return id;
         }
-        return PlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
+        return BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot).id;
     }
     
     /**

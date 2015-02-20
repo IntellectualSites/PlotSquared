@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Delete extends SubCommand {
@@ -40,11 +40,11 @@ public class Delete extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !BukkitMain.hasPermission(plr, "plots.admin.command.delete")) {
@@ -65,7 +65,7 @@ public class Delete extends SubCommand {
             plot.clear(plr, true);
             DBFunc.delete(plr.getWorld().getName(), plot);
         } else {
-            PlayerFunctions.sendMessage(plr, "Plot deletion has been denied.");
+            BukkitPlayerFunctions.sendMessage(plr, "Plot deletion has been denied.");
         }
         return true;
     }

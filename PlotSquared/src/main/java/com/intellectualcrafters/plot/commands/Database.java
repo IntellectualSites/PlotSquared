@@ -15,7 +15,7 @@ import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -36,7 +36,7 @@ public class Database extends SubCommand {
         } else {
             final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
-                return PlayerFunctions.sendMessage(p, msg);
+                return BukkitPlayerFunctions.sendMessage(p, msg);
             } else {
                 return sendMessageU(null, msg);
             }
@@ -141,7 +141,7 @@ public class Database extends SubCommand {
         if (player == null) {
             PlotSquared.log(msg);
         } else {
-            PlayerFunctions.sendMessage(player, msg);
+            BukkitPlayerFunctions.sendMessage(player, msg);
         }
         return true;
     }

@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * @author Citymonstret
@@ -57,7 +57,7 @@ public class Claim extends SubCommand {
         if (!event.isCancelled()) {
             MainUtil.createPlot(player, plot);
             MainUtil.setSign(player, plot);
-            PlayerFunctions.sendMessage(player, C.CLAIMED);
+            BukkitPlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
@@ -88,13 +88,13 @@ public class Claim extends SubCommand {
         if (args.length >= 1) {
             schematic = args[0];
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (PlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= PlayerFunctions.getAllowedPlots(plr)) {
+        if (BukkitPlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= BukkitPlayerFunctions.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }

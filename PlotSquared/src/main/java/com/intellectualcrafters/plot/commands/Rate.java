@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings({ "unused", "deprecated", "javadoc" })
@@ -44,11 +44,11 @@ public class Rate extends SubCommand {
             sendMessage(plr, C.RATING_NOT_VALID);
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
             sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (!plot.hasOwner()) {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;

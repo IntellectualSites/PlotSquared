@@ -76,7 +76,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 if (Settings.USE_PLOTME_ALIAS) {
                     player.performCommand(message.replace("/plotme", "plots"));
                 } else {
-                    PlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
+                    BukkitPlayerFunctions.sendMessage(player, C.NOT_USING_PLOTME);
                 }
                 event.setCancelled(true);
             }

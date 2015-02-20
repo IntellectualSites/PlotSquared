@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -65,7 +65,7 @@ public class list extends SubCommand {
             } else {
                 builder.append(getArgumentList(new String[] { "all" }));
             }
-            PlayerFunctions.sendMessage(plr, builder.toString());
+            BukkitPlayerFunctions.sendMessage(plr, builder.toString());
             return true;
         }
         if (args[0].equalsIgnoreCase("forsale") && (plr != null)) {
@@ -83,11 +83,11 @@ public class list extends SubCommand {
                 }
             }
             if (idx == 0) {
-                PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+                BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOTS);
                 return true;
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "Includes").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            BukkitPlayerFunctions.sendMessage(plr, string.toString());
             return true;
         }
         if (args[0].equalsIgnoreCase("mine") && (plr != null)) {
@@ -99,11 +99,11 @@ public class list extends SubCommand {
                 idx++;
             }
             if (idx == 0) {
-                PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+                BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOTS);
                 return true;
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            BukkitPlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
@@ -114,7 +114,7 @@ public class list extends SubCommand {
                 }
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            BukkitPlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("all")) {
             // Current page
@@ -152,7 +152,7 @@ public class list extends SubCommand {
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            BukkitPlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
@@ -162,7 +162,7 @@ public class list extends SubCommand {
                 string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.values().size() + "").replaceAll("%plot%", plots.values().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            BukkitPlayerFunctions.sendMessage(plr, string.toString());
             return true;
         } else {
             // execute(plr);

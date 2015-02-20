@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Template extends SubCommand {
     public Template() {
@@ -42,23 +42,23 @@ public class Template extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (args.length != 2) {
-            PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
+            BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(args[1]);
         if ((world == null) || (plotworld == null)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "import": {
                 // TODO import template
-                PlayerFunctions.sendMessage(plr, "TODO");
+                BukkitPlayerFunctions.sendMessage(plr, "TODO");
                 return true;
             }
             case "export": {
-                PlayerFunctions.sendMessage(plr, "TODO");
+                BukkitPlayerFunctions.sendMessage(plr, "TODO");
             }
         }
         // TODO allow world settings (including schematics to be packed into a single file)

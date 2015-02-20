@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * @author Citymonstret
@@ -45,7 +45,7 @@ public class DebugSaveTest extends SubCommand {
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
         } else {
-            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
+            BukkitPlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
         }
         return true;
     }

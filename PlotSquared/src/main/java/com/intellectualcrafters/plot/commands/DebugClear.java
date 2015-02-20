@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugClear extends SubCommand {
@@ -64,7 +64,7 @@ public class DebugClear extends SubCommand {
                             final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
                             final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
                             if (MainUtil.runners.containsKey(plot)) {
-                                PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+                                BukkitPlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
                             }
                             MainUtil.runners.put(plot, 1);
@@ -82,11 +82,11 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr) || !(PlotSquared.getPlotWorld(plr.getWorld()) instanceof SquarePlotWorld)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr) || !(PlotSquared.getPlotWorld(plr.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.debugclear")) {
@@ -97,7 +97,7 @@ public class DebugClear extends SubCommand {
         final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
         if (MainUtil.runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+            BukkitPlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);
@@ -105,7 +105,7 @@ public class DebugClear extends SubCommand {
             @Override
             public void run() {
                 MainUtil.runners.remove(plot);
-                PlayerFunctions.sendMessage(plr, "&aDone!");
+                BukkitPlayerFunctions.sendMessage(plr, "&aDone!");
             }
         });
         // sign

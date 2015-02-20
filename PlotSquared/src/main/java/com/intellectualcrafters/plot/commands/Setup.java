@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Setup extends SubCommand {
     public final static Map<String, SetupObject> setupMap = new HashMap<>();
@@ -93,13 +93,13 @@ public class Setup extends SubCommand {
             updateGenerators();
             final String prefix = "\n&8 - &7";
             sendMessage(plr, C.SETUP_INIT);
-            PlayerFunctions.sendMessage(plr, "&6What generator do you want?" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
+            BukkitPlayerFunctions.sendMessage(plr, "&6What generator do you want?" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
             return false;
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("cancel")) {
                 setupMap.remove(plr.getName());
-                PlayerFunctions.sendMessage(plr, "&aCancelled setup");
+                BukkitPlayerFunctions.sendMessage(plr, "&aCancelled setup");
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
@@ -120,14 +120,14 @@ public class Setup extends SubCommand {
             case 0: { // choose generator
                 if ((args.length != 1) || !this.generators.containsKey(args[0])) {
                     final String prefix = "\n&8 - &7";
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
+                    BukkitPlayerFunctions.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringUtils.join(this.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
                     sendMessage(plr, C.SETUP_INIT);
                     return false;
                 }
                 object.generator = args[0];
                 object.current++;
                 final String partial = Settings.ENABLE_CLUSTERS ? "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots" : "";
-                PlayerFunctions.sendMessage(plr, "&6What world type do you want?" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
+                BukkitPlayerFunctions.sendMessage(plr, "&6What world type do you want?" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
             }
             case 1: { // choose world type
@@ -138,7 +138,7 @@ public class Setup extends SubCommand {
                     types = Arrays.asList(new String[] { "default", "augmented" });
                 }
                 if ((args.length != 1) || !types.contains(args[0].toLowerCase())) {
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose a world type!" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
+                    BukkitPlayerFunctions.sendMessage(plr, "&cYou must choose a world type!" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
                     return false;
                 }
                 object.type = types.indexOf(args[0].toLowerCase());
@@ -150,7 +150,7 @@ public class Setup extends SubCommand {
                     final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 } else {
-                    PlayerFunctions.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    BukkitPlayerFunctions.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
                 object.current++;
                 break;
@@ -158,7 +158,7 @@ public class Setup extends SubCommand {
             case 2: { // Choose terrain
                 final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "all" });
                 if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
-                    PlayerFunctions.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    BukkitPlayerFunctions.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
@@ -172,7 +172,7 @@ public class Setup extends SubCommand {
             }
             case 3: { // world setup
                 if (object.setup_index == object.step.length) {
-                    PlayerFunctions.sendMessage(plr, "&6What do you want your world to be called?");
+                    BukkitPlayerFunctions.sendMessage(plr, "&6What do you want your world to be called?");
                     object.setup_index = 0;
                     object.current++;
                     return true;
@@ -202,11 +202,11 @@ public class Setup extends SubCommand {
             }
             case 4: {
                 if (args.length != 1) {
-                    PlayerFunctions.sendMessage(plr, "&cYou need to choose a world name!");
+                    BukkitPlayerFunctions.sendMessage(plr, "&cYou need to choose a world name!");
                     return false;
                 }
                 if (Bukkit.getWorld(args[0]) != null) {
-                    PlayerFunctions.sendMessage(plr, "&cThat world name is already taken!");
+                    BukkitPlayerFunctions.sendMessage(plr, "&cThat world name is already taken!");
                 }
                 object.world = args[0];
                 setupMap.remove(plr.getName());

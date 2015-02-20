@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class plugin extends SubCommand {
     public static String downloads, version;
@@ -103,7 +103,7 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    PlayerFunctions.sendMessage(plr, s);
+                    BukkitPlayerFunctions.sendMessage(plr, s);
                 }
             }
         });

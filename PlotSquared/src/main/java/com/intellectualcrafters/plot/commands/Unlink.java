@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -51,19 +51,19 @@ public class Unlink extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        if (PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
         final World world = plr.getWorld();
         if (!unlinkPlot(world, plot)) {
-            PlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
+            BukkitPlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
         }
         try {
@@ -76,14 +76,14 @@ public class Unlink extends SubCommand {
                 ex.printStackTrace();
             }
         }
-        PlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
+        BukkitPlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
     
     public static boolean unlinkPlot(final World world, final Plot plot) {
-        final PlotId pos1 = PlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId pos2 = PlayerFunctions.getTopPlot(world, plot).id;
-        final ArrayList<PlotId> ids = PlayerFunctions.getPlotSelectionIds(pos1, pos2);
+        final PlotId pos1 = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
+        final PlotId pos2 = BukkitPlayerFunctions.getTopPlot(world, plot).id;
+        final ArrayList<PlotId> ids = BukkitPlayerFunctions.getPlotSelectionIds(pos1, pos2);
         final PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {

@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class SetOwner extends SubCommand {
@@ -52,28 +52,28 @@ public class SetOwner extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || (plot.owner == null)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_USER);
+            BukkitPlayerFunctions.sendMessage(plr, C.NEED_USER);
             return false;
         }
         if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.setowner")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
         }
         final World world = plr.getWorld();
-        final PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
-        final ArrayList<PlotId> plots = PlayerFunctions.getPlotSelectionIds(bot, top);
+        final PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
+        final PlotId top = BukkitPlayerFunctions.getTopPlot(world, plot).id;
+        final ArrayList<PlotId> plots = BukkitPlayerFunctions.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);
             final UUID uuid = getUUID(args[0]);
             if (uuid == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
             current.owner = uuid;
@@ -84,7 +84,7 @@ public class SetOwner extends SubCommand {
             }
         }
         MainUtil.setSign(world, args[0], plot);
-        PlayerFunctions.sendMessage(plr, C.SET_OWNER);
+        BukkitPlayerFunctions.sendMessage(plr, C.SET_OWNER);
         return true;
     }
 }

@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class FlagCmd extends SubCommand {
     public FlagCmd() {
@@ -53,12 +53,12 @@ public class FlagCmd extends SubCommand {
          *  plot flag list
          */
         if (args.length == 0) {
-            PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
+            BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(player);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
         if (plot == null) {
-            PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+            BukkitPlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
             return false;
         }
         if (!plot.hasOwner()) {
@@ -66,88 +66,88 @@ public class FlagCmd extends SubCommand {
             return false;
         }
         if (!plot.hasRights(player) && !BukkitMain.hasPermission(player, "plots.set.flag.other")) {
-            PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
+            BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "info": {
                 if (!BukkitMain.hasPermission(player, "plots.set.flag")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.info");
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.info");
                     return false;
                 }
                 if (args.length != 2) {
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
                 final AbstractFlag af = FlagManager.getFlag(args[1]);
                 if (af == null) {
-                    PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
+                    BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
                 // flag key
-                PlayerFunctions.sendMessage(player, C.FLAG_KEY, af.getKey());
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_KEY, af.getKey());
                 // flag type
-                PlayerFunctions.sendMessage(player, C.FLAG_TYPE, af.value.getClass().getSimpleName());
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_TYPE, af.value.getClass().getSimpleName());
                 // Flag type description
-                PlayerFunctions.sendMessage(player, C.FLAG_DESC, af.getValueDesc());
-                PlayerFunctions.sendMessage(player, "&cNot implemented.");
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_DESC, af.getValueDesc());
+                BukkitPlayerFunctions.sendMessage(player, "&cNot implemented.");
             }
             case "set": {
                 if (!BukkitMain.hasPermission(player, "plots.set.flag")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag");
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag");
                     return false;
                 }
                 if (args.length < 3) {
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
                     return false;
                 }
                 final AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
                 if (af == null) {
-                    PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
+                    BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
                 if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
                 final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);
                 if (parsed == null) {
-                    PlayerFunctions.sendMessage(player, "&c" + af.getValueDesc());
+                    BukkitPlayerFunctions.sendMessage(player, "&c" + af.getValueDesc());
                     return false;
                 }
                 final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed);
                 final boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
-                    PlayerFunctions.sendMessage(player, C.FLAG_NOT_ADDED);
+                    BukkitPlayerFunctions.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
-                PlayerFunctions.sendMessage(player, C.FLAG_ADDED);
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_ADDED);
                 PlotListener.plotEntry(player, plot);
                 return true;
             }
             case "remove": {
                 if (!BukkitMain.hasPermission(player, "plots.flag.remove")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
                     return false;
                 }
                 if ((args.length != 2) && (args.length != 3)) {
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
                     return false;
                 }
                 final AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
                 if (af == null) {
-                    PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
+                    BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
                 if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
                 final Flag flag = FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase());
                 if (flag == null) {
-                    PlayerFunctions.sendMessage(player, C.FLAG_NOT_IN_PLOT);
+                    BukkitPlayerFunctions.sendMessage(player, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
                 if ((args.length == 3) && flag.getAbstractFlag().isList()) {
@@ -157,36 +157,36 @@ public class FlagCmd extends SubCommand {
                 } else {
                     final boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
                     if (!result) {
-                        PlayerFunctions.sendMessage(player, C.FLAG_NOT_REMOVED);
+                        BukkitPlayerFunctions.sendMessage(player, C.FLAG_NOT_REMOVED);
                         return false;
                     }
                 }
-                PlayerFunctions.sendMessage(player, C.FLAG_REMOVED);
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_REMOVED);
                 PlotListener.plotEntry(player, plot);
                 return true;
             }
             case "add": {
                 if (!BukkitMain.hasPermission(player, "plots.flag.add")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
                     return false;
                 }
                 if (args.length < 3) {
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
                     return false;
                 }
                 final AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
                 if (af == null) {
-                    PlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
+                    BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
                 if (!BukkitMain.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
                 final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);
                 if (parsed == null) {
-                    PlayerFunctions.sendMessage(player, "&c" + af.getValueDesc());
+                    BukkitPlayerFunctions.sendMessage(player, "&c" + af.getValueDesc());
                     return false;
                 }
                 Flag flag = FlagManager.getPlotFlag(plot, args[1].toLowerCase());
@@ -197,21 +197,21 @@ public class FlagCmd extends SubCommand {
                 }
                 final boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
-                    PlayerFunctions.sendMessage(player, C.FLAG_NOT_ADDED);
+                    BukkitPlayerFunctions.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
-                PlayerFunctions.sendMessage(player, C.FLAG_ADDED);
+                BukkitPlayerFunctions.sendMessage(player, C.FLAG_ADDED);
                 PlotListener.plotEntry(player, plot);
                 return true;
             }
             case "list": {
                 if (!BukkitMain.hasPermission(player, "plots.flag.list")) {
-                    PlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
+                    BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
                 }
                 if (args.length != 1) {
-                    PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag list");
+                    BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag list");
                     return false;
                 }
                 final HashMap<String, ArrayList<String>> flags = new HashMap<>();
@@ -228,11 +228,11 @@ public class FlagCmd extends SubCommand {
                     message += prefix + "&6" + flag + ": &7" + StringUtils.join(flags.get(flag), ", ");
                     prefix = "\n";
                 }
-                PlayerFunctions.sendMessage(player, message);
+                BukkitPlayerFunctions.sendMessage(player, message);
                 return true;
             }
         }
-        PlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
+        BukkitPlayerFunctions.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
         return false;
     }
 }

@@ -42,7 +42,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -64,7 +64,7 @@ public class DebugClaimTest extends SubCommand {
         if (!event.isCancelled()) {
             MainUtil.createPlot(player, plot);
             MainUtil.setSign(player, plot);
-            PlayerFunctions.sendMessage(player, C.CLAIMED);
+            BukkitPlayerFunctions.sendMessage(player, C.CLAIMED);
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }
@@ -76,11 +76,11 @@ public class DebugClaimTest extends SubCommand {
     public boolean execute(final Player plr, final String... args) {
         if (plr == null) {
             if (args.length < 3) {
-                return !PlayerFunctions.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
+                return !BukkitPlayerFunctions.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
             final World world = Bukkit.getWorld(args[0]);
             if ((world == null) || !PlotSquared.isPlotWorld(world)) {
-                return !PlayerFunctions.sendMessage(null, "&cInvalid plot world!");
+                return !BukkitPlayerFunctions.sendMessage(null, "&cInvalid plot world!");
             }
             PlotId min, max;
             try {
@@ -89,18 +89,18 @@ public class DebugClaimTest extends SubCommand {
                 min = new PlotId(Integer.parseInt(split1[0]), Integer.parseInt(split1[1]));
                 max = new PlotId(Integer.parseInt(split2[0]), Integer.parseInt(split2[1]));
             } catch (final Exception e) {
-                return !PlayerFunctions.sendMessage(null, "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X,Y are the plot coords\nThe conversion will only check the plots in the selected area.");
+                return !BukkitPlayerFunctions.sendMessage(null, "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X,Y are the plot coords\nThe conversion will only check the plots in the selected area.");
             }
-            PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
-            PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
+            BukkitPlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
+            BukkitPlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
             final PlotManager manager = PlotSquared.getPlotManager(world);
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
-            for (final PlotId id : PlayerFunctions.getPlotSelectionIds(min, max)) {
+            for (final PlotId id : BukkitPlayerFunctions.getPlotSelectionIds(min, max)) {
                 final Plot plot = MainUtil.getPlot(world, id);
                 final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
                 if (contains) {
-                    PlayerFunctions.sendMessage(null, " - &cDB Already contains: " + plot.id);
+                    BukkitPlayerFunctions.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
                 }
                 final Location loc = manager.getSignLoc(world, plotworld, plot);
@@ -132,30 +132,30 @@ public class DebugClaimTest extends SubCommand {
                                 uuid = UUIDHandler.getUUID(line);
                             }
                             if (uuid != null) {
-                                PlayerFunctions.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
+                                BukkitPlayerFunctions.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
                                 plot.owner = uuid;
                                 plot.hasChanged = true;
                                 plots.add(plot);
                             } else {
-                                PlayerFunctions.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
+                                BukkitPlayerFunctions.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
                             }
                         }
                     }
                 }
             }
             if (plots.size() > 0) {
-                PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
+                BukkitPlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
                 DBFunc.createPlots(plots);
                 DBFunc.createAllSettingsAndHelpers(plots);
                 for (final Plot plot : plots) {
                     PlotSquared.updatePlot(plot);
                 }
-                PlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
+                BukkitPlayerFunctions.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
             } else {
-                PlayerFunctions.sendMessage(null, "No plots were found for the given search.");
+                BukkitPlayerFunctions.sendMessage(null, "No plots were found for the given search.");
             }
         } else {
-            PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused.");
+            BukkitPlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused.");
         }
         return true;
     }

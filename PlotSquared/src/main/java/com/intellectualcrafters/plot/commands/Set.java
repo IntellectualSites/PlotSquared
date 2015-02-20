@@ -48,7 +48,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -65,21 +65,21 @@ public class Set extends SubCommand {
     @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (!plot.hasOwner()) {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
         if (!plot.hasRights(plr) && !BukkitMain.hasPermission(plr, "plots.admin.command.set")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
+            BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
             return false;
         }
         for (int i = 0; i < aliases.length; i++) {
@@ -91,7 +91,7 @@ public class Set extends SubCommand {
         /* TODO: Implement option */
         // final boolean advanced_permissions = true;
         if (!BukkitMain.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
-            PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
         }
         if (args[0].equalsIgnoreCase("flag")) {
@@ -104,7 +104,7 @@ public class Set extends SubCommand {
                         message += "," + StringUtils.join(PlotSquared.worldGuardListener.str_flags, "&c, &6");
                     }
                 }
-                PlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
+                BukkitPlayerFunctions.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
                 return false;
             }
             AbstractFlag af;
@@ -114,11 +114,11 @@ public class Set extends SubCommand {
                 af = new AbstractFlag(args[1].toLowerCase());
             }
             if (!FlagManager.getFlags().contains(af) && ((PlotSquared.worldGuardListener == null) || !PlotSquared.worldGuardListener.str_flags.contains(args[1].toLowerCase()))) {
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
+                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
             if (!BukkitMain.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
-                PlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
+                BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION);
                 return false;
             }
             if (args.length == 2) {
@@ -129,15 +129,15 @@ public class Set extends SubCommand {
                             return false;
                         }
                     }
-                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
+                    BukkitPlayerFunctions.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
                 final boolean result = FlagManager.removePlotFlag(plot, args[1].toLowerCase());
                 if (!result) {
-                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
+                    BukkitPlayerFunctions.sendMessage(plr, C.FLAG_NOT_REMOVED);
                     return false;
                 }
-                PlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
+                BukkitPlayerFunctions.sendMessage(plr, C.FLAG_REMOVED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
             }
@@ -145,7 +145,7 @@ public class Set extends SubCommand {
                 final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed_value = af.parseValueRaw(value);
                 if (parsed_value == null) {
-                    PlayerFunctions.sendMessage(plr, af.getValueDesc());
+                    BukkitPlayerFunctions.sendMessage(plr, af.getValueDesc());
                     return false;
                 }
                 if ((FlagManager.getFlag(args[1].toLowerCase()) == null) && (PlotSquared.worldGuardListener != null)) {
@@ -155,14 +155,14 @@ public class Set extends SubCommand {
                 final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed_value);
                 final boolean result = FlagManager.addPlotFlag(plot, flag);
                 if (!result) {
-                    PlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
+                    BukkitPlayerFunctions.sendMessage(plr, C.FLAG_NOT_ADDED);
                     return false;
                 }
-                PlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
+                BukkitPlayerFunctions.sendMessage(plr, C.FLAG_ADDED);
                 PlotListener.plotEntry(plr, plot);
                 return true;
             } catch (final Exception e) {
-                PlayerFunctions.sendMessage(plr, "&c" + e.getMessage());
+                BukkitPlayerFunctions.sendMessage(plr, "&c" + e.getMessage());
                 return false;
             }
         }
@@ -173,7 +173,7 @@ public class Set extends SubCommand {
                     DBFunc.setPosition(plr.getWorld().getName(), plot, "");
                     return true;
                 }
-                return PlayerFunctions.sendMessage(plr, C.HOME_ARGUMENT);
+                return BukkitPlayerFunctions.sendMessage(plr, C.HOME_ARGUMENT);
             }
             //set to current location
             final World world = plr.getWorld();
@@ -183,35 +183,35 @@ public class Set extends SubCommand {
             final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
             plot.settings.setPosition(blockloc);
             DBFunc.setPosition(plr.getWorld().getName(), plot, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
-            return PlayerFunctions.sendMessage(plr, C.POSITION_SET);
+            return BukkitPlayerFunctions.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
             if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.MISSING_ALIAS);
+                BukkitPlayerFunctions.sendMessage(plr, C.MISSING_ALIAS);
                 return false;
             }
             final String alias = args[1];
             if (alias.length() >= 50) {
-                PlayerFunctions.sendMessage(plr, C.ALIAS_TOO_LONG);
+                BukkitPlayerFunctions.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
             for (final Plot p : PlotSquared.getPlots(plr.getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
-                    PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
+                    BukkitPlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
                 if (UUIDHandler.nameExists(new StringWrapper(alias))) {
-                    PlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
+                    BukkitPlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
             }
             DBFunc.setAlias(plr.getWorld().getName(), plot, alias);
-            PlayerFunctions.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
+            BukkitPlayerFunctions.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
             return true;
         }
         if (args[0].equalsIgnoreCase("biome")) {
             if (args.length < 2) {
-                PlayerFunctions.sendMessage(plr, C.NEED_BIOME);
+                BukkitPlayerFunctions.sendMessage(plr, C.NEED_BIOME);
                 return true;
             }
             if (args[1].length() < 2) {
@@ -228,11 +228,11 @@ public class Set extends SubCommand {
              * }
              */
             if (biome == null) {
-                PlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
+                BukkitPlayerFunctions.sendMessage(plr, getBiomeList(Arrays.asList(Biome.values())));
                 return true;
             }
             MainUtil.setBiome(plr.getWorld(), plot, biome);
-            PlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
+            BukkitPlayerFunctions.sendMessage(plr, C.BIOME_SET_TO.s() + biome.toString().toLowerCase());
             return true;
         }
         // Get components
@@ -243,7 +243,7 @@ public class Set extends SubCommand {
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
                 if (args.length < 2) {
-                    PlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
+                    BukkitPlayerFunctions.sendMessage(plr, C.NEED_BLOCK);
                     return true;
                 }
                 PlotBlock[] blocks;
@@ -253,12 +253,12 @@ public class Set extends SubCommand {
                     try {
                         blocks = new PlotBlock[] { new PlotBlock((short) getMaterial(args[1], PlotWorld.BLOCKS).getId(), (byte) 0) };
                     } catch (final Exception e2) {
-                        PlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
+                        BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_BLOCK);
                         return false;
                     }
                 }
                 manager.setComponent(world, plotworld, plot.id, component, blocks);
-                PlayerFunctions.sendMessage(plr, C.GENERATING_COMPONENT);
+                BukkitPlayerFunctions.sendMessage(plr, C.GENERATING_COMPONENT);
                 return true;
             }
         }
@@ -280,7 +280,7 @@ public class Set extends SubCommand {
                 return true;
             }
         }
-        PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
+        BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
         return false;
     }
     

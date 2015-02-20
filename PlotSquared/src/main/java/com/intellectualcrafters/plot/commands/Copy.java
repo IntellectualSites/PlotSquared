@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Copy extends SubCommand {
@@ -36,18 +36,18 @@ public class Copy extends SubCommand {
     
     @Override
     public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.copy")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         assert plot != null;
         if (plot.settings.isMerged()) {
-            PlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
+            BukkitPlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }
         final int size = (MainUtil.getPlotTopLocAbs(plr.getWorld(), plot.getId()).getBlockX() - MainUtil.getPlotBottomLocAbs(plr.getWorld(), plot.getId()).getBlockX());

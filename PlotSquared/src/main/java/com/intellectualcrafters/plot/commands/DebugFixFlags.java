@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class DebugFixFlags extends SubCommand {
     public DebugFixFlags() {
@@ -44,19 +44,19 @@ public class DebugFixFlags extends SubCommand {
     @Override
     public boolean execute(final Player plr, final String... args) {
         if (plr != null) {
-            PlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
             return false;
         }
         if (args.length != 1) {
-            PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
+            BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
             return false;
         }
         final World world = Bukkit.getWorld(args[0]);
         if ((world == null) || !PlotSquared.isPlotWorld(world)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
-        PlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
+        BukkitPlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
         for (final Plot plot : PlotSquared.getPlots(world).values()) {
             final Set<Flag> flags = plot.settings.flags;
             final ArrayList<Flag> toRemove = new ArrayList<Flag>();
@@ -73,7 +73,7 @@ public class DebugFixFlags extends SubCommand {
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
             }
         }
-        PlayerFunctions.sendMessage(plr, "&aDone!");
+        BukkitPlayerFunctions.sendMessage(plr, "&aDone!");
         return true;
     }
 }

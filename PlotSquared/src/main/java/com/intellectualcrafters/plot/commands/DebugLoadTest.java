@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
  * @author Citymonstret
@@ -49,7 +49,7 @@ public class DebugLoadTest extends SubCommand {
                 PlotSquared.log("&3===END OF STACKTRACE===");
             }
         } else {
-            PlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
+            BukkitPlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
         }
         return true;
     }

@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Inbox extends SubCommand {
@@ -50,13 +50,13 @@ public class Inbox extends SubCommand {
                 report = true;
             }
         }
-        if (!PlayerFunctions.isInPlot(plr) && !report) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+        if (!BukkitPlayerFunctions.isInPlot(plr) && !report) {
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot != null) && !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         Integer tier;
@@ -80,7 +80,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 0) {
                         tier = 0;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
                         return false;
                     }
                     break;
@@ -88,7 +88,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 1) {
                         tier = 1;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.owner");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.owner");
                         return false;
                     }
                     break;
@@ -96,7 +96,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 2) {
                         tier = 2;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.helper");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.helper");
                         return false;
                     }
                     break;
@@ -104,7 +104,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 3) {
                         tier = 3;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.trusted");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.trusted");
                         return false;
                     }
                     break;
@@ -112,7 +112,7 @@ public class Inbox extends SubCommand {
                     if (tier <= 4) {
                         tier = 4;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.everyone");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.everyone");
                         return false;
                     }
                     break;
@@ -120,12 +120,12 @@ public class Inbox extends SubCommand {
                     if (tier <= 0) {
                         tier = -1;
                     } else {
-                        PlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
+                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
                         return false;
                     }
                     break;
                 default:
-                    PlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] { "admin", "owner", "helper", "trusted", "everyone" }, Math.max(0, tier), 4));
+                    BukkitPlayerFunctions.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] { "admin", "owner", "helper", "trusted", "everyone" }, Math.max(0, tier), 4));
                     return false;
             }
         } else {
@@ -149,7 +149,7 @@ public class Inbox extends SubCommand {
                 if (args.length == 2) {
                     final String[] split = args[1].toLowerCase().split(":");
                     if (!split[0].equals("clear")) {
-                        PlayerFunctions.sendMessage(plr, "&c/plot inbox [tier] [clear][:#]");
+                        BukkitPlayerFunctions.sendMessage(plr, "&c/plot inbox [tier] [clear][:#]");
                         return;
                     }
                     if (split.length > 1) {
@@ -158,10 +158,10 @@ public class Inbox extends SubCommand {
                             final PlotComment comment = comments.get(index - 1);
                             DBFunc.removeComment(world, plot, comment);
                             plot.settings.removeComment(comment);
-                            PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
+                            BukkitPlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
                             return;
                         } catch (final Exception e) {
-                            PlayerFunctions.sendMessage(plr, "&cInvalid index:\n/plot inbox [tier] [clear][:#]");
+                            BukkitPlayerFunctions.sendMessage(plr, "&cInvalid index:\n/plot inbox [tier] [clear][:#]");
                             return;
                         }
                     }
@@ -169,7 +169,7 @@ public class Inbox extends SubCommand {
                         DBFunc.removeComment(world, plot, comment);
                     }
                     plot.settings.removeComments(comments);
-                    PlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
+                    BukkitPlayerFunctions.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
                 } else {
                     final List<String> recipients = Arrays.asList("A", "O", "H", "T", "E");
                     int count = 1;
@@ -183,7 +183,7 @@ public class Inbox extends SubCommand {
                     if (comments.size() == 0) {
                         message.append("&cNo messages.");
                     }
-                    PlayerFunctions.sendMessage(plr, message.toString());
+                    BukkitPlayerFunctions.sendMessage(plr, message.toString());
                 }
             }
         });
