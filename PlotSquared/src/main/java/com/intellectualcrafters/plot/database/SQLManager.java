@@ -49,6 +49,7 @@ import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 
 /**
@@ -92,7 +93,7 @@ public class SQLManager implements AbstractDB {
 
         // schedule reconnect
         if (PlotSquared.getMySQL() != null) {
-            Bukkit.getScheduler().runTaskTimer(PlotSquared.getMain(), new Runnable() {
+            TaskManager.runTaskRepeat(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -101,7 +102,7 @@ public class SQLManager implements AbstractDB {
                         e.printStackTrace();
                     }
                 }
-            }, 11000, 11000);
+            }, 11000);
         }
 
     }
@@ -1078,7 +1079,7 @@ public class SQLManager implements AbstractDB {
             String comparison = below ? ">=" : "=";
             if (plot != null) {
             	statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `tier` " + comparison + " ?");
-            	statement.setInt(1, getId(plot.world.getName(), plot.id));
+            	statement.setInt(1, getId(plot.world, plot.id));
                 statement.setInt(2, tier);
             }
             else {
@@ -1284,7 +1285,7 @@ public class SQLManager implements AbstractDB {
     public double getRatings(final Plot plot) {
         try {
             final PreparedStatement statement = this.connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + this.prefix + "plot_ratings` WHERE `plot_plot_id` = ? ");
-            statement.setInt(1, getId(plot.world.getName(), plot.id));
+            statement.setInt(1, getId(plot.world, plot.id));
             final ResultSet set = statement.executeQuery();
             double rating = 0;
             while (set.next()) {

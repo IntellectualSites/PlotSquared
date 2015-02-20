@@ -59,15 +59,15 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!this.plotsquared.IMP.getDirectory().exists()) {
-            this.plugin.getDataFolder().mkdirs();
+        if (!PlotSquared.IMP.getDirectory().exists()) {
+            PlotSquared.IMP.getDirectory().mkdirs();
         }
         final File file = new File(this.dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                this.plugin.getLogger().log(Level.SEVERE, "Unable to create database!");
+                PlotSquared.log("&cUnable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");

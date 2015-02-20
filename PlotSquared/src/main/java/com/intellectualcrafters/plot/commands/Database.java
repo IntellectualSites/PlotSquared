@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.PlayerFunctions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
@@ -46,9 +47,8 @@ public class Database extends SubCommand {
     }
 
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
-        final Plugin p = PlotSquared.getMain();
         final java.util.Set<Plot> plots = PlotSquared.getPlots();
-        p.getServer().getScheduler().runTaskAsynchronously(p, new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -94,7 +94,7 @@ public class Database extends SubCommand {
                 }
                 Connection n;
                 try {
-                    n = new MySQL(PlotSquared.getMain(), host, port, database, username, password).openConnection();
+                    n = new MySQL(PlotSquared.THIS, host, port, database, username, password).openConnection();
                     // Connection
                     if (n.isClosed()) {
                         return sendMessage(plr, "Failed to open connection");
