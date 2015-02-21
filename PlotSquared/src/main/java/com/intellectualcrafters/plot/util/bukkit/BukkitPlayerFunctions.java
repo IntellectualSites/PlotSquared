@@ -169,22 +169,4 @@ public class BukkitPlayerFunctions {
         }
         return p;
     }
-    
-    /**
-     * Get the number of plots for a player
-     *
-     * @param plr
-     *
-     * @return
-     */
-    public static int getPlayerPlotCount(final String world, final Player plr) {
-        final UUID uuid = UUIDHandler.getUUID(plr);
-        int count = 0;
-        for (final Plot plot : PlotSquared.getPlots(world).values()) {
-            if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
-                count++;
-            }
-        }
-        return count;
-    }
 }

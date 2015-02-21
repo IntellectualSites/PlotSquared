@@ -23,14 +23,12 @@ package com.intellectualcrafters.plot.commands;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -44,11 +42,11 @@ public class Claim extends SubCommand {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
     
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final boolean auto) {
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final boolean auto) {
         return claimPlot(player, plot, teleport, "", auto);
     }
     
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
         if (plot.hasOwner() || plot.settings.isMerged()) {
             return false;
         }

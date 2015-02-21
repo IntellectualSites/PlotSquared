@@ -22,14 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.RUtils;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class Debug extends SubCommand {
     public Debug() {

@@ -22,15 +22,10 @@ package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -38,8 +33,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 
 public class Auto extends SubCommand {
     public Auto() {
@@ -124,7 +118,8 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        final int diff = BukkitPlayerFunctions.getPlayerPlotCount(world, plr) - BukkitPlayerFunctions.getAllowedPlots(plr);
+        int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        final int diff = currentPlots - MainUtil.getAllowedPlots(plr, currentPlots);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
@@ -133,17 +128,17 @@ public class Auto extends SubCommand {
             }
             return false;
         }
-        final PlotWorld pWorld = PlotSquared.getPlotWorld(world.getName());
+        final PlotWorld pWorld = PlotSquared.getPlotWorld(world);
         if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr) < cost) {
+                if (economy.getBalance(plr.getName()) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                economy.withdrawPlayer(plr, cost);
+                economy.withdrawPlayer(plr.getName(), cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
@@ -159,11 +154,11 @@ public class Auto extends SubCommand {
             }
             // }
         }
-        final String worldname = world.getName();
+        final String worldname = world;
         final PlotWorld plotworld = PlotSquared.getPlotWorld(worldname);
         if (plotworld.TYPE == 2) {
-            final Location loc = BukkitUtil.getLocation(plr);
-            final Plot plot = MainUtil.getCurrentPlot(new com.intellectualcrafters.plot.object.Location(worldname, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+            final Location loc = plr.getLocation();
+            final Plot plot = MainUtil.getPlot(new Location(worldname, loc.getX(), loc.getY(), loc.getZ()));
             if (plot == null) {
                 return sendMessage(plr, C.NOT_IN_PLOT);
             }
@@ -225,7 +220,7 @@ public class Auto extends SubCommand {
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!MainUtil.mergePlots(plr, worldname, BukkitPlayerFunctions.getPlotSelectionIds(start, end))) {
+                    if (!MainUtil.mergePlots(worldname, MainUtil.getPlotSelectionIds(start, end), true)) {
                         return false;
                     }
                     br = true;

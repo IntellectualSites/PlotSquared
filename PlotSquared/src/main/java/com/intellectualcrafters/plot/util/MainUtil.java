@@ -54,6 +54,24 @@ public class MainUtil {
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
     
+    /**
+     * Get the number of plots for a player
+     *
+     * @param plr
+     *
+     * @return
+     */
+    public static int getPlayerPlotCount(final String world, final PlotPlayer plr) {
+        final UUID uuid = plr.getUUID();
+        int count = 0;
+        for (final Plot plot : PlotSquared.getPlots(world).values()) {
+            if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
         final Plot bot = MainUtil.getBottomPlot(plot);
         
@@ -189,8 +207,10 @@ public class MainUtil {
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        
+        // FIXME call event
+        
         manager.startPlotMerge(plotworld, plotIds);
-        final boolean result = false;
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
@@ -234,7 +254,7 @@ public class MainUtil {
             }
         }
         manager.finishPlotMerge(plotworld, plotIds);
-        return result;
+        return true;
     }
     
     /**

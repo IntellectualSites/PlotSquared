@@ -7,7 +7,7 @@
  */
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class Help extends SubCommand {
     public Help() {

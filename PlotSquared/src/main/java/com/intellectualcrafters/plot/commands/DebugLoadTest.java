@@ -22,11 +22,10 @@ package com.intellectualcrafters.plot.commands;
 
 import java.lang.reflect.Field;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * @author Citymonstret

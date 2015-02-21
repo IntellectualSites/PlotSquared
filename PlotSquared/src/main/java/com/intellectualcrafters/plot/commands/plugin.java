@@ -27,11 +27,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class plugin extends SubCommand {
     public static String downloads, version;

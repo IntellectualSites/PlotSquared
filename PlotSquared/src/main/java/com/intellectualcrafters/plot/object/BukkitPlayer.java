@@ -17,13 +17,10 @@ public class BukkitPlayer implements PlotPlayer {
     private HashSet<String> noPerm;
     private int op = 0;
     
-    
-    public BukkitPlayer(Player player, String name, UUID uuid) {
-        this.player = player;
-        this.name = name;
-        this.uuid = uuid;
-    }
-    
+    /**
+     * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
+     * @param player
+     */
     public BukkitPlayer(Player player) {
         this.player = player;
     }
