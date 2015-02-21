@@ -56,7 +56,7 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
             return false;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
             return false;

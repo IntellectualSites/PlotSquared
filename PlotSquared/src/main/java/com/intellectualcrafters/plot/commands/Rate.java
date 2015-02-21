@@ -47,7 +47,7 @@ public class Rate extends SubCommand {
             sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (!plot.hasOwner()) {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;

@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -45,10 +46,11 @@ public class Buy extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (!PlotSquared.useEconomy) {
+        if (PlotSquared.economy == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
-        final World world = plr.getWorld();
+        Location loc = plr.getLocation();
+        final String world = loc.getWorld();
         if (!PlotSquared.isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
@@ -62,7 +64,7 @@ public class Buy extends SubCommand {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {
-            plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+            plot = MainUtil.getPlot(loc);
         }
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);

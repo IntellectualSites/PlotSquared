@@ -98,7 +98,7 @@ public class Schematic extends SubCommand {
                         }
                         final int x;
                         final int z;
-                        final Plot plot2 = BukkitPlayerFunctions.getCurrentPlot(plr);
+                        final Plot plot2 = MainUtil.getPlot(loc);
                         final Dimension dem = schematic.getSchematicDimension();
                         final Location bot = MainUtil.getPlotBottomLoc(plr.getWorld(), plot2.id).add(1, 0, 1);
                         final int length2 = MainUtil.getPlotWidth(plr.getWorld(), plot2.id);
@@ -165,7 +165,7 @@ public class Schematic extends SubCommand {
                 }
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
-                final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+                final Plot plot = MainUtil.getPlot(loc);
                 final int length = MainUtil.getPlotWidth(plr.getWorld(), plot.id);
                 if ((l1 < length) || (l2 < length)) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
@@ -251,7 +251,7 @@ public class Schematic extends SubCommand {
                         sendMessage(plr, C.NOT_IN_PLOT);
                         return false;
                     }
-                    final Plot myplot = BukkitPlayerFunctions.getCurrentPlot(plr);
+                    final Plot myplot = MainUtil.getPlot(loc);
                     if (!myplot.hasRights(plr)) {
                         sendMessage(plr, C.NO_PLOT_PERMS);
                         return false;

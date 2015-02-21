@@ -44,7 +44,7 @@ public class MusicSubcommand extends SubCommand {
             sendMessage(player, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
+        final Plot plot = MainUtil.getPlot(loc);
         if (!plot.hasRights(player)) {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;

@@ -49,7 +49,7 @@ public class Trusted extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || !plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;

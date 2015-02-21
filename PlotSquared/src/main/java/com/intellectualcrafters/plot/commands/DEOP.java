@@ -24,7 +24,7 @@ public class DEOP extends SubCommand {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (!plot.hasRights(plr)) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }

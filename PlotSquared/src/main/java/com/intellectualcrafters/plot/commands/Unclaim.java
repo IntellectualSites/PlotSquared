@@ -44,7 +44,7 @@ public class Unclaim extends SubCommand {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }

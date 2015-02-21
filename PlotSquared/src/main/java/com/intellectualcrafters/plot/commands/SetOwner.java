@@ -51,7 +51,7 @@ public class SetOwner extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || (plot.owner == null)) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;

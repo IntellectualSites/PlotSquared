@@ -92,7 +92,7 @@ public class Claim extends SubCommand {
         if (BukkitPlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= BukkitPlayerFunctions.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }

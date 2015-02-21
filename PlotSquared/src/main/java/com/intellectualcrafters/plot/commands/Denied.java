@@ -50,7 +50,7 @@ public class Denied extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || !plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
@@ -93,7 +93,7 @@ public class Denied extends SubCommand {
             }
             final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
-                final Plot pl = BukkitPlayerFunctions.getCurrentPlot(player);
+                final Plot pl = MainUtil.getPlot(loc);
                 if ((pl != null) && pl.id.equals(plot.id)) {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.YOU_BE_DENIED);
                     player.teleport(player.getWorld().getSpawnLocation());

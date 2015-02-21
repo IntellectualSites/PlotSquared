@@ -53,7 +53,7 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;

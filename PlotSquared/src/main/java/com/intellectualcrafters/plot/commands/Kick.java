@@ -42,7 +42,7 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, "You're not in a plot.");
             return false;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
+        final Plot plot = MainUtil.getPlot(loc);
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.kick")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
@@ -56,7 +56,7 @@ public class Kick extends SubCommand {
             return false;
         }
         final Player player = Bukkit.getPlayer(args[0]);
-        if (!player.getWorld().equals(plr.getWorld()) || !BukkitPlayerFunctions.isInPlot(player) || (BukkitPlayerFunctions.getCurrentPlot(player) == null) || !BukkitPlayerFunctions.getCurrentPlot(player).equals(plot)) {
+        if (!player.getWorld().equals(plr.getWorld()) || !BukkitPlayerFunctions.isInPlot(player) || (MainUtil.getPlot(loc) == null) || !MainUtil.getPlot(loc).equals(plot)) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }

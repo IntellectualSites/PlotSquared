@@ -66,7 +66,7 @@ public class Info extends SubCommand {
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
                 return false;
             }
-            plot = BukkitPlayerFunctions.getCurrentPlot(player);
+            plot = MainUtil.getPlot(loc);
         } else {
             if (args.length < 2) {
                 MainUtil.sendMessage(null, C.INFO_SYNTAX_CONSOLE);

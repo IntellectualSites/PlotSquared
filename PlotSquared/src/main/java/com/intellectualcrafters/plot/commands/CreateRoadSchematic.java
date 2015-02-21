@@ -43,7 +43,7 @@ public class CreateRoadSchematic extends SubCommand {
         if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
+        final Plot plot = MainUtil.getPlot(loc);
         final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         manager.setupRoadSchematic(plot);
         MainUtil.update(BukkitUtil.getLocation(entity));

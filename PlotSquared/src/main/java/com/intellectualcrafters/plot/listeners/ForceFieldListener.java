@@ -99,7 +99,7 @@ public class ForceFieldListener implements Listener {
         if (!BukkitPlayerFunctions.isInPlot(player)) {
             return;
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(player);
+        final Plot plot = MainUtil.getPlot(loc);
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
                 UUID uuid = UUIDHandler.getUUID(player);
