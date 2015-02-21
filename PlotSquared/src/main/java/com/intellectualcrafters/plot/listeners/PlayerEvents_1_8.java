@@ -23,25 +23,25 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         if (isPlotWorld(l)) {
             final Player p = e.getPlayer();
-            PlotPlayer PlotPlayer = BukkitUtil.getPlayer(e.getPlayer());
+            PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
             if (!isInPlot(l)) {
-                if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.road")) {
-                    MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.road");
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
                     e.setCancelled(true);
                 }
             } else {
                 final Plot plot = MainUtil.getPlot(l);
                 if ((plot == null) || !plot.hasOwner()) {
-                    if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.unowned")) {
-                        MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                    if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
                     }
                 } else {
-                    UUID uuid = UUIDHandler.getUUID(p);
+                    UUID uuid = pp.getUUID();
                     if (!plot.isAdded(uuid)) {
-                        if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.other")) {
+                        if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
                             if (isPlotArea(l)) {
-                                MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.other");
+                                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
                                 e.setCancelled(true);
                             }
                         }
