@@ -48,7 +48,7 @@ public class DebugRoadRegen extends SubCommand {
         if (result) {
             SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
         }
-        BukkitPlayerFunctions.sendMessage(player, "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }
 }

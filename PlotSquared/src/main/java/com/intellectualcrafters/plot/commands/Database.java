@@ -141,7 +141,7 @@ public class Database extends SubCommand {
         if (player == null) {
             PlotSquared.log(msg);
         } else {
-            BukkitPlayerFunctions.sendMessage(player, msg);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), msg);
         }
         return true;
     }

@@ -94,7 +94,7 @@ public class Denied extends SubCommand {
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
                 final Plot pl = BukkitPlayerFunctions.getCurrentPlot(player);
                 if ((pl != null) && pl.id.equals(plot.id)) {
-                    BukkitPlayerFunctions.sendMessage(player, C.YOU_BE_DENIED);
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.YOU_BE_DENIED);
                     player.teleport(player.getWorld().getSpawnLocation());
                 }
             }

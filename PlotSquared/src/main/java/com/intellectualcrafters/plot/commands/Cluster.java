@@ -320,7 +320,7 @@ public class Cluster extends SubCommand {
                     DBFunc.setInvited(world, cluster, uuid);
                     final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
                     if (player != null) {
-                        BukkitPlayerFunctions.sendMessage(player, C.CLUSTER_INVITED, cluster.getName());
+                        MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLUSTER_INVITED, cluster.getName());
                     }
                 }
                 BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_ADDED_USER);
@@ -367,7 +367,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
                 if (player != null) {
-                    BukkitPlayerFunctions.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLUSTER_REMOVED, cluster.getName());
                 }
                 for (final Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
                     final PlotCluster current = ClusterManager.getCluster(plot);

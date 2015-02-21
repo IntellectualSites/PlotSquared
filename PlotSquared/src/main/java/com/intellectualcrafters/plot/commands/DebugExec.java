@@ -166,7 +166,7 @@ public class DebugExec extends SubCommand {
                 }
             }
         }
-        BukkitPlayerFunctions.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
         return true;
     }
 }

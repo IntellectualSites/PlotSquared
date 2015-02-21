@@ -31,6 +31,14 @@ public class BukkitUtil extends BlockManager {
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
     
+    public static void removePlayer(String plr) {
+        if (lastPlayer != null && lastPlayer.getName().equals(plr)) {
+            lastPlayer = null;
+            lastPlotPlayer = null;
+        }
+        players.remove(plr);
+    }
+    
     public static PlotPlayer getPlayer(Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;

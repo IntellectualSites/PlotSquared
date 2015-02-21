@@ -57,7 +57,7 @@ public class Claim extends SubCommand {
         if (!event.isCancelled()) {
             MainUtil.createPlot(player, plot);
             MainUtil.setSign(player, plot);
-            BukkitPlayerFunctions.sendMessage(player, C.CLAIMED);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLAIMED);
             if (teleport) {
                 PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
             }

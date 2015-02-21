@@ -53,7 +53,7 @@ public class MainCommand {
     };
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {
-        BukkitPlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NO_PERMISSION, permission);
         return false;
     }
 
@@ -121,7 +121,7 @@ public class MainCommand {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
-                return BukkitPlayerFunctions.sendMessage(player, builder.toString());
+                return MainUtil.sendMessage(BukkitUtil.getPlayer(player), builder.toString());
             }
             final String cat = args[1];
             SubCommand.CommandCategory cato = null;
@@ -137,7 +137,7 @@ public class MainCommand {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                return BukkitPlayerFunctions.sendMessage(player, builder.toString(), false);
+                return MainUtil.sendMessage(BukkitUtil.getPlayer(player), builder.toString(), false);
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
@@ -181,14 +181,14 @@ public class MainCommand {
                     }
                 }
             }
-            BukkitPlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_VALID_SUBCOMMAND);
             final String[] commands = new String[subCommands.size()];
             for (int x = 0; x < subCommands.size(); x++) {
                 commands[x] = subCommands.get(x).cmd;
             }
             /* Let's try to get a proper usage string */
             final String command = new StringComparison(args[0], commands).getBestMatch();
-            return BukkitPlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
+            return MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.DID_YOU_MEAN, "/plot " + command);
             // PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new
             // StringComparsion(args[0], commands).getBestMatch());
         }

@@ -108,12 +108,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
         event.setCancelled(true);
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
         if (plot == null) {
-            BukkitPlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
             return;
         }
         UUID uuid = UUIDHandler.getUUID(player);
         if (!plot.isAdded(uuid)) {
-            BukkitPlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
@@ -215,7 +215,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 if (player.isOnline()) {
-                    BukkitPlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
@@ -258,7 +258,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 if (player.isOnline()) {
-                    BukkitPlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }

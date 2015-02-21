@@ -38,7 +38,7 @@ public class CreateRoadSchematic extends SubCommand {
     @Override
     public boolean execute(final Player player, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(player)) {
-            BukkitPlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
             return false;
         }
         if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
@@ -48,7 +48,7 @@ public class CreateRoadSchematic extends SubCommand {
         final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
         manager.setupRoadSchematic(plot);
         MainUtil.update(BukkitUtil.getLocation(entity));
-        BukkitPlayerFunctions.sendMessage(player, "&6Saved new road schematic");
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "&6Saved new road schematic");
         return true;
     }
 }
