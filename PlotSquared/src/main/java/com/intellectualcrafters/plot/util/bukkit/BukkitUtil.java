@@ -116,6 +116,10 @@ public class BukkitUtil extends BlockManager {
         getWorld(world).refreshChunk(x, z);
     }
     
+    public static void regenerateChunk(final String world, final int x, final int z) {
+        getWorld(world).regenerateChunk(x, z);
+    }
+    
     public static PlotBlock getBlock(final Location loc) {
         final World world = getWorld(loc.getWorld());
         final Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());

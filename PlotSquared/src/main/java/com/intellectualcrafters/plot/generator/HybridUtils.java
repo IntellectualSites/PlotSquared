@@ -18,6 +18,8 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class HybridUtils {
     
+    public static HybridUtils manager = new BukkitHybridUtils();
+    
     public boolean checkModified(final Plot plot, int requiredChanges) {
         final Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
