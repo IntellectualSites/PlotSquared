@@ -42,7 +42,7 @@ public class Clipboard extends SubCommand {
         final int total = selection.getBlocks().length;
         String message = C.CLIPBOARD_INFO.s();
         message = message.replace("%id", plotId.toString()).replace("%width", width + "").replace("%total", total + "");
-        BukkitPlayerFunctions.sendMessage(plr, message);
+        MainUtil.sendMessage(plr, message);
         return true;
     }
 }

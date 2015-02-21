@@ -55,7 +55,7 @@ public class Unlink extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.unlink")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
@@ -63,7 +63,7 @@ public class Unlink extends SubCommand {
         }
         final World world = plr.getWorld();
         if (!unlinkPlot(world, plot)) {
-            BukkitPlayerFunctions.sendMessage(plr, "&cUnlink has been cancelled");
+            MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
         }
         try {
@@ -76,7 +76,7 @@ public class Unlink extends SubCommand {
                 ex.printStackTrace();
             }
         }
-        BukkitPlayerFunctions.sendMessage(plr, "&6Plots unlinked successfully!");
+        MainUtil.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
     

@@ -48,7 +48,7 @@ public class Unclaim extends SubCommand {
         if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !BukkitMain.hasPermission(plr, "plots.admin.command.unclaim")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -69,9 +69,9 @@ public class Unclaim extends SubCommand {
             DBFunc.delete(worldname, plot);
             // TODO set wall block
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
+            MainUtil.sendMessage(plr, "Plot removal has been denied.");
         }
-        BukkitPlayerFunctions.sendMessage(plr, C.UNCLAIM_SUCCESS);
+        MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);
         return true;
     }
 }

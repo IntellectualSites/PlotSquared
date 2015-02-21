@@ -67,20 +67,20 @@ public class Home extends SubCommand {
                             return true;
                         }
                     }
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_YOUR_PLOT);
+                    MainUtil.sendMessage(plr, C.NOT_YOUR_PLOT);
                     return false;
                 }
-                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return true;
             }
             if ((id > (plots.length)) || (id < 1)) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
             teleportPlayer(plr, plots[id - 1]);
             return true;
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+            MainUtil.sendMessage(plr, C.NO_PLOTS);
             return true;
         }
     }

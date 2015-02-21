@@ -46,21 +46,21 @@ public class Swap extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
-            BukkitPlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
+            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
+            MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.swap")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if ((plot != null) && plot.settings.isMerged()) {
-            BukkitPlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
+            MainUtil.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }
         final String id = args[0];
@@ -69,26 +69,26 @@ public class Swap extends SubCommand {
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
             final Plot plot2 = PlotSquared.getPlots(world).get(plotid);
-            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.swap")) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
+            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+                MainUtil.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
                 return false;
             }
         } catch (final Exception e) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            BukkitPlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
         assert plot != null;
         if (plot.id.equals(plotid)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            BukkitPlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
         PlotSelection.swap(world, plot.id, plotid);
         // TODO Requires testing!!
         DBFunc.dbManager.swapPlots(plot, MainUtil.getPlot(world, plotid));
         // TODO Requires testing!!
-        BukkitPlayerFunctions.sendMessage(plr, C.SWAP_SUCCESS);
+        MainUtil.sendMessage(plr, C.SWAP_SUCCESS);
         MainUtil.update(plr.getLocation());
         return true;
     }

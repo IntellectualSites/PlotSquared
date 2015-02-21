@@ -19,7 +19,7 @@ public class DEOP extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
-            return BukkitPlayerFunctions.sendMessage(plr, "&cUsage: &c" + this.usage);
+            return MainUtil.sendMessage(plr, "&cUsage: &c" + this.usage);
         }
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);

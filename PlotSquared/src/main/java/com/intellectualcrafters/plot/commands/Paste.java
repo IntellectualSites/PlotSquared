@@ -37,16 +37,16 @@ public class Paste extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.paste")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.paste")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
-            BukkitPlayerFunctions.sendMessage(plr, C.UNLINK_REQUIRED);
+            MainUtil.sendMessage(plr, C.UNLINK_REQUIRED);
             return false;
         }
         assert plot != null;

@@ -37,21 +37,21 @@ public class Target extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (!PlotSquared.isPlotWorld(plr.getWorld())) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         if (args.length == 1) {
             final PlotId id = MainUtil.parseId(args[1]);
             if (id == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+                MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
             final Location loc = MainUtil.getPlotHome(plr.getWorld(), id);
             plr.setCompassTarget(loc);
-            BukkitPlayerFunctions.sendMessage(plr, C.COMPASS_TARGET);
+            MainUtil.sendMessage(plr, C.COMPASS_TARGET);
             return true;
         }
-        BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot target <X;Z>");
+        MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot target <X;Z>");
         return false;
     }
 }

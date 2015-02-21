@@ -68,7 +68,7 @@ public class Info extends SubCommand {
             plot = BukkitPlayerFunctions.getCurrentPlot(player);
         } else {
             if (args.length < 2) {
-                BukkitPlayerFunctions.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
+                MainUtil.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
             final PlotWorld plotworld = PlotSquared.getPlotWorld(args[0]);

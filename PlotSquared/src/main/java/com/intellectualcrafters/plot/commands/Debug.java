@@ -43,7 +43,7 @@ public class Debug extends SubCommand {
             for (final C c : C.values()) {
                 msg.append(c.s()).append("\n");
             }
-            BukkitPlayerFunctions.sendMessage(plr, msg.toString());
+            MainUtil.sendMessage(plr, msg.toString());
             return true;
         }
         StringBuilder information;
@@ -84,7 +84,7 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "View all captions", "/plot debug msg"));
         }
         {
-            BukkitPlayerFunctions.sendMessage(plr, information.toString());
+            MainUtil.sendMessage(plr, information.toString());
         }
         return true;
     }

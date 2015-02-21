@@ -42,20 +42,20 @@ public class Denied extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
             return true;
         }
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.denied")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
@@ -66,12 +66,12 @@ public class Denied extends SubCommand {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.denied.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.trusted.contains(uuid)) {
@@ -87,7 +87,7 @@ public class Denied extends SubCommand {
                 final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
-                BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
             final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
@@ -98,18 +98,18 @@ public class Denied extends SubCommand {
                     player.teleport(player.getWorld().getSpawnLocation());
                 }
             }
-            BukkitPlayerFunctions.sendMessage(plr, C.DENIED_ADDED);
+            MainUtil.sendMessage(plr, C.DENIED_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.denied.contains(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeDenied(uuid);
                 DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
-                BukkitPlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);
+                MainUtil.sendMessage(plr, C.DENIED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
@@ -117,9 +117,9 @@ public class Denied extends SubCommand {
             DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
-            BukkitPlayerFunctions.sendMessage(plr, C.DENIED_REMOVED);
+            MainUtil.sendMessage(plr, C.DENIED_REMOVED);
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
             return true;
         }
         return true;

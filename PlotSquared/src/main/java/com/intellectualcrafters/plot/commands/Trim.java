@@ -63,35 +63,35 @@ public class Trim extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
-            BukkitPlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);
             if (id != null) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot trim x;z &l<world>");
+                MainUtil.sendMessage(plr, "/plot trim x;z &l<world>");
                 return false;
             }
             if (arg.equals("all")) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot trim all &l<world>");
+                MainUtil.sendMessage(plr, "/plot trim all &l<world>");
                 return false;
             }
-            BukkitPlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
         if (args.length != 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
         final String arg = args[0].toLowerCase();
         if (!arg.equals("all")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.TRIM_SYNTAX);
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
         if ((world == null) || (PlotSquared.getPlotWorld(world) == null)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_WORLD);
+            MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
         if (Trim.TASK) {

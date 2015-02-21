@@ -103,7 +103,7 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    BukkitPlayerFunctions.sendMessage(plr, s);
+                    MainUtil.sendMessage(plr, s);
                 }
             }
         });

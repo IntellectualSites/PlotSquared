@@ -55,62 +55,62 @@ public class Cluster extends SubCommand {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments
-            BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
+            MainUtil.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
             return false;
         }
         final String sub = args[0].toLowerCase();
         switch (sub) {
             case "l":
             case "list": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.list")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.list");
+                if (!Permissions.hasPermission(plr, "plots.cluster.list")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.list");
                     return false;
                 }
                 if (args.length != 1) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster list");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster list");
                     return false;
                 }
                 final HashSet<PlotCluster> clusters = ClusterManager.getClusters(plr.getWorld());
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_HEADING, clusters.size() + "");
+                MainUtil.sendMessage(plr, C.CLUSTER_LIST_HEADING, clusters.size() + "");
                 for (final PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
                     final String name = "'" + cluster.getName() + "' : " + cluster.toString();
                     if (UUIDHandler.getUUID(plr).equals(cluster.owner)) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&a" + name);
+                        MainUtil.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&a" + name);
                     } else if (cluster.helpers.contains(UUIDHandler.getUUID(plr))) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&3" + name);
+                        MainUtil.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&3" + name);
                     } else if (cluster.invited.contains(UUIDHandler.getUUID(plr))) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&9" + name);
+                        MainUtil.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, "&9" + name);
                     } else {
-                        BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, cluster.toString());
+                        MainUtil.sendMessage(plr, C.CLUSTER_LIST_ELEMENT, cluster.toString());
                     }
                 }
                 return true;
             }
             case "c":
             case "create": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.create")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create");
+                if (!Permissions.hasPermission(plr, "plots.cluster.create")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create");
                     return false;
                 }
                 if (args.length != 4) {
                     final PlotId id = ClusterManager.estimatePlotId(plr.getLocation());
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
-                    BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_CURRENT_PLOTID, "" + id);
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
+                    MainUtil.sendMessage(plr, C.CLUSTER_CURRENT_PLOTID, "" + id);
                     return false;
                 }
                 // check pos1 / pos2
                 final PlotId pos1 = MainUtil.parseId(args[2]);
                 final PlotId pos2 = MainUtil.parseId(args[3]);
                 if ((pos1 == null) || (pos2 == null)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+                    MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
                 // check if name is taken
                 final String name = args[1];
                 for (final PlotCluster cluster : ClusterManager.getClusters(plr.getWorld())) {
                     if (name.equals(cluster.getName())) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.ALIAS_IS_TAKEN);
+                        MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                         return false;
                     }
                 }
@@ -118,7 +118,7 @@ public class Cluster extends SubCommand {
                 final PlotClusterId id = new PlotClusterId(pos1, pos2);
                 final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
                 if ((intersects.size() > 0) || (pos2.x < pos1.x) || (pos2.y < pos1.y)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
+                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
                     return false;
                 }
                 // create cluster
@@ -142,37 +142,37 @@ public class Cluster extends SubCommand {
                     PlotSquared.config.createSection("worlds." + world);
                     PlotSquared.loadWorld(plr.getWorld());
                 }
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_ADDED);
+                MainUtil.sendMessage(plr, C.CLUSTER_ADDED);
                 return true;
             }
             case "disband":
             case "del":
             case "delete": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.delete")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete");
+                if (!Permissions.hasPermission(plr, "plots.cluster.delete")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete");
                     return false;
                 }
                 if ((args.length != 1) && (args.length != 2)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster delete [name]");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster delete [name]");
                     return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
+                        MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                        MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
                 if (!cluster.owner.equals(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.delete.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.delete.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete.other");
                         return false;
                     }
                 }
@@ -205,35 +205,35 @@ public class Cluster extends SubCommand {
                 ClusterManager.last = null;
                 ClusterManager.clusters.get(cluster.world).remove(cluster);
                 ClusterManager.regenCluster(cluster);
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_DELETED);
+                MainUtil.sendMessage(plr, C.CLUSTER_DELETED);
                 return true;
             }
             case "res":
             case "resize": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.resize")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize");
+                if (!Permissions.hasPermission(plr, "plots.cluster.resize")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize");
                     return false;
                 }
                 if (args.length != 3) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster resize <pos1> <pos2>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster resize <pos1> <pos2>");
                     return false;
                 }
                 // check pos1 / pos2
                 final PlotId pos1 = MainUtil.parseId(args[1]);
                 final PlotId pos2 = MainUtil.parseId(args[2]);
                 if ((pos1 == null) || (pos2 == null)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+                    MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
                 // check if in cluster
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                    MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.resize.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.resize.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.other");
                         return false;
                     }
                 }
@@ -241,76 +241,76 @@ public class Cluster extends SubCommand {
                 final PlotClusterId id = new PlotClusterId(pos1, pos2);
                 final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getWorld().getName(), id);
                 if (intersects.size() > 1) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_INTERSECTION, (intersects.size() - 1) + "");
+                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, (intersects.size() - 1) + "");
                     return false;
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, id);
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_RESIZED);
+                MainUtil.sendMessage(plr, C.CLUSTER_RESIZED);
                 return true;
             }
             case "reg":
             case "regenerate":
             case "regen": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.delete")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen");
+                if (!Permissions.hasPermission(plr, "plots.cluster.delete")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen");
                     return false;
                 }
                 if ((args.length != 1) && (args.length != 2)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster regen [name]");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster regen [name]");
                     return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
+                        MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                        MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
                 if (!cluster.owner.equals(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.regen.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.regen.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen.other");
                         return false;
                     }
                 }
                 ClusterManager.regenCluster(cluster);
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_REGENERATED);
+                MainUtil.sendMessage(plr, C.CLUSTER_REGENERATED);
                 return true;
             }
             case "add":
             case "inv":
             case "invite": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.invite")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite");
+                if (!Permissions.hasPermission(plr, "plots.cluster.invite")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite");
                     return false;
                 }
                 if (args.length != 2) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster invite <player>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster invite <player>");
                     return false;
                 }
                 // check if in cluster
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                    MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.invite.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.invite.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite.other");
                         return false;
                     }
                 }
                 // check uuid
                 final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
                 }
                 if (!cluster.hasRights(uuid)) {
@@ -323,40 +323,40 @@ public class Cluster extends SubCommand {
                         MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLUSTER_INVITED, cluster.getName());
                     }
                 }
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_ADDED_USER);
+                MainUtil.sendMessage(plr, C.CLUSTER_ADDED_USER);
                 return true;
             }
             case "k":
             case "remove":
             case "kick": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.kick")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick");
+                if (!Permissions.hasPermission(plr, "plots.cluster.kick")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick");
                     return false;
                 }
                 if (args.length != 2) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster kick <player>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster kick <player>");
                     return false;
                 }
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                    MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.kick.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.kick.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick.other");
                         return false;
                     }
                 }
                 // check uuid
                 final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
                 }
                 // Can't kick if the player is yourself, the owner, or not added to the cluster
                 if (uuid.equals(UUIDHandler.getUUID(plr)) || uuid.equals(cluster.owner) || !cluster.hasRights(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.CANNOT_KICK_PLAYER, cluster.getName());
+                    MainUtil.sendMessage(plr, C.CANNOT_KICK_PLAYER, cluster.getName());
                     return false;
                 }
                 if (cluster.helpers.contains(uuid)) {
@@ -376,40 +376,40 @@ public class Cluster extends SubCommand {
                         DBFunc.delete(world, plot);
                     }
                 }
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_KICKED_USER);
+                MainUtil.sendMessage(plr, C.CLUSTER_KICKED_USER);
                 return true;
             }
             case "quit":
             case "leave": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.leave")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.leave");
+                if (!Permissions.hasPermission(plr, "plots.cluster.leave")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.leave");
                     return false;
                 }
                 if ((args.length != 1) && (args.length != 2)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster leave [name]");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster leave [name]");
                     return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
+                        MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                        MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
                 final UUID uuid = UUIDHandler.getUUID(plr);
                 if (!cluster.hasRights(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.CLUSTER_NOT_ADDED);
                     return false;
                 }
                 if (uuid.equals(cluster.owner)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_CANNOT_LEAVE);
+                    MainUtil.sendMessage(plr, C.CLUSTER_CANNOT_LEAVE);
                     return false;
                 }
                 if (cluster.helpers.contains(uuid)) {
@@ -418,7 +418,7 @@ public class Cluster extends SubCommand {
                 }
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
-                BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
+                MainUtil.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
                 for (final Plot plot : PlotSquared.getPlots(plr.getWorld(), uuid)) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if ((current != null) && current.equals(cluster)) {
@@ -431,84 +431,84 @@ public class Cluster extends SubCommand {
             case "admin":
             case "helper":
             case "helpers": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.helpers")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.helpers");
+                if (!Permissions.hasPermission(plr, "plots.cluster.helpers")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.helpers");
                     return false;
                 }
                 if (args.length != 3) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
                     return false;
                 }
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                    MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
                 final UUID uuid = UUIDHandler.getUUID(args[2]);
                 if (uuid == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                     return false;
                 }
                 if (args[1].toLowerCase().equals("add")) {
                     cluster.helpers.add(uuid);
-                    return BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_ADDED_HELPER);
+                    return MainUtil.sendMessage(plr, C.CLUSTER_ADDED_HELPER);
                 }
                 if (args[1].toLowerCase().equals("remove")) {
                     cluster.helpers.remove(uuid);
-                    return BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_REMOVED_HELPER);
+                    return MainUtil.sendMessage(plr, C.CLUSTER_REMOVED_HELPER);
                 }
-                BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
                 return false;
             }
             case "spawn":
             case "home":
             case "tp": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.tp")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp");
+                if (!Permissions.hasPermission(plr, "plots.cluster.tp")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp");
                     return false;
                 }
                 if (args.length != 2) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster tp <name>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster tp <name>");
                     return false;
                 }
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                     return false;
                 }
                 final UUID uuid = UUIDHandler.getUUID(plr);
                 if (!cluster.hasRights(uuid)) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.tp.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.tp.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp.other");
                         return false;
                     }
                 }
                 plr.teleport(ClusterManager.getHome(cluster));
-                return BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_TELEPORTING);
+                return MainUtil.sendMessage(plr, C.CLUSTER_TELEPORTING);
             }
             case "i":
             case "info":
             case "show":
             case "information": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.info")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.info");
+                if (!Permissions.hasPermission(plr, "plots.cluster.info")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.info");
                     return false;
                 }
                 if ((args.length != 1) && (args.length != 2)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster info [name]");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster info [name]");
                     return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = ClusterManager.getCluster(plr.getWorld().getName(), args[1]);
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
+                        MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
                     cluster = ClusterManager.getCluster(plr.getLocation());
                     if (cluster == null) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                        MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
                     }
                 }
@@ -526,28 +526,28 @@ public class Cluster extends SubCommand {
                 message = message.replaceAll("%name%", name);
                 message = message.replaceAll("%size%", size);
                 message = message.replaceAll("%rights%", rights);
-                BukkitPlayerFunctions.sendMessage(plr, message);
+                MainUtil.sendMessage(plr, message);
                 return true;
             }
             case "sh":
             case "setspawn":
             case "sethome": {
-                if (!BukkitMain.hasPermission(plr, "plots.cluster.sethome")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
+                if (!Permissions.hasPermission(plr, "plots.cluster.sethome")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
                 }
                 if ((args.length != 1) && (args.length != 2)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster sethome");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster sethome");
                     return false;
                 }
                 final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
                 if (cluster == null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                    MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!BukkitMain.hasPermission(plr, "plots.cluster.sethome.other")) {
-                        BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome.other");
+                    if (!Permissions.hasPermission(plr, "plots.cluster.sethome.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome.other");
                         return false;
                     }
                 }
@@ -557,10 +557,10 @@ public class Cluster extends SubCommand {
                 final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
                 cluster.settings.setPosition(blockloc);
                 DBFunc.setPosition(cluster, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
-                return BukkitPlayerFunctions.sendMessage(plr, C.POSITION_SET);
+                return MainUtil.sendMessage(plr, C.POSITION_SET);
             }
         }
-        BukkitPlayerFunctions.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
+        MainUtil.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
         return false;
     }
 }

@@ -44,19 +44,19 @@ public class DebugFixFlags extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
+            MainUtil.sendMessage(plr, C.NOT_CONSOLE);
             return false;
         }
         if (args.length != 1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
             return false;
         }
         final World world = Bukkit.getWorld(args[0]);
         if ((world == null) || !PlotSquared.isPlotWorld(world)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
-        BukkitPlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
+        MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
         for (final Plot plot : PlotSquared.getPlots(world).values()) {
             final Set<Flag> flags = plot.settings.flags;
             final ArrayList<Flag> toRemove = new ArrayList<Flag>();
@@ -73,7 +73,7 @@ public class DebugFixFlags extends SubCommand {
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
             }
         }
-        BukkitPlayerFunctions.sendMessage(plr, "&aDone!");
+        MainUtil.sendMessage(plr, "&aDone!");
         return true;
     }
 }

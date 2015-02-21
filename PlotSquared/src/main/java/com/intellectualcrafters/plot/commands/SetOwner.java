@@ -54,15 +54,15 @@ public class SetOwner extends SubCommand {
     public boolean execute(final PlotPlayer plr, final String... args) {
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || (plot.owner == null)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
         if (args.length < 1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NEED_USER);
+            MainUtil.sendMessage(plr, C.NEED_USER);
             return false;
         }
-        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.setowner")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
+        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
         }
         final World world = plr.getWorld();
@@ -73,7 +73,7 @@ public class SetOwner extends SubCommand {
             final Plot current = PlotSquared.getPlots(world).get(id);
             final UUID uuid = getUUID(args[0]);
             if (uuid == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
             current.owner = uuid;
@@ -84,7 +84,7 @@ public class SetOwner extends SubCommand {
             }
         }
         MainUtil.setSign(world, args[0], plot);
-        BukkitPlayerFunctions.sendMessage(plr, C.SET_OWNER);
+        MainUtil.sendMessage(plr, C.SET_OWNER);
         return true;
     }
 }

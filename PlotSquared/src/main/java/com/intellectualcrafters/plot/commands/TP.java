@@ -43,7 +43,7 @@ public class TP extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
+            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
             return false;
         }
         final String id = args[0];
@@ -55,7 +55,7 @@ public class TP extends SubCommand {
             }
         }
         if (!PlotSquared.isPlotWorld(world)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot temp;
@@ -68,7 +68,7 @@ public class TP extends SubCommand {
             PlotSquared.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
         }
         return false;
     }

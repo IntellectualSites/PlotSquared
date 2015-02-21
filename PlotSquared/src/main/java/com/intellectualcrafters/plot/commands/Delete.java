@@ -47,7 +47,7 @@ public class Delete extends SubCommand {
         if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !BukkitMain.hasPermission(plr, "plots.admin.command.delete")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -65,7 +65,7 @@ public class Delete extends SubCommand {
             plot.clear(plr, true);
             DBFunc.delete(plr.getWorld().getName(), plot);
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, "Plot deletion has been denied.");
+            MainUtil.sendMessage(plr, "Plot deletion has been denied.");
         }
         return true;
     }

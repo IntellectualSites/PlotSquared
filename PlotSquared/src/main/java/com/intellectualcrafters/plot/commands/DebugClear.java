@@ -64,7 +64,7 @@ public class DebugClear extends SubCommand {
                             final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
                             final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
                             if (MainUtil.runners.containsKey(plot)) {
-                                BukkitPlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+                                MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
                             }
                             MainUtil.runners.put(plot, 1);
@@ -89,7 +89,7 @@ public class DebugClear extends SubCommand {
         if (!BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !BukkitMain.hasPermission(plr, "plots.admin.command.debugclear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -97,7 +97,7 @@ public class DebugClear extends SubCommand {
         final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
         if (MainUtil.runners.containsKey(plot)) {
-            BukkitPlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);
@@ -105,7 +105,7 @@ public class DebugClear extends SubCommand {
             @Override
             public void run() {
                 MainUtil.runners.remove(plot);
-                BukkitPlayerFunctions.sendMessage(plr, "&aDone!");
+                MainUtil.sendMessage(plr, "&aDone!");
             }
         });
         // sign

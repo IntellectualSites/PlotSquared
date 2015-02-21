@@ -108,7 +108,7 @@ public class Buy extends SubCommand {
         }
         plot.owner = UUIDHandler.getUUID(plr);
         DBFunc.setOwner(plot, plot.owner);
-        BukkitPlayerFunctions.sendMessage(plr, C.CLAIMED);
+        MainUtil.sendMessage(plr, C.CLAIMED);
         return true;
     }
 }

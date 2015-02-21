@@ -55,47 +55,47 @@ public class Purge extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
-            BukkitPlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
+            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
             return false;
         }
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);
             if (id != null) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge x;z &l<world>");
+                MainUtil.sendMessage(plr, "/plot purge x;z &l<world>");
                 return false;
             }
             final UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
+                MainUtil.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
                 return false;
             }
             if (arg.equals("player")) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge &l<player> <world>");
+                MainUtil.sendMessage(plr, "/plot purge &l<player> <world>");
                 return false;
             }
             if (arg.equals("unowned")) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge unowned &l<world>");
+                MainUtil.sendMessage(plr, "/plot purge unowned &l<world>");
                 return false;
             }
             if (arg.equals("unknown")) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge unknown &l<world>");
+                MainUtil.sendMessage(plr, "/plot purge unknown &l<world>");
                 return false;
             }
             if (arg.equals("all")) {
-                BukkitPlayerFunctions.sendMessage(plr, "/plot purge all &l<world>");
+                MainUtil.sendMessage(plr, "/plot purge all &l<world>");
                 return false;
             }
-            BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
         if (args.length != 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
         if ((world == null) || !PlotSquared.isPlotWorld(world)) {
-            BukkitPlayerFunctions.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
+            MainUtil.sendMessage(null, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         final String worldname = world.getName();
@@ -123,7 +123,7 @@ public class Purge extends SubCommand {
         if (arg.equals("all")) {
             final Set<PlotId> ids = PlotSquared.getPlots(world).keySet();
             if (ids.size() == 0) {
-                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
@@ -140,7 +140,7 @@ public class Purge extends SubCommand {
                 }
             }
             if (ids.size() == 0) {
-                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
@@ -154,17 +154,17 @@ public class Purge extends SubCommand {
                 }
             }
             if (ids.size() == 0) {
-                return BukkitPlayerFunctions.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(ids.size());
         }
-        BukkitPlayerFunctions.sendMessage(plr, C.PURGE_SYNTAX);
+        MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
         return false;
     }
     
     private boolean finishPurge(final int amount) {
-        BukkitPlayerFunctions.sendMessage(null, C.PURGE_SUCCESS, amount + "");
+        MainUtil.sendMessage(null, C.PURGE_SUCCESS, amount + "");
         return false;
     }
 }

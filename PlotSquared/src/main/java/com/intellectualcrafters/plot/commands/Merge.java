@@ -76,22 +76,22 @@ public class Merge extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        final boolean admin = BukkitMain.hasPermission(plr, "plots.admin.command.merge");
+        final boolean admin = Permissions.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (args.length < 1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            BukkitPlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         int direction = -1;
@@ -102,8 +102,8 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            BukkitPlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            BukkitPlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         final World world = plr.getWorld();
@@ -138,7 +138,7 @@ public class Merge extends SubCommand {
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
+                MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
         }
@@ -160,10 +160,10 @@ public class Merge extends SubCommand {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.setCancelled(true);
-            BukkitPlayerFunctions.sendMessage(plr, "&cMerge has been cancelled");
+            MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }
-        BukkitPlayerFunctions.sendMessage(plr, "&cPlots have been merged");
+        MainUtil.sendMessage(plr, "&cPlots have been merged");
         MainUtil.mergePlots(world, plots, true);
         MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
         MainUtil.update(plr.getLocation());

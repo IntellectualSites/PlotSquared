@@ -40,32 +40,32 @@ public class Move extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
-            BukkitPlayerFunctions.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
+            MainUtil.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
         }
         if (args.length != 2) {
-            BukkitPlayerFunctions.sendMessage(plr, "/plot move <pos1> <pos2>");
+            MainUtil.sendMessage(plr, "/plot move <pos1> <pos2>");
             return false;
         }
         final World world = plr.getWorld();
         final PlotId plot1 = MainUtil.parseId(args[0]);
         final PlotId plot2 = MainUtil.parseId(args[1]);
         if ((plot1 == null) || (plot2 == null)) {
-            BukkitPlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
+            MainUtil.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
             return false;
         }
         if (plot1 == plot2) {
-            BukkitPlayerFunctions.sendMessage(plr, "DUPLICATE ID");
+            MainUtil.sendMessage(plr, "DUPLICATE ID");
             return false;
         }
         if (MainUtil.move(world, plot1, plot2, new Runnable() {
             @Override
             public void run() {
-                BukkitPlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+                MainUtil.sendMessage(plr, "MOVE SUCCESS");
             }
         })) {
             return true;
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, "MOVE FAILED");
+            MainUtil.sendMessage(plr, "MOVE FAILED");
             return false;
         }
     }

@@ -36,7 +36,7 @@ public class Database extends SubCommand {
         } else {
             final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
-                return BukkitPlayerFunctions.sendMessage(p, msg);
+                return MainUtil.sendMessage(p, msg);
             } else {
                 return sendMessageU(null, msg);
             }

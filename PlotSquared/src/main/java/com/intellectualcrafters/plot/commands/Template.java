@@ -42,23 +42,23 @@ public class Template extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length != 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
         final World world = Bukkit.getWorld(args[1]);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(args[1]);
         if ((world == null) || (plotworld == null)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "import": {
                 // TODO import template
-                BukkitPlayerFunctions.sendMessage(plr, "TODO");
+                MainUtil.sendMessage(plr, "TODO");
                 return true;
             }
             case "export": {
-                BukkitPlayerFunctions.sendMessage(plr, "TODO");
+                MainUtil.sendMessage(plr, "TODO");
             }
         }
         // TODO allow world settings (including schematics to be packed into a single file)

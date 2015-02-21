@@ -49,7 +49,7 @@ public class DebugLoadTest extends SubCommand {
                 PlotSquared.log("&3===END OF STACKTRACE===");
             }
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
+            MainUtil.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
         }
         return true;
     }

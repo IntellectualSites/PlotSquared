@@ -42,20 +42,20 @@ public class Trusted extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.trusted")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.trusted")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
@@ -66,12 +66,12 @@ public class Trusted extends SubCommand {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.trusted.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.helpers.contains(uuid)) {
@@ -87,21 +87,21 @@ public class Trusted extends SubCommand {
                 final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
-                BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            BukkitPlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
+            MainUtil.sendMessage(plr, C.TRUSTED_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.trusted.contains(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.T_WAS_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.T_WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeTrusted(uuid);
                 DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
-                BukkitPlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
+                MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
@@ -109,9 +109,9 @@ public class Trusted extends SubCommand {
             DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
-            BukkitPlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
+            MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
         return true;

@@ -47,7 +47,7 @@ public class Reload extends SubCommand {
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
-            BukkitPlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
+            MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }
         return true;
     }

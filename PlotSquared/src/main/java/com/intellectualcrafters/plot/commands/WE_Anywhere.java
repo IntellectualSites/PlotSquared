@@ -36,15 +36,15 @@ public class WE_Anywhere extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (PlotSquared.worldEdit == null) {
-            BukkitPlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
+            MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
-        if (BukkitMain.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
+        if (Permissions.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
             PWE.removeMask(plr);
-            BukkitPlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
+            MainUtil.sendMessage(plr, "&6Cleared your WorldEdit mask");
         } else {
             PWE.setMask(plr, plr.getLocation(), true);
-            BukkitPlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
+            MainUtil.sendMessage(plr, "&6Updated your WorldEdit mask");
         }
         return true;
     }

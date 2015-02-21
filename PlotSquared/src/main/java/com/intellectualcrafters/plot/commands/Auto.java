@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -77,31 +78,30 @@ public class Auto extends SubCommand {
     // TODO auto claim a mega plot with schematic
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        World world;
+        String world;
         int size_x = 1;
         int size_z = 1;
         String schematic = "";
         if (PlotSquared.getPlotWorlds().size() == 1) {
-            world = Bukkit.getWorld(PlotSquared.getPlotWorlds().iterator().next());
+            world = PlotSquared.getPlotWorlds().iterator().next();
         } else {
-            if (PlotSquared.isPlotWorld(plr.getWorld().getName())) {
-                world = plr.getWorld();
-            } else {
-                BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            world = plr.getLocation().getWorld();
+            if (!PlotSquared.isPlotWorld(world)) {
+                MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
         }
         if (args.length > 0) {
-            if (BukkitMain.hasPermission(plr, "plots.auto.mega")) {
+            if (Permissions.hasPermission(plr, "plots.auto.mega")) {
                 try {
                     final String[] split = args[0].split(",");
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
                     if ((size_x < 1) || (size_z < 1)) {
-                        BukkitPlayerFunctions.sendMessage(plr, "&cError: size<=0");
+                        MainUtil.sendMessage(plr, "&cError: size<=0");
                     }
                     if ((size_x > 4) || (size_z > 4)) {
-                        BukkitPlayerFunctions.sendMessage(plr, "&cError: size>4");
+                        MainUtil.sendMessage(plr, "&cError: size>4");
                     }
                     if (args.length > 1) {
                         schematic = args[1];
@@ -121,15 +121,15 @@ public class Auto extends SubCommand {
             }
         }
         if ((size_x * size_z) > Settings.MAX_AUTO_SIZE) {
-            BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
+            MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
         final int diff = BukkitPlayerFunctions.getPlayerPlotCount(world, plr) - BukkitPlayerFunctions.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
-                BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
+                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
             } else {
-                BukkitPlayerFunctions.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }
             return false;
         }
@@ -153,8 +153,8 @@ public class Auto extends SubCommand {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!BukkitMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+            if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+                MainUtil.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
             // }
@@ -170,7 +170,7 @@ public class Auto extends SubCommand {
             final PlotCluster cluster = ClusterManager.getCluster(loc);
             // Must be standing in a cluster
             if (cluster == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_CLUSTER);
+                MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                 return false;
             }
             final PlotId bot = cluster.getP1();
@@ -190,7 +190,7 @@ public class Auto extends SubCommand {
                 id = getNextPlot(id, 1);
             }
             // no free plots
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_FREE_PLOTS);
+            MainUtil.sendMessage(plr, C.NO_FREE_PLOTS);
             return false;
         }
         boolean br = false;

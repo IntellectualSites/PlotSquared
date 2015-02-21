@@ -41,20 +41,20 @@ public class Helpers extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
-            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return true;
         }
         final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            BukkitPlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !BukkitMain.hasPermission(plr, "plots.admin.command.helpers")) {
-            BukkitPlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
@@ -65,12 +65,12 @@ public class Helpers extends SubCommand {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                BukkitPlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.trusted.contains(uuid)) {
@@ -86,21 +86,21 @@ public class Helpers extends SubCommand {
                 final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
-                BukkitPlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
+            MainUtil.sendMessage(plr, C.HELPER_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.helpers.contains(uuid)) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeHelper(uuid);
                 DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
-                BukkitPlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+                MainUtil.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
@@ -108,9 +108,9 @@ public class Helpers extends SubCommand {
             DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
             final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
-            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+            MainUtil.sendMessage(plr, C.HELPER_REMOVED);
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
         return true;

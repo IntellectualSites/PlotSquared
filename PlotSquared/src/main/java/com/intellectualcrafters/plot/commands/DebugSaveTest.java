@@ -45,7 +45,7 @@ public class DebugSaveTest extends SubCommand {
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
         } else {
-            BukkitPlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
+            MainUtil.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
         }
         return true;
     }

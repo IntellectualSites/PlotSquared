@@ -69,8 +69,8 @@ public class Schematic extends SubCommand {
                     PlotSquared.log(C.IS_CONSOLE);
                     return false;
                 }
-                if (!BukkitMain.hasPermission(plr, "plots.schematic.paste")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
+                if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;
                 }
                 if (args.length < 2) {
@@ -82,7 +82,7 @@ public class Schematic extends SubCommand {
                     break;
                 }
                 if (this.running) {
-                    BukkitPlayerFunctions.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
                 final String file2 = args[1];
@@ -150,8 +150,8 @@ public class Schematic extends SubCommand {
                     PlotSquared.log(C.IS_CONSOLE);
                     return false;
                 }
-                if (!BukkitMain.hasPermission(plr, "plots.schematic.test")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
+                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
                     return false;
                 }
                 if (args.length < 2) {
@@ -177,20 +177,20 @@ public class Schematic extends SubCommand {
             case "saveall":
             case "exportall":
                 if (plr != null) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
+                    MainUtil.sendMessage(plr, C.NOT_CONSOLE);
                     return false;
                 }
                 if (args.length != 2) {
-                    BukkitPlayerFunctions.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
                 final HashMap<PlotId, Plot> plotmap = PlotSquared.getPlots(args[1]);
                 if ((plotmap == null) || (plotmap.size() == 0)) {
-                    BukkitPlayerFunctions.sendMessage(null, "&cInvalid world. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(null, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;
                 }
                 if (this.running) {
-                    BukkitPlayerFunctions.sendMessage(null, "&cTask is already running.");
+                    MainUtil.sendMessage(null, "&cTask is already running.");
                     return false;
                 }
                 PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
@@ -216,17 +216,17 @@ public class Schematic extends SubCommand {
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
-                            BukkitPlayerFunctions.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
+                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
                         } else {
                             Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
                                 @Override
                                 public void run() {
-                                    BukkitPlayerFunctions.sendMessage(null, "&6ID: " + plot.id);
+                                    MainUtil.sendMessage(null, "&6ID: " + plot.id);
                                     final boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + worldname + "," + owner + ".schematic");
                                     if (!result) {
-                                        BukkitPlayerFunctions.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
                                     } else {
-                                        BukkitPlayerFunctions.sendMessage(null, "&7 - &aExport success: " + plot.id);
+                                        MainUtil.sendMessage(null, "&7 - &aExport success: " + plot.id);
                                     }
                                 }
                             });
@@ -237,12 +237,12 @@ public class Schematic extends SubCommand {
                 break;
             case "export":
             case "save":
-                if (!BukkitMain.hasPermission(plr, "plots.schematic.save")) {
-                    BukkitPlayerFunctions.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
+                if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }
                 if (this.running) {
-                    BukkitPlayerFunctions.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
                 final String world;
@@ -266,16 +266,16 @@ public class Schematic extends SubCommand {
                             final String[] split = args[2].split(";");
                             final PlotId i = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                             if ((PlotSquared.getPlots(world) == null) || (PlotSquared.getPlots(world).get(i) == null)) {
-                                BukkitPlayerFunctions.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
+                                MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                                 return false;
                             }
                             p2 = PlotSquared.getPlots(world).get(i);
                         } catch (final Exception e) {
-                            BukkitPlayerFunctions.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
+                            MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                             return false;
                         }
                     } else {
-                        BukkitPlayerFunctions.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
+                        MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                         return false;
                     }
                 }
@@ -297,17 +297,17 @@ public class Schematic extends SubCommand {
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
-                            BukkitPlayerFunctions.sendMessage(plr, "&7 - Skipped plot &c" + plot.id);
+                            MainUtil.sendMessage(plr, "&7 - Skipped plot &c" + plot.id);
                         } else {
                             Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
                                 @Override
                                 public void run() {
-                                    BukkitPlayerFunctions.sendMessage(plr, "&6ID: " + plot.id);
+                                    MainUtil.sendMessage(plr, "&6ID: " + plot.id);
                                     final boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + world + "," + owner.trim() + ".schematic");
                                     if (!result) {
-                                        BukkitPlayerFunctions.sendMessage(plr, "&7 - Failed to save &c" + plot.id);
+                                        MainUtil.sendMessage(plr, "&7 - Failed to save &c" + plot.id);
                                     } else {
-                                        BukkitPlayerFunctions.sendMessage(plr, "&7 - &aExport success: " + plot.id);
+                                        MainUtil.sendMessage(plr, "&7 - &aExport success: " + plot.id);
                                     }
                                 }
                             });
