@@ -47,7 +47,9 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
@@ -110,7 +112,7 @@ public class WorldEditListener implements Listener {
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
             if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
-                PWE.setMask(p, loc, false);
+                PWE.setMask(BukkitUtil.getPlayer(p), loc, false);
             }
         }
     }
@@ -118,7 +120,8 @@ public class WorldEditListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
-        if (!PlotSquared.isPlotWorld(p.getWorld().getName()) || BukkitMain.hasPermission(p, "plots.worldedit.bypass")) {
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        if (!PlotSquared.isPlotWorld(p.getWorld().getName()) || Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
             return;
         }
         String cmd = e.getMessage().toLowerCase();
@@ -149,16 +152,16 @@ public class WorldEditListener implements Listener {
                 final LocalSession session = PlotSquared.worldEdit.getSession(p);
                 final Mask mask = session.getMask();
                 if (mask == null) {
-                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Both points");
+                    MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "Both points");
                     return;
                 }
                 if (!mask.test(pos1)) {
                     e.setCancelled(true);
-                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 1");
+                    MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "Position 1");
                 }
                 if (!mask.test(pos2)) {
                     e.setCancelled(true);
-                    BukkitPlayerFunctions.sendMessage(p, C.REQUIRE_SELECTION_IN_MASK, "Position 2");
+                    MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "Position 2");
                 }
             }
         }
@@ -168,17 +171,18 @@ public class WorldEditListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent e) {
         final Player p = e.getPlayer();
         final Location l = p.getLocation();
-        if (BukkitMain.hasPermission(p, "plots.worldedit.bypass")) {
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
             if (isPlotWorld(l)) {
-                PWE.removeMask(p);
+                PWE.removeMask(pp);
             }
             return;
         }
         if (isPlotWorld(l)) {
             com.intellectualcrafters.plot.object.Location loc = BukkitUtil.getLocation(l);
-            PWE.setMask(p, loc, false);
+            PWE.setMask(pp, loc, false);
         } else {
-            PWE.removeMask(p);
+            PWE.removeMask(pp);
         }
     }
     
@@ -190,7 +194,8 @@ public class WorldEditListener implements Listener {
         }
         final Location f = e.getFrom();
         final Player p = e.getPlayer();
-        if (BukkitMain.hasPermission(p, "plots.worldedit.bypass")) {
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
             if (!PWE.hasMask(p)) {
                 return;
             }
@@ -201,37 +206,39 @@ public class WorldEditListener implements Listener {
             final PlotId idF = MainUtil.getPlotId(locf);
             final PlotId idT = MainUtil.getPlotId(loct);
             if ((idT != null) && !(idF == idT)) {
-                PWE.setMask(p, loct, false);
+                PWE.setMask(pp, loct, false);
             }
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPortal(final PlayerPortalEvent e) {
-        if (BukkitMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+        Player p = e.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
             return;
         }
-        final Player p = e.getPlayer();
         final Location t = e.getTo();
         final Location f = e.getFrom();
         if (t == null) {
-            PWE.removeMask(p);
+            PWE.removeMask(pp);
             return;
         }
         if (isPlotWorld(t)) {
             com.intellectualcrafters.plot.object.Location loct = BukkitUtil.getLocation(t);
-            PWE.setMask(p, loct, false);
+            PWE.setMask(pp, loct, false);
             return;
         }
         if ((f != null) && isPlotWorld(f)) {
-            PWE.removeMask(p);
+            PWE.removeMask(pp);
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent e) {
         final Player p = e.getPlayer();
-        if (BukkitMain.hasPermission(e.getPlayer(), "plots.worldedit.bypass")) {
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
             if (!PWE.hasMask(p)) {
                 return;
             }
@@ -241,11 +248,11 @@ public class WorldEditListener implements Listener {
         final Location f = e.getFrom();
         if (!PlotSquared.isPlotWorld(loct.getWorld())) {
             if (isPlotWorld(f)) {
-                PWE.removeMask(p);
+                PWE.removeMask(pp);
             }
             return;
         }
         
-        PWE.setMask(p, loct, false);
+        PWE.setMask(pp, loct, false);
     }
 }
