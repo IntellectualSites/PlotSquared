@@ -22,15 +22,16 @@ package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
@@ -60,12 +61,13 @@ public class Claim extends SubCommand {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
             MainUtil.sendMessage(player, C.CLAIMED);
+            Location loc = player.getLocation();
             if (teleport) {
-                MainUtil.teleportPlayer(player, player.getLocation(), plot);
+                MainUtil.teleportPlayer(player, loc, plot);
             }
-            final World world = plot.world;
+            final String world = plot.world;
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-            final Plot plot2 = PlotSquared.getPlots(player.getWorld()).get(plot.id);
+            final Plot plot2 = PlotSquared.getPlots(world).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
@@ -76,12 +78,12 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.paste(BukkitUtil.getLocation(entity), sch, plot2, 0, 0);
+                SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
-            PlotSquared.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
-            MainUtil.update(BukkitUtil.getLocation(entity));
+            PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
+            MainUtil.update(loc);
         }
-        return event.isCancelled();
+        return !result;
     }
     
     @Override
@@ -90,22 +92,24 @@ public class Claim extends SubCommand {
         if (args.length >= 1) {
             schematic = args[0];
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+        Location loc = plr.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (BukkitPlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= BukkitPlayerFunctions.getAllowedPlots(plr)) {
+        int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Plot plot = MainUtil.getPlot(loc);
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
         final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.useEconomy && world.USE_ECONOMY) {
+        if (PlotSquared.economy != null && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
                 final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr) < cost) {
+                if (EconHandler.getBalance(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
                 EconHandler.withdrawPlayer(plr, cost);

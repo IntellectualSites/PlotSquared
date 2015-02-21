@@ -95,7 +95,6 @@ public class Buy extends SubCommand {
             initPrice += plotworld.SELL_PRICE * size;
         }
         if (PlotSquared.economy != null && price > 0d) {
-            final Economy economy = PlotSquared.economy;
             if (EconHandler.getBalance(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }
