@@ -77,15 +77,13 @@ public class PWE {
                 }
             }
             if (force ^ (noMask(s) && !p.hasPermission("plots.worldedit.bypass"))) {
+                // FIXME unchecked casting 
                 final com.sk89q.worldedit.bukkit.BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(((BukkitPlayer) p).player);
                 final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
                 s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            // throw new
-            // PlotSquaredException(PlotSquaredException.PlotError.MISSING_DEPENDENCY,
-            // "WorldEdit == Null?");
         }
     }
     
