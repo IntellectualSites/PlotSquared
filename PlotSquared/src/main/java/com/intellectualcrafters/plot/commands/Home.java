@@ -50,7 +50,7 @@ public class Home extends SubCommand {
     public boolean execute(final PlotPlayer plr, String... args) {
         final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
         if (plots.length == 1) {
-            PlotSquared.teleportPlayer(plr, plr.getLocation(), plots[0]);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[0]);
             return true;
         } else if (plots.length > 1) {
             if (args.length < 1) {
@@ -87,6 +87,6 @@ public class Home extends SubCommand {
     }
     
     public void teleportPlayer(final Player player, final Plot plot) {
-        PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+        MainUtil.teleportPlayer(player, player.getLocation(), plot);
     }
 }

@@ -67,7 +67,7 @@ public class DebugClaimTest extends SubCommand {
             MainUtil.setSign(player, plot);
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLAIMED);
             if (teleport) {
-                PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+                MainUtil.teleportPlayer(player, player.getLocation(), plot);
             }
         }
         return event.isCancelled();

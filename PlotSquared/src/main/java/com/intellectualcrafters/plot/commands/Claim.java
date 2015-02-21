@@ -50,14 +50,18 @@ public class Claim extends SubCommand {
         if (plot.hasOwner() || plot.settings.isMerged()) {
             return false;
         }
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            MainUtil.createPlot(player, plot);
-            MainUtil.setSign(player, plot);
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLAIMED);
+        // FIXME claim plot event
+//        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
+//        Bukkit.getPluginManager().callEvent(event);
+//        boolean result = event.isCancelled();
+        boolean result = true;
+        
+        if (!result) {
+            MainUtil.createPlot(player.getUUID(), plot);
+            MainUtil.setSign(player.getName(), plot);
+            MainUtil.sendMessage(player, C.CLAIMED);
             if (teleport) {
-                PlotSquared.teleportPlayer(player, BukkitUtil.getLocation(entity), plot);
+                MainUtil.teleportPlayer(player, player.getLocation(), plot);
             }
             final World world = plot.world;
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);

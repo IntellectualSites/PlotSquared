@@ -60,12 +60,12 @@ public class TP extends SubCommand {
         }
         Plot temp;
         if ((temp = isAlias(world, id)) != null) {
-            PlotSquared.teleportPlayer(plr, plr.getLocation(), temp);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
             return true;
         }
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            PlotSquared.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
+            MainUtil.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);

@@ -60,7 +60,7 @@ public class Visit extends SubCommand {
             return sendMessage(plr, C.FOUND_NO_PLOTS);
         }
         if (args.length < 2) {
-            PlotSquared.teleportPlayer(plr, plr.getLocation(), plots.get(0));
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
         }
         int i;
@@ -72,7 +72,7 @@ public class Visit extends SubCommand {
         if ((i < 0) || (i >= plots.size())) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        PlotSquared.teleportPlayer(plr, plr.getLocation(), plots.get(i));
+        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i));
         return true;
     }
 }
