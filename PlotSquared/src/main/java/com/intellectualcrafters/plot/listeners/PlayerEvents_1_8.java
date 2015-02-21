@@ -8,13 +8,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -26,23 +25,23 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             final Player p = e.getPlayer();
             PlotPlayer PlotPlayer = BukkitUtil.getPlayer(e.getPlayer());
             if (!isInPlot(l)) {
-                if (!BukkitMain.hasPermission(p, "plots.admin.interact.road")) {
-                    BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.road");
+                if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.road")) {
+                    MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.road");
                     e.setCancelled(true);
                 }
             } else {
                 final Plot plot = MainUtil.getPlot(l);
                 if ((plot == null) || !plot.hasOwner()) {
-                    if (!BukkitMain.hasPermission(p, "plots.admin.interact.unowned")) {
-                        BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                    if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.unowned")) {
+                        MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
                     }
                 } else {
                     UUID uuid = UUIDHandler.getUUID(p);
                     if (!plot.isAdded(uuid)) {
-                        if (!BukkitMain.hasPermission(p, "plots.admin.interact.other")) {
+                        if (!Permissions.hasPermission(PlotPlayer, "plots.admin.interact.other")) {
                             if (isPlotArea(l)) {
-                                BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.other");
+                                MainUtil.sendMessage(PlotPlayer, C.NO_PERMISSION, "plots.admin.interact.other");
                                 e.setCancelled(true);
                             }
                         }
