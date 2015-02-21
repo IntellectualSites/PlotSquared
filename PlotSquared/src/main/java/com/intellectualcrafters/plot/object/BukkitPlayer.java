@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -12,6 +13,9 @@ public class BukkitPlayer implements PlotPlayer {
     public final Player player;
     UUID uuid;
     String name;
+    private HashSet<String> hasPerm;
+    private HashSet<String> noPerm;
+    private int op = 0;
     
     
     public BukkitPlayer(Player player, String name, UUID uuid) {
@@ -39,7 +43,19 @@ public class BukkitPlayer implements PlotPlayer {
 
     @Override
     public boolean hasPermission(String perm) {
-        return player.hasPermission(perm);
+        if (noPerm.contains(perm)) {
+            return false;
+        }
+        if (hasPerm.contains(perm)) {
+            return true;
+        }
+        boolean result = player.hasPermission(perm);
+        if (!result) {
+            noPerm.add(perm);
+            return false;
+        }
+        hasPerm.add(perm);
+        return true;
     }
 
     @Override
@@ -55,7 +71,19 @@ public class BukkitPlayer implements PlotPlayer {
 
     @Override
     public boolean isOp() {
-        return this.player.isOp();
+        if (this.op != 0) {
+            if (this.op == 1) {
+                return false;
+            }
+            return true;
+        }
+        boolean result = this.player.isOp();
+        if (!result) {
+            this.op = 1;
+            return false;
+        }
+        this.op = 2;
+        return true;
     }
 
     @Override

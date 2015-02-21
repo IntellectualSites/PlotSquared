@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
@@ -23,6 +24,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         if (isPlotWorld(l)) {
             final Player p = e.getPlayer();
+            PlotPlayer PlotPlayer = BukkitUtil.getPlayer(e.getPlayer());
             if (!isInPlot(l)) {
                 if (!BukkitMain.hasPermission(p, "plots.admin.interact.road")) {
                     BukkitPlayerFunctions.sendMessage(p, C.NO_PERMISSION, "plots.admin.interact.road");

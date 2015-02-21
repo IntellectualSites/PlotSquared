@@ -36,14 +36,14 @@ public class Permissions {
         return false;
     }
     
-    public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
+    public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range, final int min) {
         if ((player == null) || player.isOp() || player.hasPermission(ADMIN)) {
             return Byte.MAX_VALUE;
         }
         if (player.hasPermission(stub + ".*")) {
             return Byte.MAX_VALUE;
         }
-        for (int i = range; i > 0; i--) {
+        for (int i = min; i < range; i++) {
             if (player.hasPermission(stub + "." + i)) {
                 return i;
             }
