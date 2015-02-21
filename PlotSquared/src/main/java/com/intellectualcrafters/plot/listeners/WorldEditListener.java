@@ -106,10 +106,11 @@ public class WorldEditListener implements Listener {
         if ((p.getItemInHand() == null) || (p.getItemInHand().getType() == Material.AIR)) {
             return;
         }
-        com.intellectualcrafters.plot.object.Location loc = BukkitUtil.getLocation(b.getLocation());
+        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        com.intellectualcrafters.plot.object.Location loc = pp.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
-            if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
+            if (plot.hasOwner() && (plot.helpers != null) && (plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(pp.getUUID()))) {
                 PWE.setMask(BukkitUtil.getPlayer(p), loc, false);
             }
         }
@@ -127,8 +128,8 @@ public class WorldEditListener implements Listener {
             cmd = cmd.substring(0, cmd.indexOf(" "));
         }
         if (this.restrictedcmds.contains(cmd)) {
-            final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(p));
-            if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(UUIDHandler.getUUID(p)))) {
+            final Plot plot = MainUtil.getPlot(pp.getLocation());
+            if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(pp.getUUID()))) {
                 e.setCancelled(true);
             }
             return;
@@ -194,7 +195,7 @@ public class WorldEditListener implements Listener {
         final Player p = e.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(p);
         if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-            if (!PWE.hasMask(p)) {
+            if (!PWE.hasMask(pp)) {
                 return;
             }
         }
@@ -237,7 +238,7 @@ public class WorldEditListener implements Listener {
         final Player p = e.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(p);
         if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-            if (!PWE.hasMask(p)) {
+            if (!PWE.hasMask(pp)) {
                 return;
             }
         }
