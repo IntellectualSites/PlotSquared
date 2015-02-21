@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Created by Citymonstret on 2014-08-03.
@@ -47,6 +48,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final PlotPlayer player) {
-        return Permissions.hasPermission(BukkitUtil.getPlayer(player), this.permission);
+        return Permissions.hasPermission(player, this.permission);
     }
 }

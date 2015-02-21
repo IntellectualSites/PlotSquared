@@ -24,15 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
@@ -53,7 +50,7 @@ public class MainCommand {
     };
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NO_PERMISSION, permission);
+        MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
 
@@ -106,11 +103,11 @@ public class MainCommand {
     }
     
     private static String t(final String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return MainUtil.colorise('&', s);
     }
 
-    public boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
-        if (!Permissions.hasPermission(BukkitUtil.getPlayer(player), PlotSquared.MAIN_PERMISSION)) {
+    public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
+        if (!Permissions.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
@@ -121,7 +118,7 @@ public class MainCommand {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
-                return MainUtil.sendMessage(BukkitUtil.getPlayer(player), builder.toString());
+                return MainUtil.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
             SubCommand.CommandCategory cato = null;
@@ -137,7 +134,7 @@ public class MainCommand {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                return MainUtil.sendMessage(BukkitUtil.getPlayer(player), builder.toString(), false);
+                return MainUtil.sendMessage(player, builder.toString(), false);
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
@@ -163,7 +160,7 @@ public class MainCommand {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
+            player.sendMessage(MainUtil.colorise('&', help.toString()));
             // return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {
@@ -174,58 +171,24 @@ public class MainCommand {
                         if ((player != null) || !command.isPlayer) {
                             return command.execute(player, arguments);
                         } else {
-                            return !BukkitPlayerFunctions.sendMessage(null, C.IS_CONSOLE);
+                            return !MainUtil.sendMessage(null, C.IS_CONSOLE);
                         }
                     } else {
                         return no_permission(player, command.permission.permission.toLowerCase());
                     }
                 }
             }
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_VALID_SUBCOMMAND);
+            MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
             final String[] commands = new String[subCommands.size()];
             for (int x = 0; x < subCommands.size(); x++) {
                 commands[x] = subCommands.get(x).cmd;
             }
             /* Let's try to get a proper usage string */
             final String command = new StringComparison(args[0], commands).getBestMatch();
-            return MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.DID_YOU_MEAN, "/plot " + command);
+            return MainUtil.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             // PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new
             // StringComparsion(args[0], commands).getBestMatch());
         }
         return true;
-    }
-    
-    @Override
-    public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
-        if (!(commandSender instanceof Player)) {
-            return null;
-        }
-        final Player player = (Player) commandSender;
-        if (strings.length < 1) {
-            if ((strings.length == 0) || "plots".startsWith(s)) {
-                return Arrays.asList("plots");
-            }
-        }
-        if (strings.length > 1) {
-            return null;
-        }
-        if (!command.getLabel().equalsIgnoreCase("plots")) {
-            return null;
-        }
-        final List<String> tabOptions = new ArrayList<>();
-        final String arg = strings[0].toLowerCase();
-        for (final SubCommand cmd : subCommands) {
-            if (cmd.permission.hasPermission(player)) {
-                if (cmd.cmd.startsWith(arg)) {
-                    tabOptions.add(cmd.cmd);
-                } else if (cmd.alias.get(0).startsWith(arg)) {
-                    tabOptions.add(cmd.alias.get(0));
-                }
-            }
-        }
-        if (tabOptions.size() > 0) {
-            return tabOptions;
-        }
-        return null;
     }
 }

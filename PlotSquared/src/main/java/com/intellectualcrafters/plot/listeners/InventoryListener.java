@@ -10,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 
 import com.intellectualcrafters.plot.object.InfoInventory;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * Created 2014-11-18 for PlotSquared

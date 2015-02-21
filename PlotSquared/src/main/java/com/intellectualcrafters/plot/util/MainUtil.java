@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-import org.bukkit.util.ChatPaginator;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -61,8 +58,8 @@ public class MainUtil {
         final Plot bot = MainUtil.getBottomPlot(plot);
         
         // TODO
-//      boolean result = PlotSquared.IMP.callPlayerTeleportToPlotEvent(player, from, plot);
-        boolean result = true;
+        //      boolean result = PlotSquared.IMP.callPlayerTeleportToPlotEvent(player, from, plot);
+        final boolean result = true;
         // TOOD ^ remove that
         
         if (!result) {
@@ -794,16 +791,94 @@ public class MainUtil {
     public static boolean sendMessage(final PlotPlayer plr, final String msg) {
         return sendMessage(plr, msg, true);
     }
-
+    
+    public static String colorise(final char alt, final String message) {
+        final char[] b = message.toCharArray();
+        for (int i = 0; i < (b.length - 1); i++) {
+            if ((b[i] == alt) && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
+                b[i] = '§';
+                b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
+            }
+        }
+        return new String(b);
+    }
+    
     public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
                 PlotSquared.log(C.PREFIX.s() + msg);
             } else {
-                sendMessageWrapped(plr, ChatColor.translateAlternateColorCodes('&', C.PREFIX.s() + msg));
+                sendMessageWrapped(plr, colorise('&', C.PREFIX.s() + msg));
             }
         }
         return true;
+    }
+    
+    public static String[] wordWrap(final String rawString, final int lineLength) {
+        if (rawString == null) {
+            return new String[] { "" };
+        }
+        if ((rawString.length() <= lineLength) && (!rawString.contains("\n"))) {
+            return new String[] { rawString };
+        }
+        final char[] rawChars = (rawString + ' ').toCharArray();
+        StringBuilder word = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        final ArrayList<String> lines = new ArrayList();
+        int lineColorChars = 0;
+        for (int i = 0; i < rawChars.length; i++) {
+            final char c = rawChars[i];
+            if (c == '§') {
+                word.append('§' + (rawChars[(i + 1)]));
+                lineColorChars += 2;
+                i++;
+            } else if ((c == ' ') || (c == '\n')) {
+                if ((line.length() == 0) && (word.length() > lineLength)) {
+                    for (final String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
+                        lines.add(partialWord);
+                    }
+                } else if (((line.length() + word.length()) - lineColorChars) == lineLength) {
+                    line.append(word);
+                    lines.add(line.toString());
+                    line = new StringBuilder();
+                    lineColorChars = 0;
+                } else if (((line.length() + 1 + word.length()) - lineColorChars) > lineLength) {
+                    for (final String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
+                        lines.add(line.toString());
+                        line = new StringBuilder(partialWord);
+                    }
+                    lineColorChars = 0;
+                } else {
+                    if (line.length() > 0) {
+                        line.append(' ');
+                    }
+                    line.append(word);
+                }
+                word = new StringBuilder();
+                if (c == '\n') {
+                    lines.add(line.toString());
+                    line = new StringBuilder();
+                }
+            } else {
+                word.append(c);
+            }
+        }
+        if (line.length() > 0) {
+            lines.add(line.toString());
+        }
+        if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != '§')) {
+            lines.set(0, "§f" + lines.get(0));
+        }
+        for (int i = 1; i < lines.size(); i++) {
+            final String pLine = lines.get(i - 1);
+            final String subLine = lines.get(i);
+            
+            final char color = pLine.charAt(pLine.lastIndexOf('§') + 1);
+            if ((subLine.length() == 0) || (subLine.charAt(0) != '§')) {
+                lines.set(i, '§' + (color) + subLine);
+            }
+        }
+        return lines.toArray(new String[lines.size()]);
     }
     
     /**
@@ -813,8 +888,8 @@ public class MainUtil {
      * @param msg Was used to wrap the chat client length (Packets out--)
      */
     public static void sendMessageWrapped(final PlotPlayer plr, String msg) {
-        if (msg.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
-            final String[] ss = ChatPaginator.wordWrap(msg, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
+        if (msg.length() > 65) {
+            final String[] ss = wordWrap(msg, 65);
             final StringBuilder b = new StringBuilder();
             for (final String p : ss) {
                 b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
@@ -905,7 +980,6 @@ public class MainUtil {
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }
     
-
     /**
      * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
      * @param loc
@@ -953,7 +1027,7 @@ public class MainUtil {
     }
     
     public static Plot getPlot(final Location loc) {
-        PlotId id = getPlotId(loc);
+        final PlotId id = getPlotId(loc);
         if (id == null) {
             return null;
         }

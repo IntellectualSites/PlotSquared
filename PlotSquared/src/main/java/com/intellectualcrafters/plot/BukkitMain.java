@@ -21,6 +21,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.commands.BukkitCommand;
 import com.intellectualcrafters.plot.commands.Buy;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
@@ -36,6 +37,7 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -145,10 +147,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerCommands() {
         final MainCommand command = new MainCommand();
+        final BukkitCommand bcmd = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
-        plotCommand.setExecutor(command);
+        plotCommand.setExecutor(bcmd);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
-        plotCommand.setTabCompleter(command);
+        plotCommand.setTabCompleter(bcmd);
     }
     
     @Override

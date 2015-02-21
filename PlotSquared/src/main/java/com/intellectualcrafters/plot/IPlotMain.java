@@ -42,8 +42,4 @@ public interface IPlotMain {
     public void getGenerator(String world, String name);
     
     public boolean callRemovePlot(String world, PlotId id);
-
-    public boolean hasPermission(final PlotPlayer player, final String permission);
-
-    public void sendMessage(final PlotPlayer player, final String message);
 }

@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 /**
@@ -148,7 +149,7 @@ public abstract class SubCommand {
      * com.intellectualcrafters.plot.config.C, String...)
      */
     public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        BukkitPlayerFunctions.sendMessage(plr, c, args);
+        MainUtil.sendMessage(plr, c, args);
         return true;
     }
     
