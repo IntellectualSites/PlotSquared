@@ -112,7 +112,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             MainUtil.sendMessage(pp, C.NOT_IN_PLOT);
             return;
         }
-        UUID uuid = UUIDHandler.getUUID(player);
+        UUID uuid = pp.getUUID();
         if (!plot.isAdded(uuid)) {
             MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
             return;
@@ -173,11 +173,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final Plot plot = MainUtil.getPlot(pp.getLocation());
         if (plot == null) {
             return;
         }
-        UUID uuid = UUIDHandler.getUUID(player);
+        UUID uuid = pp.getUUID();
         if (plot.isAdded(uuid) && booleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
@@ -186,11 +187,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final Plot plot = MainUtil.getPlot(pp.getLocation());
         if (plot == null) {
             return;
         }
-        UUID uuid = UUIDHandler.getUUID(player);
+        UUID uuid = pp.getUUID();
         if (plot.isAdded(uuid) && booleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
@@ -204,20 +206,19 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
-                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
-                if (player == null) {
+                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
+                if (pp == null) {
                     return;
                 }
                 final Player trespasser = event.getPlayer();
                 PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
-                PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (pp.getUUID().equals(pt.getUUID())) {
                     return;
                 }
                 if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
-                if (player.isOnline()) {
+                if (pp.isOnline()) {
                     MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
@@ -254,18 +255,17 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         if (booleanFlag(plot, "notify-leave", false)) {
             if (plot.hasOwner()) {
-                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
-                if (player == null) {
+                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
+                if (pp == null) {
                     return;
                 }
-                PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (pp.getUUID().equals(pl.getUUID())) {
                     return;
                 }
                 if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
-                if (player.isOnline()) {
+                if (pp.isOnline()) {
                     MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pl.getName()).replace("%plot", plot.getId().toString()));
                 }
             }

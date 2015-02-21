@@ -146,7 +146,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         final String username = pp.getName();
         final StringWrapper name = new StringWrapper(username);
-        final UUID uuid = UUIDHandler.getUUID(player);
+        final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
         final Location loc = BukkitUtil.getLocation(player.getLocation());
         final Plot plot = MainUtil.getPlot(loc);
@@ -656,7 +656,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             } else {
-                UUID uuid = UUIDHandler.getUUID(p);
                 PlotPlayer pp = BukkitUtil.getPlayer(p);
                 if (!plot.isAdded(pp.getUUID())) if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
                     if (isPlotArea(loc)) {
