@@ -444,7 +444,7 @@ public enum C {
      * @see com.intellectualsites.translation.TranslationLanguage
      */
     protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-    public static ChatColor COLOR_1 = ChatColor.GOLD, COLOR_2 = ChatColor.GRAY, COLOR_3 = ChatColor.DARK_GRAY, COLOR_4 = ChatColor.DARK_AQUA;
+    public static String COLOR_1 = "\u00A76", COLOR_2 = "\u00A77", COLOR_3 = "\u00A78", COLOR_4 = "\u00A73";
     /**
      * The TranslationManager
      *

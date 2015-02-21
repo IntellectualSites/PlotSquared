@@ -21,13 +21,14 @@ public class Ban extends SubCommand {
         if (args.length < 1) {
             return MainUtil.sendMessage(plr, "&cUsage: &c" + this.usage);
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+        Plot plot = MainUtil.getPlot(plr.getLocation());
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = BukkitPlayerFunctions.getCurrentPlot(plr);
-        if (!plot.hasRights(plr)) {
+        if (!plot.isAdded(plr.getUUID())) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
+        
         return plr.performCommand("plot denied add " + args[0]);
     }
 }

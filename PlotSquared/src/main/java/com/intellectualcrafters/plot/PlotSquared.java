@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.commands.Cluster;
@@ -761,10 +760,10 @@ public class PlotSquared {
         Settings.API_URL = config.getString("uuid.api.location");
         Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
         Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
-        C.COLOR_1 = ChatColor.getByChar(style.getString("color.1"));
-        C.COLOR_2 = ChatColor.getByChar(style.getString("color.2"));
-        C.COLOR_3 = ChatColor.getByChar(style.getString("color.3"));
-        C.COLOR_4 = ChatColor.getByChar(style.getString("color.4"));
+        C.COLOR_1 = "\u00A7" + (style.getString("color.1"));
+        C.COLOR_2 = "\u00A7" + (style.getString("color.2"));
+        C.COLOR_3 = "\u00A7" + (style.getString("color.3"));
+        C.COLOR_4 = "\u00A7" + (style.getString("color.4"));
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
@@ -786,10 +785,10 @@ public class PlotSquared {
     private static void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
-        o.put("color.1", C.COLOR_1.getChar());
-        o.put("color.2", C.COLOR_2.getChar());
-        o.put("color.3", C.COLOR_3.getChar());
-        o.put("color.4", C.COLOR_4.getChar());
+        o.put("color.1", C.COLOR_1.substring(1));
+        o.put("color.2", C.COLOR_2.substring(1));
+        o.put("color.3", C.COLOR_3.substring(1));
+        o.put("color.4", C.COLOR_4.substring(1));
         for (final Entry<String, Object> node : o.entrySet()) {
             if (!style.contains(node.getKey())) {
                 style.set(node.getKey(), node.getValue());
