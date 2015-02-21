@@ -52,7 +52,9 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -107,13 +109,14 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         event.setCancelled(true);
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         if (plot == null) {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
+            MainUtil.sendMessage(pp, C.NOT_IN_PLOT);
             return;
         }
         UUID uuid = UUIDHandler.getUUID(player);
         if (!plot.isAdded(uuid)) {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NO_PLOT_PERMS);
+            MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
@@ -135,7 +138,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         for (final Player p : plotPlayers) {
             p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
-            BukkitPlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+            MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
     }
     
@@ -208,14 +211,16 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 final Player trespasser = event.getPlayer();
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
+                PlotPlayer pp = BukkitUtil.getPlayer(player);
+                if (pp.getUUID().equals(pt.getUUID())) {
                     return;
                 }
-                if (BukkitMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
+                if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
@@ -223,26 +228,31 @@ public class PlotPlusListener extends PlotListener implements Listener {
     
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        if (feedRunnable.containsKey(player.getName())) {
-            feedRunnable.remove(player.getName());
+        Player player = event.getPlayer();
+        String name = player.getName();
+        if (feedRunnable.containsKey(name)) {
+            feedRunnable.remove(name);
         }
-        if (healRunnable.containsKey(player.getName())) {
-            healRunnable.remove(player.getName());
+        if (healRunnable.containsKey(name)) {
+            healRunnable.remove(name);
         }
     }
     
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
-        event.getPlayer().playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
+        Player leaver = event.getPlayer();
+        leaver.playEffect(leaver.getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
-        if (feedRunnable.containsKey(player.getName())) {
-            feedRunnable.remove(player.getName());
+        PlotPlayer pl = BukkitUtil.getPlayer(leaver);
+        String name = pl.getName();
+        if (feedRunnable.containsKey(leaver)) {
+            feedRunnable.remove(leaver);
         }
-        if (healRunnable.containsKey(player.getName())) {
-            healRunnable.remove(player.getName());
+        if (healRunnable.containsKey(leaver)) {
+            healRunnable.remove(leaver);
         }
         if (booleanFlag(plot, "notify-leave", false)) {
             if (plot.hasOwner()) {
@@ -250,15 +260,15 @@ public class PlotPlusListener extends PlotListener implements Listener {
                 if (player == null) {
                     return;
                 }
-                final Player trespasser = event.getPlayer();
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                PlotPlayer pp = BukkitUtil.getPlayer(player);
+                if (pp.getUUID().equals(pl.getUUID())) {
                     return;
                 }
-                if (BukkitMain.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
+                if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
                 if (player.isOnline()) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pl.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
