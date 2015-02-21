@@ -116,7 +116,7 @@ public class HybridPop extends BlockPopulator {
         }
         this.X = cx << 4;
         this.Z = cz << 4;
-        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(w);
+        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(w.getName());
         final RegionWrapper plot = AChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             short sx = (short) ((this.X) % this.size);
