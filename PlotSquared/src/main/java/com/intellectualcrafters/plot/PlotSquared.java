@@ -381,6 +381,7 @@ public class PlotSquared {
         THIS = this;
         IMP = imp_class;
         VERSION = IMP.getVersion();
+        economy = IMP.getEconomy();
         C.setupTranslations();
         C.saveTranslations();
         if (getJavaVersion() < 1.7) {
@@ -428,7 +429,6 @@ public class PlotSquared {
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }
-        economy = IMP.getEconomy();
     }
     
     public void disable() {

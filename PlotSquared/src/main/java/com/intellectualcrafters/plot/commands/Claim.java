@@ -104,7 +104,7 @@ public class Claim extends SubCommand {
                 if (economy.getBalance(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                economy.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

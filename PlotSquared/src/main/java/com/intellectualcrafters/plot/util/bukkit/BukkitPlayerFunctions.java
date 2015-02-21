@@ -88,7 +88,7 @@ public class BukkitPlayerFunctions {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
                     return false;
                 }
-                economy.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.REMOVED_BALANCE, cost + "");
             }
         }

@@ -115,7 +115,7 @@ public abstract class PlotWorld {
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use");
+        this.USE_ECONOMY = config.getBoolean("economy.use") && PlotSquared.economy != null;
         this.PLOT_PRICE = config.getDouble("economy.prices.claim");
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");

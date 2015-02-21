@@ -151,7 +151,7 @@ public class Merge extends SubCommand {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
                 }
-                economy.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

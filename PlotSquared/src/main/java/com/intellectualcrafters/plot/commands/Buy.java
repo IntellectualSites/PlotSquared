@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -92,12 +93,12 @@ public class Buy extends SubCommand {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
         }
-        if (price > 0d) {
+        if (PlotSquared.economy != null && price > 0d) {
             final Economy economy = PlotSquared.economy;
-            if (economy.getBalance(plr) < price) {
+            if (EconHandler.getBalance(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }
-            economy.withdrawPlayer(plr, price);
+            EconHandler.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
             economy.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
             final Player owner = UUIDHandler.uuidWrapper.getPlayer(plot.owner);

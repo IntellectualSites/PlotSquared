@@ -138,7 +138,7 @@ public class Auto extends SubCommand {
                     sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                economy.withdrawPlayer(plr.getName(), cost);
+                EconHandler.withdrawPlayer(plr.getName(), cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
