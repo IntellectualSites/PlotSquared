@@ -44,7 +44,7 @@ public class FlagCmd extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         /*
          *  plot flag set fly true
          *  plot flag remove fly

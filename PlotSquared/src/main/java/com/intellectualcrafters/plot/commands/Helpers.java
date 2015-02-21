@@ -39,7 +39,7 @@ public class Helpers extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
             BukkitPlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;

@@ -17,7 +17,7 @@ public class DEOP extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             return BukkitPlayerFunctions.sendMessage(plr, "&cUsage: &c" + this.usage);
         }

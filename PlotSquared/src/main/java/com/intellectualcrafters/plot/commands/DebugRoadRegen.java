@@ -38,7 +38,7 @@ public class DebugRoadRegen extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }

@@ -39,7 +39,7 @@ public class MusicSubcommand extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(player)) {
             sendMessage(player, C.NOT_IN_PLOT);
             return true;

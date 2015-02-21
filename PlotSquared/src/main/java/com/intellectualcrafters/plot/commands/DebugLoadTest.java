@@ -37,7 +37,7 @@ public class DebugLoadTest extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             try {
                 final Field fPlots = PlotSquared.class.getDeclaredField("plots");

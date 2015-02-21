@@ -44,7 +44,7 @@ public class Swap extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             BukkitPlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
             BukkitPlayerFunctions.sendMessage(plr, C.SWAP_SYNTAX);

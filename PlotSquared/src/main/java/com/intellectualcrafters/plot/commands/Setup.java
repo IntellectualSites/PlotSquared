@@ -84,7 +84,7 @@ public class Setup extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         // going through setup
         final String name = plr.getName();
         if (!setupMap.containsKey(name)) {

@@ -37,7 +37,7 @@ public class Debug extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             final StringBuilder msg = new StringBuilder();
             for (final C c : C.values()) {

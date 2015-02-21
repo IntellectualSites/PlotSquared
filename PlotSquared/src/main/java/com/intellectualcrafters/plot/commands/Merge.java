@@ -74,7 +74,7 @@ public class Merge extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
             return true;

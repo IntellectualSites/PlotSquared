@@ -32,7 +32,7 @@ public class Clipboard extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (!currentSelection.containsKey(plr.getName())) {
             return sendMessage(plr, C.NO_CLIPBOARD);
         }

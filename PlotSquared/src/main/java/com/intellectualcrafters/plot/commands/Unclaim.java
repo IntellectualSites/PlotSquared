@@ -40,7 +40,7 @@ public class Unclaim extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }

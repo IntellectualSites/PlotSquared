@@ -34,7 +34,7 @@ public class Reload extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.

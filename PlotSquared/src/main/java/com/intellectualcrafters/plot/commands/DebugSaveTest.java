@@ -38,7 +38,7 @@ public class DebugSaveTest extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
             plots.addAll(PlotSquared.getPlots());

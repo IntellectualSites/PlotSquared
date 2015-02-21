@@ -46,7 +46,7 @@ public class Condense extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
             BukkitPlayerFunctions.sendMessage(plr, (C.NOT_CONSOLE));
             return false;

@@ -50,7 +50,7 @@ public class Unlink extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(plr)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -69,7 +69,7 @@ public class Unlink extends SubCommand {
         try {
             MainUtil.update(plr.getLocation());
         } catch (final Exception e) {
-            // execute(final Player plr, final String... args) {
+            // execute(final PlotPlayer plr, final String... args) {
             try {
                 PlotSquared.log("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
             } catch (final Exception ex) {

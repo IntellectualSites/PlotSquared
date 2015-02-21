@@ -35,7 +35,7 @@ public class Inventory extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         final ArrayList<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand cmd : MainCommand.subCommands) {
             if (cmd.permission.hasPermission(plr)) {

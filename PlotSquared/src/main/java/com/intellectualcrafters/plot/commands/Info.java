@@ -52,7 +52,7 @@ public class Info extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, String... args) {
+    public boolean execute(final PlotPlayer player, String... args) {
         World world;
         Plot plot;
         if (player != null) {

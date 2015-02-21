@@ -46,7 +46,7 @@ public class Home extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, String... args) {
+    public boolean execute(final PlotPlayer plr, String... args) {
         final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
         if (plots.length == 1) {
             PlotSquared.teleportPlayer(plr, plr.getLocation(), plots[0]);

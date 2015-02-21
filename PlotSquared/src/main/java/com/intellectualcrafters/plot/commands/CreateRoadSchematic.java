@@ -36,7 +36,7 @@ public class CreateRoadSchematic extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         if (!BukkitPlayerFunctions.isInPlot(player)) {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
             return false;

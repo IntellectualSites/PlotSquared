@@ -40,7 +40,7 @@ public class Template extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length != 2) {
             BukkitPlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;

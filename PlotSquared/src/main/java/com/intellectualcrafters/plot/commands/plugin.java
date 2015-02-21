@@ -89,7 +89,7 @@ public class plugin extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
             @Override
             public void run() {

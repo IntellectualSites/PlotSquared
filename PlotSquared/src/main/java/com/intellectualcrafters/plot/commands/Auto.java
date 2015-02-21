@@ -76,7 +76,7 @@ public class Auto extends SubCommand {
     
     // TODO auto claim a mega plot with schematic
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         World world;
         int size_x = 1;
         int size_z = 1;

@@ -41,7 +41,7 @@ public class TP extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             BukkitPlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
             return false;

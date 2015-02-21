@@ -56,7 +56,7 @@ public class list extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             final StringBuilder builder = new StringBuilder();
             builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());

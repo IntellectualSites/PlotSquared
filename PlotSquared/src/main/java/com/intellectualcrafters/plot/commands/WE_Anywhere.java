@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
 
@@ -33,7 +34,7 @@ public class WE_Anywhere extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (PlotSquared.worldEdit == null) {
             BukkitPlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;

@@ -55,7 +55,7 @@ public class Schematic extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
             return true;

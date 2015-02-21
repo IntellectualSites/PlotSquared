@@ -43,7 +43,7 @@ public class Inbox extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         boolean report = false;
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reports")) {

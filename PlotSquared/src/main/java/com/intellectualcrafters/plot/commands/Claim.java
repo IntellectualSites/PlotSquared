@@ -83,7 +83,7 @@ public class Claim extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];

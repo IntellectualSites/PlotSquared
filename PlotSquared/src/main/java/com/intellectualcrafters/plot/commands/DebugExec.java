@@ -50,7 +50,7 @@ public class DebugExec extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         final List<String> allowed_params = Arrays.asList(new String[] { "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();

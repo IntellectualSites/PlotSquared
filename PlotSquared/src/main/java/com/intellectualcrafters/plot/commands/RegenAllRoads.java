@@ -39,7 +39,7 @@ public class RegenAllRoads extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player player, final String... args) {
+    public boolean execute(final PlotPlayer player, final String... args) {
         if (player != null) {
             sendMessage(player, C.NOT_CONSOLE);
             return false;

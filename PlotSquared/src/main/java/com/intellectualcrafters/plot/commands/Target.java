@@ -35,7 +35,7 @@ public class Target extends SubCommand {
     }
     
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (!PlotSquared.isPlotWorld(plr.getWorld())) {
             BukkitPlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
