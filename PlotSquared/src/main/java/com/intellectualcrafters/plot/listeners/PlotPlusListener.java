@@ -223,26 +223,26 @@ public class PlotPlusListener extends PlotListener implements Listener {
     
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        if (feedRunnable.containsKey(event.getPlayer().getName())) {
-            feedRunnable.remove(event.getPlayer().getName());
+        if (feedRunnable.containsKey(player.getName())) {
+            feedRunnable.remove(player.getName());
         }
-        if (healRunnable.containsKey(event.getPlayer().getName())) {
-            healRunnable.remove(event.getPlayer().getName());
+        if (healRunnable.containsKey(player.getName())) {
+            healRunnable.remove(player.getName());
         }
     }
     
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
-        event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
+        event.getPlayer().playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
-        if (feedRunnable.containsKey(event.getPlayer().getName())) {
-            feedRunnable.remove(event.getPlayer().getName());
+        if (feedRunnable.containsKey(player.getName())) {
+            feedRunnable.remove(player.getName());
         }
-        if (healRunnable.containsKey(event.getPlayer().getName())) {
-            healRunnable.remove(event.getPlayer().getName());
+        if (healRunnable.containsKey(player.getName())) {
+            healRunnable.remove(player.getName());
         }
         if (booleanFlag(plot, "notify-leave", false)) {
             if (plot.hasOwner()) {

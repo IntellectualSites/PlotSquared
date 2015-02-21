@@ -277,7 +277,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
-                if (BukkitMain.hasPermission(event.getPlayer(), "plots.admin.destroy.other")) {
+                if (Permissions.hasPermission(BukkitUtil.getPlayer(player), "plots.admin.destroy.other")) {
                     return;
                 }
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NO_PERMISSION, "plots.admin.destroy.other");
@@ -286,7 +286,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             return;
         }
-        if (BukkitMain.hasPermission(event.getPlayer(), "plots.admin.destroy.road")) {
+        if (Permissions.hasPermission(BukkitUtil.getPlayer(player), "plots.admin.destroy.road")) {
             return;
         }
         if (isPlotArea(loc)) {
@@ -671,19 +671,19 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (isInPlot(q)) {
                 final Plot plot = getCurrentPlot(q);
                 
-                if (plot.isDenied(event.getPlayer())) {
-                    BukkitPlayerFunctions.sendMessage(event.getPlayer(), C.YOU_BE_DENIED);
+                if (plot.isDenied(player)) {
+                    BukkitPlayerFunctions.sendMessage(player, C.YOU_BE_DENIED);
                     event.setCancelled(true);
                     return;
                 } else {
                     if (enteredPlot(f, t)) {
-                        plotEntry(event.getPlayer(), plot);
+                        plotEntry(player, plot);
                     }
                 }
             } else {
                 if (leftPlot(f, t)) {
                     final Plot plot = getCurrentPlot(event.getFrom());
-                    plotExit(event.getPlayer(), plot);
+                    plotExit(player, plot);
                 }
             }
             if ((q.getX() >= 29999999) || (q.getX() <= -29999999) || (q.getZ() >= 29999999) || (q.getZ() <= -29999999)) {
@@ -744,12 +744,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     
     @EventHandler
     public static void onLeave(final PlayerQuitEvent event) {
-        if (Setup.setupMap.containsKey(event.getPlayer().getName())) {
-            Setup.setupMap.remove(event.getPlayer().getName());
+        if (Setup.setupMap.containsKey(player.getName())) {
+            Setup.setupMap.remove(player.getName());
         }
-        BukkitUtil.removePlayer(event.getPlayer().getName());
+        BukkitUtil.removePlayer(player.getName());
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            final Collection<Plot> plots = PlotSquared.getPlots(event.getPlayer().getName()).values();
+            final Collection<Plot> plots = PlotSquared.getPlots(player.getName()).values();
             for (final Plot plot : plots) {
                 final PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
                 final PlotManager manager = PlotSquared.getPlotManager(plot.world);
@@ -1070,7 +1070,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!isPlotWorld(world)) {
             return;
         }
-        if (BukkitMain.hasPermission(event.getPlayer(), "plots.admin")) {
+        if (Permissions.hasPermission(BukkitUtil.getPlayer(player), "plots.admin")) {
             return;
         }
         final Player player = event.getPlayer();
