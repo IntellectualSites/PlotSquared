@@ -47,6 +47,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final PlotPlayer player) {
-        return BukkitMain.hasPermission(player, this.permission);
+        return Permissions.hasPermission(BukkitUtil.getPlayer(player), this.permission);
     }
 }

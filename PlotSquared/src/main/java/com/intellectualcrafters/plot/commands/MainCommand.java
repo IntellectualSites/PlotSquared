@@ -110,7 +110,7 @@ public class MainCommand {
     }
 
     public boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
-        if (!BukkitMain.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
+        if (!Permissions.hasPermission(BukkitUtil.getPlayer(player), PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {

@@ -85,7 +85,7 @@ public class WorldEditListener implements Listener {
         if (!world.equals(player.getWorld().getName())) {
             return;
         }
-        if (BukkitMain.hasPermission(player, "plots.worldedit.bypass")) {
+        if (Permissions.hasPermission(BukkitUtil.getPlayer(player), "plots.worldedit.bypass")) {
             return;
         }
         PWE.setNoMask(player);
