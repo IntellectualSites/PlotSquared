@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,8 +32,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -48,7 +51,7 @@ public class ForceFieldListener implements Listener {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            UUID uuid = UUIDHandler.getUUID(oPlayer);
+            UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
             if (!plot.isAdded(uuid)) {
                 players.add(oPlayer);
             }
@@ -62,7 +65,7 @@ public class ForceFieldListener implements Listener {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            UUID uuid = UUIDHandler.getUUID(oPlayer);
+            UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
             if (plot.isAdded(uuid)) {
                 return oPlayer;
             }
@@ -71,8 +74,8 @@ public class ForceFieldListener implements Listener {
     }
     
     public Vector calculateVelocity(final Player p, final Player e) {
-        final Location playerLocation = p.getLocation();
-        final Location oPlayerLocation = e.getLocation();
+        final org.bukkit.Location playerLocation = p.getLocation();
+        final org.bukkit.Location oPlayerLocation = e.getLocation();
         final double playerX = playerLocation.getX(), playerY = playerLocation.getY(), playerZ = playerLocation.getZ(), oPlayerX = oPlayerLocation.getX(), oPlayerY = oPlayerLocation.getY(), oPlayerZ = oPlayerLocation.getZ();
         double x = 0d, y = 0d, z = 0d;
         if (playerX < oPlayerX) {
@@ -96,13 +99,15 @@ public class ForceFieldListener implements Listener {
     @EventHandler
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        if (!BukkitPlayerFunctions.isInPlot(player)) {
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Location loc = pp.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return;
         }
-        final Plot plot = MainUtil.getPlot(loc);
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
-                UUID uuid = UUIDHandler.getUUID(player);
+                UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {
                     final Set<Player> players = getNearbyPlayers(player, plot);
                     for (final Player oPlayer : players) {
