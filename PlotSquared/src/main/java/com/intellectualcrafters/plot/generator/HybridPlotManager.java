@@ -24,13 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -40,6 +33,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -138,8 +132,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
     
-    public int get_ey(final World world, final int sx, final int ex, final int sz, final int ez, final int sy) {
-        final int maxY = world.getMaxHeight();
+    public int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
@@ -156,7 +149,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         return ey;
     }
     
-    public void regenerateChunkChunk(final World world, final ChunkLoc loc) {
+    public void regenerateChunkChunk(final String world, final ChunkLoc loc) {
         final int sx = loc.x << 5;
         final int sz = loc.z << 5;
         for (int x = sx; x < (sx + 32); x++) {
@@ -176,7 +169,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         SetBlockManager.setBlockManager.update(chunks2);
     }
     
-    public boolean scheduleRoadUpdate(final World world) {
+    public boolean scheduleRoadUpdate(final String world) {
         if (HybridPlotManager.UPDATE) {
             return false;
         }
@@ -207,93 +200,6 @@ public class HybridPlotManager extends ClassicPlotManager {
             }
         }, 20, 20);
         return true;
-    }
-    
-    public boolean regenerateRoad(final Chunk chunk) {
-        final World world = chunk.getWorld();
-        final int x = chunk.getX() << 4;
-        final int z = chunk.getZ() << 4;
-        final int ex = x + 15;
-        final int ez = z + 15;
-        final Location bot = new Location(world, x, 0, z);
-        final Location top = new Location(world, ex, 0, ez);
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
-        if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
-            return false;
-        }
-        final PlotId id1 = getPlotId(plotworld, bot);
-        final PlotId id2 = getPlotId(plotworld, top);
-        boolean toCheck = false;
-        if ((id1 == null) || (id2 == null) || (id1 != id2)) {
-            final boolean result = chunk.load(false);
-            if (result) {
-                while (!chunk.isLoaded()) {
-                    chunk.load(false);
-                }
-                if (id1 != null) {
-                    final Plot p1 = MainUtil.getPlot(world, id1);
-                    if ((p1 != null) && p1.hasOwner() && p1.settings.isMerged()) {
-                        toCheck = true;
-                    }
-                }
-                if ((id2 != null) && !toCheck) {
-                    final Plot p2 = MainUtil.getPlot(world, id2);
-                    if ((p2 != null) && p2.hasOwner() && p2.settings.isMerged()) {
-                        toCheck = true;
-                    }
-                }
-                final int size = plotworld.SIZE;
-                for (int X = 0; X < 16; X++) {
-                    for (int Z = 0; Z < 16; Z++) {
-                        short absX = (short) ((x + X) % size);
-                        short absZ = (short) ((z + Z) % size);
-                        if (absX < 0) {
-                            absX += size;
-                        }
-                        if (absZ < 0) {
-                            absZ += size;
-                        }
-                        final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
-                        final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
-                        final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
-                        final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
-                        boolean condition;
-                        if (toCheck) {
-                            final Location l = new Location(world, x + X, 1, z + Z);
-                            condition = getPlotId(plotworld, l) == null;
-                        } else {
-                            condition = (!gx || !gz || !lx || !lz);
-                        }
-                        if (condition) {
-                            final int sy = plotworld.ROAD_HEIGHT;
-                            final ChunkLoc loc = new ChunkLoc(absX, absZ);
-                            final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
-                            for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT); y++) {
-                                MainUtil.setBlock(world, x + X, sy + y, z + Z, 0, (byte) 0);
-                            }
-                            if (blocks != null) {
-                                final HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);
-                                if (datas == null) {
-                                    for (final Short y : blocks.keySet()) {
-                                        MainUtil.setBlock(world, x + X, sy + y, z + Z, blocks.get(y), (byte) 0);
-                                    }
-                                } else {
-                                    for (final Short y : blocks.keySet()) {
-                                        Byte data = datas.get(y);
-                                        if (data == null) {
-                                            data = 0;
-                                        }
-                                        MainUtil.setBlock(world, x + X, sy + y, z + Z, blocks.get(y), data);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
     }
     
     @Override
@@ -351,7 +257,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final String world = plotworld.worldname;
         MainUtil.runners.put(plot, 1);
         final Plugin plugin = PlotSquared.getMain();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        TaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
                 MainUtil.runners.remove(plot);
@@ -374,27 +280,27 @@ public class HybridPlotManager extends ClassicPlotManager {
         if ((block.getTypeId() != wall_filling.id) || (block.getData() != wall_filling.data)) {
             setWallFilling(world, dpw, plot.id, new PlotBlock[] { wall_filling });
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        TaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
                 final Block block = world.getBlockAt(new Location(world, pos1.getX() - 1, dpw.WALL_HEIGHT + 1, pos1.getZ()));
                 if ((block.getTypeId() != wall.id) || (block.getData() != wall.data)) {
                     setWall(world, dpw, plot.id, new PlotBlock[] { wall });
                 }
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                TaskManager.runTaskLater(new Runnable() {
                     @Override
                     public void run() {
                         if ((pos2.getX() - pos1.getX()) < 48) {
                             MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT + 1, pos1.getZ()), new Location(world, pos2.getX() + 1, world.getMaxHeight() + 1, pos2.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setCuboid(world, new Location(world, pos1.getX(), 1, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT, pos2.getZ() + 1), filling);
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
@@ -453,15 +359,15 @@ public class HybridPlotManager extends ClassicPlotManager {
                         final Location min = mn;
                         if (min == null) {
                             MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT + 1, pos1.getZ()), new Location(world, pos2.getX() + 1, world.getMaxHeight() + 1, pos2.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setCuboid(world, new Location(world, pos1.getX(), 1, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT, pos2.getZ() + 1), filling);
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
@@ -485,204 +391,204 @@ public class HybridPlotManager extends ClassicPlotManager {
                             if (max.getZ() > plotMaxZ) {
                                 max.setZ(plotMaxZ);
                             }
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getX() + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getX() + 1, world.getMaxHeight() + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, plotMinZ), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
-                            }, 21L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            }, 21);
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, plotMinZ), new Location(world, max.getX() + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getX() + 1, world.getMaxHeight() + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, min.getX(), 1, plotMinZ), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT, min.getZ() + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
                             }, 25L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, max.getX(), 1, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, min.getZ() + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
                             }, 29L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getZ()), new Location(world, min.getX() + 1, 1, max.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, min.getZ()), new Location(world, min.getX() + 1, world.getMaxHeight() + 1, max.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, plotMinX, 1, min.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT, max.getZ() + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, min.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, max.getZ() + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
                             }, 33L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getZ()), new Location(world, min.getX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, min.getX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, plotMinX, 1, max.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, max.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
                             }, 37L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, max.getZ()), new Location(world, max.getX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, max.getX() + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, min.getX(), 1, max.getZ()), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT, max.getZ()), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
-                            }, 41L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            }, 41);
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, min.getZ()), new Location(world, plotMaxX + 1, 1, max.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, min.getZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, max.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, max.getX(), 1, min.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, max.getZ() + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, min.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, max.getZ() + 1), plotfloor);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
-                            }, 45L);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            }, 45);
+                            TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, max.getZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
                                             MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, plotMaxX + 1, world.getMaxHeight() + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            TaskManager.runTaskLater(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, max.getX(), 1, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                                    TaskManager.runTaskLater(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             MainUtil.setCuboid(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
                                                             TaskManager.runTask(whenDone);
                                                         }
-                                                    }, 1L);
+                                                    }, 1);
                                                 }
-                                            }, 1L);
+                                            }, 1);
                                         }
-                                    }, 1L);
+                                    }, 1);
                                 }
-                            }, 49L);
+                            }, 49);
                         }
                     }
-                }, 20L);
+                }, 20);
             }
-        }, 20L);
+        }, 20);
         return true;
     }
 }

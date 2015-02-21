@@ -4,7 +4,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class BlockManager {
-    private static BlockManager manager = new BukkitUtil();
+    public static BlockManager manager = new BukkitUtil();
     private static long state = 1;
     
     public static long nextLong() {
@@ -31,6 +31,8 @@ public abstract class BlockManager {
     public abstract void functionSetBlocks(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data);
     
     public abstract void functionSetSign(String worldname, int x, int y, int z, String[] lines);
+    
+    public abstract void functionSetBlock(String worldname, int x, int y, int z, int id, byte data);
     
     public abstract void functionSetBiomes(final String worldname, final int[] x, final int z[], final int[] biome);
     

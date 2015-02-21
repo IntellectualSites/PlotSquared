@@ -961,4 +961,8 @@ public class MainUtil {
         }
         return getPlot(loc.getWorld(), id);
     }
+
+    public static void setBlock(String world, int i, int j, int k, int l, byte b) {
+        BlockManager.setBl
+    }
 }

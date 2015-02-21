@@ -15,6 +15,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -23,6 +24,10 @@ public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
     private static String lastString = null;
     private static World lastWorld = null;
+    
+    public static boolean loadChunk(String world, ChunkLoc loc) {
+        return getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);
+    }
     
     public static Biome getBiome(final Location loc) {
         return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ());
@@ -33,7 +38,7 @@ public class BukkitUtil extends BlockManager {
     }
     
     public static World getWorld(final String string) {
-        if (lastString == string) {
+        if (string == lastString) {
             return lastWorld;
         }
         World world = worlds.get(string);
@@ -160,5 +165,10 @@ public class BukkitUtil extends BlockManager {
         for (int i = 0; i < x.length; i++) {
             world.setBiome(x[i], z[i], biomes[biome[i]]);
         }
+    }
+
+    @Override
+    public void functionSetBlock(String worldname, int x, int y, int z, int id, byte data) {
+        BukkitUtil.setBlock(getWorld(worldname), x, y, z, id, data);
     }
 }
