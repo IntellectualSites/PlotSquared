@@ -14,10 +14,8 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * Created 2014-11-18 for PlotSquared
- *
  * @author Citymonstret
  */
-@SuppressWarnings("unused")
 public class InventoryListener implements Listener {
     @EventHandler
     public void onInventoryAction(final InventoryInteractEvent event) {
@@ -31,7 +29,6 @@ public class InventoryListener implements Listener {
         final Inventory inventory = event.getInventory();
         final Player player = (Player) event.getWhoClicked();
         if (inventory.getHolder() instanceof InfoInventory) {
-            // TODO: Do stuff
             switch (event.getSlot()) {
                 case 3:
                 case 4:
