@@ -6,16 +6,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
@@ -24,6 +22,8 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 public class UUIDHandler {
     public static boolean CACHED = false;
     public static UUIDWrapper uuidWrapper = null;
+    public static HashMap<String, PlotPlayer> players = new HashMap<>();
+    
     /**
      * Map containing names and UUIDs
      *
@@ -77,14 +77,14 @@ public class UUIDHandler {
         return uuidMap.containsKey(name);
     }
     
-    public static void cacheAll() {
+    public static void cacheAll(String world) {
         if (CACHED) {
             return;
         }
         PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching");
         UUIDHandler.CACHED = true;
         final HashSet<String> worlds = new HashSet<>();
-        worlds.add(Bukkit.getWorlds().get(0).getName());
+        worlds.add(world);
         worlds.add("world");
         final HashSet<UUID> uuids = new HashSet<>();
         final HashSet<String> names = new HashSet<>();
@@ -125,7 +125,7 @@ public class UUIDHandler {
         final UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
             try {
-                final OfflinePlayer player = wrapper.getOfflinePlayer(uuid);
+                final BukkitOfflinePlayer player = wrapper.getOfflinePlayer(uuid);
                 uuid = UUIDHandler.uuidWrapper.getUUID(player);
                 final StringWrapper name = new StringWrapper(player.getName());
                 add(name, uuid);
@@ -134,8 +134,7 @@ public class UUIDHandler {
             }
         }
         for (final String name : names) {
-            final OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-            final UUID uuid = UUIDHandler.uuidWrapper.getUUID(player);
+            final UUID uuid = uuidWrapper.getUUID(name);
             final StringWrapper nameWrap = new StringWrapper(name);
             add(nameWrap, uuid);
         }
@@ -144,11 +143,11 @@ public class UUIDHandler {
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
     
-    public static UUID getUUID(final Player player) {
+    public static UUID getUUID(final PlotPlayer player) {
         return UUIDHandler.uuidWrapper.getUUID(player);
     }
     
-    public static UUID getUUID(final OfflinePlayer player) {
+    public static UUID getUUID(final BukkitOfflinePlayer player) {
         return UUIDHandler.uuidWrapper.getUUID(player);
     }
     
@@ -157,7 +156,7 @@ public class UUIDHandler {
             return null;
         }
         // check online
-        final Player player = uuidWrapper.getPlayer(uuid);
+        final PlotPlayer player = UUIDHandler.getPlayer(uuid);
         if (player != null) {
             return player.getName();
         }
@@ -169,16 +168,27 @@ public class UUIDHandler {
         return null;
     }
     
+    public static PlotPlayer getPlayer(UUID uuid) {
+        for (PlotPlayer player : players.values()) {
+            if (player.getUUID().equals(uuid)) {
+                return player;
+            }
+        }
+        return null;
+    }
+    
+    public static PlotPlayer getPlayer(String name) {
+        return players.get(name);
+    }
+
     public static UUID getUUID(final String name) {
         if ((name == null) || (name.length() == 0)) {
             return null;
         }
         // check online
-        final Player player = Bukkit.getPlayer(name);
+        final PlotPlayer player = getPlayer(name);
         if (player != null) {
-            final UUID uuid = UUIDHandler.uuidWrapper.getUUID(player);
-            add(new StringWrapper(name), uuid);
-            return uuid;
+            return player.getUUID();
         }
         // check cache
         final StringWrapper wrap = new StringWrapper(name);

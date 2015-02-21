@@ -57,7 +57,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @EventHandler
     public static void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.cacheAll();
+        UUIDHandler.cacheAll(event.getWorld().getName());
     }
 
     public static boolean checkVersion(final int major, final int minor, final int minor2) {

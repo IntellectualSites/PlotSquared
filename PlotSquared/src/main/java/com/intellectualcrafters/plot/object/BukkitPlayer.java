@@ -33,7 +33,7 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public UUID getUUID() {
         if (this.uuid == null) {
-            this.uuid = UUIDHandler.getUUID(this.player);
+            this.uuid = UUIDHandler.getUUID(this);
         }
         return this.uuid;
     }

@@ -163,8 +163,8 @@ public class Info extends SubCommand {
     
     private String format(String info, final World world, final Plot plot, final Player player) {
         final PlotId id = plot.id;
-        final PlotId id2 = BukkitPlayerFunctions.getTopPlot(world, plot).id;
-        final int num = BukkitPlayerFunctions.getPlotSelectionIds(id, id2).size();
+        final PlotId id2 = MainUtil.getTopPlot(world, plot).id;
+        final int num = MainUtil.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
         final String biome = getBiomeAt(plot).toString();
         final String helpers = getPlayerList(plot.helpers);

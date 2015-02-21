@@ -3,28 +3,24 @@ package com.intellectualcrafters.plot.uuid;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.BukkitPlayer;;
 
 public class DefaultUUIDWrapper extends UUIDWrapper {
     @Override
-    public UUID getUUID(final Player player) {
-        return player.getUniqueId();
+    public UUID getUUID(final PlotPlayer player) {
+        return ((BukkitPlayer) player).player.getUniqueId();
     }
     
     @Override
-    public UUID getUUID(final OfflinePlayer player) {
-        return player.getUniqueId();
+    public UUID getUUID(final BukkitOfflinePlayer player) {
+        return player.getUUID();
     }
     
     @Override
-    public OfflinePlayer getOfflinePlayer(final UUID uuid) {
-        return Bukkit.getOfflinePlayer(uuid);
-    }
-    
-    @Override
-    public Player getPlayer(final UUID uuid) {
-        return Bukkit.getPlayer(uuid);
+    public BukkitOfflinePlayer getOfflinePlayer(final UUID uuid) {
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
     }
     
     @Override

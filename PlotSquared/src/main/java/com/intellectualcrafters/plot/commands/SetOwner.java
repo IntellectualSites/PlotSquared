@@ -66,8 +66,8 @@ public class SetOwner extends SubCommand {
         }
         final World world = plr.getWorld();
         final PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId top = BukkitPlayerFunctions.getTopPlot(world, plot).id;
-        final ArrayList<PlotId> plots = BukkitPlayerFunctions.getPlotSelectionIds(bot, top);
+        final PlotId top = MainUtil.getTopPlot(world, plot).id;
+        final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);
             final UUID uuid = getUUID(args[0]);

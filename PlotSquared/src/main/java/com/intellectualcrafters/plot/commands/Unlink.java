@@ -58,7 +58,7 @@ public class Unlink extends SubCommand {
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        if (BukkitPlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
         final World world = plr.getWorld();
@@ -82,8 +82,8 @@ public class Unlink extends SubCommand {
     
     public static boolean unlinkPlot(final World world, final Plot plot) {
         final PlotId pos1 = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId pos2 = BukkitPlayerFunctions.getTopPlot(world, plot).id;
-        final ArrayList<PlotId> ids = BukkitPlayerFunctions.getPlotSelectionIds(pos1, pos2);
+        final PlotId pos2 = MainUtil.getTopPlot(world, plot).id;
+        final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(pos1, pos2);
         final PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {

@@ -147,7 +147,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean isAdded(final UUID uuid) {
-        return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.uuidWrapper.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
+        return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
     }
     
     /**

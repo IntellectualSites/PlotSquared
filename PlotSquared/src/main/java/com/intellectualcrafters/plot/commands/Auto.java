@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
@@ -138,7 +139,7 @@ public class Auto extends SubCommand {
                     sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.withdrawPlayer(plr.getName(), cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

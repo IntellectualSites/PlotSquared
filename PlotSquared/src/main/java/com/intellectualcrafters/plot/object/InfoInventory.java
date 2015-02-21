@@ -13,6 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -50,7 +51,7 @@ public class InfoInventory implements InventoryHolder {
     }
     
     public InfoInventory build() {
-        UUID uuid = UUIDHandler.getUUID(player);
+        UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(player));
         final ItemStack generalInfo = getItem(Material.EMERALD, "&cPlot Info", "&cID: &6" + this.plot.getId().toString(), "&cOwner: &6" + getName(this.plot.getOwner()), "&cAlias: &6" + this.plot.settings.getAlias(), "&cBiome: &6" + this.plot.settings.getBiome().toString().replaceAll("_", "").toLowerCase(), "&cCan Build: &6" + this.plot.isAdded(uuid), "&cIs Denied: &6" + this.plot.isDenied(uuid));
         final ItemStack helpers = getItem(Material.EMERALD, "&cHelpers", "&cAmount: &6" + this.plot.helpers.size(), "&8Click to view a list of the plot helpers");
         final ItemStack trusted = getItem(Material.EMERALD, "&cTrusted", "&cAmount: &6" + this.plot.trusted.size(), "&8Click to view a list of trusted players");

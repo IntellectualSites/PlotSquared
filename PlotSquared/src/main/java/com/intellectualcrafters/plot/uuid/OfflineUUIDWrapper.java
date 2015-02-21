@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
+import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -29,17 +31,21 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     }
     
     @Override
-    public UUID getUUID(final Player player) {
+    public UUID getUUID(final PlotPlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
     
     @Override
+    public UUID getUUID(final BukkitOfflinePlayer player) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+    }
+    
     public UUID getUUID(final OfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
     
     @Override
-    public OfflinePlayer getOfflinePlayer(final UUID uuid) {
+    public BukkitOfflinePlayer getOfflinePlayer(final UUID uuid) {
         final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
         String name;
         try {
@@ -50,12 +56,12 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         if (name != null) {
             final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
             if (op.hasPlayedBefore()) {
-                return op;
+                return new BukkitOfflinePlayer(op);
             }
         }
         for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             if (getUUID(player).equals(uuid)) {
-                return player;
+                return new BukkitOfflinePlayer(player);
             }
         }
         return null;
@@ -79,16 +85,6 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             this.getOnline = null;
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }
-    }
-    
-    @Override
-    public Player getPlayer(final UUID uuid) {
-        for (final Player player : getOnlinePlayers()) {
-            if (getUUID(player).equals(uuid)) {
-                return player;
-            }
-        }
-        return null;
     }
     
     @Override

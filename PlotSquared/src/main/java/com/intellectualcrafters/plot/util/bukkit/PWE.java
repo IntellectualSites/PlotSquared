@@ -86,13 +86,8 @@ public class PWE {
         }
     }
     
-    public static boolean hasMask(final Player p) {
-        LocalSession s;
-        if (PlotSquared.worldEdit == null) {
-            s = WorldEdit.getInstance().getSession(p.getName());
-        } else {
-            s = PlotSquared.worldEdit.getSession(p);
-        }
+    public static boolean hasMask(final PlotPlayer p) {
+        LocalSession s = WorldEdit.getInstance().getSession(p.getName());
         return !noMask(s);
     }
     
@@ -101,14 +96,9 @@ public class PWE {
     }
     
     @SuppressWarnings("deprecation")
-    public static void setNoMask(final Player p) {
+    public static void setNoMask(final PlotPlayer p) {
         try {
-            LocalSession s;
-            if (PlotSquared.worldEdit == null) {
-                s = WorldEdit.getInstance().getSession(p.getName());
-            } else {
-                s = PlotSquared.worldEdit.getSession(p);
-            }
+            LocalSession s = WorldEdit.getInstance().getSession(p.getName());
             final com.sk89q.worldedit.bukkit.BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(((BukkitPlayer) p).player);
             final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
             s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));

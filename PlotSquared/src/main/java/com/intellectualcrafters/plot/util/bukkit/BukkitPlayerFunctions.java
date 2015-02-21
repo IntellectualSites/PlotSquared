@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
@@ -88,7 +89,7 @@ public class BukkitPlayerFunctions {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
                     return false;
                 }
-                EconHandler.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(BukkitUtil.getPlayer(plr), cost);
                 MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.REMOVED_BALANCE, cost + "");
             }
         }
@@ -99,11 +100,11 @@ public class BukkitPlayerFunctions {
         if (uuid == null) {
             return "unknown";
         }
-        final OfflinePlayer plr = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-        if (!plr.hasPlayedBefore()) {
+        final String name = UUIDHandler.getName(uuid);
+        if (name == null) {
             return "unknown";
         }
-        return plr.getName();
+        return name;
     }
     
     /**

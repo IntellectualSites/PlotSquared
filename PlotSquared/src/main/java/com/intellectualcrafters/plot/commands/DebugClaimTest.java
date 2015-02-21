@@ -97,7 +97,7 @@ public class DebugClaimTest extends SubCommand {
             final PlotManager manager = PlotSquared.getPlotManager(world);
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
-            for (final PlotId id : BukkitPlayerFunctions.getPlotSelectionIds(min, max)) {
+            for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
                 final Plot plot = MainUtil.getPlot(world, id);
                 final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
                 if (contains) {

@@ -19,8 +19,10 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -86,7 +88,7 @@ public class ExpireManager {
                     }
                     final Plot plot = plots.iterator().next();
                     if (plot.owner != null) {
-                        if (UUIDHandler.uuidWrapper.getPlayer(plot.owner) != null) {
+                        if (UUIDHandler.getPlayer(plot.owner) != null) {
                             expiredPlots.get(world).remove(plot);
                             return;
                         }
@@ -102,9 +104,9 @@ public class ExpireManager {
                         return;
                     }
                     for (final UUID helper : plot.helpers) {
-                        final Player player = UUIDHandler.uuidWrapper.getPlayer(helper);
+                        final PlotPlayer player = UUIDHandler.getPlayer(helper);
                         if (player != null) {
-                            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.PLOT_REMOVED_HELPER, plot.id.toString());
+                            MainUtil.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
                         }
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -165,13 +167,13 @@ public class ExpireManager {
             if (keep.contains(uuid)) {
                 continue;
             }
-            final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            final PlotPlayer player = UUIDHandler.getPlayer(uuid);
             if (player != null) {
                 keep.add(uuid);
                 continue;
             }
-            final OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            if ((op == null) || !op.hasPlayedBefore()) {
+            final BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+            if ((op == null) || op.getLastPlayed() == 0) {
                 continue;
             }
             long last = op.getLastPlayed();
@@ -184,7 +186,7 @@ public class ExpireManager {
                     if (BukkitMain.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
-                            filename = op.getUniqueId() + ".dat";
+                            filename = op.getUUID() + ".dat";
                         } catch (final Throwable e) {
                             filename = uuid.toString() + ".dat";
                         }

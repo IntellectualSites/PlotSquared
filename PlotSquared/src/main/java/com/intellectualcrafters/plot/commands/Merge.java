@@ -107,7 +107,7 @@ public class Merge extends SubCommand {
         }
         final World world = plr.getWorld();
         PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        PlotId top = BukkitPlayerFunctions.getTopPlot(world, plot).id;
+        PlotId top = MainUtil.getTopPlot(world, plot).id;
         ArrayList<PlotId> plots;
         switch (direction) {
             case 0: // north = -y
@@ -129,8 +129,8 @@ public class Merge extends SubCommand {
         final PlotId topId = plots.get(plots.size() - 1);
         final PlotId bot1 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, botId)).id;
         final PlotId bot2 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top1 = BukkitPlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top2 = BukkitPlayerFunctions.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
+        final PlotId top1 = MainUtil.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
+        final PlotId top2 = MainUtil.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
         plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, bot, top);

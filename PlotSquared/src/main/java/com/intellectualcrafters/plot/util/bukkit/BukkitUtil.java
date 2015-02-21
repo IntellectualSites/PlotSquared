@@ -27,7 +27,6 @@ public class BukkitUtil extends BlockManager {
     private static String lastString = null;
     private static World lastWorld = null;
     
-    private static HashMap<String, PlotPlayer> players = new HashMap<>();
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
     
@@ -36,7 +35,7 @@ public class BukkitUtil extends BlockManager {
             lastPlayer = null;
             lastPlotPlayer = null;
         }
-        players.remove(plr);
+        UUIDHandler.players.remove(plr);
     }
     
     public static PlotPlayer getPlayer(Player player) {
@@ -44,7 +43,7 @@ public class BukkitUtil extends BlockManager {
             return lastPlotPlayer;
         }
         lastPlotPlayer = new BukkitPlayer(player);
-        players.put(lastPlotPlayer.getName(), lastPlotPlayer);
+        UUIDHandler.players.put(lastPlotPlayer.getName(), lastPlotPlayer);
         lastPlayer = player;
         return lastPlotPlayer;
     }

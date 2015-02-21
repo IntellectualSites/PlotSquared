@@ -70,13 +70,14 @@ public class Buy extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (BukkitPlayerFunctions.getPlayerPlotCount(world, plr) >= BukkitPlayerFunctions.getAllowedPlots(plr)) {
+        int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        if (plot.owner.equals(UUIDHandler.getUUID(plr))) {
+        if (plot.owner.equals(plr.getUUID())) {
             return sendMessage(plr, C.CANNOT_BUY_OWN);
         }
         final Flag flag = FlagManager.getPlotFlag(plot, "price");
@@ -86,8 +87,8 @@ public class Buy extends SubCommand {
         double initPrice = (double) flag.getValue();
         double price = initPrice;
         final PlotId id = plot.id;
-        final PlotId id2 = BukkitPlayerFunctions.getTopPlot(world, plot).id;
-        final int size = BukkitPlayerFunctions.getPlotSelectionIds(id, id2).size();
+        final PlotId id2 = MainUtil.getTopPlot(world, plot).id;
+        final int size = MainUtil.getPlotSelectionIds(id, id2).size();
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
@@ -100,14 +101,14 @@ public class Buy extends SubCommand {
             }
             EconHandler.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            economy.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
+            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
             final Player owner = UUIDHandler.uuidWrapper.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        plot.owner = UUIDHandler.getUUID(plr);
+        plot.owner = plr.getUUID();
         DBFunc.setOwner(plot, plot.owner);
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;

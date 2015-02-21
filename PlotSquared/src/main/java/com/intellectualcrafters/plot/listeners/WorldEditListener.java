@@ -78,14 +78,14 @@ public class WorldEditListener implements Listener {
         if ((plot == null) || (plot.owner == null)) {
             return;
         }
-        final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.owner);
+        final PlotPlayer player = UUIDHandler.getPlayer(plot.owner);
         if (player == null) {
             return;
         }
-        if (!world.equals(player.getWorld().getName())) {
+        if (!world.equals(player.getLocation().getWorld())) {
             return;
         }
-        if (Permissions.hasPermission(BukkitUtil.getPlayer(player), "plots.worldedit.bypass")) {
+        if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
             return;
         }
         PWE.setNoMask(player);

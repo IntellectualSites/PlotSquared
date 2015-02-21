@@ -10,6 +10,10 @@ public class EconHandler {
     }
     
     public static void withdrawPlayer(PlotPlayer player, double amount) {
-        EconHandler.withdrawPlayer(player.getName(), amount);
+        PlotSquared.economy.withdrawPlayer(player.getName(), amount);
+    }
+    
+    public static void depositPlayer(PlotPlayer player, double amount) {
+        PlotSquared.economy.depositPlayer(player.getName(), amount);
     }
 }

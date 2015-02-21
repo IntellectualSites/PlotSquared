@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
@@ -258,9 +259,9 @@ public class ClusterManager {
             @Override
             public void run() {
                 ClusterManager.regenerating.remove(cluster.world + ":" + cluster.getName());
-                final Player owner = UUIDHandler.uuidWrapper.getPlayer(cluster.owner);
+                final PlotPlayer owner = UUIDHandler.getPlayer(cluster.owner);
                 if (owner != null) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(owner), C.CLEARING_DONE);
+                    MainUtil.sendMessage(owner, C.CLEARING_DONE);
                 }
             }
         }, (interval * chunks.size()) + 20);
