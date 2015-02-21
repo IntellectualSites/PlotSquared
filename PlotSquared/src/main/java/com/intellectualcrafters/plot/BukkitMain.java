@@ -1,25 +1,7 @@
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.commands.Buy;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.WE_Anywhere;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.events.PlayerTeleportToPlotEvent;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.listeners.*;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.*;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.File;
+import java.util.Arrays;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -39,8 +21,34 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.util.Arrays;
+import com.intellectualcrafters.plot.commands.Buy;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.listeners.ForceFieldListener;
+import com.intellectualcrafters.plot.listeners.InventoryListener;
+import com.intellectualcrafters.plot.listeners.PlayerEvents;
+import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
+import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.Metrics;
+import com.intellectualcrafters.plot.util.bukkit.SendChunk;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public static BukkitMain THIS = null;
@@ -79,7 +87,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 if (Settings.USE_PLOTME_ALIAS) {
                     player.performCommand(message.replace("/plotme", "plots"));
                 } else {
-                    MainUtil.sendMessage(new BukkitPlayer(player), C.NOT_USING_PLOTME);
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
                 }
                 event.setCancelled(true);
             }

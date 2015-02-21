@@ -15,15 +15,31 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
     private static String lastString = null;
     private static World lastWorld = null;
+    
+    private static HashMap<String, PlotPlayer> players = new HashMap<>();
+    private static Player lastPlayer = null;
+    private static PlotPlayer lastPlotPlayer = null;
+    
+    public static PlotPlayer getPlayer(Player player) {
+        if (player == lastPlayer) {
+            return lastPlotPlayer;
+        }
+        lastPlotPlayer = new BukkitPlayer(player);
+        players.put(lastPlotPlayer.getName(), lastPlotPlayer);
+        lastPlayer = player;
+        return lastPlotPlayer;
+    }
     
     public static boolean loadChunk(String world, ChunkLoc loc) {
         return getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);

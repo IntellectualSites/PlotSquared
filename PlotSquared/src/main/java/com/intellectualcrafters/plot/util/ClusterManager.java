@@ -16,7 +16,6 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -25,7 +24,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -262,7 +260,7 @@ public class ClusterManager {
                 ClusterManager.regenerating.remove(cluster.world + ":" + cluster.getName());
                 final Player owner = UUIDHandler.uuidWrapper.getPlayer(cluster.owner);
                 if (owner != null) {
-                    MainUtil.sendMessage(new BukkitPlayer(owner), C.CLEARING_DONE);
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(owner), C.CLEARING_DONE);
                 }
             }
         }, (interval * chunks.size()) + 20);

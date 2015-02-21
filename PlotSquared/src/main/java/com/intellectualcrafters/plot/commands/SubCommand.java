@@ -20,12 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * SubCommand class

@@ -45,7 +45,6 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -748,7 +747,7 @@ public class ChunkManager extends AChunkManager {
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
-                    MainUtil.teleportPlayer(new BukkitPlayer(player), BukkitUtil.getLocation(entity), plot);
+                    MainUtil.teleportPlayer(BukkitUtil.getPlayer(player), BukkitUtil.getLocation(entity), plot);
                     PlotListener.plotExit(player, plot);
                 } else {
                     entity.remove();

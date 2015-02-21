@@ -20,29 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util.bukkit;
 
-import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * Functions involving players, plots and locations.
@@ -53,13 +46,6 @@ public class BukkitPlayerFunctions {
      * =========== NOTICE ================
      *  - We will try to move as many functions as we can out of this class and into the MainUtil class
      */
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Clear a plot. Use null player if no player is present
@@ -74,7 +60,7 @@ public class BukkitPlayerFunctions {
             @Override
             public void run() {
                 if ((player != null) && player.isOnline()) {
-                    MainUtil.sendMessage(new BukkitPlayer(player), C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                 }
             }
         };
@@ -99,11 +85,11 @@ public class BukkitPlayerFunctions {
             if (cost > 0d) {
                 final Economy economy = PlotSquared.economy;
                 if (economy.getBalance(plr) < cost) {
-                    MainUtil.sendMessage(new BukkitPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
                     return false;
                 }
                 economy.withdrawPlayer(plr, cost);
-                MainUtil.sendMessage(new BukkitPlayer(plr), C.REMOVED_BALANCE, cost + "");
+                MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.REMOVED_BALANCE, cost + "");
             }
         }
         return MainUtil.mergePlots(world, plotIds, true);

@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class Permissions {

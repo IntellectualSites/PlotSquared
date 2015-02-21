@@ -97,12 +97,13 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -143,7 +144,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!player.hasPlayedBefore()) {
             player.saveData();
         }
-        final String username = player.getName();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final String username = pp.getName();
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = UUIDHandler.getUUID(player);
         UUIDHandler.add(name, uuid);
@@ -154,7 +156,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         if (Settings.TELEPORT_ON_LOGIN) {
             BukkitUtil.teleportPlayer(player, MainUtil.getPlotHomeDefault(plot));
-            BukkitPlayerFunctions.sendMessage(event.getPlayer(), C.TELEPORTED_TO_ROAD);
+            MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
         }
         plotEntry(player, plot);
     }

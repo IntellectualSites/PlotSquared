@@ -1,11 +1,12 @@
 package com.intellectualcrafters.plot;
 
+import java.io.File;
+
+import net.milkbowl.vault.economy.Economy;
+
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.TaskManager;
-import net.milkbowl.vault.economy.Economy;
-
-import java.io.File;
 
 public interface IPlotMain {
     public void log(String message);

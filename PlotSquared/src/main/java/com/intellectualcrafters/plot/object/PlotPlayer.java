@@ -1,8 +1,5 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-
 import java.util.UUID;
 
 /**

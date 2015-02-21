@@ -22,8 +22,6 @@ package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
 
-import org.bukkit.block.Biome;
-
 public abstract class PlotManager {
     /*
      * Plot locations (methods with Abs in them will not need to consider mega

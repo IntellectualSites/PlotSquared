@@ -13,6 +13,7 @@ public class BukkitPlayer implements PlotPlayer {
     UUID uuid;
     String name;
     
+    
     public BukkitPlayer(Player player, String name, UUID uuid) {
         this.player = player;
         this.name = name;

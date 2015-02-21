@@ -20,27 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings("deprecation")
 public class HybridPlotManager extends ClassicPlotManager {
