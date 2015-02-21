@@ -36,7 +36,7 @@ public class InventoryListener implements Listener {
                 case 4:
                 case 5:
                 case 6:
-                    MainUtil.sendMessage(player, "This is not implemented yet");
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), "This is not implemented yet");
                     break;
                 default:
                     break;
