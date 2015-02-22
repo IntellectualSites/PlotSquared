@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -35,7 +34,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Inbox extends SubCommand {

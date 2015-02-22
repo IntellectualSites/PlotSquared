@@ -52,8 +52,9 @@ public class BukkitUtil extends BlockManager {
         return lastPlotPlayer;
     }
     
-    public static Biome getBiome(final Location loc) {
-        return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ());
+    @Override
+    public String getBiome(final Location loc) {
+        return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ()).name();
     }
     
     public static Location getLocation(org.bukkit.Location loc) {

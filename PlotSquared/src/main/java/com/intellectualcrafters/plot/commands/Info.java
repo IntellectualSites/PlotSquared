@@ -24,23 +24,19 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.InfoInventory;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -54,20 +50,19 @@ public class Info extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer player, String... args) {
-        World world;
         Plot plot;
+        String world;
         if (player != null) {
             Location loc = player.getLocation();
-            String world = loc.getWorld();
+            world = loc.getWorld();
             if (!PlotSquared.isPlotWorld(world)) {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT_WORLD);
+                MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
-            final Plot plot = MainUtil.getPlot(loc);
-            if (plot == null) {
-                return !sendMessage(plr, C.NOT_IN_PLOT);
-            }
             plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                return !sendMessage(player, C.NOT_IN_PLOT);
+            }
         } else {
             if (args.length < 2) {
                 MainUtil.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
@@ -75,25 +70,25 @@ public class Info extends SubCommand {
             }
             final PlotWorld plotworld = PlotSquared.getPlotWorld(args[0]);
             if (plotworld == null) {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_VALID_WORLD);
+                MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
                 return false;
             }
             try {
                 final String[] split = args[1].split(";");
                 final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = MainUtil.getPlot(Bukkit.getWorld(plotworld.worldname), id);
+                plot = MainUtil.getPlot(plotworld.worldname, id);
                 if (plot == null) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_VALID_PLOT_ID);
+                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
-                world = Bukkit.getWorld(args[0]);
+                world = args[0];
                 if (args.length == 3) {
                     args = new String[] { args[2] };
                 } else {
                     args = new String[0];
                 }
             } catch (final Exception e) {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.INFO_SYNTAX_CONSOLE);
+                MainUtil.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
                 return false;
             }
         }
@@ -111,7 +106,7 @@ public class Info extends SubCommand {
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
+            MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
             return true;
         }
         String owner = "none";
@@ -125,13 +120,13 @@ public class Info extends SubCommand {
         if (args.length == 1) {
             info = getCaption(args[0].toLowerCase());
             if (info == null) {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), "&6Categories&7: &ahelpers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
+                MainUtil.sendMessage(player, "&6Categories&7: &ahelpers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
                 return false;
             }
         }
         info = format(info, world, plot, player);
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.PLOT_INFO_HEADER);
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), info, false);
+        MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
+        MainUtil.sendMessage(player, info, false);
         return true;
     }
     
@@ -162,18 +157,18 @@ public class Info extends SubCommand {
         }
     }
     
-    private String format(String info, final World world, final Plot plot, final Player player) {
+    private String format(String info, final String world, final Plot plot, final PlotPlayer player) {
         final PlotId id = plot.id;
-        final PlotId id2 = MainUtil.getTopPlot(world, plot).id;
+        final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
-        final String biome = getBiomeAt(plot).toString();
+        final String biome = BlockManager.manager.getBiome(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1));
         final String helpers = getPlayerList(plot.helpers);
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
-        final boolean build = (player == null) || plot.hasRights(player);
+        final boolean build = (player == null) || plot.isAdded(player.getUUID());
         String owner = "none";
         if (plot.owner != null) {
             owner = UUIDHandler.getName(plot.owner);
@@ -225,11 +220,5 @@ public class Info extends SubCommand {
             return "unknown";
         }
         return name;
-    }
-    
-    private Biome getBiomeAt(final Plot plot) {
-        final World w = Bukkit.getWorld(plot.world);
-        final Location bl = MainUtil.getPlotTopLoc(w, plot.id);
-        return bl.getBlock().getBiome();
     }
 }

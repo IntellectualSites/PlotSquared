@@ -31,9 +31,9 @@ public class InfoInventory implements InventoryHolder {
      *
      * @param plot from which we take information
      */
-    public InfoInventory(final Plot plot, final Player player) {
+    public InfoInventory(final Plot plot, final PlotPlayer plr) {
         this.plot = plot;
-        this.player = player;
+        this.player = ((BukkitPlayer) plr).player;
         this.inventory = Bukkit.createInventory(this, 9, "Plot: " + plot.id.toString());
     }
     

@@ -29,6 +29,8 @@ public abstract class BlockManager {
         return (int) r;
     }
     
+    public abstract String getBiome(Location loc);
+    
     public abstract Location getSpawn(String world);
     
     public abstract String[] getSign(Location loc);
