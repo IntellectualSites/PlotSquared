@@ -36,9 +36,11 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.ClusterManager;
@@ -147,6 +149,10 @@ public class PlotListener {
             default:
                 return Bukkit.getDefaultGameMode();
         }
+    }
+    
+    public static void plotEntry(final PlotPlayer player, final Plot plot) {
+        plotEntry(((BukkitPlayer) player).player, plot);
     }
     
     public static void plotEntry(final Player player, final Plot plot) {
