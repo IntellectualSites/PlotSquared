@@ -20,18 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import java.util.List;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
+import com.intellectualcrafters.plot.util.AChunkManager;
 
 public class RegenAllRoads extends SubCommand {
     public RegenAllRoads() {
@@ -54,14 +52,12 @@ public class RegenAllRoads extends SubCommand {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        final HybridPlotManager hpm = (HybridPlotManager) manager;
-        final World world = Bukkit.getWorld(name);
-        final ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
+        final List<ChunkLoc> chunks = AChunkManager.manager.getChunkChunks(name);
         PlotSquared.log("&cIf no schematic is set, the following will not do anything");
         PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
         PlotSquared.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
-        final boolean result = hpm.scheduleRoadUpdate(world);
+        final boolean result = HybridUtils.manager.scheduleRoadUpdate(name);
         if (!result) {
             PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;

@@ -28,7 +28,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({ "unused", "deprecated", "javadoc" })
 public class Rate extends SubCommand {
     /*
      * String cmd, String permission, String description, String usage, String
