@@ -38,7 +38,8 @@ public class BukkitUtil extends BlockManager {
         UUIDHandler.players.remove(plr);
     }
     
-    public static boolean isWorld(String world) {
+    @Override
+    public boolean isWorld(String world) {
         return getWorld(world) != null;
     }
     
@@ -50,10 +51,6 @@ public class BukkitUtil extends BlockManager {
         UUIDHandler.players.put(lastPlotPlayer.getName(), lastPlotPlayer);
         lastPlayer = player;
         return lastPlotPlayer;
-    }
-    
-    public static boolean loadChunk(String world, ChunkLoc loc) {
-        return getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);
     }
     
     public static Biome getBiome(final Location loc) {
@@ -201,5 +198,17 @@ public class BukkitUtil extends BlockManager {
     @Override
     public void functionSetBlock(String worldname, int x, int y, int z, int id, byte data) {
         BukkitUtil.setBlock(getWorld(worldname), x, y, z, id, data);
+    }
+
+    @Override
+    public String[] getSign(Location loc) {
+        Block block = getWorld(loc.getWorld()).getBlockAt(loc.getX(), loc.getY(), loc.getZ());
+        if (block != null) {
+            if (block.getState() instanceof Sign) {
+                final Sign sign = (Sign) block.getState();
+                return sign.getLines();
+            }
+        }
+        return null;
     }
 }

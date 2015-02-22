@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
@@ -54,7 +55,7 @@ public class Condense extends SubCommand {
             return false;
         }
         final String worldname = args[0];
-        if (!BukkitUtil.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
+        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }

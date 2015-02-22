@@ -755,4 +755,9 @@ public class ChunkManager extends AChunkManager {
             }
         }
     }
+
+    @Override
+    public boolean loadChunk(String world, ChunkLoc loc) {
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);
+    }
 }

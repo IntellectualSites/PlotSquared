@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -101,7 +102,7 @@ public abstract class HybridUtils {
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
         boolean toCheck = false;
         if ((id1 == null) || (id2 == null) || (id1 != id2)) {
-            final boolean result = BukkitUtil.loadChunk(world, chunk);
+            final boolean result = AChunkManager.manager.loadChunk(world, chunk);
             if (result) {
                 if (id1 != null) {
                     final Plot p1 = MainUtil.getPlot(world, id1);

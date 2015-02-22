@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
@@ -27,6 +28,10 @@ public abstract class BlockManager {
         final long r = ((nextLong() >>> 32) * n) >> 32;
         return (int) r;
     }
+    
+    public abstract String[] getSign(Location loc);
+    
+    public abstract boolean isWorld(String world);
     
     public abstract void functionSetBlocks(String worldname, int[] x, int[] y, int[] z, int[] id, byte[] data);
     

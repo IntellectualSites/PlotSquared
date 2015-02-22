@@ -23,26 +23,23 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -54,22 +51,24 @@ public class DebugClaimTest extends SubCommand {
     }
     
     @SuppressWarnings("unused")
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport) {
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport) {
         return claimPlot(player, plot, teleport, "");
     }
     
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, true);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            MainUtil.createPlot(player, plot);
-            MainUtil.setSign(player, plot);
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLAIMED);
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
+        // FIXME call claim event
+        // boolean result = event result
+        boolean result = true;
+        
+        if (!result) {
+            MainUtil.createPlot(player.getUUID(), plot);
+            MainUtil.setSign(player.getName(), plot);
+            MainUtil.sendMessage(player, C.CLAIMED);
             if (teleport) {
                 MainUtil.teleportPlayer(player, player.getLocation(), plot);
             }
         }
-        return event.isCancelled();
+        return result;
     }
     
     @Override
@@ -78,8 +77,8 @@ public class DebugClaimTest extends SubCommand {
             if (args.length < 3) {
                 return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
-            final World world = Bukkit.getWorld(args[0]);
-            if ((world == null) || !PlotSquared.isPlotWorld(world)) {
+            String world = args[0];
+            if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
                 return !MainUtil.sendMessage(null, "&cInvalid plot world!");
             }
             PlotId min, max;
@@ -103,42 +102,37 @@ public class DebugClaimTest extends SubCommand {
                     MainUtil.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
                 }
-                final Location loc = manager.getSignLoc(world, plotworld, plot);
-                final Chunk chunk = world.getChunkAt(loc);
-                if (!chunk.isLoaded()) {
-                    final boolean result = chunk.load(false);
-                    if (!result) {
-                        continue;
-                    }
+                final Location loc = manager.getSignLoc(plotworld, plot);
+                ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+                boolean result = AChunkManager.manager.loadChunk(world, chunk);
+                if (!result) {
+                    continue;
                 }
-                final Block block = world.getBlockAt(loc);
-                if (block != null) {
-                    if (block.getState() instanceof Sign) {
-                        final Sign sign = (Sign) block.getState();
-                        String line = sign.getLine(2);
-                        if ((line != null) && (line.length() > 2)) {
-                            line = line.substring(2);
-                            final BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                            UUID uuid = (map.get(new StringWrapper(line)));
-                            if (uuid == null) {
-                                for (final StringWrapper string : map.keySet()) {
-                                    if (string.value.toLowerCase().startsWith(line.toLowerCase())) {
-                                        uuid = map.get(string);
-                                        break;
-                                    }
+                String[] lines = BlockManager.manager.getSign(loc);
+                if (lines != null) {
+                    String line = lines[2];
+                    if ((line != null) && (line.length() > 2)) {
+                        line = line.substring(2);
+                        final BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                        UUID uuid = (map.get(new StringWrapper(line)));
+                        if (uuid == null) {
+                            for (final StringWrapper string : map.keySet()) {
+                                if (string.value.toLowerCase().startsWith(line.toLowerCase())) {
+                                    uuid = map.get(string);
+                                    break;
                                 }
                             }
-                            if (uuid == null) {
-                                uuid = UUIDHandler.getUUID(line);
-                            }
-                            if (uuid != null) {
-                                MainUtil.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
-                                plot.owner = uuid;
-                                plot.hasChanged = true;
-                                plots.add(plot);
-                            } else {
-                                MainUtil.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
-                            }
+                        }
+                        if (uuid == null) {
+                            uuid = UUIDHandler.getUUID(line);
+                        }
+                        if (uuid != null) {
+                            MainUtil.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
+                            plot.owner = uuid;
+                            plot.hasChanged = true;
+                            plots.add(plot);
+                        } else {
+                            MainUtil.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
                         }
                     }
                 }

@@ -20,6 +20,8 @@ public abstract class AChunkManager {
         return new ChunkLoc(x, z);
     }
     
+    public abstract boolean loadChunk(String world, ChunkLoc loc);
+    
     public abstract List<ChunkLoc> getChunkChunks(String world);
     
     public abstract void deleteRegionFile(final String world, final ChunkLoc loc);
