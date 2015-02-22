@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util.bukkit;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;

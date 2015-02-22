@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;

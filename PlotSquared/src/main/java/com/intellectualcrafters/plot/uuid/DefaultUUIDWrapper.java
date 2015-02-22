@@ -3,9 +3,10 @@ package com.intellectualcrafters.plot.uuid;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.BukkitPlayer;;
 
 public class DefaultUUIDWrapper extends UUIDWrapper {
     @Override

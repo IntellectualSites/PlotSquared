@@ -9,7 +9,6 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotSquared;

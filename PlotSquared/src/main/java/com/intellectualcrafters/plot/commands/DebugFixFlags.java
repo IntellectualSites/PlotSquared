@@ -23,9 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -34,6 +31,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public class DebugFixFlags extends SubCommand {
@@ -51,8 +49,8 @@ public class DebugFixFlags extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
             return false;
         }
-        final World world = Bukkit.getWorld(args[0]);
-        if ((world == null) || !PlotSquared.isPlotWorld(world)) {
+        final String world = args[0];
+        if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }

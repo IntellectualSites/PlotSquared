@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 
 /**
  * Random utilities

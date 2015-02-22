@@ -20,17 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-
-import org.bukkit.Chunk;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 
 public class DebugRoadRegen extends SubCommand {
     public DebugRoadRegen() {
@@ -39,16 +36,17 @@ public class DebugRoadRegen extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
+        Location loc = player.getLocation();
+        String world = loc.getWorld();
+        if (!(PlotSquared.getPlotWorld(world) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
-        final Chunk chunk = BukkitUtil.getLocation(entity).getChunk();
-        final boolean result = manager.regenerateRoad(chunk);
+        ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+        boolean result = HybridUtils.manager.regenerateRoad(world, chunk);
         if (result) {
-            SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+            MainUtil.update(loc);
         }
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "&6Regenerating chunk: " + chunk.getX() + "," + chunk.getZ() + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+        MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }
 }
