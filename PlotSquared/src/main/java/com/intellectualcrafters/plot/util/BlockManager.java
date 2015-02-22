@@ -29,6 +29,8 @@ public abstract class BlockManager {
         return (int) r;
     }
     
+    public abstract int getHeighestBlock(Location loc);
+    
     public abstract String getBiome(Location loc);
     
     public abstract Location getSpawn(String world);

@@ -23,23 +23,21 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -64,9 +62,9 @@ public class Schematic extends SubCommand {
         final String file;
         final SchematicHandler.Schematic schematic;
         switch (arg) {
-            case "paste":
+            case "paste": {
                 if (plr == null) {
-                    PlotSquared.log(C.IS_CONSOLE);
+                    PlotSquared.log(C.IS_CONSOLE.s());
                     return false;
                 }
                 if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
@@ -77,7 +75,9 @@ public class Schematic extends SubCommand {
                     sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
                     break;
                 }
-                if (!BukkitPlayerFunctions.isInPlot(plr)) {
+                final Location loc = plr.getLocation();
+                Plot plot = MainUtil.getPlot(loc);
+                if (plot  == null) {
                     sendMessage(plr, C.NOT_IN_PLOT);
                     break;
                 }
@@ -88,7 +88,7 @@ public class Schematic extends SubCommand {
                 final String file2 = args[1];
                 this.running = true;
                 this.counter = 0;
-                Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+                TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         final SchematicHandler.Schematic schematic = SchematicHandler.getSchematic(file2);
@@ -101,8 +101,8 @@ public class Schematic extends SubCommand {
                         final int z;
                         final Plot plot2 = MainUtil.getPlot(loc);
                         final Dimension dem = schematic.getSchematicDimension();
-                        final Location bot = MainUtil.getPlotBottomLoc(plr.getWorld(), plot2.id).add(1, 0, 1);
-                        final int length2 = MainUtil.getPlotWidth(plr.getWorld(), plot2.id);
+                        final Location bot = MainUtil.getPlotBottomLoc(loc.getWorld(), plot2.id).add(1, 0, 1);
+                        final int length2 = MainUtil.getPlotWidth(loc.getWorld(), plot2.id);
                         if ((dem.getX() > length2) || (dem.getZ() > length2)) {
                             sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
                             Schematic.this.running = false;
@@ -110,20 +110,19 @@ public class Schematic extends SubCommand {
                         }
                         if ((dem.getX() != length2) || (dem.getZ() != length2)) {
                             final Location loc = plr.getLocation();
-                            x = Math.min(length2 - dem.getX(), loc.getBlockX() - bot.getBlockX());
-                            z = Math.min(length2 - dem.getZ(), loc.getBlockZ() - bot.getBlockZ());
+                            x = Math.min(length2 - dem.getX(), loc.getX() - bot.getX());
+                            z = Math.min(length2 - dem.getZ(), loc.getZ() - bot.getZ());
                         } else {
                             x = 0;
                             z = 0;
                         }
-                        final World w = plot2.getWorld();
                         final DataCollection[] b = schematic.getBlockCollection();
-                        final int sy = w.getHighestBlockYAt(bot.getBlockX(), bot.getBlockZ());
+                        final int sy = BlockManager.manager.getHeighestBlock(bot);
                         final Location l1 = bot.add(0, sy - 1, 0);
                         final int WIDTH = schematic.getSchematicDimension().getX();
                         final int LENGTH = schematic.getSchematicDimension().getZ();
                         final int blen = b.length - 1;
-                        Schematic.this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
+                        Schematic.this.task = TaskManager.runTaskRepeat(new Runnable() {
                             @Override
                             public void run() {
                                 boolean result = false;
@@ -133,21 +132,22 @@ public class Schematic extends SubCommand {
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                         MainUtil.update(plr.getLocation());
                                         Schematic.this.running = false;
-                                        Bukkit.getScheduler().cancelTask(Schematic.this.task);
+                                        PlotSquared.TASK.cancelTask(Schematic.this.task);
                                         return;
                                     }
                                     final int end = Math.min(start + 5000, blen);
-                                    result = SchematicHandler.pastePart(w, b, l1, x, z, start, end, WIDTH, LENGTH);
+                                    result = SchematicHandler.pastePart(loc.getWorld(), b, l1, x, z, start, end, WIDTH, LENGTH);
                                     Schematic.this.counter++;
                                 }
                             }
-                        }, 1, 1);
+                        }, 1);
                     }
                 });
                 break;
-            case "test":
+            }
+            case "test": {
                 if (plr == null) {
-                    PlotSquared.log(C.IS_CONSOLE);
+                    PlotSquared.log(C.IS_CONSOLE.s());
                     return false;
                 }
                 if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
@@ -164,18 +164,20 @@ public class Schematic extends SubCommand {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
                     break;
                 }
+                Location loc = plr.getLocation();
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
                 final Plot plot = MainUtil.getPlot(loc);
-                final int length = MainUtil.getPlotWidth(plr.getWorld(), plot.id);
+                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
                 if ((l1 < length) || (l2 < length)) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
                     break;
                 }
                 sendMessage(plr, C.SCHEMATIC_VALID);
                 break;
+            }
             case "saveall":
-            case "exportall":
+            case "exportall": {
                 if (plr != null) {
                     MainUtil.sendMessage(plr, C.NOT_CONSOLE);
                     return false;
@@ -195,30 +197,28 @@ public class Schematic extends SubCommand {
                 }
                 PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
                 PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
-                final World worldObj = Bukkit.getWorld(args[1]);
-                final String worldname = Bukkit.getWorld(args[1]).getName();
-                final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
+                final String worldname = args[1];
                 final Collection<Plot> values = plotmap.values();
                 this.plots = values.toArray(new Plot[values.size()]);
                 this.running = true;
                 this.counter = 0;
-                this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                this.task = TaskManager.runTaskRepeat(new Runnable() {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
                             PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
-                            Bukkit.getScheduler().cancelTask(Schematic.this.task);
+                            PlotSquared.TASK.cancelTask(Schematic.this.task);
                             return;
                         }
                         final Plot plot = Schematic.this.plots[Schematic.this.counter];
-                        final CompoundTag sch = SchematicHandler.getCompoundTag(worldObj, plot.id);
+                        final CompoundTag sch = SchematicHandler.getCompoundTag(worldname, plot.id);
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
                         } else {
-                            Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+                            TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.sendMessage(null, "&6ID: " + plot.id);
@@ -233,10 +233,12 @@ public class Schematic extends SubCommand {
                         }
                         Schematic.this.counter++;
                     }
-                }, 20, 20);
+                }, 20);
                 break;
+            }
             case "export":
             case "save":
+            {
                 if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
@@ -253,11 +255,11 @@ public class Schematic extends SubCommand {
                     if (plot == null) {
                         return !sendMessage(plr, C.NOT_IN_PLOT);
                     }
-                    if (!myplot.hasRights(plr)) {
+                    if (!plot.isAdded(plr.getUUID())) {
                         sendMessage(plr, C.NO_PLOT_PERMS);
                         return false;
                     }
-                    p2 = myplot;
+                    p2 = plot;
                     world = loc.getWorld();
                 } else {
                     if (args.length == 3) {
@@ -279,27 +281,26 @@ public class Schematic extends SubCommand {
                         return false;
                     }
                 }
-                final Plugin plugin2 = Bukkit.getServer().getPluginManager().getPlugin("PlotSquared");
                 this.plots = new Plot[] { p2 };
                 this.running = true;
                 this.counter = 0;
-                this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin2, new Runnable() {
+                this.task = TaskManager.runTaskRepeat(new Runnable() {
                     @Override
                     public void run() {
                         if (Schematic.this.counter >= Schematic.this.plots.length) {
                             PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
                             Schematic.this.running = false;
-                            Bukkit.getScheduler().cancelTask(Schematic.this.task);
+                            PlotSquared.TASK.cancelTask(Schematic.this.task);
                             return;
                         }
                         final Plot plot = Schematic.this.plots[Schematic.this.counter];
-                        final CompoundTag sch = SchematicHandler.getCompoundTag(Bukkit.getWorld(world), plot.id);
+                        final CompoundTag sch = SchematicHandler.getCompoundTag(world, plot.id);
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
                             MainUtil.sendMessage(plr, "&7 - Skipped plot &c" + plot.id);
                         } else {
-                            Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getServer().getPluginManager().getPlugin("PlotSquared"), new Runnable() {
+                            TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.sendMessage(plr, "&6ID: " + plot.id);
@@ -314,11 +315,13 @@ public class Schematic extends SubCommand {
                         }
                         Schematic.this.counter++;
                     }
-                }, 20, 60);
+                }, 60);
                 break;
-            default:
+            }
+            default: {
                 sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
                 break;
+            }
         }
         return true;
     }

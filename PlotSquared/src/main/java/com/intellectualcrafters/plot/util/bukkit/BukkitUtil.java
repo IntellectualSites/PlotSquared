@@ -217,4 +217,9 @@ public class BukkitUtil extends BlockManager {
         org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ());
     }
+
+    @Override
+    public int getHeighestBlock(Location loc) {
+        return getWorld(loc.getWorld()).getHighestBlockAt(loc.getX(), loc.getZ()).getY();
+    }
 }
