@@ -67,7 +67,7 @@ public class Clear extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!MainUtil.getTopPlot(loc.getWorld(), plot).equals(MainUtil.getBottomPlot( plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot( plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {

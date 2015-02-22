@@ -84,7 +84,7 @@ public class Buy extends SubCommand {
         double initPrice = (double) flag.getValue();
         double price = initPrice;
         final PlotId id = plot.id;
-        final PlotId id2 = MainUtil.getTopPlot(world, plot).id;
+        final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int size = MainUtil.getPlotSelectionIds(id, id2).size();
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (plotworld.USE_ECONOMY) {

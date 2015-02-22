@@ -333,7 +333,7 @@ public class MainUtil {
             }
             count++;
             final PlotId bot = getBottomPlot(plot).id;
-            final PlotId top = getTopPlot(world, plot).id;
+            final PlotId top = getTopPlot(plot).id;
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(world, plots, uuid, 0)) {
                 final boolean result = mergePlots(world, plots, true);
@@ -379,7 +379,7 @@ public class MainUtil {
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(uuid))) {
                 return false;
             }
-            final PlotId top = getTopPlot(world, myplot).id;
+            final PlotId top = getTopPlot(myplot).id;
             if (((top.x > id_max.x) && (dir != 1)) || ((top.y > id_max.y) && (dir != 2))) {
                 return false;
             }
@@ -724,7 +724,7 @@ public class MainUtil {
     public static Location getPlotTopLoc(final String world, PlotId id) {
         final Plot plot = PlotSquared.getPlots(world).get(id);
         if (plot != null) {
-            id = getTopPlot(world, plot).id;
+            id = getTopPlot(plot).id;
         }
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -773,7 +773,7 @@ public class MainUtil {
             return false;
         }
         final Plot pos1 = getBottomPlot(currentPlot);
-        final Plot pos2 = getTopPlot(world, currentPlot);
+        final Plot pos2 = getTopPlot(currentPlot);
         final PlotId size = MainUtil.getSize(world, currentPlot);
         if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
             return false;
@@ -967,12 +967,12 @@ public class MainUtil {
         return plot;
     }
     
-    public static Plot getTopPlot(final String world, final Plot plot) {
+    public static Plot getTopPlot(final Plot plot) {
         if (plot.settings.getMerged(2)) {
-            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x, plot.id.y + 1)));
+            return getTopPlot(PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1)));
         }
         if (plot.settings.getMerged(1)) {
-            return getTopPlot(world, PlotSquared.getPlots(world).get(new PlotId(plot.id.x + 1, plot.id.y)));
+            return getTopPlot(PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y)));
         }
         return plot;
     }
@@ -982,7 +982,7 @@ public class MainUtil {
         if (!settings.isMerged()) {
             return new PlotId(1, 1);
         }
-        final Plot top = getTopPlot(world, plot);
+        final Plot top = getTopPlot(plot);
         final Plot bot = getBottomPlot(plot);
         return new PlotId((top.id.x - bot.id.x) + 1, (top.id.y - bot.id.y) + 1);
     }

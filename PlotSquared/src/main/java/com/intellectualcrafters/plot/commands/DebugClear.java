@@ -20,17 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -55,19 +53,18 @@ public class DebugClear extends SubCommand {
                     if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getPlotWorld(world) instanceof SquarePlotWorld)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = MainUtil.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            final World bukkitWorld = Bukkit.getWorld(world);
-                            final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-                            final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
+                            final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+                            final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
                             if (MainUtil.runners.containsKey(plot)) {
                                 MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
                             }
                             MainUtil.runners.put(plot, 1);
-                            ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+                            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.runners.remove(plot);
@@ -81,26 +78,26 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr) || !(PlotSquared.getPlotWorld(plr.getWorld()) instanceof SquarePlotWorld)) {
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null || !(PlotSquared.getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = MainUtil.getPlot(loc);
-        if (!MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final World bukkitWorld = plr.getWorld();
-        final Location pos1 = MainUtil.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(bukkitWorld, plot.id);
+        final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
         if (MainUtil.runners.containsKey(plot)) {
             MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);
-        ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+        ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
             @Override
             public void run() {
                 MainUtil.runners.remove(plot);

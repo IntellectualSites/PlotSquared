@@ -27,7 +27,6 @@ import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -39,7 +38,6 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -50,12 +48,11 @@ public class DebugClaimTest extends SubCommand {
         super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "debugclaimtest", CommandCategory.DEBUG, false);
     }
     
-    @SuppressWarnings("unused")
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport) {
         return claimPlot(player, plot, teleport, "");
     }
     
-    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, @SuppressWarnings("unused") final String schematic) {
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
         // FIXME call claim event
         // boolean result = event result
         boolean result = true;

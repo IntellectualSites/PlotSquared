@@ -123,7 +123,7 @@ public class BukkitPlayerFunctions {
             pos1 = MainUtil.getBottomPlot(plot1).id;
         }
         if (plot2 != null) {
-            pos2 = MainUtil.getTopPlot(world, plot2).id;
+            pos2 = MainUtil.getTopPlot(plot2).id;
         }
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
