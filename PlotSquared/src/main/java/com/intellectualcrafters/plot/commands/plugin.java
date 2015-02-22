@@ -26,9 +26,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -41,8 +38,8 @@ public class plugin extends SubCommand {
         super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
     }
     
-    public static void setup(final JavaPlugin plugin) {
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+    public static void setup() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -51,8 +48,8 @@ public class plugin extends SubCommand {
                     downloads = "unknown";
                 }
             }
-        }, 1l);
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+        });
+        TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -62,7 +59,7 @@ public class plugin extends SubCommand {
                     version = "unknown";
                 }
             }
-        }, 200l);
+        }, 200);
     }
     
     private static String convertToNumericString(final String str, final boolean dividers) {
