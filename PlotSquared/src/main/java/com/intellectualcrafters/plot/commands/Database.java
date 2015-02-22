@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
@@ -35,7 +33,7 @@ public class Database extends SubCommand {
         if (uuid == null) {
             PlotSquared.log(msg);
         } else {
-            final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            final PlotPlayer p = UUIDHandler.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
                 return MainUtil.sendMessage(p, msg);
             } else {
@@ -138,11 +136,11 @@ public class Database extends SubCommand {
         return false;
     }
     
-    private boolean sendMessage(final Player player, final String msg) {
+    private boolean sendMessage(final PlotPlayer player, final String msg) {
         if (player == null) {
             PlotSquared.log(msg);
         } else {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), msg);
+            MainUtil.sendMessage(player, msg);
         }
         return true;
     }
