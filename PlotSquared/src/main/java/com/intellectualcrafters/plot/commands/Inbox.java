@@ -25,8 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -35,6 +33,8 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -134,7 +134,7 @@ public class Inbox extends SubCommand {
         }
         final String world = loc.getWorld();
         final int tier2 = tier;
-        Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 ArrayList<PlotComment> comments = null;
