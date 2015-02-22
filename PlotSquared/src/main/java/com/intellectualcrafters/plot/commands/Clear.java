@@ -20,14 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -51,11 +51,11 @@ public class Clear extends SubCommand {
                     if (!PlotSquared.isPlotWorld(world)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = MainUtil.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            plot.clear(null, false);
+                            MainUtil.clear(world, plot, true, null);
                             PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                         }
                     }
@@ -63,17 +63,19 @@ public class Clear extends SubCommand {
             }
             return true;
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+        Location loc = plr.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = MainUtil.getPlot(loc);
-        if (!MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(loc.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
+        boolean result = MainUtil.clearAsPlayer(plot, isDelete, whenDone);
         plot.clear(plr, false);
         // sign
         // wall
