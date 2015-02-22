@@ -7,6 +7,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -152,10 +153,11 @@ public class AugmentedPopulator extends BlockPopulator {
     }
     
     private void populateBiome(final World world, final int x, final int z) {
+        Biome biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         if (this.b) {
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    world.setBiome(x + i, z + j, this.plotworld.PLOT_BIOME);
+                    world.setBiome(x + i, z + j, biome);
                 }
             }
         }

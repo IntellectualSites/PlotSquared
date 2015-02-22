@@ -118,7 +118,7 @@ public class HybridGen extends PlotGenerator {
             this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
         }
         this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
-        this.biome = this.plotworld.PLOT_BIOME;
+        this.biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         try {
             this.maxY = Bukkit.getWorld(world).getMaxHeight();
         } catch (final NullPointerException e) {

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.StringComparison;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
@@ -221,5 +223,33 @@ public class BukkitUtil extends BlockManager {
     @Override
     public int getHeighestBlock(Location loc) {
         return getWorld(loc.getWorld()).getHighestBlockAt(loc.getX(), loc.getZ()).getY();
+    }
+
+    @Override
+    public int getBiomeFromString(String biomeStr) {
+        Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+        if (biome == null) {
+            return -1;
+        }
+        return Arrays.asList(Biome.values()).indexOf(biome);
+    }
+
+    @Override
+    public String[] getBiomeList() {
+        Biome[] biomes = Biome.values();
+        String[] list = new String[biomes.length];
+        for (int i = 0; i< biomes.length; i++) {
+            list[i] = biomes[i].name();
+        }
+        return list;
+    }
+
+    @Override
+    public int getBlockIdFromString(String block) {
+        Material material = Material.valueOf(block.toUpperCase());
+        if (material == null) {
+            return -1;
+        }
+        return material.getId();
     }
 }

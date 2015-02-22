@@ -29,6 +29,12 @@ public abstract class BlockManager {
         return (int) r;
     }
     
+    public abstract String[] getBiomeList();
+    
+    public abstract int getBiomeFromString(String biome);
+    
+    public abstract int getBlockIdFromString(String block);
+    
     public abstract int getHeighestBlock(Location loc);
     
     public abstract String getBiome(Location loc);

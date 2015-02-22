@@ -22,9 +22,8 @@ package com.intellectualcrafters.plot.config;
 
 import java.util.ArrayList;
 
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.BlockManager;
 
 /**
  * Main Configuration Utility
@@ -107,7 +106,10 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                Biome.valueOf(string.toUpperCase());
+                int biome = BlockManager.manager.getBiomeFromString(string.toUpperCase());
+                if (biome == -1) {
+                    return false;
+                }
                 return true;
             } catch (final Exception e) {
                 return false;
@@ -116,17 +118,15 @@ public class Configuration {
         
         @Override
         public Object parseString(final String string) {
-            for (final Biome biome : Biome.values()) {
-                if (biome.name().equals(string.toUpperCase())) {
-                    return biome;
-                }
+            if (validateValue(string)) {
+                return string.toUpperCase();
             }
-            return Biome.FOREST;
+            return "FOREST";
         }
         
         @Override
         public Object parseObject(final Object object) {
-            return (((Biome) object)).toString();
+            return object.toString();
         }
     };
     public static final SettingValue BLOCK = new SettingValue("BLOCK") {

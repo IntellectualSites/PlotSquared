@@ -26,9 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -36,6 +33,7 @@ import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
 import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
@@ -141,11 +139,7 @@ public class FlagManager {
      * @param flag
      */
     public static boolean addPlotFlag(final Plot plot, final Flag flag) {
-        final PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return false;
-        }
+        // FIXME PlotFlagAddEvent
         final Flag hasFlag = getPlotFlag(plot, flag.getKey());
         if (hasFlag != null) {
             plot.settings.flags.remove(hasFlag);
@@ -197,11 +191,7 @@ public class FlagManager {
         if (hasFlag != null) {
             final Flag flagObj = FlagManager.getPlotFlagAbs(plot, flag);
             if (flagObj != null) {
-                final PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flagObj, plot);
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return false;
-                }
+                // FIXME PlotFlagRemoveEvent
                 plot.settings.flags.remove(hasFlag);
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
                 return true;
@@ -281,7 +271,7 @@ public class FlagManager {
      *
      * @return List (AbstractFlag)
      */
-    public static List<AbstractFlag> getFlags(final Player player) {
+    public static List<AbstractFlag> getFlags(final PlotPlayer player) {
         final List<AbstractFlag> returnFlags = new ArrayList<>();
         for (final AbstractFlag flag : flags) {
             if (player.hasPermission("plots.set.flag." + flag.getKey().toLowerCase())) {
