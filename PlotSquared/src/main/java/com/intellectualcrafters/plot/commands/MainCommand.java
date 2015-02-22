@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.awt.datatransfer.Clipboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

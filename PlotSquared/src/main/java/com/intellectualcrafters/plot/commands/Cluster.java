@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;

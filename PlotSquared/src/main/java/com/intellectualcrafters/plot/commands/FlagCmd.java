@@ -36,7 +36,6 @@ import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 
 public class FlagCmd extends SubCommand {
     public FlagCmd() {
