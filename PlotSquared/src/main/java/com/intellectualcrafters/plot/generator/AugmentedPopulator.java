@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -35,6 +36,18 @@ public class AugmentedPopulator extends BlockPopulator {
     private final int bz;
     private final int tx;
     private final int tz;
+    
+    public static void removePopulator(String worldname, PlotCluster cluster) {
+        World world = Bukkit.getWorld(worldname);
+        for (final Iterator<BlockPopulator> iterator = world.getPopulators().iterator(); iterator.hasNext();) {
+            final BlockPopulator populator = iterator.next();
+            if (populator instanceof AugmentedPopulator) {
+                if (((AugmentedPopulator) populator).cluster.equals(cluster)) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
     
     public BlockWrapper get(final int X, final int Z, final int i, final int j, final short[][] r, final boolean c) {
         final int y = (i << 4) + (j >> 8);
