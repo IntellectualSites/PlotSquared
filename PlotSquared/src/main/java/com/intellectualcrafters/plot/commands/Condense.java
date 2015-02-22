@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -36,6 +34,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class Condense extends SubCommand {
     public static boolean TASK = false;
@@ -55,8 +54,7 @@ public class Condense extends SubCommand {
             return false;
         }
         final String worldname = args[0];
-        final World world = Bukkit.getWorld(worldname);
-        if ((world == null) || !PlotSquared.isPlotWorld(worldname)) {
+        if (!BukkitUtil.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -90,13 +88,13 @@ public class Condense extends SubCommand {
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
                 while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
-                    final Plot plot = MainUtil.getPlot(world, start);
+                    final Plot plot = MainUtil.getPlot(worldname, start);
                     if (!plot.hasOwner()) {
                         free.add(plot.id);
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
-                MainUtil.move(world, to_move.get(0), free.get(0), new Runnable() {
+                MainUtil.move(worldname, to_move.get(0), free.get(0), new Runnable() {
                     @Override
                     public void run() {
                         if (!TASK) {
@@ -107,7 +105,7 @@ public class Condense extends SubCommand {
                         free.remove(0);
                         int index = 0;
                         for (final PlotId id : to_move) {
-                            final Plot plot = MainUtil.getPlot(world, id);
+                            final Plot plot = MainUtil.getPlot(worldname, id);
                             if (plot.hasOwner()) {
                                 break;
                             }
@@ -118,7 +116,7 @@ public class Condense extends SubCommand {
                         }
                         index = 0;
                         for (final PlotId id : free) {
-                            final Plot plot = MainUtil.getPlot(world, id);
+                            final Plot plot = MainUtil.getPlot(worldname, id);
                             if (!plot.hasOwner()) {
                                 break;
                             }
@@ -138,7 +136,7 @@ public class Condense extends SubCommand {
                             return;
                         }
                         sendMessage("MOVING " + to_move.get(0) + " to " + free.get(0));
-                        MainUtil.move(world, to_move.get(0), free.get(0), this);
+                        MainUtil.move(worldname, to_move.get(0), free.get(0), this);
                     }
                 });
                 TASK = true;

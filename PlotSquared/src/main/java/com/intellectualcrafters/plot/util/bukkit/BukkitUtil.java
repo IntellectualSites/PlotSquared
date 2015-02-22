@@ -38,6 +38,10 @@ public class BukkitUtil extends BlockManager {
         UUIDHandler.players.remove(plr);
     }
     
+    public static boolean isWorld(String world) {
+        return getWorld(world) != null;
+    }
+    
     public static PlotPlayer getPlayer(Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
