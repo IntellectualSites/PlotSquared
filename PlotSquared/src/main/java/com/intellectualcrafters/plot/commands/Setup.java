@@ -27,12 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.WorldCreator;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -41,6 +35,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Setup extends SubCommand {
@@ -205,7 +200,7 @@ public class Setup extends SubCommand {
                     MainUtil.sendMessage(plr, "&cYou need to choose a world name!");
                     return false;
                 }
-                if (Bukkit.getWorld(args[0]) != null) {
+                if (BlockManager.manager.isWorld(args[0])) {
                     MainUtil.sendMessage(plr, "&cThat world name is already taken!");
                 }
                 object.world = args[0];

@@ -760,4 +760,9 @@ public class ChunkManager extends AChunkManager {
     public boolean loadChunk(String world, ChunkLoc loc) {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);
     }
+
+    @Override
+    public void swap(String world, PlotId id, PlotId plotid) {
+        // FIXME swap plots
+    }
 }

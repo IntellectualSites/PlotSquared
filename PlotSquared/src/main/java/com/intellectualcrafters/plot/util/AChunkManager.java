@@ -6,6 +6,7 @@ import java.util.List;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public abstract class AChunkManager {
@@ -33,4 +34,6 @@ public abstract class AChunkManager {
     public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
     
     public abstract void clearAllEntities(final Plot plot);
+
+    public abstract void swap(String world, PlotId id, PlotId plotid);
 }

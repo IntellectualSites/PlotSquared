@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Location;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -35,7 +33,8 @@ public class Target extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (!PlotSquared.isPlotWorld(plr.getWorld())) {
+        Location ploc = plr.getLocation();
+        if (!PlotSquared.isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
@@ -45,7 +44,7 @@ public class Target extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
-            final Location loc = MainUtil.getPlotHome(plr.getWorld(), id);
+            final Location loc = MainUtil.getPlotHome(loc.getWorld(), id);
             plr.setCompassTarget(loc);
             MainUtil.sendMessage(plr, C.COMPASS_TARGET);
             return true;

@@ -23,15 +23,15 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.World;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -51,6 +51,7 @@ public class SetOwner extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || (plot.owner == null)) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
@@ -64,9 +65,9 @@ public class SetOwner extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
             return false;
         }
-        final World world = plr.getWorld();
-        final PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId top = MainUtil.getTopPlot(world, plot).id;
+        final String world = loc.getWorld();
+        final PlotId bot = MainUtil.getBottomPlot(plot).id;
+        final PlotId top = MainUtil.getTopPlot( plot).id;
         final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);
@@ -78,11 +79,8 @@ public class SetOwner extends SubCommand {
             current.owner = uuid;
             PlotSquared.updatePlot(current);
             DBFunc.setOwner(current, current.owner);
-            if (PlotSquared.worldGuardListener != null) {
-                PlotSquared.worldGuardListener.changeOwner(plr, current.owner, plr.getWorld(), current);
-            }
         }
-        MainUtil.setSign(world, args[0], plot);
+        MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
         return true;
     }
