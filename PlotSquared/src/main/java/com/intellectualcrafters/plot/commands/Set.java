@@ -64,11 +64,11 @@ public class Set extends SubCommand {
     @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
-            return false;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if (!plot.hasOwner()) {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;

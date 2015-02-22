@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -38,11 +39,11 @@ public class Kick extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            MainUtil.sendMessage(plr, "You're not in a plot.");
-            return false;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.kick")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;

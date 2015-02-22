@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -45,11 +46,11 @@ public class Trusted extends SubCommand {
             MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if ((plot == null) || !plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;

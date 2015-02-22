@@ -25,6 +25,7 @@ import org.bukkit.World;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -49,11 +50,11 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
-            return false;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;

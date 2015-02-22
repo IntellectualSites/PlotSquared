@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.PWE;
 
 public class WE_Anywhere extends SubCommand {

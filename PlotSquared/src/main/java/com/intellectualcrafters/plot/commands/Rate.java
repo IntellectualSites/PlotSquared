@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -44,11 +45,11 @@ public class Rate extends SubCommand {
             sendMessage(plr, C.RATING_NOT_VALID);
             return true;
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
-            sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if (!plot.hasOwner()) {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;

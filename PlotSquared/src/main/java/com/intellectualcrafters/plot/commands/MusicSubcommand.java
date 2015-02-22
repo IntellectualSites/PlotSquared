@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -41,11 +42,11 @@ public class MusicSubcommand extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        if (!BukkitPlayerFunctions.isInPlot(player)) {
-            sendMessage(player, C.NOT_IN_PLOT);
-            return true;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if (!plot.hasRights(player)) {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;

@@ -30,6 +30,7 @@ import org.bukkit.Bukkit;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -50,11 +51,11 @@ public class Inbox extends SubCommand {
                 report = true;
             }
         }
-        if (!BukkitPlayerFunctions.isInPlot(plr) && !report) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
-            return false;
-        }
+        Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null && !report) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
         if ((plot != null) && !plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;

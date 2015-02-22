@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
@@ -247,11 +248,11 @@ public class Schematic extends SubCommand {
                 final String world;
                 final Plot p2;
                 if (plr != null) {
-                    if (!BukkitPlayerFunctions.isInPlot(plr)) {
-                        sendMessage(plr, C.NOT_IN_PLOT);
-                        return false;
+                    Location loc = plr.getLocation();
+                    final Plot plot = MainUtil.getPlot(loc);
+                    if (plot == null) {
+                        return !sendMessage(plr, C.NOT_IN_PLOT);
                     }
-                    final Plot myplot = MainUtil.getPlot(loc);
                     if (!myplot.hasRights(plr)) {
                         sendMessage(plr, C.NO_PLOT_PERMS);
                         return false;

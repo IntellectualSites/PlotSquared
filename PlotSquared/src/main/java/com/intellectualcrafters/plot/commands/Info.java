@@ -57,14 +57,15 @@ public class Info extends SubCommand {
         World world;
         Plot plot;
         if (player != null) {
-            world = player.getWorld();
+            Location loc = player.getLocation();
+            String world = loc.getWorld();
             if (!PlotSquared.isPlotWorld(world)) {
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT_WORLD);
                 return false;
             }
-            if (!BukkitPlayerFunctions.isInPlot(player)) {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
-                return false;
+            final Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                return !sendMessage(plr, C.NOT_IN_PLOT);
             }
             plot = MainUtil.getPlot(loc);
         } else {
