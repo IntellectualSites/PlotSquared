@@ -84,6 +84,7 @@ public class MainCommand {
         }
         final List<String> help = new ArrayList<>();
         help.add(C.HELP_HEADER.s());
+        System.out.print(C.HELP_HEADER.s());
         // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
         help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages + 1)).replace("%dis%", "" + (commands.size() % perPage)).replace("%total%", "" + commands.size()));
         SubCommand cmd;
@@ -158,7 +159,7 @@ public class MainCommand {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-            player.sendMessage(MainUtil.colorise('&', help.toString()));
+            MainUtil.sendMessage(player, help.toString());
             // return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {

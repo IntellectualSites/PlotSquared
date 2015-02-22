@@ -444,7 +444,7 @@ public enum C {
      * @see com.intellectualsites.translation.TranslationLanguage
      */
     protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-    public static String COLOR_1 = "\u00A76", COLOR_2 = "\u00A77", COLOR_3 = "\u00A78", COLOR_4 = "\u00A73";
+    public static String COLOR_1 = "&6", COLOR_2 = "&7", COLOR_3 = "&8", COLOR_4 = "&3";
     /**
      * The TranslationManager
      *

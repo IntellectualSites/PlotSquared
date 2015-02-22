@@ -437,6 +437,8 @@ public class PlotSquared {
         IMP.registerPlotPlusEvents();
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
+        // create UUIDWrapper
+        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
         // create Hybrid utility class
         HybridUtils.manager = IMP.initHybridUtils();
         // create setup util class
@@ -771,9 +773,6 @@ public class PlotSquared {
                 storage.set(node.getKey(), node.getValue());
             }
         }
-    }
-    
-    public static void showDebug() {
         Settings.DB.USE_MYSQL = storage.getBoolean("mysql.use");
         Settings.DB.USER = storage.getString("mysql.user");
         Settings.DB.PASSWORD = storage.getString("mysql.password");
@@ -790,10 +789,13 @@ public class PlotSquared {
         Settings.API_URL = config.getString("uuid.api.location");
         Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
         Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
-        C.COLOR_1 = "\u00A7" + (style.getString("color.1"));
-        C.COLOR_2 = "\u00A7" + (style.getString("color.2"));
-        C.COLOR_3 = "\u00A7" + (style.getString("color.3"));
-        C.COLOR_4 = "\u00A7" + (style.getString("color.4"));
+    }
+    
+    public static void showDebug() {
+        C.COLOR_1 = "&" + (style.getString("color.1"));
+        C.COLOR_2 = "&" + (style.getString("color.2"));
+        C.COLOR_3 = "&" + (style.getString("color.3"));
+        C.COLOR_4 = "&" + (style.getString("color.4"));
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);

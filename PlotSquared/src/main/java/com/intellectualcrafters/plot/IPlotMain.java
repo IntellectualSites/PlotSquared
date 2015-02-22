@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public interface IPlotMain {
     public void log(String message);
@@ -42,6 +43,8 @@ public interface IPlotMain {
     public SetupUtils initSetupUtils();
     
     public HybridUtils initHybridUtils();
+    
+    public UUIDWrapper initUUIDHandler();
     
     public boolean initPlotMeConverter();
     

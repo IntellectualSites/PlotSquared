@@ -53,7 +53,7 @@ public class Claim extends SubCommand {
 //        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
 //        Bukkit.getPluginManager().callEvent(event);
 //        boolean result = event.isCancelled();
-        boolean result = true;
+        boolean result = false;
         
         if (!result) {
             MainUtil.createPlot(player.getUUID(), plot);

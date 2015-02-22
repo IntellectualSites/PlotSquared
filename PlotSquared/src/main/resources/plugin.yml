@@ -1,5 +1,5 @@
 name: ${project.name}
-main: com.intellectualcrafters.plot.PlotSquared
+main: com.intellectualcrafters.plot.BukkitMain
 version: ${project.version}
 load: STARTUP
 description: >

@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -39,6 +40,8 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -54,6 +57,9 @@ import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -102,8 +108,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void onEnable() {
-        MAIN = new PlotSquared(this);
         THIS = this;
+        MAIN = new PlotSquared(this);
         if (Settings.METRICS) {
             try {
                 final Metrics metrics = new Metrics(this);
@@ -127,6 +133,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void log(String message) {
+        message = message.replaceAll("\u00B2", "2");
         if ((THIS == null) || (Bukkit.getServer().getConsoleSender() == null)) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(message)));
         } else {
@@ -336,5 +343,37 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public SetupUtils initSetupUtils() {
         return new BukkitSetupUtils();
+    }
+
+    @Override
+    public UUIDWrapper initUUIDHandler() {
+        boolean checkVersion = checkVersion(1, 7, 6);
+        if (!checkVersion) {
+            log(C.PREFIX.s()+" &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+            Settings.TITLES = false;
+            FlagManager.removeFlag(FlagManager.getFlag("titles"));
+        }
+        else {
+            AbstractTitle.TITLE_CLASS = new DefaultTitle();
+        }
+        if (Settings.OFFLINE_MODE) {
+            UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            Settings.OFFLINE_MODE = true;
+        }
+        else if (checkVersion) {
+            UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
+            Settings.OFFLINE_MODE = false;
+        }
+        else {
+            UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            Settings.OFFLINE_MODE = true;
+        }
+        if (Settings.OFFLINE_MODE) {
+            log(C.PREFIX.s()+" &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
+        }
+        else {
+            log(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");
+        }
+        return UUIDHandler.uuidWrapper;
     }
 }
