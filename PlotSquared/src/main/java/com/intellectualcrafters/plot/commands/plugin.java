@@ -32,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class plugin extends SubCommand {
     public static String downloads, version;
@@ -90,12 +91,12 @@ public class plugin extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.getMain().getDescription().getVersion()));
+                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.IMP.getVersion()));
                         add(String.format("&c>> &6Made by Citymonstret and Empire92"));
                         add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
                         add(String.format("&c>> &cNewest Version (Spigot): %s", version));

@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -41,12 +42,12 @@ public class MusicSubcommand extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        Location loc = plr.getLocation();
+        Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.hasRights(player)) {
+        if (!plot.isAdded(player.getUUID())) {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
@@ -59,7 +60,8 @@ public class MusicSubcommand extends SubCommand {
             stack.setItemMeta(itemMeta);
             inventory.addItem(stack);
         }
-        player.openInventory(inventory);
+        // FIXME unchecked casting
+        ((BukkitPlayer) player).player.openInventory(inventory);
         return true;
     }
 }
