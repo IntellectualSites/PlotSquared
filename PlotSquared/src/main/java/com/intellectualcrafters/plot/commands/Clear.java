@@ -68,17 +68,25 @@ public class Clear extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!MainUtil.getTopPlot(loc.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(loc.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(loc.getWorld(), plot).equals(MainUtil.getBottomPlot( plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        boolean result = MainUtil.clearAsPlayer(plot, isDelete, whenDone);
-        plot.clear(plr, false);
+        final long start = System.currentTimeMillis();
+        boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+            @Override
+            public void run() {
+                MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+            }
+        });
+        if (!result) {
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+        }
         // sign
         // wall
-        return true;
+        return result;
     }
 }
