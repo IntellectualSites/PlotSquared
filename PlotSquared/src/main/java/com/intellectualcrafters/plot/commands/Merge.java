@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import net.milkbowl.vault.economy.Economy;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -38,7 +36,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -107,35 +105,35 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
-        final World world = plr.getWorld();
-        PlotId bot = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        PlotId top = MainUtil.getTopPlot(world, plot).id;
+        PlotId bot = MainUtil.getBottomPlot(plot).id;
+        PlotId top = MainUtil.getTopPlot(plot).id;
         ArrayList<PlotId> plots;
+        String world = plr.getLocation().getWorld();
         switch (direction) {
             case 0: // north = -y
-                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
                 break;
             case 1: // east = +x
-                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
                 break;
             case 2: // south = +y
-                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
                 break;
             case 3: // west = -x
-                plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
                 break;
             default:
                 return false;
         }
         final PlotId botId = plots.get(0);
         final PlotId topId = plots.get(plots.size() - 1);
-        final PlotId bot1 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, botId)).id;
-        final PlotId bot2 = BukkitPlayerFunctions.getBottomPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top1 = MainUtil.getTopPlot(world, MainUtil.getPlot(world, topId)).id;
-        final PlotId top2 = MainUtil.getTopPlot(world, MainUtil.getPlot(world, botId)).id;
+        final PlotId bot1 = MainUtil.getBottomPlot(MainUtil.getPlot(world, botId)).id;
+        final PlotId bot2 = MainUtil.getBottomPlot(MainUtil.getPlot(world, topId)).id;
+        final PlotId top1 = MainUtil.getTopPlot(MainUtil.getPlot(world, topId)).id;
+        final PlotId top2 = MainUtil.getTopPlot(MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
-        plots = BukkitPlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
+        plots = MainUtil.getMaxPlotSelectionIds(world, bot, top);
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
@@ -144,12 +142,12 @@ public class Merge extends SubCommand {
             }
         }
         final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
-        if (PlotSquared.useEconomy && plotWorld.USE_ECONOMY) {
+        if (PlotSquared.economy != null && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;
             if (cost > 0d) {
                 final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr) < cost) {
+                if (EconHandler.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
                 }
@@ -157,16 +155,16 @@ public class Merge extends SubCommand {
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        final PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            event.setCancelled(true);
+        //FIXME PlotMergeEvent
+        // boolean result = event.isCancelled();
+        boolean result = false;
+        if (result) {
             MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }
         MainUtil.sendMessage(plr, "&cPlots have been merged");
         MainUtil.mergePlots(world, plots, true);
-        MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
+        MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
         MainUtil.update(plr.getLocation());
         return true;
     }

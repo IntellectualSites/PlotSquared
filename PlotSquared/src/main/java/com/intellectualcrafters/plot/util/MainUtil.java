@@ -54,6 +54,28 @@ public class MainUtil {
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
     
+    public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
+
+        final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
+        final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
+
+        if (plot1 != null) {
+            pos1 = getBottomPlot(plot1).id;
+        }
+
+        if (plot2 != null) {
+            pos2 = getTopPlot(plot2).id;
+        }
+
+        final ArrayList<PlotId> myplots = new ArrayList<>();
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                myplots.add(new PlotId(x, y));
+            }
+        }
+        return myplots;
+    }
+    
     /**
      * Get the number of plots for a player
      *
