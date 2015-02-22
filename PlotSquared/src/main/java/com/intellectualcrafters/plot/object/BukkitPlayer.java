@@ -95,5 +95,11 @@ public class BukkitPlayer implements PlotPlayer {
     public boolean isOnline() {
         return this.player.isOnline();
     }
+
+    @Override
+    public void setCompassTarget(Location loc) {
+        player.setCompassTarget(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ()));
+        
+    }
     
 }

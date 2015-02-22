@@ -23,4 +23,6 @@ public interface PlotPlayer {
     public boolean isOnline();
     
     public String getName();
+
+    public void setCompassTarget(Location loc);
 }

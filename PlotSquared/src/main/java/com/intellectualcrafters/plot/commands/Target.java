@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -44,7 +45,7 @@ public class Target extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }
-            final Location loc = MainUtil.getPlotHome(loc.getWorld(), id);
+            final Location loc = MainUtil.getPlotHome(ploc.getWorld(), id);
             plr.setCompassTarget(loc);
             MainUtil.sendMessage(plr, C.COMPASS_TARGET);
             return true;
