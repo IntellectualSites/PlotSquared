@@ -18,35 +18,36 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {
         super("music", "plots.music", "Play music in plot", "music", "mus", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player player, final String... args) {
-        if (!PlayerFunctions.isInPlot(player)) {
-            sendMessage(player, C.NOT_IN_PLOT);
-            return true;
+    public boolean execute(final PlotPlayer player, final String... args) {
+        Location loc = player.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(player);
-        if (!plot.hasRights(player)) {
+        if (!plot.isAdded(player.getUUID())) {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
@@ -59,7 +60,8 @@ public class MusicSubcommand extends SubCommand {
             stack.setItemMeta(itemMeta);
             inventory.addItem(stack);
         }
-        player.openInventory(inventory);
+        // FIXME unchecked casting
+        ((BukkitPlayer) player).player.openInventory(inventory);
         return true;
     }
 }

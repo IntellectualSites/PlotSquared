@@ -4,7 +4,7 @@ public class PlotLoc {
     public short x;
     public short z;
     
-    public PlotLoc(short x, short z) {
+    public PlotLoc(final short x, final short z) {
         this.x = x;
         this.z = z;
     }
@@ -19,7 +19,7 @@ public class PlotLoc {
     }
     
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -29,7 +29,7 @@ public class PlotLoc {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PlotLoc other = (PlotLoc) obj;
+        final PlotLoc other = (PlotLoc) obj;
         return ((this.x == other.x) && (this.z == other.z));
     }
 }

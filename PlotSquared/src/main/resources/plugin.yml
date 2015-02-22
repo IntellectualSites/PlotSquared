@@ -1,5 +1,5 @@
 name: ${project.name}
-main: com.intellectualcrafters.plot.PlotMain
+main: com.intellectualcrafters.plot.PlotSquared
 version: ${project.version}
 load: STARTUP
 description: >
@@ -9,7 +9,7 @@ softdepend: [WorldEdit, BarAPI, CameraAPI, Vault]
 database: false
 commands:
   plots:
-    description: PlotMain PlotSquared command.
+    description: PlotSquared PlotSquared command.
     aliases: [p,plot,ps,plotsquared,p2]
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"

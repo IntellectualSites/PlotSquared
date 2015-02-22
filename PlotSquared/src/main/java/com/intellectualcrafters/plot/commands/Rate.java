@@ -18,39 +18,36 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
-
-import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({"unused", "deprecated", "javadoc"}) public class Rate extends SubCommand {
-
+public class Rate extends SubCommand {
     /*
      * String cmd, String permission, String description, String usage, String
      * alias, CommandCategory category
      */
-
     public Rate() {
         super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             sendMessage(plr, C.RATING_NOT_VALID);
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (!plot.hasOwner()) {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;
@@ -82,7 +79,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         } catch (final Exception e) {
             rated = false;
         }
-
         if (rated) {
             sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
         }

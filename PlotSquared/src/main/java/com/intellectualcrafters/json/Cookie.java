@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 /**
@@ -29,7 +28,6 @@ package com.intellectualcrafters.json;
  * @version 2014-05-03
  */
 public class Cookie {
-
     /**
      * Produce a copy of a string in which the characters '+', '%', '=', ';' and control characters are replaced with
      * "%hh". This is a gentle form of URL encoding, attempting to cause as little distortion to the string as possible.
@@ -58,7 +56,7 @@ public class Cookie {
         }
         return sb.toString();
     }
-
+    
     /**
      * Convert a cookie specification string into a JSONObject. The string will contain a name value pair separated by
      * '='. The name and the value will be unescaped, possibly converting '+' and '%' sequences. The cookie properties
@@ -98,7 +96,7 @@ public class Cookie {
         }
         return jo;
     }
-
+    
     /**
      * Convert a JSONObject into a cookie specification string. The JSONObject must contain "name" and "value" members.
      * If the JSONObject contains "expires", "domain", "path", or "secure" members, they will be appended to the cookie
@@ -112,7 +110,6 @@ public class Cookie {
      */
     public static String toString(final JSONObject jo) throws JSONException {
         final StringBuilder sb = new StringBuilder();
-
         sb.append(escape(jo.getString("name")));
         sb.append("=");
         sb.append(escape(jo.getString("value")));
@@ -133,7 +130,7 @@ public class Cookie {
         }
         return sb.toString();
     }
-
+    
     /**
      * Convert <code>%</code><i>hh</i> sequences to single characters, and convert plus to space.
      *

@@ -18,17 +18,15 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * plot settings
@@ -36,7 +34,8 @@ import com.intellectualcrafters.plot.util.PlotHelper;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused") public class PlotSettings {
+@SuppressWarnings("unused")
+public class PlotSettings {
     /**
      * Plot
      */
@@ -44,7 +43,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     /**
      * merged plots
      */
-    private boolean[] merged = new boolean[]{false, false, false, false};
+    private boolean[] merged = new boolean[] { false, false, false, false };
     /**
      * plot alias
      */
@@ -61,7 +60,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
      * Home Position
      */
     private BlockLoc position;
-
+    
     /**
      * Constructor
      *
@@ -71,7 +70,7 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         this.alias = "";
         this.plot = plot;
     }
-
+    
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
@@ -82,48 +81,49 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public boolean getMerged(final int direction) {
         return this.merged[direction];
     }
-
+    
     /**
      * Returns true if the plot is merged (i.e. if it's a mega plot)
      */
     public boolean isMerged() {
         return (this.merged[0] || this.merged[1] || this.merged[2] || this.merged[3]);
     }
-
+    
     public boolean[] getMerged() {
         return this.merged;
     }
-
+    
     public void setMerged(final boolean[] merged) {
         this.merged = merged;
     }
-
+    
     public void setMerged(final int direction, final boolean merged) {
         this.merged[direction] = merged;
     }
-
+    
     /**
      * @return biome at plot loc
      */
-    public Biome getBiome() {
-        return PlotHelper.getPlotBottomLoc(this.plot.getWorld(), this.plot.getId()).add(1, 0, 1).getBlock().getBiome();
+    public String getBiome() {
+        final Location loc = MainUtil.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1);
+        return BlockManager.manager.getBiome(loc);
     }
-
+    
     public BlockLoc getPosition() {
         if (this.position == null) {
             return new BlockLoc(0, 0, 0);
         }
         return this.position;
     }
-
-    public void setPosition(BlockLoc position) {
+    
+    public void setPosition(final BlockLoc position) {
         this.position = position;
     }
-
+    
     public String getAlias() {
         return this.alias;
     }
-
+    
     /**
      * Set the plot alias
      *
@@ -132,28 +132,28 @@ import com.intellectualcrafters.plot.util.PlotHelper;
     public void setAlias(final String alias) {
         this.alias = alias;
     }
-
+    
     public String getJoinMessage() {
-        final Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
+        final Flag greeting = FlagManager.getPlotFlag(this.plot, "greeting");
         if (greeting != null) {
             return greeting.getValueString();
         }
         return "";
     }
-
+    
     /**
      * Get the "farewell" flag value
      *
      * @return Farewell flag
      */
     public String getLeaveMessage() {
-        final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
+        final Flag farewell = FlagManager.getPlotFlag(this.plot, "farewell");
         if (farewell != null) {
             return farewell.getValueString();
         }
         return "";
     }
-
+    
     public ArrayList<PlotComment> getComments(final int tier) {
         final ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
@@ -166,23 +166,23 @@ import com.intellectualcrafters.plot.util.PlotHelper;
         }
         return c;
     }
-
+    
     public void setComments(final ArrayList<PlotComment> comments) {
         this.comments = comments;
     }
-
+    
     public void removeComment(final PlotComment comment) {
         if (this.comments.contains(comment)) {
             this.comments.remove(comment);
         }
     }
-
+    
     public void removeComments(final ArrayList<PlotComment> comments) {
         for (final PlotComment comment : comments) {
             removeComment(comment);
         }
     }
-
+    
     public void addComment(final PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<>();

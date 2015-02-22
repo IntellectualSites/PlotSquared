@@ -27,7 +27,6 @@ package com.intellectualcrafters.json;
  * @version 2013-04-18
  */
 public class Kim {
-
     /**
      * The number of bytes in the kim. The number of bytes can be as much as three times the number of characters.
      */
@@ -44,7 +43,7 @@ public class Kim {
      * The memoization of toString().
      */
     private String string = null;
-
+    
     /**
      * Make a kim from a portion of a byte array.
      *
@@ -53,11 +52,9 @@ public class Kim {
      * @param thru  The index of the last byte plus one.
      */
     public Kim(final byte[] bytes, final int from, final int thru) {
-
         // As the bytes are copied into the new kim, a hashcode is computed
         // using a
         // modified Fletcher code.
-
         int sum = 1;
         int value;
         this.hashcode = 0;
@@ -73,7 +70,7 @@ public class Kim {
             this.hashcode += sum << 16;
         }
     }
-
+    
     /**
      * Make a kim from a byte array.
      *
@@ -83,7 +80,7 @@ public class Kim {
     public Kim(final byte[] bytes, final int length) {
         this(bytes, 0, length);
     }
-
+    
     /**
      * Make a new kim from a substring of an existing kim. The coordinates are in byte units, not character units.
      *
@@ -94,7 +91,7 @@ public class Kim {
     public Kim(final Kim kim, final int from, final int thru) {
         this(kim.bytes, from, thru);
     }
-
+    
     /**
      * Make a kim from a string.
      *
@@ -106,10 +103,8 @@ public class Kim {
         final int stringLength = string.length();
         this.hashcode = 0;
         this.length = 0;
-
         // First pass: Determine the length of the kim, allowing for the UTF-16
         // to UTF-32 conversion, and then the UTF-32 to Kim conversion.
-
         if (stringLength > 0) {
             for (int i = 0; i < stringLength; i += 1) {
                 final int c = string.charAt(i);
@@ -128,11 +123,9 @@ public class Kim {
                     this.length += 3;
                 }
             }
-
             // Second pass: Allocate a byte array and fill that array with the
             // conversion
             // while computing the hashcode.
-
             this.bytes = new byte[this.length];
             int at = 0;
             int b;
@@ -180,7 +173,7 @@ public class Kim {
             this.hashcode += sum << 16;
         }
     }
-
+    
     /**
      * Returns the number of bytes needed to contain the character in Kim format.
      *
@@ -196,7 +189,7 @@ public class Kim {
         }
         return character <= 0x7F ? 1 : character <= 0x3FFF ? 2 : 3;
     }
-
+    
     /**
      * Returns the character at the specified index. The index refers to byte values and ranges from 0 to length - 1.
      * The index of the next character is at index + Kim.characterSize(kim.characterAt(index)).
@@ -227,7 +220,7 @@ public class Kim {
         }
         throw new JSONException("Bad character at " + at);
     }
-
+    
     /**
      * Copy the contents of this kim to a byte array.
      *
@@ -240,7 +233,7 @@ public class Kim {
         System.arraycopy(this.bytes, 0, bytes, at, this.length);
         return at + this.length;
     }
-
+    
     /**
      * Two kim objects containing exactly the same bytes in the same order are equal to each other.
      *
@@ -262,7 +255,7 @@ public class Kim {
         }
         return java.util.Arrays.equals(this.bytes, that.bytes);
     }
-
+    
     /**
      * Get a byte from a kim.
      *
@@ -278,7 +271,7 @@ public class Kim {
         }
         return (this.bytes[at]) & 0xFF;
     }
-
+    
     /**
      * Returns a hash code value for the kim.
      */
@@ -286,7 +279,7 @@ public class Kim {
     public int hashCode() {
         return this.hashcode;
     }
-
+    
     /**
      * Produce a UTF-16 String from this kim. The number of codepoints in the string will not be greater than the number
      * of bytes in the kim, although it could be less.

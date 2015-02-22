@@ -1,14 +1,12 @@
 package com.intellectualcrafters.plot.object;
 
-
 public class ChunkLoc {
     public int x;
     public int z;
     
-    public ChunkLoc(int x, int z) {
+    public ChunkLoc(final int x, final int z) {
         this.x = x;
         this.z = z;
-        
     }
     
     @Override
@@ -21,7 +19,7 @@ public class ChunkLoc {
     }
     
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -31,8 +29,7 @@ public class ChunkLoc {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ChunkLoc other = (ChunkLoc) obj;
+        final ChunkLoc other = (ChunkLoc) obj;
         return ((this.x == other.x) && (this.z == other.z));
     }
-    
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.events;
 
 import org.bukkit.event.Cancellable;
@@ -39,7 +38,7 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
     private final Plot plot;
     private final Flag flag;
     private boolean cancelled;
-
+    
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
@@ -50,11 +49,11 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
         this.plot = plot;
         this.flag = flag;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plot involved
      *
@@ -63,7 +62,7 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
     public Plot getPlot() {
         return this.plot;
     }
-
+    
     /**
      * Get the flag involved
      *
@@ -72,17 +71,17 @@ public class PlotFlagRemoveEvent extends Event implements Cancellable {
     public Flag getFlag() {
         return this.flag;
     }
-
+    
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-
+    
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

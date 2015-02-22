@@ -18,65 +18,60 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class DebugFixFlags extends SubCommand {
-
     public DebugFixFlags() {
         super(Command.DEBUGFIXFLAGS, "Attempt to fix all flags for a world", "debugclear", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
-            PlayerFunctions.sendMessage(plr, C.NOT_CONSOLE);
+            MainUtil.sendMessage(plr, C.NOT_CONSOLE);
             return false;
         }
         if (args.length != 1) {
-            PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
             return false;
         }
-        World world = Bukkit.getWorld(args[0]);
-        if (world == null || !PlotMain.isPlotWorld(world)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
+        final String world = args[0];
+        if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
-        PlayerFunctions.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (Plot plot : PlotMain.getPlots(world).values()) {
-            Set<Flag> flags = plot.settings.flags;
-            ArrayList<Flag> toRemove = new ArrayList<Flag>();
-            for (Flag flag : flags) {
-                AbstractFlag af = FlagManager.getFlag(flag.getKey());
+        MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
+        for (final Plot plot : PlotSquared.getPlots(world).values()) {
+            final Set<Flag> flags = plot.settings.flags;
+            final ArrayList<Flag> toRemove = new ArrayList<Flag>();
+            for (final Flag flag : flags) {
+                final AbstractFlag af = FlagManager.getFlag(flag.getKey());
                 if (af == null) {
                     toRemove.add(flag);
                 }
             }
-            for (Flag flag : toRemove) {
+            for (final Flag flag : toRemove) {
                 plot.settings.flags.remove(flag);
             }
             if (toRemove.size() > 0) {
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
             }
         }
-        PlayerFunctions.sendMessage(plr, "&aDone!");
-        
+        MainUtil.sendMessage(plr, "&aDone!");
         return true;
     }
 }

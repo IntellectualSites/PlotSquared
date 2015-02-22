@@ -18,24 +18,11 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -43,41 +30,39 @@ import com.intellectualcrafters.plot.util.TaskManager;
  * @author Empire92
  */
 public class Move extends SubCommand {
-
     public Move() {
         super("debugmove", "plots.admin", "plot moving debug test", "debugmove", "move", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
-            PlayerFunctions.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
+            MainUtil.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
         }
         if (args.length != 2) {
-            PlayerFunctions.sendMessage(plr, "/plot move <pos1> <pos2>");
+            MainUtil.sendMessage(plr, "/plot move <pos1> <pos2>");
             return false;
         }
-        World world = plr.getWorld();
-        PlotId plot1 = PlotHelper.parseId(args[0]);
-        PlotId plot2 = PlotHelper.parseId(args[1]);
-        if (plot1 == null || plot2 == null) {
-            PlayerFunctions.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
+        final String world = plr.getLocation().getWorld();
+        final PlotId plot1 = MainUtil.parseId(args[0]);
+        final PlotId plot2 = MainUtil.parseId(args[1]);
+        if ((plot1 == null) || (plot2 == null)) {
+            MainUtil.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
             return false;
         }
         if (plot1 == plot2) {
-            PlayerFunctions.sendMessage(plr, "DUPLICATE ID");
+            MainUtil.sendMessage(plr, "DUPLICATE ID");
             return false;
         }
-        if (PlotHelper.move(world, plot1, plot2, new Runnable() {
+        if (MainUtil.move(world, plot1, plot2, new Runnable() {
             @Override
             public void run() {
-                PlayerFunctions.sendMessage(plr, "MOVE SUCCESS");
+                MainUtil.sendMessage(plr, "MOVE SUCCESS");
             }
         })) {
             return true;
-        }
-        else {
-            PlayerFunctions.sendMessage(plr, "MOVE FAILED");
+        } else {
+            MainUtil.sendMessage(plr, "MOVE FAILED");
             return false;
         }
     }

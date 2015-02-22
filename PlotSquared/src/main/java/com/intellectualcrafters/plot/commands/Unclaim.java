@@ -18,61 +18,60 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Unclaim extends SubCommand {
-
     public Unclaim() {
         super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !PlotMain.hasPermission(plr, "plots.admin.command.unclaim")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && pWorld.USE_ECONOMY) {
+        final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
+        if (PlotSquared.economy != null && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
-                final Economy economy = PlotMain.economy;
-                economy.depositPlayer(plr, c);
+                final Economy economy = PlotSquared.economy;
+                EconHandler.depositPlayer(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PlotMain.removePlot(plr.getWorld().getName(), plot.id, true);
+        final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
         if (result) {
-            World world = plr.getWorld();
-            String worldname = world.getName();
-            PlotMain.getPlotManager(world).unclaimPlot(world, pWorld, plot);
+            final String worldname = plr.getLocation().getWorld();
+            PlotSquared.getPlotManager(worldname).unclaimPlot(pWorld, plot);
             DBFunc.delete(worldname, plot);
             // TODO set wall block
         } else {
-            PlayerFunctions.sendMessage(plr, "Plot removal has been denied.");
+            MainUtil.sendMessage(plr, "Plot removal has been denied.");
         }
-        PlayerFunctions.sendMessage(plr, C.UNCLAIM_SUCCESS);
+        MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);
         return true;
     }
 }

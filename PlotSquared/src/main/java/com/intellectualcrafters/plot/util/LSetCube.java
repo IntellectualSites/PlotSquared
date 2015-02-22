@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
 import org.bukkit.Location;
@@ -28,13 +27,13 @@ import org.bukkit.Location;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"javadoc", "unused"}) public class LSetCube {
-
+@SuppressWarnings({ "javadoc", "unused" })
+public class LSetCube {
     /**
      * Base locations
      */
     private Location l1, l2;
-
+    
     /**
      * Constructor
      *
@@ -45,7 +44,7 @@ import org.bukkit.Location;
         this.l1 = l1;
         this.l1 = l2;
     }
-
+    
     /**
      * Secondary constructor
      *
@@ -56,7 +55,7 @@ import org.bukkit.Location;
         this.l1 = l1;
         this.l2 = l1.clone().add(size, size, size);
     }
-
+    
     /**
      * Returns the absolute min. of the cube
      *
@@ -68,7 +67,7 @@ import org.bukkit.Location;
         final int z = Math.min(this.l1.getBlockZ(), this.l2.getBlockZ());
         return new Location(this.l1.getWorld(), x, y, z);
     }
-
+    
     /**
      * Returns the absolute max. of the cube
      *
@@ -80,7 +79,7 @@ import org.bukkit.Location;
         final int z = Math.max(this.l1.getBlockZ(), this.l2.getBlockZ());
         return new Location(this.l1.getWorld(), x, y, z);
     }
-
+    
     /**
      * Creates a LCycler for the cube.
      *
@@ -89,7 +88,7 @@ import org.bukkit.Location;
     public LCycler getCycler() {
         return new LCycler(this);
     }
-
+    
     /**
      * @author Citymonstret
      */
@@ -106,7 +105,7 @@ import org.bukkit.Location;
          *
          */
         private Location current;
-
+        
         /**
          * @param cube
          */
@@ -115,14 +114,14 @@ import org.bukkit.Location;
             this.max = cube.maxLoc();
             this.current = this.min;
         }
-
+        
         /**
          * @return
          */
         public boolean hasNext() {
             return ((this.current.getBlockX() + 1) <= this.max.getBlockX()) && ((this.current.getBlockY() + 1) <= this.max.getBlockY()) && ((this.current.getBlockZ() + 1) <= this.max.getBlockZ());
         }
-
+        
         /**
          * @return
          */

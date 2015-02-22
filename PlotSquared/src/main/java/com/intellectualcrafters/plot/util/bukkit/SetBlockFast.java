@@ -18,8 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -28,6 +27,7 @@ import java.util.List;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
@@ -36,18 +36,16 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
-public class SetBlockFast extends AbstractSetBlock {
-
+public class SetBlockFast extends SetBlockManager {
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
     private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-
     private static RefMethod methodGetHandle;
     private static RefMethod methodGetChunkAt;
     private static RefMethod methodA;
     private static RefMethod methodGetById;
-
+    
     /**
      * Constructor
      *
@@ -59,7 +57,7 @@ public class SetBlockFast extends AbstractSetBlock {
         methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
         methodGetById = classBlock.getMethod("getById", int.class);
     }
-
+    
     /**
      * Set the block at the location
      *
@@ -73,28 +71,26 @@ public class SetBlockFast extends AbstractSetBlock {
      * @return true
      */
     @Override
-    public boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
-
+    public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
-        return true;
     }
-
+    
     /**
      * Update chunks
      *
      * @param player Player whose chunks we're updating
      */
     @Override
-    public void update(List<Chunk> chunks) {
+    public void update(final List<Chunk> chunks) {
         if (chunks.size() == 0) {
             return;
         }
-        if (!PlotHelper.canSendChunk) {
-            World world = chunks.get(0).getWorld();
-            for (Chunk chunk : chunks) {
+        if (!MainUtil.canSendChunk) {
+            final World world = chunks.get(0).getWorld();
+            for (final Chunk chunk : chunks) {
                 world.refreshChunk(chunk.getX(), chunk.getZ());
             }
             return;
@@ -102,7 +98,7 @@ public class SetBlockFast extends AbstractSetBlock {
         try {
             SendChunk.sendChunk(chunks);
         } catch (final Throwable e) {
-            PlotHelper.canSendChunk = false;
+            MainUtil.canSendChunk = false;
         }
     }
 }

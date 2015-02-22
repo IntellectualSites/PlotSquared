@@ -1,8 +1,6 @@
 package com.intellectualsites.translation;
 
-
 public class TranslationObject {
-
     // can include a suffix | not null
     private final String key;
     // The default ("no-translation" value) | not null
@@ -11,7 +9,7 @@ public class TranslationObject {
     private final String description;
     // Like a plugin name for example | can be null
     private final String creationDescription;
-
+    
     public TranslationObject(final String key, final String defaultValue, String description, String creationDescription) {
         if (description == null) {
             description = "";
@@ -29,21 +27,20 @@ public class TranslationObject {
         this.description = description;
         this.creationDescription = creationDescription;
     }
-
+    
     public String getKey() {
         return this.key;
     }
-
+    
     public String getDefaultValue() {
         return this.defaultValue;
     }
-
+    
     public String getDescription() {
         return this.description;
     }
-
+    
     public String getCreationDescription() {
         return this.creationDescription;
     }
-
 }

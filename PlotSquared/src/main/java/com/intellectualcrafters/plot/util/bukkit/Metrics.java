@@ -18,8 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-package com.intellectualcrafters.plot.util;
+package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -99,7 +98,7 @@ public class Metrics {
      * The scheduled task
      */
     private volatile BukkitTask task = null;
-
+    
     public Metrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
@@ -121,7 +120,7 @@ public class Metrics {
         this.guid = this.configuration.getString("guid");
         this.debug = this.configuration.getBoolean("debug", false);
     }
-
+    
     /**
      * GZip compress a string of bytes
      *
@@ -147,7 +146,7 @@ public class Metrics {
         }
         return baos.toByteArray();
     }
-
+    
     /**
      * Appends a json encoded key/value pair to the given string builder.
      *
@@ -178,7 +177,7 @@ public class Metrics {
             json.append(escapeJSON(value));
         }
     }
-
+    
     /**
      * Escape a string to create a valid JSON string
      *
@@ -222,7 +221,7 @@ public class Metrics {
         builder.append('"');
         return builder.toString();
     }
-
+    
     /**
      * Encode text as UTF-8
      *
@@ -233,7 +232,7 @@ public class Metrics {
     private static String urlEncode(final String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");
     }
-
+    
     /**
      * Construct and create a Graph that can be used to separate specific plotters to their own graphs on the metrics
      * website. Plotters can be added to the graph object returned.
@@ -253,7 +252,7 @@ public class Metrics {
         // and return back
         return graph;
     }
-
+    
     /**
      * Add a Graph object to BukkitMetrics that represents data for the plugin that should be sent to the backend
      *
@@ -265,7 +264,7 @@ public class Metrics {
         }
         this.graphs.add(graph);
     }
-
+    
     /**
      * Start measuring statistics. This will immediately create an async repeating task as the plugin and send the
      * initial data to the metrics backend, and then after that it will post in increments of PING_INTERVAL * 1200
@@ -286,7 +285,7 @@ public class Metrics {
             // Begin hitting the server with glorious data
             this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
                 private boolean firstPost = true;
-
+                
                 @Override
                 public void run() {
                     try {
@@ -330,7 +329,7 @@ public class Metrics {
             return true;
         }
     }
-
+    
     /**
      * Has the server owner denied plugin metrics?
      *
@@ -355,7 +354,7 @@ public class Metrics {
             return this.configuration.getBoolean("opt-out", false);
         }
     }
-
+    
     /**
      * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
      *
@@ -377,7 +376,7 @@ public class Metrics {
             }
         }
     }
-
+    
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
@@ -400,7 +399,7 @@ public class Metrics {
             }
         }
     }
-
+    
     /**
      * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status
      *
@@ -417,7 +416,7 @@ public class Metrics {
         // return => base/plugins/PluginMetrics/config.yml
         return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
     }
-
+    
     /**
      * Generic method that posts a plugin to the metrics website
      */
@@ -442,7 +441,6 @@ public class Metrics {
             }
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
         }
-
         // END server software specific section -- all code below does not use
         // any code outside of this class / Java
         // Construct the post data
@@ -557,7 +555,7 @@ public class Metrics {
             }
         }
     }
-
+    
     /**
      * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
      *
@@ -571,7 +569,7 @@ public class Metrics {
             return false;
         }
     }
-
+    
     /**
      * Represents a custom graph on the website
      */
@@ -585,11 +583,11 @@ public class Metrics {
          * The set of plotters that are contained within this graph
          */
         private final Set<Plotter> plotters = new LinkedHashSet<Plotter>();
-
+        
         private Graph(final String name) {
             this.name = name;
         }
-
+        
         /**
          * Gets the graph's name
          *
@@ -598,7 +596,7 @@ public class Metrics {
         public String getName() {
             return this.name;
         }
-
+        
         /**
          * Add a plotter to the graph, which will be used to plot entries
          *
@@ -607,7 +605,7 @@ public class Metrics {
         public void addPlotter(final Plotter plotter) {
             this.plotters.add(plotter);
         }
-
+        
         /**
          * Remove a plotter from the graph
          *
@@ -616,7 +614,7 @@ public class Metrics {
         public void removePlotter(final Plotter plotter) {
             this.plotters.remove(plotter);
         }
-
+        
         /**
          * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
          *
@@ -625,12 +623,12 @@ public class Metrics {
         public Set<Plotter> getPlotters() {
             return Collections.unmodifiableSet(this.plotters);
         }
-
+        
         @Override
         public int hashCode() {
             return this.name.hashCode();
         }
-
+        
         @Override
         public boolean equals(final Object object) {
             if (!(object instanceof Graph)) {
@@ -639,14 +637,14 @@ public class Metrics {
             final Graph graph = (Graph) object;
             return graph.name.equals(this.name);
         }
-
+        
         /**
          * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
          */
         protected void onOptOut() {
         }
     }
-
+    
     /**
      * Interface used to collect custom data for a plugin
      */
@@ -655,14 +653,14 @@ public class Metrics {
          * The plot's name
          */
         private final String name;
-
+        
         /**
          * Construct a plotter with the default plot name
          */
         public Plotter() {
             this("Default");
         }
-
+        
         /**
          * Construct a plotter with a specific plot name
          *
@@ -671,7 +669,7 @@ public class Metrics {
         public Plotter(final String name) {
             this.name = name;
         }
-
+        
         /**
          * Get the current value for the plotted point. Since this function defers to an external function it may or may
          * not return immediately thus cannot be guaranteed to be thread friendly or safe. This function can be called
@@ -680,7 +678,7 @@ public class Metrics {
          * @return the current value for the point to be plotted.
          */
         public abstract int getValue();
-
+        
         /**
          * Get the column name for the plotted point
          *
@@ -689,18 +687,18 @@ public class Metrics {
         public String getColumnName() {
             return this.name;
         }
-
+        
         /**
          * Called after the website graphs have been updated
          */
         public void reset() {
         }
-
+        
         @Override
         public int hashCode() {
             return getColumnName().hashCode();
         }
-
+        
         @Override
         public boolean equals(final Object object) {
             if (!(object instanceof Plotter)) {

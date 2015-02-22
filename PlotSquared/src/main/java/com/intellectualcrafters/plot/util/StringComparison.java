@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
@@ -29,25 +28,23 @@ import java.util.Collections;
  *
  * @author Citymonstret
  */
-@SuppressWarnings("unused") public class StringComparison {
-
+@SuppressWarnings("unused")
+public class StringComparison {
     /**
      * Best Match
      */
     private String bestMatch;
-
     /**
      * Match Value
      * <p/>
      * Can be checked for low match (< .25 or something)
      */
     private double match = 0;
-
     /**
      * The actual object
      */
     private Object bestMatchObject;
-
+    
     /**
      * Constructor
      *
@@ -66,7 +63,7 @@ import java.util.Collections;
             }
         }
     }
-
+    
     /**
      * Compare two strings
      *
@@ -90,7 +87,7 @@ import java.util.Collections;
         }
         return (2.0 * intersection) / union;
     }
-
+    
     /**
      * Create an ArrayList containing pairs of letters
      *
@@ -107,7 +104,7 @@ import java.util.Collections;
         }
         return aPairs;
     }
-
+    
     /**
      * Get an array containing letter pairs
      *
@@ -123,7 +120,7 @@ import java.util.Collections;
         }
         return p;
     }
-
+    
     /**
      * Get the object
      *
@@ -132,7 +129,7 @@ import java.util.Collections;
     public Object getMatchObject() {
         return this.bestMatchObject;
     }
-
+    
     /**
      * Get the best match value
      *
@@ -141,14 +138,13 @@ import java.util.Collections;
     public String getBestMatch() {
         return this.bestMatch;
     }
-
+    
     /**
      * Will return both the match number, and the actual match string
      *
      * @return object[] containing: double, String
      */
     public Object[] getBestMatchAdvanced() {
-        return new Object[]{this.match, this.bestMatch};
+        return new Object[] { this.match, this.bestMatch };
     }
-
 }

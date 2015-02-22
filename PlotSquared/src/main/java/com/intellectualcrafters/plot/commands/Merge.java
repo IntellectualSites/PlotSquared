@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -26,32 +25,30 @@ import java.util.ArrayList;
 import net.milkbowl.vault.economy.Economy;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.events.PlotMergeEvent;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  */
 public class Merge extends SubCommand {
-
-    public final static String[] values = new String[]{"north", "east", "south", "west"};
-    public final static String[] aliases = new String[]{"n", "e", "s", "w"};
-
+    public final static String[] values = new String[] { "north", "east", "south", "west" };
+    public final static String[] aliases = new String[] { "n", "e", "s", "w" };
+    
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);
     }
-
+    
     public static String direction(float yaw) {
         yaw = yaw / 90;
         final int i = Math.round(yaw);
@@ -73,26 +70,26 @@ public class Merge extends SubCommand {
                 return "";
         }
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        boolean admin = PlotMain.hasPermission(plr, "plots.admin.command.merge");
+        final boolean admin = Permissions.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
         int direction = -1;
@@ -103,81 +100,71 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            PlayerFunctions.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            PlayerFunctions.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
             return false;
         }
-        final World world = plr.getWorld();
-        PlotId bot = PlayerFunctions.getBottomPlot(world, plot).id;
-        PlotId top = PlayerFunctions.getTopPlot(world, plot).id;
+        PlotId bot = MainUtil.getBottomPlot(plot).id;
+        PlotId top = MainUtil.getTopPlot(plot).id;
         ArrayList<PlotId> plots;
+        String world = plr.getLocation().getWorld();
         switch (direction) {
             case 0: // north = -y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
                 break;
             case 1: // east = +x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
                 break;
             case 2: // south = +y
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
                 break;
             case 3: // west = -x
-                plots = PlayerFunctions.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
                 break;
             default:
                 return false;
         }
-        
-        PlotId botId = plots.get(0);
-        PlotId topId = plots.get(plots.size() - 1);
-        
-        PlotId bot1 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, botId)).id;
-        PlotId bot2 = PlayerFunctions.getBottomPlot(world, PlotHelper.getPlot(world, topId)).id;
-        
-        PlotId top1 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, topId)).id;
-        PlotId top2 = PlayerFunctions.getTopPlot(world, PlotHelper.getPlot(world, botId)).id;
-        
+        final PlotId botId = plots.get(0);
+        final PlotId topId = plots.get(plots.size() - 1);
+        final PlotId bot1 = MainUtil.getBottomPlot(MainUtil.getPlot(world, botId)).id;
+        final PlotId bot2 = MainUtil.getBottomPlot(MainUtil.getPlot(world, topId)).id;
+        final PlotId top1 = MainUtil.getTopPlot(MainUtil.getPlot(world, topId)).id;
+        final PlotId top2 = MainUtil.getTopPlot(MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
-        
-        plots = PlayerFunctions.getMaxPlotSelectionIds(world, bot, top);
-        
+        plots = MainUtil.getMaxPlotSelectionIds(world, bot, top);
         for (final PlotId myid : plots) {
-            final Plot myplot = PlotMain.getPlots(world).get(myid);
+            final Plot myplot = PlotSquared.getPlots(world).get(myid);
             if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
-                PlayerFunctions.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
+                MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
         }
-
-        final PlotWorld plotWorld = PlotMain.getWorldSettings(world);
-        if (PlotMain.useEconomy && plotWorld.USE_ECONOMY) {
+        final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
+        if (PlotSquared.economy != null && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;
             if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
-                if (economy.getBalance(plr) < cost) {
+                final Economy economy = PlotSquared.economy;
+                if (EconHandler.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
                 }
-                economy.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-
-        final PlotMergeEvent event = new PlotMergeEvent(world, plot, plots);
-
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            event.setCancelled(true);
-            PlayerFunctions.sendMessage(plr, "&cMerge has been cancelled");
+        //FIXME PlotMergeEvent
+        // boolean result = event.isCancelled();
+        boolean result = false;
+        if (result) {
+            MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }
-        PlayerFunctions.sendMessage(plr, "&cPlots have been merged");
-        PlotHelper.mergePlots(world, plots, true);
-
-        PlotHelper.setSign(world, UUIDHandler.getName(plot.owner), plot);
-        PlotHelper.update(plr.getLocation());
+        MainUtil.sendMessage(plr, "&cPlots have been merged");
+        MainUtil.mergePlots(world, plots, true);
+        MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
+        MainUtil.update(plr.getLocation());
         return true;
     }
 }

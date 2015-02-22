@@ -18,102 +18,96 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings("deprecation") public class Trusted extends SubCommand {
-
+@SuppressWarnings("deprecation")
+public class Trusted extends SubCommand {
     public Trusted() {
         super(Command.TRUSTED, "Manage trusted users for a plot", "trusted {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
-            PlayerFunctions.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotMain.hasPermission(plr, "plots.admin.command.trusted")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.trusted")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
             UUID uuid;
             if (args[1].equalsIgnoreCase("*")) {
                 uuid = DBFunc.everyone;
-
             } else {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.trusted.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.helpers.contains(uuid)) {
                     plot.helpers.remove(uuid);
-                    DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
                 }
                 if (plot.denied.contains(uuid)) {
                     plot.denied.remove(uuid);
-                    DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
                 }
                 plot.addTrusted(uuid);
-                DBFunc.setTrusted(plr.getWorld().getName(), plot, uuid);
-                final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
-                Bukkit.getPluginManager().callEvent(event);
+                DBFunc.setTrusted(loc.getWorld(), plot, uuid);
+                // FIXME PlayerPlotTrustedEvent
             } else {
-                PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            PlayerFunctions.sendMessage(plr, C.TRUSTED_ADDED);
+            MainUtil.sendMessage(plr, C.TRUSTED_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.trusted.contains(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.T_WAS_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.T_WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeTrusted(uuid);
-                DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
-                PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
+                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+                MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
-            DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
-            final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);
-            Bukkit.getPluginManager().callEvent(event);
-            PlayerFunctions.sendMessage(plr, C.TRUSTED_REMOVED);
+            DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+            // FIXME PlayerPlotTrustedEvent
+            MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
         } else {
-            PlayerFunctions.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
         return true;

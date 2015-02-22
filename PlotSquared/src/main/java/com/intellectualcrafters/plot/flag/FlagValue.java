@@ -12,97 +12,91 @@ import com.intellectualcrafters.plot.object.PlotBlock;
  * @author Citymonstret
  */
 public abstract class FlagValue<T> {
-
     private final Class<T> clazz;
-
+    
     @SuppressWarnings("unchecked")
-	public FlagValue() {
+    public FlagValue() {
         this.clazz = (Class<T>) getClass();
     }
-
+    
     public FlagValue(final Class<T> clazz) {
         if (clazz == null) {
             throw new NullPointerException();
         }
         this.clazz = clazz;
     }
-
+    
     public boolean validValue(final Object value) {
         return (value != null) && (value.getClass() == this.clazz);
     }
     
-    public String toString(Object t) {
-    	return t.toString();
+    public String toString(final Object t) {
+        return t.toString();
     }
-
+    
     public abstract T getValue(Object t);
-
+    
     public abstract T parse(String t);
-
+    
     public abstract String getDescription();
-
+    
     public static class BooleanValue extends FlagValue<Boolean> {
-    	
         @Override
         public Boolean getValue(final Object t) {
             return (Boolean) t;
         }
-
+        
         @Override
         public Boolean parse(final String t) {
-        	try {
-        		return Boolean.parseBoolean(t);
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                return Boolean.parseBoolean(t);
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a boolean (true|false)";
+            return "Flag value must be a boolean (true|false)";
         }
     }
     
     public static class IntegerValue extends FlagValue<Integer> {
-
         @Override
         public Integer getValue(final Object t) {
             return (Integer) t;
         }
-
+        
         @Override
         public Integer parse(final String t) {
-        	try {
-        		return Integer.parseInt(t);
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                return Integer.parseInt(t);
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a whole number";
+            return "Flag value must be a whole number";
         }
     }
     
     public static class IntervalValue extends FlagValue<Integer[]> {
-
-    	@Override
-    	public String toString(Object t) {
-    		Integer[] value = ((Integer[]) t);
-    		return value[0] + " " + value[1];
-    	}
-    	
+        @Override
+        public String toString(final Object t) {
+            final Integer[] value = ((Integer[]) t);
+            return value[0] + " " + value[1];
+        }
+        
         @Override
         public Integer[] getValue(final Object t) {
             return (Integer[]) t;
         }
-
+        
         @Override
         public Integer[] parse(final String t) {
-        	int seconds;
+            int seconds;
             int amount;
             final String[] values = t.split(" ");
             if (values.length < 2) {
@@ -120,262 +114,241 @@ public abstract class FlagValue<T> {
                     return null;
                 }
             }
-            return new Integer[]{amount, seconds};
+            return new Integer[] { amount, seconds };
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
+            return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
         }
     }
     
     public static class UnsignedIntegerValue extends FlagValue<Integer> {
-
         @Override
         public Integer getValue(final Object t) {
             return (Integer) t;
         }
-
+        
         @Override
         public Integer parse(final String t) {
-        	try {
-        		int value = Integer.parseInt(t);
-        		if (value >= 0) {
-        			return null;
-        		}
-        		return value;
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                final int value = Integer.parseInt(t);
+                if (value >= 0) {
+                    return null;
+                }
+                return value;
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a positive whole number (includes 0)";
+            return "Flag value must be a positive whole number (includes 0)";
         }
     }
     
     public static class DoubleValue extends FlagValue<Double> {
-
         @Override
         public Double getValue(final Object t) {
             return (Double) t;
         }
-
+        
         @Override
         public Double parse(final String t) {
-        	try {
-        		return Double.parseDouble(t);
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                return Double.parseDouble(t);
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a number (negative decimals are allowed)";
+            return "Flag value must be a number (negative decimals are allowed)";
         }
     }
     
     public static class LongValue extends FlagValue<Long> {
-
         @Override
         public Long getValue(final Object t) {
             return (Long) t;
         }
-
+        
         @Override
         public Long parse(final String t) {
-        	try {
-        		return Long.parseLong(t);
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                return Long.parseLong(t);
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a whole number (large numbers allowed)";
+            return "Flag value must be a whole number (large numbers allowed)";
         }
     }
     
     public static class UnsignedLongValue extends FlagValue<Long> {
-
         @Override
         public Long getValue(final Object t) {
             return (Long) t;
         }
-
+        
         @Override
         public Long parse(final String t) {
-        	try {
-        		long value = Long.parseLong(t);
-        		if (value < 0) {
-        			return null;
-        		}
-        		return value;
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                final long value = Long.parseLong(t);
+                if (value < 0) {
+                    return null;
+                }
+                return value;
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a positive whole number (large numbers allowed)";
+            return "Flag value must be a positive whole number (large numbers allowed)";
         }
     }
     
     public static class UnsignedDoubleValue extends FlagValue<Double> {
-
         @Override
         public Double getValue(final Object t) {
             return (Double) t;
         }
-
+        
         @Override
         public Double parse(final String t) {
-        	try {
-        		double value = Double.parseDouble(t);
-        		if (value < 0) {
-        			return null;
-        		}
-        		return value;
-        	}
-        	catch (IllegalArgumentException e) {
-        		return null;
-        	}
+            try {
+                final double value = Double.parseDouble(t);
+                if (value < 0) {
+                    return null;
+                }
+                return value;
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a positive number (decimals allowed)";
+            return "Flag value must be a positive number (decimals allowed)";
         }
     }
     
     public static class PlotBlockValue extends FlagValue<PlotBlock> {
-
         @Override
         public PlotBlock getValue(final Object t) {
             return (PlotBlock) t;
         }
-
+        
         @Override
         public PlotBlock parse(final String t) {
-        	try {
-        		String[] split = t.split(":");
-            	byte data;
-            	if (split.length == 2) {
-            	    if ("*".equals(split[1])) {
+            try {
+                final String[] split = t.split(":");
+                byte data;
+                if (split.length == 2) {
+                    if ("*".equals(split[1])) {
                         data = -1;
-                    }
-                    else {
+                    } else {
                         data = Byte.parseByte(split[1]);
                     }
-            	}
-            	else {
-            		data = -1;
-            	}
-            	short id = Short.parseShort(split[0]);
-            	return new PlotBlock(id, data);
-        	}
-        	catch (Exception e) {
-        		return null;
-        	}
+                } else {
+                    data = -1;
+                }
+                final short id = Short.parseShort(split[0]);
+                return new PlotBlock(id, data);
+            } catch (final Exception e) {
+                return null;
+            }
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a number (negative decimals are allowed)";
+            return "Flag value must be a number (negative decimals are allowed)";
         }
     }
     
     public interface ListValue {
         public void add(Object t, String value);
+        
         public void remove(Object t, String value);
     }
     
     public static class PlotBlockListValue extends FlagValue<HashSet<PlotBlock>> implements ListValue {
-
-    	@SuppressWarnings("unchecked")
-        @Override
-    	public String toString(Object t) {
-    		return StringUtils.join((HashSet<PlotBlock>) t, ",");
-    	}
-    	
         @SuppressWarnings("unchecked")
-		@Override
-        public HashSet<PlotBlock> getValue(final Object t) {
-        	return (HashSet<PlotBlock>)t;
+        @Override
+        public String toString(final Object t) {
+            return StringUtils.join((HashSet<PlotBlock>) t, ",");
         }
-
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public HashSet<PlotBlock> getValue(final Object t) {
+            return (HashSet<PlotBlock>) t;
+        }
+        
         @Override
         public HashSet<PlotBlock> parse(final String t) {
-        	HashSet<PlotBlock> list = new HashSet<PlotBlock>();
-            for (String item : t.split(",")) {
-            	String[] split = item.split(":");
-            	byte data;
-            	if (split.length == 2) {
-            	    if ("*".equals(split[1])) {
-            	        data = -1;
-            	    }
-            	    else {
-            	        data = Byte.parseByte(split[1]);
-            	    }
-            	}
-            	else {
-            		data = -1;
-            	}
-            	short id = Short.parseShort(split[0]);
-            	PlotBlock block = new PlotBlock(id, data);
-            	list.add(block);
+            final HashSet<PlotBlock> list = new HashSet<PlotBlock>();
+            for (final String item : t.split(",")) {
+                final String[] split = item.split(":");
+                byte data;
+                if (split.length == 2) {
+                    if ("*".equals(split[1])) {
+                        data = -1;
+                    } else {
+                        data = Byte.parseByte(split[1]);
+                    }
+                } else {
+                    data = -1;
+                }
+                final short id = Short.parseShort(split[0]);
+                final PlotBlock block = new PlotBlock(id, data);
+                list.add(block);
             }
             return list;
         }
-
+        
         @Override
         public String getDescription() {
-        	return "Flag value must be a block list";
+            return "Flag value must be a block list";
         }
-
+        
         @Override
-        public void add(Object t, String value) {
+        public void add(final Object t, final String value) {
             try {
-                ((HashSet<PlotBlock>)t).addAll(parse(value));
-            }
-            catch (Exception e) {
-                
+                ((HashSet<PlotBlock>) t).addAll(parse(value));
+            } catch (final Exception e) {
             }
         }
-
+        
         @Override
-        public void remove(Object t, String value) {
+        public void remove(final Object t, final String value) {
             try {
-                for (PlotBlock item : parse(value)) {
-                    ((HashSet<PlotBlock>)t).remove(item);
+                for (final PlotBlock item : parse(value)) {
+                    ((HashSet<PlotBlock>) t).remove(item);
                 }
-            }
-            catch (Exception e) {
-                
+            } catch (final Exception e) {
             }
         }
     }
-
+    
     public static class StringValue extends FlagValue<String> {
-
         @Override
         public String parse(final String s) {
             return s;
         }
-
+        
         @Override
         public String getDescription() {
             return "Flag value must be alphanumeric. Some special characters are allowed.";
         }
-
+        
         @Override
         public String getValue(final Object t) {
             return t.toString();

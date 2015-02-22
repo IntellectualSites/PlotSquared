@@ -7,16 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-11-15 for PlotSquared
@@ -24,31 +23,29 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
  * @author Citymonstret
  */
 public class Database extends SubCommand {
-
-    final String[] tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
-
+    final String[] tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
+    
     public Database() {
         super(Command.DATABASE, "Convert/Backup Storage", "database [type] [...details]", CommandCategory.DEBUG, false);
     }
-
+    
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
-            PlotMain.sendConsoleSenderMessage(msg);
+            PlotSquared.log(msg);
         } else {
-            final Player p = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            final PlotPlayer p = UUIDHandler.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
-                return PlayerFunctions.sendMessage(p, msg);
+                return MainUtil.sendMessage(p, msg);
             } else {
                 return sendMessageU(null, msg);
             }
         }
         return true;
     }
-
+    
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
-        final Plugin p = PlotMain.getMain();
-        final java.util.Set<Plot> plots = PlotMain.getPlots();
-        p.getServer().getScheduler().runTaskAsynchronously(p, new Runnable() {
+        final java.util.Set<Plot> plots = PlotSquared.getPlots();
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -71,13 +68,13 @@ public class Database extends SubCommand {
             }
         });
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             return sendMessage(plr, "/plot database [sqlite/mysql]");
         }
-        final String type = new StringComparison(args[0], new String[]{"mysql", "sqlite"}).getBestMatch().toLowerCase();
+        final String type = new StringComparison(args[0], new String[] { "mysql", "sqlite" }).getBestMatch().toLowerCase();
         switch (type) {
             case "mysql":
                 if (args.length < 6) {
@@ -94,7 +91,7 @@ public class Database extends SubCommand {
                 }
                 Connection n;
                 try {
-                    n = new MySQL(PlotMain.getMain(), host, port, database, username, password).openConnection();
+                    n = new MySQL(PlotSquared.THIS, host, port, database, username, password).openConnection();
                     // Connection
                     if (n.isClosed()) {
                         return sendMessage(plr, "Failed to open connection");
@@ -138,12 +135,12 @@ public class Database extends SubCommand {
         }
         return false;
     }
-
-    private boolean sendMessage(final Player player, final String msg) {
+    
+    private boolean sendMessage(final PlotPlayer player, final String msg) {
         if (player == null) {
-            PlotMain.sendConsoleSenderMessage(msg);
+            PlotSquared.log(msg);
         } else {
-            PlayerFunctions.sendMessage(player, msg);
+            MainUtil.sendMessage(player, msg);
         }
         return true;
     }

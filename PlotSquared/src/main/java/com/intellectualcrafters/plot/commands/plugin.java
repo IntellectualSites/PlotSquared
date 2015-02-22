@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.io.BufferedReader;
@@ -27,23 +26,20 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class plugin extends SubCommand {
-
     public static String downloads, version;
-
+    
     public plugin() {
         super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
     }
-
-    public static void setup(final JavaPlugin plugin) {
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+    
+    public static void setup() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -52,8 +48,8 @@ public class plugin extends SubCommand {
                     downloads = "unknown";
                 }
             }
-        }, 1l);
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+        });
+        TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -63,9 +59,9 @@ public class plugin extends SubCommand {
                     version = "unknown";
                 }
             }
-        }, 200l);
+        }, 200);
     }
-
+    
     private static String convertToNumericString(final String str, final boolean dividers) {
         final StringBuilder builder = new StringBuilder();
         for (final char c : str.toCharArray()) {
@@ -77,7 +73,7 @@ public class plugin extends SubCommand {
         }
         return builder.toString();
     }
-
+    
     private static String getInfo(final String link) throws Exception {
         final URLConnection connection = new URL(link).openConnection();
         connection.addRequestProperty("User-Agent", "Mozilla/4.0");
@@ -89,15 +85,15 @@ public class plugin extends SubCommand {
         reader.close();
         return document;
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
-        Bukkit.getScheduler().runTaskAsynchronously(PlotMain.getMain(), new Runnable() {
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotMain.getMain().getDescription().getVersion()));
+                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.IMP.getVersion()));
                         add(String.format("&c>> &6Made by Citymonstret and Empire92"));
                         add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
                         add(String.format("&c>> &cNewest Version (Spigot): %s", version));
@@ -105,11 +101,10 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    PlayerFunctions.sendMessage(plr, s);
+                    MainUtil.sendMessage(plr, s);
                 }
             }
         });
         return true;
     }
-
 }

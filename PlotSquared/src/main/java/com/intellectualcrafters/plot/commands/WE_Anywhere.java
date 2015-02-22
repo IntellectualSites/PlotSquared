@@ -18,35 +18,31 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualcrafters.plot.util.PWE;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.PWE;
 
 public class WE_Anywhere extends SubCommand {
-
     public WE_Anywhere() {
         super("weanywhere", "plots.weanywhere", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
-        if (PlotMain.worldEdit == null) {
-            PlayerFunctions.sendMessage(plr, "&cWorldEdit is not enabled on this server");
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        if (PlotSquared.worldEdit == null) {
+            MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
-        
-        if (PlotMain.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
+        if (Permissions.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
             PWE.removeMask(plr);
-            PlayerFunctions.sendMessage(plr, "&6Cleared your WorldEdit mask");
-        }
-        else {
+            MainUtil.sendMessage(plr, "&6Cleared your WorldEdit mask");
+        } else {
             PWE.setMask(plr, plr.getLocation(), true);
-            PlayerFunctions.sendMessage(plr, "&6Updated your WorldEdit mask");
+            MainUtil.sendMessage(plr, "&6Updated your WorldEdit mask");
         }
         return true;
     }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.util;
 
 import java.io.BufferedReader;
@@ -29,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 
 /**
@@ -38,10 +37,9 @@ import com.intellectualcrafters.plot.config.C;
  * @author Citymonstret
  */
 public class Logger {
-
     private static ArrayList<String> entries;
     private static File log;
-
+    
     public static void setup(final File file) {
         log = file;
         entries = new ArrayList<>();
@@ -53,10 +51,10 @@ public class Logger {
             }
             reader.close();
         } catch (final IOException e) {
-            PlotMain.sendConsoleSenderMessage(C.PREFIX.s() + "File setup error Logger#setup");
+            PlotSquared.log(C.PREFIX.s() + "File setup error Logger#setup");
         }
     }
-
+    
     public static void write() throws IOException {
         final FileWriter writer = new FileWriter(log);
         for (final String string : entries) {
@@ -64,25 +62,25 @@ public class Logger {
         }
         writer.close();
     }
-
+    
     public static void add(final LogLevel level, final String string) {
         append("[" + level.toString() + "] " + string);
     }
-
+    
     private static void append(final String string) {
         entries.add("[" + new Date().toString() + "]" + string);
     }
-
+    
     public enum LogLevel {
         GENERAL("General"),
         WARNING("Warning"),
         DANGER("Danger");
         private final String name;
-
+        
         LogLevel(final String name) {
             this.name = name;
         }
-
+        
         @Override
         public String toString() {
             return this.name;

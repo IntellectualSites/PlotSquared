@@ -18,12 +18,10 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Created by Citymonstret on 2014-08-03.
@@ -31,25 +29,24 @@ import com.intellectualcrafters.plot.PlotMain;
  * @author Citymonstret
  */
 public class CommandPermission {
-
     /**
      * Permission Node
      */
     public final String permission;
-
+    
     /**
      * @param permission Command Permission
      */
     public CommandPermission(final String permission) {
         this.permission = permission.toLowerCase();
     }
-
+    
     /**
      * @param player Does the player have the permission?
      *
      * @return true of player has the required permission node
      */
-    public boolean hasPermission(final Player player) {
-        return PlotMain.hasPermission(player, this.permission);
+    public boolean hasPermission(final PlotPlayer player) {
+        return Permissions.hasPermission(player, this.permission);
     }
 }

@@ -18,36 +18,33 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * @author Citymonstret
  */
 public class DebugSaveTest extends SubCommand {
-
     public DebugSaveTest() {
         super(Command.DEBUGSAVETEST, "This debug command will force the recreation of all plots in the DB", "debugsavetest", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
-            plots.addAll(PlotMain.getPlots());
+            plots.addAll(PlotSquared.getPlots());
             DBFunc.createPlots(plots);
             DBFunc.createAllSettingsAndHelpers(plots);
         } else {
-            PlayerFunctions.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
+            MainUtil.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
         }
         return true;
     }

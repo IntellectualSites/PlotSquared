@@ -18,20 +18,18 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 import org.bukkit.generator.ChunkGenerator;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class PlotGenerator extends ChunkGenerator {
-
     public PlotGenerator(final String world) {
-        PlotMain.loadWorld(world, this);
+        PlotSquared.loadWorld(world, this);
     }
-
+    
     public abstract PlotWorld getNewPlotWorld(final String world);
-
+    
     public abstract PlotManager getPlotManager();
 }

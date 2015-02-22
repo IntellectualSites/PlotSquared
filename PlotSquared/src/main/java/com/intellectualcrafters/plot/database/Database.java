@@ -18,14 +18,13 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.bukkit.plugin.Plugin;
+import com.intellectualcrafters.plot.PlotSquared;
 
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
@@ -34,21 +33,20 @@ import org.bukkit.plugin.Plugin;
  * @author tips48
  */
 public abstract class Database {
-
     /**
      * Plugin instance, use for plugin.getDataFolder()
      */
-    protected final Plugin plugin;
-
+    protected final PlotSquared plotsquared;
+    
     /**
      * Creates a new Database
      *
-     * @param plugin Plugin instance
+     * @param plotsquared Plugin instance
      */
-    protected Database(final Plugin plugin) {
-        this.plugin = plugin;
+    protected Database(final PlotSquared plotsquared) {
+        this.plotsquared = plotsquared;
     }
-
+    
     /**
      * Opens a connection with the database
      *
@@ -58,7 +56,7 @@ public abstract class Database {
      * @throws ClassNotFoundException if the driver cannot be found
      */
     public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
-
+    
     /**
      * Checks if a connection is open with the database
      *
@@ -67,14 +65,14 @@ public abstract class Database {
      * @throws SQLException if the connection cannot be checked
      */
     public abstract boolean checkConnection() throws SQLException;
-
+    
     /**
      * Gets the connection with the database
      *
      * @return Connection with the database, null if none
      */
     public abstract Connection getConnection();
-
+    
     /**
      * Closes the connection with the database
      *
@@ -83,7 +81,7 @@ public abstract class Database {
      * @throws SQLException if the connection cannot be closed
      */
     public abstract boolean closeConnection() throws SQLException;
-
+    
     /**
      * Executes a SQL Query<br> If the connection is closed, it will be opened
      *
@@ -95,7 +93,7 @@ public abstract class Database {
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException;
-
+    
     /**
      * Executes an Update SQL Query<br> See {@link java.sql.Statement#executeUpdate(String)}<br> If the connection is
      * closed, it will be opened

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.database;
 
 import java.io.File;
@@ -28,9 +27,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 
-import org.bukkit.plugin.Plugin;
+import com.intellectualcrafters.plot.PlotSquared;
 
 /**
  * Connects to and uses a SQLite database
@@ -39,52 +37,51 @@ import org.bukkit.plugin.Plugin;
  * @author tips48
  */
 public class SQLite extends Database {
-
     private final String dbLocation;
     private Connection connection;
-
+    
     /**
      * Creates a new SQLite instance
      *
      * @param plugin     Plugin instance
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(final Plugin plugin, final String dbLocation) {
-        super(plugin);
+    public SQLite(final PlotSquared plotsquared, final String dbLocation) {
+        super(plotsquared);
         this.dbLocation = dbLocation;
     }
-
+    
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!this.plugin.getDataFolder().exists()) {
-            this.plugin.getDataFolder().mkdirs();
+        if (!PlotSquared.IMP.getDirectory().exists()) {
+            PlotSquared.IMP.getDirectory().mkdirs();
         }
         final File file = new File(this.dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                this.plugin.getLogger().log(Level.SEVERE, "Unable to create database!");
+                PlotSquared.log("&cUnable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
-
+    
     @Override
     public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
-
+    
     @Override
     public Connection getConnection() {
         return this.connection;
     }
-
+    
     @Override
     public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
@@ -93,26 +90,22 @@ public class SQLite extends Database {
         this.connection.close();
         return true;
     }
-
+    
     @Override
     public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
-
         final Statement statement = this.connection.createStatement();
-
         return statement.executeQuery(query);
     }
-
+    
     @Override
     public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
-
         final Statement statement = this.connection.createStatement();
-
         return statement.executeUpdate(query);
     }
 }

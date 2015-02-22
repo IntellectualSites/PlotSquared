@@ -18,57 +18,54 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 
 /**
  * @author Citymonstret
  */
 public class Claim extends SubCommand {
-
     public Claim() {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
-
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final boolean auto) {
+    
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final boolean auto) {
         return claimPlot(player, plot, teleport, "", auto);
     }
-
-    public static boolean claimPlot(final Player player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
-    	if (plot.hasOwner() || plot.settings.isMerged()) {
-    		return false;
-    	}
-        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            PlotHelper.createPlot(player, plot);
-            PlotHelper.setSign(player, plot);
-            PlayerFunctions.sendMessage(player, C.CLAIMED);
+    
+    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
+        if (plot.hasOwner() || plot.settings.isMerged()) {
+            return false;
+        }
+        // FIXME claim plot event
+//        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
+//        Bukkit.getPluginManager().callEvent(event);
+//        boolean result = event.isCancelled();
+        boolean result = true;
+        
+        if (!result) {
+            MainUtil.createPlot(player.getUUID(), plot);
+            MainUtil.setSign(player.getName(), plot);
+            MainUtil.sendMessage(player, C.CLAIMED);
+            Location loc = player.getLocation();
             if (teleport) {
-                PlotMain.teleportPlayer(player, player.getLocation(), plot);
+                MainUtil.teleportPlayer(player, loc, plot);
             }
-            World world = plot.getWorld();
-            final PlotWorld plotworld = PlotMain.getWorldSettings(world);
-
-            final Plot plot2 = PlotMain.getPlots(player.getWorld()).get(plot.id);
-
+            final String world = plot.world;
+            final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+            final Plot plot2 = PlotSquared.getPlots(world).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 SchematicHandler.Schematic sch;
                 if (schematic.equals("")) {
@@ -81,37 +78,39 @@ public class Claim extends SubCommand {
                 }
                 SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
             }
-            PlotMain.getPlotManager(plot.world).claimPlot(world, plotworld, plot);
-            PlotHelper.update(player.getLocation());
+            PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
+            MainUtil.update(loc);
         }
-        return event.isCancelled();
+        return !result;
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
+        Location loc = plr.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (PlayerFunctions.getPlayerPlotCount(plr.getWorld(), plr) >= PlayerFunctions.getAllowedPlots(plr)) {
+        int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotMain.getWorldSettings(plot.getWorld());
-        if (PlotMain.useEconomy && world.USE_ECONOMY) {
+        final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
+        if (PlotSquared.economy != null && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
-                final Economy economy = PlotMain.economy;
-                if (economy.getBalance(plr) < cost) {
+                final Economy economy = PlotSquared.economy;
+                if (EconHandler.getBalance(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                economy.withdrawPlayer(plr, cost);
+                EconHandler.withdrawPlayer(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
@@ -120,12 +119,11 @@ public class Claim extends SubCommand {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!PlotMain.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+                if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                     return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }
         }
-
         return !claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

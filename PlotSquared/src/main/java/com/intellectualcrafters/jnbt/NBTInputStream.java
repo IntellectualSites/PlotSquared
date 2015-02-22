@@ -15,9 +15,8 @@ import java.util.Map;
  * may be found at <a href="http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt</a>. </p>
  */
 public final class NBTInputStream implements Closeable {
-
     private final DataInputStream is;
-
+    
     /**
      * Creates a new {@code NBTInputStream}, which will source its data from the specified input stream.
      *
@@ -28,7 +27,7 @@ public final class NBTInputStream implements Closeable {
     public NBTInputStream(final InputStream is) throws IOException {
         this.is = new DataInputStream(is);
     }
-
+    
     /**
      * Reads an NBT tag from the stream.
      *
@@ -39,7 +38,7 @@ public final class NBTInputStream implements Closeable {
     public Tag readTag() throws IOException {
         return readTag(0);
     }
-
+    
     /**
      * Reads an NBT from the stream.
      *
@@ -51,7 +50,6 @@ public final class NBTInputStream implements Closeable {
      */
     private Tag readTag(final int depth) throws IOException {
         final int type = this.is.readByte() & 0xFF;
-
         String name;
         if (type != NBTConstants.TYPE_END) {
             final int nameLength = this.is.readShort() & 0xFFFF;
@@ -61,10 +59,9 @@ public final class NBTInputStream implements Closeable {
         } else {
             name = "";
         }
-
         return readTagPayload(type, name, depth);
     }
-
+    
     /**
      * Reads the payload of a tag, given the name and type.
      *
@@ -109,7 +106,6 @@ public final class NBTInputStream implements Closeable {
             case NBTConstants.TYPE_LIST:
                 final int childType = this.is.readByte();
                 length = this.is.readInt();
-
                 final List<Tag> tagList = new ArrayList<Tag>();
                 for (int i = 0; i < length; ++i) {
                     final Tag tag = readTagPayload(childType, "", depth + 1);
@@ -118,7 +114,6 @@ public final class NBTInputStream implements Closeable {
                     }
                     tagList.add(tag);
                 }
-
                 return new ListTag(name, NBTUtils.getTypeClass(childType), tagList);
             case NBTConstants.TYPE_COMPOUND:
                 final Map<String, Tag> tagMap = new HashMap<String, Tag>();
@@ -130,7 +125,6 @@ public final class NBTInputStream implements Closeable {
                         tagMap.put(tag.getName(), tag);
                     }
                 }
-
                 return new CompoundTag(name, tagMap);
             case NBTConstants.TYPE_INT_ARRAY:
                 length = this.is.readInt();
@@ -143,10 +137,9 @@ public final class NBTInputStream implements Closeable {
                 throw new IOException("Invalid tag type: " + type + ".");
         }
     }
-
+    
     @Override
     public void close() throws IOException {
         this.is.close();
     }
-
 }

@@ -18,13 +18,16 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.plot.PlotMain;
-import com.intellectualsites.translation.*;
-import com.intellectualsites.translation.bukkit.BukkitTranslation;
 import org.bukkit.ChatColor;
+
+import com.intellectualsites.translation.TranslationFile;
+import com.intellectualsites.translation.TranslationLanguage;
+import com.intellectualsites.translation.TranslationManager;
+import com.intellectualsites.translation.TranslationObject;
+import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.bukkit.BukkitTranslation;
 
 /**
  * Captions class.
@@ -197,7 +200,6 @@ public enum C {
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots."),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot"),
-
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%"),
     UNLINK_REQUIRED("$2An unlink is required to do this."),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot"),
@@ -325,7 +327,6 @@ public enum C {
     PLOT_INFO_ID("$1ID:$2 %id%"),
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%"),
     PLOT_INFO_SIZE("$1Size:$2 %size%"),
-
     PLOT_USER_LIST(" $1%user%$2,"),
     INFO_SYNTAX_CONSOLE("$2/plot info <world> X;Y"),
     /*
@@ -385,7 +386,6 @@ public enum C {
     FLAG_KEY("$2Key: %s"),
     FLAG_TYPE("$2Type: %s"),
     FLAG_DESC("$2Desc: %s"),
-    
     NEED_KEY("$2Possible values: $1%values%"),
     NOT_VALID_FLAG("$2That is not a valid flag"),
     NOT_VALID_VALUE("$2Flag values must be alphanumerical"),
@@ -438,14 +438,13 @@ public enum C {
      * Custom
      */
     CUSTOM_STRING("-");
-
     /**
      * Special Language
      *
      * @see com.intellectualsites.translation.TranslationLanguage
      */
     protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-    public static ChatColor COLOR_1 = ChatColor.GOLD, COLOR_2 = ChatColor.GRAY, COLOR_3 = ChatColor.DARK_GRAY, COLOR_4 = ChatColor.DARK_AQUA;
+    public static String COLOR_1 = "\u00A76", COLOR_2 = "\u00A77", COLOR_3 = "\u00A78", COLOR_4 = "\u00A73";
     /**
      * The TranslationManager
      *
@@ -470,8 +469,7 @@ public enum C {
      * Should the string be prefixed?
      */
     private boolean prefix;
-    private ChatColor[] sColors = null;
-
+    
     /**
      * Constructor for custom strings.
      */
@@ -480,7 +478,7 @@ public enum C {
          * use setCustomString();
          */
     }
-
+    
     /**
      * Constructor
      *
@@ -494,7 +492,7 @@ public enum C {
         }
         this.prefix = prefix;
     }
-
+    
     /**
      * Constructor
      *
@@ -503,24 +501,24 @@ public enum C {
     C(final String d) {
         this(d, true);
     }
-
+    
     public static void setupTranslations() {
         manager = new TranslationManager();
-        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(PlotMain.getMain()), lang, "PlotSquared", manager).read();
+        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
         // register everything in this class
         for (final C c : values()) {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
         }
     }
-
+    
     public static void saveTranslations() {
         try {
             manager.saveAll(defaultFile).saveFile(defaultFile);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Get the default string
      *
@@ -529,18 +527,18 @@ public enum C {
     public String d() {
         return this.d;
     }
-
+    
     /**
      * Get translated if exists
      *
      * @return translated if exists else default
      */
     public String s() {
-        String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
+        final String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         return s.replace("$1", COLOR_1.toString()).replace("$2", COLOR_2.toString()).replace("$3", COLOR_3.toString()).replace("$4", COLOR_4.toString());
         /*
-         * if (PlotMain.translations != null) {
-         * final String t = PlotMain.translations.getString(this.toString());
+         * if (PlotSquared.translations != null) {
+         * final String t = PlotSquared.translations.getString(this.toString());
          * if (t != null) {
          * this.s = t;
          * }
@@ -551,11 +549,11 @@ public enum C {
          * return this.s.replace("\\n", "\n");
          */
     }
-
+    
     public boolean usePrefix() {
         return this.prefix;
     }
-
+    
     /**
      * @return translated and color decoded
      *

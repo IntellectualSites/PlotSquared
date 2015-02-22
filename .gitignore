@@ -1,3 +1,4 @@
+PlotSquared/.project
 # Created by https://www.gitignore.io
 
 ### Intellij ###
@@ -48,6 +49,8 @@ com_crashlytics_export_strings.xml
 
 
 ### Eclipse ###
+.classpath
+.project
 *.pydevproject
 .metadata
 .gradle
@@ -93,8 +96,6 @@ local.properties
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-.classpath
-.project
 /target
 /plotsquared/target
 *.MF

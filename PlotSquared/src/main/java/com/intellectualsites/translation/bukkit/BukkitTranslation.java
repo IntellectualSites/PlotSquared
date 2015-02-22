@@ -3,8 +3,8 @@ package com.intellectualsites.translation.bukkit;
 import java.io.File;
 
 import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
@@ -14,7 +14,6 @@ import com.intellectualsites.translation.TranslationObject;
  * @author Citymonstret
  */
 public class BukkitTranslation {
-
     /**
      * Get the converted string
      *
@@ -28,7 +27,7 @@ public class BukkitTranslation {
         // &- = new line
         return asset.getTranslated().replace("&-", "\n").replace('&', '\u00A7');
     }
-
+    
     /**
      * Get the universal parent based on the plugin data folder
      *
@@ -36,10 +35,10 @@ public class BukkitTranslation {
      *
      * @return parent folder
      */
-    public static File getParent(final JavaPlugin plugin) {
-        return new File(plugin.getDataFolder() + File.separator + "translations");
+    public static File getParent() {
+        return new File(PlotSquared.IMP.getDirectory() + File.separator + "translations");
     }
-
+    
     /**
      * The default translation language
      *
@@ -48,7 +47,7 @@ public class BukkitTranslation {
     public TranslationLanguage getDefaultLanguage() {
         return TranslationLanguage.englishAmerican;
     }
-
+    
     /**
      * Add material names to the translation list Will default to a somewhat friendly name
      */

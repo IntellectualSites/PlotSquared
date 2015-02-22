@@ -18,37 +18,36 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Visit extends SubCommand {
     public Visit() {
         super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT, true);
     }
-
+    
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
-        for (final Plot p : PlotMain.getPlots()) {
+        for (final Plot p : PlotSquared.getPlots()) {
             if (p.hasOwner() && p.owner.equals(uuid)) {
                 plots.add(p);
             }
         }
         return plots;
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             return sendMessage(plr, C.NEED_USER);
         }
@@ -62,7 +61,7 @@ public class Visit extends SubCommand {
             return sendMessage(plr, C.FOUND_NO_PLOTS);
         }
         if (args.length < 2) {
-            PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(0));
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
         }
         int i;
@@ -74,7 +73,7 @@ public class Visit extends SubCommand {
         if ((i < 0) || (i >= plots.size())) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        PlotMain.teleportPlayer(plr, plr.getLocation(), plots.get(i));
+        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i));
         return true;
     }
 }

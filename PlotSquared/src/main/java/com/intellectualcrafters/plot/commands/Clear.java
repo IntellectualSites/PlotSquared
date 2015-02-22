@@ -18,71 +18,74 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Clear extends SubCommand {
-
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                    PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotMain.isPlotWorld(world)) {
-                        PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
+                    if (!PlotSquared.isPlotWorld(world)) {
+                        PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
-                            PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            plot.clear(null, false);
-                            PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
+                            MainUtil.clear(world, plot, true, null);
+                            PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                         }
                     }
                 }
             }
             return true;
         }
-
-        if (!PlayerFunctions.isInPlot(plr)) {
+        Location loc = plr.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot( plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.clear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        plot.clear(plr, false);
-
+        final long start = System.currentTimeMillis();
+        boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+            @Override
+            public void run() {
+                MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+            }
+        });
+        if (!result) {
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+        }
         // sign
-
         // wall
-
-        return true;
+        return result;
     }
 }

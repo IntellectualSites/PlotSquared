@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.flag;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,13 +29,13 @@ import org.apache.commons.lang.StringUtils;
  * @author Empire92
  */
 public class AbstractFlag {
-
     public final String key;
     public final FlagValue<?> value;
-
+    
     public AbstractFlag(final String key) {
         this(key, new FlagValue.StringValue());
     }
+    
     /**
      * AbstractFlag is a parameter used in creating a new Flag<br>
      * The key must be alphabetical characters and <= 16 characters in length
@@ -60,12 +59,11 @@ public class AbstractFlag {
     public boolean isList() {
         return this.value instanceof FlagValue.ListValue;
     }
-
+    
     public Object parseValueRaw(final String value) {
         try {
             return this.value.parse(value);
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -77,7 +75,7 @@ public class AbstractFlag {
     public String getValueDesc() {
         return this.value.getDescription();
     }
-
+    
     /**
      * AbstractFlag key
      *
@@ -86,12 +84,12 @@ public class AbstractFlag {
     public String getKey() {
         return this.key;
     }
-
+    
     @Override
     public String toString() {
         return this.key;
     }
-
+    
     @Override
     public boolean equals(final Object other) {
         if (other == null) {
@@ -106,5 +104,4 @@ public class AbstractFlag {
         final AbstractFlag otherObj = (AbstractFlag) other;
         return (otherObj.key.equals(this.key));
     }
-
 }

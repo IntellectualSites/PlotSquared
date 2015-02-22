@@ -18,31 +18,66 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Template extends SubCommand {
-
     public Template() {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length != 2) {
-            PlayerFunctions.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
-        
+        String world = args[1];
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+            return false;
+        }
+        switch (args[0].toLowerCase()) {
+            case "import": {
+                // TODO import template
+                MainUtil.sendMessage(plr, "TODO");
+                return true;
+            }
+            case "export": {
+                MainUtil.sendMessage(plr, "TODO");
+            }
+        }
         // TODO allow world settings (including schematics to be packed into a single file)
-        
         // TODO allow world created based on these packaged files
-        
         return true;
+    }
+    
+    public void gzipIt(final String output, final String input) {
+        final byte[] buffer = new byte[1024];
+        try {
+            final GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(output));
+            final FileInputStream in = new FileInputStream(input);
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                gzos.write(buffer, 0, len);
+            }
+            in.close();
+            gzos.finish();
+            gzos.close();
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -18,110 +18,105 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  */
 public class list extends SubCommand {
-
     public list() {
         super(Command.LIST, "List all plots", "list {mine|shared|all|world|forsale}", CommandCategory.INFO, false);
     }
-
+    
     private static String getName(final UUID id) {
         if (id == null) {
             return "none";
         }
-        String name = UUIDHandler.getName(id);
+        final String name = UUIDHandler.getName(id);
         if (name == null) {
             return "unknown";
         }
         return name;
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             final StringBuilder builder = new StringBuilder();
             builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
             if (plr != null) {
-                builder.append(getArgumentList(new String[]{"mine", "shared", "world", "all", "forsale"}));
+                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "forsale" }));
             } else {
-                builder.append(getArgumentList(new String[]{"all"}));
+                builder.append(getArgumentList(new String[] { "all" }));
             }
-            PlayerFunctions.sendMessage(plr, builder.toString());
+            MainUtil.sendMessage(plr, builder.toString());
             return true;
         }
         if (args[0].equalsIgnoreCase("forsale") && (plr != null)) {
-            if (PlotMain.economy == null) {
+            if (PlotSquared.economy == null) {
                 return sendMessage(plr, C.ECON_DISABLED);
             }
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "buyable")).append("\n");
             int idx = 0;
-            for (final Plot p : PlotMain.getPlots(plr.getWorld()).values()) {
-                Flag price = FlagManager.getPlotFlag(p, "price");
+            for (final Plot p : PlotSquared.getPlots(plr.getLocation().getWorld()).values()) {
+                final Flag price = FlagManager.getPlotFlag(p, "price");
                 if (price != null) {
                     string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValueString()).replaceAll("%owner", getName(p.owner))).append("\n");
                     idx++;
                 }
             }
             if (idx == 0) {
-                PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+                MainUtil.sendMessage(plr, C.NO_PLOTS);
                 return true;
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "Includes").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            MainUtil.sendMessage(plr, string.toString());
             return true;
         }
         if (args[0].equalsIgnoreCase("mine") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "your")).append("\n");
             int idx = 0;
-            for (final Plot p : PlotMain.getPlots(plr)) {
+            for (final Plot p : PlotSquared.getPlots(plr)) {
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
                 idx++;
             }
             if (idx == 0) {
-                PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+                MainUtil.sendMessage(plr, C.NO_PLOTS);
                 return true;
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "You have").replaceAll("%num%", idx + "").replaceAll("%plot%", idx == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            MainUtil.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("shared") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
-            for (final Plot p : PlotMain.getPlotsSorted()) {
+            for (final Plot p : PlotSquared.getPlotsSorted()) {
                 if (p.helpers.contains(UUIDHandler.getUUID(plr))) {
                     string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
                 }
             }
-            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There are").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
+            MainUtil.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("all")) {
             // Current page
             int page = 0;
-
             // is a page specified? else use 0
             if (args.length > 1) {
                 try {
@@ -134,64 +129,51 @@ public class list extends SubCommand {
                     page = 0;
                 }
             }
-
             // Get the total pages
             // int totalPages = ((int) Math.ceil(12 *
-            // (PlotMain.getPlotsSorted().size()) / 100));
-            final int totalPages = (int) Math.ceil(PlotMain.getPlotsSorted().size() / 12);
-
+            // (PlotSquared.getPlotsSorted().size()) / 100));
+            final int totalPages = (int) Math.ceil(PlotSquared.getPlotsSorted().size() / 12);
             if (page > totalPages) {
                 page = totalPages;
             }
-
             // Only display 12!
             int max = (page * 12) + 12;
-
-            if (max > PlotMain.getPlotsSorted().size()) {
-                max = PlotMain.getPlotsSorted().size();
+            if (max > PlotSquared.getPlotsSorted().size()) {
+                max = PlotSquared.getPlotsSorted().size();
             }
-
             final StringBuilder string = new StringBuilder();
-
             string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
             Plot p;
-
             // This might work xD
             for (int x = (page * 12); x < max; x++) {
-                p = (Plot) PlotMain.getPlotsSorted().toArray()[x];
+                p = (Plot) PlotSquared.getPlotsSorted().toArray()[x];
                 string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
-
-            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotMain.getPlotsSorted().size() + "").replaceAll("%plot%", PlotMain.getPlotsSorted().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", PlotSquared.getPlotsSorted().size() + "").replaceAll("%plot%", PlotSquared.getPlotsSorted().size() == 1 ? "plot" : "plots"));
+            MainUtil.sendMessage(plr, string.toString());
             return true;
         } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
-            final HashMap<PlotId, Plot> plots = PlotMain.getPlots(plr.getWorld());
+            final HashMap<PlotId, Plot> plots = PlotSquared.getPlots(plr.getLocation().getWorld());
             for (final Plot p : plots.values()) {
                 string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
             string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.values().size() + "").replaceAll("%plot%", plots.values().size() == 1 ? "plot" : "plots"));
-            PlayerFunctions.sendMessage(plr, string.toString());
+            MainUtil.sendMessage(plr, string.toString());
             return true;
         } else {
             // execute(plr);
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
+            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
             return false;
         }
     }
-
+    
     private String getArgumentList(final String[] strings) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {
-            builder.append(getString(s));
+            builder.append(MainUtil.colorise('&', s));
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
     }
-
-    private String getString(final String s) {
-        return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
-    }
-
 }

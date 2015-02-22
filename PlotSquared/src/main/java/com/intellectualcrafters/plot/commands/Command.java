@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 /**
@@ -28,7 +27,6 @@ package com.intellectualcrafters.plot.commands;
  * @author Empire92
  */
 public enum Command {
-
     // TODO new commands
     // (economy)
     // - /plot buy
@@ -39,7 +37,7 @@ public enum Command {
     FLAG("flag", "f"),
     TARGET("target"),
     CLUSTER("cluster", "clusters"),
-    BUY("buy","b"),
+    BUY("buy", "b"),
     CREATEROADSCHEMATIC("createroadschematic"),
     DEBUGROADREGEN("debugroadregen"),
     DEBUGFIXFLAGS("debugfixflags"),
@@ -77,22 +75,19 @@ public enum Command {
     UNBAN("unban", "unblock"),
     DATABASE("database", "convert"),
     TP("tp", "tp");
-
     /**
      * Command
      */
     private final String command;
-
     /**
      * Alias
      */
     private final String alias;
-
     /**
      * Permission Node
      */
     private final CommandPermission permission;
-
+    
     /**
      * @param command Command "name" (/plot [cmd])
      */
@@ -101,7 +96,7 @@ public enum Command {
         this.alias = command;
         this.permission = new CommandPermission("plots." + command);
     }
-
+    
     /**
      * @param command    Command "name" (/plot [cmd])
      * @param permission Command Permission Node
@@ -111,7 +106,7 @@ public enum Command {
         this.permission = permission;
         this.alias = command;
     }
-
+    
     /**
      * @param command Command "name" (/plot [cmd])
      * @param alias   Command Alias
@@ -121,7 +116,7 @@ public enum Command {
         this.alias = alias;
         this.permission = new CommandPermission("plots." + command);
     }
-
+    
     /**
      * @param command    Command "name" (/plot [cmd])
      * @param alias      Command Alias
@@ -132,21 +127,21 @@ public enum Command {
         this.alias = alias;
         this.permission = permission;
     }
-
+    
     /**
      * @return command
      */
     public String getCommand() {
         return this.command;
     }
-
+    
     /**
      * @return alias
      */
     public String getAlias() {
         return this.alias;
     }
-
+    
     /**
      * @return permission object
      *

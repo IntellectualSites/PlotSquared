@@ -18,15 +18,14 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.events;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 
 /**
@@ -37,12 +36,10 @@ import com.intellectualcrafters.plot.object.Plot;
  */
 public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
     private final Location from;
     private final Plot plot;
-
     private boolean cancelled;
-
+    
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
@@ -55,16 +52,16 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         this.from = from;
         this.plot = plot;
     }
-
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     /**
      * Get the from location
      *
@@ -73,7 +70,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     public Location getFrom() {
         return this.from;
     }
-
+    
     /**
      * Get the plot involved
      *
@@ -82,12 +79,12 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     public Plot getPlot() {
         return this.plot;
     }
-
+    
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-
+    
     @Override
     public void setCancelled(final boolean cancelled) {
         this.cancelled = cancelled;

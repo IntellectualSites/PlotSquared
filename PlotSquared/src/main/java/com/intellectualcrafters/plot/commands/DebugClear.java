@@ -18,63 +18,57 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugClear extends SubCommand {
-
     public DebugClear() {
         super(Command.DEBUGCLEAR, "Clear a plot using a fast experimental algorithm", "debugclear", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotMain.sendConsoleSenderMessage("You need to specify two arguments: ID (0;0) & World (world)");
+                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotMain.sendConsoleSenderMessage("Invalid Plot ID: " + args[0]);
+                    PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotMain.isPlotWorld(world) || !(PlotMain.getWorldSettings(world) instanceof SquarePlotWorld)) {
-                        PlotMain.sendConsoleSenderMessage("Invalid plot world: " + world);
+                    if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getPlotWorld(world) instanceof SquarePlotWorld)) {
+                        PlotSquared.log("Invalid plot world: " + world);
                     } else {
-                        final Plot plot = PlotHelper.getPlot(Bukkit.getWorld(world), id);
+                        final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
-                            PlotMain.sendConsoleSenderMessage("Could not find plot " + args[0] + " in world " + world);
+                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            World bukkitWorld = Bukkit.getWorld(world);
-                            Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-                            Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-                            if (PlotHelper.runners.containsKey(plot)) {
-                                PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+                            final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+                            final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
+                            if (MainUtil.runners.containsKey(plot)) {
+                                MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
                                 return false;
                             }
-                            PlotHelper.runners.put(plot, 1);
-                            ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+                            MainUtil.runners.put(plot, 1);
+                            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                                 @Override
                                 public void run() {
-                                    PlotHelper.runners.remove(plot);
-                                    PlotMain.sendConsoleSenderMessage("Plot " + plot.getId().toString() + " cleared.");
-                                    PlotMain.sendConsoleSenderMessage("&aDone!");
+                                    MainUtil.runners.remove(plot);
+                                    PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
+                                    PlotSquared.log("&aDone!");
                                 }
                             });
                         }
@@ -83,38 +77,34 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-
-        if (!PlayerFunctions.isInPlot(plr) || !(PlotMain.getWorldSettings(plr.getWorld()) instanceof SquarePlotWorld)) {
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null || !(PlotSquared.getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
-        if (!PlayerFunctions.getTopPlot(plr.getWorld(), plot).equals(PlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !PlotMain.hasPermission(plr, "plots.admin.command.debugclear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        World bukkitWorld = plr.getWorld();
-        Location pos1 = PlotHelper.getPlotBottomLoc(bukkitWorld, plot.id).add(1, 0, 1);
-        Location pos2 = PlotHelper.getPlotTopLoc(bukkitWorld, plot.id);
-        if (PlotHelper.runners.containsKey(plot)) {
-            PlayerFunctions.sendMessage(null, C.WAIT_FOR_TIMER);
+        final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
+        if (MainUtil.runners.containsKey(plot)) {
+            MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
             return false;
         }
-        PlotHelper.runners.put(plot, 1);
-        ChunkManager.regenerateRegion(pos1, pos2, new Runnable() {
+        MainUtil.runners.put(plot, 1);
+        ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
             @Override
             public void run() {
-                PlotHelper.runners.remove(plot);
-                PlayerFunctions.sendMessage(plr, "&aDone!");
+                MainUtil.runners.remove(plot);
+                MainUtil.sendMessage(plr, "&aDone!");
             }
         });
-
         // sign
-
         // wall
-
         return true;
     }
 }

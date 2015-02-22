@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
@@ -26,16 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.PlotHelper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * The plot class
@@ -43,8 +35,8 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("javadoc") public class Plot implements Cloneable {
-
+@SuppressWarnings("javadoc")
+public class Plot implements Cloneable {
     /**
      * plot ID
      */
@@ -86,34 +78,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      */
     public boolean hasChanged = false;
     public boolean countsTowardsMax = true;
-
-    /**
-     * Primary constructor
-     *
-     * @param id
-     * @param owner
-     * @param plotBiome
-     * @param helpers
-     * @param denied
-     *
-     * @deprecated
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
-        this.id = id;
-        this.settings = new PlotSettings(this);
-        this.owner = owner;
-        this.deny_entry = this.owner == null;
-        this.helpers = helpers;
-        this.denied = denied;
-        this.trusted = new ArrayList<>();
-        this.settings.setAlias("");
-        this.delete = false;
-        this.settings.flags = new HashSet<Flag>();
-        this.world = world;
-    }
-
+    
     /**
      * Primary constructor
      *
@@ -135,41 +100,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         this.settings.flags = new HashSet<Flag>();
         this.world = world;
     }
-
-    /**
-     * Constructor for saved plots
-     *
-     * @param id
-     * @param owner
-     * @param plotBiome
-     * @param helpers
-     * @param denied
-     * @param merged
-     *
-     * @deprecated
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public Plot(final PlotId id, final UUID owner, final Biome plotBiome, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
-        this.id = id;
-        this.settings = new PlotSettings(this);
-        this.owner = owner;
-        this.deny_entry = this.owner != null;
-        this.trusted = trusted;
-        this.helpers = helpers;
-        this.denied = denied;
-        this.settings.setAlias(alias);
-        this.settings.setPosition(position);
-        this.settings.setMerged(merged);
-        this.delete = false;
-        if (flags != null) {
-            this.settings.flags = flags;
-        } else {
-            this.settings.flags = new HashSet<Flag>();
-        }
-        this.world = world;
-    }
-
+    
     /**
      * Constructor for saved plots
      *
@@ -198,7 +129,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         this.world = world;
     }
-
+    
     /**
      * Check if the plot has a set owner
      *
@@ -207,7 +138,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public boolean hasOwner() {
         return this.owner != null;
     }
-
+    
     /**
      * Check if the player is either the owner or on the helpers list
      *
@@ -215,10 +146,10 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      *
      * @return true if the player is added as a helper or is the owner
      */
-    public boolean hasRights(final Player player) {
-        return PlotMain.hasPermission(player, "plots.admin.build.other") || ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(UUIDHandler.getUUID(player))) || ((this.owner != null) && this.owner.equals(UUIDHandler.getUUID(player))) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.uuidWrapper.getPlayer(this.owner) != null) && (this.trusted.contains(UUIDHandler.getUUID(player)) || this.trusted.contains(DBFunc.everyone)));
+    public boolean isAdded(final UUID uuid) {
+        return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
     }
-
+    
     /**
      * Should the player be allowed to enter?
      *
@@ -226,40 +157,33 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      *
      * @return false if the player is allowed to enter
      */
-    public boolean deny_entry(final Player player) {
-        return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.hasRights(player)) || (!this.hasRights(player) && this.denied.contains(UUIDHandler.getUUID(player))));
+    public boolean isDenied(final UUID uuid) {
+        return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
     }
-
+    
     /**
      * Get the UUID of the owner
      */
     public UUID getOwner() {
         return this.owner;
     }
-
+    
     /**
      * Set the owner
      *
      * @param player
      */
-    public void setOwner(final Player player) {
-        this.owner = UUIDHandler.getUUID(player);
+    public void setOwner(final UUID uuid) {
+        this.owner = uuid;
     }
-
+    
     /**
      * Get the plot ID
      */
     public PlotId getId() {
         return this.id;
     }
-
-    /**
-     * Get the plot World
-     */
-    public World getWorld() {
-        return Bukkit.getWorld(this.world);
-    }
-
+    
     /**
      * Get a clone of the plot
      *
@@ -269,11 +193,11 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, getWorld().getName(), this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
         }
         return p;
     }
-
+    
     /**
      * Deny someone (use DBFunc.addDenied() as well)
      *
@@ -282,7 +206,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void addDenied(final UUID uuid) {
         this.denied.add(uuid);
     }
-
+    
     /**
      * Add someone as a helper (use DBFunc as well)
      *
@@ -291,7 +215,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void addHelper(final UUID uuid) {
         this.helpers.add(uuid);
     }
-
+    
     /**
      * Add someone as a trusted user (use DBFunc as well)
      *
@@ -300,19 +224,20 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void addTrusted(final UUID uuid) {
         this.trusted.add(uuid);
     }
-
+    
     /**
      * Get plot display name
      *
      * @return alias if set, else id
      */
+    @Override
     public String toString() {
         if (this.settings.getAlias().length() > 1) {
             return this.settings.getAlias();
         }
         return this.world + ";" + this.getId().x + ";" + this.getId().y;
     }
-
+    
     /**
      * Remove a denied player (use DBFunc as well)
      *
@@ -321,7 +246,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void removeDenied(final UUID uuid) {
         this.denied.remove(uuid);
     }
-
+    
     /**
      * Remove a helper (use DBFunc as well)
      *
@@ -330,7 +255,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void removeHelper(final UUID uuid) {
         this.helpers.remove(uuid);
     }
-
+    
     /**
      * Remove a trusted user (use DBFunc as well)
      *
@@ -339,16 +264,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
     public void removeTrusted(final UUID uuid) {
         this.trusted.remove(uuid);
     }
-
-    /**
-     * Clear a plot
-     *
-     * @param plr initiator
-     */
-    public void clear(final Player plr, final boolean isDelete) {
-        PlotHelper.clear(plr, this, isDelete);
-    }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -363,7 +279,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         final Plot other = (Plot) obj;
         return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
     }
-
+    
     /**
      * Get the plot hashcode
      *

@@ -18,65 +18,64 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  */
 public class TP extends SubCommand {
-
     public TP() {
         super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
-            PlayerFunctions.sendMessage(plr, C.NEED_PLOT_ID);
+            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
             return false;
         }
         final String id = args[0];
         PlotId plotid;
-        World world = plr.getWorld();
+        Location loc = plr.getLocation();
+        String pworld = loc.getWorld();
+        String world = pworld;
         if (args.length == 2) {
-            if (Bukkit.getWorld(args[1]) != null) {
-                world = Bukkit.getWorld(args[1]);
+            if (BlockManager.manager.isWorld(args[1])) {
+                world = args[1];
             }
         }
-        if (!PlotMain.isPlotWorld(world)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+        if (!PlotSquared.isPlotWorld(world)) {
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot temp;
         if ((temp = isAlias(world, id)) != null) {
-            PlotMain.teleportPlayer(plr, plr.getLocation(), temp);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
             return true;
         }
-
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            PlotMain.teleportPlayer(plr, plr.getLocation(), PlotHelper.getPlot(world, plotid));
+            MainUtil.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
             return true;
         } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
         }
         return false;
     }
-
-    private Plot isAlias(final World world, String a) {
+    
+    private Plot isAlias(final String world, String a) {
         int index = 0;
         if (a.contains(";")) {
             final String[] split = a.split(";");
@@ -85,16 +84,16 @@ public class TP extends SubCommand {
             }
             a = split[0];
         }
-        @SuppressWarnings("deprecation") final Player player = Bukkit.getPlayer(a);
+        final PlotPlayer player = UUIDHandler.getPlayer(a);
         if (player != null) {
-            final java.util.Set<Plot> plotMainPlots = PlotMain.getPlots(world, player);
+            final java.util.Set<Plot> plotMainPlots = PlotSquared.getPlots(world, player);
             final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
             if (plots.length > index) {
                 return plots[index];
             }
             return null;
         }
-        for (final Plot p : PlotMain.getPlots(world).values()) {
+        for (final Plot p : PlotSquared.getPlots(world).values()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }

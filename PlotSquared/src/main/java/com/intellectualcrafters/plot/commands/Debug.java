@@ -18,34 +18,28 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.RUtils;
 
 public class Debug extends SubCommand {
-
     public Debug() {
         super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             final StringBuilder msg = new StringBuilder();
             for (final C c : C.values()) {
                 msg.append(c.s()).append("\n");
             }
-            PlayerFunctions.sendMessage(plr, msg.toString());
+            MainUtil.sendMessage(plr, msg.toString());
             return true;
         }
         StringBuilder information;
@@ -58,9 +52,12 @@ public class Debug extends SubCommand {
         }
         {
             final StringBuilder worlds = new StringBuilder("");
-            for (final String world : PlotMain.getPlotWorlds()) {
+            for (final String world : PlotSquared.getPlotWorlds()) {
                 worlds.append(world).append(" ");
             }
+            
+            // FIXME not sure if we actually need any of this debug info as we should just do a timings report which is more detailed anyway
+            
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
             information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));
@@ -68,16 +65,7 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "TPS Percentage", (int) Lag.getFullPercentage() + "%"));
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
-            information.append(getLine(line, "Owned Plots", PlotMain.getPlots().size()));
-            // information.append(getLine(line, "PlotWorld Size",
-            // PlotHelper.getWorldFolderSize() + "MB"));
-            for (final String worldname : PlotMain.getPlotWorlds()) {
-                final World world = Bukkit.getWorld(worldname);
-                information.append(getLine(line, "World: " + world.getName() + " size", PlotHelper.getWorldFolderSize(world)));
-                information.append(getLine(line, " - Entities", PlotHelper.getEntities(world)));
-                information.append(getLine(line, " - Loaded Tile Entities", PlotHelper.getTileEntities(world)));
-                information.append(getLine(line, " - Loaded Chunks", PlotHelper.getLoadedChunks(world)));
-            }
+            information.append(getLine(line, "Owned Plots", PlotSquared.getPlots().size()));
             information.append(getSection(section, "RAM"));
             information.append(getLine(line, "Free Ram", RUtils.getFreeRam() + "MB"));
             information.append(getLine(line, "Total Ram", RUtils.getTotalRam() + "MB"));
@@ -86,15 +74,15 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "View all captions", "/plot debug msg"));
         }
         {
-            PlayerFunctions.sendMessage(plr, information.toString());
+            MainUtil.sendMessage(plr, information.toString());
         }
         return true;
     }
-
+    
     private String getSection(final String line, final String val) {
         return line.replaceAll("%val%", val) + "\n";
     }
-
+    
     private String getLine(final String line, final String var, final Object val) {
         return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }

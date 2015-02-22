@@ -18,47 +18,44 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.entity.Player;
 
-import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotComment;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 
 public class Comment extends SubCommand {
-
     public Comment() {
         super(Command.COMMENT, "Comment on a plot", "comment", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
-        if (!PlayerFunctions.isInPlot(plr)) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        Location loc = plr.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-
         final List<String> recipients = Arrays.asList("admin", "owner", "helper", "trusted", "everyone");
-
         if ((args.length > 1) && recipients.contains(args[0].toLowerCase())) {
-
-            if (PlotMain.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
+            if (Permissions.hasPermission(plr, "plots.comment." + args[0].toLowerCase())) {
                 final String text = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                 final PlotComment comment = new PlotComment(text, plr.getName(), recipients.indexOf(args[0].toLowerCase()));
                 plot.settings.addComment(comment);
-                DBFunc.setComment(plr.getWorld().getName(), plot, comment);
+                DBFunc.setComment(loc.getWorld(), plot, comment);
                 return sendMessage(plr, C.COMMENT_ADDED);
             } else {
                 return sendMessage(plr, C.NO_PERMISSION, "plots.comment." + args[0].toLowerCase());

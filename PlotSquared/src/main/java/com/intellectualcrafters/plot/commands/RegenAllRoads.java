@@ -18,66 +18,50 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.AChunkManager;
 
 public class RegenAllRoads extends SubCommand {
-
     public RegenAllRoads() {
         super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
-    public boolean execute(final Player player, final String... args) {
-        
+    public boolean execute(final PlotPlayer player, final String... args) {
         if (player != null) {
             sendMessage(player, C.NOT_CONSOLE);
             return false;
         }
-        
         if (args.length != 1) {
             sendMessage(player, C.NEED_PLOT_WORLD);
             return false;
         }
-        
-        String name = args[0];
-        PlotManager manager = PlotMain.getPlotManager(name);
-        
-        if (manager == null || !(manager instanceof HybridPlotManager)) {
+        final String name = args[0];
+        final PlotManager manager = PlotSquared.getPlotManager(name);
+        if ((manager == null) || !(manager instanceof HybridPlotManager)) {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-
-        HybridPlotManager hpm = (HybridPlotManager) manager;
-        
-        World world = Bukkit.getWorld(name);
-        ArrayList<ChunkLoc> chunks = ChunkManager.getChunkChunks(world);
-        
-        PlotMain.sendConsoleSenderMessage("&cIf no schematic is set, the following will not do anything");
-        PlotMain.sendConsoleSenderMessage("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotMain.sendConsoleSenderMessage("&6Potential chunks to update: &7"+ (chunks.size() * 1024));
-        PlotMain.sendConsoleSenderMessage("&6Estimated time: &7"+ (chunks.size()) + " seconds");
-        
-        boolean result = hpm.scheduleRoadUpdate(world);
-        
+        final List<ChunkLoc> chunks = AChunkManager.manager.getChunkChunks(name);
+        PlotSquared.log("&cIf no schematic is set, the following will not do anything");
+        PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        PlotSquared.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
+        final boolean result = HybridUtils.manager.scheduleRoadUpdate(name);
         if (!result) {
-            PlotMain.sendConsoleSenderMessage("&cCannot schedule mass schematic update! (Is one already in progress?)");
+            PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
-        
         return true;
     }
 }

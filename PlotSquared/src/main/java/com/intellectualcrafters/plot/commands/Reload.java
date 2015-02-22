@@ -18,39 +18,35 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Reload extends SubCommand {
-
     public Reload() {
         super("reload", "plots.admin.command.reload", "Reload configurations", "", "reload", CommandCategory.INFO, false);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PlotMain.config.load(PlotMain.configFile);
-            PlotMain.setupConfig();
+            PlotSquared.config.load(PlotSquared.configFile);
+            PlotSquared.setupConfig();
             C.setupTranslations();
-            for (final String pw : PlotMain.getPlotWorlds()) {
-                final PlotWorld plotworld = PlotMain.getWorldSettings(pw);
-                plotworld.loadDefaultConfiguration(PlotMain.config.getConfigurationSection("worlds." + pw));
+            for (final String pw : PlotSquared.getPlotWorlds()) {
+                final PlotWorld plotworld = PlotSquared.getPlotWorld(pw);
+                plotworld.loadDefaultConfiguration(PlotSquared.config.getConfigurationSection("worlds." + pw));
             }
-            PlotMain.BroadcastWithPerms(C.RELOADED_CONFIGS);
+            MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
-            PlayerFunctions.sendMessage(plr, C.RELOAD_FAILED);
+            MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }
         return true;
     }
-
 }

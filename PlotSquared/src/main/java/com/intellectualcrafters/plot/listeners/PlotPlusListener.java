@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,25 +46,27 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-10-30 for PlotSquared
  *
  * @author Citymonstret
  */
-@SuppressWarnings({"deprecation", "unused"}) public class PlotPlusListener extends PlotListener implements Listener {
-
+@SuppressWarnings({ "deprecation", "unused" })
+public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
-
+    
     public static void startRunnable(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
@@ -96,7 +98,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             }
         }, 0l, 20l);
     }
-
+    
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
@@ -104,18 +106,21 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
             return;
         }
         event.setCancelled(true);
-        if (!isInPlot(player)) {
-            PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        if (plot == null) {
+            MainUtil.sendMessage(pp, C.NOT_IN_PLOT);
             return;
         }
-        final Plot plot = getPlot(player);
-        if (!plot.hasRights(player)) {
-            PlayerFunctions.sendMessage(player, C.NO_PLOT_PERMS);
+        UUID uuid = pp.getUUID();
+        if (!plot.isAdded(uuid)) {
+            MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
         for (final Player p : player.getWorld().getPlayers()) {
-            if (isInPlot(p) && getPlot(p).equals(plot)) {
+            Plot newPlot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+            if (plot.equals(newPlot)) {
                 plotPlayers.add(p);
             }
         }
@@ -131,54 +136,68 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         for (final Player p : plotPlayers) {
             p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
-            PlayerFunctions.sendMessage(p, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+            MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
-
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        if (!isInPlot(player)) {
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
             return;
         }
-        final Plot plot = getPlot(player);
         if (booleanFlag(plot, "instabreak", false)) {
             event.getBlock().breakNaturally();
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(final EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
         final Player player = (Player) event.getEntity();
-        if (!isInPlot(player)) {
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
             return;
         }
-        if (booleanFlag(getPlot(player), "invincible", false)) {
+        if (booleanFlag(plot, "invincible", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "drop-protection", false)) {
+        final Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final Plot plot = MainUtil.getPlot(pp.getLocation());
+        if (plot == null) {
+            return;
+        }
+        UUID uuid = pp.getUUID();
+        if (plot.isAdded(uuid) && booleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
-        if (isInPlot(event.getPlayer()) && !getPlot(event.getPlayer()).hasRights(event.getPlayer()) && booleanFlag(getPlot(event.getPlayer()), "item-drop", false)) {
+        final Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final Plot plot = MainUtil.getPlot(pp.getLocation());
+        if (plot == null) {
+            return;
+        }
+        UUID uuid = pp.getUUID();
+        if (plot.isAdded(uuid) && booleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
@@ -187,80 +206,85 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         }
         if (booleanFlag(plot, "notify-enter", false)) {
             if (plot.hasOwner()) {
-                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
-                if (player == null) {
+                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
+                if (pp == null) {
                     return;
                 }
-                Player trespasser = event.getPlayer();
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                final Player trespasser = event.getPlayer();
+                PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
+                if (pp.getUUID().equals(pt.getUUID())) {
                     return;
                 }
-                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-enter.bypass")) {
+                if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
                     return;
                 }
-                if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                if (pp.isOnline()) {
+                    MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
     }
-
+    
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        if (feedRunnable.containsKey(event.getPlayer().getName())) {
-            feedRunnable.remove(event.getPlayer().getName());
+        Player player = event.getPlayer();
+        String name = player.getName();
+        if (feedRunnable.containsKey(name)) {
+            feedRunnable.remove(name);
         }
-        if (healRunnable.containsKey(event.getPlayer().getName())) {
-            healRunnable.remove(event.getPlayer().getName());
+        if (healRunnable.containsKey(name)) {
+            healRunnable.remove(name);
         }
     }
-
+    
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
-        event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.RECORD_PLAY, 0);
+        Player leaver = event.getPlayer();
+        leaver.playEffect(leaver.getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
-        if (feedRunnable.containsKey(event.getPlayer().getName())) {
-            feedRunnable.remove(event.getPlayer().getName());
+        PlotPlayer pl = BukkitUtil.getPlayer(leaver);
+        String name = pl.getName();
+        if (feedRunnable.containsKey(leaver)) {
+            feedRunnable.remove(leaver);
         }
-        if (healRunnable.containsKey(event.getPlayer().getName())) {
-            healRunnable.remove(event.getPlayer().getName());
+        if (healRunnable.containsKey(leaver)) {
+            healRunnable.remove(leaver);
         }
         if (booleanFlag(plot, "notify-leave", false)) {
             if (plot.hasOwner()) {
-                final Player player = UUIDHandler.uuidWrapper.getPlayer(plot.getOwner());
-                if (player == null) {
+                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
+                if (pp == null) {
                     return;
                 }
-                Player trespasser = event.getPlayer();
-                if (UUIDHandler.getUUID(player).equals(UUIDHandler.getUUID(trespasser))) {
+                if (pp.getUUID().equals(pl.getUUID())) {
                     return;
                 }
-                if (PlotMain.hasPermission(trespasser, "plots.flag.notify-leave.bypass")) {
+                if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                     return;
                 }
-                if (player.isOnline()) {
-                    PlayerFunctions.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                if (pp.isOnline()) {
+                    MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pl.getName()).replace("%plot", plot.getId().toString()));
                 }
             }
         }
     }
-
+    
     public static class Interval {
         public final int interval;
         public final int amount;
         public final int max;
         public int count = 0;
-
+        
         public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
             this.amount = amount;
             this.max = max;
         }
     }
-
+    
     /**
      * Record Meta Class
      *
@@ -268,31 +292,29 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
      */
     public static class RecordMeta {
         public final static List<RecordMeta> metaList = new ArrayList<>();
-
         static {
             for (int x = 3; x < 12; x++) {
                 metaList.add(new RecordMeta(x + "", Material.valueOf("RECORD_" + x)));
             }
         }
-
         private final String name;
         private final Material material;
-
+        
         public RecordMeta(final String name, final Material material) {
             this.name = name;
             this.material = material;
         }
-
+        
         @Override
         public String toString() {
             return this.name;
         }
-
+        
         @Override
         public int hashCode() {
             return this.name.hashCode();
         }
-
+        
         public Material getMaterial() {
             return this.material;
         }

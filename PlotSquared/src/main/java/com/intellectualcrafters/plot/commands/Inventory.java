@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
@@ -26,18 +25,19 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class Inventory extends SubCommand {
+import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
+public class Inventory extends SubCommand {
     public Inventory() {
         super("inventory", "plots.inventory", "Open a command inventory", "inventory", "inv", CommandCategory.INFO, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         final ArrayList<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand cmd : MainCommand.subCommands) {
             if (cmd.permission.hasPermission(plr)) {
@@ -49,10 +49,11 @@ public class Inventory extends SubCommand {
         for (final SubCommand cmd : cmds) {
             inventory.addItem(getItem(cmd));
         }
-        plr.openInventory(inventory);
+        // FIXME unchecked cast
+        ((BukkitPlayer) plr).player.openInventory(inventory);
         return true;
     }
-
+    
     private ItemStack getItem(final SubCommand cmd) {
         final ItemStack stack = new ItemStack(Material.COMMAND);
         final ItemMeta meta = stack.getItemMeta();

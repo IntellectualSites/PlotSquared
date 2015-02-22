@@ -18,45 +18,41 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerPlotHelperEvent;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Helpers extends SubCommand {
-
     public Helpers() {
         super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-
+    
     @Override
-    public boolean execute(final Player plr, final String... args) {
+    public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
-            PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
-        if (!PlayerFunctions.isInPlot(plr)) {
-            PlayerFunctions.sendMessage(plr, C.NOT_IN_PLOT);
-            return true;
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = PlayerFunctions.getCurrentPlot(plr);
         if ((plot == null) || !plot.hasOwner()) {
-            PlayerFunctions.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !PlotMain.hasPermission(plr, "plots.admin.command.helpers")) {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
@@ -67,52 +63,50 @@ public class Helpers extends SubCommand {
                 uuid = UUIDHandler.getUUID(args[1]);
             }
             if (uuid == null) {
-                PlayerFunctions.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
                 if (plot.owner.equals(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.ALREADY_OWNER);
+                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
                 if (plot.trusted.contains(uuid)) {
                     plot.trusted.remove(uuid);
-                    DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
                 }
                 if (plot.denied.contains(uuid)) {
                     plot.denied.remove(uuid);
-                    DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
                 }
                 plot.addHelper(uuid);
-                DBFunc.setHelper(plr.getWorld().getName(), plot, uuid);
-                final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
-                Bukkit.getPluginManager().callEvent(event);
+                DBFunc.setHelper(loc.getWorld(), plot, uuid);
+                // FIXME PlayerPlotHelperEvent
             } else {
-                PlayerFunctions.sendMessage(plr, C.ALREADY_ADDED);
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            PlayerFunctions.sendMessage(plr, C.HELPER_ADDED);
+            MainUtil.sendMessage(plr, C.HELPER_ADDED);
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
                 final UUID uuid = DBFunc.everyone;
                 if (!plot.helpers.contains(uuid)) {
-                    PlayerFunctions.sendMessage(plr, C.WAS_NOT_ADDED);
+                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
                 plot.removeHelper(uuid);
-                DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
-                PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+                DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                MainUtil.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
-            DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
-            final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
-            Bukkit.getPluginManager().callEvent(event);
-            PlayerFunctions.sendMessage(plr, C.HELPER_REMOVED);
+            DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+            // FIXME PlayerPlotHelperEvent
+            MainUtil.sendMessage(plr, C.HELPER_REMOVED);
         } else {
-            PlayerFunctions.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
         return true;

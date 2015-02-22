@@ -18,44 +18,41 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  */
 public class Home extends SubCommand {
-
     public Home() {
         super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT, true);
     }
-
+    
     private Plot isAlias(final String a) {
-        for (final Plot p : PlotMain.getPlots()) {
+        for (final Plot p : PlotSquared.getPlots()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }
         }
         return null;
     }
-
+    
     @Override
-    public boolean execute(final Player plr, String... args) {
-        final Plot[] plots = PlotMain.getPlots(plr).toArray(new Plot[0]);
+    public boolean execute(final PlotPlayer plr, String... args) {
+        final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
         if (plots.length == 1) {
-            PlotMain.teleportPlayer(plr, plr.getLocation(), plots[0]);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[0]);
             return true;
         } else if (plots.length > 1) {
             if (args.length < 1) {
-                args = new String[]{"1"};
+                args = new String[] { "1" };
             }
             int id = 0;
             try {
@@ -65,30 +62,29 @@ public class Home extends SubCommand {
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
                         if (temp.getOwner().equals(UUIDHandler.getUUID(plr))) {
-                            teleportPlayer(plr, temp);
+                            MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
                             return true;
                         }
                     }
-                    PlayerFunctions.sendMessage(plr, C.NOT_YOUR_PLOT);
+                    MainUtil.sendMessage(plr, C.NOT_YOUR_PLOT);
                     return false;
                 }
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return true;
             }
             if ((id > (plots.length)) || (id < 1)) {
-                PlayerFunctions.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
-            teleportPlayer(plr, plots[id - 1]);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[id - 1]);
             return true;
         } else {
-            PlayerFunctions.sendMessage(plr, C.NO_PLOTS);
+            MainUtil.sendMessage(plr, C.NO_PLOTS);
             return true;
         }
     }
     
-    public void teleportPlayer(Player player, Plot plot) {
-    	PlotMain.teleportPlayer(player, player.getLocation(), plot);
+    public void teleportPlayer(final PlotPlayer player, final Plot plot) {
+        MainUtil.teleportPlayer(player, player.getLocation(), plot);
     }
-    
 }

@@ -18,7 +18,6 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.json;
 
 import java.util.Iterator;
@@ -30,12 +29,11 @@ import java.util.Iterator;
  * @version 2014-05-03
  */
 public class HTTP {
-
     /**
      * Carriage return/line feed.
      */
     public static final String CRLF = "\r\n";
-
+    
     /**
      * Convert an HTTP header string into a JSONObject. It can be a request header or a response header. A request
      * header will contain
@@ -93,28 +91,20 @@ public class HTTP {
         final JSONObject jo = new JSONObject();
         final HTTPTokener x = new HTTPTokener(string);
         String token;
-
         token = x.nextToken();
         if (token.toUpperCase().startsWith("HTTP")) {
-
             // Response
-
             jo.put("HTTP-Version", token);
             jo.put("Status-Code", x.nextToken());
             jo.put("Reason-Phrase", x.nextTo('\0'));
             x.next();
-
         } else {
-
             // Request
-
             jo.put("Method", token);
             jo.put("Request-URI", x.nextToken());
             jo.put("HTTP-Version", x.nextToken());
         }
-
         // Fields
-
         while (x.more()) {
             final String name = x.nextTo(':');
             x.next(':');
@@ -123,7 +113,7 @@ public class HTTP {
         }
         return jo;
     }
-
+    
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
      * <p/>

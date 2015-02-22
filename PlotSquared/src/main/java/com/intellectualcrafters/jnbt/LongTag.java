@@ -4,9 +4,8 @@ package com.intellectualcrafters.jnbt;
  * The {@code TAG_Long} tag.
  */
 public final class LongTag extends Tag {
-
     private final long value;
-
+    
     /**
      * Creates the tag with an empty name.
      *
@@ -16,7 +15,7 @@ public final class LongTag extends Tag {
         super();
         this.value = value;
     }
-
+    
     /**
      * Creates the tag.
      *
@@ -27,12 +26,12 @@ public final class LongTag extends Tag {
         super(name);
         this.value = value;
     }
-
+    
     @Override
     public Long getValue() {
         return this.value;
     }
-
+    
     @Override
     public String toString() {
         final String name = getName();
@@ -42,5 +41,4 @@ public final class LongTag extends Tag {
         }
         return "TAG_Long" + append + ": " + this.value;
     }
-
 }

@@ -7,7 +7,6 @@ package com.intellectualcrafters.json;
  * @version 2014-05-03
  */
 public class HTTPTokener extends JSONTokener {
-
     /**
      * Construct an HTTPTokener from a string.
      *
@@ -16,7 +15,7 @@ public class HTTPTokener extends JSONTokener {
     public HTTPTokener(final String string) {
         super(string);
     }
-
+    
     /**
      * Get the next token or string. This is used in parsing HTTP headers.
      *
@@ -33,7 +32,7 @@ public class HTTPTokener extends JSONTokener {
         } while (Character.isWhitespace(c));
         if ((c == '"') || (c == '\'')) {
             q = c;
-            for (; ; ) {
+            for (;;) {
                 c = next();
                 if (c < ' ') {
                     throw syntaxError("Unterminated string.");
@@ -44,7 +43,7 @@ public class HTTPTokener extends JSONTokener {
                 sb.append(c);
             }
         }
-        for (; ; ) {
+        for (;;) {
             if ((c == 0) || Character.isWhitespace(c)) {
                 return sb.toString();
             }

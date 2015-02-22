@@ -18,45 +18,35 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PlotMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.PlayerFunctions;
-import com.intellectualcrafters.plot.util.PlotHelper;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class CreateRoadSchematic extends SubCommand {
-
     public CreateRoadSchematic() {
         super(Command.CREATEROADSCHEMATIC, "Add a road schematic to your world using the road around your current plot", "crs", CommandCategory.DEBUG, true);
     }
-
+    
     @Override
-    public boolean execute(final Player player, final String... args) {
-        
-        if (!PlayerFunctions.isInPlot(player)) {
-            PlayerFunctions.sendMessage(player, C.NOT_IN_PLOT);
-            return false;
+    public boolean execute(final PlotPlayer player, final String... args) {
+        Location loc = player.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return sendMessage(player, C.NOT_IN_PLOT);
         }
-        
-        if (!(PlotMain.getWorldSettings(player.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PlotSquared.getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        
-        final Plot plot = PlayerFunctions.getCurrentPlot(player);
-
-        HybridPlotManager manager = (HybridPlotManager) PlotMain.getPlotManager(player.getWorld());
-        
-        manager.setupRoadSchematic(plot);
-        PlotHelper.update(player.getLocation());
-        PlayerFunctions.sendMessage(player, "&6Saved new road schematic");
-        
+        HybridUtils.manager.setupRoadSchematic(plot);
+        MainUtil.update(loc);
+        MainUtil.sendMessage(player, "&6Saved new road schematic");
         return true;
     }
 }
