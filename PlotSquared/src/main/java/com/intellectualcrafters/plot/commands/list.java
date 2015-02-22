@@ -23,8 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -75,7 +73,7 @@ public class list extends SubCommand {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "buyable")).append("\n");
             int idx = 0;
-            for (final Plot p : PlotSquared.getPlots(plr.getWorld()).values()) {
+            for (final Plot p : PlotSquared.getPlots(plr.getLocation().getWorld()).values()) {
                 final Flag price = FlagManager.getPlotFlag(p, "price");
                 if (price != null) {
                     string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", idx + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", price.getValueString()).replaceAll("%owner", getName(p.owner))).append("\n");
@@ -157,7 +155,7 @@ public class list extends SubCommand {
         } else if (args[0].equalsIgnoreCase("world") && (plr != null)) {
             final StringBuilder string = new StringBuilder();
             string.append(C.PLOT_LIST_HEADER.s().replaceAll("%word%", "all")).append("\n");
-            final HashMap<PlotId, Plot> plots = PlotSquared.getPlots(plr.getWorld());
+            final HashMap<PlotId, Plot> plots = PlotSquared.getPlots(plr.getLocation().getWorld());
             for (final Plot p : plots.values()) {
                 string.append(C.PLOT_LIST_ITEM.s().replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
             }
@@ -174,12 +172,8 @@ public class list extends SubCommand {
     private String getArgumentList(final String[] strings) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {
-            builder.append(getString(s));
+            builder.append(MainUtil.colorise('&', s));
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
-    }
-    
-    private String getString(final String s) {
-        return ChatColor.translateAlternateColorCodes('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
     }
 }
