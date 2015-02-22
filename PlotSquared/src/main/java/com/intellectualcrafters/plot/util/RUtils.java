@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 
@@ -76,37 +73,6 @@ public class RUtils {
         final String s_m = (int) m + " " + ((int) m != 1 ? "minutes" : "minute");
         final String s_s = (int) s + " " + ((int) s != 1 ? "seconds" : "second");
         return string.replaceAll("%sec%", s_s).replaceAll("%min%", s_m).replaceAll("%hours%", s_h);
-    }
-    
-    /**
-     * Force textures on the client
-     *
-     * @param p texture to force
-     */
-    public void forceTexture(final Player p) {
-        p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
-    }
-    
-    public Direction getDirection(final Location l) {
-        final double d = ((l.getYaw() * 4.0F) / 360.0F) + 0.5D;
-        final int i = (int) d;
-        final int x = d < i ? i - 1 : i;
-        switch (x) {
-            case 0:
-                return Direction.SOUTH;
-            case 1:
-                return Direction.EAST;
-            case 2:
-                return Direction.NORTH;
-            case 3:
-                return Direction.WEST;
-            default:
-                return null;
-        }
-    }
-    
-    public boolean compareDirections(final Location l1, final Location l2) {
-        return getDirection(l1) == getDirection(l2);
     }
     
     enum Direction {

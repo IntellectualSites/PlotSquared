@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.RUtils;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class Debug extends SubCommand {
     public Debug() {
@@ -66,15 +67,6 @@ public class Debug extends SubCommand {
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PlotSquared.getPlots().size()));
-            // information.append(getLine(line, "PlotWorld Size",
-            // PlotHelper.getWorldFolderSize() + "MB"));
-            for (final String worldname : PlotSquared.getPlotWorlds()) {
-                final World world = Bukkit.getWorld(worldname);
-                information.append(getLine(line, "World: " + world.getName() + " size", MainUtil.getWorldFolderSize(world)));
-                information.append(getLine(line, " - Entities", MainUtil.getEntities(world)));
-                information.append(getLine(line, " - Loaded Tile Entities", MainUtil.getTileEntities(world)));
-                information.append(getLine(line, " - Loaded Chunks", MainUtil.getLoadedChunks(world)));
-            }
             information.append(getSection(section, "RAM"));
             information.append(getLine(line, "Free Ram", RUtils.getFreeRam() + "MB"));
             information.append(getLine(line, "Total Ram", RUtils.getTotalRam() + "MB"));
