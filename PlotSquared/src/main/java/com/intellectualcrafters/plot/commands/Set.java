@@ -169,7 +169,7 @@ public class Set extends SubCommand {
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("none")) {
                     plot.settings.setPosition(null);
-                    DBFunc.setPosition(plr.getWorld().getName(), plot, "");
+                    DBFunc.setPosition(loc.getWorld(), plot, "");
                     return true;
                 }
                 return MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
@@ -181,7 +181,7 @@ public class Set extends SubCommand {
             final Location relative = plr.getLocation().subtract(base);
             final BlockLoc blockloc = new BlockLoc(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
             plot.settings.setPosition(blockloc);
-            DBFunc.setPosition(plr.getWorld().getName(), plot, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
+            DBFunc.setPosition(loc.getWorld(), plot, relative.getBlockX() + "," + relative.getBlockY() + "," + relative.getBlockZ());
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
@@ -204,7 +204,7 @@ public class Set extends SubCommand {
                     return false;
                 }
             }
-            DBFunc.setAlias(plr.getWorld().getName(), plot, alias);
+            DBFunc.setAlias(loc.getWorld(), plot, alias);
             MainUtil.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
             return true;
         }

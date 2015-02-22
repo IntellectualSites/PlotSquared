@@ -76,14 +76,14 @@ public class Trusted extends SubCommand {
                 }
                 if (plot.helpers.contains(uuid)) {
                     plot.helpers.remove(uuid);
-                    DBFunc.removeHelper(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
                 }
                 if (plot.denied.contains(uuid)) {
                     plot.denied.remove(uuid);
-                    DBFunc.removeDenied(plr.getWorld().getName(), plot, uuid);
+                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
                 }
                 plot.addTrusted(uuid);
-                DBFunc.setTrusted(plr.getWorld().getName(), plot, uuid);
+                DBFunc.setTrusted(loc.getWorld(), plot, uuid);
                 final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
                 Bukkit.getPluginManager().callEvent(event);
             } else {
@@ -100,13 +100,13 @@ public class Trusted extends SubCommand {
                     return true;
                 }
                 plot.removeTrusted(uuid);
-                DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
+                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
                 MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
-            DBFunc.removeTrusted(plr.getWorld().getName(), plot, uuid);
+            DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
             final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);
             Bukkit.getPluginManager().callEvent(event);
             MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);

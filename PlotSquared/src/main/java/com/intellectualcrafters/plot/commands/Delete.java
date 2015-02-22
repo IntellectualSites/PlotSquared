@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -32,7 +30,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Delete extends SubCommand {
@@ -58,7 +55,6 @@ public class Delete extends SubCommand {
         if (PlotSquared.economy != null && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
-                final Economy economy = PlotSquared.economy;
                 EconHandler.depositPlayer(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }

@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -55,6 +56,7 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
             return false;
         }
+        Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);

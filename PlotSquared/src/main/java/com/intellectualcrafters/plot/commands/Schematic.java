@@ -257,7 +257,7 @@ public class Schematic extends SubCommand {
                         return false;
                     }
                     p2 = myplot;
-                    world = plr.getWorld().getName();
+                    world = loc.getWorld();
                 } else {
                     if (args.length == 3) {
                         try {

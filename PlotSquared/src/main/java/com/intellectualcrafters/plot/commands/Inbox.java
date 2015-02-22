@@ -131,7 +131,7 @@ public class Inbox extends SubCommand {
         } else {
             below = true;
         }
-        final String world = plr.getWorld().getName();
+        final String world = loc.getWorld();
         final int tier2 = tier;
         Bukkit.getScheduler().runTaskAsynchronously(PlotSquared.getMain(), new Runnable() {
             @Override

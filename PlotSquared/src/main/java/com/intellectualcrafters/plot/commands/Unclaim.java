@@ -61,7 +61,7 @@ public class Unclaim extends SubCommand {
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PlotSquared.removePlot(plr.getWorld().getName(), plot.id, true);
+        final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
         if (result) {
             final World world = plr.getWorld();
             final String worldname = world.getName();
