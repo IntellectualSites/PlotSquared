@@ -28,6 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class Inventory extends SubCommand {
@@ -48,7 +49,8 @@ public class Inventory extends SubCommand {
         for (final SubCommand cmd : cmds) {
             inventory.addItem(getItem(cmd));
         }
-        plr.openInventory(inventory);
+        // FIXME unchecked cast
+        ((BukkitPlayer) plr).player.openInventory(inventory);
         return true;
     }
     
