@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -64,7 +62,7 @@ public class Home extends SubCommand {
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
                         if (temp.getOwner().equals(UUIDHandler.getUUID(plr))) {
-                            teleportPlayer(plr, temp);
+                            MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
                             return true;
                         }
                     }
@@ -78,7 +76,7 @@ public class Home extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
-            teleportPlayer(plr, plots[id - 1]);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[id - 1]);
             return true;
         } else {
             MainUtil.sendMessage(plr, C.NO_PLOTS);
@@ -86,7 +84,7 @@ public class Home extends SubCommand {
         }
     }
     
-    public void teleportPlayer(final Player player, final Plot plot) {
+    public void teleportPlayer(final PlotPlayer player, final Plot plot) {
         MainUtil.teleportPlayer(player, player.getLocation(), plot);
     }
 }

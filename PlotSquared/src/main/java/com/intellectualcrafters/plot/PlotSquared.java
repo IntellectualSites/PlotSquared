@@ -46,6 +46,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
@@ -174,6 +175,23 @@ public class PlotSquared {
             return plots.get(world);
         }
         return new HashMap<>();
+    }
+    
+    public static Set<Plot> getPlots(final PlotPlayer player) {
+        final UUID uuid = player.getUUID();
+        final ArrayList<Plot> myplots = new ArrayList<>();
+        for (final String world : plots.keySet()) {
+            if (isPlotWorld(world)) {
+                for (final Plot plot : plots.get(world).values()) {
+                    if (plot.hasOwner()) {
+                        if (plot.getOwner().equals(uuid)) {
+                            myplots.add(plot);
+                        }
+                    }
+                }
+            }
+        }
+        return new HashSet<>(myplots);
     }
     
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {

@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -84,8 +85,7 @@ public class Helpers extends SubCommand {
                 }
                 plot.addHelper(uuid);
                 DBFunc.setHelper(loc.getWorld(), plot, uuid);
-                final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, true);
-                Bukkit.getPluginManager().callEvent(event);
+                // FIXME PlayerPlotHelperEvent
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -107,8 +107,7 @@ public class Helpers extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
             DBFunc.removeHelper(loc.getWorld(), plot, uuid);
-            final PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(plr, plot, uuid, false);
-            Bukkit.getPluginManager().callEvent(event);
+            // FIXME PlayerPlotHelperEvent
             MainUtil.sendMessage(plr, C.HELPER_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
