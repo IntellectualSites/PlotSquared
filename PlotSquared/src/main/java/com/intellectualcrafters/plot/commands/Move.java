@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.World;
-
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -45,7 +43,7 @@ public class Move extends SubCommand {
             MainUtil.sendMessage(plr, "/plot move <pos1> <pos2>");
             return false;
         }
-        final World world = plr.getWorld();
+        final String world = plr.getLocation().getWorld();
         final PlotId plot1 = MainUtil.parseId(args[0]);
         final PlotId plot2 = MainUtil.parseId(args[1]);
         if ((plot1 == null) || (plot2 == null)) {
