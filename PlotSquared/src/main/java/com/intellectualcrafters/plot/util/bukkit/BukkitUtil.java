@@ -210,4 +210,10 @@ public class BukkitUtil extends BlockManager {
         }
         return null;
     }
+
+    @Override
+    public Location getSpawn(String world) {
+        org.bukkit.Location temp = getWorld(world).getSpawnLocation();
+        return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ());
+    }
 }

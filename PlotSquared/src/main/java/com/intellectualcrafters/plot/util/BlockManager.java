@@ -29,6 +29,8 @@ public abstract class BlockManager {
         return (int) r;
     }
     
+    public abstract Location getSpawn(String world);
+    
     public abstract String[] getSign(Location loc);
     
     public abstract boolean isWorld(String world);

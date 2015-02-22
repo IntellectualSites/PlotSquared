@@ -31,12 +31,12 @@ import com.intellectualcrafters.plot.events.PlayerPlotDeniedEvent;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-@SuppressWarnings("deprecation")
 public class Denied extends SubCommand {
     public Denied() {
         super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS, true);
@@ -87,18 +87,17 @@ public class Denied extends SubCommand {
                 }
                 plot.addDenied(uuid);
                 DBFunc.setDenied(loc.getWorld(), plot, uuid);
-                final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, true);
-                Bukkit.getPluginManager().callEvent(event);
+                //FIXME PlayerPlotDeniedEvent
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
             }
-            final Player player = UUIDHandler.uuidWrapper.getPlayer(uuid);
+            final PlotPlayer player = UUIDHandler.getPlayer(uuid);
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
                 final Plot pl = MainUtil.getPlot(loc);
                 if ((pl != null) && pl.id.equals(plot.id)) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.YOU_BE_DENIED);
-                    player.teleport(player.getWorld().getSpawnLocation());
+                    MainUtil.sendMessage(player, C.YOU_BE_DENIED);
+                    player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
                 }
             }
             MainUtil.sendMessage(plr, C.DENIED_ADDED);
@@ -118,8 +117,7 @@ public class Denied extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeDenied(uuid);
             DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            final PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(plr, plot, uuid, false);
-            Bukkit.getPluginManager().callEvent(event);
+            // FIXME PlayerPlotDeniedEvent
             MainUtil.sendMessage(plr, C.DENIED_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
