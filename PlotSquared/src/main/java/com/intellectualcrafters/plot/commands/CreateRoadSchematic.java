@@ -22,8 +22,11 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -36,18 +39,17 @@ public class CreateRoadSchematic extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        if (!BukkitPlayerFunctions.isInPlot(player)) {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_IN_PLOT);
-            return false;
+        Location loc = player.getLocation();
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!(PlotSquared.getPlotWorld(player.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PlotSquared.getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = MainUtil.getPlot(loc);
-        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(player.getWorld());
-        manager.setupRoadSchematic(plot);
-        MainUtil.update(BukkitUtil.getLocation(entity));
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "&6Saved new road schematic");
+        HybridUtils.manager.setupRoadSchematic(plot);
+        MainUtil.update(loc);
+        MainUtil.sendMessage(player, "&6Saved new road schematic");
         return true;
     }
 }
