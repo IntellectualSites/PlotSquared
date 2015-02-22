@@ -25,10 +25,13 @@ import net.milkbowl.vault.economy.Economy;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -39,11 +42,12 @@ public class Delete extends SubCommand {
     
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (!BukkitPlayerFunctions.isInPlot(plr)) {
+        Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final Plot plot = MainUtil.getPlot(loc);
-        if (!MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
@@ -51,18 +55,31 @@ public class Delete extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.useEconomy && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+        if (PlotSquared.economy != null && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 final Economy economy = PlotSquared.economy;
-                economy.depositPlayer(plr, c);
+                EconHandler.depositPlayer(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PlotSquared.removePlot(plr.getWorld().getName(), plot.id, true);
+        if (MainUtil.runners.containsKey(plot)) {
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            return false;
+        }
+        final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
+        final long start = System.currentTimeMillis();
         if (result) {
-            plot.clear(plr, true);
-            DBFunc.delete(plr.getWorld().getName(), plot);
+            boolean result2 = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+                @Override
+                public void run() {
+                    MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                }
+            });
+            if (!result2) {
+                MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            }
+            DBFunc.delete(loc.getWorld(), plot);
         } else {
             MainUtil.sendMessage(plr, "Plot deletion has been denied.");
         }
