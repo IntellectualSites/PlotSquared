@@ -29,8 +29,6 @@ import java.util.Set;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotFlagAddEvent;
-import com.intellectualcrafters.plot.events.PlotFlagRemoveEvent;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotPlayer;

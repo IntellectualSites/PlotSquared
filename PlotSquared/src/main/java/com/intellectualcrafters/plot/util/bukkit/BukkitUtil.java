@@ -21,7 +21,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.StringComparison;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();

@@ -22,11 +22,8 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlayerPlotTrustedEvent;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;

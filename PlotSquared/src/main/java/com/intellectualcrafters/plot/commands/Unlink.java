@@ -22,12 +22,9 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotUnlinkEvent;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -36,7 +33,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -62,7 +58,6 @@ public class Unlink extends SubCommand {
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
-        final String world = plr.getLocation().getWorld();
         if (!unlinkPlot(plot)) {
             MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
