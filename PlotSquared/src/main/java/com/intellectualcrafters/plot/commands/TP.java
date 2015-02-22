@@ -24,10 +24,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -45,10 +48,12 @@ public class TP extends SubCommand {
         }
         final String id = args[0];
         PlotId plotid;
-        World world = plr.getWorld();
+        Location loc = plr.getLocation();
+        String pworld = loc.getWorld();
+        String world = pworld;
         if (args.length == 2) {
-            if (Bukkit.getWorld(args[1]) != null) {
-                world = Bukkit.getWorld(args[1]);
+            if (BlockManager.manager.isWorld(args[1])) {
+                world = args[1];
             }
         }
         if (!PlotSquared.isPlotWorld(world)) {
@@ -70,7 +75,7 @@ public class TP extends SubCommand {
         return false;
     }
     
-    private Plot isAlias(final World world, String a) {
+    private Plot isAlias(final String world, String a) {
         int index = 0;
         if (a.contains(";")) {
             final String[] split = a.split(";");
@@ -79,8 +84,7 @@ public class TP extends SubCommand {
             }
             a = split[0];
         }
-        @SuppressWarnings("deprecation")
-        final Player player = Bukkit.getPlayer(a);
+        final PlotPlayer player = UUIDHandler.getPlayer(a);
         if (player != null) {
             final java.util.Set<Plot> plotMainPlots = PlotSquared.getPlots(world, player);
             final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);

@@ -142,6 +142,11 @@ public class PlotSquared {
         return getPlots(world, uuid);
     }
     
+    public static Set<Plot> getPlots(final String world, final PlotPlayer player) {
+        final UUID uuid = player.getUUID();
+        return getPlots(world, uuid);
+    }
+    
     public static Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
