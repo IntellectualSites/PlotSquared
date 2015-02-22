@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Template extends SubCommand {
@@ -42,9 +43,9 @@ public class Template extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
-        final World world = Bukkit.getWorld(args[1]);
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(args[1]);
-        if ((world == null) || (plotworld == null)) {
+        String world = args[1];
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
