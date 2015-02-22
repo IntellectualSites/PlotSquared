@@ -20,14 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -52,16 +51,16 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, "&c/plot kick <player>");
             return false;
         }
-        if (Bukkit.getPlayer(args[0]) == null) {
+        PlotPlayer player = UUIDHandler.getPlayer(args[0]);
+        if (player == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        final Player player = Bukkit.getPlayer(args[0]);
-        if (!player.getWorld().equals(plr.getWorld()) || !BukkitPlayerFunctions.isInPlot(player) || (MainUtil.getPlot(loc) == null) || !MainUtil.getPlot(loc).equals(plot)) {
+        if (!player.getLocation().getWorld().equals(loc.getWorld()) || !plot.equals(MainUtil.getPlot(loc))) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }
-        player.teleport(player.getWorld().getSpawnLocation());
+        player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
         return true;
     }
 }
