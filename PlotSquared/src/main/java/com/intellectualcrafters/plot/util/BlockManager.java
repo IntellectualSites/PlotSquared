@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class BlockManager {
-    public static BlockManager manager = new BukkitUtil();
+    public static BlockManager manager;
     private static long state = 1;
     
     public static long nextLong() {

@@ -101,6 +101,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -752,8 +753,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler
     public static void onLeave(final PlayerQuitEvent event) {
         String name = event.getPlayer().getName();
-        if (Setup.setupMap.containsKey(name)) {
-            Setup.setupMap.remove(name);
+        if (SetupUtils.setupMap.containsKey(name)) {
+            SetupUtils.setupMap.remove(name);
         }
         BukkitUtil.removePlayer(name);
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {

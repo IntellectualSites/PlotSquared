@@ -29,7 +29,9 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
@@ -37,9 +39,12 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.Metrics;
@@ -265,7 +270,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public void initSetBlockManager() {
+    public BlockManager initBlockManager() {
         if (checkVersion(1, 8, 0)) {
             try {
                 SetBlockManager.setBlockManager = new SetBlockFast_1_8();
@@ -286,6 +291,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }
+        return BlockManager.manager = new BukkitUtil();
     }
     
     @Override
@@ -320,5 +326,15 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public HybridUtils initHybridUtils() {
+        return new BukkitHybridUtils();
+    }
+
+    @Override
+    public SetupUtils initSetupUtils() {
+        return new BukkitSetupUtils();
     }
 }

@@ -109,7 +109,7 @@ public class ExpireManager {
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);
                     if (plot.settings.isMerged()) {
-                        Unlink.unlinkPlot(Bukkit.getWorld(world), plot);
+                        Unlink.unlinkPlot(plot);
                     }
                     final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
                     manager.clearPlot(plotworld, plot, false, null);

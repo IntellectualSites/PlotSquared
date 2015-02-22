@@ -4,7 +4,10 @@ import java.io.File;
 
 import net.milkbowl.vault.economy.Economy;
 
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public interface IPlotMain {
@@ -34,7 +37,11 @@ public interface IPlotMain {
     
     public Economy getEconomy();
     
-    public void initSetBlockManager();
+    public BlockManager initBlockManager();
+    
+    public SetupUtils initSetupUtils();
+    
+    public HybridUtils initHybridUtils();
     
     public boolean initPlotMeConverter();
     

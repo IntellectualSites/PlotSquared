@@ -9,7 +9,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
 
 public abstract class SetupUtils {
     
-    public static SetupUtils manager = new BukkitSetupUtils();
+    public static SetupUtils manager;
     
     public final static Map<String, SetupObject> setupMap = new HashMap<>();
     public static HashMap<String, PlotGenerator> generators = new HashMap<>();

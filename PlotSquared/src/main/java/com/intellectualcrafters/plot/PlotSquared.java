@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
@@ -48,9 +49,11 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -434,8 +437,12 @@ public class PlotSquared {
         IMP.registerPlotPlusEvents();
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
+        // create Hybrid utility class
+        HybridUtils.manager = IMP.initHybridUtils();
+        // create setup util class
+        SetupUtils.manager = IMP.initSetupUtils();
         // Set block
-        IMP.initSetBlockManager();
+        BlockManager.manager = IMP.initBlockManager();
         // PlotMe
         TaskManager.runTaskLater(new Runnable() {
             @Override
