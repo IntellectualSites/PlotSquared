@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
@@ -162,7 +163,7 @@ public class Trim extends SubCommand {
         return true;
     }
     
-    public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final World world, final Runnable whenDone) {
+    public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
@@ -170,7 +171,7 @@ public class Trim extends SubCommand {
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PlotSquared.getPlots(world).values());
-        final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.getChunkChunks(world));
+        final HashSet<ChunkLoc> chunks = new HashSet<>(AChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");

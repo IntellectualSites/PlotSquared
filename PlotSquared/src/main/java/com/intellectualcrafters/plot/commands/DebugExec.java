@@ -31,15 +31,15 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -74,8 +74,8 @@ public class DebugExec extends SubCommand {
                 }
                 case "update-expired": {
                     if (args.length > 1) {
-                        final World world = Bukkit.getWorld(args[1]);
-                        if (world == null) {
+                        final String world = args[1];
+                        if (!BlockManager.manager.isWorld(world)) {
                             return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
                         }
                         MainUtil.sendMessage(null, "Updating expired plot list");
@@ -86,9 +86,12 @@ public class DebugExec extends SubCommand {
                 }
                 case "show-expired": {
                     if (args.length > 1) {
-                        final World world = Bukkit.getWorld(args[1]);
-                        if ((world == null) || !ExpireManager.expiredPlots.containsKey(args[1])) {
+                        final String world = args[1];
+                        if (!BlockManager.manager.isWorld(world)) {
                             return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
+                        }
+                        if (!ExpireManager.expiredPlots.containsKey(args[1])) {
+                            return MainUtil.sendMessage(null, "No task for world: " + args[1]);
                         }
                         MainUtil.sendMessage(null, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
                         for (final Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
@@ -108,8 +111,8 @@ public class DebugExec extends SubCommand {
                     if (uuid == null) {
                         return MainUtil.sendMessage(null, "player not found: " + args[1]);
                     }
-                    final OfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    if ((op == null) || !op.hasPlayedBefore()) {
+                    BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    if ((op == null) || op.getLastPlayed() == 0) {
                         return MainUtil.sendMessage(null, "player hasn't connected before: " + args[1]);
                     }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());
@@ -127,8 +130,8 @@ public class DebugExec extends SubCommand {
                         MainUtil.sendMessage(null, "&7 - Generates a list of regions to trim");
                         return MainUtil.sendMessage(null, "&7 - Run after plot expiry has run");
                     }
-                    final World world = Bukkit.getWorld(args[1]);
-                    if ((world == null) || !PlotSquared.isPlotWorld(args[1])) {
+                    final String world = args[1];
+                    if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(args[1])) {
                         return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();
@@ -143,9 +146,8 @@ public class DebugExec extends SubCommand {
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);
-                                final String worldname = world.getName();
                                 for (final ChunkLoc loc : empty) {
-                                    writer.println(worldname + "/region/r." + loc.x + "." + loc.z + ".mca");
+                                    writer.println(world + "/region/r." + loc.x + "." + loc.z + ".mca");
                                 }
                                 writer.close();
                                 Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
@@ -166,7 +168,7 @@ public class DebugExec extends SubCommand {
                 }
             }
         }
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
+        MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
         return true;
     }
 }
