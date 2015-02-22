@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings("deprecation")
@@ -84,8 +85,7 @@ public class Trusted extends SubCommand {
                 }
                 plot.addTrusted(uuid);
                 DBFunc.setTrusted(loc.getWorld(), plot, uuid);
-                final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, true);
-                Bukkit.getPluginManager().callEvent(event);
+                // FIXME PlayerPlotTrustedEvent
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -107,8 +107,7 @@ public class Trusted extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
             DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
-            final PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(plr, plot, uuid, false);
-            Bukkit.getPluginManager().callEvent(event);
+            // FIXME PlayerPlotTrustedEvent
             MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);

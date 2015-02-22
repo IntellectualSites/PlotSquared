@@ -29,7 +29,9 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -45,7 +47,7 @@ public class Unclaim extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
@@ -53,19 +55,18 @@ public class Unclaim extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.useEconomy && pWorld.USE_ECONOMY) {
+        if (PlotSquared.economy != null && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 final Economy economy = PlotSquared.economy;
-                economy.depositPlayer(plr, c);
+                EconHandler.depositPlayer(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
         final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
         if (result) {
-            final World world = plr.getWorld();
-            final String worldname = world.getName();
-            PlotSquared.getPlotManager(world).unclaimPlot(world, pWorld, plot);
+            final String worldname = plr.getLocation().getWorld();
+            PlotSquared.getPlotManager(worldname).unclaimPlot(pWorld, plot);
             DBFunc.delete(worldname, plot);
             // TODO set wall block
         } else {

@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -58,41 +59,28 @@ public class Unlink extends SubCommand {
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        if (MainUtil.getTopPlot(plr.getWorld(), plot).equals(BukkitPlayerFunctions.getBottomPlot(plr.getWorld(), plot))) {
+        if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
-        final World world = plr.getWorld();
-        if (!unlinkPlot(world, plot)) {
+        final String world = plr.getLocation().getWorld();
+        if (!unlinkPlot(plot)) {
             MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
             return false;
         }
-        try {
-            MainUtil.update(plr.getLocation());
-        } catch (final Exception e) {
-            // execute(final PlotPlayer plr, final String... args) {
-            try {
-                PlotSquared.log("Error on: " + getClass().getMethod("execute", Player.class, String[].class).toGenericString() + ":119, when trying to use \"SetBlockFast#update\"");
-            } catch (final Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+        MainUtil.update(plr.getLocation());
         MainUtil.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
     
-    public static boolean unlinkPlot(final World world, final Plot plot) {
-        final PlotId pos1 = BukkitPlayerFunctions.getBottomPlot(world, plot).id;
-        final PlotId pos2 = MainUtil.getTopPlot(world, plot).id;
+    public static boolean unlinkPlot(final Plot plot) {
+        String world = plot.world;
+        final PlotId pos1 = MainUtil.getBottomPlot(plot).id;
+        final PlotId pos2 = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(pos1, pos2);
-        final PlotUnlinkEvent event = new PlotUnlinkEvent(world, ids);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            event.setCancelled(true);
-            return false;
-        }
+        // FIXME PlotUnlinkEvent (cancellable)
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-        manager.startPlotUnlink(world, plotworld, ids);
+        manager.startPlotUnlink(plotworld, ids);
         for (final PlotId id : ids) {
             final Plot myplot = PlotSquared.getPlots(world).get(id);
             if (plot == null) {
@@ -106,7 +94,7 @@ public class Unlink extends SubCommand {
             }
             myplot.deny_entry = plot.deny_entry;
             myplot.settings.setMerged(new boolean[] { false, false, false, false });
-            DBFunc.setMerged(world.getName(), myplot, myplot.settings.getMerged());
+            DBFunc.setMerged(world, myplot, myplot.settings.getMerged());
         }
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
@@ -122,16 +110,16 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-                MainUtil.setSign(world, UUIDHandler.getName(plot.owner), plot);
+                MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
             }
         }
-        manager.finishPlotUnlink(world, plotworld, ids);
+        manager.finishPlotUnlink(plotworld, ids);
         for (final PlotId id : ids) {
             final Plot myPlot = MainUtil.getPlot(world, id);
             if (plot.hasOwner()) {
                 final String name = UUIDHandler.getName(myPlot.owner);
                 if (name != null) {
-                    MainUtil.setSign(world, name, myPlot);
+                    MainUtil.setSign(name, myPlot);
                 }
             }
         }

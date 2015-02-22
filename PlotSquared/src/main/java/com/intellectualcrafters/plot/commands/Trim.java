@@ -28,15 +28,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
@@ -87,8 +87,8 @@ public class Trim extends SubCommand {
             MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
             return false;
         }
-        final World world = Bukkit.getWorld(args[1]);
-        if ((world == null) || (PlotSquared.getPlotWorld(world) == null)) {
+        final String world = args[1];
+        if (!BlockManager.manager.isWorld(world) || (PlotSquared.getPlotWorld(world) == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
@@ -107,14 +107,14 @@ public class Trim extends SubCommand {
         return true;
     }
     
-    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final World world, final Runnable whenDone) {
+    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                final String directory = world.getName() + File.separator + "region";
+                final String directory = world + File.separator + "region";
                 final File folder = new File(directory);
                 final File[] regionFiles = folder.listFiles();
                 for (final File file : regionFiles) {
@@ -173,7 +173,7 @@ public class Trim extends SubCommand {
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");
-        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
+        Trim.TASK_ID = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
@@ -183,62 +183,31 @@ public class Trim extends SubCommand {
                         System.out.print("DONE!");
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
-                        Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
+                        PlotSquared.TASK.cancelTask(Trim.TASK_ID);
                         return;
                     }
                     final Plot plot = plots.get(0);
                     plots.remove(0);
                     final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-                    final Location pos3 = new Location(world, pos1.getBlockX(), 64, pos2.getBlockZ());
-                    final Location pos4 = new Location(world, pos2.getBlockX(), 64, pos1.getBlockZ());
+                    final Location pos3 = new Location(world, pos1.getX(), 64, pos2.getZ());
+                    final Location pos4 = new Location(world, pos2.getX(), 64, pos1.getZ());
                     chunks.remove(ChunkManager.getChunkChunk(pos1));
                     chunks.remove(ChunkManager.getChunkChunk(pos2));
                     chunks.remove(ChunkManager.getChunkChunk(pos3));
                     chunks.remove(ChunkManager.getChunkChunk(pos4));
                 }
             }
-        }, 20L, 20L);
+        }, 20);
         Trim.TASK = true;
         return true;
     }
     
     public static ArrayList<Plot> expired = null;
     
-    //    public static void updateUnmodifiedPlots(final World world) {
-    //        final SquarePlotManager manager = (SquarePlotManager) PlotSquared.getPlotManager(world);
-    //        final SquarePlotWorld plotworld = (SquarePlotWorld) PlotSquared.getPlotWorld(world);
-    //        final ArrayList<Plot> expired = new ArrayList<>();
-    //        final Set<Plot> plots = ExpireManager.getOldPlots(world.getName()).keySet();
-    //        sendMessage("Checking " + plots.size() +" plots! This may take a long time...");
-    //        Trim.TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PlotSquared.getMain(), new Runnable() {
-    //            @Override
-    //            public void run() {
-    //                if (manager != null && plots.size() > 0) {
-    //                    Plot plot = plots.iterator().next();
-    //                    if (plot.hasOwner()) {
-    //                        SquarePlotManager.checkModified(plot, 0);
-    //                    }
-    //                    if (plot.owner == null || !SquarePlotManager.checkModified(plot, plotworld.REQUIRED_CHANGES)) {
-    //                        expired.add(plot);
-    //                        sendMessage("found expired: " + plot);
-    //                    }
-    //                }
-    //                else {
-    //                    Trim.expired = expired;
-    //                    Trim.TASK = false;
-    //                    sendMessage("Done!");
-    //                    Bukkit.getScheduler().cancelTask(Trim.TASK_ID);
-    //                    return;
-    //                }
-    //            }
-    //        }, 1, 1);
-    //    }
-    //
-    public static void deleteChunks(final World world, final ArrayList<ChunkLoc> chunks) {
-        final String worldname = world.getName();
+    public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
         for (final ChunkLoc loc : chunks) {
-            ChunkManager.deleteRegionFile(worldname, loc);
+            AChunkManager.manager.deleteRegionFile(world, loc);
         }
     }
     
