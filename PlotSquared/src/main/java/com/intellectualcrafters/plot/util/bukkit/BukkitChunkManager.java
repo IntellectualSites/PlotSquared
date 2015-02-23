@@ -170,8 +170,8 @@ public class BukkitChunkManager extends ChunkManager {
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final ArrayList<Chunk> toGenerate = new ArrayList<>();
         // Load chunks
-        for (int x = c1x; x <= c2x; x++) {
-            for (int z = c1z; z <= c2z; z++) {
+        for (int x = c2x; x <= c3x; x++) {
+            for (int z = c2z; z <= c3z; z++) {
                 final Chunk chunk = world.getChunkAt(x, z);
                 toGenerate.add(chunk);
             }
@@ -192,15 +192,15 @@ public class BukkitChunkManager extends ChunkManager {
                                 index.increment();
                                 // Copy entities
                                 initMaps();
-                                for (int x = c3x; x <= c4x; x++) {
-                                    for (int z = c3z; z <= c4z; z++) {
+                                for (int x = c1x; x <= c2x; x++) {
+                                    for (int z = c1z; z <= c2z; z++) {
                                         final Chunk chunk = world.getChunkAt(x, z);
                                         chunks.add(chunk);
                                         chunk.load(false);
                                         saveEntitiesIn(chunk, region);
-                                        restoreEntities(world, relX, relZ);
                                     }
                                 }
+                                restoreEntities(world, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
                                 final Integer currentIndex = index.toInteger();
