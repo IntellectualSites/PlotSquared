@@ -37,7 +37,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean setFloor(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final Location pos1 = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(plotworld.worldname, plotid);
+        final Location pos2 = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
         pos1.setY(dpw.PLOT_HEIGHT);
         pos2.setY(dpw.PLOT_HEIGHT + 1);
         MainUtil.setCuboid(plotworld.worldname, pos1, pos2, blocks);

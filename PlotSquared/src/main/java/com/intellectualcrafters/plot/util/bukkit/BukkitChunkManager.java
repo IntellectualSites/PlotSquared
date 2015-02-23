@@ -48,6 +48,7 @@ import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
@@ -198,9 +199,9 @@ public class BukkitChunkManager extends ChunkManager {
                                         chunks.add(chunk);
                                         chunk.load(false);
                                         saveEntitiesIn(chunk, region);
-                                        restoreEntities(world, relX, relZ);
                                     }
                                 }
+                                restoreEntities(world, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
                                 final Integer currentIndex = index.toInteger();
@@ -388,6 +389,10 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region) {
+        saveEntitiesIn(chunk, region, 0, 0);
+    }
+    
+    public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region, int offset_x, int offset_z) {
         for (final Entity entity : chunk.getEntities()) {
             final Location loc = BukkitUtil.getLocation(entity);
             final int x = loc.getX();
@@ -399,6 +404,8 @@ public class BukkitChunkManager extends ChunkManager {
                 continue;
             }
             final EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+            wrap.x += offset_x;
+            wrap.x += offset_z;
             entities.add(wrap);
         }
     }
@@ -597,8 +604,12 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
     }
-
+    
     public static void saveBlocks(final World world, final int maxY, final int x, final int z) {
+        saveBlocks(world, maxY, x, z, 0, 0);
+    }
+
+    public static void saveBlocks(final World world, final int maxY, int x, int z, int offset_x, int offset_z) {
         final HashMap<Short, Short> ids = new HashMap<>();
         final HashMap<Short, Byte> datas = new HashMap<>();
         for (short y = 1; y < maxY; y++) {
@@ -613,13 +624,13 @@ public class BukkitChunkManager extends ChunkManager {
                 BlockLoc bl;
                 switch (id) {
                     case 54:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final InventoryHolder chest = (InventoryHolder) block.getState();
                         final ItemStack[] inventory = chest.getInventory().getContents().clone();
                         chestContents.put(bl, inventory);
                         break;
                     case 52:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final CreatureSpawner spawner = (CreatureSpawner) block.getState();
                         final String type = spawner.getCreatureTypeId();
                         if ((type != null) && (type.length() != 0)) {
@@ -627,7 +638,7 @@ public class BukkitChunkManager extends ChunkManager {
                         }
                         break;
                     case 137:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final CommandBlock cmd = (CommandBlock) block.getState();
                         final String string = cmd.getCommand();
                         if ((string != null) && (string.length() > 0)) {
@@ -637,14 +648,14 @@ public class BukkitChunkManager extends ChunkManager {
                     case 63:
                     case 68:
                     case 323:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Sign sign = (Sign) block.getState();
                         sign.getLines();
                         signContents.put(bl, sign.getLines().clone());
                         break;
                     case 61:
                     case 62:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Furnace furnace = (Furnace) block.getState();
                         final short burn = furnace.getBurnTime();
                         final short cook = furnace.getCookTime();
@@ -655,19 +666,19 @@ public class BukkitChunkManager extends ChunkManager {
                         }
                         break;
                     case 23:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Dispenser dispenser = (Dispenser) block.getState();
                         final ItemStack[] invDis = dispenser.getInventory().getContents().clone();
                         dispenserContents.put(bl, invDis);
                         break;
                     case 158:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Dropper dropper = (Dropper) block.getState();
                         final ItemStack[] invDro = dropper.getInventory().getContents().clone();
                         dropperContents.put(bl, invDro);
                         break;
                     case 117:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final BrewingStand brewingStand = (BrewingStand) block.getState();
                         final short time = (short) brewingStand.getBrewingTime();
                         if (time > 0) {
@@ -677,19 +688,19 @@ public class BukkitChunkManager extends ChunkManager {
                         brewingStandContents.put(bl, invBre);
                         break;
                     case 25:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final NoteBlock noteBlock = (NoteBlock) block.getState();
                         final Note note = noteBlock.getNote();
                         noteBlockContents.put(bl, note);
                         break;
                     case 138:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Beacon beacon = (Beacon) block.getState();
                         final ItemStack[] invBea = beacon.getInventory().getContents().clone();
                         beaconContents.put(bl, invBea);
                         break;
                     case 84:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Jukebox jukebox = (Jukebox) block.getState();
                         final Material playing = jukebox.getPlaying();
                         if (playing != null) {
@@ -697,13 +708,13 @@ public class BukkitChunkManager extends ChunkManager {
                         }
                         break;
                     case 154:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Hopper hopper = (Hopper) block.getState();
                         final ItemStack[] invHop = hopper.getInventory().getContents().clone();
                         hopperContents.put(bl, invHop);
                         break;
                     case 397:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Skull skull = (Skull) block.getState();
                         final String o = skull.getOwner();
                         final byte skulltype = getOrdinal(SkullType.values(), skull.getSkullType());
@@ -713,7 +724,7 @@ public class BukkitChunkManager extends ChunkManager {
                         break;
                     case 176:
                     case 177:
-                        bl = new BlockLoc(x, y, z);
+                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
                         final Banner banner = (Banner) block.getState();
                         final byte base = getOrdinal(DyeColor.values(), banner.getBaseColor());
                         final ArrayList<Byte[]> types = new ArrayList<>();
@@ -762,8 +773,82 @@ public class BukkitChunkManager extends ChunkManager {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
     }
     
+    public static void swapChunk(World world, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
+        System.out.print("SWAPPING: " + pos1 +" and " + pos2);
+        initMaps();
+        int relX = (pos2.getX() - pos1.getX()) << 4;
+        int relZ = (pos2.getZ() - pos1.getZ()) << 4;
+        
+        saveEntitiesIn(pos1, r1, relX, relZ);
+        saveEntitiesIn(pos2, r2, -relX, -relZ);
+        
+        int sx = pos1.getX() << 4;
+        int sz = pos1.getX() << 4;
+        
+        int maxY = world.getMaxHeight();
+        
+        for (int x = sx; x< sx + 15; x++) {
+            for (int z = sz; z< sz + 15; z++) {
+                saveBlocks(world, maxY, sx, sz, relX, relZ);
+                for (int y = 0; y < maxY; y++) {
+                    Block block1 = world.getBlockAt(x, y, z);
+                    int id1 = block1.getTypeId();
+                    byte data1 = block1.getData();
+                    int xx = x + relX;
+                    int zz = z + relZ;
+                    Block block2 = world.getBlockAt(xx, y, zz);
+                    int id2 = block1.getTypeId();
+                    byte data2 = block1.getData();
+                    if (id1 == 0) {
+                        if (id2 != 0) {
+                            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
+                        }
+                    }
+                    else if (id2 == 0) {
+                        if (id1 != 0) {
+                            BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
+                        }
+                    }
+                    else if (id1 == id2) {
+                        if (data1 != data2) {
+                            block1.setData(data2);
+                            block2.setData(data1);
+                        }
+                    }
+                    else {
+                        BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
+                        BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
+                    }
+                    
+                }
+            }
+        }
+        restoreBlocks(world, 0, 0);
+        restoreEntities(world, 0, 0);
+    }
+    
     @Override
-    public void swap(final String world, final PlotId id, final PlotId plotid) {
+    public void swap(final String worldname, final PlotId pos1, final PlotId pos2) {
+        Location bot1 = MainUtil.getPlotBottomLoc(worldname, pos1).add(1, 0, 1);
+        Location top1 = MainUtil.getPlotTopLoc(worldname, pos1);
+        
+        Location bot2 = MainUtil.getPlotBottomLoc(worldname, pos2).add(1, 0, 1);
+        Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
+        
+        final RegionWrapper region1 = new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
+        final RegionWrapper region2 = new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
+        final World world = Bukkit.getWorld(bot1.getWorld());
+        
+        final int relX = bot2.getX() - bot1.getX();
+        final int relZ = bot2.getZ() - bot1.getZ();
+        
+        for (int x = bot1.getX() >> 4; x <= top1.getX() >> 4; x++) {
+            for (int z = bot1.getZ() >> 4; z <= top1.getZ() >> 4; z++) {
+                Chunk chunk1 = world.getChunkAt(x, z);
+                Chunk chunk2 = world.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
+                swapChunk(world, chunk1, chunk2, region1, region2);
+            }
+        }
         // FIXME swap plots
     }
 }
