@@ -48,7 +48,6 @@ import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
@@ -199,9 +198,9 @@ public class BukkitChunkManager extends ChunkManager {
                                         chunks.add(chunk);
                                         chunk.load(false);
                                         saveEntitiesIn(chunk, region);
+                                        restoreEntities(world, relX, relZ);
                                     }
                                 }
-                                restoreEntities(world, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
                                 final Integer currentIndex = index.toInteger();
@@ -389,10 +388,10 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region) {
-        saveEntitiesIn(chunk, region, 0, 0);
+        saveEntitiesIn(chunk, region, 0, 0, false);
     }
     
-    public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region, int offset_x, int offset_z) {
+    public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region, int offset_x, int offset_z, boolean delete) {
         for (final Entity entity : chunk.getEntities()) {
             final Location loc = BukkitUtil.getLocation(entity);
             final int x = loc.getX();
@@ -405,8 +404,13 @@ public class BukkitChunkManager extends ChunkManager {
             }
             final EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
             wrap.x += offset_x;
-            wrap.x += offset_z;
+            wrap.z += offset_z;
             entities.add(wrap);
+            if (delete) {
+                if (!(entity instanceof Player)) {
+                    entity.remove();
+                }
+            }
         }
     }
 
@@ -774,13 +778,12 @@ public class BukkitChunkManager extends ChunkManager {
     }
     
     public static void swapChunk(World world, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
-        System.out.print("SWAPPING: " + pos1 +" and " + pos2);
         initMaps();
         int relX = (r2.minX - r1.minX);
         int relZ = (r2.minZ - r1.minZ);
         
-        saveEntitiesIn(pos1, r1, relX, relZ);
-        saveEntitiesIn(pos2, r2, -relX, -relZ);
+        saveEntitiesIn(pos1, r1, relX, relZ, true);
+        saveEntitiesIn(pos2, r2, -relX, -relZ, true);
         
         int sx = pos1.getX() << 4;
         int sz = pos1.getZ() << 4;
@@ -851,6 +854,8 @@ public class BukkitChunkManager extends ChunkManager {
                 swapChunk(world, chunk1, chunk2, region1, region2);
             }
         }
+        clearAllEntities(MainUtil.getPlot(worldname, pos1));
+        clearAllEntities(MainUtil.getPlot(worldname, pos2));
         // FIXME swap plots
     }
 }
