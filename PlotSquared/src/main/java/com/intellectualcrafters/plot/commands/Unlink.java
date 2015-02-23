@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -72,7 +73,10 @@ public class Unlink extends SubCommand {
         final PlotId pos1 = MainUtil.getBottomPlot(plot).id;
         final PlotId pos2 = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(pos1, pos2);
-        // FIXME PlotUnlinkEvent (cancellable)
+        final boolean result = EventUtil.manager.callUnlink(world, ids);
+        if (!result) {
+            return false;
+        }
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         manager.startPlotUnlink(plotworld, ids);

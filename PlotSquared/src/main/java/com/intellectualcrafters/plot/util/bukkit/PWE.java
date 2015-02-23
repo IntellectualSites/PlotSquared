@@ -42,9 +42,18 @@ import com.sk89q.worldedit.regions.CuboidRegion;
  * @author Empire92
  */
 public class PWE {
+    
+    public static LocalSession getSession(PlotPlayer p) {
+        if (PlotSquared.worldEdit == null) {
+            return WorldEdit.getInstance().getSession(p.getName());
+        } else {
+            return PlotSquared.worldEdit.getSession(((BukkitPlayer) p).player);
+        }
+    }
+    
     public static void setMask(final PlotPlayer p, final Location l, final boolean force) {
         try {
-            final LocalSession s = WorldEdit.getInstance().getSession(p.getName());
+            LocalSession s = getSession(p);
             if (!PlotSquared.isPlotWorld(l.getWorld())) {
                 removeMask(p);
             }
@@ -84,7 +93,7 @@ public class PWE {
     }
 
     public static boolean hasMask(final PlotPlayer p) {
-        final LocalSession s = WorldEdit.getInstance().getSession(p.getName());
+        LocalSession s = getSession(p);
         return !noMask(s);
     }
 
@@ -95,7 +104,7 @@ public class PWE {
     @SuppressWarnings("deprecation")
     public static void setNoMask(final PlotPlayer p) {
         try {
-            final LocalSession s = WorldEdit.getInstance().getSession(p.getName());
+            LocalSession s = getSession(p);
             final com.sk89q.worldedit.bukkit.BukkitPlayer plr = PlotSquared.worldEdit.wrapPlayer(((BukkitPlayer) p).player);
             final Vector p1 = new Vector(69, 69, 69), p2 = new Vector(69, 69, 69);
             s.setMask(new RegionMask(new CuboidRegion(plr.getWorld(), p1, p2)));
@@ -111,7 +120,7 @@ public class PWE {
 
     public static void removeMask(final PlotPlayer p) {
         try {
-            final LocalSession s = WorldEdit.getInstance().getSession(p.getName());
+            LocalSession s = getSession(p);
             removeMask(p, s);
         } catch (final Exception e) {
             // throw new

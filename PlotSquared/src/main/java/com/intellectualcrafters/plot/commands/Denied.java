@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -82,7 +83,7 @@ public class Denied extends SubCommand {
                 }
                 plot.addDenied(uuid);
                 DBFunc.setDenied(loc.getWorld(), plot, uuid);
-                //FIXME PlayerPlotDeniedEvent
+                EventUtil.manager.callDenied(plr, plot, uuid, true);
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -112,7 +113,7 @@ public class Denied extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeDenied(uuid);
             DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            // FIXME PlayerPlotDeniedEvent
+            EventUtil.manager.callDenied(plr, plot, uuid, false);
             MainUtil.sendMessage(plr, C.DENIED_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);

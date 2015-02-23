@@ -14,9 +14,9 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 
 public class BukkitHybridUtils extends HybridUtils {
     
@@ -87,7 +87,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 regenerateRoad(worldname, new ChunkLoc(x, z));
             }
         }
-        SetBlockManager.setBlockManager.update(chunks2);
+        BukkitSetBlockManager.setBlockManager.update(chunks2);
     }
     
     private static boolean UPDATE = false;
@@ -98,7 +98,7 @@ public class BukkitHybridUtils extends HybridUtils {
         if (BukkitHybridUtils.UPDATE) {
             return false;
         }
-        final List<ChunkLoc> chunks = AChunkManager.manager.getChunkChunks(world);
+        final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(world);
         final Plugin plugin = BukkitMain.THIS;
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override

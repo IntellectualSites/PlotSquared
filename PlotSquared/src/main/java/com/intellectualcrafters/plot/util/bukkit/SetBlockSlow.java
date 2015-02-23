@@ -6,7 +6,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-public class SetBlockSlow extends SetBlockManager {
+public class SetBlockSlow extends BukkitSetBlockManager {
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
         final Block block = world.getBlockAt(x, y, z);

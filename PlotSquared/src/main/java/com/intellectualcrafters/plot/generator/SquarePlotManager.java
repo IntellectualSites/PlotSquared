@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -17,7 +17,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-        AChunkManager.manager.regenerateRegion(pos1, pos2, whenDone);
+        ChunkManager.manager.regenerateRegion(pos1, pos2, whenDone);
         return true;
     }
 

@@ -35,8 +35,9 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -53,11 +54,8 @@ public class DebugClaimTest extends SubCommand {
     }
 
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
-        // FIXME call claim event
-        // boolean result = event result
-        final boolean result = true;
-
-        if (!result) {
+        final boolean result = EventUtil.manager.callClaim(player, plot, false);
+        if (result) {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
             MainUtil.sendMessage(player, C.CLAIMED);
@@ -65,7 +63,7 @@ public class DebugClaimTest extends SubCommand {
                 MainUtil.teleportPlayer(player, player.getLocation(), plot);
             }
         }
-        return result;
+        return !result;
     }
 
     @Override
@@ -101,7 +99,7 @@ public class DebugClaimTest extends SubCommand {
                 }
                 final Location loc = manager.getSignLoc(plotworld, plot);
                 final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-                final boolean result = AChunkManager.manager.loadChunk(world, chunk);
+                final boolean result = ChunkManager.manager.loadChunk(world, chunk);
                 if (!result) {
                     continue;
                 }

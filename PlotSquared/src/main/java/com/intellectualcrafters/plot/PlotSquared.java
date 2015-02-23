@@ -49,9 +49,10 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
@@ -204,7 +205,7 @@ public class PlotSquared {
     }
 
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
-        // FIXME plot remove event
+        EventUtil.manager.callDelete(world, id);
         plots.get(world).remove(id);
         if (MainUtil.lastPlot.containsKey(world)) {
             final PlotId last = MainUtil.lastPlot.get(world);
@@ -436,6 +437,8 @@ public class PlotSquared {
         IMP.registerWorldEditEvents();
         // create UUIDWrapper
         UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
+        // create event util class
+        EventUtil.manager = IMP.initEventUtil();
         // create Hybrid utility class
         HybridUtils.manager = IMP.initHybridUtils();
         // create setup util class
@@ -443,7 +446,7 @@ public class PlotSquared {
         // Set block
         BlockManager.manager = IMP.initBlockManager();
         // Set chunk
-        AChunkManager.manager = IMP.initChunkManager();
+        ChunkManager.manager = IMP.initChunkManager();
         // PlotMe
         TaskManager.runTaskLater(new Runnable() {
             @Override

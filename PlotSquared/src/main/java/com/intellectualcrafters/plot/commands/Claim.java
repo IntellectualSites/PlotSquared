@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -47,13 +48,8 @@ public class Claim extends SubCommand {
         if (plot.hasOwner() || plot.settings.isMerged()) {
             return false;
         }
-        // FIXME claim plot event
-        //        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
-        //        Bukkit.getPluginManager().callEvent(event);
-        //        boolean result = event.isCancelled();
-        final boolean result = false;
-
-        if (!result) {
+        final boolean result = EventUtil.manager.callClaim(player, plot, false);
+        if (result) {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
             MainUtil.sendMessage(player, C.CLAIMED);
@@ -79,7 +75,7 @@ public class Claim extends SubCommand {
             PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
             MainUtil.update(loc);
         }
-        return !result;
+        return result;
     }
 
     @Override

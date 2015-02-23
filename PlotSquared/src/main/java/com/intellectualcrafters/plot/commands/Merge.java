@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -151,10 +152,8 @@ public class Merge extends SubCommand {
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        //FIXME PlotMergeEvent
-        // boolean result = event.isCancelled();
-        final boolean result = false;
-        if (result) {
+        final boolean result = EventUtil.manager.callMerge(world, plot, plots);
+        if (!result) {
             MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }

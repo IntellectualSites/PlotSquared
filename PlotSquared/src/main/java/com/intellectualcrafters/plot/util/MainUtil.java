@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 
@@ -99,7 +100,8 @@ public class MainUtil {
 
         // TODO
         //      boolean result = PlotSquared.IMP.callPlayerTeleportToPlotEvent(player, from, plot);
-        final boolean result = true;
+        
+        final boolean result = false;
         // TOOD ^ remove that
 
         if (!result) {
@@ -163,7 +165,7 @@ public class MainUtil {
                 chunks.add(chunk);
             }
         }
-        AbstractSetBlock.setBlockManager.update(world, chunks);
+        BlockUpdateUtil.setBlockManager.update(world, chunks);
     }
 
     public static void createWorld(final String world, final String generator) {
@@ -230,7 +232,10 @@ public class MainUtil {
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
 
-        // FIXME call event
+        boolean result = EventUtil.manager.callMerge(world, getPlot(world, pos1), plotIds);
+        if (!result) {
+            return false;
+        }
 
         manager.startPlotMerge(plotworld, plotIds);
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -483,7 +488,7 @@ public class MainUtil {
         if (runners.containsKey(plot)) {
             return false;
         }
-        AChunkManager.manager.clearAllEntities(plot);
+        ChunkManager.manager.clearAllEntities(plot);
         clear(plot.world, plot, isDelete, whenDone);
         removeSign(plot);
         return true;
@@ -503,7 +508,7 @@ public class MainUtil {
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0) {
             final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-            AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
+            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
                     runners.remove(plot);
@@ -539,7 +544,7 @@ public class MainUtil {
         for (int y = pos1.getY(); y < pos2.getY(); y++) {
             for (int x = pos1.getX(); x < pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final int i = BlockManager.random(blocks.length);
+                    final int i = PseudoRandom.random(blocks.length);
                     xl[index] = x;
                     yl[index] = y;
                     zl[index] = z;
@@ -811,11 +816,11 @@ public class MainUtil {
             plot.id.y += offset_y;
             PlotSquared.getPlots(world).put(plot.id, plot);
         }
-        AChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
+        ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {
                 final Location bot = bot1.clone().add(1, 0, 1);
-                AChunkManager.manager.regenerateRegion(bot, top, null);
+                ChunkManager.manager.regenerateRegion(bot, top, null);
                 TaskManager.runTaskLater(whenDone, 1);
             }
         });

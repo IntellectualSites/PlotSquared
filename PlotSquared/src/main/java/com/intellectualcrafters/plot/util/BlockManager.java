@@ -2,31 +2,10 @@ package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PseudoRandom;
 
 public abstract class BlockManager {
     public static BlockManager manager;
-    private static long state = 1;
-
-    public static long nextLong() {
-        final long a = state;
-        state = xorShift64(a);
-        return a;
-    }
-
-    public static long xorShift64(long a) {
-        a ^= (a << 21);
-        a ^= (a >>> 35);
-        a ^= (a << 4);
-        return a;
-    }
-
-    public static int random(final int n) {
-        if (n == 1) {
-            return 0;
-        }
-        final long r = ((nextLong() >>> 32) * n) >> 32;
-        return (int) r;
-    }
 
     public abstract String[] getBiomeList();
 
@@ -61,7 +40,7 @@ public abstract class BlockManager {
         final byte[] data = new byte[blocks.length];
         for (int i = 0; i < blocks.length; i++) {
             final PlotBlock[] current = blocks[i];
-            final int n = random(current.length);
+            final int n = PseudoRandom.random(current.length);
             id[i] = current[n].id;
             data[i] = current[n].data;
         }

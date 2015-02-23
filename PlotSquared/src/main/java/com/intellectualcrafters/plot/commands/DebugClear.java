@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -63,7 +63,7 @@ public class DebugClear extends SubCommand {
                                 return false;
                             }
                             MainUtil.runners.put(plot, 1);
-                            AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
+                            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                                 @Override
                                 public void run() {
                                     MainUtil.runners.remove(plot);
@@ -96,7 +96,7 @@ public class DebugClear extends SubCommand {
             return false;
         }
         MainUtil.runners.put(plot, 1);
-        AChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
+        ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
             @Override
             public void run() {
                 MainUtil.runners.remove(plot);

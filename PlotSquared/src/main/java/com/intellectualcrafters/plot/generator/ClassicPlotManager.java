@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -64,7 +65,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[BlockManager.random(blocks.length)];
+                bl[i] = blocks[PseudoRandom.random(blocks.length)];
                 i++;
             }
         }
@@ -74,7 +75,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[BlockManager.random(blocks.length)];
+                bl[i] = blocks[PseudoRandom.random(blocks.length)];
                 i++;
             }
         }
@@ -84,7 +85,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[BlockManager.random(blocks.length)];
+                bl[i] = blocks[PseudoRandom.random(blocks.length)];
                 i++;
             }
         }
@@ -94,7 +95,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[BlockManager.random(blocks.length)];
+                bl[i] = blocks[PseudoRandom.random(blocks.length)];
                 i++;
             }
         }
@@ -123,7 +124,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[BlockManager.random(blocks.length)];
+            bl[i] = blocks[PseudoRandom.random(blocks.length)];
             i++;
         }
         x = top.getX();
@@ -131,7 +132,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[BlockManager.random(blocks.length)];
+            bl[i] = blocks[PseudoRandom.random(blocks.length)];
             i++;
         }
         z = top.getZ();
@@ -139,7 +140,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[BlockManager.random(blocks.length)];
+            bl[i] = blocks[PseudoRandom.random(blocks.length)];
             i++;
         }
         x = bottom.getX();
@@ -147,7 +148,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[BlockManager.random(blocks.length)];
+            bl[i] = blocks[PseudoRandom.random(blocks.length)];
             i++;
         }
         BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);

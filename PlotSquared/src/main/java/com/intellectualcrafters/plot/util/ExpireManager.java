@@ -97,10 +97,6 @@ public class ExpireManager {
                     }
                     final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                     Bukkit.getServer().getPluginManager().callEvent(event);
-                    if (event.isCancelled()) {
-                        event.setCancelled(true);
-                        return;
-                    }
                     for (final UUID helper : plot.helpers) {
                         final PlotPlayer player = UUIDHandler.getPlayer(helper);
                         if (player != null) {
@@ -108,6 +104,11 @@ public class ExpireManager {
                         }
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);
+                    if (manager == null) {
+                        PlotSquared.log("&cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                        expiredPlots.get(world).remove(plot);
+                        return;
+                    }
                     if (plot.settings.isMerged()) {
                         Unlink.unlinkPlot(plot);
                     }

@@ -39,22 +39,24 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
-import com.intellectualcrafters.plot.util.AChunkManager;
-import com.intellectualcrafters.plot.util.AbstractSetBlock;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitEventUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.Metrics;
 import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
@@ -260,19 +262,19 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public BlockManager initBlockManager() {
         if (checkVersion(1, 8, 0)) {
             try {
-                SetBlockManager.setBlockManager = new SetBlockFast_1_8();
+                BukkitSetBlockManager.setBlockManager = new SetBlockFast_1_8();
             } catch (final Throwable e) {
                 e.printStackTrace();
-                SetBlockManager.setBlockManager = new SetBlockSlow();
+                BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
             }
         } else {
             try {
-                SetBlockManager.setBlockManager = new SetBlockFast();
+                BukkitSetBlockManager.setBlockManager = new SetBlockFast();
             } catch (final Throwable e) {
-                SetBlockManager.setBlockManager = new SetBlockSlow();
+                BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
             }
         }
-        AbstractSetBlock.setBlockManager = SetBlockManager.setBlockManager;
+        BlockUpdateUtil.setBlockManager = BukkitSetBlockManager.setBlockManager;
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;
@@ -305,17 +307,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
     }
 
-    @Override
-    public boolean callRemovePlot(final String world, final PlotId id) {
-        final PlotDeleteEvent event = new PlotDeleteEvent(world, id);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            event.setCancelled(true);
-            return false;
-        }
-        return true;
-    }
-    
     @Override
     public HybridUtils initHybridUtils() {
         return new BukkitHybridUtils();
@@ -355,7 +346,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public AChunkManager initChunkManager() {
-        return new ChunkManager();
+    public ChunkManager initChunkManager() {
+        return new BukkitChunkManager();
+    }
+
+    @Override
+    public EventUtil initEventUtil() {
+        return new BukkitEventUtil();
     }
 }

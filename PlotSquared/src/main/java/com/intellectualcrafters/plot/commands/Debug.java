@@ -55,9 +55,6 @@ public class Debug extends SubCommand {
             for (final String world : PlotSquared.getPlotWorlds()) {
                 worlds.append(world).append(" ");
             }
-
-            // FIXME not sure if we actually need any of this debug info as we should just do a timings report which is more detailed anyway
-
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
             information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));

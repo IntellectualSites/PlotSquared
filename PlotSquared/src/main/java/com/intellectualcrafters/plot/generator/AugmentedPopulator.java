@@ -19,10 +19,10 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 
 public class AugmentedPopulator extends BlockPopulator {
     public final PlotWorld plotworld;
@@ -130,7 +130,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     populateBiome(world, x, z);
                     chunk.unload(true, true);
-                    SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+                    BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                 }
             }, 20);
         } else {
@@ -146,7 +146,7 @@ public class AugmentedPopulator extends BlockPopulator {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
                     chunk.unload(true, true);
-                    SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+                    BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                 }
             }, 40 + rand.nextInt(40));
         }
@@ -175,15 +175,15 @@ public class AugmentedPopulator extends BlockPopulator {
                 final int xx = x + blockInfo.x;
                 final int zz = z + blockInfo.z;
                 if (this.p) {
-                    if (AChunkManager.CURRENT_PLOT_CLEAR != null) {
-                        if (ChunkManager.isIn(AChunkManager.CURRENT_PLOT_CLEAR, xx, zz)) {
+                    if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                        if (BukkitChunkManager.isIn(ChunkManager.CURRENT_PLOT_CLEAR, xx, zz)) {
                             continue;
                         }
                     } else if (this.manager.getPlotIdAbs(this.plotworld, xx, 0, zz) != null) {
                         continue;
                     }
                 }
-                SetBlockManager.setBlockManager.set(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
+                BukkitSetBlockManager.setBlockManager.set(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
             }
         }
         for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {

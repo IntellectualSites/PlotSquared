@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class ClusterManager {
@@ -277,7 +277,7 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if ((populator == null) || (plotworld.TYPE == 0)) {
-                        SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+                        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
                         chunk.unload(true, true);
                     } else {

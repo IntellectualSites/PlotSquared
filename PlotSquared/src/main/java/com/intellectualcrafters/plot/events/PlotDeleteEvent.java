@@ -32,11 +32,10 @@ import com.intellectualcrafters.plot.object.PlotId;
  * @author Citymonstret
  * @author Empire92
  */
-public class PlotDeleteEvent extends Event implements Cancellable {
+public class PlotDeleteEvent extends Event {
     private static HandlerList handlers = new HandlerList();
     private final PlotId id;
     private final String world;
-    private boolean cancelled;
 
     /**
      * PlotDeleteEvent: Called when a plot is deleted
@@ -74,15 +73,5 @@ public class PlotDeleteEvent extends Event implements Cancellable {
     @Override
     public HandlerList getHandlers() {
         return handlers;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
-
-    @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
     }
 }

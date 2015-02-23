@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -168,7 +168,7 @@ public class Trim extends SubCommand {
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PlotSquared.getPlots(world).values());
-        final HashSet<ChunkLoc> chunks = new HashSet<>(AChunkManager.manager.getChunkChunks(world));
+        final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");
@@ -190,10 +190,10 @@ public class Trim extends SubCommand {
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
                     final Location pos3 = new Location(world, pos1.getX(), 64, pos2.getZ());
                     final Location pos4 = new Location(world, pos2.getX(), 64, pos1.getZ());
-                    chunks.remove(AChunkManager.getChunkChunk(pos1));
-                    chunks.remove(AChunkManager.getChunkChunk(pos2));
-                    chunks.remove(AChunkManager.getChunkChunk(pos3));
-                    chunks.remove(AChunkManager.getChunkChunk(pos4));
+                    chunks.remove(ChunkManager.getChunkChunk(pos1));
+                    chunks.remove(ChunkManager.getChunkChunk(pos2));
+                    chunks.remove(ChunkManager.getChunkChunk(pos3));
+                    chunks.remove(ChunkManager.getChunkChunk(pos4));
                 }
             }
         }, 20);
@@ -205,7 +205,7 @@ public class Trim extends SubCommand {
 
     public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
         for (final ChunkLoc loc : chunks) {
-            AChunkManager.manager.deleteRegionFile(world, loc);
+            ChunkManager.manager.deleteRegionFile(world, loc);
         }
     }
 

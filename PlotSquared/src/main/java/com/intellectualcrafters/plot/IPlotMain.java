@@ -6,8 +6,9 @@ import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -40,8 +41,10 @@ public interface IPlotMain {
     public Economy getEconomy();
 
     public BlockManager initBlockManager();
+    
+    public EventUtil initEventUtil();
 
-    public AChunkManager initChunkManager();
+    public ChunkManager initChunkManager();
 
     public SetupUtils initSetupUtils();
 
@@ -52,6 +55,4 @@ public interface IPlotMain {
     public boolean initPlotMeConverter();
 
     public void getGenerator(String world, String name);
-
-    public boolean callRemovePlot(String world, PlotId id);
 }

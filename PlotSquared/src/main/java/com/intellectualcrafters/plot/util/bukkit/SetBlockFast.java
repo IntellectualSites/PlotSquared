@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
-public class SetBlockFast extends SetBlockManager {
+public class SetBlockFast extends BukkitSetBlockManager {
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
     private static final RefClass classWorld = getRefClass("{nms}.World");

@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EventUtil;
 
 /**
  * Flag Manager Utility
@@ -137,7 +138,10 @@ public class FlagManager {
      * @param flag
      */
     public static boolean addPlotFlag(final Plot plot, final Flag flag) {
-        // FIXME PlotFlagAddEvent
+        final boolean result = EventUtil.manager.callFlagAdd(flag, plot);
+        if (!result) {
+            return false;
+        }
         final Flag hasFlag = getPlotFlag(plot, flag.getKey());
         if (hasFlag != null) {
             plot.settings.flags.remove(hasFlag);
@@ -189,7 +193,10 @@ public class FlagManager {
         if (hasFlag != null) {
             final Flag flagObj = FlagManager.getPlotFlagAbs(plot, flag);
             if (flagObj != null) {
-                // FIXME PlotFlagRemoveEvent
+                final boolean result = EventUtil.manager.callFlagRemove(flagObj, plot);
+                if (!result) {
+                    return false;
+                }
                 plot.settings.flags.remove(hasFlag);
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
                 return true;

@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Citymonstret
  * @author Empire92
  */
-@SuppressWarnings("unused")
 public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;

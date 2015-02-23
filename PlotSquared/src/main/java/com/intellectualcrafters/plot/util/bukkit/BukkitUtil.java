@@ -96,7 +96,7 @@ public class BukkitUtil extends BlockManager {
                 chunks.add(chunk);
             }
         }
-        SetBlockManager.setBlockManager.update(chunks);
+        BukkitSetBlockManager.setBlockManager.update(chunks);
     }
 
     public static String getWorld(final Entity entity) {
@@ -114,10 +114,10 @@ public class BukkitUtil extends BlockManager {
 
     public static void setBlock(final World world, final int x, final int y, final int z, final int id, final byte data) {
         try {
-            SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
+            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
         } catch (final Throwable e) {
-            SetBlockManager.setBlockManager = new SetBlockSlow();
-            SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
+            BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
+            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
         }
     }
 
