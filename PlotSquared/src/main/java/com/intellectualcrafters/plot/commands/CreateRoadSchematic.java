@@ -33,11 +33,11 @@ public class CreateRoadSchematic extends SubCommand {
     public CreateRoadSchematic() {
         super(Command.CREATEROADSCHEMATIC, "Add a road schematic to your world using the road around your current plot", "crs", CommandCategory.DEBUG, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        Location loc = player.getLocation();
-        Plot plot = MainUtil.getPlot(loc);
+        final Location loc = player.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }

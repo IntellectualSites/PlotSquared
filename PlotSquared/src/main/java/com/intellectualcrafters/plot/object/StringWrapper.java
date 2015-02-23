@@ -25,7 +25,7 @@ package com.intellectualcrafters.plot.object;
  */
 public class StringWrapper {
     public final String value;
-    
+
     /**
      * Constructor
      *
@@ -34,7 +34,7 @@ public class StringWrapper {
     public StringWrapper(final String value) {
         this.value = value;
     }
-    
+
     /**
      * Check if a wrapped string equals another one
      *
@@ -59,7 +59,7 @@ public class StringWrapper {
         }
         return other.value.toLowerCase().equals(this.value.toLowerCase());
     }
-    
+
     /**
      * Get the string value
      *
@@ -69,7 +69,7 @@ public class StringWrapper {
     public String toString() {
         return this.value;
     }
-    
+
     /**
      * Get the hash value
      *

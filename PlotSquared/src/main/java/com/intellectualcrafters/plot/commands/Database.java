@@ -24,11 +24,11 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class Database extends SubCommand {
     final String[] tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
-    
+
     public Database() {
         super(Command.DATABASE, "Convert/Backup Storage", "database [type] [...details]", CommandCategory.DEBUG, false);
     }
-    
+
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
             PlotSquared.log(msg);
@@ -42,7 +42,7 @@ public class Database extends SubCommand {
         }
         return true;
     }
-    
+
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
         final java.util.Set<Plot> plots = PlotSquared.getPlots();
         TaskManager.runTaskAsync(new Runnable() {
@@ -68,7 +68,7 @@ public class Database extends SubCommand {
             }
         });
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -135,7 +135,7 @@ public class Database extends SubCommand {
         }
         return false;
     }
-    
+
     private boolean sendMessage(final PlotPlayer player, final String msg) {
         if (player == null) {
             PlotSquared.log(msg);

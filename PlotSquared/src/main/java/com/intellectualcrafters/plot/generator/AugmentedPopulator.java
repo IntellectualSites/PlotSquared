@@ -37,9 +37,9 @@ public class AugmentedPopulator extends BlockPopulator {
     private final int bz;
     private final int tx;
     private final int tz;
-    
-    public static void removePopulator(String worldname, PlotCluster cluster) {
-        World world = Bukkit.getWorld(worldname);
+
+    public static void removePopulator(final String worldname, final PlotCluster cluster) {
+        final World world = Bukkit.getWorld(worldname);
         for (final Iterator<BlockPopulator> iterator = world.getPopulators().iterator(); iterator.hasNext();) {
             final BlockPopulator populator = iterator.next();
             if (populator instanceof AugmentedPopulator) {
@@ -49,7 +49,7 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
     }
-    
+
     public BlockWrapper get(final int X, final int Z, final int i, final int j, final short[][] r, final boolean c) {
         final int y = (i << 4) + (j >> 8);
         final int a = (j - ((y & 0xF) << 8));
@@ -61,7 +61,7 @@ public class AugmentedPopulator extends BlockPopulator {
             return (c && (((Z + z) < this.bz) || ((Z + z) > this.tz) || ((X + x) < this.bx) || ((X + x) > this.tx))) ? null : new BlockWrapper(x, y, z, r[i][j], (byte) 0);
         }
     }
-    
+
     public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
         this.cluster = cluster;
         this.generator = generator;
@@ -91,7 +91,7 @@ public class AugmentedPopulator extends BlockPopulator {
             bukkitWorld.getPopulators().add(this);
         }
     }
-    
+
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
         final int X = chunk.getX();
@@ -151,9 +151,9 @@ public class AugmentedPopulator extends BlockPopulator {
             }, 40 + rand.nextInt(40));
         }
     }
-    
+
     private void populateBiome(final World world, final int x, final int z) {
-        Biome biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
+        final Biome biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         if (this.b) {
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
@@ -162,7 +162,7 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
     }
-    
+
     private void populateBlocks(final World world, final Random rand, final int X, final int Z, final int x, final int z, final boolean check) {
         final short[][] result = this.generator.generateExtBlockSections(world, rand, X, Z, null);
         final int length = result[0].length;
@@ -190,7 +190,7 @@ public class AugmentedPopulator extends BlockPopulator {
             populator.populate(world, this.r, world.getChunkAt(X, Z));
         }
     }
-    
+
     public boolean isIn(final RegionWrapper plot, final int x, final int z) {
         return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }

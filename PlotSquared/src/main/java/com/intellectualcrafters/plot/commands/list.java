@@ -41,7 +41,7 @@ public class list extends SubCommand {
     public list() {
         super(Command.LIST, "List all plots", "list {mine|shared|all|world|forsale}", CommandCategory.INFO, false);
     }
-    
+
     private static String getName(final UUID id) {
         if (id == null) {
             return "none";
@@ -52,7 +52,7 @@ public class list extends SubCommand {
         }
         return name;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -168,7 +168,7 @@ public class list extends SubCommand {
             return false;
         }
     }
-    
+
     private String getArgumentList(final String[] strings) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {

@@ -38,7 +38,7 @@ public class SetOwner extends SubCommand {
     public SetOwner() {
         super("setowner", "plots.set.owner", "Set the plot owner", "setowner {player}", "so", CommandCategory.ACTIONS, true);
     }
-    
+
     /*
      * private UUID getUUID(String string) { OfflinePlayer player =
      * Bukkit.getOfflinePlayer(string); return ((player != null) &&
@@ -47,10 +47,10 @@ public class SetOwner extends SubCommand {
     private UUID getUUID(final String string) {
         return UUIDHandler.getUUID(string);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || (plot.owner == null)) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
@@ -66,7 +66,7 @@ public class SetOwner extends SubCommand {
         }
         final String world = loc.getWorld();
         final PlotId bot = MainUtil.getBottomPlot(plot).id;
-        final PlotId top = MainUtil.getTopPlot( plot).id;
+        final PlotId top = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);

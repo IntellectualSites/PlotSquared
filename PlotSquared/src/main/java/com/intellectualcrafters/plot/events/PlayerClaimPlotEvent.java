@@ -37,7 +37,7 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private final Plot plot;
     private final boolean auto;
     private boolean cancelled;
-    
+
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed
      *
@@ -49,11 +49,11 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
         this.plot = plot;
         this.auto = auto;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plot involved
      *
@@ -62,24 +62,24 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     /**
      * @return true if it was an automated claim, else false
      */
     public boolean wasAuto() {
         return this.auto;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-    
+
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

@@ -108,7 +108,7 @@ public class SchematicHandler {
         }
         return true;
     }
-    
+
     public static Schematic getSchematic(final CompoundTag tag, final File file) {
         final Map<String, Tag> tagMap = tag.getValue();
         byte[] addId = new byte[0];
@@ -140,7 +140,7 @@ public class SchematicHandler {
         }
         return new Schematic(collection, dimension, file);
     }
-    
+
     /**
      * Get a schematic
      *
@@ -173,7 +173,7 @@ public class SchematicHandler {
             return null;
         }
     }
-    
+
     /**
      * Saves a schematic to a file path
      *
@@ -201,7 +201,7 @@ public class SchematicHandler {
         }
         return true;
     }
-    
+
     /**
      * Gets the schematic of a plot
      *
@@ -218,7 +218,7 @@ public class SchematicHandler {
         final Location pos2 = MainUtil.getPlotTopLoc(world, id);
         return getCompoundTag(world, pos1, pos2);
     }
-    
+
     @SuppressWarnings("deprecation")
     public static CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2) {
         // loading chunks
@@ -290,7 +290,7 @@ public class SchematicHandler {
         }
         return new CompoundTag("Schematic", schematic);
     }
-    
+
     public static boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
         int length = 0;
         for (int i = i1; i <= i2; i++) {
@@ -328,7 +328,7 @@ public class SchematicHandler {
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
         return true;
     }
-    
+
     /**
      * Schematic Class
      *
@@ -338,26 +338,26 @@ public class SchematicHandler {
         private final DataCollection[] blockCollection;
         private final Dimension schematicDimension;
         private final File file;
-        
+
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
             this.blockCollection = blockCollection;
             this.schematicDimension = schematicDimension;
             this.file = file;
         }
-        
+
         public File getFile() {
             return this.file;
         }
-        
+
         public Dimension getSchematicDimension() {
             return this.schematicDimension;
         }
-        
+
         public DataCollection[] getBlockCollection() {
             return this.blockCollection;
         }
     }
-    
+
     /**
      * Schematic Dimensions
      *
@@ -367,26 +367,26 @@ public class SchematicHandler {
         private final int x;
         private final int y;
         private final int z;
-        
+
         public Dimension(final int x, final int y, final int z) {
             this.x = x;
             this.y = y;
             this.z = z;
         }
-        
+
         public int getX() {
             return this.x;
         }
-        
+
         public int getY() {
             return this.y;
         }
-        
+
         public int getZ() {
             return this.z;
         }
     }
-    
+
     /**
      * Schematic Data Collection
      *
@@ -395,17 +395,17 @@ public class SchematicHandler {
     public static class DataCollection {
         private final short block;
         private final byte data;
-        
+
         // public CompoundTag tag;
         public DataCollection(final short block, final byte data) {
             this.block = block;
             this.data = data;
         }
-        
+
         public short getBlock() {
             return this.block;
         }
-        
+
         public byte getData() {
             return this.data;
         }

@@ -30,7 +30,7 @@ public class WE_Anywhere extends SubCommand {
     public WE_Anywhere() {
         super("weanywhere", "plots.weanywhere", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (PlotSquared.worldEdit == null) {

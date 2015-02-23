@@ -38,7 +38,7 @@ public class DebugFixFlags extends SubCommand {
     public DebugFixFlags() {
         super(Command.DEBUGFIXFLAGS, "Attempt to fix all flags for a world", "debugclear", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {

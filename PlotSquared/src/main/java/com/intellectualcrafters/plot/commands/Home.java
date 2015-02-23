@@ -34,7 +34,7 @@ public class Home extends SubCommand {
     public Home() {
         super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT, true);
     }
-    
+
     private Plot isAlias(final String a) {
         for (final Plot p : PlotSquared.getPlots()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
@@ -43,7 +43,7 @@ public class Home extends SubCommand {
         }
         return null;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, String... args) {
         final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
@@ -83,7 +83,7 @@ public class Home extends SubCommand {
             return true;
         }
     }
-    
+
     public void teleportPlayer(final PlotPlayer player, final Plot plot) {
         MainUtil.teleportPlayer(player, player.getLocation(), plot);
     }

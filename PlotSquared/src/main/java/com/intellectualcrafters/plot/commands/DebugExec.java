@@ -48,7 +48,7 @@ public class DebugExec extends SubCommand {
     public DebugExec() {
         super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         final List<String> allowed_params = Arrays.asList(new String[] { "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
@@ -111,8 +111,8 @@ public class DebugExec extends SubCommand {
                     if (uuid == null) {
                         return MainUtil.sendMessage(null, "player not found: " + args[1]);
                     }
-                    BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                    if ((op == null) || op.getLastPlayed() == 0) {
+                    final BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    if ((op == null) || (op.getLastPlayed() == 0)) {
                         return MainUtil.sendMessage(null, "player hasn't connected before: " + args[1]);
                     }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());

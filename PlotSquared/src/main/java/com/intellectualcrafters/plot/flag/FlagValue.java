@@ -13,39 +13,39 @@ import com.intellectualcrafters.plot.object.PlotBlock;
  */
 public abstract class FlagValue<T> {
     private final Class<T> clazz;
-    
+
     @SuppressWarnings("unchecked")
     public FlagValue() {
         this.clazz = (Class<T>) getClass();
     }
-    
+
     public FlagValue(final Class<T> clazz) {
         if (clazz == null) {
             throw new NullPointerException();
         }
         this.clazz = clazz;
     }
-    
+
     public boolean validValue(final Object value) {
         return (value != null) && (value.getClass() == this.clazz);
     }
-    
+
     public String toString(final Object t) {
         return t.toString();
     }
-    
+
     public abstract T getValue(Object t);
-    
+
     public abstract T parse(String t);
-    
+
     public abstract String getDescription();
-    
+
     public static class BooleanValue extends FlagValue<Boolean> {
         @Override
         public Boolean getValue(final Object t) {
             return (Boolean) t;
         }
-        
+
         @Override
         public Boolean parse(final String t) {
             try {
@@ -54,19 +54,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a boolean (true|false)";
         }
     }
-    
+
     public static class IntegerValue extends FlagValue<Integer> {
         @Override
         public Integer getValue(final Object t) {
             return (Integer) t;
         }
-        
+
         @Override
         public Integer parse(final String t) {
             try {
@@ -75,25 +75,25 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a whole number";
         }
     }
-    
+
     public static class IntervalValue extends FlagValue<Integer[]> {
         @Override
         public String toString(final Object t) {
             final Integer[] value = ((Integer[]) t);
             return value[0] + " " + value[1];
         }
-        
+
         @Override
         public Integer[] getValue(final Object t) {
             return (Integer[]) t;
         }
-        
+
         @Override
         public Integer[] parse(final String t) {
             int seconds;
@@ -116,19 +116,19 @@ public abstract class FlagValue<T> {
             }
             return new Integer[] { amount, seconds };
         }
-        
+
         @Override
         public String getDescription() {
             return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
         }
     }
-    
+
     public static class UnsignedIntegerValue extends FlagValue<Integer> {
         @Override
         public Integer getValue(final Object t) {
             return (Integer) t;
         }
-        
+
         @Override
         public Integer parse(final String t) {
             try {
@@ -141,19 +141,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a positive whole number (includes 0)";
         }
     }
-    
+
     public static class DoubleValue extends FlagValue<Double> {
         @Override
         public Double getValue(final Object t) {
             return (Double) t;
         }
-        
+
         @Override
         public Double parse(final String t) {
             try {
@@ -162,19 +162,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a number (negative decimals are allowed)";
         }
     }
-    
+
     public static class LongValue extends FlagValue<Long> {
         @Override
         public Long getValue(final Object t) {
             return (Long) t;
         }
-        
+
         @Override
         public Long parse(final String t) {
             try {
@@ -183,19 +183,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a whole number (large numbers allowed)";
         }
     }
-    
+
     public static class UnsignedLongValue extends FlagValue<Long> {
         @Override
         public Long getValue(final Object t) {
             return (Long) t;
         }
-        
+
         @Override
         public Long parse(final String t) {
             try {
@@ -208,19 +208,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a positive whole number (large numbers allowed)";
         }
     }
-    
+
     public static class UnsignedDoubleValue extends FlagValue<Double> {
         @Override
         public Double getValue(final Object t) {
             return (Double) t;
         }
-        
+
         @Override
         public Double parse(final String t) {
             try {
@@ -233,19 +233,19 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a positive number (decimals allowed)";
         }
     }
-    
+
     public static class PlotBlockValue extends FlagValue<PlotBlock> {
         @Override
         public PlotBlock getValue(final Object t) {
             return (PlotBlock) t;
         }
-        
+
         @Override
         public PlotBlock parse(final String t) {
             try {
@@ -266,32 +266,32 @@ public abstract class FlagValue<T> {
                 return null;
             }
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a number (negative decimals are allowed)";
         }
     }
-    
+
     public interface ListValue {
         public void add(Object t, String value);
-        
+
         public void remove(Object t, String value);
     }
-    
+
     public static class PlotBlockListValue extends FlagValue<HashSet<PlotBlock>> implements ListValue {
         @SuppressWarnings("unchecked")
         @Override
         public String toString(final Object t) {
             return StringUtils.join((HashSet<PlotBlock>) t, ",");
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         public HashSet<PlotBlock> getValue(final Object t) {
             return (HashSet<PlotBlock>) t;
         }
-        
+
         @Override
         public HashSet<PlotBlock> parse(final String t) {
             final HashSet<PlotBlock> list = new HashSet<PlotBlock>();
@@ -313,12 +313,12 @@ public abstract class FlagValue<T> {
             }
             return list;
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be a block list";
         }
-        
+
         @Override
         public void add(final Object t, final String value) {
             try {
@@ -326,7 +326,7 @@ public abstract class FlagValue<T> {
             } catch (final Exception e) {
             }
         }
-        
+
         @Override
         public void remove(final Object t, final String value) {
             try {
@@ -337,18 +337,18 @@ public abstract class FlagValue<T> {
             }
         }
     }
-    
+
     public static class StringValue extends FlagValue<String> {
         @Override
         public String parse(final String s) {
             return s;
         }
-        
+
         @Override
         public String getDescription() {
             return "Flag value must be alphanumeric. Some special characters are allowed.";
         }
-        
+
         @Override
         public String getValue(final Object t) {
             return t.toString();

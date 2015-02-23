@@ -23,7 +23,7 @@ public class InventoryListener implements Listener {
             event.setResult(Event.Result.DENY);
         }
     }
-    
+
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Inventory inventory = event.getInventory();

@@ -48,7 +48,7 @@ public class FlagManager {
     // - Mob cap
     // - customized plot composition
     private final static ArrayList<AbstractFlag> flags = new ArrayList<>();
-    
+
     /**
      * Register an AbstractFlag with PlotSquared
      *
@@ -70,7 +70,7 @@ public class FlagManager {
         }
         return (getFlag(af.getKey()) == null) && flags.add(af);
     }
-    
+
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String flag) {
         final ArrayList<Flag> flags = new ArrayList<>();
         if ((settings.flags != null) && (settings.flags.size() > 0)) {
@@ -87,7 +87,7 @@ public class FlagManager {
         }
         return null;
     }
-    
+
     /**
      * Get the value of a flag for a plot (respects flag defaults)
      * @param plot
@@ -97,7 +97,7 @@ public class FlagManager {
     public static Flag getPlotFlag(final Plot plot, final String flag) {
         return getSettingFlag(plot.world, plot.settings, flag);
     }
-    
+
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
         final Flag flag = getPlotFlag(plot, strFlag);
         if (flag == null) {
@@ -108,7 +108,7 @@ public class FlagManager {
         }
         return false;
     }
-    
+
     /**
      * Get the value of a flag for a plot (ignores flag defaults)
      * @param plot
@@ -118,7 +118,7 @@ public class FlagManager {
     public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
         return getSettingFlagAbs(plot.settings, flag);
     }
-    
+
     public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
         if ((settings.flags == null) || (settings.flags.size() == 0)) {
             return null;
@@ -130,7 +130,7 @@ public class FlagManager {
         }
         return null;
     }
-    
+
     /**
      * Add a flag to a plot
      * @param plot
@@ -146,7 +146,7 @@ public class FlagManager {
         DBFunc.setFlags(plot.world, plot, plot.settings.flags);
         return true;
     }
-    
+
     public static boolean addClusterFlag(final PlotCluster cluster, final Flag flag) {
         //TODO plot cluster flag event
         final Flag hasFlag = getSettingFlag(cluster.world, cluster.settings, flag.getKey());
@@ -157,7 +157,7 @@ public class FlagManager {
         DBFunc.setFlags(cluster, cluster.settings.flags);
         return true;
     }
-    
+
     /**
      *
      * @param plot
@@ -166,7 +166,7 @@ public class FlagManager {
     public static Set<Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);
     }
-    
+
     public static Set<Flag> getSettingFlags(final String world, final PlotSettings settings) {
         final Set<Flag> plotflags = settings.flags;
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
@@ -183,7 +183,7 @@ public class FlagManager {
         }
         return plotflags;
     }
-    
+
     public static boolean removePlotFlag(final Plot plot, final String flag) {
         final Flag hasFlag = getPlotFlag(plot, flag);
         if (hasFlag != null) {
@@ -197,7 +197,7 @@ public class FlagManager {
         }
         return false;
     }
-    
+
     public static boolean removeClusterFlag(final PlotCluster cluster, final String flag) {
         final Flag hasFlag = getSettingFlag(cluster.world, cluster.settings, flag);
         if (hasFlag != null) {
@@ -211,7 +211,7 @@ public class FlagManager {
         }
         return false;
     }
-    
+
     public static void setPlotFlags(final Plot plot, final Set<Flag> flags) {
         if (flags == null) {
             plot.settings.flags = new HashSet<>();
@@ -221,7 +221,7 @@ public class FlagManager {
         plot.settings.flags = flags;
         DBFunc.setFlags(plot.world, plot, plot.settings.flags);
     }
-    
+
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {
         if (flags == null) {
             cluster.settings.flags = new HashSet<>();
@@ -231,7 +231,7 @@ public class FlagManager {
         cluster.settings.flags = flags;
         DBFunc.setFlags(cluster, cluster.settings.flags);
     }
-    
+
     public static Flag[] removeFlag(final Flag[] flags, final String r) {
         final Flag[] f = new Flag[flags.length - 1];
         int index = 0;
@@ -242,7 +242,7 @@ public class FlagManager {
         }
         return f;
     }
-    
+
     public static Set<Flag> removeFlag(final Set<Flag> flags, final String r) {
         final HashSet<Flag> newflags = new HashSet<>();
         for (final Flag flag : flags) {
@@ -252,7 +252,7 @@ public class FlagManager {
         }
         return newflags;
     }
-    
+
     /**
      * Get a list of registered AbstractFlag objects
      *
@@ -261,7 +261,7 @@ public class FlagManager {
     public static List<AbstractFlag> getFlags() {
         return flags;
     }
-    
+
     /**
      * Get a list of registerd AbstragFlag objects based on player permissions
      *
@@ -278,7 +278,7 @@ public class FlagManager {
         }
         return returnFlags;
     }
-    
+
     /**
      * Get an AbstractFlag by a string Returns null if flag does not exist
      *
@@ -294,7 +294,7 @@ public class FlagManager {
         }
         return null;
     }
-    
+
     /**
      * Get an AbstractFlag by a string
      *
@@ -311,7 +311,7 @@ public class FlagManager {
         }
         return getFlag(string);
     }
-    
+
     /**
      * Remove a registered AbstractFlag
      *
@@ -322,7 +322,7 @@ public class FlagManager {
     public static boolean removeFlag(final AbstractFlag flag) {
         return flags.remove(flag);
     }
-    
+
     public static Flag[] parseFlags(final List<String> flagstrings) {
         final Flag[] flags = new Flag[flagstrings.size()];
         for (int i = 0; i < flagstrings.size(); i++) {

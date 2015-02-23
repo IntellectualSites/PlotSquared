@@ -26,24 +26,24 @@ public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
     private static String lastString = null;
     private static World lastWorld = null;
-    
+
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
-    
-    public static void removePlayer(String plr) {
-        if (lastPlayer != null && lastPlayer.getName().equals(plr)) {
+
+    public static void removePlayer(final String plr) {
+        if ((lastPlayer != null) && lastPlayer.getName().equals(plr)) {
             lastPlayer = null;
             lastPlotPlayer = null;
         }
         UUIDHandler.players.remove(plr);
     }
-    
+
     @Override
-    public boolean isWorld(String world) {
+    public boolean isWorld(final String world) {
         return getWorld(world) != null;
     }
-    
-    public static PlotPlayer getPlayer(Player player) {
+
+    public static PlotPlayer getPlayer(final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
@@ -52,16 +52,16 @@ public class BukkitUtil extends BlockManager {
         lastPlayer = player;
         return lastPlotPlayer;
     }
-    
+
     @Override
     public String getBiome(final Location loc) {
         return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ()).name();
     }
-    
-    public static Location getLocation(org.bukkit.Location loc) {
+
+    public static Location getLocation(final org.bukkit.Location loc) {
         return new Location(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
-    
+
     public static World getWorld(final String string) {
         if (string == lastString) {
             return lastWorld;
@@ -73,20 +73,20 @@ public class BukkitUtil extends BlockManager {
         }
         return world;
     }
-    
+
     public static int getMaxHeight(final String world) {
         return getWorld(world).getMaxHeight();
     }
-    
+
     public static int getHeighestBlock(final String world, final int x, final int z) {
         return getWorld(world).getHighestBlockYAt(x, z);
     }
-    
+
     public static Chunk getChunkAt(final String worldname, final int x, final int z) {
         final World world = getWorld(worldname);
         return world.getChunkAt(x, z);
     }
-    
+
     public static void update(final String world, final int x, final int z) {
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final int distance = Bukkit.getViewDistance();
@@ -98,20 +98,20 @@ public class BukkitUtil extends BlockManager {
         }
         SetBlockManager.setBlockManager.update(chunks);
     }
-    
+
     public static String getWorld(final Entity entity) {
         return entity.getWorld().getName();
     }
-    
+
     public static void teleportPlayer(final Player player, final Location loc) {
         final org.bukkit.Location bukkitLoc = new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
         player.teleport(bukkitLoc);
     }
-    
+
     public static List<Entity> getEntities(final String worldname) {
         return getWorld(worldname).getEntities();
     }
-    
+
     public static void setBlock(final World world, final int x, final int y, final int z, final int id, final byte data) {
         try {
             SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
@@ -120,7 +120,7 @@ public class BukkitUtil extends BlockManager {
             SetBlockManager.setBlockManager.set(world, x, y, z, id, data);
         }
     }
-    
+
     public static void setBiome(final String worldname, final int pos1_x, final int pos1_z, final int pos2_x, final int pos2_z, final String biome) {
         final Biome b = Biome.valueOf(biome.toUpperCase());
         final World world = getWorld(worldname);
@@ -136,15 +136,15 @@ public class BukkitUtil extends BlockManager {
             }
         }
     }
-    
+
     public static void refreshChunk(final String world, final int x, final int z) {
         getWorld(world).refreshChunk(x, z);
     }
-    
+
     public static void regenerateChunk(final String world, final int x, final int z) {
         getWorld(world).regenerateChunk(x, z);
     }
-    
+
     public static PlotBlock getBlock(final Location loc) {
         final World world = getWorld(loc.getWorld());
         final Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());
@@ -153,13 +153,13 @@ public class BukkitUtil extends BlockManager {
         }
         return new PlotBlock((short) block.getTypeId(), block.getData());
     }
-    
+
     public static Location getLocation(final Entity entity) {
         final org.bukkit.Location loc = entity.getLocation();
         final String world = loc.getWorld().getName();
         return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
-    
+
     @Override
     public void functionSetBlocks(final String worldname, final int[] x, final int[] y, final int[] z, final int[] id, final byte[] data) {
         final World world = getWorld(worldname);
@@ -167,7 +167,7 @@ public class BukkitUtil extends BlockManager {
             BukkitUtil.setBlock(world, x[i], y[i], z[i], id[i], data[i]);
         }
     }
-    
+
     @Override
     public void functionSetSign(final String worldname, final int x, final int y, final int z, final String[] lines) {
         final World world = getWorld(worldname);
@@ -182,28 +182,28 @@ public class BukkitUtil extends BlockManager {
             ((Sign) blockstate).update(true);
         }
     }
-    
+
     public static int getViewDistance() {
         return Bukkit.getViewDistance();
     }
-
+    
     @Override
-    public void functionSetBiomes(String worldname, int[] x, int[] z, int[] biome) {
-        World world = getWorld(worldname);
-        Biome[] biomes = Biome.values();
+    public void functionSetBiomes(final String worldname, final int[] x, final int[] z, final int[] biome) {
+        final World world = getWorld(worldname);
+        final Biome[] biomes = Biome.values();
         for (int i = 0; i < x.length; i++) {
             world.setBiome(x[i], z[i], biomes[biome[i]]);
         }
     }
-
+    
     @Override
-    public void functionSetBlock(String worldname, int x, int y, int z, int id, byte data) {
+    public void functionSetBlock(final String worldname, final int x, final int y, final int z, final int id, final byte data) {
         BukkitUtil.setBlock(getWorld(worldname), x, y, z, id, data);
     }
-
+    
     @Override
-    public String[] getSign(Location loc) {
-        Block block = getWorld(loc.getWorld()).getBlockAt(loc.getX(), loc.getY(), loc.getZ());
+    public String[] getSign(final Location loc) {
+        final Block block = getWorld(loc.getWorld()).getBlockAt(loc.getX(), loc.getY(), loc.getZ());
         if (block != null) {
             if (block.getState() instanceof Sign) {
                 final Sign sign = (Sign) block.getState();
@@ -212,40 +212,40 @@ public class BukkitUtil extends BlockManager {
         }
         return null;
     }
-
+    
     @Override
-    public Location getSpawn(String world) {
-        org.bukkit.Location temp = getWorld(world).getSpawnLocation();
+    public Location getSpawn(final String world) {
+        final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ());
     }
-
+    
     @Override
-    public int getHeighestBlock(Location loc) {
+    public int getHeighestBlock(final Location loc) {
         return getWorld(loc.getWorld()).getHighestBlockAt(loc.getX(), loc.getZ()).getY();
     }
-
+    
     @Override
-    public int getBiomeFromString(String biomeStr) {
-        Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+    public int getBiomeFromString(final String biomeStr) {
+        final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
         if (biome == null) {
             return -1;
         }
         return Arrays.asList(Biome.values()).indexOf(biome);
     }
-
+    
     @Override
     public String[] getBiomeList() {
-        Biome[] biomes = Biome.values();
-        String[] list = new String[biomes.length];
-        for (int i = 0; i< biomes.length; i++) {
+        final Biome[] biomes = Biome.values();
+        final String[] list = new String[biomes.length];
+        for (int i = 0; i < biomes.length; i++) {
             list[i] = biomes[i].name();
         }
         return list;
     }
-
+    
     @Override
-    public int getBlockIdFromString(String block) {
-        Material material = Material.valueOf(block.toUpperCase());
+    public int getBlockIdFromString(final String block) {
+        final Material material = Material.valueOf(block.toUpperCase());
         if (material == null) {
             return -1;
         }

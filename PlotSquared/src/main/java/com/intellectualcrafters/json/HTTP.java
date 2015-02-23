@@ -33,7 +33,7 @@ public class HTTP {
      * Carriage return/line feed.
      */
     public static final String CRLF = "\r\n";
-    
+
     /**
      * Convert an HTTP header string into a JSONObject. It can be a request header or a response header. A request
      * header will contain
@@ -113,7 +113,7 @@ public class HTTP {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
      * <p/>

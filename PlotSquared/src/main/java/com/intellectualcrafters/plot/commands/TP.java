@@ -39,7 +39,7 @@ public class TP extends SubCommand {
     public TP() {
         super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -48,8 +48,8 @@ public class TP extends SubCommand {
         }
         final String id = args[0];
         PlotId plotid;
-        Location loc = plr.getLocation();
-        String pworld = loc.getWorld();
+        final Location loc = plr.getLocation();
+        final String pworld = loc.getWorld();
         String world = pworld;
         if (args.length == 2) {
             if (BlockManager.manager.isWorld(args[1])) {
@@ -74,7 +74,7 @@ public class TP extends SubCommand {
         }
         return false;
     }
-    
+
     private Plot isAlias(final String world, String a) {
         int index = 0;
         if (a.contains(";")) {

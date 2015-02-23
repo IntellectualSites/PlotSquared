@@ -44,7 +44,7 @@ public class HybridPop extends BlockPopulator {
     private boolean doFilling = false;
     private boolean doFloor = false;
     private boolean doState = false;
-    
+
     public HybridPop(final PlotWorld pw) {
         this.plotworld = (HybridPlotWorld) pw;
         // save configuration
@@ -85,25 +85,25 @@ public class HybridPop extends BlockPopulator {
         }
         this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
     }
-    
+
     public final long nextLong() {
         final long a = this.state;
         this.state = xorShift64(a);
         return a;
     }
-    
+
     public final long xorShift64(long a) {
         a ^= (a << 21);
         a ^= (a >>> 35);
         a ^= (a << 4);
         return a;
     }
-    
+
     public final int random(final int n) {
         final long result = ((nextLong() >>> 32) * n) >> 32;
         return (int) result;
     }
-    
+
     @Override
     public void populate(final World w, final Random r, final Chunk c) {
         final int cx = c.getX(), cz = c.getZ();
@@ -116,7 +116,7 @@ public class HybridPop extends BlockPopulator {
         }
         this.X = cx << 4;
         this.Z = cz << 4;
-        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(w.getName());
+        PlotSquared.getPlotManager(w.getName());
         final RegionWrapper plot = AChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             short sx = (short) ((this.X) % this.size);
@@ -211,7 +211,7 @@ public class HybridPop extends BlockPopulator {
             }
         }
     }
-    
+
     private void setBlock(final World w, final short x, final short y, final short z, final byte[] blkids) {
         if (blkids.length == 1) {
             setBlock(w, x, y, z, blkids[0]);
@@ -220,12 +220,12 @@ public class HybridPop extends BlockPopulator {
             setBlock(w, x, y, z, blkids[i]);
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     private void setBlock(final World w, final short x, final short y, final short z, final byte val) {
         w.getBlockAt(this.X + x, y, this.Z + z).setData(val, false);
     }
-    
+
     public boolean isIn(final RegionWrapper plot, final int x, final int z) {
         return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }

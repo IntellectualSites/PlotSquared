@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 @SuppressWarnings("deprecation")
 public class HybridPlotManager extends ClassicPlotManager {
-    
+
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the SetCuboid
      * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster

@@ -78,7 +78,7 @@ public class Plot implements Cloneable {
      */
     public boolean hasChanged = false;
     public boolean countsTowardsMax = true;
-    
+
     /**
      * Primary constructor
      *
@@ -100,7 +100,7 @@ public class Plot implements Cloneable {
         this.settings.flags = new HashSet<Flag>();
         this.world = world;
     }
-    
+
     /**
      * Constructor for saved plots
      *
@@ -129,7 +129,7 @@ public class Plot implements Cloneable {
         }
         this.world = world;
     }
-    
+
     /**
      * Check if the plot has a set owner
      *
@@ -138,7 +138,7 @@ public class Plot implements Cloneable {
     public boolean hasOwner() {
         return this.owner != null;
     }
-    
+
     /**
      * Check if the player is either the owner or on the helpers list
      *
@@ -149,7 +149,7 @@ public class Plot implements Cloneable {
     public boolean isAdded(final UUID uuid) {
         return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
     }
-    
+
     /**
      * Should the player be allowed to enter?
      *
@@ -160,14 +160,14 @@ public class Plot implements Cloneable {
     public boolean isDenied(final UUID uuid) {
         return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
     }
-    
+
     /**
      * Get the UUID of the owner
      */
     public UUID getOwner() {
         return this.owner;
     }
-    
+
     /**
      * Set the owner
      *
@@ -176,14 +176,14 @@ public class Plot implements Cloneable {
     public void setOwner(final UUID uuid) {
         this.owner = uuid;
     }
-    
+
     /**
      * Get the plot ID
      */
     public PlotId getId() {
         return this.id;
     }
-    
+
     /**
      * Get a clone of the plot
      *
@@ -197,7 +197,7 @@ public class Plot implements Cloneable {
         }
         return p;
     }
-    
+
     /**
      * Deny someone (use DBFunc.addDenied() as well)
      *
@@ -206,7 +206,7 @@ public class Plot implements Cloneable {
     public void addDenied(final UUID uuid) {
         this.denied.add(uuid);
     }
-    
+
     /**
      * Add someone as a helper (use DBFunc as well)
      *
@@ -215,7 +215,7 @@ public class Plot implements Cloneable {
     public void addHelper(final UUID uuid) {
         this.helpers.add(uuid);
     }
-    
+
     /**
      * Add someone as a trusted user (use DBFunc as well)
      *
@@ -224,7 +224,7 @@ public class Plot implements Cloneable {
     public void addTrusted(final UUID uuid) {
         this.trusted.add(uuid);
     }
-    
+
     /**
      * Get plot display name
      *
@@ -237,7 +237,7 @@ public class Plot implements Cloneable {
         }
         return this.world + ";" + this.getId().x + ";" + this.getId().y;
     }
-    
+
     /**
      * Remove a denied player (use DBFunc as well)
      *
@@ -246,7 +246,7 @@ public class Plot implements Cloneable {
     public void removeDenied(final UUID uuid) {
         this.denied.remove(uuid);
     }
-    
+
     /**
      * Remove a helper (use DBFunc as well)
      *
@@ -255,7 +255,7 @@ public class Plot implements Cloneable {
     public void removeHelper(final UUID uuid) {
         this.helpers.remove(uuid);
     }
-    
+
     /**
      * Remove a trusted user (use DBFunc as well)
      *
@@ -264,7 +264,7 @@ public class Plot implements Cloneable {
     public void removeTrusted(final UUID uuid) {
         this.trusted.remove(uuid);
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -279,7 +279,7 @@ public class Plot implements Cloneable {
         final Plot other = (Plot) obj;
         return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
     }
-    
+
     /**
      * Get the plot hashcode
      *

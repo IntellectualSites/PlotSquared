@@ -33,7 +33,7 @@ public class LSetCube {
      * Base locations
      */
     private Location l1, l2;
-    
+
     /**
      * Constructor
      *
@@ -44,7 +44,7 @@ public class LSetCube {
         this.l1 = l1;
         this.l1 = l2;
     }
-    
+
     /**
      * Secondary constructor
      *
@@ -55,7 +55,7 @@ public class LSetCube {
         this.l1 = l1;
         this.l2 = l1.clone().add(size, size, size);
     }
-    
+
     /**
      * Returns the absolute min. of the cube
      *
@@ -67,7 +67,7 @@ public class LSetCube {
         final int z = Math.min(this.l1.getBlockZ(), this.l2.getBlockZ());
         return new Location(this.l1.getWorld(), x, y, z);
     }
-    
+
     /**
      * Returns the absolute max. of the cube
      *
@@ -79,7 +79,7 @@ public class LSetCube {
         final int z = Math.max(this.l1.getBlockZ(), this.l2.getBlockZ());
         return new Location(this.l1.getWorld(), x, y, z);
     }
-    
+
     /**
      * Creates a LCycler for the cube.
      *
@@ -88,7 +88,7 @@ public class LSetCube {
     public LCycler getCycler() {
         return new LCycler(this);
     }
-    
+
     /**
      * @author Citymonstret
      */
@@ -105,7 +105,7 @@ public class LSetCube {
          *
          */
         private Location current;
-        
+
         /**
          * @param cube
          */
@@ -114,14 +114,14 @@ public class LSetCube {
             this.max = cube.maxLoc();
             this.current = this.min;
         }
-        
+
         /**
          * @return
          */
         public boolean hasNext() {
             return ((this.current.getBlockX() + 1) <= this.max.getBlockX()) && ((this.current.getBlockY() + 1) <= this.max.getBlockY()) && ((this.current.getBlockZ() + 1) <= this.max.getBlockZ());
         }
-        
+
         /**
          * @return
          */

@@ -22,7 +22,7 @@ public class SetBlockSlow extends SetBlockManager {
             }
         }
     }
-    
+
     @Override
     public void update(final List<Chunk> chunks) {
         // TODO Auto-generated method stub

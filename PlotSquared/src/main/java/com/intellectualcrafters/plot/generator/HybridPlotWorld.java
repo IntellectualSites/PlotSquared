@@ -42,17 +42,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short REQUIRED_CHANGES = 0;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
-    
+
     /*
      * Here we are just calling the super method, nothing special
      */
     public HybridPlotWorld(final String worldname) {
         super(worldname);
     }
-    
+
     public HashMap<ChunkLoc, HashMap<Short, Short>> G_SCH;
     public HashMap<ChunkLoc, HashMap<Short, Byte>> G_SCH_DATA;
-    
+
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
@@ -88,7 +88,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
     }
-    
+
     public void setupSchematics() {
         this.G_SCH_DATA = new HashMap<>();
         this.G_SCH = new HashMap<>();
@@ -175,7 +175,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
-    
+
     public static boolean isRotate(final short id) {
         switch (id) {
             case 23:
@@ -292,7 +292,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 return false;
         }
     }
-    
+
     public void addOverlayBlock(short x, final short y, short z, final short id, byte data, final boolean rotate) {
         if (z < 0) {
             z += this.SIZE;

@@ -34,10 +34,10 @@ public class Kick extends SubCommand {
     public Kick() {
         super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -50,7 +50,7 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, "&c/plot kick <player>");
             return false;
         }
-        PlotPlayer player = UUIDHandler.getPlayer(args[0]);
+        final PlotPlayer player = UUIDHandler.getPlayer(args[0]);
         if (player == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;

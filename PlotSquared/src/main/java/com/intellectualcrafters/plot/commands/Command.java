@@ -87,7 +87,7 @@ public enum Command {
      * Permission Node
      */
     private final CommandPermission permission;
-    
+
     /**
      * @param command Command "name" (/plot [cmd])
      */
@@ -96,7 +96,7 @@ public enum Command {
         this.alias = command;
         this.permission = new CommandPermission("plots." + command);
     }
-    
+
     /**
      * @param command    Command "name" (/plot [cmd])
      * @param permission Command Permission Node
@@ -106,7 +106,7 @@ public enum Command {
         this.permission = permission;
         this.alias = command;
     }
-    
+
     /**
      * @param command Command "name" (/plot [cmd])
      * @param alias   Command Alias
@@ -116,7 +116,7 @@ public enum Command {
         this.alias = alias;
         this.permission = new CommandPermission("plots." + command);
     }
-    
+
     /**
      * @param command    Command "name" (/plot [cmd])
      * @param alias      Command Alias
@@ -127,21 +127,21 @@ public enum Command {
         this.alias = alias;
         this.permission = permission;
     }
-    
+
     /**
      * @return command
      */
     public String getCommand() {
         return this.command;
     }
-    
+
     /**
      * @return alias
      */
     public String getAlias() {
         return this.alias;
     }
-    
+
     /**
      * @return permission object
      *

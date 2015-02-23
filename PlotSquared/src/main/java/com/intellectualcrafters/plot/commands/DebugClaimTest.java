@@ -47,16 +47,16 @@ public class DebugClaimTest extends SubCommand {
     public DebugClaimTest() {
         super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "debugclaimtest", CommandCategory.DEBUG, false);
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport) {
         return claimPlot(player, plot, teleport, "");
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
         // FIXME call claim event
         // boolean result = event result
-        boolean result = true;
-        
+        final boolean result = true;
+
         if (!result) {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
@@ -67,14 +67,14 @@ public class DebugClaimTest extends SubCommand {
         }
         return result;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             if (args.length < 3) {
                 return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
-            String world = args[0];
+            final String world = args[0];
             if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
                 return !MainUtil.sendMessage(null, "&cInvalid plot world!");
             }
@@ -100,12 +100,12 @@ public class DebugClaimTest extends SubCommand {
                     continue;
                 }
                 final Location loc = manager.getSignLoc(plotworld, plot);
-                ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-                boolean result = AChunkManager.manager.loadChunk(world, chunk);
+                final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+                final boolean result = AChunkManager.manager.loadChunk(world, chunk);
                 if (!result) {
                     continue;
                 }
-                String[] lines = BlockManager.manager.getSign(loc);
+                final String[] lines = BlockManager.manager.getSign(loc);
                 if (lines != null) {
                     String line = lines[2];
                     if ((line != null) && (line.length() > 2)) {

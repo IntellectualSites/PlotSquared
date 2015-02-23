@@ -61,9 +61,7 @@ public abstract class PlotWorld {
     // make non static and static_default_valu + add config option
     public static int[] BLOCKS;
     static {
-        BLOCKS = new int[] {
-                1,2,3,4,5,7,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,52,56,57,58,61,62,73,74,80,82,84,86,87,88,91,97,98,99,100,103,110,112,120,121,123,124,125,129,133,153,155,159,162,165,166,168,170,172,173,174,179,181
-        };
+        BLOCKS = new int[] { 1, 2, 3, 4, 5, 7, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 35, 41, 42, 43, 45, 47, 48, 49, 52, 56, 57, 58, 61, 62, 73, 74, 80, 82, 84, 86, 87, 88, 91, 97, 98, 99, 100, 103, 110, 112, 120, 121, 123, 124, 125, 129, 133, 153, 155, 159, 162, 165, 166, 168, 170, 172, 173, 174, 179, 181 };
     }
     public final String worldname;
     public boolean AUTO_MERGE;
@@ -87,11 +85,11 @@ public abstract class PlotWorld {
     public boolean WORLD_BORDER;
     public int TYPE = 0;
     public int TERRAIN = 0;
-    
+
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
     }
-    
+
     /**
      * When a world is created, the following method will be called for each
      *
@@ -109,7 +107,7 @@ public abstract class PlotWorld {
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use") && PlotSquared.economy != null;
+        this.USE_ECONOMY = config.getBoolean("economy.use") && (PlotSquared.economy != null);
         this.PLOT_PRICE = config.getDouble("economy.prices.claim");
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
@@ -133,9 +131,9 @@ public abstract class PlotWorld {
         this.SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
     }
-    
+
     public abstract void loadConfiguration(final ConfigurationSection config);
-    
+
     /**
      * Saving core plotworld settings
      *
@@ -179,7 +177,7 @@ public abstract class PlotWorld {
             }
         }
     }
-    
+
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *

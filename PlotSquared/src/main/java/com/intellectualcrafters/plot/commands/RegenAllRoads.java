@@ -35,7 +35,7 @@ public class RegenAllRoads extends SubCommand {
     public RegenAllRoads() {
         super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         if (player != null) {

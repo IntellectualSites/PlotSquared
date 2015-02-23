@@ -15,12 +15,12 @@ public class Location implements Cloneable, Comparable<Location> {
     private String world;
     private boolean built;
     private Object o;
-    
+
     @Override
     public Location clone() {
         return new Location(this.world, this.x, this.y, this.z, this.yaw, this.pitch);
     }
-    
+
     public Location(final String world, final int x, final int y, final int z, final float yaw, final float pitch) {
         this.world = world;
         this.x = x;
@@ -31,69 +31,69 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
         this.o = null;
     }
-    
+
     public Location() {
         this("", 0, 0, 0, 0, 0);
     }
-    
+
     public Location(final String world, final int x, final int y, final int z) {
         this(world, x, y, z, 0f, 0f);
     }
-    
+
     public int getX() {
         return this.x;
     }
-    
+
     public void setX(final int x) {
         this.x = x;
         this.built = false;
     }
-    
+
     public int getY() {
         return this.y;
     }
-    
+
     public void setY(final int y) {
         this.y = y;
         this.built = false;
     }
-    
+
     public int getZ() {
         return this.z;
     }
-    
+
     public void setZ(final int z) {
         this.z = z;
         this.built = false;
     }
-    
+
     public String getWorld() {
         return this.world;
     }
-    
+
     public void setWorld(final String world) {
         this.world = world;
         this.built = false;
     }
-    
+
     public float getYaw() {
         return this.yaw;
     }
-    
+
     public void setYaw(final float yaw) {
         this.yaw = yaw;
         this.built = false;
     }
-    
+
     public float getPitch() {
         return this.pitch;
     }
-    
+
     public void setPitch(final float pitch) {
         this.pitch = pitch;
         this.built = false;
     }
-    
+
     public Location add(final int x, final int y, final int z) {
         this.x += x;
         this.y += y;
@@ -101,22 +101,22 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
         return this;
     }
-    
+
     public double getEuclideanDistanceSquared(final Location l2) {
         final double x = getX() - l2.getX();
         final double y = getY() - l2.getY();
         final double z = getZ() - l2.getZ();
         return (x * x) + (y * y) + (z * z);
     }
-    
+
     public double getEuclideanDistance(final Location l2) {
         return Math.sqrt(getEuclideanDistanceSquared(l2));
     }
-    
+
     public boolean isInSphere(final Location origin, final int radius) {
         return getEuclideanDistanceSquared(origin) < (radius * radius);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 127;
@@ -127,11 +127,11 @@ public class Location implements Cloneable, Comparable<Location> {
         hash = (int) ((hash * 31) + getPitch());
         return (hash * 31) + (this.world == null ? 127 : this.world.hashCode());
     }
-    
+
     public boolean isInAABB(final Location min, final Location max) {
         return (this.x >= min.getX()) && (this.x <= max.getX()) && (this.y >= min.getY()) && (this.y <= max.getY()) && (this.z >= min.getX()) && (this.z < max.getZ());
     }
-    
+
     public void lookTowards(final int x, final int y) {
         final double l = this.x - x;
         final double w = this.z - this.z;
@@ -143,7 +143,7 @@ public class Location implements Cloneable, Comparable<Location> {
         }
         this.built = false;
     }
-    
+
     public Location subtract(final int x, final int y, final int z) {
         this.x -= x;
         this.y -= y;
@@ -151,7 +151,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.built = false;
         return this;
     }
-    
+
     @Override
     public boolean equals(final Object o) {
         if (o == null) {
@@ -163,7 +163,7 @@ public class Location implements Cloneable, Comparable<Location> {
         final Location l = (Location) o;
         return (this.x == l.getX()) && (this.y == l.getY()) && (this.z == l.getZ()) && this.world.equals(l.getWorld()) && (this.yaw == l.getY()) && (this.pitch == l.getPitch());
     }
-    
+
     @Override
     public int compareTo(final Location o) {
         if (o == null) {
@@ -177,12 +177,12 @@ public class Location implements Cloneable, Comparable<Location> {
         }
         return 1;
     }
-    
+
     @Override
     public String toString() {
         return "\"plotsquaredlocation\":{" + "\"x\":" + this.x + ",\"y\":" + this.y + ",\"z\":" + this.z + ",\"yaw\":" + this.yaw + ",\"pitch\":" + this.pitch + ",\"world\":\"" + this.world + "\"}";
     }
-    
+
     private Object getBukkitWorld() {
         try {
             final Class clazz = Class.forName("org.bukkit.Bukkit");
@@ -191,7 +191,7 @@ public class Location implements Cloneable, Comparable<Location> {
             return null;
         }
     }
-    
+
     public Object toBukkitLocation() {
         if (this.built) {
             return this.o;
@@ -204,7 +204,7 @@ public class Location implements Cloneable, Comparable<Location> {
             return null;
         }
     }
-    
+
     /**
      * Please use utility class as this is not efficient
      */

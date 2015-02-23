@@ -33,14 +33,14 @@ public class CommandPermission {
      * Permission Node
      */
     public final String permission;
-    
+
     /**
      * @param permission Command Permission
      */
     public CommandPermission(final String permission) {
         this.permission = permission.toLowerCase();
     }
-    
+
     /**
      * @param player Does the player have the permission?
      *

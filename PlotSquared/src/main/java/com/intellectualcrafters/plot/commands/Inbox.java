@@ -40,7 +40,7 @@ public class Inbox extends SubCommand {
     public Inbox() {
         super(Command.INBOX, "Review the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         boolean report = false;
@@ -49,9 +49,9 @@ public class Inbox extends SubCommand {
                 report = true;
             }
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null && !report) {
+        if ((plot == null) && !report) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
         if ((plot != null) && !plot.hasOwner()) {

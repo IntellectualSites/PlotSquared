@@ -37,7 +37,7 @@ public class SendChunk {
     private static RefField world;
     // Ref Constructor
     private static RefConstructor ChunkCoordIntPairCon;
-    
+
     /**
      * Constructor
      *
@@ -52,7 +52,7 @@ public class SendChunk {
         world = classChunk.getField("world");
         ChunkCoordIntPairCon = classChunkCoordIntPair.getConstructor(int.class, int.class);
     }
-    
+
     public static void sendChunk(final List<Chunk> chunks) {
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
@@ -73,7 +73,7 @@ public class SendChunk {
             }
         }
     }
-    
+
     public static void sendChunk(final String worldname, final List<ChunkLoc> locs) {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();

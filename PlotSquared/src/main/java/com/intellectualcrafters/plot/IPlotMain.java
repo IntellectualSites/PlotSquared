@@ -14,44 +14,44 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public interface IPlotMain {
     public void log(String message);
-    
+
     public File getDirectory();
-    
+
     public void disable();
-    
+
     public String getVersion();
-    
+
     public TaskManager getTaskManager();
-    
+
     public void runEntityTask();
-    
+
     public void registerCommands();
-    
+
     public void registerPlayerEvents();
-    
+
     public void registerInventoryEvents();
-    
+
     public void registerPlotPlusEvents();
-    
+
     public void registerForceFieldEvents();
-    
+
     public void registerWorldEditEvents();
-    
+
     public Economy getEconomy();
-    
+
     public BlockManager initBlockManager();
-    
+
     public AChunkManager initChunkManager();
-    
+
     public SetupUtils initSetupUtils();
-    
+
     public HybridUtils initHybridUtils();
-    
+
     public UUIDWrapper initUUIDHandler();
-    
+
     public boolean initPlotMeConverter();
-    
+
     public void getGenerator(String world, String name);
-    
+
     public boolean callRemovePlot(String world, PlotId id);
 }

@@ -60,7 +60,7 @@ public class PlotMeConverter {
     private void sendMessage(final String message) {
         PlotSquared.log("&3PlotMe&8->&3PlotSquared&8: &7" + message);
     }
-    
+
     public void runAsync() throws Exception {
         // We have to make it wait a couple of seconds
         TaskManager.runTaskLaterAsync(new Runnable() {
@@ -310,7 +310,7 @@ public class PlotMeConverter {
             }
         }, 20);
     }
-    
+
     public String getWorld(final String world) {
         for (final World newworld : Bukkit.getWorlds()) {
             if (newworld.getName().equalsIgnoreCase(world)) {

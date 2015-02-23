@@ -31,11 +31,11 @@ import org.apache.commons.lang.StringUtils;
 public class AbstractFlag {
     public final String key;
     public final FlagValue<?> value;
-    
+
     public AbstractFlag(final String key) {
         this(key, new FlagValue.StringValue());
     }
-    
+
     /**
      * AbstractFlag is a parameter used in creating a new Flag<br>
      * The key must be alphabetical characters and <= 16 characters in length
@@ -55,11 +55,11 @@ public class AbstractFlag {
             this.value = value;
         }
     }
-    
+
     public boolean isList() {
         return this.value instanceof FlagValue.ListValue;
     }
-    
+
     public Object parseValueRaw(final String value) {
         try {
             return this.value.parse(value);
@@ -67,15 +67,15 @@ public class AbstractFlag {
             return null;
         }
     }
-    
+
     public String toString(final Object t) {
         return this.value.toString(t);
     }
-    
+
     public String getValueDesc() {
         return this.value.getDescription();
     }
-    
+
     /**
      * AbstractFlag key
      *
@@ -84,12 +84,12 @@ public class AbstractFlag {
     public String getKey() {
         return this.key;
     }
-    
+
     @Override
     public String toString() {
         return this.key;
     }
-    
+
     @Override
     public boolean equals(final Object other) {
         if (other == null) {

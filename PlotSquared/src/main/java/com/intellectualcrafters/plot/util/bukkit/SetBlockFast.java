@@ -45,7 +45,7 @@ public class SetBlockFast extends SetBlockManager {
     private static RefMethod methodGetChunkAt;
     private static RefMethod methodA;
     private static RefMethod methodGetById;
-    
+
     /**
      * Constructor
      *
@@ -57,7 +57,7 @@ public class SetBlockFast extends SetBlockManager {
         methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
         methodGetById = classBlock.getMethod("getById", int.class);
     }
-    
+
     /**
      * Set the block at the location
      *
@@ -77,7 +77,7 @@ public class SetBlockFast extends SetBlockManager {
         final Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
     }
-    
+
     /**
      * Update chunks
      *

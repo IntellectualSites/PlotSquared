@@ -136,7 +136,7 @@ public class Settings {
      * Use offline mode storage
      */
     public static boolean OFFLINE_MODE = false;
-    
+
     /**
      * Database settings
      *
@@ -147,9 +147,9 @@ public class Settings {
          * MongoDB enabled?
          */
         public static boolean USE_MONGO = false; /*
-                                                 * TODO: Implement Mongo
-                                                 * @Brandon
-                                                 */
+         * TODO: Implement Mongo
+         * @Brandon
+         */
         /**
          * SQLite enabled?
          */

@@ -39,16 +39,15 @@ import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 public class Trim extends SubCommand {
     public static boolean TASK = false;
     private static int TASK_ID = 0;
-    
+
     public Trim() {
         super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
     }
-    
+
     public PlotId getId(final String id) {
         try {
             final String[] split = id.split(";");
@@ -57,7 +56,7 @@ public class Trim extends SubCommand {
             return null;
         }
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
@@ -106,7 +105,7 @@ public class Trim extends SubCommand {
         });
         return true;
     }
-    
+
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
@@ -160,12 +159,12 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         return true;
     }
-    
+
     public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
-        final long startOld = System.currentTimeMillis();
+        System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PlotSquared.getPlots(world).values());
@@ -191,25 +190,25 @@ public class Trim extends SubCommand {
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
                     final Location pos3 = new Location(world, pos1.getX(), 64, pos2.getZ());
                     final Location pos4 = new Location(world, pos2.getX(), 64, pos1.getZ());
-                    chunks.remove(ChunkManager.getChunkChunk(pos1));
-                    chunks.remove(ChunkManager.getChunkChunk(pos2));
-                    chunks.remove(ChunkManager.getChunkChunk(pos3));
-                    chunks.remove(ChunkManager.getChunkChunk(pos4));
+                    chunks.remove(AChunkManager.getChunkChunk(pos1));
+                    chunks.remove(AChunkManager.getChunkChunk(pos2));
+                    chunks.remove(AChunkManager.getChunkChunk(pos3));
+                    chunks.remove(AChunkManager.getChunkChunk(pos4));
                 }
             }
         }, 20);
         Trim.TASK = true;
         return true;
     }
-    
+
     public static ArrayList<Plot> expired = null;
-    
+
     public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
         for (final ChunkLoc loc : chunks) {
             AChunkManager.manager.deleteRegionFile(world, loc);
         }
     }
-    
+
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
     }

@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
@@ -40,26 +38,26 @@ public class Claim extends SubCommand {
     public Claim() {
         super(Command.CLAIM, "Claim the current plot you're standing on.", "claim", CommandCategory.CLAIMING, true);
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final boolean auto) {
         return claimPlot(player, plot, teleport, "", auto);
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
         if (plot.hasOwner() || plot.settings.isMerged()) {
             return false;
         }
         // FIXME claim plot event
-//        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
-//        Bukkit.getPluginManager().callEvent(event);
-//        boolean result = event.isCancelled();
-        boolean result = false;
-        
+        //        final PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, auto);
+        //        Bukkit.getPluginManager().callEvent(event);
+        //        boolean result = event.isCancelled();
+        final boolean result = false;
+
         if (!result) {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
             MainUtil.sendMessage(player, C.CLAIMED);
-            Location loc = player.getLocation();
+            final Location loc = player.getLocation();
             if (teleport) {
                 MainUtil.teleportPlayer(player, loc, plot);
             }
@@ -83,19 +81,19 @@ public class Claim extends SubCommand {
         }
         return !result;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
-        Location loc = plr.getLocation();
-        Plot plot = MainUtil.getPlot(loc);
+        final Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+        final int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
         if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
@@ -103,7 +101,7 @@ public class Claim extends SubCommand {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
         final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.economy != null && world.USE_ECONOMY) {
+        if ((PlotSquared.economy != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
                 if (EconHandler.getBalance(plr) < cost) {

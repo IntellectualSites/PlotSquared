@@ -58,7 +58,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class ChunkManager extends AChunkManager {
     public static MutableInt index = new MutableInt(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
-    
+
     @Override
     public ArrayList<ChunkLoc> getChunkChunks(final String world) {
         final String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region";
@@ -86,7 +86,7 @@ public class ChunkManager extends AChunkManager {
         }
         return chunks;
     }
-    
+
     @Override
     public void deleteRegionFile(final String world, final ChunkLoc loc) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -101,7 +101,7 @@ public class ChunkManager extends AChunkManager {
             }
         });
     }
-    
+
     @Override
     public Plot hasPlot(final String world, final ChunkLoc chunk) {
         final int x1 = chunk.x << 4;
@@ -121,7 +121,7 @@ public class ChunkManager extends AChunkManager {
         }
         return null;
     }
-    
+
     private static HashMap<BlockLoc, ItemStack[]> chestContents;
     private static HashMap<BlockLoc, ItemStack[]> furnaceContents;
     private static HashMap<BlockLoc, ItemStack[]> dispenserContents;
@@ -140,7 +140,7 @@ public class ChunkManager extends AChunkManager {
     private static HashMap<BlockLoc, ArrayList<Byte[]>> bannerColors;
     private static HashMap<BlockLoc, Byte> bannerBase;
     private static HashSet<EntityWrapper> entities;
-    
+
     /**
      * Copy a region to a new location (in the same world)
      */
@@ -250,7 +250,7 @@ public class ChunkManager extends AChunkManager {
         tasks.put(currentIndex, loadTask);
         return true;
     }
-    
+
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
         index.increment();
@@ -266,7 +266,7 @@ public class ChunkManager extends AChunkManager {
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
-        
+
         final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
         for (int x = c1x; x <= c2x; x++) {
             for (int z = c1z; z <= c2z; z++) {
@@ -343,7 +343,7 @@ public class ChunkManager extends AChunkManager {
         tasks.put(currentIndex, task);
         return true;
     }
-    
+
     public static void initMaps() {
         GENERATE_BLOCKS = new HashMap<>();
         GENERATE_DATA = new HashMap<>();
@@ -366,11 +366,11 @@ public class ChunkManager extends AChunkManager {
         bannerColors = new HashMap<>();
         entities = new HashSet<>();
     }
-    
+
     public static boolean isIn(final RegionWrapper region, final int x, final int z) {
         return ((x >= region.minX) && (x <= region.maxX) && (z >= region.minZ) && (z <= region.maxZ));
     }
-    
+
     public static void saveEntitiesOut(final Chunk chunk, final RegionWrapper region) {
         for (final Entity entity : chunk.getEntities()) {
             final Location loc = BukkitUtil.getLocation(entity);
@@ -386,7 +386,7 @@ public class ChunkManager extends AChunkManager {
             entities.add(wrap);
         }
     }
-    
+
     public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region) {
         for (final Entity entity : chunk.getEntities()) {
             final Location loc = BukkitUtil.getLocation(entity);
@@ -402,7 +402,7 @@ public class ChunkManager extends AChunkManager {
             entities.add(wrap);
         }
     }
-    
+
     public static void restoreEntities(final World world, final int x_offset, final int z_offset) {
         for (final EntityWrapper entity : entities) {
             try {
@@ -413,7 +413,7 @@ public class ChunkManager extends AChunkManager {
             }
         }
     }
-    
+
     public static void restoreBlocks(final World world, final int x_offset, final int z_offset) {
         for (final BlockLoc loc : chestContents.keySet()) {
             final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
@@ -597,7 +597,7 @@ public class ChunkManager extends AChunkManager {
             }
         }
     }
-    
+
     public static void saveBlocks(final World world, final int maxY, final int x, final int z) {
         final HashMap<Short, Short> ids = new HashMap<>();
         final HashMap<Short, Byte> datas = new HashMap<>();
@@ -730,7 +730,7 @@ public class ChunkManager extends AChunkManager {
         GENERATE_BLOCKS.put(loc, ids);
         GENERATE_DATA.put(loc, datas);
     }
-    
+
     private static byte getOrdinal(final Object[] list, final Object value) {
         for (byte i = 0; i < list.length; i++) {
             if (list[i].equals(value)) {
@@ -739,7 +739,7 @@ public class ChunkManager extends AChunkManager {
         }
         return 0;
     }
-    
+
     @Override
     public void clearAllEntities(final Plot plot) {
         final List<Entity> entities = BukkitUtil.getEntities(plot.world);
@@ -756,14 +756,14 @@ public class ChunkManager extends AChunkManager {
             }
         }
     }
-
+    
     @Override
-    public boolean loadChunk(String world, ChunkLoc loc) {
+    public boolean loadChunk(final String world, final ChunkLoc loc) {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
     }
-
+    
     @Override
-    public void swap(String world, PlotId id, PlotId plotid) {
+    public void swap(final String world, final PlotId id, final PlotId plotid) {
         // FIXME swap plots
     }
 }

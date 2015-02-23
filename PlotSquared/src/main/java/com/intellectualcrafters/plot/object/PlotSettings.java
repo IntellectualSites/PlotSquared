@@ -60,7 +60,7 @@ public class PlotSettings {
      * Home Position
      */
     private BlockLoc position;
-    
+
     /**
      * Constructor
      *
@@ -70,7 +70,7 @@ public class PlotSettings {
         this.alias = "";
         this.plot = plot;
     }
-    
+
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
@@ -81,26 +81,26 @@ public class PlotSettings {
     public boolean getMerged(final int direction) {
         return this.merged[direction];
     }
-    
+
     /**
      * Returns true if the plot is merged (i.e. if it's a mega plot)
      */
     public boolean isMerged() {
         return (this.merged[0] || this.merged[1] || this.merged[2] || this.merged[3]);
     }
-    
+
     public boolean[] getMerged() {
         return this.merged;
     }
-    
+
     public void setMerged(final boolean[] merged) {
         this.merged = merged;
     }
-    
+
     public void setMerged(final int direction, final boolean merged) {
         this.merged[direction] = merged;
     }
-    
+
     /**
      * @return biome at plot loc
      */
@@ -108,22 +108,22 @@ public class PlotSettings {
         final Location loc = MainUtil.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1);
         return BlockManager.manager.getBiome(loc);
     }
-    
+
     public BlockLoc getPosition() {
         if (this.position == null) {
             return new BlockLoc(0, 0, 0);
         }
         return this.position;
     }
-    
+
     public void setPosition(final BlockLoc position) {
         this.position = position;
     }
-    
+
     public String getAlias() {
         return this.alias;
     }
-    
+
     /**
      * Set the plot alias
      *
@@ -132,7 +132,7 @@ public class PlotSettings {
     public void setAlias(final String alias) {
         this.alias = alias;
     }
-    
+
     public String getJoinMessage() {
         final Flag greeting = FlagManager.getPlotFlag(this.plot, "greeting");
         if (greeting != null) {
@@ -140,7 +140,7 @@ public class PlotSettings {
         }
         return "";
     }
-    
+
     /**
      * Get the "farewell" flag value
      *
@@ -153,7 +153,7 @@ public class PlotSettings {
         }
         return "";
     }
-    
+
     public ArrayList<PlotComment> getComments(final int tier) {
         final ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
@@ -166,23 +166,23 @@ public class PlotSettings {
         }
         return c;
     }
-    
+
     public void setComments(final ArrayList<PlotComment> comments) {
         this.comments = comments;
     }
-    
+
     public void removeComment(final PlotComment comment) {
         if (this.comments.contains(comment)) {
             this.comments.remove(comment);
         }
     }
-    
+
     public void removeComments(final ArrayList<PlotComment> comments) {
         for (final PlotComment comment : comments) {
             removeComment(comment);
         }
     }
-    
+
     public void addComment(final PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<>();

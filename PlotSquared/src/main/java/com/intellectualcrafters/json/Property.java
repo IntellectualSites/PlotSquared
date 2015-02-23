@@ -51,7 +51,7 @@ public class Property {
         }
         return jo;
     }
-    
+
     /**
      * Converts the JSONObject into a property file object.
      *

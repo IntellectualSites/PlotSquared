@@ -43,7 +43,7 @@ public class Kim {
      * The memoization of toString().
      */
     private String string = null;
-    
+
     /**
      * Make a kim from a portion of a byte array.
      *
@@ -70,7 +70,7 @@ public class Kim {
             this.hashcode += sum << 16;
         }
     }
-    
+
     /**
      * Make a kim from a byte array.
      *
@@ -80,7 +80,7 @@ public class Kim {
     public Kim(final byte[] bytes, final int length) {
         this(bytes, 0, length);
     }
-    
+
     /**
      * Make a new kim from a substring of an existing kim. The coordinates are in byte units, not character units.
      *
@@ -91,7 +91,7 @@ public class Kim {
     public Kim(final Kim kim, final int from, final int thru) {
         this(kim.bytes, from, thru);
     }
-    
+
     /**
      * Make a kim from a string.
      *
@@ -173,7 +173,7 @@ public class Kim {
             this.hashcode += sum << 16;
         }
     }
-    
+
     /**
      * Returns the number of bytes needed to contain the character in Kim format.
      *
@@ -189,7 +189,7 @@ public class Kim {
         }
         return character <= 0x7F ? 1 : character <= 0x3FFF ? 2 : 3;
     }
-    
+
     /**
      * Returns the character at the specified index. The index refers to byte values and ranges from 0 to length - 1.
      * The index of the next character is at index + Kim.characterSize(kim.characterAt(index)).
@@ -220,7 +220,7 @@ public class Kim {
         }
         throw new JSONException("Bad character at " + at);
     }
-    
+
     /**
      * Copy the contents of this kim to a byte array.
      *
@@ -233,7 +233,7 @@ public class Kim {
         System.arraycopy(this.bytes, 0, bytes, at, this.length);
         return at + this.length;
     }
-    
+
     /**
      * Two kim objects containing exactly the same bytes in the same order are equal to each other.
      *
@@ -255,7 +255,7 @@ public class Kim {
         }
         return java.util.Arrays.equals(this.bytes, that.bytes);
     }
-    
+
     /**
      * Get a byte from a kim.
      *
@@ -271,7 +271,7 @@ public class Kim {
         }
         return (this.bytes[at]) & 0xFF;
     }
-    
+
     /**
      * Returns a hash code value for the kim.
      */
@@ -279,7 +279,7 @@ public class Kim {
     public int hashCode() {
         return this.hashcode;
     }
-    
+
     /**
      * Produce a UTF-16 String from this kim. The number of codepoints in the string will not be greater than the number
      * of bytes in the kim, although it could be less.

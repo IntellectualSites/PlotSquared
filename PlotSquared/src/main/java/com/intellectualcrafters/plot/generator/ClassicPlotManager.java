@@ -32,7 +32,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return false;
     }
-    
+
     public boolean setFloor(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final Location pos1 = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid).add(1, 0, 1);
@@ -42,7 +42,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setCuboid(plotworld.worldname, pos1, pos2, blocks);
         return true;
     }
-    
+
     public boolean setWallFilling(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
@@ -52,8 +52,8 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
         int x, z;
         z = bottom.getZ();
-        int length = top.getX() - bottom.getX();
-        int size = (length) * 4 * (dpw.WALL_HEIGHT);
+        final int length = top.getX() - bottom.getX();
+        final int size = (length) * 4 * (dpw.WALL_HEIGHT);
         final int[] xl = new int[size];
         final int[] yl = new int[size];
         final int[] zl = new int[size];
@@ -101,16 +101,16 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);
         return true;
     }
-    
+
     public boolean setWall(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
         final Location bottom = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid);
-        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1,0,1);
-        int length = top.getX() - bottom.getX();
-        int size = (length) * 4;
+        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
+        final int length = top.getX() - bottom.getX();
+        final int size = (length) * 4;
         final int[] xl = new int[size];
         final int[] yl = new int[size];
         final int[] zl = new int[size];
@@ -118,7 +118,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         int x, z;
         z = bottom.getZ();
         int i = 0;
-        int y = dpw.WALL_HEIGHT + 1;
+        final int y = dpw.WALL_HEIGHT + 1;
         for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
             xl[i] = x;
             zl[i] = z;
@@ -153,7 +153,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);
         return true;
     }
-    
+
     /**
      * PLOT MERGING
      */
@@ -175,7 +175,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
     public boolean createRoadSouth(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
@@ -194,7 +194,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
     public boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
@@ -208,7 +208,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
     public boolean removeRoadEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
@@ -223,7 +223,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setCuboid(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.PLOT_HEIGHT, sz), new Location(plotworld.worldname, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     @Override
     public boolean removeRoadSouth(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
@@ -238,7 +238,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setCuboid(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.PLOT_HEIGHT, sz), new Location(plotworld.worldname, ex + 1, dpw.PLOT_HEIGHT + 1, ez + 1), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     @Override
     public boolean removeRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
@@ -252,13 +252,12 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         MainUtil.setCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.ROAD_HEIGHT, sz + 1), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT + 1, ez), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED)
      */
     @Override
     public boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final PlotId pos1 = plotIds.get(0);
         final PlotBlock block = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         if (block.id != 0) {
@@ -266,7 +265,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
+
     @Override
     public boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
         final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
@@ -278,17 +277,17 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
+
     @Override
     public boolean startPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
         return true;
     }
-    
+
     @Override
     public boolean startPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
         return true;
     }
-    
+
     @Override
     public boolean claimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
@@ -298,7 +297,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
+
     @Override
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
@@ -308,12 +307,12 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
+
     @Override
     public String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid) {
         return new String[] { "floor", "wall", "border" };
     }
-    
+
     /**
      * Remove sign for a plot
      */

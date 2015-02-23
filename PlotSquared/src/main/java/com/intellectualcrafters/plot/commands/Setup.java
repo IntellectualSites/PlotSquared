@@ -38,7 +38,7 @@ public class Setup extends SubCommand {
     public Setup() {
         super("setup", "plots.admin.command.setup", "Plotworld setup command", "setup", "create", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         // going through setup
@@ -179,6 +179,5 @@ public class Setup extends SubCommand {
         }
         return false;
     }
-    
     
 }

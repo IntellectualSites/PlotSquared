@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import net.milkbowl.vault.economy.Economy;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -38,10 +36,10 @@ public class Unclaim extends SubCommand {
     public Unclaim() {
         super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -54,10 +52,9 @@ public class Unclaim extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.economy != null && pWorld.USE_ECONOMY) {
+        if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
-                final Economy economy = PlotSquared.economy;
                 EconHandler.depositPlayer(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }

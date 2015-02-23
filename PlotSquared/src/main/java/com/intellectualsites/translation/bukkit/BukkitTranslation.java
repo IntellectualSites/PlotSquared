@@ -27,7 +27,7 @@ public class BukkitTranslation {
         // &- = new line
         return asset.getTranslated().replace("&-", "\n").replace('&', '\u00A7');
     }
-    
+
     /**
      * Get the universal parent based on the plugin data folder
      *
@@ -38,7 +38,7 @@ public class BukkitTranslation {
     public static File getParent() {
         return new File(PlotSquared.IMP.getDirectory() + File.separator + "translations");
     }
-    
+
     /**
      * The default translation language
      *
@@ -47,7 +47,7 @@ public class BukkitTranslation {
     public TranslationLanguage getDefaultLanguage() {
         return TranslationLanguage.englishAmerican;
     }
-    
+
     /**
      * Add material names to the translation list Will default to a somewhat friendly name
      */

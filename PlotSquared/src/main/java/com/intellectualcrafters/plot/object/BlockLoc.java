@@ -4,13 +4,13 @@ public class BlockLoc {
     public int x;
     public int y;
     public int z;
-    
+
     public BlockLoc(final int x, final int y, final int z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -20,7 +20,7 @@ public class BlockLoc {
         result = (prime * result) + this.z;
         return result;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

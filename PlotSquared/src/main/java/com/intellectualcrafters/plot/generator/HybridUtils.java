@@ -18,9 +18,9 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class HybridUtils {
-    
+
     public static HybridUtils manager;
-    
+
     public boolean checkModified(final Plot plot, int requiredChanges) {
         final Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
@@ -48,9 +48,9 @@ public abstract class HybridUtils {
         changes = checkModified(requiredChanges, plot.world, botx, topx, 1, hpw.PLOT_HEIGHT - 1, botz, topz, hpw.MAIN_BLOCK);
         return changes == -1;
     }
-    
+
     public abstract int checkModified(final int threshhold, final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
-    
+
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.world;
         final Location bot = MainUtil.getPlotBottomLoc(world, plot.id);
@@ -81,14 +81,14 @@ public abstract class HybridUtils {
         plotworld.setupSchematics();
         return true;
     }
-    
-    public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
-    
-    public abstract void regenerateChunkChunk(final String world, final ChunkLoc loc);
 
-    public abstract boolean scheduleRoadUpdate(final String world);
+    public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
+
+    public abstract void regenerateChunkChunk(final String world, final ChunkLoc loc);
     
-    public boolean regenerateRoad(String world, final ChunkLoc chunk) {
+    public abstract boolean scheduleRoadUpdate(final String world);
+
+    public boolean regenerateRoad(final String world, final ChunkLoc chunk) {
         final int x = chunk.x << 4;
         final int z = chunk.z << 4;
         final int ex = x + 15;
@@ -97,7 +97,7 @@ public abstract class HybridUtils {
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
-        PlotManager manager = PlotSquared.getPlotManager(world);
+        final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotId id1 = manager.getPlotId(plotworld, x, 0, z);
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
         boolean toCheck = false;

@@ -46,12 +46,12 @@ public class MainCommand {
             addAll(Arrays.asList(_subCommands));
         }
     };
-
+    
     public static boolean no_permission(final PlotPlayer player, final String permission) {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-
+    
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final PlotPlayer player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
@@ -63,7 +63,7 @@ public class MainCommand {
         }
         return cmds;
     }
-
+    
     public static List<String> helpMenu(final PlotPlayer player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
@@ -99,11 +99,11 @@ public class MainCommand {
         }
         return help;
     }
-    
+
     private static String t(final String s) {
         return MainUtil.colorise('&', s);
     }
-
+    
     public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
         if (!Permissions.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);

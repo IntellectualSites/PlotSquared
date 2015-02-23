@@ -83,7 +83,7 @@ public class HybridGen extends PlotGenerator {
      * Faster sudo-random number generator than java.util.random
      */
     private long state = 13;
-    
+
     /**
      * Initialize variables, and create plotworld object used in calculations
      */
@@ -125,7 +125,7 @@ public class HybridGen extends PlotGenerator {
             this.maxY = 256;
         }
     }
-    
+
     /**
      * Return the plot manager for this type of generator, or create one For square plots you may as well use the
      * default plot manager which comes with PlotSquared
@@ -137,7 +137,7 @@ public class HybridGen extends PlotGenerator {
         }
         return HybridGen.manager;
     }
-    
+
     /**
      * Allow spawning everywhere
      */
@@ -145,7 +145,7 @@ public class HybridGen extends PlotGenerator {
     public boolean canSpawn(final World world, final int x, final int z) {
         return true;
     }
-    
+
     /**
      * Get a new plotworld class For square plots you can use the DefaultPlotWorld class which comes with PlotSquared
      */
@@ -156,25 +156,25 @@ public class HybridGen extends PlotGenerator {
         }
         return this.plotworld;
     }
-    
+
     public final long nextLong() {
         final long a = this.state;
         this.state = xorShift64(a);
         return a;
     }
-    
+
     public final long xorShift64(long a) {
         a ^= (a << 21);
         a ^= (a >>> 35);
         a ^= (a << 4);
         return a;
     }
-    
+
     public final int random(final int n) {
         final long r = ((nextLong() >>> 32) * n) >> 32;
         return (int) r;
     }
-    
+
     private void setBlock(final short[][] result, final int x, final int y, final int z, final short[] blkids) {
         if (blkids.length == 1) {
             setBlock(result, x, y, z, blkids[0]);
@@ -183,7 +183,7 @@ public class HybridGen extends PlotGenerator {
             setBlock(result, x, y, z, blkids[i]);
         }
     }
-    
+
     /**
      * Standard setblock method for world generation
      */
@@ -193,7 +193,7 @@ public class HybridGen extends PlotGenerator {
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
-    
+
     /**
      * Return the block populator
      */
@@ -211,7 +211,7 @@ public class HybridGen extends PlotGenerator {
         // populator, ore populator
         return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
     }
-    
+
     /**
      * Return the default spawn location for this world
      */
@@ -219,7 +219,7 @@ public class HybridGen extends PlotGenerator {
     public Location getFixedSpawnLocation(final World world, final Random random) {
         return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
     }
-    
+
     /**
      * This part is a fucking mess. - Refer to a proper tutorial if you would like to learn how to make a world
      * generator
@@ -340,7 +340,7 @@ public class HybridGen extends PlotGenerator {
         }
         return this.result;
     }
-    
+
     public boolean isIn(final RegionWrapper plot, final int x, final int z) {
         return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }

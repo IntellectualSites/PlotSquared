@@ -36,14 +36,14 @@ public class Template extends SubCommand {
     public Template() {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length != 2) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
             return false;
         }
-        String world = args[1];
+        final String world = args[1];
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
@@ -63,7 +63,7 @@ public class Template extends SubCommand {
         // TODO allow world created based on these packaged files
         return true;
     }
-    
+
     public void gzipIt(final String output, final String input) {
         final byte[] buffer = new byte[1024];
         try {

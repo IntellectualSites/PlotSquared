@@ -50,7 +50,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
     private static RefMethod methodA;
     private static RefMethod methodGetByCombinedId;
     private static RefConstructor constructorBlockPosition;
-    
+
     /**
      * Constructor
      *
@@ -63,7 +63,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
     }
-    
+
     /**
      * Set the block at the location
      *
@@ -120,7 +120,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
         final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
         methodA.of(chunk).call(pos, combined);
     }
-    
+
     /**
      * Update chunks
      *

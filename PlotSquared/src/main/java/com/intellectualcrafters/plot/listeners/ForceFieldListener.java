@@ -51,28 +51,28 @@ public class ForceFieldListener implements Listener {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
+            final UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
             if (!plot.isAdded(uuid)) {
                 players.add(oPlayer);
             }
         }
         return players;
     }
-    
+
     private Player hasNearbyPermitted(final Player player, final Plot plot) {
         Player oPlayer;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
                 continue;
             }
-            UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
+            final UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
             if (plot.isAdded(uuid)) {
                 return oPlayer;
             }
         }
         return null;
     }
-    
+
     public Vector calculateVelocity(final Player p, final Player e) {
         final org.bukkit.Location playerLocation = p.getLocation();
         final org.bukkit.Location oPlayerLocation = e.getLocation();
@@ -95,19 +95,19 @@ public class ForceFieldListener implements Listener {
         }
         return new Vector(x, y, z);
     }
-    
+
     @EventHandler
     public void onPlotEntry(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Location loc = pp.getLocation();
-        Plot plot = MainUtil.getPlot(loc);
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final Location loc = pp.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return;
         }
         if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
             if (!PlotListener.booleanFlag(plot, "forcefield", false)) {
-                UUID uuid = pp.getUUID();
+                final UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {
                     final Set<Player> players = getNearbyPlayers(player, plot);
                     for (final Player oPlayer : players) {

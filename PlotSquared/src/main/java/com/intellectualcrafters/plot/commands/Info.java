@@ -47,13 +47,13 @@ public class Info extends SubCommand {
     public Info() {
         super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, String... args) {
         Plot plot;
         String world;
         if (player != null) {
-            Location loc = player.getLocation();
+            final Location loc = player.getLocation();
             world = loc.getWorld();
             if (!PlotSquared.isPlotWorld(world)) {
                 MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
@@ -129,7 +129,7 @@ public class Info extends SubCommand {
         MainUtil.sendMessage(player, info, false);
         return true;
     }
-    
+
     private String getCaption(final String string) {
         switch (string) {
             case "helpers":
@@ -156,7 +156,7 @@ public class Info extends SubCommand {
                 return null;
         }
     }
-    
+
     private String format(String info, final String world, final Plot plot, final PlotPlayer player) {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
@@ -191,7 +191,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%desc%", "No description set.");
         return info;
     }
-    
+
     private String getPlayerList(final ArrayList<UUID> l) {
         if ((l == null) || (l.size() < 1)) {
             return " none";
@@ -207,7 +207,7 @@ public class Info extends SubCommand {
         }
         return list.toString();
     }
-    
+
     private String getPlayerName(final UUID uuid) {
         if (uuid == null) {
             return "unknown";

@@ -22,8 +22,6 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
-import net.milkbowl.vault.economy.Economy;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -44,11 +42,11 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w" };
-    
+
     public Merge() {
         super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);
     }
-    
+
     public static String direction(float yaw) {
         yaw = yaw / 90;
         final int i = Math.round(yaw);
@@ -70,10 +68,10 @@ public class Merge extends SubCommand {
                 return "";
         }
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -107,7 +105,7 @@ public class Merge extends SubCommand {
         PlotId bot = MainUtil.getBottomPlot(plot).id;
         PlotId top = MainUtil.getTopPlot(plot).id;
         ArrayList<PlotId> plots;
-        String world = plr.getLocation().getWorld();
+        final String world = plr.getLocation().getWorld();
         switch (direction) {
             case 0: // north = -y
                 plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
@@ -141,11 +139,10 @@ public class Merge extends SubCommand {
             }
         }
         final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
-        if (PlotSquared.economy != null && plotWorld.USE_ECONOMY) {
+        if ((PlotSquared.economy != null) && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;
             if (cost > 0d) {
-                final Economy economy = PlotSquared.economy;
                 if (EconHandler.getBalance(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
@@ -156,7 +153,7 @@ public class Merge extends SubCommand {
         }
         //FIXME PlotMergeEvent
         // boolean result = event.isCancelled();
-        boolean result = false;
+        final boolean result = false;
         if (result) {
             MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;

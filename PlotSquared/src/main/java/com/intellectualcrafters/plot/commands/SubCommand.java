@@ -62,7 +62,7 @@ public abstract class SubCommand {
      * Is this a player-online command?
      */
     public final boolean isPlayer;
-    
+
     /**
      * @param cmd         Command /plot {cmd} <-- That!
      * @param permission  Permission Node
@@ -81,7 +81,7 @@ public abstract class SubCommand {
         this.category = category;
         this.isPlayer = isPlayer;
     }
-    
+
     /**
      * @param cmd         Command /plot {cmd} <-- That!
      * @param permission  Permission Node
@@ -100,7 +100,7 @@ public abstract class SubCommand {
         this.category = category;
         this.isPlayer = isPlayer;
     }
-    
+
     /**
      * @param command     Command /plot {cmd} <-- That!
      * @param description Simple description
@@ -117,7 +117,7 @@ public abstract class SubCommand {
         this.category = category;
         this.isPlayer = isPlayer;
     }
-    
+
     /**
      * Execute.
      *
@@ -127,7 +127,7 @@ public abstract class SubCommand {
      * @return true on success, false on failure
      */
     public abstract boolean execute(final PlotPlayer plr, final String... args);
-    
+
     /**
      * Execute the command as console
      *
@@ -136,7 +136,7 @@ public abstract class SubCommand {
     public void executeConsole(final String... args) {
         this.execute(null, args);
     }
-    
+
     /**
      * Send a message
      *
@@ -151,7 +151,7 @@ public abstract class SubCommand {
         MainUtil.sendMessage(plr, c, args);
         return true;
     }
-    
+
     /**
      * CommandCategory
      *
@@ -193,7 +193,7 @@ public abstract class SubCommand {
          * The category name (Readable)
          */
         private final String name;
-        
+
         /**
          * Constructor
          *
@@ -202,7 +202,7 @@ public abstract class SubCommand {
         CommandCategory(final String name) {
             this.name = name;
         }
-        
+
         @Override
         public String toString() {
             return this.name;

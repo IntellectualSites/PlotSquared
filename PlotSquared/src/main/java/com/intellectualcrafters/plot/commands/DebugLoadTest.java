@@ -34,7 +34,7 @@ public class DebugLoadTest extends SubCommand {
     public DebugLoadTest() {
         super(Command.DEBUGLOADTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {

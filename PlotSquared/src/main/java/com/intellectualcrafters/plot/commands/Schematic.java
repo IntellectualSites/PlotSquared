@@ -45,12 +45,12 @@ public class Schematic extends SubCommand {
     private boolean running = false;
     private Plot[] plots;
     private int task;
-    
+
     public Schematic() {
         super("schematic", "plots.schematic", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
         // TODO command to fetch schematic from worldedit directory
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -75,8 +75,8 @@ public class Schematic extends SubCommand {
                     break;
                 }
                 final Location loc = plr.getLocation();
-                Plot plot = MainUtil.getPlot(loc);
-                if (plot  == null) {
+                final Plot plot = MainUtil.getPlot(loc);
+                if (plot == null) {
                     sendMessage(plr, C.NOT_IN_PLOT);
                     break;
                 }
@@ -163,7 +163,7 @@ public class Schematic extends SubCommand {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
                     break;
                 }
-                Location loc = plr.getLocation();
+                final Location loc = plr.getLocation();
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
                 final Plot plot = MainUtil.getPlot(loc);
@@ -236,8 +236,7 @@ public class Schematic extends SubCommand {
                 break;
             }
             case "export":
-            case "save":
-            {
+            case "save": {
                 if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
@@ -249,7 +248,7 @@ public class Schematic extends SubCommand {
                 final String world;
                 final Plot p2;
                 if (plr != null) {
-                    Location loc = plr.getLocation();
+                    final Location loc = plr.getLocation();
                     final Plot plot = MainUtil.getPlot(loc);
                     if (plot == null) {
                         return !sendMessage(plr, C.NOT_IN_PLOT);

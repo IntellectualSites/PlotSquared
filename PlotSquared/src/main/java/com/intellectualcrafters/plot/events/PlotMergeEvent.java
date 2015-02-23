@@ -39,7 +39,7 @@ public class PlotMergeEvent extends Event implements Cancellable {
     private boolean cancelled;
     private Plot plot;
     private World world;
-    
+
     /**
      * PlotMergeEvent: Called when plots are merged
      *
@@ -50,11 +50,11 @@ public class PlotMergeEvent extends Event implements Cancellable {
     public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
         this.plots = plots;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plots being added;
      *
@@ -63,7 +63,7 @@ public class PlotMergeEvent extends Event implements Cancellable {
     public ArrayList<PlotId> getPlots() {
         return this.plots;
     }
-    
+
     /**
      * Get the main plot
      *
@@ -72,21 +72,21 @@ public class PlotMergeEvent extends Event implements Cancellable {
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     public World getWorld() {
         return this.world;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-    
+
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

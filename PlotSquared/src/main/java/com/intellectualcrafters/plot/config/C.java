@@ -469,7 +469,7 @@ public enum C {
      * Should the string be prefixed?
      */
     private boolean prefix;
-    
+
     /**
      * Constructor for custom strings.
      */
@@ -478,7 +478,7 @@ public enum C {
          * use setCustomString();
          */
     }
-    
+
     /**
      * Constructor
      *
@@ -492,7 +492,7 @@ public enum C {
         }
         this.prefix = prefix;
     }
-    
+
     /**
      * Constructor
      *
@@ -501,7 +501,7 @@ public enum C {
     C(final String d) {
         this(d, true);
     }
-    
+
     public static void setupTranslations() {
         manager = new TranslationManager();
         defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
@@ -510,7 +510,7 @@ public enum C {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
         }
     }
-    
+
     public static void saveTranslations() {
         try {
             manager.saveAll(defaultFile).saveFile(defaultFile);
@@ -518,7 +518,7 @@ public enum C {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Get the default string
      *
@@ -527,7 +527,7 @@ public enum C {
     public String d() {
         return this.d;
     }
-    
+
     /**
      * Get translated if exists
      *
@@ -549,11 +549,11 @@ public enum C {
          * return this.s.replace("\\n", "\n");
          */
     }
-    
+
     public boolean usePrefix() {
         return this.prefix;
     }
-    
+
     /**
      * @return translated and color decoded
      *

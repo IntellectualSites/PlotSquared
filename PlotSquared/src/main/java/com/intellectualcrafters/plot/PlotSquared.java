@@ -82,11 +82,11 @@ public class PlotSquared {
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private static MySQL mySQL;
     public static Connection connection;
-    
+
     public static MySQL getMySQL() {
         return mySQL;
     }
-    
+
     public static void updatePlot(final Plot plot) {
         final String world = plot.world;
         if (!plots.containsKey(world)) {
@@ -95,14 +95,14 @@ public class PlotSquared {
         plot.hasChanged = true;
         plots.get(world).put(plot.id, plot);
     }
-    
+
     public static PlotWorld getPlotWorld(final String world) {
         if (plotworlds.containsKey(world)) {
             return plotworlds.get(world);
         }
         return null;
     }
-    
+
     public static void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         plotworlds.put(world, plotworld);
         plotmanagers.put(world, manager);
@@ -110,21 +110,21 @@ public class PlotSquared {
             plots.put(world, new HashMap<PlotId, Plot>());
         }
     }
-    
+
     public static void removePlotWorld(final String world) {
         plots.remove(world);
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
-    
+
     public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
-    
+
     public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         PlotSquared.plots = plots;
     }
-    
+
     public static Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final HashMap<PlotId, Plot> world : plots.values()) {
@@ -132,7 +132,7 @@ public class PlotSquared {
         }
         return new LinkedHashSet<>(newplots);
     }
-    
+
     public static LinkedHashSet<Plot> getPlotsSorted() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final HashMap<PlotId, Plot> world : plots.values()) {
@@ -140,17 +140,17 @@ public class PlotSquared {
         }
         return new LinkedHashSet<>(newplots);
     }
-    
+
     public static Set<Plot> getPlots(final String world, final String player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         return getPlots(world, uuid);
     }
-    
+
     public static Set<Plot> getPlots(final String world, final PlotPlayer player) {
         final UUID uuid = player.getUUID();
         return getPlots(world, uuid);
     }
-    
+
     public static Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
@@ -162,30 +162,30 @@ public class PlotSquared {
         }
         return new HashSet<>(myplots);
     }
-    
+
     public static boolean isPlotWorld(final String world) {
         return (plotworlds.containsKey(world));
     }
-    
+
     public static PlotManager getPlotManager(final String world) {
         if (plotmanagers.containsKey(world)) {
             return plotmanagers.get(world);
         }
         return null;
     }
-    
+
     public static String[] getPlotWorldsString() {
         final Set<String> strings = plots.keySet();
         return strings.toArray(new String[strings.size()]);
     }
-    
+
     public static HashMap<PlotId, Plot> getPlots(final String world) {
         if (plots.containsKey(world)) {
             return plots.get(world);
         }
         return new HashMap<>();
     }
-    
+
     public static Set<Plot> getPlots(final PlotPlayer player) {
         final UUID uuid = player.getUUID();
         final ArrayList<Plot> myplots = new ArrayList<>();
@@ -202,7 +202,7 @@ public class PlotSquared {
         }
         return new HashSet<>(myplots);
     }
-    
+
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         // FIXME plot remove event
         plots.get(world).remove(id);
@@ -216,7 +216,7 @@ public class PlotSquared {
         }
         return true;
     }
-    
+
     public static void loadWorld(final String world, final PlotGenerator generator) {
         if (getPlotWorld(world) != null) {
             return;
@@ -303,7 +303,7 @@ public class PlotSquared {
             }
         }
     }
-    
+
     public static boolean setupPlotWorld(final String world, final String id) {
         if ((id != null) && (id.length() > 0)) {
             // save configuration
@@ -395,11 +395,11 @@ public class PlotSquared {
         }
         return true;
     }
-    
+
     public static Connection getConnection() {
         return connection;
     }
-    
+
     public PlotSquared(final IPlotMain imp_class) {
         THIS = this;
         IMP = imp_class;
@@ -461,7 +461,7 @@ public class PlotSquared {
             ExpireManager.runTask();
         }
     }
-    
+
     public void disable() {
         try {
             connection.close();
@@ -472,11 +472,11 @@ public class PlotSquared {
             }
         }
     }
-    
+
     public static void log(final String message) {
         IMP.log(message);
     }
-    
+
     public void setupDatabase() {
         final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
@@ -559,7 +559,7 @@ public class PlotSquared {
             return;
         }
     }
-    
+
     public static void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
@@ -610,7 +610,7 @@ public class PlotSquared {
                         return null;
                 }
             }
-            
+
             @Override
             public String getValueDesc() {
                 return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
@@ -634,14 +634,14 @@ public class PlotSquared {
                         return null;
                 }
             }
-            
+
             @Override
             public String getValueDesc() {
                 return "Flag value must be weather type: 'clear' or 'rain'";
             }
         });
     }
-    
+
     public static void setupConfig() {
         config.set("version", VERSION);
         final Map<String, Object> options = new HashMap<>();
@@ -700,7 +700,7 @@ public class PlotSquared {
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
-    
+
     public static void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -754,7 +754,7 @@ public class PlotSquared {
             e.printStackTrace();
         }
     }
-    
+
     private static void setupStorage() {
         storage.set("version", VERSION);
         final Map<String, Object> options = new HashMap<>();
@@ -789,7 +789,7 @@ public class PlotSquared {
         Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
         Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
     }
-    
+
     public static void showDebug() {
         C.COLOR_1 = "&" + (style.getString("color.1"));
         C.COLOR_2 = "&" + (style.getString("color.2"));
@@ -812,7 +812,7 @@ public class PlotSquared {
             }
         }
     }
-    
+
     private static void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
@@ -826,11 +826,11 @@ public class PlotSquared {
             }
         }
     }
-    
+
     public static double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
-    
+
     public static Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }

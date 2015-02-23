@@ -41,7 +41,7 @@ public class Swap extends SubCommand {
     public Swap() {
         super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -49,7 +49,7 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);

@@ -17,7 +17,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class BukkitSetupUtils extends SetupUtils {
-
+    
     @Override
     public void updateGenerators() {
         if (SetupUtils.generators.size() > 0) {
@@ -40,7 +40,7 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
     }
-
+    
     @Override
     public String setupWorld(final SetupObject object) {
         final ConfigurationNode[] steps = object.step;
@@ -84,5 +84,5 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         return object.world;
     }
-    
+
 }

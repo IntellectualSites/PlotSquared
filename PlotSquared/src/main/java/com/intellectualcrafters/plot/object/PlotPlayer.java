@@ -9,20 +9,20 @@ import java.util.UUID;
  */
 public interface PlotPlayer {
     public Location getLocation();
-
+    
     public UUID getUUID();
-
+    
     public boolean hasPermission(final String perm);
-
+    
     public void sendMessage(final String message);
-    
-    public void teleport(final Location loc);
-    
-    public boolean isOp();
-    
-    public boolean isOnline();
-    
-    public String getName();
 
+    public void teleport(final Location loc);
+
+    public boolean isOp();
+
+    public boolean isOnline();
+
+    public String getName();
+    
     public void setCompassTarget(Location loc);
 }

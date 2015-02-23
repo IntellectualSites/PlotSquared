@@ -51,15 +51,15 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "flag" };
     public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
-    
+
     public Set() {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
     }
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -90,7 +90,7 @@ public class Set extends SubCommand {
         }
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
-                String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
+                final String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
                 MainUtil.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
                 return false;
             }
@@ -260,11 +260,11 @@ public class Set extends SubCommand {
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
         return false;
     }
-    
+
     private String getString(final String s) {
         return MainUtil.colorise('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
     }
-    
+
     private String getArgumentList(final String[] strings) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {
@@ -272,7 +272,7 @@ public class Set extends SubCommand {
         }
         return builder.toString().substring(1, builder.toString().length() - 1);
     }
-    
+
     private String getBiomeList(final String[] biomes) {
         final StringBuilder builder = new StringBuilder();
         builder.append(MainUtil.colorise('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));

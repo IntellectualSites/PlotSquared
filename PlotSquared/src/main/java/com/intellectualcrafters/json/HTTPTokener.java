@@ -15,7 +15,7 @@ public class HTTPTokener extends JSONTokener {
     public HTTPTokener(final String string) {
         super(string);
     }
-    
+
     /**
      * Get the next token or string. This is used in parsing HTTP headers.
      *

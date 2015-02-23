@@ -20,7 +20,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class OfflineUUIDWrapper extends UUIDWrapper {
     private Method getOnline = null;
     private final Object[] arg = new Object[0];
-    
+
     public OfflineUUIDWrapper() {
         try {
             this.getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
@@ -30,21 +30,21 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public UUID getUUID(final PlotPlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
     public UUID getUUID(final BukkitOfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-    
+
     public UUID getUUID(final OfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
     public BukkitOfflinePlayer getOfflinePlayer(final UUID uuid) {
         final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
@@ -67,7 +67,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return null;
     }
-    
+
     public Player[] getOnlinePlayers() {
         if (this.getOnline == null) {
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
@@ -87,7 +87,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }
     }
-    
+
     @Override
     public UUID getUUID(final String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));

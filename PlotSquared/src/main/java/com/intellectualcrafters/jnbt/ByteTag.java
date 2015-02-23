@@ -5,7 +5,7 @@ package com.intellectualcrafters.jnbt;
  */
 public final class ByteTag extends Tag {
     private final byte value;
-    
+
     /**
      * Creates the tag with an empty name.
      *
@@ -15,7 +15,7 @@ public final class ByteTag extends Tag {
         super();
         this.value = value;
     }
-    
+
     /**
      * Creates the tag.
      *
@@ -26,12 +26,12 @@ public final class ByteTag extends Tag {
         super(name);
         this.value = value;
     }
-    
+
     @Override
     public Byte getValue() {
         return this.value;
     }
-    
+
     @Override
     public String toString() {
         final String name = getName();

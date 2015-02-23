@@ -25,7 +25,7 @@ package com.intellectualcrafters.jnbt;
  */
 public final class ShortTag extends Tag {
     private final short value;
-    
+
     /**
      * Creates the tag with an empty name.
      *
@@ -35,7 +35,7 @@ public final class ShortTag extends Tag {
         super();
         this.value = value;
     }
-    
+
     /**
      * Creates the tag.
      *
@@ -46,12 +46,12 @@ public final class ShortTag extends Tag {
         super(name);
         this.value = value;
     }
-    
+
     @Override
     public Short getValue() {
         return this.value;
     }
-    
+
     @Override
     public String toString() {
         final String name = getName();

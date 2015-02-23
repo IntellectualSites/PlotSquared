@@ -31,7 +31,7 @@ public class Debug extends SubCommand {
     public Debug() {
         super(Command.DEBUG, "Show debug information", "debug [msg]", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
@@ -55,9 +55,9 @@ public class Debug extends SubCommand {
             for (final String world : PlotSquared.getPlotWorlds()) {
                 worlds.append(world).append(" ");
             }
-            
+
             // FIXME not sure if we actually need any of this debug info as we should just do a timings report which is more detailed anyway
-            
+
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
             information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));
@@ -78,11 +78,11 @@ public class Debug extends SubCommand {
         }
         return true;
     }
-    
+
     private String getSection(final String line, final String val) {
         return line.replaceAll("%val%", val) + "\n";
     }
-    
+
     private String getLine(final String line, final String var, final Object val) {
         return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }

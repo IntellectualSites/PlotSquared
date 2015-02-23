@@ -2,7 +2,6 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,11 +17,11 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onInteract(final PlayerInteractAtEntityEvent e) {
+    public void onInteract(final PlayerInteractAtEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         if (isPlotWorld(l)) {
-            final Player p = e.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
+            e.getPlayer();
+            final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
             if (!isInPlot(l)) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
@@ -36,7 +35,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                         e.setCancelled(true);
                     }
                 } else {
-                    UUID uuid = pp.getUUID();
+                    final UUID uuid = pp.getUUID();
                     if (!plot.isAdded(uuid)) {
                         if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
                             if (isPlotArea(l)) {

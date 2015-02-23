@@ -9,7 +9,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public static int ROAD_WIDTH_DEFAULT = 7;
     public int PLOT_WIDTH;
     public int ROAD_WIDTH;
-    
+
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
@@ -19,7 +19,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
         this.ROAD_WIDTH = config.getInt("road.width");
         this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
     }
-    
+
     public SquarePlotWorld(final String worldname) {
         super(worldname);
     }

@@ -31,10 +31,10 @@ public class Target extends SubCommand {
     public Target() {
         super(Command.TARGET, "Target a plot with your compass", "target <X;Z>", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location ploc = plr.getLocation();
+        final Location ploc = plr.getLocation();
         if (!PlotSquared.isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;

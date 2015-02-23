@@ -17,7 +17,7 @@ public class Permissions {
     public static String BREAK_OTHER = "plots.admin.break.other";
     public static String BREAK_ROAD = "plots.admin.break.road";
     public static String BREAK_UNOWNED = "plots.admin.break.unowned";
-    
+
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
         if ((player == null) || player.isOp() || player.hasPermission(ADMIN)) {
             return true;
@@ -35,7 +35,7 @@ public class Permissions {
         }
         return false;
     }
-    
+
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range, final int min) {
         if ((player == null) || player.isOp() || player.hasPermission(ADMIN)) {
             return Byte.MAX_VALUE;
