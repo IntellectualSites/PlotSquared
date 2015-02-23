@@ -106,7 +106,6 @@ public class Claim extends SubCommand {
         if (PlotSquared.economy != null && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
-                final Economy economy = PlotSquared.economy;
                 if (EconHandler.getBalance(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
@@ -124,6 +123,6 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        return !claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
+        return claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

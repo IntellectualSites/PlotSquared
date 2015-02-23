@@ -204,11 +204,7 @@ public class PlotSquared {
     }
     
     public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
-        if (callEvent) {
-            if (!IMP.callRemovePlot(world, id)) {
-                return false;
-            }
-        }
+        // FIXME plot remove event
         plots.get(world).remove(id);
         if (MainUtil.lastPlot.containsKey(world)) {
             final PlotId last = MainUtil.lastPlot.get(world);

@@ -66,7 +66,7 @@ public class Delete extends SubCommand {
         final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
         final long start = System.currentTimeMillis();
         if (result) {
-            boolean result2 = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+            boolean result2 = MainUtil.clearAsPlayer(plot, true, new Runnable() {
                 @Override
                 public void run() {
                     MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

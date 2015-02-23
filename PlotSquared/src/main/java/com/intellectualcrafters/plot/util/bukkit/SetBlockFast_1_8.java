@@ -83,6 +83,9 @@ public class SetBlockFast_1_8 extends SetBlockManager {
             case 130:
             case 146:
             case 27:
+            case 63:
+            case 68:
+            case 313:
             case 28:
             case 66:
             case 157:
