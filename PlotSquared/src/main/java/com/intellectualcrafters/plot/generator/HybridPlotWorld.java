@@ -87,7 +87,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             PlotSquared.log("&c - road schematics are disabled for this world.");
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
-        System.out.print("LOADED!");
     }
     
     public void setupSchematics() {

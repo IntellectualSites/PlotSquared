@@ -151,10 +151,10 @@ public class ChunkManager extends AChunkManager {
         final int relZ = newPos.getZ() - pos1.getZ();
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World world = Bukkit.getWorld(pos1.getWorld());
-        final Chunk c1 = world.getChunkAt(pos1.getX(), pos1.getZ());
-        final Chunk c2 = world.getChunkAt(pos2.getX(), pos2.getZ());
-        final Chunk c3 = world.getChunkAt((pos1.getX() + relX), (pos1.getZ() + relZ));
-        final Chunk c4 = world.getChunkAt((pos2.getX() + relX), (pos2.getZ() + relZ));
+        final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
+        final Chunk c2 = world.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
+        final Chunk c3 = world.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
+        final Chunk c4 = world.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
         final int ex = pos2.getX();
@@ -172,7 +172,7 @@ public class ChunkManager extends AChunkManager {
         // Load chunks
         for (int x = c1x; x <= c2x; x++) {
             for (int z = c1z; z <= c2z; z++) {
-                final Chunk chunk = world.getChunkAt(x << 4, z << 4);
+                final Chunk chunk = world.getChunkAt(x, z);
                 toGenerate.add(chunk);
             }
         }
@@ -210,24 +210,24 @@ public class ChunkManager extends AChunkManager {
                                     public void run() {
                                         final long start = System.currentTimeMillis();
                                         while ((System.currentTimeMillis() - start) < 25) {
-                                            final int x = mx.intValue();
+                                            final int xv = mx.intValue();
                                             for (int z = sz; z <= ez; z++) {
-                                                saveBlocks(world, maxY, x, z);
+                                                saveBlocks(world, maxY, xv, z);
                                                 for (int y = 1; y <= maxY; y++) {
-                                                    final Block block = world.getBlockAt(x, y, z);
+                                                    final Block block = world.getBlockAt(xv, y, z);
                                                     final int id = block.getTypeId();
                                                     final byte data = block.getData();
-                                                    SetBlockManager.setBlockManager.set(world, x + relX, y, z + relZ, id, data);
+                                                    SetBlockManager.setBlockManager.set(world, xv + relX, y, z + relZ, id, data);
                                                 }
                                             }
                                             mx.increment();
-                                            if (x == ex) { // done!
+                                            if (xv == ex) { // done!
                                                 restoreBlocks(world, relX, relZ);
                                                 SetBlockManager.setBlockManager.update(chunks);
                                                 for (final Chunk chunk : chunks) {
                                                     chunk.unload(true, true);
                                                 }
-                                                TaskManager.runTaskLater(whenDone, 1);
+                                                TaskManager.runTask(whenDone);
                                                 Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
                                                 tasks.remove(currentIndex);
                                                 return;
@@ -256,8 +256,8 @@ public class ChunkManager extends AChunkManager {
         index.increment();
         final Plugin plugin = BukkitMain.THIS;
         final World world = Bukkit.getWorld(pos1.getWorld());
-        final Chunk c1 = world.getChunkAt(pos1.getX(), pos1.getZ());
-        final Chunk c2 = world.getChunkAt(pos2.getX(), pos2.getZ());
+        final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
+        final Chunk c2 = world.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
         final int ex = pos2.getX();
@@ -266,6 +266,7 @@ public class ChunkManager extends AChunkManager {
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
+        
         final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
         for (int x = c1x; x <= c2x; x++) {
             for (int z = c1z; z <= c2z; z++) {
@@ -407,7 +408,7 @@ public class ChunkManager extends AChunkManager {
             try {
                 entity.spawn(world, x_offset, z_offset);
             } catch (final Exception e) {
-                System.out.print("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
+                PlotSquared.log("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
                 e.printStackTrace();
             }
         }
@@ -758,7 +759,7 @@ public class ChunkManager extends AChunkManager {
 
     @Override
     public boolean loadChunk(String world, ChunkLoc loc) {
-        return BukkitUtil.getWorld(world).getChunkAt(loc.x << 4, loc.z << 4).load(false);
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
     }
 
     @Override

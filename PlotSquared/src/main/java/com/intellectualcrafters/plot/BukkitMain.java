@@ -300,7 +300,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }
-        System.out.print("SET BLOCK MANAGER");
         return BlockManager.manager = new BukkitUtil();
     }
     

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -12,23 +13,23 @@ public class BukkitTaskManager extends TaskManager {
     }
     
     @Override
-    public int taskAsync(final Runnable r) {
-        return BukkitMain.THIS.getServer().getScheduler().runTaskAsynchronously(BukkitMain.THIS, r).getTaskId();
+    public void taskAsync(final Runnable r) {
+        BukkitMain.THIS.getServer().getScheduler().runTaskAsynchronously(BukkitMain.THIS, r).getTaskId();
     }
     
     @Override
-    public int task(final Runnable r) {
-        return BukkitMain.THIS.getServer().getScheduler().runTask(BukkitMain.THIS, r).getTaskId();
+    public void task(final Runnable r) {
+        BukkitMain.THIS.getServer().getScheduler().runTask(BukkitMain.THIS, r).getTaskId();
     }
     
     @Override
-    public int taskLater(final Runnable r, final int delay) {
-        return BukkitMain.THIS.getServer().getScheduler().runTaskLater(BukkitMain.THIS, r, delay).getTaskId();
+    public void taskLater(final Runnable r, final int delay) {
+        BukkitMain.THIS.getServer().getScheduler().runTaskLater(BukkitMain.THIS, r, delay).getTaskId();
     }
     
     @Override
-    public int taskLaterAsync(final Runnable r, final int delay) {
-        return BukkitMain.THIS.getServer().getScheduler().runTaskLaterAsynchronously(BukkitMain.THIS, r, delay).getTaskId();
+    public void taskLaterAsync(final Runnable r, final int delay) {
+        BukkitTask runnable = BukkitMain.THIS.getServer().getScheduler().runTaskLaterAsynchronously(BukkitMain.THIS, r, delay);
     }
 
     @Override

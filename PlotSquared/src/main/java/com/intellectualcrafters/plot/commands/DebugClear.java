@@ -92,7 +92,7 @@ public class DebugClear extends SubCommand {
         final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
         if (MainUtil.runners.containsKey(plot)) {
-            MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);

@@ -83,6 +83,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
+                                                    TaskManager.runTask(whenDone);
                                                 }
                                             }, 5);
                                         }

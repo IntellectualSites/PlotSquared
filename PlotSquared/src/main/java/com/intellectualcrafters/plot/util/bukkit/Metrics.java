@@ -49,6 +49,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.intellectualcrafters.plot.PlotSquared;
+
 public class Metrics {
     /**
      * The current revision number
@@ -523,7 +525,7 @@ public class Metrics {
         connection.addRequestProperty("Connection", "close");
         connection.setDoOutput(true);
         if (this.debug) {
-            System.out.println("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
+            PlotSquared.log("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
         // Write the data
         final OutputStream os = connection.getOutputStream();

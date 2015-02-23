@@ -721,7 +721,7 @@ public class PlotSquared {
             setupStyle();
         } catch (final Exception err) {
             Logger.add(LogLevel.DANGER, "Failed to save style.yml");
-            System.out.println("failed to save style.yml");
+            log("failed to save style.yml");
         }
         try {
             configFile = new File(IMP.getDirectory() + File.separator + "config" + File.separator + "settings.yml");
@@ -734,7 +734,7 @@ public class PlotSquared {
             setupConfig();
         } catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save settings.yml");
-            System.out.println("Failed to save settings.yml");
+            log("Failed to save settings.yml");
         }
         try {
             storageFile = new File(IMP.getDirectory() + File.separator + "config" + File.separator + "storage.yml");
@@ -747,7 +747,7 @@ public class PlotSquared {
             setupStorage();
         } catch (final Exception err_trans) {
             Logger.add(LogLevel.DANGER, "Failed to save storage.yml");
-            System.out.println("Failed to save storage.yml");
+            log("Failed to save storage.yml");
         }
         try {
             style.save(styleFile);

@@ -128,7 +128,7 @@ public class Trim extends SubCommand {
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (final Exception e) {
-                                System.out.print("INVALID MCA: " + name);
+                                PlotSquared.log("INVALID MCA: " + name);
                             }
                         } else {
                             final Path path = Paths.get(file.getPath());
@@ -145,7 +145,7 @@ public class Trim extends SubCommand {
                                         final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
                                     } catch (final Exception e) {
-                                        System.out.print("INVALID MCA: " + name);
+                                        PlotSquared.log("INVALID MCA: " + name);
                                     }
                                 }
                             } catch (final Exception e) {
@@ -180,7 +180,6 @@ public class Trim extends SubCommand {
                 while ((System.currentTimeMillis() - start) < 50) {
                     if (plots.size() == 0) {
                         empty.addAll(chunks);
-                        System.out.print("DONE!");
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
                         PlotSquared.TASK.cancelTask(Trim.TASK_ID);
