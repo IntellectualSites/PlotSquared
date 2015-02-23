@@ -776,19 +776,19 @@ public class BukkitChunkManager extends ChunkManager {
     public static void swapChunk(World world, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
         System.out.print("SWAPPING: " + pos1 +" and " + pos2);
         initMaps();
-        int relX = (pos2.getX() - pos1.getX()) << 4;
-        int relZ = (pos2.getZ() - pos1.getZ()) << 4;
+        int relX = (r2.minX - r1.minX);
+        int relZ = (r2.minZ - r1.minZ);
         
         saveEntitiesIn(pos1, r1, relX, relZ);
         saveEntitiesIn(pos2, r2, -relX, -relZ);
         
         int sx = pos1.getX() << 4;
-        int sz = pos1.getX() << 4;
+        int sz = pos1.getZ() << 4;
         
         int maxY = world.getMaxHeight();
         
-        for (int x = sx; x< sx + 15; x++) {
-            for (int z = sz; z< sz + 15; z++) {
+        for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
+            for (int z = Math.max(r1.minZ, sz); z <=  Math.min(r1.maxZ, sz + 15); z++) {
                 saveBlocks(world, maxY, sx, sz, relX, relZ);
                 for (int y = 0; y < maxY; y++) {
                     Block block1 = world.getBlockAt(x, y, z);
@@ -797,16 +797,18 @@ public class BukkitChunkManager extends ChunkManager {
                     int xx = x + relX;
                     int zz = z + relZ;
                     Block block2 = world.getBlockAt(xx, y, zz);
-                    int id2 = block1.getTypeId();
-                    byte data2 = block1.getData();
+                    int id2 = block2.getTypeId();
+                    byte data2 = block2.getData();
                     if (id1 == 0) {
                         if (id2 != 0) {
                             BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
+                            BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, 0, (byte) 0);
                         }
                     }
                     else if (id2 == 0) {
                         if (id1 != 0) {
                             BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
+                            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, 0, (byte) 0);
                         }
                     }
                     else if (id1 == id2) {
