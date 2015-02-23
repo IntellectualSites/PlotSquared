@@ -20,7 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -49,7 +52,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Set extends SubCommand {
-    public final static String[] values = new String[] { "biome", "wall", "wall_filling", "floor", "alias", "home", "flag" };
+    public final static String[] values = new String[] { "biome", "alias", "home", "flag" };
     public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
 
     public Set() {
@@ -73,7 +76,10 @@ public class Set extends SubCommand {
             return false;
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
+            PlotManager manager = PlotSquared.getPlotManager(loc.getWorld());
+            List<String> newValues = Arrays.asList(values);;
+            newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getPlotWorld(loc.getWorld()), plot.id)));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
             return false;
         }
         for (int i = 0; i < aliases.length; i++) {
@@ -258,7 +264,9 @@ public class Set extends SubCommand {
                 return true;
             }
         }
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(values));
+        List<String> newValues = Arrays.asList(values);;
+        newValues.addAll(Arrays.asList(manager.getPlotComponents(plotworld, plot.id)));
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
         return false;
     }
 
@@ -266,9 +274,9 @@ public class Set extends SubCommand {
         return MainUtil.colorise('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
     }
 
-    private String getArgumentList(final String[] strings) {
+    private String getArgumentList(final List<String> newValues) {
         final StringBuilder builder = new StringBuilder();
-        for (final String s : strings) {
+        for (final String s : newValues) {
             builder.append(getString(s));
         }
         return builder.toString().substring(1, builder.toString().length() - 1);

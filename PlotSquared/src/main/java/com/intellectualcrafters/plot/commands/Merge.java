@@ -72,7 +72,7 @@ public class Merge extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        final Location loc = plr.getLocation();
+        final Location loc = plr.getLocationFull();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);

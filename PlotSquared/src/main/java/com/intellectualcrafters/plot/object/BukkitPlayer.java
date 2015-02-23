@@ -102,4 +102,9 @@ public class BukkitPlayer implements PlotPlayer {
 
     }
 
+    @Override
+    public Location getLocationFull() {
+        return BukkitUtil.getLocationFull(this.player);
+    }
+
 }

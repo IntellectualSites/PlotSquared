@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface PlotPlayer {
     public Location getLocation();
     
+    public Location getLocationFull();
+    
     public UUID getUUID();
     
     public boolean hasPermission(final String perm);

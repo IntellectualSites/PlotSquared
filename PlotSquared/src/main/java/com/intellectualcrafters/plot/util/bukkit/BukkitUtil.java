@@ -159,6 +159,12 @@ public class BukkitUtil extends BlockManager {
         final String world = loc.getWorld().getName();
         return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
+    
+    public static Location getLocationFull(final Entity entity) {
+        final org.bukkit.Location loc = entity.getLocation();
+        final String world = loc.getWorld().getName();
+        return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
+    }
 
     @Override
     public void functionSetBlocks(final String worldname, final int[] x, final int[] y, final int[] z, final int[] id, final byte[] data) {
