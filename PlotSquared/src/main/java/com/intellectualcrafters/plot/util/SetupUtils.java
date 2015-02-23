@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
 
 public abstract class SetupUtils {
     

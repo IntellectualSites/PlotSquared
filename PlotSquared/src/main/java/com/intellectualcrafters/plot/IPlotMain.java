@@ -10,7 +10,6 @@ import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public interface IPlotMain {

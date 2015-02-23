@@ -3,11 +3,10 @@ package com.intellectualcrafters.plot.util;
 import java.util.List;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 
 public abstract class AbstractSetBlock {
-    public static AbstractSetBlock setBlockManager = null;
+    public static SetBlockManager setBlockManager = null;
     
-    public abstract boolean set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data);
-    
-    public abstract void update(String world, List<ChunkLoc> chunks);
+    public abstract void update(String worldname, List<ChunkLoc> chunkLocs);
 }

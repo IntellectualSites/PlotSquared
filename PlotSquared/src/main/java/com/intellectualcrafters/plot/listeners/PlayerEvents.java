@@ -85,7 +85,6 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.Setup;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;

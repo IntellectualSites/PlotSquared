@@ -43,6 +43,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.AbstractSetBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -294,6 +295,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 SetBlockManager.setBlockManager = new SetBlockSlow();
             }
         }
+        AbstractSetBlock.setBlockManager = SetBlockManager.setBlockManager; 
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;
