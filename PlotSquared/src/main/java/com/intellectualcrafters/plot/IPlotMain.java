@@ -6,9 +6,11 @@ import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public interface IPlotMain {
@@ -39,6 +41,8 @@ public interface IPlotMain {
     public Economy getEconomy();
     
     public BlockManager initBlockManager();
+    
+    public AChunkManager initChunkManager();
     
     public SetupUtils initSetupUtils();
     

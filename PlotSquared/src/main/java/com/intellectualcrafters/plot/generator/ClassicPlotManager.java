@@ -49,7 +49,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             return false;
         }
         final Location bottom = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid);
-        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid);
+        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
         int x, z;
         z = bottom.getZ();
         int length = top.getX() - bottom.getX();
@@ -59,7 +59,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final int[] zl = new int[size];
         final PlotBlock[] bl = new PlotBlock[size];
         int i = 0;
-        for (x = bottom.getX(); x < (top.getX() + 1); x++) {
+        for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                 xl[i] = x;
                 zl[i] = z;
@@ -68,8 +68,8 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 i++;
             }
         }
-        x = top.getX() + 1;
-        for (z = bottom.getZ(); z < (top.getZ() + 1); z++) {
+        x = top.getX();
+        for (z = bottom.getZ(); z <= (top.getZ() - 1); z++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                 xl[i] = x;
                 zl[i] = z;
@@ -78,8 +78,8 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 i++;
             }
         }
-        z = top.getZ() + 1;
-        for (x = top.getX() + 1; x > (bottom.getX() - 1); x--) {
+        z = top.getZ();
+        for (x = top.getX(); x >= (bottom.getX() + 1); x--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                 xl[i] = x;
                 zl[i] = z;
@@ -89,7 +89,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             }
         }
         x = bottom.getX();
-        for (z = top.getZ() + 1; z > (bottom.getZ() - 1); z--) {
+        for (z = top.getZ(); z >= (bottom.getZ() + 1); z--) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                 xl[i] = x;
                 zl[i] = z;
@@ -98,7 +98,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 i++;
             }
         }
-        BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, blocks);
+        BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);
         return true;
     }
     
@@ -108,7 +108,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             return false;
         }
         final Location bottom = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid);
-        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid);
+        final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1,0,1);
         int length = top.getX() - bottom.getX();
         int size = (length) * 4;
         final int[] xl = new int[size];
@@ -119,23 +119,23 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         z = bottom.getZ();
         int i = 0;
         int y = dpw.WALL_HEIGHT + 1;
-        for (x = bottom.getX(); x < (top.getX() + 1); x++) {
+        for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
             bl[i] = blocks[BlockManager.random(blocks.length)];
             i++;
         }
-        x = top.getX() + 1;
-        for (z = bottom.getZ(); z < (top.getZ() + 1); z++) {
+        x = top.getX();
+        for (z = bottom.getZ(); z <= (top.getZ() - 1); z++) {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
             bl[i] = blocks[BlockManager.random(blocks.length)];
             i++;
         }
-        z = top.getZ() + 1;
-        for (x = top.getX() + 1; x > (bottom.getX() - 1); x--) {
+        z = top.getZ();
+        for (x = top.getX(); x >= (bottom.getX() + 1); x--) {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
@@ -143,14 +143,14 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             i++;
         }
         x = bottom.getX();
-        for (z = top.getZ() + 1; z > (bottom.getZ() - 1); z--) {
+        for (z = top.getZ(); z >= (bottom.getZ() + 1); z--) {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
             bl[i] = blocks[BlockManager.random(blocks.length)];
             i++;
         }
-        BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, blocks);
+        BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);
         return true;
     }
     

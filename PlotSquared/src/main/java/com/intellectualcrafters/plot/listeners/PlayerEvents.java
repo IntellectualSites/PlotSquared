@@ -70,6 +70,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -90,6 +91,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -329,6 +331,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             }
         }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public static void onWorldChanged(final PlayerChangedWorldEvent event) {
+        PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
+        ((BukkitPlayer) player).hasPerm = null;
+        ((BukkitPlayer) player).noPerm = null;
     }
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

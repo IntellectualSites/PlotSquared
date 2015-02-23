@@ -42,6 +42,7 @@ import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
+import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -50,6 +51,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
 import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.Metrics;
 import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
@@ -298,6 +300,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }
+        System.out.print("SET BLOCK MANAGER");
         return BlockManager.manager = new BukkitUtil();
     }
     
@@ -375,5 +378,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             log(C.PREFIX.s()+" &6PlotSquared is using online UUIDs");
         }
         return UUIDHandler.uuidWrapper;
+    }
+
+    @Override
+    public AChunkManager initChunkManager() {
+        return new ChunkManager();
     }
 }

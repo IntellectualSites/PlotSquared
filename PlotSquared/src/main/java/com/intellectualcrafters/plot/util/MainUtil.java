@@ -845,12 +845,14 @@ public class MainUtil {
         return new String(b);
     }
     
-    public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
+    public static boolean sendMessage(final PlotPlayer plr, String msg, final boolean prefix) {
+        msg = colorise('&', msg);
+        String prefixStr = colorise('&', C.PREFIX.s());
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotSquared.log(C.PREFIX.s() + msg);
+                PlotSquared.log(prefixStr + msg);
             } else {
-                sendMessageWrapped(plr, colorise('&', C.PREFIX.s() + msg));
+                sendMessageWrapped(plr, prefixStr + msg);
             }
         }
         return true;
@@ -930,17 +932,17 @@ public class MainUtil {
      * @param msg Was used to wrap the chat client length (Packets out--)
      */
     public static void sendMessageWrapped(final PlotPlayer plr, String msg) {
-        if (msg.length() > 65) {
-            final String[] ss = wordWrap(msg, 65);
-            final StringBuilder b = new StringBuilder();
-            for (final String p : ss) {
-                b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
-            }
-            msg = b.toString();
-        }
-        if (msg.endsWith("\n")) {
-            msg = msg.substring(0, msg.length() - 2);
-        }
+//        if (msg.length() > 65) {
+//            final String[] ss = wordWrap(msg, 65);
+//            final StringBuilder b = new StringBuilder();
+//            for (final String p : ss) {
+//                b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
+//            }
+//            msg = b.toString();
+//        }
+//        if (msg.endsWith("\n")) {
+//            msg = msg.substring(0, msg.length() - 2);
+//        }
         plr.sendMessage(msg);
     }
     
@@ -963,7 +965,7 @@ public class MainUtil {
                 }
             }
             if (plr == null) {
-                PlotSquared.log(msg);
+                PlotSquared.log(colorise('&', msg));
             } else {
                 sendMessage(plr, msg, c.usePrefix());
             }

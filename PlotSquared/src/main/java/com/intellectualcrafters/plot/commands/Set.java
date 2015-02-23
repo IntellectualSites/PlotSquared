@@ -219,16 +219,16 @@ public class Set extends SubCommand {
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
-                if (args.length < 2) {
-                    MainUtil.sendMessage(plr, C.NEED_BLOCK);
-                    return true;
-                }
                 PlotBlock[] blocks;
                 try {
-                    blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseObject(args[2]);
+                    blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseString(args[1]);
                 } catch (final Exception e) {
                     try {
-                        blocks = new PlotBlock[] { new PlotBlock((short) BlockManager.manager.getBlockIdFromString(args[2]), (byte) 0) };
+                        if (args.length < 2) {
+                            MainUtil.sendMessage(plr, C.NEED_BLOCK);
+                            return true;
+                        }
+                        blocks = new PlotBlock[] { new PlotBlock((short) BlockManager.manager.getBlockIdFromString(args[1]), (byte) 0) };
                     } catch (final Exception e2) {
                         MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
                         return false;

@@ -49,6 +49,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
@@ -445,6 +446,8 @@ public class PlotSquared {
         SetupUtils.manager = IMP.initSetupUtils();
         // Set block
         BlockManager.manager = IMP.initBlockManager();
+        // Set chunk
+        AChunkManager.manager = IMP.initChunkManager();
         // PlotMe
         TaskManager.runTaskLater(new Runnable() {
             @Override
