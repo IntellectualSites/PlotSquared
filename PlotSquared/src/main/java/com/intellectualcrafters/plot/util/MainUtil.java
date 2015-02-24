@@ -328,10 +328,12 @@ public class MainUtil {
         }
         final PlotManager manager = PlotSquared.getPlotManager(p.world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(p.world);
+        if (plotworld.ALLOW_SIGNS) {
         final Location loc = manager.getSignLoc(plotworld, p);
-        final String id = p.id.x + ";" + p.id.y;
-        final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", name) };
-        BlockManager.setSign(p.world, loc.getX(), loc.getY(), loc.getZ(), lines);
+            final String id = p.id.x + ";" + p.id.y;
+            final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", name) };
+            BlockManager.setSign(p.world, loc.getX(), loc.getY(), loc.getZ(), lines);
+        }
     }
 
     public static String getStringSized(final int max, final String string) {

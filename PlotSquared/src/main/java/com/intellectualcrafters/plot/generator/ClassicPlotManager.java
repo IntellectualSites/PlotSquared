@@ -318,7 +318,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
      * Remove sign for a plot
      */
     @Override
-    public com.intellectualcrafters.plot.object.Location getSignLoc(final PlotWorld plotworld, final Plot plot) {
+    public Location getSignLoc(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final Location bot = MainUtil.getPlotBottomLoc(plotworld.worldname, plot.id);
         return new com.intellectualcrafters.plot.object.Location(plotworld.worldname, bot.getX(), dpw.ROAD_HEIGHT + 1, bot.getZ() - 1);

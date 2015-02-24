@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
  */
 public abstract class PlotWorld {
     public final static boolean AUTO_MERGE_DEFAULT = false;
+    public final static boolean ALLOW_SIGNS_DEFAULT = true;
     public final static boolean MOB_SPAWNING_DEFAULT = false;
     public final static String PLOT_BIOME_DEFAULT = "FOREST";
     public final static boolean PLOT_CHAT_DEFAULT = false;
@@ -65,6 +66,7 @@ public abstract class PlotWorld {
     }
     public final String worldname;
     public boolean AUTO_MERGE;
+    public boolean ALLOW_SIGNS;
     public boolean MOB_SPAWNING;
     public String PLOT_BIOME;
     public boolean PLOT_CHAT;
@@ -102,6 +104,7 @@ public abstract class PlotWorld {
         }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        this.ALLOW_SIGNS = config.getBoolean("plot.create_signs");
         this.PLOT_BIOME = (String) Configuration.BIOME.parseString(config.getString("plot.biome"));
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
         this.SCHEMATIC_FILE = config.getString("schematic.file");
@@ -143,6 +146,7 @@ public abstract class PlotWorld {
         final HashMap<String, Object> options = new HashMap<>();
         options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
         options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
+        options.put("plot.create_signs", PlotWorld.ALLOW_SIGNS_DEFAULT);
         options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
         options.put("schematic.on_claim", PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("schematic.file", PlotWorld.SCHEMATIC_FILE_DEFAULT);
