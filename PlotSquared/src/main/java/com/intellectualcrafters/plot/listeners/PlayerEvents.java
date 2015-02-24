@@ -117,21 +117,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Empire92
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onWorldInit(final WorldInitEvent event) {
-        final World world = event.getWorld();
-        final ChunkGenerator gen = world.getGenerator();
-        if (gen instanceof PlotGenerator) {
-            PlotSquared.loadWorld(world.getName(), (PlotGenerator) gen);
-        } else {
-            PlotSquared.loadWorld(world.getName(), null);
-        }
-    }
-
-    @EventHandler
-    public void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.cacheAll(event.getWorld().getName());
-    }
 
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {

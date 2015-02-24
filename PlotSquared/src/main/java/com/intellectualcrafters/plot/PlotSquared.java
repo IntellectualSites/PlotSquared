@@ -219,11 +219,14 @@ public class PlotSquared {
     }
 
     public static void loadWorld(final String world, final PlotGenerator generator) {
-        if (getPlotWorld(world) != null) {
+        PlotWorld plotWorld = getPlotWorld(world); 
+        if (plotWorld != null) {
+            if (generator != null) {
+                generator.init(plotWorld);
+            }
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-        final PlotWorld plotWorld;
         final PlotGenerator plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
@@ -249,6 +252,7 @@ public class PlotSquared {
             }
             // Now add it
             addPlotWorld(world, plotWorld, plotManager);
+            generator.init(plotWorld);
             MainUtil.setupBorder(world);
         } else {
             if (!worlds.contains(world)) {
@@ -259,7 +263,7 @@ public class PlotSquared {
                 try {
                     final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
                     if (gen_string == null) {
-                        new HybridGen(world);
+                        new HybridGen();
                     } else {
                         IMP.getGenerator(world, gen_string);
                     }
@@ -301,6 +305,7 @@ public class PlotSquared {
                 } else if (plotWorld.TYPE == 1) {
                     new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                 }
+                gen_class.init(plotWorld);
             }
         }
     }

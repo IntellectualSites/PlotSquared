@@ -293,7 +293,7 @@ public class PlotMeConverter {
                                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + actualWorldName + " plugin:PlotSquared");
                                     } else {
                                         Bukkit.getServer().unloadWorld(world, true);
-                                        final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen(actualWorldName)).createWorld();
+                                        final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen()).createWorld();
                                         myworld.save();
                                     }
                                 }

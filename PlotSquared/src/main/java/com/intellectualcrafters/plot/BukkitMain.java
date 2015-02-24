@@ -25,7 +25,6 @@ import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.PlotMeConverter;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
@@ -36,7 +35,6 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -203,7 +201,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (!PlotSquared.setupPlotWorld(world, id)) {
             return null;
         }
-        return new HybridGen(world);
+        return new HybridGen();
     }
 
     @Override
@@ -303,7 +301,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if ((gen_plugin != null) && gen_plugin.isEnabled()) {
             gen_plugin.getDefaultWorldGenerator(world, "");
         } else {
-            new HybridGen(world);
+            new HybridGen();
         }
     }
 

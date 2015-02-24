@@ -31,7 +31,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -59,22 +58,22 @@ public class HybridGen extends PlotGenerator {
     /**
      * Some generator specific variables (implementation dependent)
      */
-    final int plotsize;
-    final int pathsize;
-    final short wall;
-    final short wallfilling;
-    final short roadblock;
-    final int size;
-    final Biome biome;
-    final int roadheight;
-    final int wallheight;
-    final int plotheight;
-    final short[] plotfloors;
-    final short[] filling;
-    final short pathWidthLower;
-    final short pathWidthUpper;
+    int plotsize;
+    int pathsize;
+    short wall;
+    short wallfilling;
+    short roadblock;
+    int size;
+    Biome biome;
+    int roadheight;
+    int wallheight;
+    int plotheight;
+    short[] plotfloors;
+    short[] filling;
+    short pathWidthLower;
+    short pathWidthUpper;
     boolean doState = false;
-    int maxY;
+    int maxY = 0;
     /**
      * result object is returned for each generated chunk, do stuff to it
      */
@@ -87,11 +86,13 @@ public class HybridGen extends PlotGenerator {
     /**
      * Initialize variables, and create plotworld object used in calculations
      */
-    public HybridGen(final String world) {
-        super(world);
+    public void init(PlotWorld plotworld) {
         if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
+            this.plotworld = (HybridPlotWorld) plotworld;
         }
+        
+        System.out.print("INITIALIZING ===================================");
+        
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;
         this.roadblock = this.plotworld.ROAD_BLOCK.id;
@@ -120,10 +121,12 @@ public class HybridGen extends PlotGenerator {
         this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
         this.biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         try {
-            this.maxY = Bukkit.getWorld(world).getMaxHeight();
-        } catch (final NullPointerException e) {
+            this.maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
+        } catch (final NullPointerException e) {}
+        if (this.maxY == 0) {
             this.maxY = 256;
         }
+        
     }
 
     /**
@@ -197,8 +200,7 @@ public class HybridGen extends PlotGenerator {
     /**
      * Return the block populator
      */
-    @Override
-    public List<BlockPopulator> getDefaultPopulators(final World world) {
+    public List<BlockPopulator> getPopulators(final World world) {
         // disabling spawning for this world
         if (!this.plotworld.MOB_SPAWNING) {
             world.setSpawnFlags(false, false);
@@ -206,6 +208,9 @@ public class HybridGen extends PlotGenerator {
             world.setAnimalSpawnLimit(0);
             world.setMonsterSpawnLimit(0);
             world.setWaterAnimalSpawnLimit(0);
+        }
+        else {
+            world.setSpawnFlags(true, true);
         }
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
@@ -233,6 +238,7 @@ public class HybridGen extends PlotGenerator {
             h = (prime * h) + cz;
             this.state = h;
         }
+        System.out.print(this.maxY);
         this.result = new short[this.maxY / 16][];
         if (this.plotworld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
