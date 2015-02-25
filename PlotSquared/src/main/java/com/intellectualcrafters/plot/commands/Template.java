@@ -24,9 +24,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,6 +39,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -53,12 +58,6 @@ public class Template extends SubCommand {
             return false;
         }
         final String world = args[1];
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-        if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
-            return false;
-        }
-        PlotManager manager = PlotSquared.getPlotManager(world);
         switch (args[0].toLowerCase()) {
             case "import": {
                 // TODO import template
@@ -66,6 +65,12 @@ public class Template extends SubCommand {
                 return true;
             }
             case "export": {
+                final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+                if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
+                    MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+                    return false;
+                }
+                PlotManager manager = PlotSquared.getPlotManager(world);
                 manager.export(plotworld);
                 MainUtil.sendMessage(plr, "Done!");
             }
@@ -81,42 +86,19 @@ public class Template extends SubCommand {
         plotworld.saveConfiguration(section);
         return config.saveToString().getBytes();
     }
-
-    public static boolean zip(final String world, final byte[] bytes, String location, File output) {
-        try {
-            output.mkdirs();
-            FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
-            ZipOutputStream zos = new ZipOutputStream(fos);
-            ZipEntry ze = new ZipEntry(location);
-            zos.putNextEntry(ze);
-            zos.write(bytes);
-            zos.closeEntry();
-            zos.close();
-            return true;
-        } catch (final IOException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
     
-    public static boolean zip(final String world, final File file, File output) {
-        if (!file.exists()) {
-            System.out.print("NOT EXIST: " + file);
-            return false;
-        }
-        byte[] buffer = new byte[1024];
+    public static boolean zipAll(final String world, Set<FileBytes> files) {
         try {
+            File output = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
             output.mkdirs();
             FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
             ZipOutputStream zos = new ZipOutputStream(fos);
-            ZipEntry ze= new ZipEntry(file.getPath());
-            zos.putNextEntry(ze);
-            FileInputStream in = new FileInputStream(file.getPath());
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                zos.write(buffer, 0, len);
+            
+            for (FileBytes file : files) {
+                ZipEntry ze = new ZipEntry(file.path);
+                zos.putNextEntry(ze);
+                zos.write(file.data);
             }
-            in.close();
             zos.closeEntry();
             zos.close();
             return true;
