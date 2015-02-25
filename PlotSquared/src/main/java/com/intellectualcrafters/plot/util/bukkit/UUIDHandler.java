@@ -35,9 +35,7 @@ public class UUIDHandler {
         if ((uuid == null) || (name == null)) {
             return;
         }
-        if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
-            uuidMap.put(name, uuid);
-        }
+        uuidMap.put(name, uuid);
     }
 
     /**
