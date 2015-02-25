@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
 /**
  * @author Citymonstret
@@ -61,16 +62,16 @@ public class Claim extends SubCommand {
             final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
             final Plot plot2 = PlotSquared.getPlots(world).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
-                SchematicHandler.Schematic sch;
+                Schematic sch;
                 if (schematic.equals("")) {
-                    sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
+                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                 } else {
-                    sch = SchematicHandler.getSchematic(schematic);
+                    sch = SchematicHandler.manager.getSchematic(schematic);
                     if (sch == null) {
-                        sch = SchematicHandler.getSchematic(plotworld.SCHEMATIC_FILE);
+                        sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.paste(player.getLocation(), sch, plot2, 0, 0);
+                SchematicHandler.manager.paste(player.getLocation(), sch, plot2, 0, 0);
             }
             PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
             MainUtil.update(loc);

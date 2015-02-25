@@ -95,9 +95,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         final String schem1Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad";
         final String schem2Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection";
         final String schem3Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot";
-        final Schematic schem1 = SchematicHandler.getSchematic(schem1Str);
-        final Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
-        final Schematic schem3 = SchematicHandler.getSchematic(schem3Str);
+        final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1Str);
+        final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2Str);
+        final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3Str);
         final int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
         int oddshift = 0;
         if ((this.ROAD_WIDTH % 2) != 0) {

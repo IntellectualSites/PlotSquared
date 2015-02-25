@@ -1,23 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PlotSquared - A plot manager and world generator for the Bukkit API                             /
-// Copyright (c) 2014 IntellectualSites/IntellectualCrafters                                       /
-//                                                                                                 /
-// This program is free software; you can redistribute it and/or modify                            /
-// it under the terms of the GNU General Public License as published by                            /
-// the Free Software Foundation; either version 3 of the License, or                               /
-// (at your option) any later version.                                                             /
-//                                                                                                 /
-// This program is distributed in the hope that it will be useful,                                 /
-// but WITHOUT ANY WARRANTY; without even the implied warranty of                                  /
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                   /
-// GNU General Public License for more details.                                                    /
-//                                                                                                 /
-// You should have received a copy of the GNU General Public License                               /
-// along with this program; if not, write to the Free Software Foundation,                         /
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA                               /
-//                                                                                                 /
-// You can contact us via: support@intellectualsites.com                                           /
-////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
@@ -26,37 +6,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.bukkit.Chunk;
-
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.NBTInputStream;
 import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
-/**
- * Schematic Handler
- *
- * @author Citymonstret
- * @author Empire92
- */
-public class SchematicHandler {
+public abstract class SchematicHandler {
+    public static SchematicHandler manager = new BukkitSchematicHandler();
+    
     /**
      * Paste a schematic
      *
@@ -66,7 +34,7 @@ public class SchematicHandler {
      *
      * @return true if succeeded
      */
-    public static boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
+    public boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
             PlotSquared.log("Schematic == null :|");
             return false;
@@ -109,7 +77,7 @@ public class SchematicHandler {
         return true;
     }
 
-    public static Schematic getSchematic(final CompoundTag tag, final File file) {
+    public Schematic getSchematic(final CompoundTag tag, final File file) {
         final Map<String, Tag> tagMap = tag.getValue();
         byte[] addId = new byte[0];
         if (tagMap.containsKey("AddBlocks")) {
@@ -140,7 +108,7 @@ public class SchematicHandler {
         }
         return new Schematic(collection, dimension, file);
     }
-
+    
     /**
      * Get a schematic
      *
@@ -148,7 +116,7 @@ public class SchematicHandler {
      *
      * @return schematic if found, else null
      */
-    public static Schematic getSchematic(final String name) {
+    public Schematic getSchematic(final String name) {
         {
             final File parent = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
@@ -173,7 +141,7 @@ public class SchematicHandler {
             return null;
         }
     }
-
+    
     /**
      * Saves a schematic to a file path
      *
@@ -182,7 +150,7 @@ public class SchematicHandler {
      *
      * @return true if succeeded
      */
-    public static boolean save(final CompoundTag tag, final String path) {
+    public boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
             PlotSquared.log("&cCannot save empty tag");
             return false;
@@ -201,7 +169,7 @@ public class SchematicHandler {
         }
         return true;
     }
-
+    
     /**
      * Gets the schematic of a plot
      *
@@ -210,7 +178,7 @@ public class SchematicHandler {
      *
      * @return tag
      */
-    public static CompoundTag getCompoundTag(final String world, final PlotId id) {
+    public CompoundTag getCompoundTag(final String world, final PlotId id) {
         if (!PlotSquared.getPlots(world).containsKey(id)) {
             return null;
         }
@@ -218,80 +186,10 @@ public class SchematicHandler {
         final Location pos2 = MainUtil.getPlotTopLoc(world, id);
         return getCompoundTag(world, pos1, pos2);
     }
-
-    @SuppressWarnings("deprecation")
-    public static CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2) {
-        // loading chunks
-        int i = 0;
-        int j = 0;
-        try {
-            for (i = (pos1.getX() / 16) * 16; i < (16 + ((pos2.getX() / 16) * 16)); i += 16) {
-                for (j = (pos1.getZ() / 16) * 16; j < (16 + ((pos2.getZ() / 16) * 16)); j += 16) {
-                    final Chunk chunk = BukkitUtil.getChunkAt(world, i, j);
-                    final boolean result = chunk.load(false);
-                    if (!result) {
-                        // Plot is not even generated
-                        return null;
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            PlotSquared.log("&7 - Cannot save: corrupt chunk at " + (i / 16) + ", " + (j / 16));
-            return null;
-        }
-        final int width = (pos2.getX() - pos1.getX()) + 1;
-        final int height = (pos2.getY() - pos1.getY()) + 1;
-        final int length = (pos2.getZ() - pos1.getZ()) + 1;
-        final HashMap<String, Tag> schematic = new HashMap<>();
-        schematic.put("Width", new ShortTag("Width", (short) width));
-        schematic.put("Length", new ShortTag("Length", (short) length));
-        schematic.put("Height", new ShortTag("Height", (short) height));
-        schematic.put("Materials", new StringTag("Materials", "Alpha"));
-        schematic.put("WEOriginX", new IntTag("WEOriginX", 0));
-        schematic.put("WEOriginY", new IntTag("WEOriginY", 0));
-        schematic.put("WEOriginZ", new IntTag("WEOriginZ", 0));
-        schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
-        schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
-        schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
-        final byte[] blocks = new byte[width * height * length];
-        byte[] addBlocks = null;
-        final byte[] blockData = new byte[width * height * length];
-        final int sx = pos1.getX();
-        pos2.getX();
-        final int sz = pos1.getZ();
-        pos2.getZ();
-        final int sy = pos1.getY();
-        pos2.getY();
-        for (int x = 0; x < width; x++) {
-            for (int z = 0; z < length; z++) {
-                for (int y = 0; y < height; y++) {
-                    final int index = (y * width * length) + (z * width) + x;
-                    final PlotBlock block = BukkitUtil.getBlock(new Location(world, sx + x, sy + y, sz + z));
-                    if (block.id > 255) {
-                        if (addBlocks == null) {
-                            addBlocks = new byte[(blocks.length >> 1) + 1];
-                        }
-                        addBlocks[index >> 1] = (byte) (((index & 1) == 0) ? (addBlocks[index >> 1] & 0xF0) | ((block.id >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((block.id >> 8) & 0xF) << 4));
-                    }
-                    blocks[index] = (byte) block.id;
-                    blockData[index] = block.data;
-                    // We need worldedit to save tileentity data or entities
-                    // - it uses NMS and CB internal code, which changes every
-                    // update
-                }
-            }
-        }
-        schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
-        schematic.put("Data", new ByteArrayTag("Data", blockData));
-        schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
-        schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
-        if (addBlocks != null) {
-            schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
-        }
-        return new CompoundTag("Schematic", schematic);
-    }
-
-    public static boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
+    
+    public abstract CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2);
+    
+    public boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
         int length = 0;
         for (int i = i1; i <= i2; i++) {
             if (blocks[i].block == 0) {
@@ -334,7 +232,7 @@ public class SchematicHandler {
      *
      * @author Citymonstret
      */
-    public static class Schematic {
+    public class Schematic {
         private final DataCollection[] blockCollection;
         private final Dimension schematicDimension;
         private final File file;
@@ -363,7 +261,7 @@ public class SchematicHandler {
      *
      * @author Citymonstret
      */
-    public static class Dimension {
+    public class Dimension {
         private final int x;
         private final int y;
         private final int z;
@@ -392,7 +290,7 @@ public class SchematicHandler {
      *
      * @author Citymonstret
      */
-    public static class DataCollection {
+    public class DataCollection {
         private final short block;
         private final byte data;
 
