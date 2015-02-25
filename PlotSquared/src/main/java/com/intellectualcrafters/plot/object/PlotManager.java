@@ -20,7 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.commands.Template;
 
 public abstract class PlotManager {
     /*
@@ -81,4 +85,10 @@ public abstract class PlotManager {
     public abstract boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
 
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
+    
+    public void export(PlotWorld plotworld) {
+        byte[] bytes = Template.getBytes(plotworld);
+        Template.zip(plotworld.worldname, bytes, "settings.yml", new File(PlotSquared.IMP.getDirectory() + File.separator + "templates"));
+    }
+    
 }

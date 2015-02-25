@@ -90,9 +90,6 @@ public class HybridGen extends PlotGenerator {
         if (this.plotworld == null) {
             this.plotworld = (HybridPlotWorld) plotworld;
         }
-        
-        System.out.print("INITIALIZING ===================================");
-        
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;
         this.roadblock = this.plotworld.ROAD_BLOCK.id;
@@ -238,7 +235,6 @@ public class HybridGen extends PlotGenerator {
             h = (prime * h) + cz;
             this.state = h;
         }
-        System.out.print(this.maxY);
         this.result = new short[this.maxY / 16][];
         if (this.plotworld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {

@@ -20,13 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -34,7 +43,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Template extends SubCommand {
     public Template() {
-        super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, true);
+        super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, false);
     }
 
     @Override
@@ -49,6 +58,7 @@ public class Template extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
+        PlotManager manager = PlotSquared.getPlotManager(world);
         switch (args[0].toLowerCase()) {
             case "import": {
                 // TODO import template
@@ -56,28 +66,63 @@ public class Template extends SubCommand {
                 return true;
             }
             case "export": {
-                MainUtil.sendMessage(plr, "TODO");
+                manager.export(plotworld);
+                MainUtil.sendMessage(plr, "Done!");
             }
         }
         // TODO allow world settings (including schematics to be packed into a single file)
         // TODO allow world created based on these packaged files
         return true;
     }
+    
+    public static byte[] getBytes(PlotWorld plotworld) {
+        YamlConfiguration config = new YamlConfiguration();
+        ConfigurationSection section = config.getConfigurationSection("");
+        plotworld.saveConfiguration(section);
+        return config.saveToString().getBytes();
+    }
 
-    public void gzipIt(final String output, final String input) {
-        final byte[] buffer = new byte[1024];
+    public static boolean zip(final String world, final byte[] bytes, String location, File output) {
         try {
-            final GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(output));
-            final FileInputStream in = new FileInputStream(input);
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                gzos.write(buffer, 0, len);
-            }
-            in.close();
-            gzos.finish();
-            gzos.close();
+            output.mkdirs();
+            FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            ZipEntry ze = new ZipEntry(location);
+            zos.putNextEntry(ze);
+            zos.write(bytes);
+            zos.closeEntry();
+            zos.close();
+            return true;
         } catch (final IOException ex) {
             ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean zip(final String world, final File file, File output) {
+        if (!file.exists()) {
+            System.out.print("NOT EXIST: " + file);
+            return false;
+        }
+        byte[] buffer = new byte[1024];
+        try {
+            output.mkdirs();
+            FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            ZipEntry ze= new ZipEntry(file.getPath());
+            zos.putNextEntry(ze);
+            FileInputStream in = new FileInputStream(file.getPath());
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                zos.write(buffer, 0, len);
+            }
+            in.close();
+            zos.closeEntry();
+            zos.close();
+            return true;
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 }

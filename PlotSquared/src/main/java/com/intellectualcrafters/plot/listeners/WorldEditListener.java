@@ -192,6 +192,9 @@ public class WorldEditListener implements Listener {
             return;
         }
         final Location f = e.getFrom();
+        if ((f.getX() == t.getX()) && (f.getZ() == t.getZ())) {
+            return;
+        }
         final Player p = e.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(p);
         if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {

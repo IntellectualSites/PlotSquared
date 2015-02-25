@@ -345,8 +345,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
-        ((BukkitPlayer) player).hasPerm = null;
-        ((BukkitPlayer) player).noPerm = null;
+        ((BukkitPlayer) player).hasPerm = new HashSet<>();
+        ((BukkitPlayer) player).noPerm = new HashSet<>();
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

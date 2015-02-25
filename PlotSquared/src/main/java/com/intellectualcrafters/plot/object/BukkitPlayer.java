@@ -13,8 +13,8 @@ public class BukkitPlayer implements PlotPlayer {
     public final Player player;
     UUID uuid;
     String name;
-    public HashSet<String> hasPerm;
-    public HashSet<String> noPerm;
+    public HashSet<String> hasPerm = new HashSet<>();
+    public HashSet<String> noPerm = new HashSet<>();
     private int op = 0;
 
     /**
