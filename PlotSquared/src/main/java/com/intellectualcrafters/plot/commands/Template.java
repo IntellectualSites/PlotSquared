@@ -24,13 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Set;
-import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -38,46 +34,128 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Template extends SubCommand {
     public Template() {
         super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, false);
     }
-
+    
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length != 2) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world>");
+        if (args.length != 2 && args.length != 3) {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
             return false;
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {
             case "import": {
-                // TODO import template
-                MainUtil.sendMessage(plr, "TODO");
+                if (args.length != 3) {
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    return false;
+                }
+                if (PlotSquared.isPlotWorld(world)) {
+                    MainUtil.sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
+                    return false;
+                }
+                boolean result = extractAllFiles(world, args[2]);
+                if (!result) {
+                    MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] +".template");
+                    return false;
+                }
+                File worldFile = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
+                YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
+                PlotSquared.config.set("worlds." + world, worldConfig.get(""));
+                try {
+                    PlotSquared.config.save(PlotSquared.configFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String generator = worldConfig.getString("generator.plugin");
+                if (generator == null) {
+                    generator = "PlotSquared";
+                }
+                int type = worldConfig.getInt("generator.type");
+                int terrain = worldConfig.getInt("generator.terrain");
+                SetupObject setup = new SetupObject();
+                setup.generator = generator;
+                setup.type = type;
+                setup.terrain = terrain;
+                setup.step = new ConfigurationNode[0];
+                setup.world = world;
+                SetupUtils.manager.setupWorld(setup);
+                MainUtil.sendMessage(plr, "Done!");
+                if (plr != null) {
+                    plr.teleport(BlockManager.manager.getSpawn(world));
+                }
                 return true;
             }
             case "export": {
+                if (args.length != 2) {
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    return false;
+                }
                 final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
                 if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
                     return false;
                 }
-                PlotManager manager = PlotSquared.getPlotManager(world);
-                manager.export(plotworld);
-                MainUtil.sendMessage(plr, "Done!");
+                final PlotManager manager = PlotSquared.getPlotManager(world);
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        manager.exportTemplate(plotworld);
+                        MainUtil.sendMessage(plr, "Done!");
+                    }
+                });
+                return true;
             }
         }
-        // TODO allow world settings (including schematics to be packed into a single file)
-        // TODO allow world created based on these packaged files
         return true;
+    }
+    
+    public static boolean extractAllFiles(String world, String template) {
+        byte[] buffer = new byte[2048];
+        try {
+            File folder = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
+            if (!folder.exists()) {
+                return false;
+            }
+            File input = new File(folder + File.separator + template +".template");
+            File output = PlotSquared.IMP.getDirectory();
+            if (!output.exists()) {
+                output.mkdirs();
+            }
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String name = ze.getName();
+                File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
     public static byte[] getBytes(PlotWorld plotworld) {

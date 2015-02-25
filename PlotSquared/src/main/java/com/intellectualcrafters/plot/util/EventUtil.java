@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.UUID;
 
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;

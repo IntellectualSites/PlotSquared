@@ -40,22 +40,23 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 public class HybridPlotManager extends ClassicPlotManager {
 
     @Override
-    public void export(PlotWorld plotworld) {
-        HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("settings.yml", Template.getBytes(plotworld))));
+    public void exportTemplate(PlotWorld plotworld) {
+        HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         String psRoot = PlotSquared.IMP.getDirectory() + File.separator;
         String dir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
+        String newDir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {
         File sideroad = new File(psRoot + dir + "sideroad.schematic");
         if (sideroad.exists()) {
-            files.add(new FileBytes(dir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
+            files.add(new FileBytes(newDir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
         }
         File intersection = new File(psRoot + dir + "intersection.schematic");
         if (sideroad.exists()) {
-            files.add(new FileBytes(dir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
+            files.add(new FileBytes(newDir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
         }
         File plot = new File(psRoot + dir + "plot.schematic");
         if (sideroad.exists()) {
-            files.add(new FileBytes(dir + "plot.schematic", Files.readAllBytes(plot.toPath())));
+            files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
         }
         }
         catch (Exception e) {
