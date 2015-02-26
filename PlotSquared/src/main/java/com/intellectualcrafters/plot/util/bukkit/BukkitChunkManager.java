@@ -49,6 +49,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -616,7 +617,7 @@ public class BukkitChunkManager extends ChunkManager {
     public static void saveBlocks(final World world, final int maxY, int x, int z, int offset_x, int offset_z) {
         final HashMap<Short, Short> ids = new HashMap<>();
         final HashMap<Short, Byte> datas = new HashMap<>();
-        for (short y = 1; y < maxY; y++) {
+        for (short y = 0; y < maxY; y++) {
             final Block block = world.getBlockAt(x, y, z);
             final short id = (short) block.getTypeId();
             if (id != 0) {
@@ -741,7 +742,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
-        final ChunkLoc loc = new ChunkLoc(x, z);
+        final PlotLoc loc = new PlotLoc((short) x, (short) z);
         GENERATE_BLOCKS.put(loc, ids);
         GENERATE_DATA.put(loc, datas);
     }

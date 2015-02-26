@@ -7,13 +7,14 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public abstract class ChunkManager {
     public static ChunkManager manager = null;
     public static RegionWrapper CURRENT_PLOT_CLEAR = null;
-    public static HashMap<ChunkLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
-    public static HashMap<ChunkLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
+    public static HashMap<PlotLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
+    public static HashMap<PlotLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
 
     public static ChunkLoc getChunkChunk(final Location loc) {
         final int x = loc.getX() >> 9;
