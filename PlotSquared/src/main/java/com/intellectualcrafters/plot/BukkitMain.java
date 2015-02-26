@@ -35,6 +35,8 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
+import com.intellectualcrafters.plot.listeners.WorldEvents;
+import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -99,7 +101,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
-        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new WorldEvents(), this);
     }
 
     @Override
@@ -295,12 +297,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public void getGenerator(final String world, final String name) {
+    public ChunkGenerator getGenerator(final String world, final String name) {
         final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
         if ((gen_plugin != null) && gen_plugin.isEnabled()) {
-            gen_plugin.getDefaultWorldGenerator(world, "");
+            return gen_plugin.getDefaultWorldGenerator(world, "");
         } else {
-            new HybridGen();
+            return new HybridGen();
         }
     }
 

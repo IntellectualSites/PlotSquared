@@ -208,6 +208,10 @@ public class HybridGen extends PlotGenerator {
         }
         else {
             world.setSpawnFlags(true, true);
+            world.setAmbientSpawnLimit(-1);
+            world.setAnimalSpawnLimit(-1);
+            world.setMonsterSpawnLimit(-1);
+            world.setWaterAnimalSpawnLimit(-1);
         }
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator

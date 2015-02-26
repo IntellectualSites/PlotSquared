@@ -2,6 +2,8 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 
+import org.bukkit.generator.ChunkGenerator;
+
 import net.milkbowl.vault.economy.Economy;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -53,5 +55,5 @@ public interface IPlotMain {
 
     public boolean initPlotMeConverter();
 
-    public void getGenerator(String world, String name);
+    public ChunkGenerator getGenerator(String world, String name);
 }

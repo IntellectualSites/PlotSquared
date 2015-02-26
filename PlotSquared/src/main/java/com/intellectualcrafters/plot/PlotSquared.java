@@ -218,7 +218,7 @@ public class PlotSquared {
         return true;
     }
 
-    public static void loadWorld(final String world, final PlotGenerator generator) {
+    public static void loadWorld(final String world, PlotGenerator generator) {
         PlotWorld plotWorld = getPlotWorld(world); 
         if (plotWorld != null) {
             if (generator != null) {
@@ -263,10 +263,11 @@ public class PlotSquared {
                 try {
                     final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
                     if (gen_string == null) {
-                        new HybridGen();
+                        generator = new HybridGen();
                     } else {
-                        IMP.getGenerator(world, gen_string);
+                        generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
                     }
+                    loadWorld(world, generator);
                 } catch (final Exception e) {
                     log("&d=== Oh no! Please set the generator for the " + world + " ===");
                     e.printStackTrace();
