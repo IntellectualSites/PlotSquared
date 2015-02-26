@@ -293,7 +293,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean claimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (claim.equals(unclaim)) {
+        if (!claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { claim });
         }
         return true;
@@ -303,7 +303,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (claim != unclaim) {
+        if (!claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { unclaim });
         }
         return true;
