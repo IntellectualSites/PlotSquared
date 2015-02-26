@@ -18,8 +18,6 @@ import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
 public class StateWrapper {

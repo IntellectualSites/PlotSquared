@@ -2,9 +2,9 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 
-import org.bukkit.generator.ChunkGenerator;
-
 import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.util.BlockManager;

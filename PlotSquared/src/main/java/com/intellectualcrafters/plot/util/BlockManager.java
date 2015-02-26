@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.inventory.ItemStack;
-
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PseudoRandom;

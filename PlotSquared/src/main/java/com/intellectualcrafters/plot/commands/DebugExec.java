@@ -35,8 +35,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -111,7 +111,7 @@ public class DebugExec extends SubCommand {
                     if (uuid == null) {
                         return MainUtil.sendMessage(null, "player not found: " + args[1]);
                     }
-                    final BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
                     if ((op == null) || (op.getLastPlayed() == 0)) {
                         return MainUtil.sendMessage(null, "player hasn't connected before: " + args[1]);
                     }

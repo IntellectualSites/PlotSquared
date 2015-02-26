@@ -13,6 +13,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -37,7 +38,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     }
 
     @Override
-    public UUID getUUID(final BukkitOfflinePlayer player) {
+    public UUID getUUID(final OfflinePlotPlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
@@ -46,7 +47,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     }
 
     @Override
-    public BukkitOfflinePlayer getOfflinePlayer(final UUID uuid) {
+    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
         final BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
         String name;
         try {
@@ -91,5 +92,15 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     @Override
     public UUID getUUID(final String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+    }
+    
+    @Override
+    public OfflinePlotPlayer[] getOfflinePlayers() {
+        OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
+        BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length] ;
+        for (int i = 0; i < ops.length; i++) {
+            toReturn[i] = new BukkitOfflinePlayer(ops[i]);
+        }
+        return toReturn;
     }
 }

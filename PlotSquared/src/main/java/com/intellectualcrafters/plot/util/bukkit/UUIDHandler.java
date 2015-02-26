@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
@@ -34,6 +35,13 @@ public class UUIDHandler {
     public static void add(final StringWrapper name, final UUID uuid) {
         if ((uuid == null) || (name == null)) {
             return;
+        }
+        BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+        if (inverse.containsKey(uuid)) {
+            if (uuidMap.containsKey(name)) {
+                return;
+            }
+            inverse.remove(uuid);
         }
         uuidMap.put(name, uuid);
     }
@@ -81,6 +89,18 @@ public class UUIDHandler {
         }
         PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching");
         UUIDHandler.CACHED = true;
+        
+        for (OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
+            if (op.getLastPlayed() != 0) {
+                String name = op.getName();
+                StringWrapper wrap = new StringWrapper(name);
+                UUID uuid = uuidWrapper.getUUID(op);
+                add(wrap, uuid);
+            }
+        }
+        
+        // OLD UUID CACHING SYSTEM
+        /*
         final HashSet<String> worlds = new HashSet<>();
         worlds.add(world);
         worlds.add("world");
@@ -136,6 +156,8 @@ public class UUIDHandler {
             final StringWrapper nameWrap = new StringWrapper(name);
             add(nameWrap, uuid);
         }
+        */
+        
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");

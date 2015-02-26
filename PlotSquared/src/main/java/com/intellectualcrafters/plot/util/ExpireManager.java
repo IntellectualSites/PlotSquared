@@ -18,7 +18,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
-import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -171,7 +171,7 @@ public class ExpireManager {
                 keep.add(uuid);
                 continue;
             }
-            final BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+            final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
             if ((op == null) || (op.getLastPlayed() == 0)) {
                 continue;
             }
