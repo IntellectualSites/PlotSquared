@@ -40,7 +40,7 @@ public class Auto extends SubCommand {
     public Auto() {
         super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
     }
-    
+
     public static PlotId getNextPlot(final PlotId id, final int step) {
         final int absX = Math.abs(id.x);
         final int absY = Math.abs(id.y);
@@ -69,7 +69,7 @@ public class Auto extends SubCommand {
             return new PlotId(id.x + 1, id.y);
         }
     }
-    
+
     // TODO auto claim a mega plot with schematic
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
@@ -119,7 +119,7 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
         final int diff = currentPlots - MainUtil.getAllowedPlots(plr, currentPlots);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
@@ -231,7 +231,7 @@ public class Auto extends SubCommand {
         MainUtil.lastPlot.put(worldname, new PlotId(0, 0));
         return true;
     }
-    
+
     public PlotId getLastPlot(final String world) {
         if ((MainUtil.lastPlot == null) || !MainUtil.lastPlot.containsKey(world)) {
             MainUtil.lastPlot.put(world, new PlotId(0, 0));

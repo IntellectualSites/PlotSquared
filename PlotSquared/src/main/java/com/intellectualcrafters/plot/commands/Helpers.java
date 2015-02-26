@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -35,14 +36,14 @@ public class Helpers extends SubCommand {
     public Helpers() {
         super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
             MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
             return true;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -81,7 +82,7 @@ public class Helpers extends SubCommand {
                 }
                 plot.addHelper(uuid);
                 DBFunc.setHelper(loc.getWorld(), plot, uuid);
-                // FIXME PlayerPlotHelperEvent
+                EventUtil.manager.callHelper(plr, plot, uuid, true);
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -103,7 +104,7 @@ public class Helpers extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeHelper(uuid);
             DBFunc.removeHelper(loc.getWorld(), plot, uuid);
-            // FIXME PlayerPlotHelperEvent
+            EventUtil.manager.callHelper(plr, plot, uuid, false);
             MainUtil.sendMessage(plr, C.HELPER_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);

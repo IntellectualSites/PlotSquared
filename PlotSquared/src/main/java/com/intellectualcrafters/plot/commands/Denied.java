@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -36,14 +37,14 @@ public class Denied extends SubCommand {
     public Denied() {
         super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
             MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
             return true;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -82,7 +83,7 @@ public class Denied extends SubCommand {
                 }
                 plot.addDenied(uuid);
                 DBFunc.setDenied(loc.getWorld(), plot, uuid);
-                //FIXME PlayerPlotDeniedEvent
+                EventUtil.manager.callDenied(plr, plot, uuid, true);
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -112,7 +113,7 @@ public class Denied extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeDenied(uuid);
             DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            // FIXME PlayerPlotDeniedEvent
+            EventUtil.manager.callDenied(plr, plot, uuid, false);
             MainUtil.sendMessage(plr, C.DENIED_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);

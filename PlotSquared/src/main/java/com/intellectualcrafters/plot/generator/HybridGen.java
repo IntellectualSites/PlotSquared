@@ -31,13 +31,12 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -
@@ -59,22 +58,22 @@ public class HybridGen extends PlotGenerator {
     /**
      * Some generator specific variables (implementation dependent)
      */
-    final int plotsize;
-    final int pathsize;
-    final short wall;
-    final short wallfilling;
-    final short roadblock;
-    final int size;
-    final Biome biome;
-    final int roadheight;
-    final int wallheight;
-    final int plotheight;
-    final short[] plotfloors;
-    final short[] filling;
-    final short pathWidthLower;
-    final short pathWidthUpper;
+    int plotsize;
+    int pathsize;
+    short wall;
+    short wallfilling;
+    short roadblock;
+    int size;
+    Biome biome;
+    int roadheight;
+    int wallheight;
+    int plotheight;
+    short[] plotfloors;
+    short[] filling;
+    short pathWidthLower;
+    short pathWidthUpper;
     boolean doState = false;
-    int maxY;
+    int maxY = 0;
     /**
      * result object is returned for each generated chunk, do stuff to it
      */
@@ -83,14 +82,13 @@ public class HybridGen extends PlotGenerator {
      * Faster sudo-random number generator than java.util.random
      */
     private long state = 13;
-    
+
     /**
      * Initialize variables, and create plotworld object used in calculations
      */
-    public HybridGen(final String world) {
-        super(world);
+    public void init(PlotWorld plotworld) {
         if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
+            this.plotworld = (HybridPlotWorld) plotworld;
         }
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;
@@ -120,12 +118,14 @@ public class HybridGen extends PlotGenerator {
         this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
         this.biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         try {
-            this.maxY = Bukkit.getWorld(world).getMaxHeight();
-        } catch (final NullPointerException e) {
+            this.maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
+        } catch (final NullPointerException e) {}
+        if (this.maxY == 0) {
             this.maxY = 256;
         }
+        
     }
-    
+
     /**
      * Return the plot manager for this type of generator, or create one For square plots you may as well use the
      * default plot manager which comes with PlotSquared
@@ -137,7 +137,7 @@ public class HybridGen extends PlotGenerator {
         }
         return HybridGen.manager;
     }
-    
+
     /**
      * Allow spawning everywhere
      */
@@ -145,7 +145,7 @@ public class HybridGen extends PlotGenerator {
     public boolean canSpawn(final World world, final int x, final int z) {
         return true;
     }
-    
+
     /**
      * Get a new plotworld class For square plots you can use the DefaultPlotWorld class which comes with PlotSquared
      */
@@ -156,25 +156,25 @@ public class HybridGen extends PlotGenerator {
         }
         return this.plotworld;
     }
-    
+
     public final long nextLong() {
         final long a = this.state;
         this.state = xorShift64(a);
         return a;
     }
-    
+
     public final long xorShift64(long a) {
         a ^= (a << 21);
         a ^= (a >>> 35);
         a ^= (a << 4);
         return a;
     }
-    
+
     public final int random(final int n) {
         final long r = ((nextLong() >>> 32) * n) >> 32;
         return (int) r;
     }
-    
+
     private void setBlock(final short[][] result, final int x, final int y, final int z, final short[] blkids) {
         if (blkids.length == 1) {
             setBlock(result, x, y, z, blkids[0]);
@@ -183,7 +183,7 @@ public class HybridGen extends PlotGenerator {
             setBlock(result, x, y, z, blkids[i]);
         }
     }
-    
+
     /**
      * Standard setblock method for world generation
      */
@@ -193,12 +193,11 @@ public class HybridGen extends PlotGenerator {
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
-    
+
     /**
      * Return the block populator
      */
-    @Override
-    public List<BlockPopulator> getDefaultPopulators(final World world) {
+    public List<BlockPopulator> getPopulators(final World world) {
         // disabling spawning for this world
         if (!this.plotworld.MOB_SPAWNING) {
             world.setSpawnFlags(false, false);
@@ -207,11 +206,14 @@ public class HybridGen extends PlotGenerator {
             world.setMonsterSpawnLimit(0);
             world.setWaterAnimalSpawnLimit(0);
         }
+        else {
+            world.setSpawnFlags(true, true);
+        }
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
         return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
     }
-    
+
     /**
      * Return the default spawn location for this world
      */
@@ -219,7 +221,7 @@ public class HybridGen extends PlotGenerator {
     public Location getFixedSpawnLocation(final World world, final Random random) {
         return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
     }
-    
+
     /**
      * This part is a fucking mess. - Refer to a proper tutorial if you would like to learn how to make a world
      * generator
@@ -241,7 +243,7 @@ public class HybridGen extends PlotGenerator {
                 }
             }
         }
-        final RegionWrapper plot = AChunkManager.CURRENT_PLOT_CLEAR;
+        final RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             final int X = cx << 4;
             final int Z = cz << 4;
@@ -264,8 +266,8 @@ public class HybridGen extends PlotGenerator {
                         }
                         setBlock(this.result, x, this.plotheight, z, this.plotfloors);
                     } else {
-                        final ChunkLoc loc = new ChunkLoc(X + x, Z + z);
-                        final HashMap<Short, Short> blocks = AChunkManager.GENERATE_BLOCKS.get(loc);
+                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                        final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
                                 setBlock(this.result, x, y, z, blocks.get(y).shortValue());
@@ -302,7 +304,7 @@ public class HybridGen extends PlotGenerator {
                     }
                     setBlock(this.result, x, this.plotheight, z, this.plotfloors);
                     if (this.plotworld.PLOT_SCHEMATIC) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
@@ -327,7 +329,7 @@ public class HybridGen extends PlotGenerator {
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
@@ -340,7 +342,7 @@ public class HybridGen extends PlotGenerator {
         }
         return this.result;
     }
-    
+
     public boolean isIn(final RegionWrapper plot, final int x, final int z) {
         return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }

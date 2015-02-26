@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
  */
 public abstract class PlotWorld {
     public final static boolean AUTO_MERGE_DEFAULT = false;
+    public final static boolean ALLOW_SIGNS_DEFAULT = true;
     public final static boolean MOB_SPAWNING_DEFAULT = false;
     public final static String PLOT_BIOME_DEFAULT = "FOREST";
     public final static boolean PLOT_CHAT_DEFAULT = false;
@@ -61,12 +62,11 @@ public abstract class PlotWorld {
     // make non static and static_default_valu + add config option
     public static int[] BLOCKS;
     static {
-        BLOCKS = new int[] {
-                1,2,3,4,5,7,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,52,56,57,58,61,62,73,74,80,82,84,86,87,88,91,97,98,99,100,103,110,112,120,121,123,124,125,129,133,153,155,159,162,165,166,168,170,172,173,174,179,181
-        };
+        BLOCKS = new int[] { 1, 2, 3, 4, 5, 7, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 35, 41, 42, 43, 45, 47, 48, 49, 52, 56, 57, 58, 61, 62, 73, 74, 80, 82, 84, 86, 87, 88, 91, 97, 98, 99, 100, 103, 110, 112, 120, 121, 123, 124, 125, 129, 133, 153, 155, 159, 162, 165, 166, 168, 170, 172, 173, 174, 179, 181 };
     }
     public final String worldname;
     public boolean AUTO_MERGE;
+    public boolean ALLOW_SIGNS;
     public boolean MOB_SPAWNING;
     public String PLOT_BIOME;
     public boolean PLOT_CHAT;
@@ -87,11 +87,11 @@ public abstract class PlotWorld {
     public boolean WORLD_BORDER;
     public int TYPE = 0;
     public int TERRAIN = 0;
-    
+
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
     }
-    
+
     /**
      * When a world is created, the following method will be called for each
      *
@@ -104,12 +104,13 @@ public abstract class PlotWorld {
         }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        this.ALLOW_SIGNS = config.getBoolean("plot.create_signs");
         this.PLOT_BIOME = (String) Configuration.BIOME.parseString(config.getString("plot.biome"));
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use") && PlotSquared.economy != null;
+        this.USE_ECONOMY = config.getBoolean("economy.use") && (PlotSquared.economy != null);
         this.PLOT_PRICE = config.getDouble("economy.prices.claim");
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
@@ -133,9 +134,9 @@ public abstract class PlotWorld {
         this.SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
     }
-    
+
     public abstract void loadConfiguration(final ConfigurationSection config);
-    
+
     /**
      * Saving core plotworld settings
      *
@@ -145,6 +146,7 @@ public abstract class PlotWorld {
         final HashMap<String, Object> options = new HashMap<>();
         options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
         options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
+        options.put("plot.create_signs", PlotWorld.ALLOW_SIGNS_DEFAULT);
         options.put("plot.biome", PlotWorld.PLOT_BIOME_DEFAULT.toString());
         options.put("schematic.on_claim", PlotWorld.SCHEMATIC_ON_CLAIM_DEFAULT);
         options.put("schematic.file", PlotWorld.SCHEMATIC_FILE_DEFAULT);
@@ -179,7 +181,7 @@ public abstract class PlotWorld {
             }
         }
     }
-    
+
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *

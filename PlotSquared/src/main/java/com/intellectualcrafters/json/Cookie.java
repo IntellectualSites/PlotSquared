@@ -56,7 +56,7 @@ public class Cookie {
         }
         return sb.toString();
     }
-    
+
     /**
      * Convert a cookie specification string into a JSONObject. The string will contain a name value pair separated by
      * '='. The name and the value will be unescaped, possibly converting '+' and '%' sequences. The cookie properties
@@ -96,7 +96,7 @@ public class Cookie {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into a cookie specification string. The JSONObject must contain "name" and "value" members.
      * If the JSONObject contains "expires", "domain", "path", or "secure" members, they will be appended to the cookie
@@ -130,7 +130,7 @@ public class Cookie {
         }
         return sb.toString();
     }
-    
+
     /**
      * Convert <code>%</code><i>hh</i> sequences to single characters, and convert plus to space.
      *

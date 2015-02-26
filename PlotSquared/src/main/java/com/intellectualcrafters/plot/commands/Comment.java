@@ -38,11 +38,11 @@ public class Comment extends SubCommand {
     public Comment() {
         super(Command.COMMENT, "Comment on a plot", "comment", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
-        Plot plot = MainUtil.getPlot(loc);
+        final Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }

@@ -38,11 +38,11 @@ import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Condense extends SubCommand {
     public static boolean TASK = false;
-    
+
     public Condense() {
         super("condense", "plots.admin", "Condense a plotworld", "condense", "", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
@@ -185,7 +185,7 @@ public class Condense extends SubCommand {
         MainUtil.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
         return false;
     }
-    
+
     public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
         final HashSet<PlotId> outside = new HashSet<>();
         for (final Plot plot : plots) {
@@ -195,7 +195,7 @@ public class Condense extends SubCommand {
         }
         return outside;
     }
-    
+
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }

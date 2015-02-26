@@ -35,8 +35,9 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -47,17 +48,14 @@ public class DebugClaimTest extends SubCommand {
     public DebugClaimTest() {
         super(Command.DEBUGCLAIMTEST, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. Execution time may vary", "debugclaimtest", CommandCategory.DEBUG, false);
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport) {
         return claimPlot(player, plot, teleport, "");
     }
-    
+
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
-        // FIXME call claim event
-        // boolean result = event result
-        boolean result = true;
-        
-        if (!result) {
+        final boolean result = EventUtil.manager.callClaim(player, plot, false);
+        if (result) {
             MainUtil.createPlot(player.getUUID(), plot);
             MainUtil.setSign(player.getName(), plot);
             MainUtil.sendMessage(player, C.CLAIMED);
@@ -65,16 +63,16 @@ public class DebugClaimTest extends SubCommand {
                 MainUtil.teleportPlayer(player, player.getLocation(), plot);
             }
         }
-        return result;
+        return !result;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             if (args.length < 3) {
                 return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
-            String world = args[0];
+            final String world = args[0];
             if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
                 return !MainUtil.sendMessage(null, "&cInvalid plot world!");
             }
@@ -100,12 +98,12 @@ public class DebugClaimTest extends SubCommand {
                     continue;
                 }
                 final Location loc = manager.getSignLoc(plotworld, plot);
-                ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-                boolean result = AChunkManager.manager.loadChunk(world, chunk);
+                final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+                final boolean result = ChunkManager.manager.loadChunk(world, chunk);
                 if (!result) {
                     continue;
                 }
-                String[] lines = BlockManager.manager.getSign(loc);
+                final String[] lines = BlockManager.manager.getSign(loc);
                 if (lines != null) {
                     String line = lines[2];
                     if ((line != null) && (line.length() > 2)) {

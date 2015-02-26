@@ -40,18 +40,18 @@ public class MainCommand {
     /**
      * Main Permission Node
      */
-    private final static SubCommand[] _subCommands = new SubCommand[] { new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Claim(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
+    private final static SubCommand[] _subCommands = new SubCommand[] { new Template(), new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Claim(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new SchematicCmd(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
     public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {
             addAll(Arrays.asList(_subCommands));
         }
     };
-
+    
     public static boolean no_permission(final PlotPlayer player, final String permission) {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-
+    
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final PlotPlayer player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
@@ -63,7 +63,7 @@ public class MainCommand {
         }
         return cmds;
     }
-
+    
     public static List<String> helpMenu(final PlotPlayer player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
@@ -99,11 +99,11 @@ public class MainCommand {
         }
         return help;
     }
-    
+
     private static String t(final String s) {
         return MainUtil.colorise('&', s);
     }
-
+    
     public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
         if (!Permissions.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
@@ -158,7 +158,7 @@ public class MainCommand {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-            player.sendMessage(MainUtil.colorise('&', help.toString()));
+            MainUtil.sendMessage(player, help.toString());
             // return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {

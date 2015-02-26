@@ -39,10 +39,10 @@ public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {
         super("music", "plots.music", "Play music in plot", "music", "mus", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        Location loc = player.getLocation();
+        final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);

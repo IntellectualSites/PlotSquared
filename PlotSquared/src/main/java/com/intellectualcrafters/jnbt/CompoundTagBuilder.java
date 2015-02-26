@@ -10,14 +10,14 @@ import java.util.Map;
  */
 public class CompoundTagBuilder {
     private final Map<String, Tag> entries;
-    
+
     /**
      * Create a new instance.
      */
     CompoundTagBuilder() {
         this.entries = new HashMap<String, Tag>();
     }
-    
+
     /**
      * Create a new instance and use the given map (which will be modified).
      *
@@ -27,7 +27,7 @@ public class CompoundTagBuilder {
         checkNotNull(value);
         this.entries = value;
     }
-    
+
     /**
      * Create a new builder instance.
      *
@@ -36,7 +36,7 @@ public class CompoundTagBuilder {
     public static CompoundTagBuilder create() {
         return new CompoundTagBuilder();
     }
-    
+
     /**
      * Put the given key and tag into the compound tag.
      *
@@ -51,7 +51,7 @@ public class CompoundTagBuilder {
         this.entries.put(key, value);
         return this;
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ByteArrayTag}.
      *
@@ -63,7 +63,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putByteArray(final String key, final byte[] value) {
         return put(key, new ByteArrayTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ByteTag}.
      *
@@ -75,7 +75,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putByte(final String key, final byte value) {
         return put(key, new ByteTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code DoubleTag}.
      *
@@ -87,7 +87,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putDouble(final String key, final double value) {
         return put(key, new DoubleTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code FloatTag}.
      *
@@ -99,7 +99,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putFloat(final String key, final float value) {
         return put(key, new FloatTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code IntArrayTag}.
      *
@@ -111,7 +111,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putIntArray(final String key, final int[] value) {
         return put(key, new IntArrayTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as an {@code IntTag}.
      *
@@ -123,7 +123,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putInt(final String key, final int value) {
         return put(key, new IntTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code LongTag}.
      *
@@ -135,7 +135,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putLong(final String key, final long value) {
         return put(key, new LongTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ShortTag}.
      *
@@ -147,7 +147,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putShort(final String key, final short value) {
         return put(key, new ShortTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code StringTag}.
      *
@@ -159,7 +159,7 @@ public class CompoundTagBuilder {
     public CompoundTagBuilder putString(final String key, final String value) {
         return put(key, new StringTag(key, value));
     }
-    
+
     /**
      * Put all the entries from the given map into this map.
      *
@@ -174,7 +174,7 @@ public class CompoundTagBuilder {
         }
         return this;
     }
-    
+
     /**
      * Build an unnamed compound tag with this builder's entries.
      *
@@ -183,7 +183,7 @@ public class CompoundTagBuilder {
     public CompoundTag build() {
         return new CompoundTag(new HashMap<String, Tag>(this.entries));
     }
-    
+
     /**
      * Build a new compound tag with this builder's entries.
      *

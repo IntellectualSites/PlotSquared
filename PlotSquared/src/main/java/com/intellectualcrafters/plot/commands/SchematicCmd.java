@@ -32,25 +32,27 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
+import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-public class Schematic extends SubCommand {
+public class SchematicCmd extends SubCommand {
     private int counter = 0;
     private boolean running = false;
     private Plot[] plots;
     private int task;
-    
-    public Schematic() {
+
+    public SchematicCmd() {
         super("schematic", "plots.schematic", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
         // TODO command to fetch schematic from worldedit directory
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -59,7 +61,7 @@ public class Schematic extends SubCommand {
         }
         final String arg = args[0].toLowerCase();
         final String file;
-        final SchematicHandler.Schematic schematic;
+        final Schematic schematic;
         switch (arg) {
             case "paste": {
                 if (plr == null) {
@@ -75,8 +77,8 @@ public class Schematic extends SubCommand {
                     break;
                 }
                 final Location loc = plr.getLocation();
-                Plot plot = MainUtil.getPlot(loc);
-                if (plot  == null) {
+                final Plot plot = MainUtil.getPlot(loc);
+                if (plot == null) {
                     sendMessage(plr, C.NOT_IN_PLOT);
                     break;
                 }
@@ -90,10 +92,10 @@ public class Schematic extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final SchematicHandler.Schematic schematic = SchematicHandler.getSchematic(file2);
+                        final Schematic schematic = SchematicHandler.manager.getSchematic(file2);
                         if (schematic == null) {
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
-                            Schematic.this.running = false;
+                            SchematicCmd.this.running = false;
                             return;
                         }
                         final int x;
@@ -104,7 +106,7 @@ public class Schematic extends SubCommand {
                         final int length2 = MainUtil.getPlotWidth(loc.getWorld(), plot2.id);
                         if ((dem.getX() > length2) || (dem.getZ() > length2)) {
                             sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
-                            Schematic.this.running = false;
+                            SchematicCmd.this.running = false;
                             return;
                         }
                         if ((dem.getX() != length2) || (dem.getZ() != length2)) {
@@ -117,26 +119,34 @@ public class Schematic extends SubCommand {
                         }
                         final DataCollection[] b = schematic.getBlockCollection();
                         final int sy = BlockManager.manager.getHeighestBlock(bot);
-                        final Location l1 = bot.add(0, sy - 1, 0);
                         final int WIDTH = schematic.getSchematicDimension().getX();
                         final int LENGTH = schematic.getSchematicDimension().getZ();
+                        final Location l1;
+                        if (!(schematic.getSchematicDimension().getY() == BukkitUtil.getMaxHeight(loc.getWorld()))) {
+                             l1 = bot.add(0, sy - 1, 0);
+                        }
+                         else {
+                             l1 = bot;
+                         }
+                        
                         final int blen = b.length - 1;
-                        Schematic.this.task = TaskManager.runTaskRepeat(new Runnable() {
+                        SchematicCmd.this.task = TaskManager.runTaskRepeat(new Runnable() {
                             @Override
                             public void run() {
                                 boolean result = false;
                                 while (!result) {
-                                    final int start = Schematic.this.counter * 5000;
+                                    final int start = SchematicCmd.this.counter * 5000;
                                     if (start > blen) {
+                                        SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                         MainUtil.update(plr.getLocation());
-                                        Schematic.this.running = false;
-                                        PlotSquared.TASK.cancelTask(Schematic.this.task);
+                                        SchematicCmd.this.running = false;
+                                        PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
                                         return;
                                     }
                                     final int end = Math.min(start + 5000, blen);
-                                    result = SchematicHandler.pastePart(loc.getWorld(), b, l1, x, z, start, end, WIDTH, LENGTH);
-                                    Schematic.this.counter++;
+                                    result = SchematicHandler.manager.pastePart(loc.getWorld(), b, l1, x, z, start, end, WIDTH, LENGTH);
+                                    SchematicCmd.this.counter++;
                                 }
                             }
                         }, 1);
@@ -158,12 +168,12 @@ public class Schematic extends SubCommand {
                     break;
                 }
                 file = args[1];
-                schematic = SchematicHandler.getSchematic(file);
+                schematic = SchematicHandler.manager.getSchematic(file);
                 if (schematic == null) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
                     break;
                 }
-                Location loc = plr.getLocation();
+                final Location loc = plr.getLocation();
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
                 final Plot plot = MainUtil.getPlot(loc);
@@ -204,14 +214,14 @@ public class Schematic extends SubCommand {
                 this.task = TaskManager.runTaskRepeat(new Runnable() {
                     @Override
                     public void run() {
-                        if (Schematic.this.counter >= Schematic.this.plots.length) {
+                        if (SchematicCmd.this.counter >= SchematicCmd.this.plots.length) {
                             PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
-                            Schematic.this.running = false;
-                            PlotSquared.TASK.cancelTask(Schematic.this.task);
+                            SchematicCmd.this.running = false;
+                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
                             return;
                         }
-                        final Plot plot = Schematic.this.plots[Schematic.this.counter];
-                        final CompoundTag sch = SchematicHandler.getCompoundTag(worldname, plot.id);
+                        final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
+                        final CompoundTag sch = SchematicHandler.manager.getCompoundTag(worldname, plot.id);
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
@@ -221,23 +231,22 @@ public class Schematic extends SubCommand {
                                 @Override
                                 public void run() {
                                     MainUtil.sendMessage(null, "&6ID: " + plot.id);
-                                    final boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + worldname + "," + owner + ".schematic");
+                                    final boolean result = SchematicHandler.manager.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + worldname + "," + owner + ".schematic");
                                     if (!result) {
                                         MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
                                     } else {
-                                        MainUtil.sendMessage(null, "&7 - &aExport success: " + plot.id);
+                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
                                     }
                                 }
                             });
                         }
-                        Schematic.this.counter++;
+                        SchematicCmd.this.counter++;
                     }
                 }, 20);
                 break;
             }
             case "export":
-            case "save":
-            {
+            case "save": {
                 if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
@@ -249,7 +258,7 @@ public class Schematic extends SubCommand {
                 final String world;
                 final Plot p2;
                 if (plr != null) {
-                    Location loc = plr.getLocation();
+                    final Location loc = plr.getLocation();
                     final Plot plot = MainUtil.getPlot(loc);
                     if (plot == null) {
                         return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -286,14 +295,14 @@ public class Schematic extends SubCommand {
                 this.task = TaskManager.runTaskRepeat(new Runnable() {
                     @Override
                     public void run() {
-                        if (Schematic.this.counter >= Schematic.this.plots.length) {
+                        if (SchematicCmd.this.counter >= SchematicCmd.this.plots.length) {
                             PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
-                            Schematic.this.running = false;
-                            PlotSquared.TASK.cancelTask(Schematic.this.task);
+                            SchematicCmd.this.running = false;
+                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
                             return;
                         }
-                        final Plot plot = Schematic.this.plots[Schematic.this.counter];
-                        final CompoundTag sch = SchematicHandler.getCompoundTag(world, plot.id);
+                        final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
+                        final CompoundTag sch = SchematicHandler.manager.getCompoundTag(world, plot.id);
                         final String o = UUIDHandler.getName(plot.owner);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
@@ -303,7 +312,7 @@ public class Schematic extends SubCommand {
                                 @Override
                                 public void run() {
                                     MainUtil.sendMessage(plr, "&6ID: " + plot.id);
-                                    final boolean result = SchematicHandler.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + world + "," + owner.trim() + ".schematic");
+                                    final boolean result = SchematicHandler.manager.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + world + "," + owner.trim() + ".schematic");
                                     if (!result) {
                                         MainUtil.sendMessage(plr, "&7 - Failed to save &c" + plot.id);
                                     } else {
@@ -312,7 +321,7 @@ public class Schematic extends SubCommand {
                                 }
                             });
                         }
-                        Schematic.this.counter++;
+                        SchematicCmd.this.counter++;
                     }
                 }, 60);
                 break;

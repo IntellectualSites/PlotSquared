@@ -23,23 +23,21 @@ public class UUIDHandler {
     public static boolean CACHED = false;
     public static UUIDWrapper uuidWrapper = null;
     public static HashMap<String, PlotPlayer> players = new HashMap<>();
-    
+
     /**
      * Map containing names and UUIDs
      *
      * @see com.google.common.collect.BiMap
      */
     private final static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-    
+
     public static void add(final StringWrapper name, final UUID uuid) {
         if ((uuid == null) || (name == null)) {
             return;
         }
-        if (!uuidMap.containsKey(name) && !uuidMap.inverse().containsKey(uuid)) {
-            uuidMap.put(name, uuid);
-        }
+        uuidMap.put(name, uuid);
     }
-    
+
     /**
      * Get the map containing all names/uuids
      *
@@ -50,7 +48,7 @@ public class UUIDHandler {
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return uuidMap;
     }
-    
+
     /**
      * Check if a uuid is cached
      *
@@ -63,7 +61,7 @@ public class UUIDHandler {
     public static boolean uuidExists(final UUID uuid) {
         return uuidMap.containsValue(uuid);
     }
-    
+
     /**
      * Check if a name is cached
      *
@@ -76,8 +74,8 @@ public class UUIDHandler {
     public static boolean nameExists(final StringWrapper name) {
         return uuidMap.containsKey(name);
     }
-    
-    public static void cacheAll(String world) {
+
+    public static void cacheAll(final String world) {
         if (CACHED) {
             return;
         }
@@ -142,15 +140,15 @@ public class UUIDHandler {
         add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
-    
+
     public static UUID getUUID(final PlotPlayer player) {
         return UUIDHandler.uuidWrapper.getUUID(player);
     }
-    
+
     public static UUID getUUID(final BukkitOfflinePlayer player) {
         return UUIDHandler.uuidWrapper.getUUID(player);
     }
-    
+
     public static String getName(final UUID uuid) {
         if (uuid == null) {
             return null;
@@ -167,20 +165,20 @@ public class UUIDHandler {
         }
         return null;
     }
-    
-    public static PlotPlayer getPlayer(UUID uuid) {
-        for (PlotPlayer player : players.values()) {
+
+    public static PlotPlayer getPlayer(final UUID uuid) {
+        for (final PlotPlayer player : players.values()) {
             if (player.getUUID().equals(uuid)) {
                 return player;
             }
         }
         return null;
     }
-    
-    public static PlotPlayer getPlayer(String name) {
+
+    public static PlotPlayer getPlayer(final String name) {
         return players.get(name);
     }
-
+    
     public static UUID getUUID(final String name) {
         if ((name == null) || (name.length() == 0)) {
             return null;

@@ -7,7 +7,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class StringTag extends Tag {
     private final String value;
-    
+
     /**
      * Creates the tag with an empty name.
      *
@@ -18,7 +18,7 @@ public final class StringTag extends Tag {
         checkNotNull(value);
         this.value = value;
     }
-    
+
     /**
      * Creates the tag.
      *
@@ -30,12 +30,12 @@ public final class StringTag extends Tag {
         checkNotNull(value);
         this.value = value;
     }
-    
+
     @Override
     public String getValue() {
         return this.value;
     }
-    
+
     @Override
     public String toString() {
         final String name = getName();

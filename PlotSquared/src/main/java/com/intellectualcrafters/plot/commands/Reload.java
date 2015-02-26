@@ -30,7 +30,7 @@ public class Reload extends SubCommand {
     public Reload() {
         super("reload", "plots.admin.command.reload", "Reload configurations", "", "reload", CommandCategory.INFO, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         try {

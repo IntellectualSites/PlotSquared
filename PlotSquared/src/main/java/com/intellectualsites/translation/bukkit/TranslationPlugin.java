@@ -17,7 +17,7 @@ public class TranslationPlugin extends JavaPlugin {
     private static final String TRANSLATOR_DISABLED = "The translator has been disabled";
     private static TranslationManager manager;
     private TranslationFile english;
-    
+
     @Override
     public void onEnable() {
         // Create a new manager
@@ -33,7 +33,7 @@ public class TranslationPlugin extends JavaPlugin {
         // That created the file, read it, and made a default header
         getLogger().log(Level.INFO, BukkitTranslation.convert(manager.getTranslated("translator_loaded", TranslationLanguage.englishAmerican)));
     }
-    
+
     @Override
     public void onDisable() {
         // Add all translations and save the file

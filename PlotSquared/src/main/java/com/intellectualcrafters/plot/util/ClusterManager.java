@@ -23,33 +23,33 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class ClusterManager {
     public static HashMap<String, HashSet<PlotCluster>> clusters;
     private static HashSet<String> regenerating = new HashSet<>();
     public static PlotCluster last;
-    
+
     public static boolean contains(final PlotCluster cluster, final PlotId id) {
         if ((cluster.getP1().x <= id.x) && (cluster.getP1().y <= id.y) && (cluster.getP2().x >= id.x) && (cluster.getP2().y >= id.y)) {
             return true;
         }
         return false;
     }
-    
+
     public static HashSet<PlotCluster> getClusters(final World world) {
         return getClusters(world.getName());
     }
-    
+
     public static HashSet<PlotCluster> getClusters(final String world) {
         if (clusters.containsKey(world)) {
             return clusters.get(world);
         }
         return new HashSet<>();
     }
-    
+
     public static Location getHome(final PlotCluster cluster) {
         final BlockLoc home = cluster.settings.getPosition();
         Location toReturn;
@@ -72,27 +72,27 @@ public class ClusterManager {
         }
         return toReturn;
     }
-    
+
     public static PlotId getCenterPlot(final PlotCluster cluster) {
         final PlotId bot = cluster.getP1();
         final PlotId top = cluster.getP2();
         return new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
     }
-    
+
     public static Location getClusterBottom(final PlotCluster cluster) {
         final String world = cluster.world;
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
     }
-    
+
     public static Location getClusterTop(final PlotCluster cluster) {
         final String world = cluster.world;
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, cluster.getP2());
     }
-    
+
     public static PlotCluster getCluster(final String world, final String name) {
         if (!clusters.containsKey(world)) {
             return null;
@@ -104,7 +104,7 @@ public class ClusterManager {
         }
         return null;
     }
-    
+
     public static boolean contains(final PlotCluster cluster, final Location loc) {
         final String world = loc.getWorld();
         final PlotManager manager = PlotSquared.getPlotManager(world);
@@ -116,7 +116,7 @@ public class ClusterManager {
         }
         return false;
     }
-    
+
     public static HashSet<PlotCluster> getIntersects(final String world, final PlotClusterId id) {
         if (!clusters.containsKey(world)) {
             return new HashSet<>();
@@ -129,7 +129,7 @@ public class ClusterManager {
         }
         return list;
     }
-    
+
     public static boolean intersects(final PlotCluster cluster, final PlotClusterId id) {
         final PlotId pos1 = cluster.getP1();
         final PlotId pos2 = cluster.getP2();
@@ -138,11 +138,11 @@ public class ClusterManager {
         }
         return false;
     }
-    
+
     public static PlotCluster getCluster(final Plot plot) {
         return getCluster(plot.world, plot.id);
     }
-    
+
     public static PlotCluster getCluster(final Location loc) {
         final String world = loc.getWorld();
         if ((last != null) && last.world.equals(world)) {
@@ -165,7 +165,7 @@ public class ClusterManager {
         }
         return null;
     }
-    
+
     public static PlotCluster getCluster(final String world, final PlotId id) {
         if ((last != null) && last.world.equals(world)) {
             if (contains(last, id)) {
@@ -187,7 +187,7 @@ public class ClusterManager {
         }
         return null;
     }
-    
+
     public static boolean removeCluster(final PlotCluster cluster) {
         if (clusters != null) {
             if (clusters.containsKey(cluster.world)) {
@@ -197,11 +197,11 @@ public class ClusterManager {
         }
         return false;
     }
-    
+
     public static PlotClusterId getClusterId(final PlotCluster cluster) {
         return new PlotClusterId(cluster.getP1(), cluster.getP2());
     }
-    
+
     public static AugmentedPopulator getPopulator(final PlotCluster cluster) {
         final World world = Bukkit.getWorld(cluster.world);
         for (final BlockPopulator populator : world.getPopulators()) {
@@ -213,7 +213,7 @@ public class ClusterManager {
         }
         return null;
     }
-    
+
     public static PlotId estimatePlotId(final Location loc) {
         final PlotId a = new PlotId(0, 0);
         final PlotId b = new PlotId(1, 1);
@@ -235,7 +235,7 @@ public class ClusterManager {
         final int z = loc.getZ();
         return new PlotId((x / xw) + 1, (z / zw) + 1);
     }
-    
+
     public static void regenCluster(final PlotCluster cluster) {
         if (regenerating.contains(cluster.world + ":" + cluster.getName())) {
             return;
@@ -277,7 +277,7 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if ((populator == null) || (plotworld.TYPE == 0)) {
-                        SetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+                        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
                         chunk.unload(true, true);
                     } else {

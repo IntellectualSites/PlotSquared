@@ -35,7 +35,7 @@ public class DebugSaveTest extends SubCommand {
     public DebugSaveTest() {
         super(Command.DEBUGSAVETEST, "This debug command will force the recreation of all plots in the DB", "debugsavetest", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {

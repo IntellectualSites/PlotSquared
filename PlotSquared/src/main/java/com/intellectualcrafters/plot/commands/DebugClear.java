@@ -27,16 +27,16 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugClear extends SubCommand {
     public DebugClear() {
         super(Command.DEBUGCLEAR, "Clear a plot using a fast experimental algorithm", "debugclear", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
@@ -77,9 +77,9 @@ public class DebugClear extends SubCommand {
             }
             return true;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null || !(PlotSquared.getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
+        if ((plot == null) || !(PlotSquared.getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
@@ -92,7 +92,7 @@ public class DebugClear extends SubCommand {
         final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
         if (MainUtil.runners.containsKey(plot)) {
-            MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);

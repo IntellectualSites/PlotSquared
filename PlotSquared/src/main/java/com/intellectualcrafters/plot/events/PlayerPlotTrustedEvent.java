@@ -38,7 +38,7 @@ public class PlayerPlotTrustedEvent extends Event {
     private final Player initiator;
     private final boolean added;
     private final UUID player;
-    
+
     /**
      * PlayerPlotTrustedEvent: Called when a plot trusted user is added/removed
      *
@@ -53,11 +53,11 @@ public class PlayerPlotTrustedEvent extends Event {
         this.added = added;
         this.player = player;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * If a player was added
      *
@@ -66,7 +66,7 @@ public class PlayerPlotTrustedEvent extends Event {
     public boolean wasAdded() {
         return this.added;
     }
-    
+
     /**
      * The UUID added/removed
      *
@@ -75,7 +75,7 @@ public class PlayerPlotTrustedEvent extends Event {
     public UUID getPlayer() {
         return this.player;
     }
-    
+
     /**
      * The plot involved
      *
@@ -84,7 +84,7 @@ public class PlayerPlotTrustedEvent extends Event {
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     /**
      * The player initiating the action
      *
@@ -93,7 +93,7 @@ public class PlayerPlotTrustedEvent extends Event {
     public Player getInitiator() {
         return this.initiator;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

@@ -43,7 +43,7 @@ public class FlagCmd extends SubCommand {
     public FlagCmd() {
         super(Command.FLAG, "Manage plot flags", "f", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         /*
@@ -57,7 +57,7 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
             return false;
         }
-        Location loc = player.getLocation();
+        final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             MainUtil.sendMessage(player, C.NOT_IN_PLOT);

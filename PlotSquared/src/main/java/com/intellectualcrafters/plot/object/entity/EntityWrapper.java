@@ -51,11 +51,11 @@ public class EntityWrapper {
     public AgeableStats aged;
     public TameableStats tamed;
     private HorseStats horse;
-    
+
     public void storeInventory(final InventoryHolder held) {
         this.inventory = held.getInventory().getContents().clone();
     }
-    
+
     private void restoreLiving(final LivingEntity entity) {
         if (this.lived.loot) {
             entity.setCanPickupItems(this.lived.loot);
@@ -84,11 +84,11 @@ public class EntityWrapper {
             //            entity.setLeashHolder(leash);
         }
     }
-    
+
     private void restoreInventory(final InventoryHolder entity) {
         entity.getInventory().setContents(this.inventory);
     }
-    
+
     public void storeLiving(final LivingEntity lived) {
         this.lived = new LivingEntityStats();
         this.lived.potions = lived.getActivePotionEffects();
@@ -115,7 +115,7 @@ public class EntityWrapper {
             this.lived.helmet = equipment.getHelmet().clone();
         }
     }
-    
+
     private void restoreTameable(final Tameable entity) {
         if (this.tamed.tamed) {
             if (this.tamed.owner != null) {
@@ -124,7 +124,7 @@ public class EntityWrapper {
             }
         }
     }
-    
+
     private void restoreAgeable(final Ageable entity) {
         if (!this.aged.adult) {
             entity.setBaby();
@@ -134,20 +134,20 @@ public class EntityWrapper {
         }
         entity.setAge(this.aged.age);
     }
-    
+
     public void storeAgeable(final Ageable aged) {
         this.aged = new AgeableStats();
         this.aged.age = aged.getAge();
         this.aged.locked = aged.getAgeLock();
         this.aged.adult = aged.isAdult();
     }
-    
+
     public void storeTameable(final Tameable tamed) {
         this.tamed = new TameableStats();
         this.tamed.owner = tamed.getOwner();
         this.tamed.tamed = tamed.isTamed();
     }
-    
+
     @SuppressWarnings("deprecation")
     public EntityWrapper(final org.bukkit.entity.Entity entity, final short depth) {
         this.depth = depth;
@@ -344,7 +344,7 @@ public class EntityWrapper {
             // END LIVING //
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     public Entity spawn(final World world, final int x_offset, final int z_offset) {
         final Location loc = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
@@ -558,7 +558,7 @@ public class EntityWrapper {
             // END LIVING //
         }
     }
-    
+
     private byte getOrdinal(final Object[] list, final Object value) {
         for (byte i = 0; i < list.length; i++) {
             if (list[i].equals(value)) {

@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,8 +29,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
@@ -42,17 +44,18 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short REQUIRED_CHANGES = 0;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
-    
+
     /*
      * Here we are just calling the super method, nothing special
      */
     public HybridPlotWorld(final String worldname) {
         super(worldname);
     }
-    
-    public HashMap<ChunkLoc, HashMap<Short, Short>> G_SCH;
-    public HashMap<ChunkLoc, HashMap<Short, Byte>> G_SCH_DATA;
-    
+
+    public HashMap<PlotLoc, HashMap<Short, Short>> G_SCH;
+    public HashMap<PlotLoc, HashMap<Short, Byte>> G_SCH_DATA;
+    public HashMap<PlotLoc, HashSet<PlotItem>> G_SCH_STATE;
+
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
@@ -87,18 +90,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             PlotSquared.log("&c - road schematics are disabled for this world.");
             this.ROAD_SCHEMATIC_ENABLED = false;
         }
-        System.out.print("LOADED!");
     }
-    
+
     public void setupSchematics() {
         this.G_SCH_DATA = new HashMap<>();
         this.G_SCH = new HashMap<>();
         final String schem1Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad";
         final String schem2Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection";
         final String schem3Str = "GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot";
-        final Schematic schem1 = SchematicHandler.getSchematic(schem1Str);
-        final Schematic schem2 = SchematicHandler.getSchematic(schem2Str);
-        final Schematic schem3 = SchematicHandler.getSchematic(schem3Str);
+        final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1Str);
+        final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2Str);
+        final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3Str);
         final int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
         int oddshift = 0;
         if ((this.ROAD_WIDTH % 2) != 0) {
@@ -129,6 +131,23 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (y), (short) (z + shift + oddshift + center_shift_z), id, data, false);
                         }
                     }
+                }
+            }
+            HashSet<PlotItem> items = schem3.getItems();
+            if (items != null) {
+                G_SCH_STATE = new HashMap<>();
+                for (PlotItem item : items) {
+                    item.x += shift + oddshift + center_shift_x;
+                    item.z += shift + oddshift + center_shift_z;
+                    item.y += this.PLOT_HEIGHT;
+                    int x = item.x;
+                    int y = item.y;
+                    int z = item.z;
+                    PlotLoc loc = new PlotLoc((short) x, (short) z);
+                    if (!G_SCH_STATE.containsKey(loc)) {
+                        G_SCH_STATE.put(loc, new HashSet<PlotItem>());
+                    }
+                    G_SCH_STATE.get(loc).add(item);
                 }
             }
         }
@@ -176,7 +195,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
-    
+
     public static boolean isRotate(final short id) {
         switch (id) {
             case 23:
@@ -293,7 +312,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 return false;
         }
     }
-    
+
     public void addOverlayBlock(short x, final short y, short z, final short id, byte data, final boolean rotate) {
         if (z < 0) {
             z += this.SIZE;
@@ -301,7 +320,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         if (x < 0) {
             x += this.SIZE;
         }
-        final ChunkLoc loc = new ChunkLoc(x, z);
+        final PlotLoc loc = new PlotLoc(x, z);
         if (!this.G_SCH.containsKey(loc)) {
             this.G_SCH.put(loc, new HashMap<Short, Short>());
         }

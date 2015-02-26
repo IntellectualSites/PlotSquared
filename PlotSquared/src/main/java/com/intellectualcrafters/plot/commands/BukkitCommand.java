@@ -19,16 +19,15 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
  * @author Citymonstret
  */
 public class BukkitCommand implements CommandExecutor, TabCompleter {
-
-    @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-        Player player = null;
-        if (commandSender instanceof Player) {
-            player = (Player) commandSender;
-        }
-        return MainCommand.onCommand(BukkitUtil.getPlayer(player), commandLabel, args);
-    }
     
+    @Override
+    public boolean onCommand(final CommandSender commandSender, final Command command, final String commandLabel, final String[] args) {
+        if (commandSender instanceof Player) {
+            return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
+        }
+        return MainCommand.onCommand(null, commandLabel, args);
+    }
+
     @Override
     public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
         if (!(commandSender instanceof Player)) {

@@ -37,7 +37,7 @@ public class RUtils {
     public static long getTotalRam() {
         return (Runtime.getRuntime().totalMemory() / 1024) / 1024;
     }
-    
+
     /**
      * Get the total free ram
      *
@@ -46,7 +46,7 @@ public class RUtils {
     public static long getFreeRam() {
         return (Runtime.getRuntime().freeMemory() / 1024) / 1024;
     }
-    
+
     /**
      * Percentage of used ram
      *
@@ -55,7 +55,7 @@ public class RUtils {
     public static long getRamPercentage() {
         return (getFreeRam() / getTotalRam()) * 100;
     }
-    
+
     /**
      * Get formatted time
      *
@@ -73,18 +73,18 @@ public class RUtils {
         final String s_s = (int) s + " " + ((int) s != 1 ? "seconds" : "second");
         return string.replaceAll("%sec%", s_s).replaceAll("%min%", s_m).replaceAll("%hours%", s_h);
     }
-    
+
     enum Direction {
         SOUTH(0),
         EAST(1),
         NORTH(2),
         WEST(3);
         private final int i;
-        
+
         Direction(final int i) {
             this.i = i;
         }
-        
+
         public int getInt() {
             return this.i;
         }

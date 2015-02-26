@@ -20,16 +20,28 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.List;
+
+import org.bukkit.World;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class PlotGenerator extends ChunkGenerator {
-    public PlotGenerator(final String world) {
-        PlotSquared.loadWorld(world, this);
+    @Override
+    public List<BlockPopulator> getDefaultPopulators(World world) {
+        PlotSquared.loadWorld(world.getName(), this);
+        return getPopulators(world);
     }
     
-    public abstract PlotWorld getNewPlotWorld(final String world);
+    public abstract List<BlockPopulator> getPopulators(World world);
     
+    public abstract void init(PlotWorld plotworld);
+
+    public abstract PlotWorld getNewPlotWorld(final String world);
+
     public abstract PlotManager getPlotManager();
+    
+    
 }

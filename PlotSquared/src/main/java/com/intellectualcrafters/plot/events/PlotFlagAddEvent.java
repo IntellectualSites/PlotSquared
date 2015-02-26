@@ -38,7 +38,7 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
     private final Plot plot;
     private final Flag flag;
     private boolean cancelled;
-    
+
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot
      *
@@ -49,11 +49,11 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
         this.plot = plot;
         this.flag = flag;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plot involved
      *
@@ -62,7 +62,7 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     /**
      * Get the flag involved
      *
@@ -71,17 +71,17 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
     public Flag getFlag() {
         return this.flag;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-    
+
     @Override
     public void setCancelled(final boolean b) {
         this.cancelled = b;

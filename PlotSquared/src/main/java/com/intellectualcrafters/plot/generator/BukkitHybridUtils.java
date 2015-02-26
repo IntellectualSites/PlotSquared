@@ -14,15 +14,15 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockManager;
 
 public class BukkitHybridUtils extends HybridUtils {
-
+    
     @Override
-    public int checkModified(int threshhold, String worldname, int x1, int x2, int y1, int y2, int z1, int z2, PlotBlock[] blocks) {
-        World world = BukkitUtil.getWorld(worldname);
+    public int checkModified(final int threshhold, final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
+        final World world = BukkitUtil.getWorld(worldname);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
@@ -47,11 +47,11 @@ public class BukkitHybridUtils extends HybridUtils {
         }
         return count;
     }
-
+    
     @Override
-    public int get_ey(String worldname, int sx, int ex, int sz, int ez, int sy) {
-        World world = BukkitUtil.getWorld(worldname);
-        int maxY = world.getMaxHeight();
+    public int get_ey(final String worldname, final int sx, final int ex, final int sz, final int ez, final int sy) {
+        final World world = BukkitUtil.getWorld(worldname);
+        final int maxY = world.getMaxHeight();
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
@@ -67,10 +67,10 @@ public class BukkitHybridUtils extends HybridUtils {
         }
         return ey;
     }
-
+    
     @Override
-    public void regenerateChunkChunk(String worldname, ChunkLoc loc) {
-        World world = BukkitUtil.getWorld(worldname);
+    public void regenerateChunkChunk(final String worldname, final ChunkLoc loc) {
+        final World world = BukkitUtil.getWorld(worldname);
         final int sx = loc.x << 5;
         final int sz = loc.z << 5;
         for (int x = sx; x < (sx + 32); x++) {
@@ -84,22 +84,22 @@ public class BukkitHybridUtils extends HybridUtils {
             for (int z = sz; z < (sz + 32); z++) {
                 final Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
-                regenerateRoad(worldname, new ChunkLoc(x,z));
+                regenerateRoad(worldname, new ChunkLoc(x, z));
             }
         }
-        SetBlockManager.setBlockManager.update(chunks2);
+        BukkitSetBlockManager.setBlockManager.update(chunks2);
     }
-
+    
     private static boolean UPDATE = false;
     private int task;
-    
+
     @Override
     public boolean scheduleRoadUpdate(final String world) {
         if (BukkitHybridUtils.UPDATE) {
             return false;
         }
-        final List<ChunkLoc> chunks = AChunkManager.manager.getChunkChunks(world);
-        final Plugin plugin = (Plugin) BukkitMain.THIS;
+        final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(world);
+        final Plugin plugin = BukkitMain.THIS;
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
@@ -126,5 +126,5 @@ public class BukkitHybridUtils extends HybridUtils {
         }, 20, 20);
         return true;
     }
-    
+
 }

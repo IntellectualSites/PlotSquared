@@ -13,7 +13,7 @@ public class Help extends SubCommand {
     public Help() {
         super("help", "", "Get this help menu", "help", "he", SubCommand.CommandCategory.INFO, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         return false;

@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.config.C;
 public class Logger {
     private static ArrayList<String> entries;
     private static File log;
-    
+
     public static void setup(final File file) {
         log = file;
         entries = new ArrayList<>();
@@ -54,7 +54,7 @@ public class Logger {
             PlotSquared.log(C.PREFIX.s() + "File setup error Logger#setup");
         }
     }
-    
+
     public static void write() throws IOException {
         final FileWriter writer = new FileWriter(log);
         for (final String string : entries) {
@@ -62,25 +62,25 @@ public class Logger {
         }
         writer.close();
     }
-    
+
     public static void add(final LogLevel level, final String string) {
         append("[" + level.toString() + "] " + string);
     }
-    
+
     private static void append(final String string) {
         entries.add("[" + new Date().toString() + "]" + string);
     }
-    
+
     public enum LogLevel {
         GENERAL("General"),
         WARNING("Warning"),
         DANGER("Danger");
         private final String name;
-        
+
         LogLevel(final String name) {
             this.name = name;
         }
-        
+
         @Override
         public String toString() {
             return this.name;

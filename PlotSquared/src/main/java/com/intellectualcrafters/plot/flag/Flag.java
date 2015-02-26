@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 public class Flag {
     private AbstractFlag key;
     private Object value;
-    
+
     /**
      * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
      * player, you need to register it with PlotSquared.
@@ -53,14 +53,14 @@ public class Flag {
             throw new IllegalArgumentException(key.getValueDesc());
         }
     }
-    
+
     public void setKey(final AbstractFlag key) {
         this.key = key;
         if (this.value instanceof String) {
             this.value = key.parseValueRaw((String) this.value);
         }
     }
-    
+
     /**
      * Warning: Unchecked
      */
@@ -68,7 +68,7 @@ public class Flag {
         this.key = key;
         this.value = value;
     }
-    
+
     /**
      * Get the AbstractFlag used in creating the flag
      *
@@ -77,7 +77,7 @@ public class Flag {
     public AbstractFlag getAbstractFlag() {
         return this.key;
     }
-    
+
     /**
      * Get the key for the AbstractFlag
      *
@@ -86,7 +86,7 @@ public class Flag {
     public String getKey() {
         return this.key.getKey();
     }
-    
+
     /**
      * Get the value
      *
@@ -95,11 +95,11 @@ public class Flag {
     public Object getValue() {
         return this.value;
     }
-    
+
     public String getValueString() {
         return this.key.toString(this.value);
     }
-    
+
     @Override
     public String toString() {
         if (this.value.equals("")) {
@@ -107,7 +107,7 @@ public class Flag {
         }
         return this.key + ":" + getValueString();
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -122,7 +122,7 @@ public class Flag {
         final Flag other = (Flag) obj;
         return (this.key.getKey().equals(other.key.getKey()) && this.value.equals(other.value));
     }
-    
+
     @Override
     public int hashCode() {
         return this.key.getKey().hashCode();

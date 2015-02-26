@@ -44,7 +44,7 @@ public class StringComparison {
      * The actual object
      */
     private Object bestMatchObject;
-    
+
     /**
      * Constructor
      *
@@ -63,7 +63,7 @@ public class StringComparison {
             }
         }
     }
-    
+
     /**
      * Compare two strings
      *
@@ -87,7 +87,7 @@ public class StringComparison {
         }
         return (2.0 * intersection) / union;
     }
-    
+
     /**
      * Create an ArrayList containing pairs of letters
      *
@@ -104,7 +104,7 @@ public class StringComparison {
         }
         return aPairs;
     }
-    
+
     /**
      * Get an array containing letter pairs
      *
@@ -120,7 +120,7 @@ public class StringComparison {
         }
         return p;
     }
-    
+
     /**
      * Get the object
      *
@@ -129,7 +129,7 @@ public class StringComparison {
     public Object getMatchObject() {
         return this.bestMatchObject;
     }
-    
+
     /**
      * Get the best match value
      *
@@ -138,7 +138,7 @@ public class StringComparison {
     public String getBestMatch() {
         return this.bestMatch;
     }
-    
+
     /**
      * Will return both the match number, and the actual match string
      *

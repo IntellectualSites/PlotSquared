@@ -64,7 +64,7 @@ public class SQLManager implements AbstractDB {
     private final String prefix;
     // Private Final
     private Connection connection;
-    
+
     /**
      * Constructor
      *
@@ -99,7 +99,7 @@ public class SQLManager implements AbstractDB {
             }, 11000);
         }
     }
-    
+
     /**
      * Set Plot owner
      *
@@ -125,7 +125,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void createAllSettingsAndHelpers(final ArrayList<Plot> mylist) {
         final int size = mylist.size();
@@ -227,7 +227,7 @@ public class SQLManager implements AbstractDB {
             }
         }
     }
-    
+
     /**
      * Create a plot
      *
@@ -287,7 +287,7 @@ public class SQLManager implements AbstractDB {
             }
         }
     }
-    
+
     /**
      * Create a plot
      *
@@ -314,7 +314,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void createPlotAndSettings(final Plot plot) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -341,7 +341,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Create tables
      *
@@ -383,7 +383,7 @@ public class SQLManager implements AbstractDB {
         stmt.clearBatch();
         stmt.close();
     }
-    
+
     /**
      * Delete a plot
      *
@@ -424,7 +424,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Create plot settings
      *
@@ -448,7 +448,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public int getId(final String world, final PlotId id2) {
         PreparedStatement stmt = null;
@@ -470,7 +470,7 @@ public class SQLManager implements AbstractDB {
         }
         return Integer.MAX_VALUE;
     }
-    
+
     /**
      * Load all plots, helpers, denied, trusted, and every setting from DB into a hashmap
      */
@@ -700,7 +700,7 @@ public class SQLManager implements AbstractDB {
         }
         return newplots;
     }
-    
+
     @Override
     public void setMerged(final String world, final Plot plot, final boolean[] merged) {
         plot.settings.setMerged(merged);
@@ -724,7 +724,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void swapPlots(final Plot p1, final Plot p2) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -759,7 +759,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -779,7 +779,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
         final StringBuilder flag_string = new StringBuilder();
@@ -807,7 +807,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     public void setFlags(final int id, final Flag[] flags) {
         final ArrayList<Flag> newflags = new ArrayList<Flag>();
         for (final Flag flag : flags) {
@@ -832,7 +832,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param alias
@@ -857,7 +857,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Purge all plots with the following database IDs
      */
@@ -895,7 +895,7 @@ public class SQLManager implements AbstractDB {
         }
         PlotSquared.log("&6[INFO] " + "SUCCESSFULLY PURGED WORLD '" + world + "'!");
     }
-    
+
     @Override
     public void purge(final String world, final Set<PlotId> plots) {
         for (final PlotId id : plots) {
@@ -922,7 +922,7 @@ public class SQLManager implements AbstractDB {
             PlotSquared.log("&c[ERROR] " + "FAILED TO PURGE WORLD '" + world + "'!");
         }
     }
-    
+
     /**
      * @param plot
      * @param position
@@ -946,7 +946,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param id
      *
@@ -999,7 +999,7 @@ public class SQLManager implements AbstractDB {
         }
         return h;
     }
-    
+
     @Override
     public void removeComment(final String world, final Plot plot, final PlotComment comment) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1028,7 +1028,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, final boolean below) {
         final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
@@ -1059,7 +1059,7 @@ public class SQLManager implements AbstractDB {
         }
         return comments;
     }
-    
+
     @Override
     public void setComment(final String world, final Plot plot, final PlotComment comment) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1080,7 +1080,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1103,7 +1103,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1126,7 +1126,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1149,7 +1149,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     public void setHelper(final int id, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -1167,7 +1167,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1190,7 +1190,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1213,7 +1213,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * @param plot
      * @param player
@@ -1236,7 +1236,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public double getRatings(final Plot plot) {
         try {
@@ -1256,7 +1256,7 @@ public class SQLManager implements AbstractDB {
         }
         return 0.0d;
     }
-    
+
     @Override
     public void delete(final PlotCluster cluster) {
         ClusterManager.removeCluster(cluster);
@@ -1287,7 +1287,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public int getClusterId(final String world, final PlotClusterId id) {
         PreparedStatement stmt = null;
@@ -1311,7 +1311,7 @@ public class SQLManager implements AbstractDB {
         }
         return Integer.MAX_VALUE;
     }
-    
+
     @Override
     public HashMap<String, HashSet<PlotCluster>> getClusters() {
         final LinkedHashMap<String, HashSet<PlotCluster>> newClusters = new LinkedHashMap<>();
@@ -1497,7 +1497,7 @@ public class SQLManager implements AbstractDB {
         }
         return newClusters;
     }
-    
+
     @Override
     public void setFlags(final PlotCluster cluster, final Set<Flag> flags) {
         final StringBuilder flag_string = new StringBuilder();
@@ -1525,7 +1525,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setClusterName(final PlotCluster cluster, final String name) {
         cluster.settings.setAlias(name);
@@ -1546,7 +1546,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeHelper(final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1565,7 +1565,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setHelper(final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1584,7 +1584,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void createCluster(final PlotCluster cluster) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1614,7 +1614,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void resizeCluster(final PlotCluster current, final PlotClusterId resize) {
         final PlotId pos1 = new PlotId(current.getP1().x, current.getP1().y);
@@ -1641,7 +1641,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setPosition(final PlotCluster cluster, final String position) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1661,7 +1661,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public HashMap<String, Object> getClusterSettings(final int id) {
         final HashMap<String, Object> h = new HashMap<String, Object>();
@@ -1709,7 +1709,7 @@ public class SQLManager implements AbstractDB {
         }
         return h;
     }
-    
+
     @Override
     public void removeInvited(final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1728,7 +1728,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {

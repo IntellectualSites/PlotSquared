@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public final class NBTInputStream implements Closeable {
     private final DataInputStream is;
-    
+
     /**
      * Creates a new {@code NBTInputStream}, which will source its data from the specified input stream.
      *
@@ -27,7 +27,7 @@ public final class NBTInputStream implements Closeable {
     public NBTInputStream(final InputStream is) throws IOException {
         this.is = new DataInputStream(is);
     }
-    
+
     /**
      * Reads an NBT tag from the stream.
      *
@@ -38,7 +38,7 @@ public final class NBTInputStream implements Closeable {
     public Tag readTag() throws IOException {
         return readTag(0);
     }
-    
+
     /**
      * Reads an NBT from the stream.
      *
@@ -61,7 +61,7 @@ public final class NBTInputStream implements Closeable {
         }
         return readTagPayload(type, name, depth);
     }
-    
+
     /**
      * Reads the payload of a tag, given the name and type.
      *
@@ -137,7 +137,7 @@ public final class NBTInputStream implements Closeable {
                 throw new IOException("Invalid tag type: " + type + ".");
         }
     }
-    
+
     @Override
     public void close() throws IOException {
         this.is.close();

@@ -29,13 +29,13 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 public class RegenAllRoads extends SubCommand {
     public RegenAllRoads() {
         super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         if (player != null) {
@@ -52,7 +52,7 @@ public class RegenAllRoads extends SubCommand {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        final List<ChunkLoc> chunks = AChunkManager.manager.getChunkChunks(name);
+        final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
         PlotSquared.log("&cIf no schematic is set, the following will not do anything");
         PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));

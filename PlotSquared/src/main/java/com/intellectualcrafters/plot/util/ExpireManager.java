@@ -30,7 +30,7 @@ public class ExpireManager {
     public static ConcurrentHashMap<String, Boolean> updatingPlots = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Long> timestamp = new ConcurrentHashMap<>();
     public static int task;
-    
+
     public static long getTimeStamp(final String world) {
         if (timestamp.containsKey(world)) {
             return timestamp.get(world);
@@ -39,7 +39,7 @@ public class ExpireManager {
             return 0;
         }
     }
-    
+
     public static boolean updateExpired(final String world) {
         updatingPlots.put(world, true);
         final long now = System.currentTimeMillis();
@@ -60,7 +60,7 @@ public class ExpireManager {
             return false;
         }
     }
-    
+
     public static void runTask() {
         ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, new Runnable() {
             @Override
@@ -97,10 +97,6 @@ public class ExpireManager {
                     }
                     final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                     Bukkit.getServer().getPluginManager().callEvent(event);
-                    if (event.isCancelled()) {
-                        event.setCancelled(true);
-                        return;
-                    }
                     for (final UUID helper : plot.helpers) {
                         final PlotPlayer player = UUIDHandler.getPlayer(helper);
                         if (player != null) {
@@ -108,6 +104,11 @@ public class ExpireManager {
                         }
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);
+                    if (manager == null) {
+                        PlotSquared.log("&cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                        expiredPlots.get(world).remove(plot);
+                        return;
+                    }
                     if (plot.settings.isMerged()) {
                         Unlink.unlinkPlot(plot);
                     }
@@ -129,7 +130,7 @@ public class ExpireManager {
             }
         }, 2400, 2400);
     }
-    
+
     public static boolean isExpired(final UUID uuid) {
         final String name = UUIDHandler.getName(uuid);
         if (name != null) {
@@ -144,7 +145,7 @@ public class ExpireManager {
         }
         return false;
     }
-    
+
     public static HashMap<Plot, Long> getOldPlots(final String world) {
         final Collection<Plot> plots = PlotSquared.getPlots(world).values();
         final HashMap<Plot, Long> toRemove = new HashMap<>();
@@ -171,7 +172,7 @@ public class ExpireManager {
                 continue;
             }
             final BukkitOfflinePlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            if ((op == null) || op.getLastPlayed() == 0) {
+            if ((op == null) || (op.getLastPlayed() == 0)) {
                 continue;
             }
             long last = op.getLastPlayed();

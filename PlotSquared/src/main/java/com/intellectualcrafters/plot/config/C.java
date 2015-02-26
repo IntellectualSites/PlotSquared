@@ -444,7 +444,7 @@ public enum C {
      * @see com.intellectualsites.translation.TranslationLanguage
      */
     protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-    public static String COLOR_1 = "\u00A76", COLOR_2 = "\u00A77", COLOR_3 = "\u00A78", COLOR_4 = "\u00A73";
+    public static String COLOR_1 = "&6", COLOR_2 = "&7", COLOR_3 = "&8", COLOR_4 = "&3";
     /**
      * The TranslationManager
      *
@@ -469,7 +469,7 @@ public enum C {
      * Should the string be prefixed?
      */
     private boolean prefix;
-    
+
     /**
      * Constructor for custom strings.
      */
@@ -478,7 +478,7 @@ public enum C {
          * use setCustomString();
          */
     }
-    
+
     /**
      * Constructor
      *
@@ -492,7 +492,7 @@ public enum C {
         }
         this.prefix = prefix;
     }
-    
+
     /**
      * Constructor
      *
@@ -501,7 +501,7 @@ public enum C {
     C(final String d) {
         this(d, true);
     }
-    
+
     public static void setupTranslations() {
         manager = new TranslationManager();
         defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
@@ -510,7 +510,7 @@ public enum C {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
         }
     }
-    
+
     public static void saveTranslations() {
         try {
             manager.saveAll(defaultFile).saveFile(defaultFile);
@@ -518,7 +518,7 @@ public enum C {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Get the default string
      *
@@ -527,7 +527,7 @@ public enum C {
     public String d() {
         return this.d;
     }
-    
+
     /**
      * Get translated if exists
      *
@@ -549,11 +549,11 @@ public enum C {
          * return this.s.replace("\\n", "\n");
          */
     }
-    
+
     public boolean usePrefix() {
         return this.prefix;
     }
-    
+
     /**
      * @return translated and color decoded
      *

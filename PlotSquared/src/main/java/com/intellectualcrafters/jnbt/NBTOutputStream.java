@@ -39,7 +39,7 @@ public final class NBTOutputStream implements Closeable {
      * The output stream.
      */
     private final DataOutputStream os;
-    
+
     /**
      * Creates a new <code>NBTOutputStream</code>, which will write data to the specified underlying output stream.
      *
@@ -50,7 +50,7 @@ public final class NBTOutputStream implements Closeable {
     public NBTOutputStream(final OutputStream os) throws IOException {
         this.os = new DataOutputStream(os);
     }
-    
+
     /**
      * Writes a tag.
      *
@@ -70,7 +70,7 @@ public final class NBTOutputStream implements Closeable {
         }
         writeTagPayload(tag);
     }
-    
+
     /**
      * Writes tag payload.
      *
@@ -121,7 +121,7 @@ public final class NBTOutputStream implements Closeable {
                 throw new IOException("Invalid tag type: " + type + ".");
         }
     }
-    
+
     /**
      * Writes a <code>TAG_Byte</code> tag.
      *
@@ -132,7 +132,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeByteTagPayload(final ByteTag tag) throws IOException {
         this.os.writeByte(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Byte_Array</code> tag.
      *
@@ -145,7 +145,7 @@ public final class NBTOutputStream implements Closeable {
         this.os.writeInt(bytes.length);
         this.os.write(bytes);
     }
-    
+
     /**
      * Writes a <code>TAG_Compound</code> tag.
      *
@@ -159,7 +159,7 @@ public final class NBTOutputStream implements Closeable {
         }
         this.os.writeByte((byte) 0); // end tag - better way?
     }
-    
+
     /**
      * Writes a <code>TAG_List</code> tag.
      *
@@ -177,7 +177,7 @@ public final class NBTOutputStream implements Closeable {
             writeTagPayload(tag1);
         }
     }
-    
+
     /**
      * Writes a <code>TAG_String</code> tag.
      *
@@ -190,7 +190,7 @@ public final class NBTOutputStream implements Closeable {
         this.os.writeShort(bytes.length);
         this.os.write(bytes);
     }
-    
+
     /**
      * Writes a <code>TAG_Double</code> tag.
      *
@@ -201,7 +201,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeDoubleTagPayload(final DoubleTag tag) throws IOException {
         this.os.writeDouble(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Float</code> tag.
      *
@@ -212,7 +212,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeFloatTagPayload(final FloatTag tag) throws IOException {
         this.os.writeFloat(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Long</code> tag.
      *
@@ -223,7 +223,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeLongTagPayload(final LongTag tag) throws IOException {
         this.os.writeLong(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Int</code> tag.
      *
@@ -234,7 +234,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeIntTagPayload(final IntTag tag) throws IOException {
         this.os.writeInt(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Short</code> tag.
      *
@@ -245,7 +245,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeShortTagPayload(final ShortTag tag) throws IOException {
         this.os.writeShort(tag.getValue());
     }
-    
+
     /**
      * Writes a <code>TAG_Empty</code> tag.
      *
@@ -256,7 +256,7 @@ public final class NBTOutputStream implements Closeable {
     private void writeEndTagPayload(final EndTag tag) {
         /* empty */
     }
-    
+
     private void writeIntArrayTagPayload(final IntArrayTag tag) throws IOException {
         final int[] data = tag.getValue();
         this.os.writeInt(data.length);
@@ -264,7 +264,7 @@ public final class NBTOutputStream implements Closeable {
             this.os.writeInt(element);
         }
     }
-    
+
     @Override
     public void close() throws IOException {
         this.os.close();

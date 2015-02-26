@@ -28,7 +28,7 @@ public class ConsoleColors {
                 .replaceAll("&n", fromChatColor(ChatColor.UNDERLINE)).replaceAll("&o", fromChatColor(ChatColor.ITALIC)).replaceAll("&r", fromChatColor(ChatColor.RESET));
         return input + "\u001B[0m";
     }
-    
+
     /*
      * public static final String ANSI_RESET = "\u001B[0m"; public static final
      * String ANSI_BLACK = "\u001B[30m"; public static final String ANSI_RED =
@@ -44,7 +44,7 @@ public class ConsoleColors {
     public static String fromChatColor(final ChatColor color) {
         return chatColor(color).getLin();
     }
-    
+
     public static ConsoleColor chatColor(final ChatColor color) {
         switch (color) {
             case RESET:
@@ -82,7 +82,7 @@ public class ConsoleColors {
                 return ConsoleColor.RESET;
         }
     }
-    
+
     static enum ConsoleColor {
         RESET("\u001B[0m"),
         BLACK("\u001B[30m"),
@@ -98,17 +98,17 @@ public class ConsoleColors {
         ITALIC("\033[3m");
         private final String win;
         private final String lin;
-        
+
         ConsoleColor(final String lin) {
             this.lin = lin;
             this.win = lin;
         }
-        
+
         @SuppressWarnings("unused")
         public String getWin() {
             return this.win;
         }
-        
+
         public String getLin() {
             return this.lin;
         }

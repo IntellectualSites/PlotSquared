@@ -45,7 +45,7 @@ public class Cluster extends SubCommand {
     public Cluster() {
         super(Command.CLUSTER, "Manage a plot cluster", "cluster", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
@@ -307,7 +307,7 @@ public class Cluster extends SubCommand {
                     cluster.invited.add(uuid);
                     final String world = plr.getLocation().getWorld();
                     DBFunc.setInvited(world, cluster, uuid);
-                    PlotPlayer player = UUIDHandler.getPlayer(uuid);
+                    final PlotPlayer player = UUIDHandler.getPlayer(uuid);
                     if (player != null) {
                         MainUtil.sendMessage(player, C.CLUSTER_INVITED, cluster.getName());
                     }
@@ -354,7 +354,7 @@ public class Cluster extends SubCommand {
                 }
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
-                PlotPlayer player = UUIDHandler.getPlayer(uuid);
+                final PlotPlayer player = UUIDHandler.getPlayer(uuid);
                 if (player != null) {
                     MainUtil.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 }

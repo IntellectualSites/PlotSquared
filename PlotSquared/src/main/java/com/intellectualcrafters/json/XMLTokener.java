@@ -19,7 +19,7 @@ public class XMLTokener extends JSONTokener {
         entity.put("lt", XML.LT);
         entity.put("quot", XML.QUOT);
     }
-    
+
     /**
      * Construct an XMLTokener from a string.
      *
@@ -28,7 +28,7 @@ public class XMLTokener extends JSONTokener {
     public XMLTokener(final String s) {
         super(s);
     }
-    
+
     /**
      * Get the text in the CDATA block.
      *
@@ -53,7 +53,7 @@ public class XMLTokener extends JSONTokener {
             }
         }
     }
-    
+
     /**
      * Get the next XML outer token, trimming whitespace. There are two kinds of tokens: the '<' character which begins
      * a markup tag, and the content text between markup tags.
@@ -88,7 +88,7 @@ public class XMLTokener extends JSONTokener {
             c = next();
         }
     }
-    
+
     /**
      * Return the next entity. These entities are translated to Characters: <code>&amp;  &apos;  &gt;  &lt;
      * &quot;</code>.
@@ -115,7 +115,7 @@ public class XMLTokener extends JSONTokener {
         final Object object = entity.get(string);
         return object != null ? object : ampersand + string + ";";
     }
-    
+
     /**
      * Returns the next XML meta token. This is used for skipping over <!...> and <?...?> structures.
      *
@@ -179,7 +179,7 @@ public class XMLTokener extends JSONTokener {
                 }
         }
     }
-    
+
     /**
      * Get the next XML Token. These tokens are found inside of angle brackets. It may be one of these characters:
      * <code>/ > = ! ?</code> or it may be a string wrapped in single quotes or double quotes, or it may be a name.
@@ -258,7 +258,7 @@ public class XMLTokener extends JSONTokener {
                 }
         }
     }
-    
+
     /**
      * Skip characters until past the requested string. If it is not found, we are left at the end of the source with a
      * result of false.

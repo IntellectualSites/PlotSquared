@@ -41,12 +41,12 @@ import com.intellectualcrafters.plot.util.MainUtil;
  * Functions involving players, plots and locations.
  */
 public class BukkitPlayerFunctions {
-    
+
     /*
      * =========== NOTICE ================
      *  - We will try to move as many functions as we can out of this class and into the MainUtil class
      */
-    
+
     /**
      * Clear a plot. Use null player if no player is present
      * @param player
@@ -56,7 +56,7 @@ public class BukkitPlayerFunctions {
      */
     public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
         final long start = System.currentTimeMillis();
-        Runnable whenDone = new Runnable() {
+        final Runnable whenDone = new Runnable() {
             @Override
             public void run() {
                 if ((player != null) && player.isOnline()) {
@@ -68,7 +68,7 @@ public class BukkitPlayerFunctions {
             MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
         }
     }
-    
+
     /**
      * Merges all plots in the arraylist (with cost)
      *
@@ -94,7 +94,7 @@ public class BukkitPlayerFunctions {
         }
         return MainUtil.mergePlots(world, plotIds, true);
     }
-    
+
     public static String getPlayerName(final UUID uuid) {
         if (uuid == null) {
             return "unknown";
@@ -105,7 +105,7 @@ public class BukkitPlayerFunctions {
         }
         return name;
     }
-    
+
     /**
      * @param player player
      *
@@ -114,7 +114,7 @@ public class BukkitPlayerFunctions {
     public static boolean isInPlot(final Player player) {
         return getCurrentPlot(player) != null;
     }
-    
+
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
         final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
@@ -132,7 +132,7 @@ public class BukkitPlayerFunctions {
         }
         return myplots;
     }
-    
+
     /**
      * Returns the plot a player is currently in.
      *
@@ -154,7 +154,7 @@ public class BukkitPlayerFunctions {
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }
-    
+
     /**
      * Get the plots for a player
      *

@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -44,10 +45,10 @@ public class Unlink extends SubCommand {
     public Unlink() {
         super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -66,13 +67,16 @@ public class Unlink extends SubCommand {
         MainUtil.sendMessage(plr, "&6Plots unlinked successfully!");
         return true;
     }
-    
+
     public static boolean unlinkPlot(final Plot plot) {
-        String world = plot.world;
+        final String world = plot.world;
         final PlotId pos1 = MainUtil.getBottomPlot(plot).id;
         final PlotId pos2 = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(pos1, pos2);
-        // FIXME PlotUnlinkEvent (cancellable)
+        final boolean result = EventUtil.manager.callUnlink(world, ids);
+        if (!result) {
+            return false;
+        }
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         manager.startPlotUnlink(plotworld, ids);

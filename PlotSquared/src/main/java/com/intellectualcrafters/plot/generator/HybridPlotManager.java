@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashSet;
+
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -30,6 +38,32 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 @SuppressWarnings("deprecation")
 public class HybridPlotManager extends ClassicPlotManager {
+
+    @Override
+    public void exportTemplate(PlotWorld plotworld) {
+        HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
+        String psRoot = PlotSquared.IMP.getDirectory() + File.separator;
+        String dir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
+        String newDir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
+        try {
+        File sideroad = new File(psRoot + dir + "sideroad.schematic");
+        if (sideroad.exists()) {
+            files.add(new FileBytes(newDir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
+        }
+        File intersection = new File(psRoot + dir + "intersection.schematic");
+        if (sideroad.exists()) {
+            files.add(new FileBytes(newDir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
+        }
+        File plot = new File(psRoot + dir + "plot.schematic");
+        if (sideroad.exists()) {
+            files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
+        }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        Template.zipAll(plotworld.worldname, files);
+    }
     
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the SetCuboid
@@ -83,6 +117,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                                                 @Override
                                                 public void run() {
                                                     MainUtil.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
+                                                    TaskManager.runTask(whenDone);
                                                 }
                                             }, 5);
                                         }

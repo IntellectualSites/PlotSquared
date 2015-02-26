@@ -36,10 +36,10 @@ public class Delete extends SubCommand {
     public Delete() {
         super(Command.DELETE, "Delete a plot", "delete", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -52,7 +52,7 @@ public class Delete extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
-        if (PlotSquared.economy != null && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+        if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
                 EconHandler.depositPlayer(plr, c);
@@ -66,7 +66,7 @@ public class Delete extends SubCommand {
         final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
         final long start = System.currentTimeMillis();
         if (result) {
-            boolean result2 = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+            final boolean result2 = MainUtil.clearAsPlayer(plot, true, new Runnable() {
                 @Override
                 public void run() {
                     MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

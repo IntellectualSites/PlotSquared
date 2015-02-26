@@ -35,7 +35,7 @@ public class Inventory extends SubCommand {
     public Inventory() {
         super("inventory", "plots.inventory", "Open a command inventory", "inventory", "inv", CommandCategory.INFO, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         final ArrayList<SubCommand> cmds = new ArrayList<>();
@@ -53,7 +53,7 @@ public class Inventory extends SubCommand {
         ((BukkitPlayer) plr).player.openInventory(inventory);
         return true;
     }
-    
+
     private ItemStack getItem(final SubCommand cmd) {
         final ItemStack stack = new ItemStack(Material.COMMAND);
         final ItemMeta meta = stack.getItemMeta();

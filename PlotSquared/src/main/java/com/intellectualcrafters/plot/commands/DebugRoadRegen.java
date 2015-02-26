@@ -33,16 +33,16 @@ public class DebugRoadRegen extends SubCommand {
     public DebugRoadRegen() {
         super(Command.DEBUGROADREGEN, "Regenerate all road schematic in your current chunk", "debugroadregen", CommandCategory.DEBUG, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        Location loc = player.getLocation();
-        String world = loc.getWorld();
+        final Location loc = player.getLocation();
+        final String world = loc.getWorld();
         if (!(PlotSquared.getPlotWorld(world) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-        boolean result = HybridUtils.manager.regenerateRoad(world, chunk);
+        final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+        final boolean result = HybridUtils.manager.regenerateRoad(world, chunk);
         if (result) {
             MainUtil.update(loc);
         }

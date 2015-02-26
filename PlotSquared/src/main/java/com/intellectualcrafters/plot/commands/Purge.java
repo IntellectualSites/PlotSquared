@@ -40,7 +40,7 @@ public class Purge extends SubCommand {
     public Purge() {
         super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
     }
-    
+
     public PlotId getId(final String id) {
         try {
             final String[] split = id.split(";");
@@ -49,7 +49,7 @@ public class Purge extends SubCommand {
             return null;
         }
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
@@ -159,7 +159,7 @@ public class Purge extends SubCommand {
         MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
         return false;
     }
-    
+
     private boolean finishPurge(final int amount) {
         MainUtil.sendMessage(null, C.PURGE_SUCCESS, amount + "");
         return false;

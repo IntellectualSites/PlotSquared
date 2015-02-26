@@ -38,7 +38,7 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  *
  * @author Empire92
  */
-public class SetBlockFast_1_8 extends SetBlockManager {
+public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     private static final RefClass classBlock = getRefClass("{nms}.Block");
     private static final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private static final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
@@ -50,7 +50,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
     private static RefMethod methodA;
     private static RefMethod methodGetByCombinedId;
     private static RefConstructor constructorBlockPosition;
-    
+
     /**
      * Constructor
      *
@@ -63,7 +63,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
     }
-    
+
     /**
      * Set the block at the location
      *
@@ -83,6 +83,9 @@ public class SetBlockFast_1_8 extends SetBlockManager {
             case 130:
             case 146:
             case 27:
+            case 63:
+            case 68:
+            case 313:
             case 28:
             case 66:
             case 157:
@@ -117,7 +120,7 @@ public class SetBlockFast_1_8 extends SetBlockManager {
         final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
         methodA.of(chunk).call(pos, combined);
     }
-    
+
     /**
      * Update chunks
      *

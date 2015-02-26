@@ -66,7 +66,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
-    
+
     public static void startRunnable(final JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
@@ -98,7 +98,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }, 0l, 20l);
     }
-    
+
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
@@ -107,19 +107,19 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         event.setCancelled(true);
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         if (plot == null) {
             MainUtil.sendMessage(pp, C.NOT_IN_PLOT);
             return;
         }
-        UUID uuid = pp.getUUID();
+        final UUID uuid = pp.getUUID();
         if (!plot.isAdded(uuid)) {
             MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
             return;
         }
         final Set<Player> plotPlayers = new HashSet<>();
         for (final Player p : player.getWorld().getPlayers()) {
-            Plot newPlot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+            final Plot newPlot = MainUtil.getPlot(BukkitUtil.getLocation(player));
             if (plot.equals(newPlot)) {
                 plotPlayers.add(p);
             }
@@ -139,7 +139,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
@@ -154,7 +154,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             event.getBlock().breakNaturally();
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(final EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
@@ -169,35 +169,35 @@ public class PlotPlusListener extends PlotListener implements Listener {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final Plot plot = MainUtil.getPlot(pp.getLocation());
         if (plot == null) {
             return;
         }
-        UUID uuid = pp.getUUID();
+        final UUID uuid = pp.getUUID();
         if (plot.isAdded(uuid) && booleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final Plot plot = MainUtil.getPlot(pp.getLocation());
         if (plot == null) {
             return;
         }
-        UUID uuid = pp.getUUID();
+        final UUID uuid = pp.getUUID();
         if (plot.isAdded(uuid) && booleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Plot plot = event.getPlot();
@@ -211,7 +211,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     return;
                 }
                 final Player trespasser = event.getPlayer();
-                PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
+                final PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
                 if (pp.getUUID().equals(pt.getUUID())) {
                     return;
                 }
@@ -224,11 +224,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        String name = player.getName();
+        final Player player = event.getPlayer();
+        final String name = player.getName();
         if (feedRunnable.containsKey(name)) {
             feedRunnable.remove(name);
         }
@@ -236,17 +236,17 @@ public class PlotPlusListener extends PlotListener implements Listener {
             healRunnable.remove(name);
         }
     }
-    
+
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
-        Player leaver = event.getPlayer();
+        final Player leaver = event.getPlayer();
         leaver.playEffect(leaver.getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
-        PlotPlayer pl = BukkitUtil.getPlayer(leaver);
-        String name = pl.getName();
+        final PlotPlayer pl = BukkitUtil.getPlayer(leaver);
+        pl.getName();
         if (feedRunnable.containsKey(leaver)) {
             feedRunnable.remove(leaver);
         }
@@ -271,20 +271,20 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }
     }
-    
+
     public static class Interval {
         public final int interval;
         public final int amount;
         public final int max;
         public int count = 0;
-        
+
         public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
             this.amount = amount;
             this.max = max;
         }
     }
-    
+
     /**
      * Record Meta Class
      *
@@ -299,22 +299,22 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         private final String name;
         private final Material material;
-        
+
         public RecordMeta(final String name, final Material material) {
             this.name = name;
             this.material = material;
         }
-        
+
         @Override
         public String toString() {
             return this.name;
         }
-        
+
         @Override
         public int hashCode() {
             return this.name.hashCode();
         }
-        
+
         public Material getMaterial() {
             return this.material;
         }

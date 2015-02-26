@@ -37,19 +37,19 @@ public class DefaultTitleManager {
     private int fadeOutTime = -1;
     private boolean ticks = false;
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
-    
+
     /**
      * Create a new 1.8 title
      *
      * @param title
      *            Title
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public DefaultTitleManager(final String title) throws ClassNotFoundException {
         this.title = title;
         loadClasses();
     }
-    
+
     /**
      * Create a new 1.8 title
      *
@@ -57,20 +57,20 @@ public class DefaultTitleManager {
      *            Title text
      * @param subtitle
      *            Subtitle text
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public DefaultTitleManager(final String title, final String subtitle) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
     }
-    
+
     /**
      * Copy 1.8 title
      *
      * @param title
      *            Title
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public DefaultTitleManager(final DefaultTitleManager title) throws ClassNotFoundException {
         // Copy title
@@ -84,7 +84,7 @@ public class DefaultTitleManager {
         this.ticks = title.ticks;
         loadClasses();
     }
-    
+
     /**
      * Create a new 1.8 title
      *
@@ -98,7 +98,7 @@ public class DefaultTitleManager {
      *            Stay on screen time
      * @param fadeOutTime
      *            Fade out time
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public DefaultTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException {
         this.title = title;
@@ -108,10 +108,10 @@ public class DefaultTitleManager {
         this.fadeOutTime = fadeOutTime;
         loadClasses();
     }
-    
+
     /**
      * Load spigot and NMS classes
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     private void loadClasses() throws ClassNotFoundException {
         this.packetTitle = getNMSClass("PacketPlayOutTitle");
@@ -119,7 +119,7 @@ public class DefaultTitleManager {
         this.chatBaseComponent = getNMSClass("IChatBaseComponent");
         this.nmsChatSerializer = getNMSClass("ChatSerializer");
     }
-    
+
     /**
      * Set title text
      *
@@ -129,7 +129,7 @@ public class DefaultTitleManager {
     public void setTitle(final String title) {
         this.title = title;
     }
-    
+
     /**
      * Get title text
      *
@@ -138,7 +138,7 @@ public class DefaultTitleManager {
     public String getTitle() {
         return this.title;
     }
-    
+
     /**
      * Set subtitle text
      *
@@ -148,7 +148,7 @@ public class DefaultTitleManager {
     public void setSubtitle(final String subtitle) {
         this.subtitle = subtitle;
     }
-    
+
     /**
      * Get subtitle text
      *
@@ -157,7 +157,7 @@ public class DefaultTitleManager {
     public String getSubtitle() {
         return this.subtitle;
     }
-    
+
     /**
      * Set the title color
      *
@@ -167,7 +167,7 @@ public class DefaultTitleManager {
     public void setTitleColor(final ChatColor color) {
         this.titleColor = color;
     }
-    
+
     /**
      * Set the subtitle color
      *
@@ -177,7 +177,7 @@ public class DefaultTitleManager {
     public void setSubtitleColor(final ChatColor color) {
         this.subtitleColor = color;
     }
-    
+
     /**
      * Set title fade in time
      *
@@ -187,7 +187,7 @@ public class DefaultTitleManager {
     public void setFadeInTime(final int time) {
         this.fadeInTime = time;
     }
-    
+
     /**
      * Set title fade out time
      *
@@ -197,7 +197,7 @@ public class DefaultTitleManager {
     public void setFadeOutTime(final int time) {
         this.fadeOutTime = time;
     }
-    
+
     /**
      * Set title stay time
      *
@@ -207,29 +207,29 @@ public class DefaultTitleManager {
     public void setStayTime(final int time) {
         this.stayTime = time;
     }
-    
+
     /**
      * Set timings to ticks
      */
     public void setTimingsToTicks() {
         this.ticks = true;
     }
-    
+
     /**
      * Set timings to seconds
      */
     public void setTimingsToSeconds() {
         this.ticks = false;
     }
-    
+
     /**
      * Send the title to a player
      *
      * @param player
      *            Player
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
      */
     public void send(final Player player) throws Exception {
         if (this.packetTitle != null) {
@@ -257,17 +257,17 @@ public class DefaultTitleManager {
             }
         }
     }
-    
+
     /**
      * Broadcast the title to all players
-     * @throws Exception 
+     * @throws Exception
      */
     public void broadcast() throws Exception {
         for (final Player p : Bukkit.getOnlinePlayers()) {
             send(p);
         }
     }
-    
+
     /**
      * Clear the title
      *
@@ -287,7 +287,7 @@ public class DefaultTitleManager {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Reset the title settings
      *
@@ -307,11 +307,11 @@ public class DefaultTitleManager {
             e.printStackTrace();
         }
     }
-    
+
     private Class<?> getPrimitiveType(final Class<?> clazz) {
         return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
     }
-    
+
     private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes) {
         final int a = classes != null ? classes.length : 0;
         final Class<?>[] types = new Class<?>[a];
@@ -320,7 +320,7 @@ public class DefaultTitleManager {
         }
         return types;
     }
-    
+
     private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o) {
         if (a.length != o.length) {
             return false;
@@ -332,7 +332,7 @@ public class DefaultTitleManager {
         }
         return true;
     }
-    
+
     private Object getHandle(final Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
@@ -341,7 +341,7 @@ public class DefaultTitleManager {
             return null;
         }
     }
-    
+
     private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes) {
         final Class<?>[] t = toPrimitiveTypeArray(paramTypes);
         for (final Method m : clazz.getMethods()) {
@@ -352,20 +352,20 @@ public class DefaultTitleManager {
         }
         return null;
     }
-    
+
     private String getVersion() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
         final String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
-    
+
     private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
         final String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
         clazz = Class.forName(fullName);
         return clazz;
     }
-    
+
     private Field getField(final Class<?> clazz, final String name) {
         try {
             final Field field = clazz.getDeclaredField(name);
@@ -376,7 +376,7 @@ public class DefaultTitleManager {
             return null;
         }
     }
-    
+
     private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
         for (final Method m : clazz.getMethods()) {
             if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
@@ -386,7 +386,7 @@ public class DefaultTitleManager {
         }
         return null;
     }
-    
+
     private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
         boolean equal = true;
         if (l1.length != l2.length) {

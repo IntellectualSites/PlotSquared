@@ -9,10 +9,10 @@ import java.util.UUID;
  */
 public interface OfflinePlotPlayer {
     public UUID getUUID();
-
+    
     public long getLastPlayed();
-    
+
     public boolean isOnline();
-    
+
     public String getName();
 }

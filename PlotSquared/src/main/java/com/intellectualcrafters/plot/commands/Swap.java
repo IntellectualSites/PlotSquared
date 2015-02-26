@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -41,7 +41,7 @@ public class Swap extends SubCommand {
     public Swap() {
         super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -49,7 +49,7 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -83,7 +83,7 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
-        AChunkManager.manager.swap(world, plot.id, plotid);
+        ChunkManager.manager.swap(world, plot.id, plotid);
         // FIXME Requires testing!!
         DBFunc.dbManager.swapPlots(plot, MainUtil.getPlot(world, plotid));
         MainUtil.sendMessage(plr, C.SWAP_SUCCESS);

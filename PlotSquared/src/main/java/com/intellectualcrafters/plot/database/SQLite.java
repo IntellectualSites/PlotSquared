@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 public class SQLite extends Database {
     private final String dbLocation;
     private Connection connection;
-    
+
     /**
      * Creates a new SQLite instance
      *
@@ -50,7 +50,7 @@ public class SQLite extends Database {
         super(plotsquared);
         this.dbLocation = dbLocation;
     }
-    
+
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -71,17 +71,17 @@ public class SQLite extends Database {
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
-    
+
     @Override
     public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
-    
+
     @Override
     public Connection getConnection() {
         return this.connection;
     }
-    
+
     @Override
     public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
@@ -90,7 +90,7 @@ public class SQLite extends Database {
         this.connection.close();
         return true;
     }
-    
+
     @Override
     public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -99,7 +99,7 @@ public class SQLite extends Database {
         final Statement statement = this.connection.createStatement();
         return statement.executeQuery(query);
     }
-    
+
     @Override
     public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {

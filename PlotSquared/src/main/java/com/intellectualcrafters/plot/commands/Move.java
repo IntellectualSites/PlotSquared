@@ -33,7 +33,7 @@ public class Move extends SubCommand {
     public Move() {
         super("debugmove", "plots.admin", "plot moving debug test", "debugmove", "move", CommandCategory.DEBUG, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {

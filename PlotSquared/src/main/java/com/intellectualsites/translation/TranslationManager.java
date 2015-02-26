@@ -23,14 +23,14 @@ public class TranslationManager {
      * The translations
      */
     private final LinkedHashMap<String, TranslationAsset> translatedObjects;
-    
+
     /**
      * Constructor
      */
     public TranslationManager() {
         this(new TranslationObject[] {});
     }
-    
+
     /**
      * Constructor
      *
@@ -40,7 +40,7 @@ public class TranslationManager {
         this.translationObjects = new LinkedList<TranslationObject>(Arrays.asList(translationObjects));
         this.translatedObjects = new LinkedHashMap<String, TranslationAsset>();
     }
-    
+
     public static List<TranslationObject> transformEnum(final Object[] os) {
         final List<TranslationObject> eList = new ArrayList<TranslationObject>();
         for (final Object o : os) {
@@ -48,7 +48,7 @@ public class TranslationManager {
         }
         return eList;
     }
-    
+
     public static void scan(final Class c, final TranslationManager manager) throws IllegalAccessException {
         final Field[] fields = c.getDeclaredFields();
         Annotation annotation;
@@ -64,7 +64,7 @@ public class TranslationManager {
             manager.addTranslationObject(new TranslationObject(key, defaultValue, t.description(), t.creationDescription()));
         }
     }
-    
+
     /**
      * Don't use this!
      *
@@ -73,7 +73,7 @@ public class TranslationManager {
     public TranslationManager instance() {
         return this;
     }
-    
+
     /**
      * Get the translation objects
      *
@@ -82,7 +82,7 @@ public class TranslationManager {
     public List<TranslationObject> translations() {
         return this.translationObjects;
     }
-    
+
     /**
      * Add an object
      *
@@ -94,7 +94,7 @@ public class TranslationManager {
         this.translationObjects.add(t);
         return instance();
     }
-    
+
     /**
      * Remove an object
      *
@@ -106,7 +106,7 @@ public class TranslationManager {
         this.translationObjects.remove(t);
         return instance();
     }
-    
+
     public String getDescription(final String key) {
         for (final TranslationObject o : translations()) {
             if (o.getKey().equals(key) && !o.getDescription().equals("")) {
@@ -115,11 +115,11 @@ public class TranslationManager {
         }
         return "";
     }
-    
+
     public TranslationManager addTranslation(final TranslationObject t, final TranslationAsset a) {
         return addTranslation(t.getKey(), a);
     }
-    
+
     public TranslationManager addTranslation(final String key, final TranslationAsset a) {
         String eKey = key + "." + a.getLang().toString();
         eKey = eKey.toLowerCase();
@@ -129,7 +129,7 @@ public class TranslationManager {
         this.translatedObjects.put(eKey, a);
         return instance();
     }
-    
+
     public TranslationAsset getTranslated(final String key, final String language) {
         String eKey = key + "." + language;
         eKey = eKey.toLowerCase();
@@ -138,7 +138,7 @@ public class TranslationManager {
         }
         return this.translatedObjects.get(key);
     }
-    
+
     public TranslationAsset getTranslated(final String key, final TranslationLanguage language) {
         String eKey = key + "." + language.toString();
         eKey = eKey.toLowerCase();
@@ -147,15 +147,15 @@ public class TranslationManager {
         }
         return this.translatedObjects.get(eKey);
     }
-    
+
     public TranslationAsset getTranslated(final TranslationObject t, final TranslationLanguage l) {
         return getTranslated(t.getKey(), l);
     }
-    
+
     public String getTranslation(final String key, final TranslationLanguage l) {
         return getTranslated(key, l).getTranslated();
     }
-    
+
     public TranslationObject getDefault(final String key) {
         for (final TranslationObject o : translations()) {
             if (o.getKey().equals(key.toLowerCase())) {
@@ -164,7 +164,7 @@ public class TranslationManager {
         }
         return null;
     }
-    
+
     public TranslationManager saveAll(final TranslationFile file) {
         for (final TranslationObject object : translations()) {
             final TranslationAsset o = getTranslated(object.getKey(), file.getLanguage());
@@ -172,7 +172,7 @@ public class TranslationManager {
         }
         return instance();
     }
-    
+
     public TranslationManager debug(final PrintStream out) {
         for (final TranslationObject object : translations()) {
             out.println(object.getKey() + ":");
@@ -182,7 +182,7 @@ public class TranslationManager {
         }
         return instance();
     }
-    
+
     public TranslationManager saveFile(final TranslationFile file) {
         file.saveFile();
         return instance();

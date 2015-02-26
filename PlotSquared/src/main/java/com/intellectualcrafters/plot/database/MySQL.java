@@ -41,7 +41,7 @@ public class MySQL extends Database {
     private final String port;
     private final String hostname;
     private Connection connection;
-    
+
     /**
      * Creates a new MySQL instance
      *
@@ -61,13 +61,13 @@ public class MySQL extends Database {
         this.password = password;
         this.connection = null;
     }
-    
+
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         this.connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
         return this.connection;
     }
-    
+
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -77,17 +77,17 @@ public class MySQL extends Database {
         this.connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
         return this.connection;
     }
-    
+
     @Override
     public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
-    
+
     @Override
     public Connection getConnection() {
         return this.connection;
     }
-    
+
     @Override
     public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
@@ -96,7 +96,7 @@ public class MySQL extends Database {
         this.connection.close();
         return true;
     }
-    
+
     @Override
     public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -105,7 +105,7 @@ public class MySQL extends Database {
         final Statement statement = this.connection.createStatement();
         return statement.executeQuery(query);
     }
-    
+
     @Override
     public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.Chunk;
@@ -9,10 +10,12 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.AChunkManager;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
  * @author Citymonstret
@@ -44,7 +47,7 @@ public class HybridPop extends BlockPopulator {
     private boolean doFilling = false;
     private boolean doFloor = false;
     private boolean doState = false;
-    
+
     public HybridPop(final PlotWorld pw) {
         this.plotworld = (HybridPlotWorld) pw;
         // save configuration
@@ -85,25 +88,25 @@ public class HybridPop extends BlockPopulator {
         }
         this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
     }
-    
+
     public final long nextLong() {
         final long a = this.state;
         this.state = xorShift64(a);
         return a;
     }
-    
+
     public final long xorShift64(long a) {
         a ^= (a << 21);
         a ^= (a >>> 35);
         a ^= (a << 4);
         return a;
     }
-    
+
     public final int random(final int n) {
         final long result = ((nextLong() >>> 32) * n) >> 32;
         return (int) result;
     }
-    
+
     @Override
     public void populate(final World w, final Random r, final Chunk c) {
         final int cx = c.getX(), cz = c.getZ();
@@ -116,8 +119,8 @@ public class HybridPop extends BlockPopulator {
         }
         this.X = cx << 4;
         this.Z = cz << 4;
-        final HybridPlotManager manager = (HybridPlotManager) PlotSquared.getPlotManager(w.getName());
-        final RegionWrapper plot = AChunkManager.CURRENT_PLOT_CLEAR;
+        PlotSquared.getPlotManager(w.getName());
+        final RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             short sx = (short) ((this.X) % this.size);
             short sz = (short) ((this.Z) % this.size);
@@ -138,9 +141,24 @@ public class HybridPop extends BlockPopulator {
                         if (this.doFloor) {
                             setBlock(w, x, (short) this.plotheight, z, this.plotfloors);
                         }
+                        if (this.plotworld.PLOT_SCHEMATIC) {
+                            final PlotLoc loc = new PlotLoc((short) (this.X + x), (short) (this.Z + z));
+                            final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
+                            if (blocks != null) {
+                                for (final short y : blocks.keySet()) {
+                                    setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
+                                }
+                            }
+                            HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                            if (states != null) {
+                                for (PlotItem items : states) {
+                                    BlockManager.manager.addItems(this.plotworld.worldname, items);
+                                }
+                            }
+                        }
                     } else {
-                        final ChunkLoc loc = new ChunkLoc(this.X + x, this.Z + z);
-                        final HashMap<Short, Byte> data = AChunkManager.GENERATE_DATA.get(loc);
+                        final PlotLoc loc = new PlotLoc((short) (this.X + x), (short) (this.Z + z));
+                        final HashMap<Short, Byte> data = ChunkManager.GENERATE_DATA.get(loc);
                         if (data != null) {
                             for (final short y : data.keySet()) {
                                 setBlock(w, x, y, z, data.get(y).byteValue());
@@ -178,6 +196,23 @@ public class HybridPop extends BlockPopulator {
                     if (this.doFloor) {
                         setBlock(w, x, (short) this.plotheight, z, this.plotfloors);
                     }
+                    if (this.plotworld.PLOT_SCHEMATIC) {
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
+                        final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
+                        if (blocks != null) {
+                            for (final short y : blocks.keySet()) {
+                                setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
+                            }
+                        }
+                        HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                        if (states != null) {
+                            for (PlotItem items : states) {
+                                items.x = this.X + x;
+                                items.z = this.Z + z;
+                                BlockManager.manager.addItems(this.plotworld.worldname, items);
+                            }
+                        }
+                    }
                 } else {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
@@ -199,7 +234,7 @@ public class HybridPop extends BlockPopulator {
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
@@ -211,7 +246,7 @@ public class HybridPop extends BlockPopulator {
             }
         }
     }
-    
+
     private void setBlock(final World w, final short x, final short y, final short z, final byte[] blkids) {
         if (blkids.length == 1) {
             setBlock(w, x, y, z, blkids[0]);
@@ -220,12 +255,12 @@ public class HybridPop extends BlockPopulator {
             setBlock(w, x, y, z, blkids[i]);
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     private void setBlock(final World w, final short x, final short y, final short z, final byte val) {
         w.getBlockAt(this.X + x, y, this.Z + z).setData(val, false);
     }
-    
+
     public boolean isIn(final RegionWrapper plot, final int x, final int z) {
         return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }

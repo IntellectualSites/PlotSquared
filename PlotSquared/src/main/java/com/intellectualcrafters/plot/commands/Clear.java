@@ -34,7 +34,7 @@ public class Clear extends SubCommand {
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
@@ -62,12 +62,12 @@ public class Clear extends SubCommand {
             }
             return true;
         }
-        Location loc = plr.getLocation();
-        Plot plot = MainUtil.getPlot(loc);
+        final Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot( plot))) {
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
         if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
@@ -75,7 +75,7 @@ public class Clear extends SubCommand {
         }
         assert plot != null;
         final long start = System.currentTimeMillis();
-        boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+        final boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

@@ -52,7 +52,7 @@ public class BlockWrapper {
      * Block Data Value
      */
     public final byte data;
-    
+
     /**
      * Constructor
      *
@@ -69,7 +69,7 @@ public class BlockWrapper {
         this.id = id;
         this.data = data;
     }
-    
+
     /**
      * Alternative Constructor Uses block data, rather than typed data
      *
@@ -83,7 +83,7 @@ public class BlockWrapper {
         this.id = block.getTypeId();
         this.data = block.getData();
     }
-    
+
     /**
      * Get a block based on the block wrapper
      *

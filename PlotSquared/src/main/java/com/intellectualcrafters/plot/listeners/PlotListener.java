@@ -57,7 +57,7 @@ public class PlotListener {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }
-    
+
     public static boolean booleanFlag(final Plot plot, final String key, final boolean defaultValue) {
         final Flag flag = FlagManager.getPlotFlag(plot, key);
         if (flag == null) {
@@ -69,15 +69,15 @@ public class PlotListener {
         }
         return defaultValue;
     }
-    
+
     public static boolean isInPlot(final String world, final int x, final int y, final int z) {
         return (MainUtil.getPlot(new Location(world, x, y, z)) != null);
     }
-    
+
     public static boolean isPlotWorld(final String world) {
         return PlotSquared.isPlotWorld(world);
     }
-    
+
     public static boolean isPlotArea(final Location location) {
         final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
@@ -85,7 +85,7 @@ public class PlotListener {
         }
         return true;
     }
-    
+
     private static String getName(final UUID id) {
         if (id == null) {
             return "none";
@@ -96,31 +96,31 @@ public class PlotListener {
         }
         return name;
     }
-    
+
     public static UUID getUUID(final String name) {
         return UUIDHandler.getUUID(name);
     }
-    
+
     public static boolean enteredPlot(final Location l1, final Location l2) {
         final PlotId p1 = MainUtil.getPlotId(l1);
         final PlotId p2 = MainUtil.getPlotId(l2);
         return (p2 != null) && ((p1 == null) || !p1.equals(p2));
     }
-    
+
     public static boolean leftPlot(final Location l1, final Location l2) {
         final PlotId p1 = MainUtil.getPlotId(l1);
         final PlotId p2 = MainUtil.getPlotId(l2);
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
-    
+
     public static boolean isPlotWorld(final Location l) {
         return PlotSquared.isPlotWorld(l.getWorld());
     }
-    
+
     public static boolean isInPlot(final Location loc) {
         return getCurrentPlot(loc) != null;
     }
-    
+
     public static Plot getCurrentPlot(final Location loc) {
         final PlotId id = MainUtil.getPlotId(loc);
         if (id == null) {
@@ -128,7 +128,7 @@ public class PlotListener {
         }
         return MainUtil.getPlot(loc.getWorld(), id);
     }
-    
+
     private static WeatherType getWeatherType(String str) {
         str = str.toLowerCase();
         if (str.equals("rain")) {
@@ -137,7 +137,7 @@ public class PlotListener {
             return WeatherType.CLEAR;
         }
     }
-    
+
     private static GameMode getGameMode(final String str) {
         switch (str) {
             case "creative":
@@ -150,11 +150,11 @@ public class PlotListener {
                 return Bukkit.getDefaultGameMode();
         }
     }
-    
+
     public static void plotEntry(final PlotPlayer player, final Plot plot) {
         plotEntry(((BukkitPlayer) player).player, plot);
     }
-    
+
     public static void plotEntry(final Player player, final Plot plot) {
         if (plot.hasOwner()) {
             final Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");
@@ -191,7 +191,7 @@ public class PlotListener {
             }
         }
     }
-    
+
     public static void plotExit(final Player player, final Plot plot) {
         {
             final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
@@ -210,7 +210,7 @@ public class PlotListener {
             player.resetPlayerWeather();
         }
     }
-    
+
     public static boolean getFlagValue(final String value) {
         return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }

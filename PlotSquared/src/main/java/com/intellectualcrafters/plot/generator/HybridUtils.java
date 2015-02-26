@@ -11,16 +11,16 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class HybridUtils {
-    
+
     public static HybridUtils manager;
-    
+
     public boolean checkModified(final Plot plot, int requiredChanges) {
         final Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
@@ -48,9 +48,9 @@ public abstract class HybridUtils {
         changes = checkModified(requiredChanges, plot.world, botx, topx, 1, hpw.PLOT_HEIGHT - 1, botz, topz, hpw.MAIN_BLOCK);
         return changes == -1;
     }
-    
+
     public abstract int checkModified(final int threshhold, final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
-    
+
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.world;
         final Location bot = MainUtil.getPlotBottomLoc(world, plot.id);
@@ -72,23 +72,23 @@ public abstract class HybridUtils {
         final int ty = get_ey(world, bx, tx, bz, tz, by);
         final Location pos3 = new Location(world, bx, by, bz);
         final Location pos4 = new Location(world, tx, ty, tz);
-        final CompoundTag sideroad = SchematicHandler.getCompoundTag(world, pos1, pos2);
-        final CompoundTag intersection = SchematicHandler.getCompoundTag(world, pos3, pos4);
+        final CompoundTag sideroad = SchematicHandler.manager.getCompoundTag(world, pos1, pos2);
+        final CompoundTag intersection = SchematicHandler.manager.getCompoundTag(world, pos3, pos4);
         final String dir = PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
-        SchematicHandler.save(sideroad, dir + "sideroad.schematic");
-        SchematicHandler.save(intersection, dir + "intersection.schematic");
+        SchematicHandler.manager.save(sideroad, dir + "sideroad.schematic");
+        SchematicHandler.manager.save(intersection, dir + "intersection.schematic");
         plotworld.ROAD_SCHEMATIC_ENABLED = true;
         plotworld.setupSchematics();
         return true;
     }
-    
-    public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
-    
-    public abstract void regenerateChunkChunk(final String world, final ChunkLoc loc);
 
-    public abstract boolean scheduleRoadUpdate(final String world);
+    public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
+
+    public abstract void regenerateChunkChunk(final String world, final ChunkLoc loc);
     
-    public boolean regenerateRoad(String world, final ChunkLoc chunk) {
+    public abstract boolean scheduleRoadUpdate(final String world);
+
+    public boolean regenerateRoad(final String world, final ChunkLoc chunk) {
         final int x = chunk.x << 4;
         final int z = chunk.z << 4;
         final int ex = x + 15;
@@ -97,12 +97,12 @@ public abstract class HybridUtils {
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
-        PlotManager manager = PlotSquared.getPlotManager(world);
+        final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotId id1 = manager.getPlotId(plotworld, x, 0, z);
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
         boolean toCheck = false;
         if ((id1 == null) || (id2 == null) || (id1 != id2)) {
-            final boolean result = AChunkManager.manager.loadChunk(world, chunk);
+            final boolean result = ChunkManager.manager.loadChunk(world, chunk);
             if (result) {
                 if (id1 != null) {
                     final Plot p1 = MainUtil.getPlot(world, id1);

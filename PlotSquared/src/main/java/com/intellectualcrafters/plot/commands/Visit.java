@@ -35,7 +35,7 @@ public class Visit extends SubCommand {
     public Visit() {
         super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT, true);
     }
-    
+
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
         for (final Plot p : PlotSquared.getPlots()) {
@@ -45,7 +45,7 @@ public class Visit extends SubCommand {
         }
         return plots;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {

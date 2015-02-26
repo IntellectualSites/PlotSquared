@@ -183,7 +183,7 @@ public class JSONML {
             }
         }
     }
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a JSONArray using the JsonML transform. Each
      * XML tag is represented as a JSONArray in which the first element is the tag name. If the tag has attributes, then
@@ -199,7 +199,7 @@ public class JSONML {
     public static JSONArray toJSONArray(final String string) throws JSONException {
         return toJSONArray(new XMLTokener(string));
     }
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a JSONArray using the JsonML transform. Each
      * XML tag is represented as a JSONArray in which the first element is the tag name. If the tag has attributes, then
@@ -216,7 +216,7 @@ public class JSONML {
     public static JSONArray toJSONArray(final XMLTokener x) throws JSONException {
         return (JSONArray) parse(x, true, null);
     }
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a JSONObject using the JsonML transform. Each
      * XML tag is represented as a JSONObject with a "tagName" property. If the tag has attributes, then the attributes
@@ -234,7 +234,7 @@ public class JSONML {
     public static JSONObject toJSONObject(final XMLTokener x) throws JSONException {
         return (JSONObject) parse(x, false, null);
     }
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a JSONObject using the JsonML transform. Each
      * XML tag is represented as a JSONObject with a "tagName" property. If the tag has attributes, then the attributes
@@ -252,7 +252,7 @@ public class JSONML {
     public static JSONObject toJSONObject(final String string) throws JSONException {
         return toJSONObject(new XMLTokener(string));
     }
-    
+
     /**
      * Reverse the JSONML transformation, making an XML text from a JSONArray.
      *
@@ -327,7 +327,7 @@ public class JSONML {
         }
         return sb.toString();
     }
-    
+
     /**
      * Reverse the JSONML transformation, making an XML text from a JSONObject. The JSONObject must contain a "tagName"
      * property. If it has children, then it must have a "childNodes" property containing an array of objects. The other

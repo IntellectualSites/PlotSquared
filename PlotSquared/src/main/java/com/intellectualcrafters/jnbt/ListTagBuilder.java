@@ -13,7 +13,7 @@ import java.util.List;
 public class ListTagBuilder {
     private final Class<? extends Tag> type;
     private final List<Tag> entries;
-    
+
     /**
      * Create a new instance.
      *
@@ -24,7 +24,7 @@ public class ListTagBuilder {
         this.type = type;
         this.entries = new ArrayList<Tag>();
     }
-    
+
     /**
      * Create a new builder instance.
      *
@@ -33,7 +33,7 @@ public class ListTagBuilder {
     public static ListTagBuilder create(final Class<? extends Tag> type) {
         return new ListTagBuilder(type);
     }
-    
+
     /**
      * Create a new builder instance.
      *
@@ -55,7 +55,7 @@ public class ListTagBuilder {
         builder.addAll(Arrays.asList(entries));
         return builder;
     }
-    
+
     /**
      * Add the given tag.
      *
@@ -71,7 +71,7 @@ public class ListTagBuilder {
         this.entries.add(value);
         return this;
     }
-    
+
     /**
      * Add all the tags in the given list.
      *
@@ -86,7 +86,7 @@ public class ListTagBuilder {
         }
         return this;
     }
-    
+
     /**
      * Build an unnamed list tag with this builder's entries.
      *
@@ -95,7 +95,7 @@ public class ListTagBuilder {
     public ListTag build() {
         return new ListTag(this.type, new ArrayList<Tag>(this.entries));
     }
-    
+
     /**
      * Build a new list tag with this builder's entries.
      *

@@ -39,7 +39,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     private final Location from;
     private final Plot plot;
     private boolean cancelled;
-    
+
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
@@ -52,16 +52,16 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         this.from = from;
         this.plot = plot;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     /**
      * Get the from location
      *
@@ -70,7 +70,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     public Location getFrom() {
         return this.from;
     }
-    
+
     /**
      * Get the plot involved
      *
@@ -79,12 +79,12 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
     public Plot getPlot() {
         return this.plot;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
-    
+
     @Override
     public void setCancelled(final boolean cancelled) {
         this.cancelled = cancelled;

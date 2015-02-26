@@ -26,12 +26,12 @@ package com.intellectualcrafters.plot.object;
 public class PlotBlock {
     public final short id;
     public final byte data;
-    
+
     public PlotBlock(final short id, final byte data) {
         this.id = id;
         this.data = data;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -46,12 +46,12 @@ public class PlotBlock {
         final PlotBlock other = (PlotBlock) obj;
         return ((this.id == other.id) && ((this.data == other.data) || (this.data == -1) || (other.data == -1)));
     }
-    
+
     @Override
     public int hashCode() {
         return this.id;
     }
-    
+
     @Override
     public String toString() {
         if (this.data == -1) {

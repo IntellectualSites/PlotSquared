@@ -34,40 +34,40 @@ public class HackTitleManager {
     private int fadeOutTime = -1;
     private boolean ticks = false;
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
-    
+
     /**
      * Create a new 1.8 title
-     * 
+     *
      * @param title
      *            Title
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public HackTitleManager(final String title) throws ClassNotFoundException {
         this.title = title;
         loadClasses();
     }
-    
+
     /**
      * Create a new 1.8 title
-     * 
+     *
      * @param title
      *            Title text
      * @param subtitle
      *            Subtitle text
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public HackTitleManager(final String title, final String subtitle) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
     }
-    
+
     /**
      * Copy 1.8 title
-     * 
+     *
      * @param title
      *            Title
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public HackTitleManager(final HackTitleManager title) throws ClassNotFoundException {
         // Copy title
@@ -81,10 +81,10 @@ public class HackTitleManager {
         this.ticks = title.ticks;
         loadClasses();
     }
-    
+
     /**
      * Create a new 1.8 title
-     * 
+     *
      * @param title
      *            Title text
      * @param subtitle
@@ -95,7 +95,7 @@ public class HackTitleManager {
      *            Stay on screen time
      * @param fadeOutTime
      *            Fade out time
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public HackTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException {
         this.title = title;
@@ -105,122 +105,122 @@ public class HackTitleManager {
         this.fadeOutTime = fadeOutTime;
         loadClasses();
     }
-    
+
     /**
      * Load spigot and NMS classes
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     private void loadClasses() throws ClassNotFoundException {
         this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
         this.packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
         this.nmsChatSerializer = getNMSClass("ChatSerializer");
     }
-    
+
     /**
      * Set title text
-     * 
+     *
      * @param title
      *            Title
      */
     public void setTitle(final String title) {
         this.title = title;
     }
-    
+
     /**
      * Get title text
-     * 
+     *
      * @return Title text
      */
     public String getTitle() {
         return this.title;
     }
-    
+
     /**
      * Set subtitle text
-     * 
+     *
      * @param subtitle
      *            Subtitle text
      */
     public void setSubtitle(final String subtitle) {
         this.subtitle = subtitle;
     }
-    
+
     /**
      * Get subtitle text
-     * 
+     *
      * @return Subtitle text
      */
     public String getSubtitle() {
         return this.subtitle;
     }
-    
+
     /**
      * Set the title color
-     * 
+     *
      * @param color
      *            Chat color
      */
     public void setTitleColor(final ChatColor color) {
         this.titleColor = color;
     }
-    
+
     /**
      * Set the subtitle color
-     * 
+     *
      * @param color
      *            Chat color
      */
     public void setSubtitleColor(final ChatColor color) {
         this.subtitleColor = color;
     }
-    
+
     /**
      * Set title fade in time
-     * 
+     *
      * @param time
      *            Time
      */
     public void setFadeInTime(final int time) {
         this.fadeInTime = time;
     }
-    
+
     /**
      * Set title fade out time
-     * 
+     *
      * @param time
      *            Time
      */
     public void setFadeOutTime(final int time) {
         this.fadeOutTime = time;
     }
-    
+
     /**
      * Set title stay time
-     * 
+     *
      * @param time
      *            Time
      */
     public void setStayTime(final int time) {
         this.stayTime = time;
     }
-    
+
     /**
      * Set timings to ticks
      */
     public void setTimingsToTicks() {
         this.ticks = true;
     }
-    
+
     /**
      * Set timings to seconds
      */
     public void setTimingsToSeconds() {
         this.ticks = false;
     }
-    
+
     /**
      * Send the title to a player
-     * 
+     *
      * @param player
      *            Player
      */
@@ -250,7 +250,7 @@ public class HackTitleManager {
             }
         }
     }
-    
+
     /**
      * Broadcast the title to all players
      */
@@ -259,10 +259,10 @@ public class HackTitleManager {
             send(p);
         }
     }
-    
+
     /**
      * Clear the title
-     * 
+     *
      * @param player
      *            Player
      */
@@ -281,10 +281,10 @@ public class HackTitleManager {
             }
         }
     }
-    
+
     /**
      * Reset the title settings
-     * 
+     *
      * @param player
      *            Player
      */
@@ -303,10 +303,10 @@ public class HackTitleManager {
             }
         }
     }
-    
+
     /**
      * Get the protocol version of the player
-     * 
+     *
      * @param player
      *            Player
      * @return Protocol version
@@ -324,19 +324,19 @@ public class HackTitleManager {
         }
         return version;
     }
-    
+
     /**
      * Check if running spigot
-     * 
+     *
      * @return Spigot
      */
     private boolean isSpigot() {
         return Bukkit.getVersion().contains("Spigot");
     }
-    
+
     /**
      * Get class by url
-     * 
+     *
      * @param namespace
      *            Namespace url
      * @return Class
@@ -348,21 +348,21 @@ public class HackTitleManager {
         }
         return null;
     }
-    
+
     private Field getField(final String name, final Class<?> clazz) throws Exception {
         return clazz.getDeclaredField(name);
     }
-    
+
     private Object getValue(final String name, final Object obj) throws Exception {
         final Field f = getField(name, obj.getClass());
         f.setAccessible(true);
         return f.get(obj);
     }
-    
+
     private Class<?> getPrimitiveType(final Class<?> clazz) {
         return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
     }
-    
+
     private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes) {
         final int a = classes != null ? classes.length : 0;
         final Class<?>[] types = new Class<?>[a];
@@ -371,7 +371,7 @@ public class HackTitleManager {
         }
         return types;
     }
-    
+
     private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o) {
         if (a.length != o.length) {
             return false;
@@ -383,7 +383,7 @@ public class HackTitleManager {
         }
         return true;
     }
-    
+
     private Object getHandle(final Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
@@ -392,7 +392,7 @@ public class HackTitleManager {
             return null;
         }
     }
-    
+
     private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes) {
         final Class<?>[] t = toPrimitiveTypeArray(paramTypes);
         for (final Method m : clazz.getMethods()) {
@@ -403,20 +403,20 @@ public class HackTitleManager {
         }
         return null;
     }
-    
+
     private String getVersion() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
         final String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
-    
+
     private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
         final String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
         clazz = Class.forName(fullName);
         return clazz;
     }
-    
+
     private Field getField(final Class<?> clazz, final String name) {
         try {
             final Field field = clazz.getDeclaredField(name);
@@ -427,7 +427,7 @@ public class HackTitleManager {
             return null;
         }
     }
-    
+
     private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
         for (final Method m : clazz.getMethods()) {
             if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
@@ -437,7 +437,7 @@ public class HackTitleManager {
         }
         return null;
     }
-    
+
     private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
         boolean equal = true;
         if (l1.length != l2.length) {

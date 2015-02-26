@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -36,14 +37,14 @@ public class Trusted extends SubCommand {
     public Trusted() {
         super(Command.TRUSTED, "Manage trusted users for a plot", "trusted {add|remove} {player}", CommandCategory.ACTIONS, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 2) {
             MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);
             return true;
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -82,7 +83,7 @@ public class Trusted extends SubCommand {
                 }
                 plot.addTrusted(uuid);
                 DBFunc.setTrusted(loc.getWorld(), plot, uuid);
-                // FIXME PlayerPlotTrustedEvent
+                EventUtil.manager.callTrusted(plr, plot, uuid, true);
             } else {
                 MainUtil.sendMessage(plr, C.ALREADY_ADDED);
                 return false;
@@ -104,7 +105,7 @@ public class Trusted extends SubCommand {
             final UUID uuid = UUIDHandler.getUUID(args[1]);
             plot.removeTrusted(uuid);
             DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
-            // FIXME PlayerPlotTrustedEvent
+            EventUtil.manager.callTrusted(plr, plot, uuid, false);
             MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
         } else {
             MainUtil.sendMessage(plr, C.TRUSTED_NEED_ARGUMENT);

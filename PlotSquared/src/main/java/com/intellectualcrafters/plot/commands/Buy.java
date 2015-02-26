@@ -41,13 +41,13 @@ public class Buy extends SubCommand {
     public Buy() {
         super(Command.BUY, "Buy the plot you are standing on", "b", CommandCategory.CLAIMING, true);
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (PlotSquared.economy == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
-        Location loc = plr.getLocation();
+        final Location loc = plr.getLocation();
         final String world = loc.getWorld();
         if (!PlotSquared.isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
@@ -67,7 +67,7 @@ public class Buy extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
         if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
@@ -91,14 +91,14 @@ public class Buy extends SubCommand {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
         }
-        if (PlotSquared.economy != null && price > 0d) {
+        if ((PlotSquared.economy != null) && (price > 0d)) {
             if (EconHandler.getBalance(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }
             EconHandler.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
             EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
-            PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
+            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }

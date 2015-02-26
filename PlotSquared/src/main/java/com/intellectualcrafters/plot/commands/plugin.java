@@ -33,11 +33,11 @@ import com.intellectualcrafters.plot.util.TaskManager;
 
 public class plugin extends SubCommand {
     public static String downloads, version;
-    
+
     public plugin() {
         super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
     }
-    
+
     public static void setup() {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -61,7 +61,7 @@ public class plugin extends SubCommand {
             }
         }, 200);
     }
-    
+
     private static String convertToNumericString(final String str, final boolean dividers) {
         final StringBuilder builder = new StringBuilder();
         for (final char c : str.toCharArray()) {
@@ -73,7 +73,7 @@ public class plugin extends SubCommand {
         }
         return builder.toString();
     }
-    
+
     private static String getInfo(final String link) throws Exception {
         final URLConnection connection = new URL(link).openConnection();
         connection.addRequestProperty("User-Agent", "Mozilla/4.0");
@@ -85,7 +85,7 @@ public class plugin extends SubCommand {
         reader.close();
         return document;
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         TaskManager.runTaskAsync(new Runnable() {

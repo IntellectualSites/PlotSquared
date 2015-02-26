@@ -45,7 +45,7 @@ public class XML {
      * The Character '/'.
      */
     public static final Character SLASH = '/';
-    
+
     /**
      * Replace special characters with XML escapes:
      * <p/>
@@ -87,7 +87,7 @@ public class XML {
         }
         return sb.toString();
     }
-    
+
     /**
      * Throw an exception if the string contains whitespace. Whitespace is not allowed in tagNames and attributes.
      *
@@ -107,7 +107,7 @@ public class XML {
             }
         }
     }
-    
+
     /**
      * Scan the content following the named tag, attaching it to the context.
      *
@@ -257,7 +257,7 @@ public class XML {
             }
         }
     }
-    
+
     /**
      * Try to convert a string into a number, boolean, or null. If the string can't be converted, return the string.
      * This is much less ambitious than JSONObject.stringToValue, especially because it does not attempt to convert plus
@@ -299,7 +299,7 @@ public class XML {
         }
         return string;
     }
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a JSONObject. Some information may be lost in
      * this transformation because JSON is a data format and XML is a document format. XML uses elements, attributes,
@@ -322,7 +322,7 @@ public class XML {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *
@@ -335,7 +335,7 @@ public class XML {
     public static String toString(final Object object) throws JSONException {
         return toString(object, null);
     }
-    
+
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *

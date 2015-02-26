@@ -35,20 +35,19 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AChunkManager;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.ChunkManager;
 
 public class Trim extends SubCommand {
     public static boolean TASK = false;
     private static int TASK_ID = 0;
-    
+
     public Trim() {
         super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
     }
-    
+
     public PlotId getId(final String id) {
         try {
             final String[] split = id.split(";");
@@ -57,7 +56,7 @@ public class Trim extends SubCommand {
             return null;
         }
     }
-    
+
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr != null) {
@@ -106,7 +105,7 @@ public class Trim extends SubCommand {
         });
         return true;
     }
-    
+
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
@@ -128,7 +127,7 @@ public class Trim extends SubCommand {
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (final Exception e) {
-                                System.out.print("INVALID MCA: " + name);
+                                PlotSquared.log("INVALID MCA: " + name);
                             }
                         } else {
                             final Path path = Paths.get(file.getPath());
@@ -145,7 +144,7 @@ public class Trim extends SubCommand {
                                         final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
                                     } catch (final Exception e) {
-                                        System.out.print("INVALID MCA: " + name);
+                                        PlotSquared.log("INVALID MCA: " + name);
                                     }
                                 }
                             } catch (final Exception e) {
@@ -160,16 +159,16 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         return true;
     }
-    
+
     public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
-        final long startOld = System.currentTimeMillis();
+        System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PlotSquared.getPlots(world).values());
-        final HashSet<ChunkLoc> chunks = new HashSet<>(AChunkManager.manager.getChunkChunks(world));
+        final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
         sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");
@@ -180,7 +179,6 @@ public class Trim extends SubCommand {
                 while ((System.currentTimeMillis() - start) < 50) {
                     if (plots.size() == 0) {
                         empty.addAll(chunks);
-                        System.out.print("DONE!");
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
                         PlotSquared.TASK.cancelTask(Trim.TASK_ID);
@@ -202,15 +200,15 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         return true;
     }
-    
+
     public static ArrayList<Plot> expired = null;
-    
+
     public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
         for (final ChunkLoc loc : chunks) {
-            AChunkManager.manager.deleteRegionFile(world, loc);
+            ChunkManager.manager.deleteRegionFile(world, loc);
         }
     }
-    
+
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
     }
