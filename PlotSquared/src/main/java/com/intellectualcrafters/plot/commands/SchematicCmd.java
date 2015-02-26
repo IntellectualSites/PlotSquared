@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class SchematicCmd extends SubCommand {
@@ -118,9 +119,16 @@ public class SchematicCmd extends SubCommand {
                         }
                         final DataCollection[] b = schematic.getBlockCollection();
                         final int sy = BlockManager.manager.getHeighestBlock(bot);
-                        final Location l1 = bot.add(0, sy - 1, 0);
                         final int WIDTH = schematic.getSchematicDimension().getX();
                         final int LENGTH = schematic.getSchematicDimension().getZ();
+                        final Location l1;
+                        if (!(schematic.getSchematicDimension().getY() == BukkitUtil.getMaxHeight(loc.getWorld()))) {
+                             l1 = bot.add(0, sy - 1, 0);
+                        }
+                         else {
+                             l1 = bot;
+                         }
+                        
                         final int blen = b.length - 1;
                         SchematicCmd.this.task = TaskManager.runTaskRepeat(new Runnable() {
                             @Override
@@ -129,6 +137,7 @@ public class SchematicCmd extends SubCommand {
                                 while (!result) {
                                     final int start = SchematicCmd.this.counter * 5000;
                                     if (start > blen) {
+                                        SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                         MainUtil.update(plr.getLocation());
                                         SchematicCmd.this.running = false;

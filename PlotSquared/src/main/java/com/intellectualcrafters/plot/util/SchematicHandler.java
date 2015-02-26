@@ -6,20 +6,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.bukkit.block.BlockState;
+
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.NBTInputStream;
 import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.commands.Set;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class SchematicHandler {
@@ -34,7 +43,7 @@ public abstract class SchematicHandler {
      *
      * @return true if succeeded
      */
-    public boolean paste(final Location location, final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
+    public boolean paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
             PlotSquared.log("Schematic == null :|");
             return false;
@@ -46,12 +55,16 @@ public abstract class SchematicHandler {
             final int HEIGHT = demensions.getY();
             final DataCollection[] blocks = schematic.getBlockCollection();
             Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
-            final int sy = BukkitUtil.getHeighestBlock(location.getWorld(), l1.getX() + 1, l1.getZ() + 1);
-            l1 = l1.add(1, sy - 1, 1);
-            if (HEIGHT == BukkitUtil.getMaxHeight(location.getWorld())) {
-            } else {
-                l1.getY();
+            final int sy = BukkitUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
+            if (!(HEIGHT == BukkitUtil.getMaxHeight(plot.world))) {
+                l1 = l1.add(1, sy - 1, 1);
             }
+            else {
+                l1 = l1.add(1, 0, 1);
+            }
+            int X = l1.getX();
+            int Y = l1.getY();
+            int Z = l1.getZ();
             final int[] xl = new int[blocks.length];
             final int[] yl = new int[blocks.length];
             final int[] zl = new int[blocks.length];
@@ -62,17 +75,48 @@ public abstract class SchematicHandler {
                     for (int y = 0; y < HEIGHT; y++) {
                         final int index = (y * WIDTH * LENGTH) + (z * WIDTH) + x;
                         final DataCollection block = blocks[index];
-                        xl[index] = x;
-                        yl[index] = y;
-                        zl[index] = z;
+                        xl[index] = x + X;
+                        yl[index] = y + Y;
+                        zl[index] = z + Z;
                         ids[index] = block.block;
                         data[index] = block.data;
                     }
                 }
             }
             BlockManager.setBlocks(plot.world, xl, yl, zl, ids, data);
+            pasteStates(schematic, plot, x_offset, z_offset);
         } catch (final Exception e) {
             return false;
+        }
+        return true;
+    }
+    
+    public boolean pasteStates(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
+        if (schematic == null) {
+            PlotSquared.log("Schematic == null :|");
+            return false;
+        }
+        HashSet<PlotItem> items = schematic.getItems();
+        if (items == null) {
+            return false;
+        }
+        Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
+        final int sy = BukkitUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
+        final Dimension demensions = schematic.getSchematicDimension();
+        final int HEIGHT = demensions.getY();
+        if (!(HEIGHT == BukkitUtil.getMaxHeight(plot.world))) {
+            l1 = l1.add(1, sy - 1, 1);
+        } else {
+            l1 = l1.add(1, 0, 1);
+        }
+        int X = l1.getX() + x_offset;
+        int Y = l1.getY();
+        int Z = l1.getZ() + z_offset;
+        for (PlotItem item : items) {
+            item.x += X;
+            item.y += Y;
+            item.z += Z;
+            BlockManager.manager.addItems(plot.world, item);
         }
         return true;
     }
@@ -106,7 +150,22 @@ public abstract class SchematicHandler {
         for (int x = 0; x < b.length; x++) {
             collection[x] = new DataCollection(blocks[x], d[x]);
         }
-        return new Schematic(collection, dimension, file);
+        Schematic schem = new Schematic(collection, dimension, file);
+        try {
+            List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
+            for (Tag stateTag : blockStates) {
+                CompoundTag ct = ((CompoundTag) stateTag);
+                Map<String, Tag> state = ct.getValue();
+                short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
+                short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
+                short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
+                new StateWrapper(ct).restoreTag(x, y, z, schem);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return schem;
     }
     
     /**
@@ -196,7 +255,12 @@ public abstract class SchematicHandler {
                 length++;
             }
         }
-        length = i2 - length;
+        length = i2 - i1 - length + 1;
+
+        int X = l1.getX();
+        int Y = l1.getY();
+        int Z = l1.getZ();
+        
         final int[] xl = new int[length];
         final int[] yl = new int[length];
         final int[] zl = new int[length];
@@ -206,19 +270,19 @@ public abstract class SchematicHandler {
         for (int i = i1; i <= i2; i++) {
             final short id = blocks[i].block;
             if (id == 0) {
-                continue;
+                continue; //
             }
-            count++;
             final int area = WIDTH * LENGTH;
             final int r = i % (area);
             final int x = r % WIDTH;
             final int y = i / area;
             final int z = r / WIDTH;
-            xl[count] = x;
-            yl[count] = y;
-            zl[count] = z;
+            xl[count] = x + X;
+            yl[count] = y + Y;
+            zl[count] = z + Z;
             ids[count] = id;
             data[count] = blocks[i].data;
+            count++;
             if (y > 256) {
                 break;
             }
@@ -236,7 +300,19 @@ public abstract class SchematicHandler {
         private final DataCollection[] blockCollection;
         private final Dimension schematicDimension;
         private final File file;
+        private HashSet<PlotItem> items;
 
+        public  void addItem(PlotItem item) {
+            if (this.items == null) {
+                this.items = new HashSet<>();
+            }
+            items.add(item);
+        }
+        
+        public HashSet<PlotItem> getItems() {
+            return this.items;
+        }
+        
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
             this.blockCollection = blockCollection;
             this.schematicDimension = schematicDimension;

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.Chunk;
@@ -9,9 +10,11 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
@@ -138,8 +141,23 @@ public class HybridPop extends BlockPopulator {
                         if (this.doFloor) {
                             setBlock(w, x, (short) this.plotheight, z, this.plotfloors);
                         }
+                        if (this.plotworld.PLOT_SCHEMATIC) {
+                            final PlotLoc loc = new PlotLoc((short) (this.X + x), (short) (this.Z + z));
+                            final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
+                            if (blocks != null) {
+                                for (final short y : blocks.keySet()) {
+                                    setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
+                                }
+                            }
+                            HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                            if (states != null) {
+                                for (PlotItem items : states) {
+                                    BlockManager.manager.addItems(this.plotworld.worldname, items);
+                                }
+                            }
+                        }
                     } else {
-                        final ChunkLoc loc = new ChunkLoc(this.X + x, this.Z + z);
+                        final PlotLoc loc = new PlotLoc((short) (this.X + x), (short) (this.Z + z));
                         final HashMap<Short, Byte> data = ChunkManager.GENERATE_DATA.get(loc);
                         if (data != null) {
                             for (final short y : data.keySet()) {
@@ -178,6 +196,23 @@ public class HybridPop extends BlockPopulator {
                     if (this.doFloor) {
                         setBlock(w, x, (short) this.plotheight, z, this.plotfloors);
                     }
+                    if (this.plotworld.PLOT_SCHEMATIC) {
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
+                        final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
+                        if (blocks != null) {
+                            for (final short y : blocks.keySet()) {
+                                setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
+                            }
+                        }
+                        HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                        if (states != null) {
+                            for (PlotItem items : states) {
+                                items.x = this.X + x;
+                                items.z = this.Z + z;
+                                BlockManager.manager.addItems(this.plotworld.worldname, items);
+                            }
+                        }
+                    }
                 } else {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
@@ -199,7 +234,7 @@ public class HybridPop extends BlockPopulator {
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {

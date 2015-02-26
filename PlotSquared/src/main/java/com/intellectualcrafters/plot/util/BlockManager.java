@@ -1,13 +1,18 @@
 package com.intellectualcrafters.plot.util;
 
+import org.bukkit.inventory.ItemStack;
+
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
 
 public abstract class BlockManager {
     public static BlockManager manager;
 
     public abstract String[] getBiomeList();
+    
+    public abstract boolean addItems(String world, PlotItem items);
 
     public abstract int getBiomeFromString(String biome);
 

@@ -15,11 +15,15 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
 
 public class BukkitUtil extends BlockManager {
@@ -256,5 +260,27 @@ public class BukkitUtil extends BlockManager {
             return -1;
         }
         return material.getId();
+    }
+
+    @Override
+    public boolean addItems(String worldname, PlotItem items) {
+        World world = getWorld(worldname);
+        Block block = world.getBlockAt(items.x, items.y, items.z);
+        if (block == null) {
+            return false;
+        }
+        BlockState state = block.getState();
+        if (state != null && state instanceof InventoryHolder) {
+            InventoryHolder holder = ((InventoryHolder) state);
+            Inventory inv = holder.getInventory();
+            for (int i = 0; i < items.id.length; i++) {
+                ItemStack item = new ItemStack(items.id[i], items.amount[i], items.data[i]);
+                inv.addItem(item);
+            }
+            state.update(true);
+            return true;
+        }
+        return false;
+        
     }
 }

@@ -71,7 +71,7 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.manager.paste(player.getLocation(), sch, plot2, 0, 0);
+                SchematicHandler.manager.paste(sch, plot2, 0, 0);
             }
             PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
             MainUtil.update(loc);

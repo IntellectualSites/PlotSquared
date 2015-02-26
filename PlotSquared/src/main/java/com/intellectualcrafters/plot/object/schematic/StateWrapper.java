@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
@@ -16,16 +18,55 @@ import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
 public class StateWrapper {
     
-    public BlockState state;
+    public BlockState state = null;
+    public CompoundTag tag = null;
     
     public StateWrapper(BlockState state) {
         this.state = state;
     }
     
+    public StateWrapper(CompoundTag tag) {
+        this.tag = tag;
+    }
+    
+    public boolean restoreTag(short x, short y, short z, Schematic schematic) {
+        if (this.tag == null) {
+            return false;
+        }
+        List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
+        int length = itemsTag.size();
+        short[] ids = new short[length];
+        byte[] datas = new byte[length];
+        byte[] amounts = new byte[length];
+        for (int i = 0; i < length; i++) {
+            Tag itemTag = itemsTag.get(i);
+            CompoundTag itemComp = (CompoundTag) itemTag;
+            short id = itemComp.getShort("id");
+            String idStr = itemComp.getString("id");
+            if (!StringUtils.isNumeric(idStr) && idStr != null) {
+                idStr = idStr.split(":")[1];
+                id = (short) Material.valueOf(idStr.toUpperCase()).getId();
+            }
+            ids[i] = id;
+            datas[i] = (byte) itemComp.getShort("Damage");
+            amounts[i] = itemComp.getByte("Count");
+        }
+        if (length != 0) {
+            schematic.addItem(new PlotItem(x, y, z, ids, datas, amounts));
+        }
+        return true;
+    }
+    
     public CompoundTag getTag() {
+        if (this.tag != null) {
+            return this.tag;
+        }
         if (state instanceof InventoryHolder) {
             InventoryHolder inv = (InventoryHolder) state;
             ItemStack[] contents = inv.getInventory().getContents();

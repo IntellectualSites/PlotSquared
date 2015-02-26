@@ -99,7 +99,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
-        System.out.print("REGISTERING EVENTS");
         getServer().getPluginManager().registerEvents(this, this);
     }
 

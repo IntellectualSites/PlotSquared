@@ -31,7 +31,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -266,7 +266,7 @@ public class HybridGen extends PlotGenerator {
                         }
                         setBlock(this.result, x, this.plotheight, z, this.plotfloors);
                     } else {
-                        final ChunkLoc loc = new ChunkLoc(X + x, Z + z);
+                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
                         final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
@@ -304,7 +304,7 @@ public class HybridGen extends PlotGenerator {
                     }
                     setBlock(this.result, x, this.plotheight, z, this.plotfloors);
                     if (this.plotworld.PLOT_SCHEMATIC) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
@@ -329,7 +329,7 @@ public class HybridGen extends PlotGenerator {
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                        final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
