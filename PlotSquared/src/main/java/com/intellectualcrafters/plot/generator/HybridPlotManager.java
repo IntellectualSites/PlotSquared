@@ -27,11 +27,14 @@ import java.util.HashSet;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
@@ -103,29 +106,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                 TaskManager.runTaskLater(new Runnable() {
                     @Override
                     public void run() {
-                        if ((pos2.getX() - pos1.getX()) < 48) {
-                            MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
-                            TaskManager.runTaskLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT + 1, pos1.getZ()), new Location(world, pos2.getX() + 1, maxy + 1, pos2.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                                    TaskManager.runTaskLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            MainUtil.setCuboid(world, new Location(world, pos1.getX(), 1, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT, pos2.getZ() + 1), filling);
-                                            TaskManager.runTaskLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    MainUtil.setCuboid(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
-                                                    TaskManager.runTask(whenDone);
-                                                }
-                                            }, 5);
-                                        }
-                                    }, 5);
-                                }
-                            }, 5);
-                            return;
-                        }
                         final int startX = (pos1.getX() / 16) * 16;
                         final int startZ = (pos1.getZ() / 16) * 16;
                         final int chunkX = 16 + pos2.getX();
@@ -166,7 +146,14 @@ public class HybridPlotManager extends ClassicPlotManager {
                                 } else if ((mx.getZ() < (j + 15)) || (mx.getX() < (i + 15))) {
                                     mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
                                 }
-                                BukkitUtil.regenerateChunk(world, i / 16, j / 16);
+                                final int I = i;
+                                final int J = j;
+                                TaskManager.runTaskLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BukkitUtil.regenerateChunk(world, I / 16, J / 16);
+                                    }
+                                }, PseudoRandom.random(40));
                             }
                         }
                         final Location max = mx;

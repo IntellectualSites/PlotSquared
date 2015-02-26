@@ -28,6 +28,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
@@ -64,6 +65,8 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
     }
 
+    private ChunkLoc lastLoc = null;
+    
     /**
      * Set the block at the location
      *
@@ -76,16 +79,28 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
      *
      * @return true
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
+        // Start blockstate workaround //
         switch (id) {
             case 54:
             case 130:
-            case 146:
+            case 142:
             case 27:
+            case 137:
+            case 52:
+            case 154:
+            case 84:
+            case 25:
+            case 144:
+            case 138:
+            case 176:
+            case 177:
             case 63:
             case 68:
-            case 313:
+            case 323:
+            case 117:
             case 28:
             case 66:
             case 157:
@@ -114,13 +129,73 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 return;
             }
         }
+        int currentId = world.getBlockAt(x, y, z).getTypeId();
+        if (currentId == id) {
+            return;
+        }
+        switch(currentId) {
+            case 54:
+            case 130:
+            case 142:
+            case 27:
+            case 137:
+            case 52:
+            case 154:
+            case 84:
+            case 25:
+            case 144:
+            case 138:
+            case 176:
+            case 177:
+            case 63:
+            case 68:
+            case 323:
+            case 117:
+            case 28:
+            case 66:
+            case 157:
+            case 61:
+            case 62:
+            case 158:
+            case 23:
+            case 123:
+            case 124:
+            case 29:
+            case 33:
+            case 151:
+            case 178: {
+                final Block block = world.getBlockAt(x, y, z);
+                if (block.getData() == data) {
+                    if (block.getTypeId() != id) {
+                        block.setTypeId(id, false);
+                    }
+                } else {
+                    if (block.getTypeId() == id) {
+                        block.setData(data, false);
+                    } else {
+                        block.setTypeIdAndData(id, data, false);
+                    }
+                }
+                return;
+            }
+        }
+        // End blockstate workaround //
+        
+        int X = x >> 4;
+        int Z = z >> 4;
+        ChunkLoc loc = new ChunkLoc(X, Z);
+        if (!loc.equals(lastLoc)) {
+            world.loadChunk(X, Z, false);
+            lastLoc = loc;
+        }
+        // check sign
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object pos = constructorBlockPosition.create(x & 0x0f, y, z & 0x0f);
         final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
         methodA.of(chunk).call(pos, combined);
     }
-
+    
     /**
      * Update chunks
      *
