@@ -53,8 +53,9 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
         int x, z;
         z = bottom.getZ();
-        final int length = top.getX() - bottom.getX();
-        final int size = (length) * 4 * (dpw.WALL_HEIGHT);
+        final int length1 = top.getX() - bottom.getX();
+        final int length2 = top.getZ() - bottom.getZ();
+        final int size = length1 * 2 + length2 * 2 * (dpw.WALL_HEIGHT);
         final int[] xl = new int[size];
         final int[] yl = new int[size];
         final int[] zl = new int[size];
@@ -110,8 +111,9 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         final Location bottom = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid);
         final Location top = MainUtil.getPlotTopLoc(plotworld.worldname, plotid).add(1, 0, 1);
-        final int length = top.getX() - bottom.getX();
-        final int size = (length) * 4;
+        final int length1 = top.getX() - bottom.getX();
+        final int length2 = top.getZ() - bottom.getZ();
+        final int size = length1 * 2 + length2 * 2;
         final int[] xl = new int[size];
         final int[] yl = new int[size];
         final int[] zl = new int[size];
