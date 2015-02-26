@@ -88,7 +88,7 @@ public class Merge extends SubCommand {
         }
         if (args.length < 1) {
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         int direction = -1;
@@ -100,13 +100,13 @@ public class Merge extends SubCommand {
         }
         if (direction == -1) {
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(plr.getLocation().getYaw())));
+            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         PlotId bot = MainUtil.getBottomPlot(plot).id;
         PlotId top = MainUtil.getTopPlot(plot).id;
         ArrayList<PlotId> plots;
-        final String world = plr.getLocation().getWorld();
+        final String world = loc.getWorld();
         switch (direction) {
             case 0: // north = -y
                 plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
@@ -160,7 +160,7 @@ public class Merge extends SubCommand {
         MainUtil.sendMessage(plr, "&cPlots have been merged");
         MainUtil.mergePlots(world, plots, true);
         MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
-        MainUtil.update(plr.getLocation());
+        MainUtil.update(loc);
         return true;
     }
 }
