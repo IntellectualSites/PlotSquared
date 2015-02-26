@@ -778,6 +778,11 @@ public class BukkitChunkManager extends ChunkManager {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
     }
     
+    @Override
+    public boolean unloadChunk(final String world, final ChunkLoc loc) {
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).unload(true, true);
+    }
+    
     public static void swapChunk(World world, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
         initMaps();
         int relX = (r2.minX - r1.minX);

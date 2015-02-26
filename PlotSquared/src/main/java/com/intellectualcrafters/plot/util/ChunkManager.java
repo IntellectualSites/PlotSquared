@@ -23,6 +23,8 @@ public abstract class ChunkManager {
     }
 
     public abstract boolean loadChunk(String world, ChunkLoc loc);
+    
+    public abstract boolean unloadChunk(String world, ChunkLoc loc);
 
     public abstract List<ChunkLoc> getChunkChunks(String world);
 
