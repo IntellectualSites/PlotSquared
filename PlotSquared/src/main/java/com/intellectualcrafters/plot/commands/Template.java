@@ -113,7 +113,14 @@ public class Template extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        manager.exportTemplate(plotworld);
+                        try {
+                            manager.exportTemplate(plotworld);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            MainUtil.sendMessage(plr, "Failed: " + e.getMessage());
+                            return;
+                        }
                         MainUtil.sendMessage(plr, "Done!");
                     }
                 });
@@ -159,30 +166,26 @@ public class Template extends SubCommand {
     }
     
     public static byte[] getBytes(PlotWorld plotworld) {
+        ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds." + plotworld.worldname);
         YamlConfiguration config = new YamlConfiguration();
-        ConfigurationSection section = config.getConfigurationSection("");
-        plotworld.saveConfiguration(section);
+        for (String key : section.getKeys(true)) {
+            config.set(key, section.get(key));
+        }
         return config.saveToString().getBytes();
     }
     
-    public static boolean zipAll(final String world, Set<FileBytes> files) {
-        try {
-            File output = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
-            output.mkdirs();
-            FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
-            ZipOutputStream zos = new ZipOutputStream(fos);
-            
-            for (FileBytes file : files) {
-                ZipEntry ze = new ZipEntry(file.path);
-                zos.putNextEntry(ze);
-                zos.write(file.data);
-            }
-            zos.closeEntry();
-            zos.close();
-            return true;
-        } catch (final IOException ex) {
-            ex.printStackTrace();
-            return false;
+    public static void zipAll(final String world, Set<FileBytes> files) throws IOException {
+        File output = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
+        output.mkdirs();
+        FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
+        ZipOutputStream zos = new ZipOutputStream(fos);
+        
+        for (FileBytes file : files) {
+            ZipEntry ze = new ZipEntry(file.path);
+            zos.putNextEntry(ze);
+            zos.write(file.data);
         }
+        zos.closeEntry();
+        zos.close();
     }
 }

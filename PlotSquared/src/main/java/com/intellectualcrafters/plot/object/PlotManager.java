@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -86,7 +87,7 @@ public abstract class PlotManager {
 
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
     
-    public void exportTemplate(PlotWorld plotworld) {
+    public void exportTemplate(PlotWorld plotworld) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }

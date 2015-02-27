@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -17,6 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -72,6 +76,7 @@ public class PlotSquared {
     public static File storageFile;
     public static YamlConfiguration storage;
     public static PlotSquared THIS = null; // This class
+    public static File FILE = null; // This file
     public static IPlotMain IMP = null; // Specific implementation of PlotSquared
     public static String VERSION = null;
     public static TaskManager TASK = null;
@@ -410,6 +415,12 @@ public class PlotSquared {
     public PlotSquared(final IPlotMain imp_class) {
         THIS = this;
         IMP = imp_class;
+        try {
+            FILE = new File(PlotSquared.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        }
+        catch (Exception e) {
+            log("Could not determine file path");
+        }
         VERSION = IMP.getVersion();
         economy = IMP.getEconomy();
         C.setupTranslations();
@@ -468,6 +479,47 @@ public class PlotSquared {
         }, 200);
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
+        }
+        // Copy files
+        copyFile("town.template");
+        copyFile("skyblock.template");
+    }
+    
+    public void copyFile(String file) {
+        try {
+            byte[] buffer = new byte[2048];
+            File output = PlotSquared.IMP.getDirectory();
+            if (!output.exists()) {
+                output.mkdirs();
+            }
+            File newFile = new File((output + File.separator + "templates" + File.separator + file));
+            if (newFile.exists()) {
+                return;
+            }
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(FILE));
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String name = ze.getName();
+                if (name.equals(file)) {
+                    new File(newFile.getParent()).mkdirs();
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                    ze = null;
+                }
+                else {
+                    ze = zis.getNextEntry();
+                }
+            }
+            zis.closeEntry();
+            zis.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log("&cCould not save " + file);
         }
     }
 

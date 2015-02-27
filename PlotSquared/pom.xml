@@ -26,6 +26,12 @@
                    <include>
                        LICENSE
                    </include>
+                   <include>
+                       town.template
+                   </include>
+                   <include>
+                       skyblock.template
+                   </include>
                </includes>
             </resource>
         </resources>

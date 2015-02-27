@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
@@ -48,8 +47,8 @@ public class StateWrapper {
             short id = itemComp.getShort("id");
             String idStr = itemComp.getString("id");
             if (!StringUtils.isNumeric(idStr) && idStr != null) {
-                idStr = idStr.split(":")[1];
-                id = (short) Material.valueOf(idStr.toUpperCase()).getId();
+                idStr = idStr.split(":")[1].toLowerCase();
+                id = (short) ItemType.getId(idStr);
             }
             ids[i] = id;
             datas[i] = (byte) itemComp.getShort("Damage");

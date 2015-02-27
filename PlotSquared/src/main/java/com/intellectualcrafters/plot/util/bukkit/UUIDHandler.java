@@ -1,9 +1,6 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.UUID;
 
 import com.google.common.collect.BiMap;
@@ -16,7 +13,6 @@ import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
