@@ -44,6 +44,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.config.C;
@@ -102,6 +104,10 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
+        Inventory inv = event.getInventory();
+        if (inv == null) {
+            return;
+        }
         if (!event.getInventory().getName().equals(ChatColor.RED + "Plot Jukebox")) {
             return;
         }
@@ -126,7 +132,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
         RecordMeta meta = null;
         for (final RecordMeta m : RecordMeta.metaList) {
-            if (m.getMaterial() == event.getCurrentItem().getType()) {
+            ItemStack item = event.getCurrentItem();
+            if (item != null && m.getMaterial() == item.getType()) {
                 meta = m;
                 break;
             }
@@ -134,9 +141,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (meta == null) {
             return;
         }
-        for (final Player p : plotPlayers) {
-            p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
-            MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+        if (meta != null) {
+            for (final Player p : plotPlayers) {
+                p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
+                MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+            }
         }
     }
 
