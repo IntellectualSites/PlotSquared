@@ -223,6 +223,9 @@ public class HybridGen extends PlotGenerator {
      */
     @Override
     public Location getFixedSpawnLocation(final World world, final Random random) {
+        if (this.plotworld == null) {
+            return new Location(world, 0, 128, 0);
+        }
         return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
     }
 

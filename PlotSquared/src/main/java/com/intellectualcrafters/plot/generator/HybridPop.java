@@ -149,10 +149,12 @@ public class HybridPop extends BlockPopulator {
                                     setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
                                 }
                             }
-                            HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
-                            if (states != null) {
-                                for (PlotItem items : states) {
-                                    BlockManager.manager.addItems(this.plotworld.worldname, items);
+                            if (this.plotworld.G_SCH_STATE != null) {
+                                HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                                if (states != null) {
+                                    for (PlotItem items : states) {
+                                        BlockManager.manager.addItems(this.plotworld.worldname, items);
+                                    }
                                 }
                             }
                         }
@@ -204,12 +206,14 @@ public class HybridPop extends BlockPopulator {
                                 setBlock(w, x, (short) (this.plotheight + y), z, blocks.get(y));
                             }
                         }
-                        HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
-                        if (states != null) {
-                            for (PlotItem items : states) {
-                                items.x = this.X + x;
-                                items.z = this.Z + z;
-                                BlockManager.manager.addItems(this.plotworld.worldname, items);
+                        if (this.plotworld.G_SCH_STATE != null) {
+                            HashSet<PlotItem> states = this.plotworld.G_SCH_STATE.get(loc);
+                            if (states != null) {
+                                for (PlotItem items : states) {
+                                    items.x = this.X + x;
+                                    items.z = this.Z + z;
+                                    BlockManager.manager.addItems(this.plotworld.worldname, items);
+                                }
                             }
                         }
                     }
