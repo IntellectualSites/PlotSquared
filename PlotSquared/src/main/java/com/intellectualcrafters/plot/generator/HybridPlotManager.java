@@ -104,6 +104,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 TaskManager.runTaskLater(new Runnable() {
                     @Override
                     public void run() {
+                        final short bedrock = (short) (dpw.PLOT_BEDROCK ? 7 : 0);
                         final int startX = (pos1.getX() / 16) * 16;
                         final int startZ = (pos1.getZ() / 16) * 16;
                         final int chunkX = 16 + pos2.getX();
@@ -157,7 +158,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                         final Location max = mx;
                         final Location min = mn;
                         if (min == null) {
-                            MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                            MainUtil.setSimpleCuboid(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -193,7 +194,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getX() + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getX() + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -217,7 +218,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, plotMinZ), new Location(world, max.getX() + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, plotMinZ), new Location(world, max.getX() + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -241,7 +242,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -265,7 +266,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getZ()), new Location(world, min.getX() + 1, 1, max.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, min.getZ()), new Location(world, min.getX() + 1, 1, max.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -289,7 +290,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getZ()), new Location(world, min.getX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, plotMinX, 0, max.getZ()), new Location(world, min.getX() + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -313,7 +314,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, max.getZ()), new Location(world, max.getX() + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, min.getX(), 0, max.getZ()), new Location(world, max.getX() + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -337,7 +338,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, min.getZ()), new Location(world, plotMaxX + 1, 1, max.getZ() + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, min.getZ()), new Location(world, plotMaxX + 1, 1, max.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -361,7 +362,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             TaskManager.runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, max.getZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), new PlotBlock((short) 7, (byte) 0));
+                                    MainUtil.setSimpleCuboid(world, new Location(world, max.getX(), 0, max.getZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
                                     TaskManager.runTaskLater(new Runnable() {
                                         @Override
                                         public void run() {
