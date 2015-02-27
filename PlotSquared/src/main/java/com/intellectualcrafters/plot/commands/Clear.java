@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
@@ -63,8 +65,32 @@ public class Clear extends SubCommand {
             return true;
         }
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot;
+        if (args.length == 2) {
+            PlotId id = PlotId.fromString(args[0]);
+            if (id == null) {
+                if (args[1].equalsIgnoreCase("mine")) {
+                    Set<Plot> plots = PlotSquared.getPlots(plr);
+                    if (plots.size() == 0) {
+                        MainUtil.sendMessage(plr, C.NO_PLOTS);
+                        return false;
+                    }
+                    plot = plots.iterator().next();
+                }
+                else {
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
+                    return false;
+                }
+            }
+            else {
+                plot = MainUtil.getPlot(loc.getWorld(), id);
+            }
+        }
+        else {
+            plot = MainUtil.getPlot(loc);
+        }
         if (plot == null) {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
