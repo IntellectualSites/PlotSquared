@@ -55,7 +55,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         z = bottom.getZ();
         final int length1 = top.getX() - bottom.getX();
         final int length2 = top.getZ() - bottom.getZ();
-        final int size = length1 * 2 + length2 * 2 * (dpw.WALL_HEIGHT);
+        final int size = (length1 * 2 + length2 * 2) * (dpw.WALL_HEIGHT);
         final int[] xl = new int[size];
         final int[] yl = new int[size];
         final int[] zl = new int[size];
@@ -262,9 +262,10 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds) {
         final PlotId pos1 = plotIds.get(0);
-        final PlotBlock block = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
-        if (block.id != 0) {
-            setWall(plotworld, pos1, new PlotBlock[] { ((ClassicPlotWorld) plotworld).WALL_BLOCK });
+        final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+        final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+        if (!block.equals(unclaim)) {
+            setWall(plotworld, pos1, new PlotBlock[] { block });
         }
         return true;
     }
@@ -274,7 +275,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         for (final PlotId id : plotIds) {
-            if (block.equals(unclaim)) {
+            if (!block.equals(unclaim)) { 
                 setWall(plotworld, id, new PlotBlock[] { block });
             }
         }

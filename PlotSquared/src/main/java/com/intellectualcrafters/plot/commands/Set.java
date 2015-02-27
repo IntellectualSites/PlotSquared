@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -75,7 +76,8 @@ public class Set extends SubCommand {
         }
         if (args.length < 1) {
             PlotManager manager = PlotSquared.getPlotManager(loc.getWorld());
-            List<String> newValues = Arrays.asList(values);;
+            ArrayList<String> newValues = new ArrayList<String>();
+            newValues.addAll(Arrays.asList(values));
             newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getPlotWorld(loc.getWorld()), plot.id)));
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
             return false;
@@ -262,8 +264,9 @@ public class Set extends SubCommand {
                 return true;
             }
         }
-        List<String> newValues = Arrays.asList(values);;
-        newValues.addAll(Arrays.asList(manager.getPlotComponents(plotworld, plot.id)));
+        ArrayList<String> newValues = new ArrayList<String>();
+        newValues.addAll(Arrays.asList(values));
+        newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getPlotWorld(loc.getWorld()), plot.id)));
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
         return false;
     }
