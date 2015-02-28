@@ -200,7 +200,9 @@ public class HybridGen extends PlotGenerator {
     public List<BlockPopulator> getPopulators(final World world) {
         // disabling spawning for this world
         if (!this.plotworld.MOB_SPAWNING) {
-            world.setSpawnFlags(false, false);
+            if (!this.plotworld.SPAWN_EGGS) {
+                world.setSpawnFlags(false, false);
+            }
             world.setAmbientSpawnLimit(0);
             world.setAnimalSpawnLimit(0);
             world.setMonsterSpawnLimit(0);

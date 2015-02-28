@@ -43,7 +43,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int idx;
         int idz;
-        
         if (x < 0) {
             idx = (x/size);
             x = size + (x % size);
@@ -86,7 +85,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int dz;
         int rx;
         int rz;
-        
         if (x < 0) {
             dx = (x/size);
             rx = size + (x % size);
