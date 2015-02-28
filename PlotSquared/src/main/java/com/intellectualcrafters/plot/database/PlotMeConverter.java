@@ -299,7 +299,10 @@ public class PlotMeConverter {
                                 }
                                 PlotSquared.setAllPlotsRaw(DBFunc.getPlots());
                                 sendMessage("Conversion has finished");
-                                PlotSquared.log("&cPlease disable 'plotme-convert.enabled' in the settings.yml to indicate that you conversion is no longer required.");
+                                PlotSquared.log("&c - Stop the server");
+                                PlotSquared.log("&c - Disable 'plotme-convert.enabled' in the settings.yml");
+                                PlotSquared.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                                PlotSquared.log("&c - Start the server");
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }
