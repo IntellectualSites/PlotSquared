@@ -34,39 +34,39 @@ public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-        // get plot size
-        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
-        // get size of path on bottom part, and top part of plot
-        // (As 0,0 is in the middle of a road, not the very start)
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
+            pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
         } else {
-            pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
+            pathWidthLower = dpw.ROAD_WIDTH / 2;
         }
-        // calulating how many shifts need to be done
-        int dx = x / size;
-        int dz = z / size;
+        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+        int idx;
+        int idz;
+        
         if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
+            idx = (x/size);
+            x = size + (x % size);
+        }
+        else {
+            idx = (x/size) + 1;
+            x = (x % size);
         }
         if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
+            idz = (z/size);
+            z = size + (z % size);
         }
-        // reducing to first plot
-        final int rx = (x) % size;
-        final int rz = (z) % size;
-        // checking if road (return null if so)
+        else {
+            idz = (z/size) + 1;
+            z = (z % size);
+        }
         final int end = pathWidthLower + dpw.PLOT_WIDTH;
-        final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
+        final boolean northSouth = (z <= pathWidthLower) || (z > end);
+        final boolean eastWest = (x <= pathWidthLower) || (x > end);
         if (northSouth || eastWest) {
             return null;
         }
-        // returning the plot id (based on the number of shifts required)
-        return new PlotId(dx + 1, dz + 1);
+        return new PlotId(idx, idz);
     }
 
     @Override
@@ -78,28 +78,37 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int pathWidthLower;
         if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (int) (Math.floor(dpw.ROAD_WIDTH / 2) - 1);
+            pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
         } else {
-            pathWidthLower = (int) Math.floor(dpw.ROAD_WIDTH / 2);
+            pathWidthLower = dpw.ROAD_WIDTH / 2;
         }
-        int dx = x / size;
-        int dz = z / size;
+        int dx;
+        int dz;
+        int rx;
+        int rz;
+        
         if (x < 0) {
-            dx--;
-            x += ((-dx) * size);
+            dx = (x/size);
+            rx = size + (x % size);
+        }
+        else {
+            dx = (x/size) + 1;
+            rx = (x % size);
         }
         if (z < 0) {
-            dz--;
-            z += ((-dz) * size);
+            dz = (z/size);
+            rz = size + (z % size);
         }
-        final int rx = (x) % size;
-        final int rz = (z) % size;
+        else {
+            dz = (z/size) + 1;
+            rz = (z % size);
+        }
         final int end = pathWidthLower + dpw.PLOT_WIDTH;
         final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
         if (northSouth && eastWest) {
             // This means you are in the intersection
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, y, z + dpw.ROAD_WIDTH);
+            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z + dpw.ROAD_WIDTH);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PlotSquared.getPlots(plotworld.worldname).get(id);
             if (plot == null) {
@@ -112,7 +121,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         if (northSouth) {
             // You are on a road running West to East (yeah, I named the var poorly)
-            final Location loc = new Location(plotworld.worldname, x, y, z + dpw.ROAD_WIDTH);
+            final Location loc = new Location(plotworld.worldname, x, 0, z + dpw.ROAD_WIDTH);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PlotSquared.getPlots(plotworld.worldname).get(id);
             if (plot == null) {
@@ -125,7 +134,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         if (eastWest) {
             // This is the road separating an Eastern and Western plot
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, y, z);
+            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PlotSquared.getPlots(plotworld.worldname).get(id);
             if (plot == null) {
@@ -136,7 +145,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             }
             return null;
         }
-        final PlotId id = new PlotId(dx + 1, dz + 1);
+        final PlotId id = new PlotId(dx, dz);
         final Plot plot = PlotSquared.getPlots(plotworld.worldname).get(id);
         if (plot == null) {
             return id;

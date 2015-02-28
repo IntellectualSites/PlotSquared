@@ -28,14 +28,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
+import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -97,11 +96,11 @@ public class ForceFieldListener implements Listener {
     }
 
     @EventHandler
-    public void onPlotEntry(final PlayerMoveEvent event) {
+    public void onPlotEntry(final PlayerEnterPlotEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final Location loc = pp.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = event.getPlot();
         if (plot == null) {
             return;
         }
