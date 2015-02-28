@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.generator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -274,12 +275,19 @@ public class HybridGen extends PlotGenerator {
                             setBlock(this.result, x, y, z, this.filling);
                         }
                         setBlock(this.result, x, this.plotheight, z, this.plotfloors);
+                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                        final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
+                        if (blocks != null) {
+                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                                setBlock(this.result, x, this.plotheight + entry.getKey(), z, entry.getValue());
+                            }
+                        }
                     } else {
                         final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
                         final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
                         if (blocks != null) {
-                            for (final short y : blocks.keySet()) {
-                                setBlock(this.result, x, y, z, blocks.get(y).shortValue());
+                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                                setBlock(this.result, x, entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
@@ -316,8 +324,8 @@ public class HybridGen extends PlotGenerator {
                         final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
-                            for (final short y : blocks.keySet()) {
-                                setBlock(this.result, x, this.plotheight + y, z, blocks.get(y));
+                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                                setBlock(this.result, x, this.plotheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
@@ -341,8 +349,8 @@ public class HybridGen extends PlotGenerator {
                         final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
-                            for (final short y : blocks.keySet()) {
-                                setBlock(this.result, x, this.roadheight + y, z, blocks.get(y));
+                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                                setBlock(this.result, x, this.roadheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
