@@ -53,6 +53,16 @@ public class Template extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length != 2 && args.length != 3) {
+            if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("export")) {
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    return false;
+                }
+                else if (args[0].equalsIgnoreCase("import")) {
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    return false;
+                }
+            }
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
             return false;
         }
