@@ -83,10 +83,12 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.SWAP_SYNTAX);
             return false;
         }
-        ChunkManager.manager.swap(world, plot.id, plotid);
-        // FIXME Requires testing!!
-        DBFunc.dbManager.swapPlots(plot, MainUtil.getPlot(world, plotid));
-        MainUtil.sendMessage(plr, C.SWAP_SUCCESS);
+        MainUtil.swap(world, plot.id, plotid, new Runnable() {
+            @Override
+            public void run() {
+                // FIXME not implemented yet
+            }
+        });
         MainUtil.update(plr.getLocation());
         return true;
     }
