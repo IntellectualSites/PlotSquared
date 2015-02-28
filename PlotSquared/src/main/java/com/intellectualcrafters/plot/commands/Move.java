@@ -20,9 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -31,38 +35,46 @@ import com.intellectualcrafters.plot.util.MainUtil;
  */
 public class Move extends SubCommand {
     public Move() {
-        super("debugmove", "plots.admin", "plot moving debug test", "debugmove", "move", CommandCategory.DEBUG, true);
+        super("debugmove", "plots.move", "Move a plot", "move", "", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr == null) {
-            MainUtil.sendMessage(plr, "MUST BE EXECUTED BY PLAYER");
-        }
-        if (args.length != 2) {
-            MainUtil.sendMessage(plr, "/plot move <pos1> <pos2>");
+        if (args.length < 1) {
+            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        final String world = plr.getLocation().getWorld();
-        final PlotId plot1 = MainUtil.parseId(args[0]);
+        final Location loc = plr.getLocation();
+        final Plot plot1 = MainUtil.getPlot(loc);
+        if (plot1 == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN))  {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
+        final String world = loc.getWorld();
         final PlotId plot2 = MainUtil.parseId(args[1]);
-        if ((plot1 == null) || (plot2 == null)) {
-            MainUtil.sendMessage(plr, "INVALID PLOT ID\n/plot move <pos1> <pos2>");
+        if ((plot2 == null)) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        if (plot1 == plot2) {
-            MainUtil.sendMessage(plr, "DUPLICATE ID");
+        if (plot1.id.equals(plot2)) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        if (MainUtil.move(world, plot1, plot2, new Runnable() {
+        if (MainUtil.move(world, plot1.id, plot2, new Runnable() {
             @Override
             public void run() {
-                MainUtil.sendMessage(plr, "MOVE SUCCESS");
+                MainUtil.sendMessage(plr, C.MOVE_SUCCESS);
             }
         })) {
             return true;
         } else {
-            MainUtil.sendMessage(plr, "MOVE FAILED");
+            MainUtil.sendMessage(plr, C.REQUIRES_UNOWNED);
             return false;
         }
     }

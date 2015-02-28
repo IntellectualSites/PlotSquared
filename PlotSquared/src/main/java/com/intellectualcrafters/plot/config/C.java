@@ -36,6 +36,11 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  */
 public enum C {
     /*
+     * Move
+     */
+    MOVE_SUCCESS("$4Successfully moved plot."),
+    REQUIRES_UNOWNED("$2The location specified is already occupied."),
+    /*
      * Compass
      */
     COMPASS_TARGET("$4Successfully targeted plot with compass"),
