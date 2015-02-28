@@ -45,7 +45,7 @@ public enum Command {
     DEBUGLOADTEST("debugloadtest"),
     DEBUGSAVETEST("debugsavetest"),
     UNCLAIM("unclaim"),
-    DEBUGCLEAR("debugclear"),
+    DEBUGCLEAR("debugclear", "fastclear"),
     SWAP("swap"),
     INBOX("inbox"),
     DEBUGCLAIMTEST("debugclaimtest"),
