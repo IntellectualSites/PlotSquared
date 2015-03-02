@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -127,22 +128,22 @@ public abstract class HybridUtils {
                         if (absZ < 0) {
                             absZ += size;
                         }
-                        final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
-                        final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
-                        final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
-                        final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
                         boolean condition;
                         if (toCheck) {
                             condition = manager.getPlotId(plotworld, x + X, 1, z + Z) == null;
                         } else {
+                            final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
+                            final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
+                            final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
+                            final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
                             condition = (!gx || !gz || !lx || !lz);
                         }
                         if (condition) {
                             final int sy = plotworld.ROAD_HEIGHT;
-                            final ChunkLoc loc = new ChunkLoc(absX, absZ);
+                            final PlotLoc loc = new PlotLoc(absX, absZ);
                             final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
-                            for (short y = (short) (plotworld.ROAD_HEIGHT + 1); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT); y++) {
-                                BlockManager.manager.functionSetBlock(world, x + X, sy + y, z + Z, 0, (byte) 0);
+                            for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT); y++) {
+                                BlockManager.manager.functionSetBlock(world, x + X, y, z + Z, 0, (byte) 0);
                             }
                             if (blocks != null) {
                                 final HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);

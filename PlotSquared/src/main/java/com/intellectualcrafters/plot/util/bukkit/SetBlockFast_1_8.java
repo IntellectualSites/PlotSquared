@@ -225,6 +225,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 return;
             }
             block.setData(data);
+            return;
         }
         switch(currentId) {
             case 54:
