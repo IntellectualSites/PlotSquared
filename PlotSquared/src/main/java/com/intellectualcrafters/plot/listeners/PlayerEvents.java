@@ -412,15 +412,62 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBD(final BlockDamageEvent e) {
-        final Block b = e.getBlock();
-        final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
+    public static void onBD(final BlockDamageEvent event) {
+        final Player player = event.getPlayer();
+        if (player == null) {
+            final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
+            if (isPlotWorld(loc)) {
+                if (!isInPlot(loc)) {
+                    if (isPlotArea(loc)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
+        }
+        final String world = player.getWorld().getName();
+        if (!isPlotWorld(world)) {
+            return;
+        }
+        final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
+        final Plot plot = getCurrentPlot(loc);
+        if (plot != null) {
+            if (event.getBlock().getY() == 0) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!plot.hasOwner()) {
+                final PlotPlayer pp = BukkitUtil.getPlayer(player);
+                if (Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
+                    return;
+                }
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                event.setCancelled(true);
+                return;
+            }
+            final PlotPlayer pp = BukkitUtil.getPlayer(player);
+            if (!plot.isAdded(pp.getUUID())) {
+                final Flag destroy = FlagManager.getPlotFlag(plot, "break");
+                final Block block = event.getBlock();
+                if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                    return;
+                }
+                if (Permissions.hasPermission(pp, "plots.admin.destroy.other")) {
+                    return;
+                }
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
+                event.setCancelled(true);
+                return;
+            }
+            return;
+        }
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        if (Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
+            return;
+        }
+        if (isPlotArea(loc)) {
+            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
+            event.setCancelled(true);
+            return;
         }
     }
 
