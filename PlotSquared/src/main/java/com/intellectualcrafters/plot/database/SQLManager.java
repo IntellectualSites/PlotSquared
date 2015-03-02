@@ -899,7 +899,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void purge(final String world, final Set<PlotId> plots) {
         for (final PlotId id : plots) {
-            PlotSquared.removePlot(world, id, true);
+            PlotSquared.removePlot(world, new PlotId(id.x, id.y), true);
         }
         PreparedStatement stmt;
         try {

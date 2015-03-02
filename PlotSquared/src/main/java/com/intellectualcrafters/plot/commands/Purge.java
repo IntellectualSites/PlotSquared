@@ -91,7 +91,7 @@ public class Purge extends SubCommand {
             MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
             return false;
         }
-        final String worldname = args[0];
+        final String worldname = args[1];
         if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
