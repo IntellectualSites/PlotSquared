@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -286,11 +287,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onBigBoom(final EntityExplodeEvent event) {
-        final String world = event.getLocation().getWorld().getName();
+        Location loc = BukkitUtil.getLocation(event.getLocation());
+        final String world = loc.getWorld();
         if (!isPlotWorld(world)) {
             return;
         }
-        final Location loc = BukkitUtil.getLocation(event.getLocation());
         final Plot plot = getCurrentPlot(loc);
         if ((plot != null) && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
@@ -511,27 +512,45 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public static void onBlockPistonExtend(final BlockPistonExtendEvent e) {
-        if (isInPlot(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-            for (final Block block : e.getBlocks()) {
-                final Plot plot = getCurrentPlot(BukkitUtil.getLocation(block.getLocation()));
-                if (plot != null) {
-                    if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                        e.setCancelled(true);
-                    }
+    public static void onBlockPistonExtend(final BlockPistonExtendEvent event) {
+        final Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
+        String world = loc.getWorld();
+        if (!PlotSquared.isPlotWorld(world)) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot != null) {
+            for (final Block b : event.getBlocks()) {
+                Location bloc = BukkitUtil.getLocation(b.getLocation());
+                Plot newPlot = MainUtil.getPlot(bloc);
+                if (!plot.equals(newPlot)) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public static void onBlockPistonRetract(final BlockPistonRetractEvent e) {
-        final Block b = e.getRetractLocation().getBlock();
-        final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc) && (e.getBlock().getType() == Material.PISTON_STICKY_BASE)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
+    public static void onBlockPistonRetract(final BlockPistonRetractEvent event) {
+        final Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
+        String world = loc.getWorld();
+        if (!PlotSquared.isPlotWorld(world)) {
+            return;
+        }
+        if (block.getType() != Material.PISTON_STICKY_BASE) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot != null) {
+            for (final Block b : event.getBlocks()) {
+                Location bloc = BukkitUtil.getLocation(b.getLocation());
+                Plot newPlot = MainUtil.getPlot(bloc);
+                if (!plot.equals(newPlot)) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
