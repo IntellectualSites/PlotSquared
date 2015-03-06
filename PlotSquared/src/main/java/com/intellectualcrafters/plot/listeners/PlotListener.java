@@ -178,7 +178,7 @@ public class PlotListener {
             if (weatherFlag != null) {
                 player.setPlayerWeather(getWeatherType(weatherFlag.getValueString()));
             }
-            if ((booleanFlag(plot, "titles", false) || Settings.TITLES) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
+            if ((booleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 if (AbstractTitle.TITLE_CLASS != null) {
