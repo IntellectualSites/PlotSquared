@@ -79,6 +79,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -812,6 +813,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (SetupUtils.setupMap.containsKey(name)) {
             SetupUtils.setupMap.remove(name);
         }
+        CmdConfirm.removePending(name);
         BukkitUtil.removePlayer(name);
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PlotSquared.getPlots(name).values();

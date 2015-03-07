@@ -36,6 +36,11 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  */
 public enum C {
     /*
+     * Confirm
+     */
+    FAILED_CONFIRM("$2You have no pending actions to confirm!"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2If you are sure: $1/plot confirm"),
+    /*
      * Move
      */
     MOVE_SUCCESS("$4Successfully moved plot."),
@@ -208,6 +213,7 @@ public enum C {
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%"),
     UNLINK_REQUIRED("$2An unlink is required to do this."),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot"),
+    UNLINK_SUCCESS("$2Successfully unlinked plots."),
     NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot."),
     /*
      * Commands

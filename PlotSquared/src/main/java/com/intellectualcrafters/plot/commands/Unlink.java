@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -31,9 +32,11 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -59,12 +62,24 @@ public class Unlink extends SubCommand {
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
-        if (!unlinkPlot(plot)) {
-            MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
-            return false;
+        
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!unlinkPlot(plot)) {
+                    MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
+                    return;
+                }
+                MainUtil.update(plr.getLocation());
+                MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
+            }
+        };
+        if (Settings.CONFIRM_UNLINK) {
+            CmdConfirm.addPending(plr, "/plot unlink " + plot.id, runnable);
         }
-        MainUtil.update(plr.getLocation());
-        MainUtil.sendMessage(plr, "&6Plots unlinked successfully!");
+        else {
+            TaskManager.runTask(runnable);
+        }
         return true;
     }
 

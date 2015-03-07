@@ -74,6 +74,7 @@ public enum Command {
     BAN("ban", "block"),
     UNBAN("unban", "unblock"),
     DATABASE("database", "convert"),
+    CONFIRM("confirm"),
     TP("tp", "tp");
     /**
      * Command

@@ -591,6 +591,7 @@ public class MainUtil {
         final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
         final int topZ = getPlotTopLoc(world, plot.id).getZ();
         BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, biome);
+        update(getPlotHome(world, plot));
     }
 
     public static int getHeighestBlock(final String world, final int x, final int z) {

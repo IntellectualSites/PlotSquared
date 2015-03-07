@@ -136,6 +136,12 @@ public class Settings {
      * Use offline mode storage
      */
     public static boolean OFFLINE_MODE = false;
+    /**
+     * Command confirmation
+     */
+    public static boolean CONFIRM_CLEAR = true;
+    public static boolean CONFIRM_DELETE = true;
+    public static boolean CONFIRM_UNLINK = true;
 
     /**
      * Database settings

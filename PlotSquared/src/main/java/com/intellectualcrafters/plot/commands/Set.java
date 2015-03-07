@@ -70,9 +70,11 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.set")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
-            return false;
+        if (!plot.isAdded(plr.getUUID())) {
+            if (!Permissions.hasPermission(plr, "plots.set.other")) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.other");
+                return false;
+            }
         }
         if (args.length < 1) {
             PlotManager manager = PlotSquared.getPlotManager(loc.getWorld());
@@ -111,7 +113,7 @@ public class Set extends SubCommand {
                 return false;
             }
             if (!Permissions.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION);
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                 return false;
             }
             if (args.length == 2) {
@@ -225,6 +227,9 @@ public class Set extends SubCommand {
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
+                if (!Permissions.hasPermission(plr, "plots.set." + component)) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
+                }
                 PlotBlock[] blocks;
                 try {
                     blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseString(args[1]);

@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -47,12 +48,17 @@ public class Confirm extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
     	String name = plr.getName();
-    	CmdInstance command = CmdConfirm.pending.get(name);
-    	if (cmd == null) {
-    		// Tell user no pending commands
+    	CmdInstance command = CmdConfirm.getPending(plr);
+    	if (command == null) {
+    		MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
     		return false;
     	}
-    	// TODO check command timestamp;
-    	return command.command.execute(plr, command.args);
+    	CmdConfirm.removePending(plr);
+    	if (System.currentTimeMillis() - command.timestamp > 10000) {
+    	    MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
+    	    return false;
+    	}
+    	TaskManager.runTask(command.command);
+    	return true;
     }
 }

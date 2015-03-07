@@ -24,12 +24,15 @@ import java.util.Set;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Clear extends SubCommand {
@@ -56,8 +59,19 @@ public class Clear extends SubCommand {
                         if (plot == null) {
                             PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
-                            MainUtil.clear(world, plot, true, null);
-                            PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
+                            Runnable runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainUtil.clear(world, plot, true, null);
+                                    PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
+                                }
+                            };
+                            if (Settings.CONFIRM_CLEAR) {
+                                CmdConfirm.addPending(plr, "/plot clear " + id, runnable);
+                            }
+                            else {
+                                TaskManager.runTask(runnable);
+                            }
                         }
                     }
                 }
@@ -100,18 +114,31 @@ public class Clear extends SubCommand {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final long start = System.currentTimeMillis();
-        final boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+        if (MainUtil.runners.containsKey(plot)) {
+            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            return false;
+        }
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                final long start = System.currentTimeMillis();
+                final boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                    }
+                });
+                if (!result) {
+                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                }
             }
-        });
-        if (!result) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+        };
+        if (Settings.CONFIRM_CLEAR) {
+            CmdConfirm.addPending(plr, "/plot clear " + plot.id, runnable);
         }
-        // sign
-        // wall
-        return result;
+        else {
+            TaskManager.runTask(runnable);
+        }
+        return true;
     }
 }
