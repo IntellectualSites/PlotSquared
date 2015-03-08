@@ -39,7 +39,7 @@ public enum C {
      * Confirm
      */
     FAILED_CONFIRM("$2You have no pending actions to confirm!"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2If you are sure: $1/plot confirm"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2This cannot be undone! If you are sure: $1/plot confirm"),
     /*
      * Move
      */
