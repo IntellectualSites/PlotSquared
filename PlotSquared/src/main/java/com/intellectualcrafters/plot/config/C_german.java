@@ -34,7 +34,7 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  *
  * @author Citymonstret
  */
-public enum C {
+public enum C_german {
     /*
      * Confirm
      */
@@ -484,7 +484,7 @@ public enum C {
     /**
      * Constructor for custom strings.
      */
-    C() {
+    C_german() {
         /*
          * use setCustomString();
          */
@@ -496,7 +496,7 @@ public enum C {
      * @param d default
      * @param prefix use prefix
      */
-    C(final String d, final boolean prefix) {
+    C_german(final String d, final boolean prefix) {
         this.d = d;
         if (this.s == null) {
             this.s = "";
@@ -509,7 +509,7 @@ public enum C {
      *
      * @param d default
      */
-    C(final String d) {
+    C_german(final String d) {
         this(d, true);
     }
 
@@ -517,7 +517,7 @@ public enum C {
         manager = new TranslationManager();
         defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
         // register everything in this class
-        for (final C c : values()) {
+        for (final C_german c : values()) {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
         }
     }
