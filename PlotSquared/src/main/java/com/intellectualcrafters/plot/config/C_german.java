@@ -76,91 +76,91 @@ public enum C {
     /*
      * Border
      */
-    BORDER("$2You are outside the current map border"),
+    BORDER("$2Du befindest dich ausserhalb der aktuellen Weltengrenze"),
     /*
      * Unclaim
      */
-    UNCLAIM_SUCCESS("$4You successfully unclaimed the plot."),
+    UNCLAIM_SUCCESS("$4Dieser Plot gehört dir jetzt nicht mehr."),
     /*
      * WorldEdit masks
      */
-    REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot."),
+    REQUIRE_SELECTION_IN_MASK("$2%s deiner Selektion befindet sich nicht innerhalb deines Plots. Du kannst Änderungen nur innerhalb deines Plots vornehmen."),
     /*
      * Records
      */
-    RECORD_PLAY("$2%player $2started playing record $1%name"),
-    NOTIFY_ENTER("$2%player $2entered your plot ($1%plot$2)"),
-    NOTIFY_LEAVE("$2%player $2left your plot ($1%plot$2)"),
+    RECORD_PLAY("$2%player $2startete Spielaufzeichnung $1%name"),
+    NOTIFY_ENTER("$2%player $2betritt deinen Plot ($1%plot$2)"),
+    NOTIFY_LEAVE("$2%player $2verlies deinen Plot ($1%plot$2)"),
     /*
      * Swap
      */
     SWAP_SYNTAX("$2/plots swap <plot id>"),
-    SWAP_SUCCESS("$4Successfully swapped plots"),
+    SWAP_SUCCESS("$4Plots erfolgreich getauscht"),
     /*
      * Comment
      */
-    COMMENT_SYNTAX("$2Use /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
-    INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s"),
-    COMMENT_REMOVED("$4Successfully deleted %s."),
-    COMMENT_ADDED("$4A comment has been left"),
+    COMMENT_SYNTAX("$2Syntax: /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
+    INVALID_INBOX("$2Dieses Postfach ist ungültig.\n$1Akzeptierte Werte: %s"),
+    COMMENT_REMOVED("$4Erfolgreich gelöscht: %s."),
+    COMMENT_ADDED("$4Ein Kommentar wurde hinterlassen."),
     /*
      * Console
      */
-    NOT_CONSOLE("$2For safety reasons, this command can only be executed by console."),
-    IS_CONSOLE("$2This command can only be executed by a player."),
+    NOT_CONSOLE("$2Aus Sicherheitsgründen kann dieser Befehl nur von der Konsole ausgeführt werden."),
+    IS_CONSOLE("$2Dieser Befehl kann nur von einem Spieler ausgeführt werden."),
     /*
      * Clipboard
      */
-    CLIPBOARD_SET("$2The current plot is now copied to your clipboard, use $1/plot paste$2 to paste it"),
-    PASTED("$4The plot selection was successfully pasted. It has been cleared from your clipboard."),
-    PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s"),
-    NO_CLIPBOARD("$2You don't have a selection in your clipboard"),
-    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2"),
+    CLIPBOARD_SET("$2Der aktuelle Plot wird in die Zwischenablage kopiert. Benutze $1/plot paste$2 um ihn einzufügen."),
+    PASTED("$4Die Plotauswahl wurde erfolgreich eingefügt. Die Zwischenablage wurde geleert."),
+    PASTE_FAILED("$2Einfügen fehlgeschlagen: $2%s"),
+    NO_CLIPBOARD("$2Deine Zwischenablage ist leer."),
+    CLIPBOARD_INFO("$2Aktuelle Auswahl - Plot ID: $1%id$2, Breite: $1%width$2, Anzahl Blöcke: $1%total$2"),
     /*
      * Ratings
      */
-    RATING_NOT_VALID("$2You need to specify a number between 1 and 10"),
-    RATING_ALREADY_EXISTS("$2You have already rated plot $2%s"),
-    RATING_APPLIED("$4You successfully rated plot $2%s"),
-    RATING_NOT_YOUR_OWN("$2You cannot rate your own plot"),
-    RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone"),
+    RATING_NOT_VALID("$2Wähle eine Zahl zwischen 1 und 10"),
+    RATING_ALREADY_EXISTS("$2Du hast diesen Plot bereits bewertet: $2%s"),
+    RATING_APPLIED("$4Du hast diesen Plot erfolgreich bewertet: $2%s"),
+    RATING_NOT_YOUR_OWN("$2Du kannst deinen eigenen Plot nicht selbst bewerten."),
+    RATING_NOT_OWNED("$2Plots ohne Besitzer können nicht bewertet werden."),
     /*
      * Economy Stuff
      */
-    ECON_DISABLED("$2Economy is not enabled"),
-    CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s"),
-    NOT_FOR_SALE("$2This plot is not for sale"),
-    CANNOT_BUY_OWN("$2You cannot buy your own plot"),
-    PLOT_SOLD("$4Your plot; $1%s$4, has been sold to $1%s$4 for $1$%s"),
-    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s"),
-    ADDED_BALANCE("$1%s $2has been added to your balance"),
-    REMOVED_BALANCE("$1%s $2has been taken from your balance"),
+    ECON_DISABLED("$2Ökonomie ist nicht aktiviert."),
+    CANNOT_AFFORD_PLOT("$2Du kannst dir diesen Plot nicht leisten. Er kostet $1%s"),
+    NOT_FOR_SALE("$2Dieser Plot steht nicht zum Verkauf."),
+    CANNOT_BUY_OWN("$2Du kannst deinen eigenen Plot nicht kaufen."),
+    PLOT_SOLD("$4Dein Plot $1%s$4, wurde an $1%s$4 für $1$%s$4 verkauft."),
+    CANNOT_AFFORD_MERGE("$2Du kannst dir das Zusammenfügen der Plots nicht leisten. Es kostet $1%s"),
+    ADDED_BALANCE("$1%s $2wurden deinem Guthaben hinzugefügt."),
+    REMOVED_BALANCE("$1%s $2wurden von deinem Guthaben abgezogen."),
     /*
      * Setup Stuff
      */
-    SETUP_INIT("$1Usage: $2/plot setup <value>"),
-    SETUP_STEP("$3[$1Step %s$3] $1%s $2- $1Expecting: $2%s $1Default: $2%s"),
-    SETUP_INVALID_ARG("$2%s is not a valid argument for step %s. To cancel setup use: $1/plot setup cancel"),
-    SETUP_VALID_ARG("$2Value $1%s $2set to %s"),
-    SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml"),
-    SETUP_WORLD_TAKEN("$2%s is already a registered plotworld"),
-    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
-    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
-    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s"),
+    SETUP_INIT("$1Verwendung: $2/plot setup <value>"),
+    SETUP_STEP("$3[$1Schritt %s$3] $1%s $2- $1Erwarte: $2%s $1Standard: $2%s"),
+    SETUP_INVALID_ARG("$2%s ist kein gültiger Wer für Schritt %s. Um Setup abzubrechen verwende: $1/plot setup cancel"),
+    SETUP_VALID_ARG("$2Wert $1%s $2gesetzt auf %s"),
+    SETUP_FINISHED("$3Falls du MULTIVERSE oder MULTIWORLD verwendest sollte die Welt generiert worden sein. Andernfalls musst du die Welt manuell über bukkit.yml hinzufügen."),
+    SETUP_WORLD_TAKEN("$2%s ist bereits eine bekannte Plotwelt"),
+    SETUP_MISSING_WORLD("$2Du musst einen Namen für die Welt vergeben ($1/plot setup &l<world>$1 <generator>$2)\n$1Zusätzliche Befehle:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
+    SETUP_MISSING_GENERATOR("$2Du musst einen Generator angeben ($1/plot setup <world> &l<generator>&r$2)\n$1Zusätzliche Befehle:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
+    SETUP_INVALID_GENERATOR("$2Ungültiger Generarator. Mögliche Optionen: %s"),
     /*
      * Schematic Stuff
      */
-    SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall"),
-    SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s"),
-    SCHEMATIC_VALID("$2That is a valid schematic"),
-    SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic"),
-    SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully"),
+    SCHEMATIC_MISSING_ARG("$2Du musst einen Wert angeben. Gültige Werte: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall"),
+    SCHEMATIC_INVALID("$2Diese Schematic ist ungültig: $2%s"),
+    SCHEMATIC_VALID("$2Diese Schematic ist gültig."),
+    SCHEMATIC_PASTE_FAILED("$2Einfügen der Schematic fehlgeschlagen"),
+    SCHEMATIC_PASTE_SUCCESS("$4Einfügen der Schematic erfolgreich."),
     /*
      * Title Stuff
      */
-    TITLE_ENTERED_PLOT("You entered plot %world%;%x%;%z%"),
+    TITLE_ENTERED_PLOT("Du betrittst Plot %world%;%x%;%z%"),
     TITLE_ENTERED_PLOT_COLOR("GOLD"),
-    TITLE_ENTERED_PLOT_SUB("Owned by %s"),
+    TITLE_ENTERED_PLOT_SUB("Besitzer: %s"),
     TITLE_ENTERED_PLOT_SUB_COLOR("RED"),
     TITLE_LEFT_PLOT("You entered plot %s"),
     TITLE_LEFT_PLOT_COLOR("GOLD"),
