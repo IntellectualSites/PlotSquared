@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -138,13 +141,37 @@ public class PlotSquared {
         }
         return new LinkedHashSet<>(newplots);
     }
-
-    public static LinkedHashSet<Plot> getPlotsSorted() {
-        final ArrayList<Plot> newplots = new ArrayList<>();
-        for (final HashMap<PlotId, Plot> world : plots.values()) {
-            newplots.addAll(world.values());
-        }
-        return new LinkedHashSet<>(newplots);
+    
+    public static ArrayList<Plot> sortPlots(Collection<Plot> plots) {
+        ArrayList<Plot> newPlots = new ArrayList<>();
+        newPlots.addAll(plots);
+        Collections.sort(newPlots, new Comparator<Plot>() {
+            @Override
+            public int compare(Plot p1, Plot p2) {
+                return p1.hashCode() + p1.world.hashCode() - p2.hashCode() + p2.world.hashCode();
+            }
+        });
+        return newPlots;
+    }
+    
+    public static ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
+        ArrayList<Plot> newPlots = new ArrayList<>();
+        newPlots.addAll(plots);
+        Collections.sort(newPlots, new Comparator<Plot>() {
+            @Override
+            public int compare(Plot p1, Plot p2) {
+                int w1 = 0;
+                int w2 = 0;
+                if (!p1.world.equals(priorityWorld)) {
+                    w1 = p1.hashCode();
+                }
+                if (!p2.world.equals(priorityWorld)) {
+                    w2 = p2.hashCode();
+                }
+                return p1.hashCode() + w1 - p2.hashCode() - w2;
+            }
+        });
+        return newPlots;
     }
 
     public static Set<Plot> getPlots(final String world, final String player) {
@@ -193,7 +220,10 @@ public class PlotSquared {
     }
 
     public static Set<Plot> getPlots(final PlotPlayer player) {
-        final UUID uuid = player.getUUID();
+        return getPlots(player.getUUID());
+    }
+    
+    public static Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final String world : plots.keySet()) {
             if (isPlotWorld(world)) {

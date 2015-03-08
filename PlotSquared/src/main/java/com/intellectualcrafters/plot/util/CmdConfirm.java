@@ -2,7 +2,6 @@ package com.intellectualcrafters.plot.util;
 
 import java.util.HashMap;
 
-import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;

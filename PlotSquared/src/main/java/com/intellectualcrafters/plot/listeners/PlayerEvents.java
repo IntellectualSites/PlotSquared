@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -177,6 +176,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     passed = false;
                 }
                 if (passed) {
+                    player.teleport(event.getTo());
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     MainUtil.sendMessage(pp, C.BORDER);
                     return;

@@ -20,22 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.CmdInstance;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -47,7 +37,6 @@ public class Confirm extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-    	String name = plr.getName();
     	CmdInstance command = CmdConfirm.getPending(plr);
     	if (command == null) {
     		MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
