@@ -94,7 +94,7 @@ public class Condense extends SubCommand {
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
-                MainUtil.move(worldname, to_move.get(0), free.get(0), new Runnable() {
+               MainUtil.move(worldname, to_move.get(0), free.get(0), new Runnable() {
                     @Override
                     public void run() {
                         if (!TASK) {

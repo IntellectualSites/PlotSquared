@@ -29,6 +29,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -866,6 +867,12 @@ public class SQLManager implements AbstractDB {
         if (uniqueIds.size() > 0) {
             try {
                 String stmt_prefix = "";
+                final StringBuilder idstr2 = new StringBuilder("");
+                for (final Integer id : uniqueIds) {
+                    idstr2.append(stmt_prefix + id);
+                    stmt_prefix = " OR `id` = ";
+                }
+                stmt_prefix = "";
                 final StringBuilder idstr = new StringBuilder("");
                 for (final Integer id : uniqueIds) {
                     idstr.append(stmt_prefix + id);
@@ -883,8 +890,7 @@ public class SQLManager implements AbstractDB {
                 stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr + "");
                 stmt.executeUpdate();
                 stmt.close();
-                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot` WHERE `world` = ?");
-                stmt.setString(1, world);
+                stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + this.prefix + "plot` WHERE `id` = " + idstr2 + "");
                 stmt.executeUpdate();
                 stmt.close();
             } catch (final SQLException e) {
@@ -898,9 +904,6 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void purge(final String world, final Set<PlotId> plots) {
-        for (final PlotId id : plots) {
-            PlotSquared.removePlot(world, new PlotId(id.x, id.y), true);
-        }
         PreparedStatement stmt;
         try {
             stmt = SQLManager.this.connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + this.prefix + "plot` WHERE `world` = ?");
@@ -917,6 +920,12 @@ public class SQLManager implements AbstractDB {
             purgeIds(world, ids);
             stmt.close();
             r.close();
+            for (Iterator<PlotId> iter = plots.iterator(); iter.hasNext();) {
+                PlotId plotId = iter.next();
+                iter.remove();
+                PlotId id = new PlotId(plotId.x, plotId.y);
+                PlotSquared.removePlot(world, new PlotId(id.x, id.y), true);
+            }
         } catch (final SQLException e) {
             e.printStackTrace();
             PlotSquared.log("&c[ERROR] " + "FAILED TO PURGE WORLD '" + world + "'!");

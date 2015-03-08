@@ -825,12 +825,14 @@ public class MainUtil {
         final Location top = MainUtil.getPlotTopLoc(world, current);
         final Plot currentPlot = MainUtil.getPlot(world, current);
         if (currentPlot.owner == null) {
+            TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
         final Plot pos1 = getBottomPlot(currentPlot);
         final Plot pos2 = getTopPlot(currentPlot);
         final PlotId size = MainUtil.getSize(world, currentPlot);
         if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
+            TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
         final int offset_x = newPlot.x - pos1.id.x;

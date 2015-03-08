@@ -74,7 +74,7 @@ public class Unlink extends SubCommand {
                 MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
             }
         };
-        if (Settings.CONFIRM_UNLINK) {
+        if (Settings.CONFIRM_UNLINK && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
             CmdConfirm.addPending(plr, "/plot unlink " + plot.id, runnable);
         }
         else {

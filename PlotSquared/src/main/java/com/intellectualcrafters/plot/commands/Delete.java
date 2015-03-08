@@ -83,7 +83,7 @@ public class Delete extends SubCommand {
                 DBFunc.delete(loc.getWorld(), plot);
             }
         };
-        if (Settings.CONFIRM_DELETE) {
+        if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
             CmdConfirm.addPending(plr, "/plot delete " + plot.id, runnable);
         }
         else {

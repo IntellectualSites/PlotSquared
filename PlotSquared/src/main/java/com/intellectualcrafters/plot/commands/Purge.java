@@ -114,16 +114,18 @@ public class Purge extends SubCommand {
             for (final Plot plot : plots) {
                 ids.add(plot.id);
             }
+            int length = ids.size();
             DBFunc.purge(worldname, ids);
-            return finishPurge(ids.size());
+            return finishPurge(length);
         }
         if (arg.equals("all")) {
             final Set<PlotId> ids = PlotSquared.getPlots(worldname).keySet();
-            if (ids.size() == 0) {
+            int length = ids.size();
+            if (length == 0) {
                 return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
-            return finishPurge(ids.size());
+            return finishPurge(length);
         }
         if (arg.equals("unknown")) {
             final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
@@ -136,11 +138,12 @@ public class Purge extends SubCommand {
                     }
                 }
             }
-            if (ids.size() == 0) {
+            int length = ids.size();
+            if (length == 0) {
                 return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
-            return finishPurge(ids.size());
+            return finishPurge(length);
         }
         if (arg.equals("unowned")) {
             final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
@@ -150,11 +153,12 @@ public class Purge extends SubCommand {
                     ids.add(plot.id);
                 }
             }
-            if (ids.size() == 0) {
+            int length = ids.size();
+            if (length == 0) {
                 return MainUtil.sendMessage(null, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
-            return finishPurge(ids.size());
+            return finishPurge(length);
         }
         MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
         return false;
