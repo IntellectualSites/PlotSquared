@@ -177,6 +177,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     passed = false;
                 }
                 if (passed) {
+                    player.teleport(event.getTo());
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     MainUtil.sendMessage(pp, C.BORDER);
                     return;
