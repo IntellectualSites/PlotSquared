@@ -38,41 +38,41 @@ public enum C {
     /*
      * Confirm
      */
-    FAILED_CONFIRM("$2You have no pending actions to confirm!"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2This cannot be undone! If you are sure: $1/plot confirm"),
+    FAILED_CONFIRM("$2Es gibt keine zur Bestätigung ausstehenden Befehle!"),
+    REQUIRES_CONFIRM("$2Bist du sicher, dass du diesen Befehl ausführen willst: $1%s$2?\n$2Die Änderung ist unwiderruflich! Wenn du sicher bist: $1/plot confirm"),
     /*
      * Move
      */
-    MOVE_SUCCESS("$4Successfully moved plot."),
-    REQUIRES_UNOWNED("$2The location specified is already occupied."),
+    MOVE_SUCCESS("$4Plot erfolgreich verschoben."),
+    REQUIRES_UNOWNED("$2Der angegebene Ort ist bereits belegt."),
     /*
      * Compass
      */
-    COMPASS_TARGET("$4Successfully targeted plot with compass"),
+    COMPASS_TARGET("$4Plot erfolgreich mit dem Kompass anvisiert."),
     /*
      * Cluster
      */
-    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2, $4tp$2, $4sethome"),
-    CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world"),
+    CLUSTER_AVAILABLE_ARGS("$1Die folgenden Parameter sind verfügbar: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2, $4tp$2, $4sethome"),
+    CLUSTER_LIST_HEADING("$2Es gibt $1%s$2 Cluster in dieser Welt."),
     CLUSTER_LIST_ELEMENT("$2 - $1%s\n"),
-    CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s"),
-    CLUSTER_ADDED("$4Successfully created the cluster."),
-    CLUSTER_DELETED("$4Successfully deleted the cluster."),
-    CLUSTER_RESIZED("$4Successfully resized the cluster."),
-    CLUSTER_ADDED_USER("$4Successfully added user to the cluster."),
-    CANNOT_KICK_PLAYER("$2You cannot kick that player"),
-    CLUSTER_INVITED("$1You have been invited to the following cluster: $2%s"),
-    CLUSTER_REMOVED("$1You have been removed from cluster: $2%s"),
-    CLUSTER_KICKED_USER("$4Successfully kicked the user"),
-    INVALID_CLUSTER("$1Invalid cluster name: $2%s"),
-    CLUSTER_NOT_ADDED("$2That player was not added to the plot cluster"),
-    CLUSTER_CANNOT_LEAVE("$1You must delete or transfer ownership before leaving"),
-    CLUSTER_ADDED_HELPER("$4Successfully added a helper to the cluster"),
-    CLUSTER_REMOVED_HELPER("$4Successfully removed a helper to the cluster"),
-    CLUSTER_REGENERATED("$4Successfully started cluster regeneration"),
-    CLUSTER_TELEPORTING("$4Teleporting..."),
-    CLUSTER_INFO("$1Current cluster: $2%id%\n$1Name: $2%name%\n$1Owner: $2%owner%\n$1Size: $2%size%\n$1Rights: $2%rights%"),
-    CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s"),
+    CLUSTER_INTERSECTION("$2Der vorgeschlagene Bereich überlappt mit $1%s$2 existierendem/n Cluster/n"),
+    CLUSTER_ADDED("$4Cluster erfolgreich erstellt."),
+    CLUSTER_DELETED("$4Cluster erfolgreich gelöscht."),
+    CLUSTER_RESIZED("$4Größe des Clusters wurde erfolgreich geändert."),
+    CLUSTER_ADDED_USER("$4Spieler erfolgreich zum Cluster hinzugefügt."),
+    CANNOT_KICK_PLAYER("$2Du kannst diesen Spieler nicht kicken."),
+    CLUSTER_INVITED("$1Du wurdest in folgenden Cluster eingeladen: $2%s"),
+    CLUSTER_REMOVED("$1Du wurdest aus folgendem Cluster enfernt: $2%s"),
+    CLUSTER_KICKED_USER("$4Spieler erfolgreich gekickt."),
+    INVALID_CLUSTER("$1Clustername ungültig: $2%s"),
+    CLUSTER_NOT_ADDED("$2Dieser Spieler war nicht zum Cluster hinzugefügt."),
+    CLUSTER_CANNOT_LEAVE("$1Du musst deinen Besitz löschen oder transferieren bevor du gehen kannst."),
+    CLUSTER_ADDED_HELPER("$4Helfer erfolgreich hinzugefügt."),
+    CLUSTER_REMOVED_HELPER("$4Helfer erfolgreich vom Cluster entfernt."),
+    CLUSTER_REGENERATED("$4Clusterregeneration erfolgreich gestartet"),
+    CLUSTER_TELEPORTING("$4Teleportiere..."),
+    CLUSTER_INFO("$1Aktueller Cluster: $2%id%\n$1Name: $2%name%\n$1Besitzer: $2%owner%\n$1Größe: $2%size%\n$1Rechte: $2%rights%"),
+    CLUSTER_CURRENT_PLOTID("$1Aktueller Plot: $2%s"),
     /*
      * Border
      */
