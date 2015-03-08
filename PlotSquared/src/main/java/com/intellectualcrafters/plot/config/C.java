@@ -162,7 +162,7 @@ public enum C {
     TITLE_ENTERED_PLOT_COLOR("GOLD"),
     TITLE_ENTERED_PLOT_SUB("Owned by %s"),
     TITLE_ENTERED_PLOT_SUB_COLOR("RED"),
-    TITLE_LEFT_PLOT("You entered plot %s"),
+    TITLE_LEFT_PLOT("You left plot %s"),
     TITLE_LEFT_PLOT_COLOR("GOLD"),
     TITLE_LEFT_PLOT_SUB("Owned by %s"),
     TITLE_LEFT_PLOT_SUB_COLOR("RED"),
