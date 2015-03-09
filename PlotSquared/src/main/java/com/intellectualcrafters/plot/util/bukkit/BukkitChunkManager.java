@@ -62,10 +62,13 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override
     public ArrayList<ChunkLoc> getChunkChunks(final String world) {
-        final String directory = new File(".").getAbsolutePath() + File.separator + world + File.separator + "region";
+        final String directory = Bukkit.getWorldContainer() + File.separator + world + File.separator + "region";
         final File folder = new File(directory);
         final File[] regionFiles = folder.listFiles();
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        if (regionFiles == null) {
+            throw new RuntimeException("Could not find worlds folder.");
+        }
         for (final File file : regionFiles) {
             final String name = file.getName();
             if (name.endsWith("mca")) {
