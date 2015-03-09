@@ -873,7 +873,7 @@ public class MainUtil {
         final char[] b = message.toCharArray();
         for (int i = 0; i < (b.length - 1); i++) {
             if ((b[i] == alt) && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
-                b[i] = '§';
+                b[i] = '\u00A7';
                 b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
             }
         }
@@ -907,8 +907,8 @@ public class MainUtil {
         int lineColorChars = 0;
         for (int i = 0; i < rawChars.length; i++) {
             final char c = rawChars[i];
-            if (c == '§') {
-                word.append('§' + (rawChars[(i + 1)]));
+            if (c == '\u00A7') {
+                word.append('\u00A7' + (rawChars[(i + 1)]));
                 lineColorChars += 2;
                 i++;
             } else if ((c == ' ') || (c == '\n')) {
@@ -945,16 +945,16 @@ public class MainUtil {
         if (line.length() > 0) {
             lines.add(line.toString());
         }
-        if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != '§')) {
-            lines.set(0, "§f" + lines.get(0));
+        if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != '\u00A7')) {
+            lines.set(0, "\u00A7f" + lines.get(0));
         }
         for (int i = 1; i < lines.size(); i++) {
             final String pLine = lines.get(i - 1);
             final String subLine = lines.get(i);
 
-            final char color = pLine.charAt(pLine.lastIndexOf('§') + 1);
-            if ((subLine.length() == 0) || (subLine.charAt(0) != '§')) {
-                lines.set(i, '§' + (color) + subLine);
+            final char color = pLine.charAt(pLine.lastIndexOf('\u00A7') + 1);
+            if ((subLine.length() == 0) || (subLine.charAt(0) != '\u00A7')) {
+                lines.set(i, '\u00A7' + (color) + subLine);
             }
         }
         return lines.toArray(new String[lines.size()]);
