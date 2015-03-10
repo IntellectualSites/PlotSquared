@@ -339,8 +339,15 @@ public class FlagManager {
     public static Flag[] parseFlags(final List<String> flagstrings) {
         final Flag[] flags = new Flag[flagstrings.size()];
         for (int i = 0; i < flagstrings.size(); i++) {
-            final String[] split = flagstrings.get(i).split(";");
+            final String[] split;
+            if (flagstrings.get(i).contains(";")) {
+                split = flagstrings.get(i).split(";");
+            }
+            else {
+                split = flagstrings.get(i).split(":");
+            }
             if (split.length == 1) {
+                System.out.print(split[0]);
                 flags[i] = new Flag(getFlag(split[0], true), "");
             } else {
                 flags[i] = new Flag(getFlag(split[0], true), split[1]);

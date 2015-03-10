@@ -20,8 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -116,16 +118,24 @@ public abstract class PlotWorld {
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
-        final List<String> flags = config.getStringList("flags.default");
-        if (flags == null) {
-            this.DEFAULT_FLAGS = new Flag[] {};
-        } else {
-            try {
-                this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
-            } catch (final Exception e) {
-                PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
-                this.DEFAULT_FLAGS = new Flag[] {};
+        List<String> flags = config.getStringList("flags.default");
+        if (flags == null || flags.size() == 0) {
+            flags = config.getStringList("flags");
+            if (flags == null || flags.size() == 0) {
+                flags = new ArrayList<String>();
+                ConfigurationSection section = config.getConfigurationSection("flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    flags.add(key + ";" + section.get(key));
+                }
             }
+        }
+        try {
+            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
+            this.DEFAULT_FLAGS = new Flag[] {};
         }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");
