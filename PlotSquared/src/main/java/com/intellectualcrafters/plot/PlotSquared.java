@@ -936,4 +936,8 @@ public class PlotSquared {
     public static Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }
+    
+    public static Collection<PlotWorld> getPlotWorldObjects() {
+        return plotworlds.values();
+    }
 }

@@ -59,7 +59,13 @@ public class FlagManager {
      */
     public static boolean addFlag(final AbstractFlag af) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        af.getKey();
+        for (PlotWorld plotworld : PlotSquared.getPlotWorldObjects()) {
+            for (final Flag flag : plotworld.DEFAULT_FLAGS) {
+                if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
+                    flag.setKey(af);
+                }
+            }
+        }
         if (PlotSquared.getAllPlotsRaw() != null) {
             for (final Plot plot : PlotSquared.getPlots()) {
                 for (final Flag flag : plot.settings.flags) {
