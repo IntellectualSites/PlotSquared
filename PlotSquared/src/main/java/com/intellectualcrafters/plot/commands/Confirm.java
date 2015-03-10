@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.commands.SubCommand.CommandCategory;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -32,7 +33,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
  */
 public class Confirm extends SubCommand {
     public Confirm() {
-        super(Command.CONFIRM, "Confirm command execution", "confirm", CommandCategory.ACTIONS, true);
+        super("confirm", "plots.use", "Confirm an action", "confirm", "confirm", CommandCategory.ACTIONS, false);
     }
 
     @Override

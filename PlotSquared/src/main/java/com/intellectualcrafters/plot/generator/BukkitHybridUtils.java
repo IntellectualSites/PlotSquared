@@ -85,6 +85,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 final Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
                 regenerateRoad(worldname, new ChunkLoc(x, z));
+                ChunkManager.manager.unloadChunk(worldname, new ChunkLoc(x, z));
             }
         }
         BukkitSetBlockManager.setBlockManager.update(chunks2);
@@ -92,6 +93,8 @@ public class BukkitHybridUtils extends HybridUtils {
     
     private static boolean UPDATE = false;
     private int task;
+    private long LAST = 0;
+    private double AV = 1000;
 
     @Override
     public boolean scheduleRoadUpdate(final String world) {
@@ -109,18 +112,35 @@ public class BukkitHybridUtils extends HybridUtils {
                     Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                     return;
                 } else {
-                    try {
-                        final ChunkLoc loc = chunks.get(0);
-                        PlotSquared.log("Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 256 chunks)");
-                        PlotSquared.log("Remaining regions: " + chunks.size());
-                        regenerateChunkChunk(world, loc);
-                        chunks.remove(0);
-                    } catch (final Exception e) {
-                        final ChunkLoc loc = chunks.get(0);
-                        PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
-                        PlotSquared.log("&d - Potentially skipping 256 chunks");
-                        PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
+                    if (LAST == 0) {
+                        LAST = System.currentTimeMillis();
                     }
+                    AV = (System.currentTimeMillis() - LAST + AV) / 2;
+                    if (AV < 1050) {
+                        try {
+                            final ChunkLoc loc = chunks.get(0);
+                            PlotSquared.log("Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 256 chunks)");
+                            PlotSquared.log("Remaining regions: " + chunks.size());
+                            regenerateChunkChunk(world, loc);
+                            chunks.remove(0);
+                        } catch (final Exception e) {
+                            final ChunkLoc loc = chunks.get(0);
+                            PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                            final int sx = loc.x << 5;
+                            final int sz = loc.z << 5;
+                            for (int x = sx; x < (sx + 32); x++) {
+                                for (int z = sz; z < (sz + 32); z++) {
+                                    ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
+                                }
+                            }
+                            PlotSquared.log("&d - Potentially skipping 256 chunks");
+                            PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
+                        }
+                    }
+                    else {
+                        System.out.print("TPS LOW: " + (System.currentTimeMillis() - LAST) + " | " + AV);
+                    }
+                    LAST = System.currentTimeMillis();
                 }
             }
         }, 20, 20);

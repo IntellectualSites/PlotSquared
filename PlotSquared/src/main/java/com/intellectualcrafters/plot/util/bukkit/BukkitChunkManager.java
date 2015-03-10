@@ -169,8 +169,6 @@ public class BukkitChunkManager extends ChunkManager {
         final int c2z = c2.getZ();
         final int c3x = c3.getX();
         final int c3z = c3.getZ();
-        final int c4x = c4.getX();
-        final int c4z = c4.getZ();
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final ArrayList<Chunk> toGenerate = new ArrayList<>();
         // Load chunks
@@ -254,7 +252,7 @@ public class BukkitChunkManager extends ChunkManager {
         tasks.put(currentIndex, loadTask);
         return true;
     }
-
+    
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
         index.increment();

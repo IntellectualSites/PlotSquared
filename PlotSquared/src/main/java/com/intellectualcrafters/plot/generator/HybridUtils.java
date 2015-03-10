@@ -164,7 +164,6 @@ public abstract class HybridUtils {
                         }
                     }
                 }
-                ChunkManager.manager.unloadChunk(world, chunk);
                 return true;
             }
         }
