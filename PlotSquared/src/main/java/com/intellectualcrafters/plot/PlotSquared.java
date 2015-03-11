@@ -149,7 +149,21 @@ public class PlotSquared {
         Collections.sort(newPlots, new Comparator<Plot>() {
             @Override
             public int compare(Plot p1, Plot p2) {
-                return p1.hashCode() + p1.world.hashCode() - p2.hashCode() + p2.world.hashCode();
+                int h1 = p1.hashCode();
+                int h2 = p2.hashCode();
+                if (h1 < 0) {
+                    h1 = -h1*2 - 1;
+                }
+                else {
+                    h1*=2;
+                }
+                if (h2 < 0) {
+                    h2 = -h2*2 - 1;
+                }
+                else {
+                    h2*=2;
+                }
+                return h1-h2;
             }
         });
         return newPlots;
@@ -157,21 +171,15 @@ public class PlotSquared {
     
     public static ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
         ArrayList<Plot> newPlots = new ArrayList<>();
-        newPlots.addAll(plots);
-        Collections.sort(newPlots, new Comparator<Plot>() {
-            @Override
-            public int compare(Plot p1, Plot p2) {
-                int w1 = 0;
-                int w2 = 0;
-                if (!p1.world.equals(priorityWorld)) {
-                    w1 = p1.hashCode();
-                }
-                if (!p2.world.equals(priorityWorld)) {
-                    w2 = p2.hashCode();
-                }
-                return p1.hashCode() + w1 - p2.hashCode() - w2;
+        HashMap<PlotId, Plot> worldPlots = PlotSquared.plots.get(priorityWorld);
+        if (worldPlots != null) {
+            newPlots.addAll(sortPlots(worldPlots.values()));
+        }
+        for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.plots.entrySet()) {
+            if (!entry.getKey().equals(priorityWorld)) {
+                entry.getValue().values();
             }
-        });
+        }
         return newPlots;
     }
 

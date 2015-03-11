@@ -92,7 +92,7 @@ public class Purge extends SubCommand {
             return false;
         }
         final String worldname = args[1];
-        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
+        if (!PlotSquared.getAllPlotsRaw().containsKey(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
