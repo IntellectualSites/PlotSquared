@@ -126,7 +126,9 @@ public abstract class PlotWorld {
                 ConfigurationSection section = config.getConfigurationSection("flags");
                 Set<String> keys = section.getKeys(false);
                 for (String key : keys) {
-                    flags.add(key + ";" + section.get(key));
+                    if (!key.equals("default")) {
+                        flags.add(key + ";" + section.get(key));
+                    }
                 }
             }
         }
