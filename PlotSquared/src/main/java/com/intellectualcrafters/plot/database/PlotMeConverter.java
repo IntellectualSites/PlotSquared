@@ -110,7 +110,7 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 owner = DBFunc.everyone;
                             } else {
-                                sendMessage("&cCould not identify owner for plot: " + id + " -> " + name);
+                                sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                                 continue;
                             }
                         }
