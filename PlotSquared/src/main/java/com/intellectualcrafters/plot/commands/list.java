@@ -113,16 +113,19 @@ public class list extends SubCommand {
                     break;
                 }
                 plots = PlotSquared.getPlots(plr);
+                break;
             }
             case "shared": {
                 if (plr == null) {
                     break;
                 }
+                plots = new ArrayList<Plot>();
                 for (Plot plot : PlotSquared.getPlots()) {
                     if (plot.helpers.contains(plr.getUUID()) || plot.trusted.contains(plr.getUUID())) {
                         plots.add(plot);
                     }
                 }
+                break;
             }
             case "world": {
                 plots = PlotSquared.getPlots(world).values();
@@ -185,7 +188,7 @@ public class list extends SubCommand {
         }
         
         if (plots.size() == 0) {
-            MainUtil.sendMessage(plr, C.NO_PLOTS);
+            MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return false;
         }
         

@@ -47,6 +47,7 @@ public class DebugRoadRegen extends SubCommand {
             MainUtil.update(loc);
         }
         MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+        MainUtil.update(loc);
         return true;
     }
 }

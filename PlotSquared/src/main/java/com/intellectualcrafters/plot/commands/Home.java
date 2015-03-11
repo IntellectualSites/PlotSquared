@@ -81,7 +81,7 @@ public class Home extends SubCommand {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(id - 1));
             return true;
         } else {
-            MainUtil.sendMessage(plr, C.NO_PLOTS);
+            MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return true;
         }
     }

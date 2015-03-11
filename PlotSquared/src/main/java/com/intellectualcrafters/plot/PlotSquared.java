@@ -173,11 +173,19 @@ public class PlotSquared {
         ArrayList<Plot> newPlots = new ArrayList<>();
         HashMap<PlotId, Plot> worldPlots = PlotSquared.plots.get(priorityWorld);
         if (worldPlots != null) {
-            newPlots.addAll(sortPlots(worldPlots.values()));
+            for (Plot plot : sortPlots(worldPlots.values())) {
+                if (plots.contains(plot)) {
+                    newPlots.add(plot);
+                }
+            }
         }
         for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.plots.entrySet()) {
             if (!entry.getKey().equals(priorityWorld)) {
-                entry.getValue().values();
+                for (Plot plot : entry.getValue().values()) {
+                    if (plots.contains(plot)) {
+                        newPlots.add(plot);
+                    }
+                }
             }
         }
         return newPlots;
@@ -504,18 +512,20 @@ public class PlotSquared {
         // Set chunk
         ChunkManager.manager = IMP.initChunkManager();
         // PlotMe
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                if (IMP.initPlotMeConverter()) {
-                    log("&c=== IMPORTANT ===");
-                    log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                    log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                    log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                    log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
+        if (Settings.CONVERT_PLOTME) {
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (IMP.initPlotMeConverter()) {
+                        log("&c=== IMPORTANT ===");
+                        log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                        log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                        log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                        log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
+                    }
                 }
-            }
-        }, 200);
+            }, 200);
+        }
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }
