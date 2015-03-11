@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -46,11 +48,11 @@ public class Home extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, String... args) {
-        final Plot[] plots = PlotSquared.getPlots(plr).toArray(new Plot[0]);
-        if (plots.length == 1) {
-            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[0]);
+        final ArrayList<Plot> plots = PlotSquared.sortPlots(PlotSquared.getPlots(plr), plr.getLocation().getWorld());
+        if (plots.size() == 1) {
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
-        } else if (plots.length > 1) {
+        } else if (plots.size() > 1) {
             if (args.length < 1) {
                 args = new String[] { "1" };
             }
@@ -72,11 +74,11 @@ public class Home extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return true;
             }
-            if ((id > (plots.length)) || (id < 1)) {
+            if ((id > (plots.size())) || (id < 1)) {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
                 return false;
             }
-            MainUtil.teleportPlayer(plr, plr.getLocation(), plots[id - 1]);
+            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(id - 1));
             return true;
         } else {
             MainUtil.sendMessage(plr, C.NO_PLOTS);

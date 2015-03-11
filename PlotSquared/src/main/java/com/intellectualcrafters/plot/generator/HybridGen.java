@@ -32,6 +32,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -88,9 +89,6 @@ public class HybridGen extends PlotGenerator {
      * Initialize variables, and create plotworld object used in calculations
      */
     public void init(PlotWorld plotworld) {
-        if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) plotworld;
-        }
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;
         this.roadblock = this.plotworld.ROAD_BLOCK.id;
@@ -198,24 +196,7 @@ public class HybridGen extends PlotGenerator {
     /**
      * Return the block populator
      */
-    public List<BlockPopulator> getPopulators(final World world) {
-        // disabling spawning for this world
-        if (!this.plotworld.MOB_SPAWNING) {
-            if (!this.plotworld.SPAWN_EGGS) {
-                world.setSpawnFlags(false, false);
-            }
-            world.setAmbientSpawnLimit(0);
-            world.setAnimalSpawnLimit(0);
-            world.setMonsterSpawnLimit(0);
-            world.setWaterAnimalSpawnLimit(0);
-        }
-        else {
-            world.setSpawnFlags(true, true);
-            world.setAmbientSpawnLimit(-1);
-            world.setAnimalSpawnLimit(-1);
-            world.setMonsterSpawnLimit(-1);
-            world.setWaterAnimalSpawnLimit(-1);
-        }
+    public List<BlockPopulator> getPopulators(final String world) {
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
         return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));

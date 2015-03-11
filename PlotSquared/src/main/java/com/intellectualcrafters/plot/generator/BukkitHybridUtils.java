@@ -115,12 +115,14 @@ public class BukkitHybridUtils extends HybridUtils {
                     if (LAST == 0) {
                         LAST = System.currentTimeMillis();
                     }
-                    AV = (System.currentTimeMillis() - LAST + AV) / 2;
-                    if (AV < 1050) {
+                    long current = System.currentTimeMillis() - LAST;
+                    AV = Math.max(current, (current + AV * 5) / 6);
+                    LAST = System.currentTimeMillis();
+                    if (AV < 1500) {
                         try {
                             final ChunkLoc loc = chunks.get(0);
-                            PlotSquared.log("Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 256 chunks)");
-                            PlotSquared.log("Remaining regions: " + chunks.size());
+                            PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
+                            PlotSquared.log(" - Remaining: " + chunks.size());
                             regenerateChunkChunk(world, loc);
                             chunks.remove(0);
                         } catch (final Exception e) {
@@ -133,14 +135,16 @@ public class BukkitHybridUtils extends HybridUtils {
                                     ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
                                 }
                             }
-                            PlotSquared.log("&d - Potentially skipping 256 chunks");
+                            PlotSquared.log("&d - Potentially skipping 1024 chunks");
                             PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
                         }
                     }
                     else {
-                        System.out.print("TPS LOW: " + (System.currentTimeMillis() - LAST) + " | " + AV);
+                        double tps = (20000.0/Math.min(AV, current));
+                        if (tps < 19) {
+                            System.out.print("waiting for chunks to unload...");
+                        }
                     }
-                    LAST = System.currentTimeMillis();
                 }
             }
         }, 20, 20);

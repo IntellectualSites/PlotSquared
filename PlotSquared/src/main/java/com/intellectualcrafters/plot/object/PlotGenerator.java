@@ -21,7 +21,10 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.List;
+import java.util.Random;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
@@ -29,13 +32,32 @@ import org.bukkit.generator.ChunkGenerator;
 import com.intellectualcrafters.plot.PlotSquared;
 
 public abstract class PlotGenerator extends ChunkGenerator {
+    
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        PlotSquared.loadWorld(world.getName(), this);
-        return getPopulators(world);
+        PlotSquared.loadWorld(PlotSquared.GEN_WORLD, this);
+//        world = Bukkit.getWorld(PlotSquared.GEN_WORLD);
+        PlotWorld plotworld = PlotSquared.getPlotWorld(PlotSquared.GEN_WORLD);
+        if (!plotworld.MOB_SPAWNING) {
+            if (!plotworld.SPAWN_EGGS) {
+                world.setSpawnFlags(false, false);
+            }
+            world.setAmbientSpawnLimit(0);
+            world.setAnimalSpawnLimit(0);
+            world.setMonsterSpawnLimit(0);
+            world.setWaterAnimalSpawnLimit(0);
+        }
+        else {
+            world.setSpawnFlags(true, true);
+            world.setAmbientSpawnLimit(-1);
+            world.setAnimalSpawnLimit(-1);
+            world.setMonsterSpawnLimit(-1);
+            world.setWaterAnimalSpawnLimit(-1);
+        }
+        return getPopulators(PlotSquared.GEN_WORLD);
     }
     
-    public abstract List<BlockPopulator> getPopulators(World world);
+    public abstract List<BlockPopulator> getPopulators(String world);
     
     public abstract void init(PlotWorld plotworld);
 

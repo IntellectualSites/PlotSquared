@@ -541,7 +541,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
-        if (block.getType() != Material.PISTON_STICKY_BASE) {
+        if (block.getType() != Material.PISTON_STICKY_BASE && block.getType() != Material.PISTON_MOVING_PIECE) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);

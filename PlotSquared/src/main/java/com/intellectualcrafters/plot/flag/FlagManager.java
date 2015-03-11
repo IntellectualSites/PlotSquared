@@ -347,7 +347,6 @@ public class FlagManager {
                 split = flagstrings.get(i).split(":");
             }
             if (split.length == 1) {
-                System.out.print(split[0]);
                 flags[i] = new Flag(getFlag(split[0], true), "");
             } else {
                 flags[i] = new Flag(getFlag(split[0], true), split[1]);
