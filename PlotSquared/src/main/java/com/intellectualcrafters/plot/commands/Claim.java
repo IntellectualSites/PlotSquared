@@ -91,7 +91,7 @@ public class Claim extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
+        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (plot.hasOwner()) {

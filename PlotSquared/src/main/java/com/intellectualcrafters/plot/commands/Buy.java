@@ -68,7 +68,7 @@ public class Buy extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
+        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (!plot.hasOwner()) {
