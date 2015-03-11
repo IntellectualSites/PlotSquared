@@ -198,7 +198,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
-        PlotSquared.GEN_WORLD = world;
         if (!PlotSquared.setupPlotWorld(world, id)) {
             return null;
         }

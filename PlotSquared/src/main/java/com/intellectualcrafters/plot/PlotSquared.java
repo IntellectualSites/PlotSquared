@@ -72,7 +72,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 public class PlotSquared {
     public static final String MAIN_PERMISSION = "plots.use";
     public static final String ADMIN_PERMISSION = "plots.admin";
-    public static String GEN_WORLD = "__PLACEHOLDER__";
     public static File styleFile;
     public static YamlConfiguration style;
     public static File configFile;

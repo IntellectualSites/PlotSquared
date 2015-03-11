@@ -35,9 +35,9 @@ public abstract class PlotGenerator extends ChunkGenerator {
     
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        PlotSquared.loadWorld(PlotSquared.GEN_WORLD, this);
+        PlotSquared.loadWorld(world.getName(), this);
 //        world = Bukkit.getWorld(PlotSquared.GEN_WORLD);
-        PlotWorld plotworld = PlotSquared.getPlotWorld(PlotSquared.GEN_WORLD);
+        PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
         if (!plotworld.MOB_SPAWNING) {
             if (!plotworld.SPAWN_EGGS) {
                 world.setSpawnFlags(false, false);
@@ -54,7 +54,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             world.setMonsterSpawnLimit(-1);
             world.setWaterAnimalSpawnLimit(-1);
         }
-        return getPopulators(PlotSquared.GEN_WORLD);
+        return getPopulators(world.getName());
     }
     
     public abstract List<BlockPopulator> getPopulators(String world);
