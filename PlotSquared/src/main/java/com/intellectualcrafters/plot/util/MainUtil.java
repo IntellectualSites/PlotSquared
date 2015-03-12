@@ -158,7 +158,7 @@ public class MainUtil {
     public static void update(final Location loc) {
         final String world = loc.getWorld();
         int ox = loc.getX() >> 4;
-        int oz = loc.getX() >> 4;
+        int oz = loc.getZ() >> 4;
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         final int distance = BukkitUtil.getViewDistance();
         for (int cx = -distance; cx <= distance; cx++) {
