@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -40,19 +41,22 @@ public class BukkitPlayer implements PlotPlayer {
     
     @Override
     public boolean hasPermission(final String perm) {
-        if (this.noPerm.contains(perm)) {
-            return false;
-        }
-        if (this.hasPerm.contains(perm)) {
+        if (Settings.PERMISSION_CACHING) {
+            if (this.noPerm.contains(perm)) {
+                return false;
+            }
+            if (this.hasPerm.contains(perm)) {
+                return true;
+            }
+            final boolean result = this.player.hasPermission(perm);
+            if (!result) {
+                this.noPerm.add(perm);
+                return false;
+            }
+            this.hasPerm.add(perm);
             return true;
         }
-        final boolean result = this.player.hasPermission(perm);
-        if (!result) {
-            this.noPerm.add(perm);
-            return false;
-        }
-        this.hasPerm.add(perm);
-        return true;
+        return this.player.hasPermission(perm);
     }
     
     @Override

@@ -781,6 +781,9 @@ public class PlotSquared {
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
+        
+        options.put("cache.permissions", Settings.PERMISSION_CACHING);
+        
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
@@ -795,6 +798,7 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         
+        Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
