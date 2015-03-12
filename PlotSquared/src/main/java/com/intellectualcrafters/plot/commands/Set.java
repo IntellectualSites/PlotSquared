@@ -164,7 +164,7 @@ public class Set extends SubCommand {
             final String world = plr.getLocation().getWorld();
             final Location base = MainUtil.getPlotBottomLoc(world, plot.id);
             base.setY(0);
-            final Location relative = plr.getLocation().subtract(base.getX(), base.getZ(), base.getY());
+            final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
             final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ());
             plot.settings.setPosition(blockloc);
             DBFunc.setPosition(loc.getWorld(), plot, relative.getX() + "," + relative.getY() + "," + relative.getZ());

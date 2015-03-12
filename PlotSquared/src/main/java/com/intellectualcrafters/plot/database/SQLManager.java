@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -241,7 +242,7 @@ public class SQLManager implements AbstractDB {
         if (PlotSquared.getMySQL() != null) {
             packet = Math.min(size, 50000);
         } else {
-            packet = Math.min(size, 5000);
+            packet = Math.min(size, 100);
         }
         final int amount = size / packet;
         for (int j = 0; j <= amount; j++) {
@@ -271,19 +272,58 @@ public class SQLManager implements AbstractDB {
                 stmt.executeUpdate();
                 stmt.close();
             } catch (final Exception e) {
-                e.printStackTrace();
-                PlotSquared.log("&6[WARN] " + "Could not bulk save. Conversion may be slower...");
                 try {
-                    for (final Plot plot : plots) {
-                        try {
-                            createPlot(plot);
-                        } catch (final Exception e3) {
-                            PlotSquared.log("&c[ERROR] " + "Failed to save plot: " + plot.id);
-                        }
+                    // TODO UNION
+                    
+                    /*
+
+                        INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values 
+
+                        INSERT INTO 'tablename'
+                              SELECT 'data1' AS 'column1', 'data2' AS 'column2'
+                        UNION SELECT 'data3', 'data4'
+                        UNION SELECT 'data5', 'data6'
+                        UNION SELECT 'data7', 'data8'
+
+
+                     */
+                    StringBuilder unionstmt = new StringBuilder("INSERT INTO `" + this.prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ");
+                    for (int i = 0; i < (plots.size() - 2); i++) {
+                        unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ? ");
                     }
-                } catch (final Exception e2) {
+                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ? ");
+                    stmt = this.connection.prepareStatement(unionstmt.toString());
+                    for (int i = 0; i < plots.size(); i++) {
+                        final Plot plot = plots.get(i);
+                        stmt.setNull((i * 6) + 1, 4);
+                        stmt.setInt((i * 6) + 2, plot.id.x);
+                        stmt.setInt((i * 6) + 3, plot.id.y);
+                        try {
+                            stmt.setString((i * 6) + 4, plot.owner.toString());
+                        } catch (final Exception e1) {
+                            stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
+                        }
+                        stmt.setString((i * 6) + 5, plot.world);
+                        stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
+                    }
+                    stmt.executeUpdate();
+                    stmt.close();
+                }
+                catch (Exception e2) {
                     e2.printStackTrace();
-                    PlotSquared.log("&c[ERROR] " + "Failed to save plots!");
+                    PlotSquared.log("&6[WARN] " + "Could not bulk save. Conversion may be slower...");
+                    try {
+                        for (final Plot plot : plots) {
+                            try {
+                                createPlot(plot);
+                            } catch (final Exception e3) {
+                                PlotSquared.log("&c[ERROR] " + "Failed to save plot: " + plot.id);
+                            }
+                        }
+                    } catch (final Exception e4) {
+                        e4.printStackTrace();
+                        PlotSquared.log("&c[ERROR] " + "Failed to save plots!");
+                    }
                 }
             }
         }
