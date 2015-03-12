@@ -236,7 +236,7 @@ public enum C {
      * purge
      */
     PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>"),
-    PURGE_SUCCESS("$4Successfully purge %s plots"),
+    PURGE_SUCCESS("$4Successfully purged %s plots"),
     /*
      * trim
      */
