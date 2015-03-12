@@ -136,8 +136,10 @@ public class PlotSquared {
 
     public static Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
-        for (final HashMap<PlotId, Plot> world : plots.values()) {
-            newplots.addAll(world.values());
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                newplots.addAll(entry.getValue().values());
+            }
         }
         return new LinkedHashSet<>(newplots);
     }

@@ -21,6 +21,8 @@ public abstract class ChunkManager {
         final int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
+    
+    public abstract int countEntities(Plot plot);
 
     public abstract boolean loadChunk(String world, ChunkLoc loc);
     

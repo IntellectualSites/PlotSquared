@@ -865,4 +865,76 @@ public class BukkitChunkManager extends ChunkManager {
         clearAllEntities(MainUtil.getPlot(worldname, pos2));
         // FIXME swap plots
     }
+
+    @Override
+    public int countEntities(Plot plot) {
+        int count = 0;
+        World world = BukkitUtil.getWorld(plot.world);
+        
+        Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        int bx = bot.getX() >> 4;
+        int bz = bot.getZ() >> 4;
+        
+        int tx = top.getX() >> 4;
+        int tz = top.getZ() >> 4;
+        
+        int size = (tx-bx) << 4;
+        
+        HashSet<Chunk> chunks = new HashSet<>();
+        for (int X = bx; X <= tx; X++) {
+            for (int Z = bz; Z <= tz; Z++) {
+                chunks.add(world.getChunkAt(X,Z));
+            }
+        }
+        
+        boolean doWhole = false;
+        List<Entity> entities = null;
+        if (size > 200) {
+            entities = world.getEntities();
+            if (entities.size() < 16 + (size * size / 64)) {
+                doWhole = true;
+            }
+        }
+        
+        if (doWhole) {
+            for (final Entity entity : entities) {
+                org.bukkit.Location loc = entity.getLocation();
+                Chunk chunk = loc.getChunk();
+                if (chunks.contains(chunk)) {
+                    int X = chunk.getX();
+                    int Z = chunk.getX();
+                    if (X > bx && X < tx && Z > bz && Z < tz) {
+                        count++;
+                    }
+                    else {
+                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
+                        if (plot.id.equals(id)) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            for (Chunk chunk : chunks) {
+                int X = chunk.getX();
+                int Z = chunk.getX();
+                Entity[] ents = chunk.getEntities();
+                if (X == bx || X == tx || Z == bz || Z == tz) {
+                    for (final Entity entity : ents) {
+                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
+                        if (plot.id.equals(id)) {
+                            count++;
+                        }
+                    }
+                }
+                else {
+                    count += ents.length;
+                }
+            }
+            return count;
+        }
+        return count;
+    }
 }

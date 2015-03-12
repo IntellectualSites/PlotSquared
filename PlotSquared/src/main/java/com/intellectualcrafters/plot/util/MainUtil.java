@@ -54,7 +54,7 @@ public class MainUtil {
     static long state = 1;
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
-
+    
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
         
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
