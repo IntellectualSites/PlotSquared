@@ -43,6 +43,7 @@
 		        <configuration>
                   	<show>public</show>
                   	<useStandardDocletOptions>false</useStandardDocletOptions>
+                  	<additionalparam>-Xdoclint:none</additionalparam>
 		        </configuration>
 		      </plugin>
             <plugin>

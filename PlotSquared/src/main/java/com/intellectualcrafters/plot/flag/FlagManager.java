@@ -171,7 +171,7 @@ public class FlagManager {
     /**
      *
      * @param plot
-     * @return Set<Flag>
+     * @return set of flags
      */
     public static Set<Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);

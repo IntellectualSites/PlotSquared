@@ -11,8 +11,8 @@ import java.util.Map;
 
 /**
  * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong> streams, and produces an object graph of
- * subclasses of the {@code Tag} object.  <p> The NBT format was created by Markus Persson, and the specification
- * may be found at <a href="http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt</a>. </p>
+ * subclasses of the {@code Tag} object.  The NBT format was created by Markus Persson, and the specification
+ * may be found at @linktourl http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt.
  */
 public final class NBTInputStream implements Closeable {
     private final DataInputStream is;

@@ -283,8 +283,8 @@ public class Plot implements Cloneable {
     /**
      * Get the plot hashcode
      *
-     * @return integer. You can easily make this a character array <br> xI = c[0] x = c[1 -> xI...] yI = c[xI ... + 1] y
-     * = c[xI ... + 2 -> yI ...]
+     * @return integer. You can easily make this a character array <br> xI = c[0] x = c[1 -&gt; xI...] yI = c[xI ... + 1] y
+     * = c[xI ... + 2 -&gt; yI ...]
      */
     @Override
     public int hashCode() {

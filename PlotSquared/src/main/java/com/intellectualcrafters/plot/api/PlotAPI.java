@@ -201,7 +201,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     }
 
     /**
-     * Do not use this. Instead use FlagManager.<method> in your code.
+     * Do not use this. Instead use FlagManager.[method] in your code.
      *  - Flag related stuff
      *
      * @return FlagManager
@@ -214,7 +214,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     }
     
     /**
-     * Do not use this. Instead use ClusterManager.<method> in your code.
+     * Do not use this. Instead use ClusterManager.[method] in your code.
      *  - Plot cluster related stuff
      *
      * @return ClusterManager
@@ -227,7 +227,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     }
     
     /**
-     * Do not use this. Instead use MainUtil.<method> in your code.
+     * Do not use this. Instead use MainUtil.[method] in your code.
      *  - Basic plot management stuff
      *
      * @return MainUtil
@@ -240,7 +240,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     }
     
     /**
-     * Do not use this. Instead use Permissions.<method> in your code.
+     * Do not use this. Instead use Permissions.[method] in your code.
      *  - Basic permission management stuff
      *
      * @return MainUtil
@@ -264,7 +264,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     }
 
     /**
-     * Use C.<caption> instead
+     * Use C.[caption] instead
      *
      * @return C
      *
@@ -293,7 +293,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * Get the plot manager for a world. - Contains useful low level methods for plot merging, clearing, and
      * tessellation
      *
-     * @param world Plot World
+     * @param world
      *
      * @return PlotManager
      *

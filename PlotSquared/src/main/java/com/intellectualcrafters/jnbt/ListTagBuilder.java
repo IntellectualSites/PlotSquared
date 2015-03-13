@@ -27,6 +27,8 @@ public class ListTagBuilder {
 
     /**
      * Create a new builder instance.
+     * 
+     * @param type
      *
      * @return a new builder
      */
@@ -36,6 +38,9 @@ public class ListTagBuilder {
 
     /**
      * Create a new builder instance.
+     * 
+     * @param entries
+     * @param <T>
      *
      * @return a new builder
      */

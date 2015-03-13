@@ -9,58 +9,16 @@ import java.util.Iterator;
  * @version 2014-05-03
  */
 public class XML {
-    /**
-     * The Character '&amp;'.
-     */
     public static final Character AMP = '&';
-    /**
-     * The Character '''.
-     */
     public static final Character APOS = '\'';
-    /**
-     * The Character '!'.
-     */
     public static final Character BANG = '!';
-    /**
-     * The Character '='.
-     */
     public static final Character EQ = '=';
-    /**
-     * The Character '>'.
-     */
     public static final Character GT = '>';
-    /**
-     * The Character '&lt;'.
-     */
     public static final Character LT = '<';
-    /**
-     * The Character '?'.
-     */
     public static final Character QUEST = '?';
-    /**
-     * The Character '"'.
-     */
     public static final Character QUOT = '"';
-    /**
-     * The Character '/'.
-     */
     public static final Character SLASH = '/';
 
-    /**
-     * Replace special characters with XML escapes:
-     * 
-     * 
-     * <pre>
-     * &amp; <small>(ampersand)</small> is replaced by &amp;amp;
-     * &lt; <small>(less than)</small> is replaced by &amp;lt;
-     * &gt; <small>(greater than)</small> is replaced by &amp;gt;
-     * &quot; <small>(double quote)</small> is replaced by &amp;quot;
-     * </pre>
-     *
-     * @param string The string to be escaped.
-     *
-     * @return The escaped string.
-     */
     public static String escape(final String string) {
         final StringBuilder sb = new StringBuilder(string.length());
         for (int i = 0, length = string.length(); i < length; i++) {
@@ -300,20 +258,6 @@ public class XML {
         return string;
     }
 
-    /**
-     * Convert a well-formed (but not necessarily valid) XML string into a JSONObject. Some information may be lost in
-     * this transformation because JSON is a data format and XML is a document format. XML uses elements, attributes,
-     * and content text, while JSON uses unordered collections of name/value pairs and arrays of values. JSON does not
-     * does not like to distinguish between elements and attributes. Sequences of similar elements are represented as
-     * JSONArrays. Content text may be placed in a "content" member. Comments, prologs, DTDs, and <code>&lt;[ [
-     * ]]></code> are ignored.
-     *
-     * @param string The source string.
-     *
-     * @return A JSONObject containing the structured data from the XML string.
-     *
-     * @throws JSONException
-     */
     public static JSONObject toJSONObject(final String string) throws JSONException {
         final JSONObject jo = new JSONObject();
         final XMLTokener x = new XMLTokener(string);

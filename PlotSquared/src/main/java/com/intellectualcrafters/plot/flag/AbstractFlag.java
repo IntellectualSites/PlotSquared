@@ -38,7 +38,7 @@ public class AbstractFlag {
 
     /**
      * AbstractFlag is a parameter used in creating a new Flag<br>
-     * The key must be alphabetical characters and <= 16 characters in length
+     * The key must be alphabetical characters and &lt;= 16 characters in length
      * @param key
      */
     public AbstractFlag(final String key, final FlagValue<?> value) {

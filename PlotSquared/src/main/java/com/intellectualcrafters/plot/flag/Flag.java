@@ -31,7 +31,7 @@ public class Flag {
      * player, you need to register it with PlotSquared.
      *
      * @param key   AbstractFlag
-     * @param value Value must be alphanumerical (can have spaces) and be <= 48 characters
+     * @param value Value must be alphanumerical (can have spaces) and be &lt;= 48 characters
      *
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
