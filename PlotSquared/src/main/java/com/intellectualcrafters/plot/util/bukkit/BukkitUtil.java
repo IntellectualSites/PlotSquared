@@ -65,6 +65,10 @@ public class BukkitUtil extends BlockManager {
     public static Location getLocation(final org.bukkit.Location loc) {
         return new Location(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
+    
+    public static org.bukkit.Location getLocation(final Location loc) {
+        return new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
+    }
 
     public static World getWorld(final String string) {
         if (string == lastString) {

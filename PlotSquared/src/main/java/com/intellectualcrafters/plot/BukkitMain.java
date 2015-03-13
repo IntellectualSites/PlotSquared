@@ -325,7 +325,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
         }
-        if (Settings.OFFLINE_MODE || Bukkit.getOnlineMode() == false) {
+        if (Settings.OFFLINE_MODE) {
             UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {

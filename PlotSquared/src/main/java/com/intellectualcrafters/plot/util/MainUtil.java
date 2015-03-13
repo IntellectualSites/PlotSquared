@@ -879,6 +879,14 @@ public class MainUtil {
         }
         return new String(b);
     }
+    
+    public static void sendConsoleMessage(String msg) {
+        sendMessage(null, msg);
+    }
+    
+    public static void sendConsoleMessage(C caption, String... args) {
+        sendMessage(null, caption, args);
+    }
 
     public static boolean sendMessage(final PlotPlayer plr, String msg, final boolean prefix) {
         msg = colorise('&', msg);
