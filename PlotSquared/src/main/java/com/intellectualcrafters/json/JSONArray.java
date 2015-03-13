@@ -34,16 +34,16 @@ import java.util.Map;
  * accessing the values by index, and <code>put</code> methods for adding or replacing values. The values can be any of
  * these types: <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>,
  * <code>String</code>, or the <code>JSONObject.NULL object</code>.
- * <p/>
+ * 
  * The constructor can convert a JSON text into a Java object. The <code>toString</code> method converts to JSON text.
- * <p/>
+ * 
  * A <code>get</code> method returns a value if one can be found, and throws an exception if one cannot be found. An
  * <code>opt</code> method returns a default value instead of throwing an exception, and so is useful for obtaining
  * optional values.
- * <p/>
+ * 
  * The generic <code>get()</code> and <code>opt()</code> methods return an object which you can cast or query for type.
  * There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coercion for you.
- * <p/>
+ * 
  * The texts produced by the <code>toString</code> methods strictly conform to JSON syntax rules. The constructors are
  * more forgiving in the texts they will accept: <ul> <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear
  * just before the closing bracket.</li> <li>The <code>null</code> value will be inserted when there is <code>,</code>
@@ -789,7 +789,7 @@ public class JSONArray {
      * Make a JSON text of this JSONArray. For compactness, no unnecessary whitespace is added. If it is not possible to
      * produce a syntactically correct JSON text then null will be returned instead. This could occur if the array
      * contains an invalid number.
-     * <p/>
+     * 
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @return a printable, displayable, transmittable representation of the array.
@@ -824,7 +824,7 @@ public class JSONArray {
 
     /**
      * Write the contents of the JSONArray as JSON text to a writer. For compactness, no whitespace is added.
-     * <p/>
+     * 
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @return The writer.
@@ -837,7 +837,7 @@ public class JSONArray {
 
     /**
      * Write the contents of the JSONArray as JSON text to a writer. For compactness, no whitespace is added.
-     * <p/>
+     * 
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @param indentFactor The number of spaces to add to each level of indentation.

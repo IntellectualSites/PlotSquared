@@ -36,7 +36,7 @@ public class StringComparison {
     private String bestMatch;
     /**
      * Match Value
-     * <p/>
+     * 
      * Can be checked for low match (< .25 or something)
      */
     private double match = 0;

@@ -37,8 +37,8 @@ public class HTTP {
     /**
      * Convert an HTTP header string into a JSONObject. It can be a request header or a response header. A request
      * header will contain
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -46,10 +46,10 @@ public class HTTP {
      *    "HTTP-Version": "HTTP/1.1" (for example)
      * }
      * </pre>
-     * <p/>
+     * 
      * A response header will contain
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),
@@ -57,20 +57,20 @@ public class HTTP {
      *    "Reason-Phrase": "OK" (for example)
      * }
      * </pre>
-     * <p/>
+     * 
      * In addition, the other parameters in the header will be captured, using the HTTP field names as JSON names, so
      * that
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      *    Date: Sun, 26 May 2002 18:06:04 GMT
      *    Cookie: Q=q2=PPEAsg--; B=677gi6ouf29bn&b=2&f=s
      *    Cache-Control: no-cache
      * </pre>
-     * <p/>
+     * 
      * become
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * {...
      *    Date: "Sun, 26 May 2002 18:06:04 GMT",
@@ -78,7 +78,7 @@ public class HTTP {
      *    "Cache-Control": "no-cache",
      * ...}
      * </pre>
-     * <p/>
+     * 
      * It does no further checking or conversion. It does not parse dates. It does not do '%' transforms on URLs.
      *
      * @param string An HTTP header string.
@@ -116,8 +116,8 @@ public class HTTP {
 
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -125,10 +125,10 @@ public class HTTP {
      *    "HTTP-Version": "HTTP/1.1" (for example)
      * }
      * </pre>
-     * <p/>
+     * 
      * A response header must contain
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),
@@ -136,7 +136,7 @@ public class HTTP {
      *    "Reason-Phrase": "OK" (for example)
      * }
      * </pre>
-     * <p/>
+     * 
      * Any other members of the JSONObject will be output as HTTP fields. The result will end with two CRLF pairs.
      *
      * @param jo A JSONObject

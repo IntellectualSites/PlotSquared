@@ -48,8 +48,8 @@ public class XML {
 
     /**
      * Replace special characters with XML escapes:
-     * <p/>
-     * <p/>
+     * 
+     * 
      * <pre>
      * &amp; <small>(ampersand)</small> is replaced by &amp;amp;
      * &lt; <small>(less than)</small> is replaced by &amp;lt;
