@@ -197,7 +197,7 @@ public class Kim {
      * @param at the index of the char value. The first character is at 0.
      *
      * @throws JSONException if at does not point to a valid character.
-     * @returns a Unicode character between 0 and 0x10FFFF.
+     * @return a Unicode character between 0 and 0x10FFFF.
      */
     public int characterAt(final int at) throws JSONException {
         final int c = get(at);
@@ -239,7 +239,7 @@ public class Kim {
      *
      * @param obj the other kim with which to compare.
      *
-     * @returns true if this and obj are both kim objects containing identical byte sequences.
+     * @return true if this and obj are both kim objects containing identical byte sequences.
      */
     @Override
     public boolean equals(final Object obj) {

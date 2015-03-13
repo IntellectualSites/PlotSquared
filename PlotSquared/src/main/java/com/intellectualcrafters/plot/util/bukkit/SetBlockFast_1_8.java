@@ -74,10 +74,8 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
      * @param x       X Coordinate
      * @param y       Y Coordinate
      * @param z       Z Coordinate
-     * @param blockId Block ID
+     * @param id      Block ID
      * @param data    Block Data Value
-     *
-     * @return true
      */
     @SuppressWarnings("deprecation")
     @Override
@@ -286,7 +284,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     /**
      * Update chunks
      *
-     * @param player Player whose chunks we're updating
+     * @param chunks chunks to be updated
      */
     @Override
     public void update(final List<Chunk> chunks) {

@@ -233,7 +233,7 @@ public class SQLManager implements AbstractDB {
     /**
      * Create a plot
      *
-     * @param plots
+     * @param mylist list of plots to be created
      */
     @Override
     public void createPlots(final ArrayList<Plot> mylist) {
@@ -874,10 +874,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param alias
-     */
     @Override
     public void setAlias(final String world, final Plot plot, final String alias) {
         plot.settings.setAlias(alias);
@@ -972,10 +968,6 @@ public class SQLManager implements AbstractDB {
         }
     }
 
-    /**
-     * @param plot
-     * @param position
-     */
     @Override
     public void setPosition(final String world, final Plot plot, final String position) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -996,11 +988,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param id
-     *
-     * @return
-     */
     @Override
     public HashMap<String, Object> getSettings(final int id) {
         final HashMap<String, Object> h = new HashMap<String, Object>();
@@ -1130,10 +1117,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void removeHelper(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1153,10 +1136,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1176,10 +1155,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void setHelper(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1217,10 +1192,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void setTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1240,10 +1211,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void removeDenied(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -1263,10 +1230,6 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * @param plot
-     * @param player
-     */
     @Override
     public void setDenied(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {

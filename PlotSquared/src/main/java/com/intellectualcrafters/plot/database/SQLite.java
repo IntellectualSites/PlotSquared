@@ -43,7 +43,6 @@ public class SQLite extends Database {
     /**
      * Creates a new SQLite instance
      *
-     * @param plugin     Plugin instance
      * @param dbLocation Location of the Database (Must end in .db)
      */
     public SQLite(final PlotSquared plotsquared, final String dbLocation) {

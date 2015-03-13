@@ -142,7 +142,7 @@ public class Plot implements Cloneable {
     /**
      * Check if the player is either the owner or on the helpers list
      *
-     * @param player
+     * @param uuid
      *
      * @return true if the player is added as a helper or is the owner
      */
@@ -153,9 +153,9 @@ public class Plot implements Cloneable {
     /**
      * Should the player be allowed to enter?
      *
-     * @param player
+     * @param uuid
      *
-     * @return false if the player is allowed to enter
+     * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(final UUID uuid) {
         return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
@@ -171,7 +171,7 @@ public class Plot implements Cloneable {
     /**
      * Set the owner
      *
-     * @param player
+     * @param uuid
      */
     public void setOwner(final UUID uuid) {
         this.owner = uuid;
@@ -187,7 +187,7 @@ public class Plot implements Cloneable {
     /**
      * Get a clone of the plot
      *
-     * @return
+     * @return Plot
      */
     @Override
     public Object clone() throws CloneNotSupportedException {

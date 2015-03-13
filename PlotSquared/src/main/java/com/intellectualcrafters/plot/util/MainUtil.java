@@ -82,7 +82,7 @@ public class MainUtil {
      *
      * @param plr
      *
-     * @return
+     * @return int plot count
      */
     public static int getPlayerPlotCount(final String world, final PlotPlayer plr) {
         final UUID uuid = plr.getUUID();
@@ -188,7 +188,7 @@ public class MainUtil {
      * @param id
      * @param direction
      *
-     * @return
+     * @return PlotId relative
      */
     public static PlotId getPlotIdRelative(final PlotId id, final int direction) {
         switch (direction) {
@@ -485,8 +485,9 @@ public class MainUtil {
     /**
      * Clear a plot and associated sections: [sign, entities, border]
      *
-     * @param requester
      * @param plot
+     * @param isDelete
+     * @param whenDone
      */
     public static boolean clearAsPlayer(final Plot plot, final boolean isDelete, final Runnable whenDone) {
         if (runners.containsKey(plot)) {
@@ -658,7 +659,7 @@ public class MainUtil {
      *
      * @return Plot Home Location
      *
-     * @see #getPlotHome(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see #getPlotHome(String, Plot)
      */
     public static Location getPlotHome(final String w, final Plot plot) {
         return getPlotHome(w, plot.id);
@@ -709,7 +710,7 @@ public class MainUtil {
      * @param world
      * @param id
      *
-     * @return
+     * @return Location top
      */
     public static Location getPlotTopLocAbs(final String world, final PlotId id) {
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
@@ -724,7 +725,7 @@ public class MainUtil {
      * @param world
      * @param id
      *
-     * @return
+     * @return Location bottom
      */
     public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
@@ -738,7 +739,7 @@ public class MainUtil {
      * @param world
      * @param id
      *
-     * @return
+     * @return int width of plot
      */
     public static int getPlotWidth(final String world, final PlotId id) {
         return getPlotTopLoc(world, id).getX() - getPlotBottomLoc(world, id).getX();
@@ -751,7 +752,7 @@ public class MainUtil {
      * @param world
      * @param id
      *
-     * @return
+     * @return Location top of mega plot
      */
     public static Location getPlotTopLoc(final String world, PlotId id) {
         final Plot plot = PlotSquared.getPlots(world).get(id);
@@ -770,7 +771,7 @@ public class MainUtil {
      * @param world
      * @param id
      *
-     * @return
+     * @return Location bottom of mega plot
      */
     public static Location getPlotBottomLoc(final String world, PlotId id) {
         final Plot plot = PlotSquared.getPlots(world).get(id);
@@ -995,7 +996,7 @@ public class MainUtil {
      * @param plr Player to recieve message
      * @param c   Caption to send
      *
-     * @return
+     * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         if (c.s().length() > 1) {
@@ -1070,7 +1071,7 @@ public class MainUtil {
     /**
      * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
      * @param loc
-     * @return
+     * @return PlotId underlying plot id of loc
      */
     public static PlotId getPlotAbs(final Location loc) {
         final String world = loc.getWorld();
@@ -1085,7 +1086,7 @@ public class MainUtil {
     /**
      * Returns the plot id at a location (mega plots are considered)
      * @param loc
-     * @return
+     * @return PlotId PlotId observed id
      */
     public static PlotId getPlotId(final Location loc) {
         final String world = loc.getWorld();
@@ -1107,7 +1108,7 @@ public class MainUtil {
      * Get the maximum number of plots a player is allowed
      *
      * @param p
-     * @return
+     * @return int
      */
     public static int getAllowedPlots(final PlotPlayer p, final int current) {
         return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS, current);

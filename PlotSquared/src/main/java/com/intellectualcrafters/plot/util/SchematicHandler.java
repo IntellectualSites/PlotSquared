@@ -34,11 +34,12 @@ public abstract class SchematicHandler {
     /**
      * Paste a schematic
      *
-     * @param location  origin
-     * @param schematic schematic to paste
+     * @param schematic the schematic object to paste
      * @param plot      plot to paste in
+     * @param x_offset  offset x to paste it from plot origin
+     * @param z_offset  offset z to paste it from plot origin
      *
-     * @return true if succeeded
+     * @return boolean true if succeeded
      */
     public boolean paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {

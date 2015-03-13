@@ -198,9 +198,9 @@ public class DBFunc {
     }
 
     /**
+     * 
      * @param id
-     *
-     * @return
+     * @return HashMap<String, Object>
      */
     public static HashMap<String, Object> getSettings(final int id) {
         return dbManager.getSettings(id);
@@ -231,7 +231,7 @@ public class DBFunc {
 
     /**
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeHelper(world, plot, uuid);
@@ -239,7 +239,7 @@ public class DBFunc {
 
     /**
      * @param cluster
-     * @param player
+     * @param uuid
      */
     public static void removeHelper(final PlotCluster cluster, final UUID uuid) {
         dbManager.removeHelper(cluster, uuid);
@@ -248,14 +248,12 @@ public class DBFunc {
     /**
      * @param world
      * @param cluster
-     * @param name
      */
     public static void createCluster(final String world, final PlotCluster cluster) {
         dbManager.createCluster(cluster);
     }
 
     /**
-     * @param world
      * @param current
      * @param resize
      */
@@ -265,7 +263,7 @@ public class DBFunc {
 
     /**
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeTrusted(world, plot, uuid);
@@ -273,8 +271,7 @@ public class DBFunc {
 
     /**
      *
-     * @param world
-     * @param plot
+     * @param cluster
      * @param uuid
      */
     public static void removeInvited(final PlotCluster cluster, final UUID uuid) {
@@ -282,8 +279,9 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.setHelper(world, plot, uuid);
@@ -294,8 +292,9 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.setTrusted(world, plot, uuid);
@@ -306,16 +305,18 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeDenied(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeDenied(world, plot, uuid);
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setDenied(final String world, final Plot plot, final UUID uuid) {
         dbManager.setDenied(world, plot, uuid);

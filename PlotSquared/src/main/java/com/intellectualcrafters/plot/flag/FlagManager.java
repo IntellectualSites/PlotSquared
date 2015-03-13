@@ -53,9 +53,9 @@ public class FlagManager {
     /**
      * Register an AbstractFlag with PlotSquared
      *
-     * @param flag Flag to register
+     * @param af Flag to register
      *
-     * @return success?
+     * @return boolean success
      */
     public static boolean addFlag(final AbstractFlag af) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
@@ -99,7 +99,7 @@ public class FlagManager {
      * Get the value of a flag for a plot (respects flag defaults)
      * @param plot
      * @param flag
-     * @return
+     * @return Flag
      */
     public static Flag getPlotFlag(final Plot plot, final String flag) {
         return getSettingFlag(plot.world, plot.settings, flag);
@@ -120,7 +120,7 @@ public class FlagManager {
      * Get the value of a flag for a plot (ignores flag defaults)
      * @param plot
      * @param flag
-     * @return
+     * @return Flag
      */
     public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
         return getSettingFlagAbs(plot.settings, flag);
@@ -171,7 +171,7 @@ public class FlagManager {
     /**
      *
      * @param plot
-     * @return
+     * @return Set<Flag>
      */
     public static Set<Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);

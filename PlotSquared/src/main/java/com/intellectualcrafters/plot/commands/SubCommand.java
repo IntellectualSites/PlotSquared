@@ -144,8 +144,7 @@ public abstract class SubCommand {
      * @param c    Caption
      * @param args Arguments (%s's)
      *
-     * @see com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions#sendMessage(org.bukkit.entity.Player,
-     * com.intellectualcrafters.plot.config.C, String...)
+     * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      */
     public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         MainUtil.sendMessage(plr, c, args);

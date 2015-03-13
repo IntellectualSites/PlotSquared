@@ -283,7 +283,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @return PlotManager
      *
      * @see com.intellectualcrafters.plot.object.PlotManager
-     * @see PlotSquared#getPlotManager(org.bukkit.World)
+     * @see PlotSquared#getPlotManager(String)
      */
     public PlotManager getPlotManager(final World world) {
         return PlotSquared.getPlotManager(world.getName());
@@ -312,7 +312,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return PlotWorld class for that world ! will return null if not a plot world world
      *
-     * @see PlotSquared#getWorldSettings(org.bukkit.World)
+     * @see PlotSquared#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final World world) {
@@ -326,7 +326,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return PlotWorld class for that world ! will return null if not a plot world world
      *
-     * @see PlotSquared#getWorldSettings(String)
+     * @see PlotSquared#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final String world) {
@@ -339,7 +339,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @param player Player that will receive the message
      * @param c      (Caption)
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player,
+     * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      * com.intellectualcrafters.plot.config.C, String...)
      */
     public void sendMessage(final Player player, final C c) {
@@ -352,7 +352,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @param player Player that will receive the message
      * @param string The message
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#sendMessage(org.bukkit.entity.Player, String)
+     * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, String)
      */
     public void sendMessage(final Player player, final String string) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
@@ -363,7 +363,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @param msg Message that should be sent to the console
      *
-     * @see PlotSquared#sendConsoleSenderMessage(String)
+     * @see MainUtil#sendConsoleMessage(String)
      */
     public void sendConsoleMessage(final String msg) {
         MainUtil.sendConsoleMessage(msg);
@@ -414,7 +414,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return plot, null if ID is wrong
      *
-     * @see MainUtil#getPlot(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see MainUtil#getPlot(String, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot getPlot(final World world, final int x, final int z) {
@@ -428,7 +428,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return plot if found, otherwise it creates a temporary plot-
      *
-     * @see MainUtil#getCurrentPlot(org.bukkit.Location)
+     * @see MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot getPlot(final Location l) {
@@ -456,7 +456,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return true if player has a plot, false if not.
      *
-     * @see #getPlots(org.bukkit.World, org.bukkit.entity.Player, boolean)
+     * @see #getPlots(World, Player, boolean)
      */
     public boolean hasPlot(final World world, final Player player) {
         return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
@@ -493,7 +493,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return Plot[] - array of plot objects in world
      *
-     * @see PlotSquared#getWorldPlots(org.bukkit.World)
+     * @see PlotSquared#getPlots(String)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot[] getPlots(final World world) {
@@ -520,7 +520,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return boolean (if plot world or not)
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#isPlotWorld(org.bukkit.World)
+     * @see com.intellectualcrafters.plot.PlotSquared#isPlotWorld(String)
      */
     public boolean isPlotWorld(final World world) {
         return PlotSquared.isPlotWorld(world.getName());
@@ -533,13 +533,12 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return [0] = bottomLc, [1] = topLoc, [2] = home
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotBottomLoc(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotBottomLoc(String,
      * com.intellectualcrafters.plot.object.PlotId)
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotTopLoc(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotTopLoc(String,
      * com.intellectualcrafters.plot.object.PlotId)
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotHome(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotHome(String,
      * com.intellectualcrafters.plot.object.Plot)
-     * @see com.intellectualcrafters.plot.object.PlotHomePosition
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location[] getLocations(final Plot p) {
@@ -553,9 +552,8 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return plot bottom location
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotHome(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotHome(String,
      * com.intellectualcrafters.plot.object.Plot)
-     * @see com.intellectualcrafters.plot.object.PlotHomePosition
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getHomeLocation(final Plot p) {
@@ -569,7 +567,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return plot bottom location
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotBottomLoc(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotBottomLoc(String,
      * com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
@@ -584,7 +582,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return plot top location
      *
-     * @see MainUtil#getPlotTopLoc(org.bukkit.World, com.intellectualcrafters.plot.object.PlotId)
+     * @see MainUtil#getPlotTopLoc(String, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getTopLocation(final Plot p) {
@@ -598,7 +596,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return true if the player is in a plot, false if not-
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#isInPlot(org.bukkit.entity.Player)
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
      */
     public boolean isInPlot(final Player player) {
         return MainUtil.getPlot(BukkitUtil.getLocation(player)) != null;
@@ -635,8 +633,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return the number of plots the player has
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getPlayerPlotCount(org.bukkit.World,
-     * org.bukkit.entity.Player)
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlayerPlotCount(String, PlotPlayer)
      */
     public int getPlayerPlotCount(final World world, final Player player) {
         return MainUtil.getPlayerPlotCount(world.getName(), BukkitUtil.getPlayer(player));
@@ -650,7 +647,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return a set containing the players plots
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getPlayerPlots(org.bukkit.World,
+     * @see com.intellectualcrafters.plot.PlotSquared#getPlots(String, PlotPlayer)
      * org.bukkit.entity.Player)
      * @see com.intellectualcrafters.plot.object.Plot
      */
@@ -665,7 +662,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return the number of allowed plots
      *
-     * @see com.intellectualcrafters.plot.util.PlayerFunctions#getAllowedPlots(org.bukkit.entity.Player)
+     * @see com.intellectualcrafters.plot.util.MainUtil#getAllowedPlots(PlotPlayer, int)
      */
     public int getAllowedPlots(final Player player) {
         PlotPlayer pp = BukkitUtil.getPlayer(player);

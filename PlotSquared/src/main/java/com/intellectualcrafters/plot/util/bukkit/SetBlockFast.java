@@ -68,7 +68,6 @@ public class SetBlockFast extends BukkitSetBlockManager {
      * @param blockId Block ID
      * @param data    Block Data Value
      *
-     * @return true
      */
     @Override
     public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
@@ -81,7 +80,7 @@ public class SetBlockFast extends BukkitSetBlockManager {
     /**
      * Update chunks
      *
-     * @param player Player whose chunks we're updating
+     * @param chunks list of chunks to update
      */
     @Override
     public void update(final List<Chunk> chunks) {

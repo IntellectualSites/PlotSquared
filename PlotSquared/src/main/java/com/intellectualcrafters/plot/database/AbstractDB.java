@@ -115,8 +115,7 @@ public interface AbstractDB {
      * Get the id of a given plot cluster
      *
      * @param world Which the plot is located in
-     * @param pos1   bottom Plot ID
-     * @param pos2	 top Plot ID
+     * @param id cluster id
      *
      * @return Integer = Cluster Entry Id
      */
@@ -160,7 +159,6 @@ public interface AbstractDB {
     /**
      * Set cluster flags
      *
-     * @param world World in which the plot is located
      * @param cluster PlotCluster Object
      * @param flags flags to set (flag[])
      */
@@ -183,7 +181,7 @@ public interface AbstractDB {
      * Purgle a plot
      *
      * @param world World in which the plot is located
-     * @param id    Plot ID
+     * @param uniqueIds list of plot id (db) to be purged
      */
     public void purgeIds(final String world, final Set<Integer> uniqueIds);
 
@@ -219,7 +217,7 @@ public interface AbstractDB {
     /**
      *
      * @param id
-     * @return
+     * @return HashMap<String, Object>
      */
     public HashMap<String, Object> getClusterSettings(final int id);
 
@@ -276,13 +274,13 @@ public interface AbstractDB {
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be added
+     * @param uuid   Player uuid
      */
     public void removeDenied(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be added
+     * @param uuid Player uuid that should be added
      */
     public void setDenied(final String world, final Plot plot, final UUID uuid);
 

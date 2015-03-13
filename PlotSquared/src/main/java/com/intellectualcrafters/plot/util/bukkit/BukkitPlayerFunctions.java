@@ -76,7 +76,7 @@ public class BukkitPlayerFunctions {
      * @param world
      * @param plotIds
      *
-     * @return
+     * @return boolean
      */
     public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
@@ -109,7 +109,7 @@ public class BukkitPlayerFunctions {
     /**
      * @param player player
      *
-     * @return
+     * @return boolean
      */
     public static boolean isInPlot(final Player player) {
         return getCurrentPlot(player) != null;
@@ -138,7 +138,7 @@ public class BukkitPlayerFunctions {
      *
      * @param player
      *
-     * @return
+     * @return boolean
      */
     public static Plot getCurrentPlot(final Player player) {
         if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
@@ -160,7 +160,7 @@ public class BukkitPlayerFunctions {
      *
      * @param plr
      *
-     * @return
+     * @return boolean
      */
     public static Set<Plot> getPlayerPlots(final String world, final Player plr) {
         final Set<Plot> p = PlotSquared.getPlots(world, plr.getName());
