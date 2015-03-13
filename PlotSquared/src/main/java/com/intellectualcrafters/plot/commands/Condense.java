@@ -94,6 +94,10 @@ public class Condense extends SubCommand {
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
+                if (free.size() == 0 || to_move.size() == 0) {
+                    MainUtil.sendMessage(plr, "NO PLOTS FOUND");
+                    return false;
+                }
                MainUtil.move(worldname, to_move.get(0), free.get(0), new Runnable() {
                     @Override
                     public void run() {
