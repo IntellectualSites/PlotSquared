@@ -120,7 +120,7 @@ public class Auto extends SubCommand {
             return false;
         }
         final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
-        final int diff = currentPlots - MainUtil.getAllowedPlots(plr, currentPlots);
+        final int diff = currentPlots - MainUtil.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");

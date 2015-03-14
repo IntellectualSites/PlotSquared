@@ -1110,8 +1110,8 @@ public class MainUtil {
      * @param p
      * @return int
      */
-    public static int getAllowedPlots(final PlotPlayer p, final int current) {
-        return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS, current);
+    public static int getAllowedPlots(final PlotPlayer p) {
+        return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     public static Plot getPlot(final Location loc) {
