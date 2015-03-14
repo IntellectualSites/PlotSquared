@@ -100,7 +100,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         TaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
-                setWall(dpw, plot.id, new PlotBlock[] { wall });
                 TaskManager.runTaskLater(new Runnable() {
                     @Override
                     public void run() {
@@ -147,14 +146,10 @@ public class HybridPlotManager extends ClassicPlotManager {
                                 }
                                 final int I = i;
                                 final int J = j;
-                                TaskManager.runTaskLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BukkitUtil.regenerateChunk(world, I / 16, J / 16);
-                                    }
-                                }, PseudoRandom.random(40));
+                                BukkitUtil.regenerateChunk(world, I / 16, J / 16);
                             }
                         }
+                        setWall(dpw, plot.id, new PlotBlock[] { wall });
                         final Location max = mx;
                         final Location min = mn;
                         if (min == null) {
