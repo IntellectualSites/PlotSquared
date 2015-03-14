@@ -546,8 +546,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
-            final Block b = event.getRetractLocation().getBlock();
-            Location bloc = BukkitUtil.getLocation(b.getLocation());
+            Location bloc = BukkitUtil.getLocation(block.getLocation().subtract(block.getRelative(event.getDirection()).getRelative(event.getDirection()).getLocation()));
             Plot newPlot = MainUtil.getPlot(bloc);
             if (!plot.equals(newPlot)) {
                 event.setCancelled(true);
