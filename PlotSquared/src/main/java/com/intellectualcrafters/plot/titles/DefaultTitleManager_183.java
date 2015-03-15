@@ -274,9 +274,10 @@ public class DefaultTitleManager_183 {
      *
      * @param player
      *            Player
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
      */
-    public void clearTitle(final Player player) {
-        try {
+    public void clearTitle(final Player player) throws Exception {
             // Send timings first
             final Object handle = getHandle(player);
             final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -284,9 +285,6 @@ public class DefaultTitleManager_183 {
             final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
             final Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[3], null);
             sendPacket.invoke(connection, packet);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -294,19 +292,21 @@ public class DefaultTitleManager_183 {
      *
      * @param player
      *            Player
+     * @throws SecurityException 
+     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
-    public void resetTitle(final Player player) {
-        try {
-            // Send timings first
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object[] actions = this.packetActions.getEnumConstants();
-            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            final Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[4], null);
-            sendPacket.invoke(connection, packet);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+    public void resetTitle(final Player player) throws Exception {
+        // Send timings first
+        final Object handle = getHandle(player);
+        final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+        final Object[] actions = this.packetActions.getEnumConstants();
+        final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+        final Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[4], null);
+        sendPacket.invoke(connection, packet);
     }
 
     private Class<?> getPrimitiveType(final Class<?> clazz) {
