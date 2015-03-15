@@ -33,16 +33,16 @@ import com.intellectualcrafters.plot.util.Permissions;
  *
  * @author Empire92
  */
-public class Move extends SubCommand {
-    public Move() {
-        super("debugmove", "plots.move", "Move a plot", "move", "", CommandCategory.ACTIONS, true);
+public class Copy extends SubCommand {
+    public Copy() {
+        super("copy", "plots.copy", "Copy a plot", "copypaste", "", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
             MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
         final Location loc = plr.getLocation();
@@ -58,18 +58,18 @@ public class Move extends SubCommand {
         final PlotId plot2 = MainUtil.parseId(args[0]);
         if ((plot2 == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
         if (plot1.id.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (MainUtil.move(world, plot1.id, plot2, new Runnable() {
+        if (MainUtil.copy(world, plot1.id, plot2, new Runnable() {
             @Override
             public void run() {
-                MainUtil.sendMessage(plr, C.MOVE_SUCCESS);
+                MainUtil.sendMessage(plr, C.COPY_SUCCESS);
                 MainUtil.update(plr.getLocation());
             }
         })) {

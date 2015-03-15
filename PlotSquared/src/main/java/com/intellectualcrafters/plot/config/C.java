@@ -44,6 +44,7 @@ public enum C {
      * Move
      */
     MOVE_SUCCESS("$4Successfully moved plot."),
+    COPY_SUCCESS("$4Successfully copied plot."),
     REQUIRES_UNOWNED("$2The location specified is already occupied."),
     /*
      * Compass

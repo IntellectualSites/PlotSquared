@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.commands.Claim;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -817,6 +818,61 @@ public class MainUtil {
                 TaskManager.runTaskLater(whenDone, 1);
             }
         });
+        return true;
+    }
+    
+    public static boolean copy(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
+        final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(world, current);
+        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(world, newPlot);
+        final Location top = MainUtil.getPlotTopLoc(world, current);
+        final Plot currentPlot = MainUtil.getPlot(world, current);
+        if (currentPlot.owner == null) {
+            TaskManager.runTaskLater(whenDone, 1);
+            return false;
+        }
+        final Plot pos1 = getBottomPlot(currentPlot);
+        final Plot pos2 = getTopPlot(currentPlot);
+        final PlotId size = MainUtil.getSize(world, currentPlot);
+        if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
+            TaskManager.runTaskLater(whenDone, 1);
+            return false;
+        }
+        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
+        final int offset_x = newPlot.x - pos1.id.x;
+        final int offset_y = newPlot.y - pos1.id.y;
+        for (final PlotId id : selection) {
+            int x = id.x + offset_x;
+            int y = id.y + offset_y;
+            Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
+            if (currentPlot.settings.flags != null && currentPlot.settings.flags.size() > 0) {
+                plot.settings.flags = currentPlot.settings.flags;
+                DBFunc.setFlags(world, plot, currentPlot.settings.flags);
+            }
+            if (currentPlot.settings.isMerged()) {
+                plot.settings.setMerged(currentPlot.settings.getMerged());
+                DBFunc.setMerged(world, plot, currentPlot.settings.getMerged());
+            }
+            if (currentPlot.trusted != null && currentPlot.trusted.size() > 0) {
+                plot.trusted = currentPlot.trusted;
+                for (UUID trusted : plot.trusted) {
+                    DBFunc.setTrusted(world, plot, trusted);
+                }
+            }
+            if (currentPlot.helpers != null && currentPlot.helpers.size() > 0) {
+                plot.trusted = currentPlot.helpers;
+                for (UUID helpers : plot.helpers) {
+                    DBFunc.setHelper(world, plot, helpers);
+                }
+            }
+            if (currentPlot.denied != null && currentPlot.denied.size() > 0) {
+                plot.trusted = currentPlot.denied;
+                for (UUID denied : plot.denied) {
+                    DBFunc.setDenied(world, plot, denied);
+                }
+            }
+            PlotSquared.getPlots(world).put(plot.id, plot);
+        }
+        ChunkManager.manager.copyRegion(bot1, top, bot2, whenDone);
         return true;
     }
 
