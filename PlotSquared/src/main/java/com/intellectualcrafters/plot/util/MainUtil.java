@@ -666,44 +666,6 @@ public class MainUtil {
     }
 
     /**
-     * Refresh the plot chunks
-     *
-     * @param world World in which the plot is located
-     * @param plot  Plot Object
-     */
-    public static void refreshPlotChunks(final String world, final Plot plot) {
-        final int bottomX = getPlotBottomLoc(world, plot.id).getX();
-        final int topX = getPlotTopLoc(world, plot.id).getX();
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ();
-        final int topZ = getPlotTopLoc(world, plot.id).getZ();
-        final int minChunkX = (int) Math.floor((double) bottomX / 16);
-        final int maxChunkX = (int) Math.floor((double) topX / 16);
-        final int minChunkZ = (int) Math.floor((double) bottomZ / 16);
-        final int maxChunkZ = (int) Math.floor((double) topZ / 16);
-        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                if (canSendChunk) {
-                    final ChunkLoc chunk = new ChunkLoc(x, z);
-                    chunks.add(chunk);
-                } else {
-                    BukkitUtil.refreshChunk(world, x, z);
-                }
-            }
-        }
-        try {
-            SendChunk.sendChunk(world, chunks);
-        } catch (final Throwable e) {
-            canSendChunk = false;
-            for (int x = minChunkX; x <= maxChunkX; x++) {
-                for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                    BukkitUtil.refreshChunk(world, x, z);
-                }
-            }
-        }
-    }
-
-    /**
      * Gets the top plot location of a plot (all plots are treated as small plots) - To get the top loc of a mega plot
      * use getPlotTopLoc(...)
      *

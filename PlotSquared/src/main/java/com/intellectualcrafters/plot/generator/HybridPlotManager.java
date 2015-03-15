@@ -147,6 +147,9 @@ public class HybridPlotManager extends ClassicPlotManager {
                                 final int I = i;
                                 final int J = j;
                                 BukkitUtil.regenerateChunk(world, I / 16, J / 16);
+                                if (!MainUtil.canSendChunk) {
+                                    BukkitUtil.refreshChunk(world, I / 16, J / 16);
+                                }
                             }
                         }
                         setWall(dpw, plot.id, new PlotBlock[] { wall });

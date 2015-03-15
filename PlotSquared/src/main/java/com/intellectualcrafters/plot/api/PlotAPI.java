@@ -666,6 +666,6 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      */
     public int getAllowedPlots(final Player player) {
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        return MainUtil.getAllowedPlots(pp, MainUtil.getPlayerPlotCount(player.getWorld().getName(), pp));
+        return MainUtil.getAllowedPlots(pp);
     }
 }

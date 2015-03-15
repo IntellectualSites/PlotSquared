@@ -145,8 +145,10 @@ public class BukkitUtil extends BlockManager {
         }
     }
 
-    public static void refreshChunk(final String world, final int x, final int z) {
-        getWorld(world).refreshChunk(x, z);
+    public static void refreshChunk(final String name, final int x, final int z) {
+        World world = getWorld(name);
+        world.unloadChunk(x, z);
+        world.loadChunk(x, z);
     }
 
     public static void regenerateChunk(final String world, final int x, final int z) {

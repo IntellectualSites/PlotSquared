@@ -62,7 +62,7 @@ public class Clear extends SubCommand {
                             Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.clear(world, plot, true, null);
+                                    MainUtil.clear(world, plot, plot.owner == null, null);
                                     PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                                 }
                             };
@@ -122,7 +122,7 @@ public class Clear extends SubCommand {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
-                final boolean result = MainUtil.clearAsPlayer(plot, false, new Runnable() {
+                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

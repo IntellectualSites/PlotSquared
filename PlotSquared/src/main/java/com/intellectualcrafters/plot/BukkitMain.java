@@ -275,7 +275,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         BlockUpdateUtil.setBlockManager = BukkitSetBlockManager.setBlockManager;
         try {
             new SendChunk();
-            MainUtil.canSendChunk = true;
+            if (checkVersion(1, 7, 10) && !checkVersion(1, 7, 11)) {
+                MainUtil.canSendChunk = false;
+            }
+            else {
+                MainUtil.canSendChunk = true;
+            }
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }
