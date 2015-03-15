@@ -36,16 +36,7 @@
             </resource>
         </resources>
         <plugins>
-              <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-javadoc-plugin</artifactId>
-		        <version>2.10.1</version>
-		        <configuration>
-                  	<show>public</show>
-                  	<useStandardDocletOptions>false</useStandardDocletOptions>
-                  	<additionalparam>-Xdoclint:none</additionalparam>
-		        </configuration>
-		      </plugin>
+     	
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
