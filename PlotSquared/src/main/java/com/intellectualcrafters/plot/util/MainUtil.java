@@ -527,7 +527,7 @@ public class MainUtil {
         final Location location = MainUtil.getPlotHomeDefault(plot);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         runners.put(plot, 1);
-        if (plotworld.TERRAIN != 0) {
+        if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
             final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
             ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override

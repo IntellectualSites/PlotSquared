@@ -765,6 +765,7 @@ public class PlotSquared {
         
         
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
+        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
@@ -802,6 +803,7 @@ public class PlotSquared {
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
+        Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
         
         Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");

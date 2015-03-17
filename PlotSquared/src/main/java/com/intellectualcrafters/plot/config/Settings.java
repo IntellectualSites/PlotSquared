@@ -28,6 +28,7 @@ package com.intellectualcrafters.plot.config;
  */
 public class Settings {
     public static boolean ENABLE_CLUSTERS = false;
+    public static boolean FAST_CLEAR = false;
     /**
      * Default UUID_FECTHING: false
      */
