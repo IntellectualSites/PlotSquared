@@ -112,6 +112,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void log(String message) {
+        if (message == null) {
+            return;
+        }
         message = message.replaceAll("\u00B2", "2");
         if ((THIS == null) || (Bukkit.getServer().getConsoleSender() == null)) {
             System.out.println(ChatColor.stripColor(ConsoleColors.fromString(message)));
