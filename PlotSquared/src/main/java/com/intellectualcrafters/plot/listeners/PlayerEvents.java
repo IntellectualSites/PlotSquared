@@ -62,6 +62,7 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
@@ -522,8 +523,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
+            BlockFace face = event.getDirection();
+            Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
             for (final Block b : event.getBlocks()) {
-                Location bloc = BukkitUtil.getLocation(b.getLocation());
+                Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
                 Plot newPlot = MainUtil.getPlot(bloc);
                 if (!plot.equals(newPlot)) {
                     event.setCancelled(true);

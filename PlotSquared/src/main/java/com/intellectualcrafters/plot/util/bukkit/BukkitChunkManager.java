@@ -765,7 +765,7 @@ public class BukkitChunkManager extends ChunkManager {
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
-                    MainUtil.teleportPlayer(BukkitUtil.getPlayer(player), BukkitUtil.getLocation(entity), plot);
+                    BukkitUtil.getPlayer(player).teleport(MainUtil.getPlotFront(plot));
                     PlotListener.plotExit(player, plot);
                 } else {
                     entity.remove();

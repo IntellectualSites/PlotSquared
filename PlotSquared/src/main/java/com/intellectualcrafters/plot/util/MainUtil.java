@@ -95,18 +95,33 @@ public class MainUtil {
         }
         return count;
     }
+    
+    public static Location getPlotFront(Plot plot) {
+        final Location top = getPlotTopLoc(plot.world, plot.id);
+        final Location bot = getPlotBottomLoc(plot.world, plot.id);
+        final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
+        final int z = 0;
+        PlotManager manager = PlotSquared.getPlotManager(plot.world);
+        final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(plot.world), plot).getY());
+        return new Location(plot.world, x, y, z);
+    }
 
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
         final Plot bot = MainUtil.getBottomPlot(plot);
 
         // TODO
         //      boolean result = PlotSquared.IMP.callPlayerTeleportToPlotEvent(player, from, plot);
-        
-        final boolean result = false;
+        boolean result = EventUtil.manager.callTeleport(player, from, plot);
         // TOOD ^ remove that
 
-        if (!result) {
-            final Location location = MainUtil.getPlotHome(bot.world, bot);
+        if (result) {
+            final Location location;
+            if (plot.isAdded(player.getUUID())) {
+                location = MainUtil.getPlotHome(bot.world, bot);
+            }
+            else {
+                location = getPlotFront(plot);
+            }
             if ((Settings.TELEPORT_DELAY == 0) || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 sendMessage(player, C.TELEPORTED_TO_PLOT);
                 player.teleport(location);
@@ -132,7 +147,7 @@ public class MainUtil {
             }, Settings.TELEPORT_DELAY * 20);
             return true;
         }
-        return !result;
+        return result;
     }
 
     public static int getBorder(final String worldname) {

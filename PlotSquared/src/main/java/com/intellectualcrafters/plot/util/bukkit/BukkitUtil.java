@@ -147,7 +147,7 @@ public class BukkitUtil extends BlockManager {
 
     public static void refreshChunk(final String name, final int x, final int z) {
         World world = getWorld(name);
-        world.unloadChunk(x, z);
+        world.refreshChunk(x, z);
         world.loadChunk(x, z);
     }
 
