@@ -23,6 +23,9 @@ public class BukkitPlayer implements PlotPlayer {
      * @param player
      */
     public BukkitPlayer(final Player player) {
+        if (player == null) {
+            System.out.print("=================== NULL PLAYER =========================");
+        }
         this.player = player;
     }
 

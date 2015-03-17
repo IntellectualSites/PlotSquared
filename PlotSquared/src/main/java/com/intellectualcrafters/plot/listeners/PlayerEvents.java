@@ -129,7 +129,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 return;
             }
         }
-        if (!(shooter instanceof Player)) {
+        else if ((shooter instanceof Player)) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
             if (plot == null) {
                 if (!pp.hasPermission("plots.projectile.unowned")) {
@@ -1120,7 +1120,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     Collection<PotionEffect> effects = potion.getEffects();
                     for (PotionEffect effect : effects) {
                         PotionEffectType type = effect.getType();
-                        if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
+                        if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM || type == PotionEffectType.INVISIBILITY  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
                             ProjectileSource shooter = ((Projectile) damager).getShooter();
                             if (shooter == null || !(shooter instanceof Player)) {
                                 return;
