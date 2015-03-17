@@ -100,7 +100,7 @@ public class MainUtil {
         final Location top = getPlotTopLoc(plot.world, plot.id);
         final Location bot = getPlotBottomLoc(plot.world, plot.id);
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
-        final int z = 0;
+        final int z = bot.getZ();
         PlotManager manager = PlotSquared.getPlotManager(plot.world);
         final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(plot.world), plot).getY());
         return new Location(plot.world, x, y, z);
