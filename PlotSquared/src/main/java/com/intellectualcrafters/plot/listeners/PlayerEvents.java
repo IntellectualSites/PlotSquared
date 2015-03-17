@@ -14,14 +14,21 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LargeFireball;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,6 +50,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -62,6 +70,10 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -95,6 +107,48 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Projectile entity = (Projectile) event.getEntity();
+        Location loc = BukkitUtil.getLocation(entity);
+        if (!isPlotWorld(loc.getWorld())) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        if (!isPlotArea(loc)) {
+            return;
+        }
+        ProjectileSource shooter = entity.getShooter();
+        if (shooter instanceof BlockProjectileSource) {
+            if (plot == null) {
+                entity.remove();
+                return;
+            }
+            Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+            Plot sPlot = MainUtil.getPlot(sLoc);
+            if (sPlot == null || sPlot.owner.equals(plot.owner)) {
+                entity.remove();
+                return;
+            }
+        }
+        if (!(shooter instanceof Player)) {
+            PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+            if (plot == null) {
+                if (!pp.hasPermission("plots.projectile.unowned")) {
+                    entity.remove();
+                }
+                return;
+            }
+            if (plot.isAdded(pp.getUUID())) {
+                return;
+            }
+            if (pp.hasPermission("plots.projectile.other")) {
+                return;
+            }
+            entity.remove();
+        }
+    }
+    
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String message = event.getMessage();
@@ -1038,21 +1092,52 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEntity());
-        final Entity d = e.getDamager();
-        final Entity a = e.getEntity();
-        if ((Settings.TELEPORT_DELAY != 0) && (TaskManager.TELEPORT_QUEUE.size() > 0) && (a instanceof Player)) {
-            final Player player = (Player) a;
+        final Entity damager = e.getDamager();
+        final Entity victim = e.getEntity();
+        if ((Settings.TELEPORT_DELAY != 0) && (TaskManager.TELEPORT_QUEUE.size() > 0) && (victim instanceof Player)) {
+            final Player player = (Player) victim;
             final String name = player.getName();
             if (TaskManager.TELEPORT_QUEUE.contains(name)) {
                 TaskManager.TELEPORT_QUEUE.remove(name);
             }
         }
         if (isPlotWorld(l)) {
-            if (d instanceof Player) {
-                final Player p = (Player) d;
-                final boolean aPlr = a instanceof Player;
+            Player p = null;
+            if (damager instanceof Player) {
+                p = (Player) damager;
+            }
+            else if (damager instanceof Projectile) {
+                //Arrow, Egg, EnderPearl, Fireball, Fish, FishHook, LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion, WitherSkull
+                if (damager instanceof Arrow || damager instanceof LargeFireball || damager instanceof Fireball || damager instanceof SmallFireball) {
+                    ProjectileSource shooter = ((Projectile) damager).getShooter();
+                    if (shooter == null || !(shooter instanceof Player)) {
+                        return;
+                    }
+                    p = (Player) shooter;
+                }
+                else if (damager instanceof ThrownPotion) {
+                    ThrownPotion potion = (ThrownPotion) damager;
+                    Collection<PotionEffect> effects = potion.getEffects();
+                    for (PotionEffect effect : effects) {
+                        PotionEffectType type = effect.getType();
+                        if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
+                            ProjectileSource shooter = ((Projectile) damager).getShooter();
+                            if (shooter == null || !(shooter instanceof Player)) {
+                                return;
+                            }
+                            p = (Player) shooter;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    return;
+                }
+            }
+            if (p != null) {
+                final boolean aPlr = victim instanceof Player;
                 final PlotWorld pW = PlotSquared.getPlotWorld(l.getWorld());
-                if (!aPlr && pW.PVE && (!(a instanceof ItemFrame) && !(a.getType().getTypeId() == 30))) {
+                if (!aPlr && pW.PVE && (!(victim instanceof ItemFrame) && !(victim.getType().getTypeId() == 30))) {
                     return;
                 } else if (aPlr && pW.PVP) {
                     return;
@@ -1082,13 +1167,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     assert plot != null;
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
                     if (!plot.isAdded(pp.getUUID())) {
-                        if ((a instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-attack")) {
+                        if ((victim instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-attack")) {
                             return;
                         }
-                        if ((a instanceof Animals) && FlagManager.isPlotFlagTrue(plot, "animal-attack")) {
+                        if ((victim instanceof Animals) && FlagManager.isPlotFlagTrue(plot, "animal-attack")) {
                             return;
                         }
-                        if ((a instanceof Tameable) && ((Tameable) a).isTamed() && FlagManager.isPlotFlagTrue(plot, "tamed-attack")) {
+                        if ((victim instanceof Tameable) && ((Tameable) victim).isTamed() && FlagManager.isPlotFlagTrue(plot, "tamed-attack")) {
                             return;
                         }
                         if (!Permissions.hasPermission(pp, "plots.admin.pve.other")) {
@@ -1100,8 +1185,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                     }
                 }
+                return;
             }
-            if ((d instanceof Arrow) && isPlotArea(l) && (!(a instanceof Creature))) {
+            if ((damager instanceof Arrow) && isPlotArea(l) && (!(victim instanceof Creature))) {
                 e.setCancelled(true);
             }
         }
