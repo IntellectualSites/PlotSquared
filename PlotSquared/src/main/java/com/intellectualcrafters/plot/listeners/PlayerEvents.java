@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
@@ -22,7 +21,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LargeFireball;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -1103,13 +1101,15 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         if (isPlotWorld(l)) {
             Player p = null;
+            Projectile projectile = null;
             if (damager instanceof Player) {
                 p = (Player) damager;
             }
             else if (damager instanceof Projectile) {
+                projectile = (Projectile) damager;
                 //Arrow, Egg, EnderPearl, Fireball, Fish, FishHook, LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion, WitherSkull
                 if (damager instanceof Arrow || damager instanceof LargeFireball || damager instanceof Fireball || damager instanceof SmallFireball) {
-                    ProjectileSource shooter = ((Projectile) damager).getShooter();
+                    ProjectileSource shooter = projectile.getShooter();
                     if (shooter == null || !(shooter instanceof Player)) {
                         return;
                     }
@@ -1155,6 +1155,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         final PlotPlayer pp = BukkitUtil.getPlayer(p);
                         if (!Permissions.hasPermission(pp, "plots.admin.pve.unowned")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.unowned");
+                            if (projectile != null) {
+                                projectile.remove();
+                            }
                             e.setCancelled(true);
                             return;
                         }
@@ -1179,6 +1182,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         if (!Permissions.hasPermission(pp, "plots.admin.pve.other")) {
                             if (isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.other");
+                                if (projectile != null) {
+                                    projectile.remove();
+                                }
                                 e.setCancelled(true);
                                 return;
                             }
