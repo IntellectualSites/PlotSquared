@@ -791,6 +791,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 final Plot plot = getCurrentPlot(q);
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.isDenied(pp.getUUID())) {
+                    if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
+                        return;
+                    }
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.YOU_BE_DENIED);
                     event.setCancelled(true);
                     return;
