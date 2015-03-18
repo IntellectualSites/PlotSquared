@@ -19,7 +19,9 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
@@ -187,7 +189,11 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
         for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {
-            populator.populate(world, this.r, world.getChunkAt(X, Z));
+            Chunk chunk = world.getChunkAt(X, Z);
+            if (MainUtil.canSetFast) {
+                ((BukkitSetBlockManager) BlockUpdateUtil.setBlockManager).update(Arrays.asList(chunk));
+            }
+            populator.populate(world, this.r, chunk);
         }
     }
 

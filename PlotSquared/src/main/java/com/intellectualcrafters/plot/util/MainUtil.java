@@ -51,6 +51,7 @@ import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 public class MainUtil {
     public final static HashMap<Plot, Integer> runners = new HashMap<>();
     public static boolean canSendChunk = false;
+    public static boolean canSetFast = true;
     public static ArrayList<String> runners_p = new ArrayList<>();
     static long state = 1;
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
