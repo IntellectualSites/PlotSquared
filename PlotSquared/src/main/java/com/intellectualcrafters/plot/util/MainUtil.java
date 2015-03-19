@@ -337,6 +337,9 @@ public class MainUtil {
         final String world = p.world;
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        if (!plotworld.ALLOW_SIGNS) {
+            return;
+        }
         final Location loc = manager.getSignLoc(plotworld, p);
         BlockManager.setBlocks(world, new int[] { loc.getX() }, new int[] { loc.getY() }, new int[] { loc.getZ() }, new int[] { 0 }, new byte[] { 0 });
     }

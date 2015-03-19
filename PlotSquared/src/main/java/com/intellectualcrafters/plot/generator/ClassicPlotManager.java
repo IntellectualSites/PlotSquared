@@ -309,6 +309,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         if (!claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { unclaim });
         }
+        MainUtil.removeSign(plot);
         return true;
     }
 
