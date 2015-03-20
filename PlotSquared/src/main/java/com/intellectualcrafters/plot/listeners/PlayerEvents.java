@@ -90,6 +90,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -703,6 +704,18 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         } else if ((reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && !pW.SPAWN_CUSTOM && !(event.getEntityType().getTypeId() == 30)) {
             event.setCancelled(true);
             return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot != null && plot.owner != null) {
+            Flag capFlag = FlagManager.getPlotFlag(plot, "mob-cap");
+            if (capFlag == null) {
+                return;
+            }
+            int cap = ((Integer) capFlag.getValue());
+            int mobs = ChunkManager.manager.countEntities(plot);
+            if (mobs >= cap) {
+                event.setCancelled(true);
+            }
         }
     }
 

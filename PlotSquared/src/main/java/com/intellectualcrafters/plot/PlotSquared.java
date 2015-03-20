@@ -676,6 +676,7 @@ public class PlotSquared {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
+        final List<String> intFlags = Arrays.asList("mob-cap");
         for (final String flag : stringFlags) {
             FlagManager.addFlag(new AbstractFlag(flag));
         }
@@ -684,6 +685,9 @@ public class PlotSquared {
         }
         for (final String flag : booleanFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.BooleanValue()));
+        }
+        for (final String flag : intFlags) {
+            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
