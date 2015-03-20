@@ -141,11 +141,11 @@ public class Merge extends SubCommand {
         final UUID u1 = plot.owner;
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
-            UUID u2 = myplot.owner;
-            if (myplot == null || u2 == null) {
+            if (myplot == null || myplot.owner == null) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
+            UUID u2 = myplot.owner;
             if (u2.equals(u1)) {
                 continue;
             }
