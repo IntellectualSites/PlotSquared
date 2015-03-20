@@ -219,6 +219,8 @@ public enum C {
     MERGE_NOT_VALID("$2This merge request is no longer valid."),
     MERGE_ACCEPTED("$2The merge request has been accepted"),
     SUCCESS_MERGE("$2Plots have been merged!"),
+    MERGE_REQUESTED("$2Successfully sent a merge request"),
+    MERGE_REQUEST_CONFIRM("merge request from %s"),
     /*
      * Commands
      */
