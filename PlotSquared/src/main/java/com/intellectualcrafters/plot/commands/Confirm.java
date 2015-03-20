@@ -44,7 +44,7 @@ public class Confirm extends SubCommand {
     		return false;
     	}
     	CmdConfirm.removePending(plr);
-    	if (System.currentTimeMillis() - command.timestamp > 10000) {
+    	if (System.currentTimeMillis() - command.timestamp > 20000) {
     	    MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
     	    return false;
     	}

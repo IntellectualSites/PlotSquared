@@ -84,6 +84,7 @@ import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -124,7 +125,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
             Plot sPlot = MainUtil.getPlot(sLoc);
-            if (sPlot == null || sPlot.owner.equals(plot.owner)) {
+            if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
                 return;
             }

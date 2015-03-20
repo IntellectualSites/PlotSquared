@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -74,7 +75,7 @@ public class Buy extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        if (plot.owner.equals(plr.getUUID())) {
+        if (PlotHandler.isOwner(plot, plr.getUUID())) {
             return sendMessage(plr, C.CANNOT_BUY_OWN);
         }
         final Flag flag = FlagManager.getPlotFlag(plot, "price");
@@ -97,15 +98,20 @@ public class Buy extends SubCommand {
             }
             EconHandler.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
-            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
+            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner_), initPrice);
+            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner_);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        plot.owner = plr.getUUID();
-        DBFunc.setOwner(plot, plot.owner);
+        Plot top = MainUtil.getTopPlot(plot);
+        
+        for (PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id)) {
+            Plot myPlot = MainUtil.getPlot(plot.world, myId);
+            myPlot.owner_ = plr.getUUID();
+            DBFunc.setOwner(plot, myPlot.owner_);
+        }
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;
     }

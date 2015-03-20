@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -64,7 +65,7 @@ public class PWE {
                     if (FlagManager.isPlotFlagTrue(plot, "no-worldedit")) {
                         return;
                     }
-                    final boolean r = ((plot.getOwner() != null) && plot.getOwner().equals(p.getUUID())) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUUID());
+                    final boolean r = (PlotHandler.isOwner(plot, p.getUUID())) || plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(p.getUUID());
                     if (r) {
                         final String w = l.getWorld();
                         final Location bloc = MainUtil.getPlotBottomLoc(w, plot.id);

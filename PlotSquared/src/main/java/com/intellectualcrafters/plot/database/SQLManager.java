@@ -263,7 +263,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt((i * 4) + 1, plot.id.x);
                     stmt.setInt((i * 4) + 2, plot.id.y);
                     try {
-                        stmt.setString((i * 4) + 3, plot.owner.toString());
+                        stmt.setString((i * 4) + 3, plot.owner_.toString());
                     } catch (final Exception e) {
                         stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
                     }
@@ -299,7 +299,7 @@ public class SQLManager implements AbstractDB {
                         stmt.setInt((i * 6) + 2, plot.id.x);
                         stmt.setInt((i * 6) + 3, plot.id.y);
                         try {
-                            stmt.setString((i * 6) + 4, plot.owner.toString());
+                            stmt.setString((i * 6) + 4, plot.owner_.toString());
                         } catch (final Exception e1) {
                             stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
                         }
@@ -344,7 +344,7 @@ public class SQLManager implements AbstractDB {
                     stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
                     stmt.setInt(1, plot.id.x);
                     stmt.setInt(2, plot.id.y);
-                    stmt.setString(3, plot.owner.toString());
+                    stmt.setString(3, plot.owner_.toString());
                     stmt.setString(4, plot.world);
                     stmt.executeUpdate();
                     stmt.close();
@@ -366,7 +366,7 @@ public class SQLManager implements AbstractDB {
                     stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
                     stmt.setInt(1, plot.id.x);
                     stmt.setInt(2, plot.id.y);
-                    stmt.setString(3, plot.owner.toString());
+                    stmt.setString(3, plot.owner_.toString());
                     stmt.setString(4, plot.world);
                     stmt.executeUpdate();
                     stmt.close();

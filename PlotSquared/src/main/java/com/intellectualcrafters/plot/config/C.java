@@ -216,6 +216,9 @@ public enum C {
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot"),
     UNLINK_SUCCESS("$2Successfully unlinked plots."),
     NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot."),
+    MERGE_NOT_VALID("$2This merge request is no longer valid."),
+    MERGE_ACCEPTED("$2The merge request has been accepted"),
+    SUCCESS_MERGE("$2Plots have been merged!"),
     /*
      * Commands
      */

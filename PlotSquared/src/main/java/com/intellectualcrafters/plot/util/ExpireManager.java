@@ -20,6 +20,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -85,13 +86,7 @@ public class ExpireManager {
                         continue;
                     }
                     final Plot plot = plots.iterator().next();
-                    if (plot.owner != null) {
-                        if (UUIDHandler.getPlayer(plot.owner) != null) {
-                            expiredPlots.get(world).remove(plot);
-                            return;
-                        }
-                    }
-                    if (!isExpired(plot.owner)) {
+                    if (!isExpired(plot)) {
                         expiredPlots.get(world).remove(plot);
                         return;
                     }
@@ -121,7 +116,7 @@ public class ExpireManager {
                     PlotSquared.log("&cDeleted expired plot: " + plot.id);
                     PlotSquared.log("&3 - World: " + plot.world);
                     if (plot.hasOwner()) {
-                        PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
+                        PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner_));
                     } else {
                         PlotSquared.log("&3 - Owner: Unowned");
                     }
@@ -132,6 +127,9 @@ public class ExpireManager {
     }
 
     public static boolean isExpired(final UUID uuid) {
+        if (UUIDHandler.getPlayer(uuid) != null) {
+            return false;
+        }
         final String name = UUIDHandler.getName(uuid);
         if (name != null) {
             final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
@@ -145,6 +143,15 @@ public class ExpireManager {
         }
         return false;
     }
+    
+    public static boolean isExpired(Plot plot) {
+        for (UUID owner : PlotHandler.getOwners(plot)) {
+            if (!isExpired(owner)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static HashMap<Plot, Long> getOldPlots(final String world) {
         final Collection<Plot> plots = PlotSquared.getPlots(world).values();
@@ -152,7 +159,7 @@ public class ExpireManager {
         final HashMap<UUID, Long> remove = new HashMap<>();
         final Set<UUID> keep = new HashSet<>();
         for (final Plot plot : plots) {
-            final UUID uuid = plot.owner;
+            final UUID uuid = plot.owner_;
             if ((uuid == null) || remove.containsKey(uuid)) {
                 Long stamp;
                 if (uuid == null) {

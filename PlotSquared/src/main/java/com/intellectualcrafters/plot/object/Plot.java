@@ -48,7 +48,7 @@ public class Plot implements Cloneable {
     /**
      * plot owner
      */
-    public UUID owner;
+    public UUID owner_;
     /**
      * Deny Entry
      */
@@ -90,8 +90,8 @@ public class Plot implements Cloneable {
     public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
         this.id = id;
         this.settings = new PlotSettings(this);
-        this.owner = owner;
-        this.deny_entry = this.owner == null;
+        this.owner_ = owner;
+        this.deny_entry = this.owner_ == null;
         this.helpers = helpers;
         this.denied = denied;
         this.trusted = new ArrayList<>();
@@ -113,8 +113,8 @@ public class Plot implements Cloneable {
     public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
-        this.owner = owner;
-        this.deny_entry = this.owner != null;
+        this.owner_ = owner;
+        this.deny_entry = this.owner_ != null;
         this.trusted = trusted;
         this.helpers = helpers;
         this.denied = denied;
@@ -136,7 +136,7 @@ public class Plot implements Cloneable {
      * @return false if there is no owner
      */
     public boolean hasOwner() {
-        return this.owner != null;
+        return this.owner_ != null;
     }
 
     /**
@@ -147,7 +147,21 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean isAdded(final UUID uuid) {
-        return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
+        if (this.owner_ == null) {
+            return false;
+        }
+        if (this.denied.contains(uuid)) {
+            return false;
+        }
+        if (this.helpers.contains(uuid) || this.helpers.contains(DBFunc.everyone)) {
+            return true;
+        }
+        if (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)) {
+            if (PlotHandler.isOnline(this)) {
+                return true;
+            }
+        }
+        return PlotHandler.isOwner(this, uuid);
     }
 
     /**
@@ -164,18 +178,18 @@ public class Plot implements Cloneable {
     /**
      * Get the UUID of the owner
      */
-    public UUID getOwner() {
-        return this.owner;
-    }
+//    public UUID getOwner() {
+//        return this.owner_;
+//    }
 
     /**
      * Set the owner
      *
      * @param uuid
      */
-    public void setOwner(final UUID uuid) {
-        this.owner = uuid;
-    }
+//    public void setOwner(final UUID uuid) {
+//        this.owner_ = uuid;
+//    }
 
     /**
      * Get the plot ID
@@ -193,7 +207,7 @@ public class Plot implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
+            return new Plot(this.id, this.owner_, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
         }
         return p;
     }

@@ -52,6 +52,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -206,7 +207,7 @@ public class PlotSquared {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
-                if (plot.getOwner().equals(uuid)) {
+                if (PlotHandler.isOwner(plot, uuid)) {
                     myplots.add(plot);
                 }
             }
@@ -247,7 +248,7 @@ public class PlotSquared {
             if (isPlotWorld(world)) {
                 for (final Plot plot : plots.get(world).values()) {
                     if (plot.hasOwner()) {
-                        if (plot.getOwner().equals(uuid)) {
+                        if (PlotHandler.isOwner(plot, uuid)) {
                             myplots.add(plot);
                         }
                     }

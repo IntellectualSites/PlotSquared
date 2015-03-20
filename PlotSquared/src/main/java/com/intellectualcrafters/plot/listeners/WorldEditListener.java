@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,6 +46,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -75,20 +77,27 @@ public class WorldEditListener implements Listener {
         final String world = e.getWorld();
         final PlotId id = e.getPlotId();
         final Plot plot = PlotSquared.getPlots(world).get(id);
-        if ((plot == null) || (plot.owner == null)) {
+        if (plot == null) {
             return;
         }
-        final PlotPlayer player = UUIDHandler.getPlayer(plot.owner);
-        if (player == null) {
+        HashSet<UUID> members = PlotHandler.getOwners(plot);
+        if (members == null) {
             return;
         }
-        if (!world.equals(player.getLocation().getWorld())) {
-            return;
+        members.addAll(plot.helpers);
+        for (UUID member : members) {
+            final PlotPlayer player = UUIDHandler.getPlayer(member);
+            if (player == null) {
+                continue;
+            }
+            if (!world.equals(player.getLocation().getWorld())) {
+                return;
+            }
+            if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+                return;
+            }
+            PWE.setNoMask(player);
         }
-        if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
-            return;
-        }
-        PWE.setNoMask(player);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

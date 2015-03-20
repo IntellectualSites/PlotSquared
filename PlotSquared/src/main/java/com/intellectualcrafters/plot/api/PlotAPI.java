@@ -474,7 +474,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
         final ArrayList<Plot> pPlots = new ArrayList<>();
         for (final Plot plot : PlotSquared.getPlots(world.getName()).values()) {
             if (just_owner) {
-                if ((plot.owner != null) && (plot.owner == UUIDHandler.getUUID(BukkitUtil.getPlayer(plr)))) {
+                if ((plot.owner_ != null) && (plot.owner_ == UUIDHandler.getUUID(BukkitUtil.getPlayer(plr)))) {
                     pPlots.add(plot);
                 }
             } else {

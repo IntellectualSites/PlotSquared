@@ -90,7 +90,7 @@ public class MainUtil {
         final UUID uuid = plr.getUUID();
         int count = 0;
         for (final Plot plot : PlotSquared.getPlots(world).values()) {
-            if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
+            if (plot.hasOwner() && plot.owner_.equals(uuid) && plot.countsTowardsMax) {
                 count++;
             }
         }
@@ -369,10 +369,10 @@ public class MainUtil {
         if (plot == null) {
             return;
         }
-        if (plot.owner == null) {
+        if (plot.owner_ == null) {
             return;
         }
-        if (!plot.owner.equals(uuid)) {
+        if (!plot.owner_.equals(uuid)) {
             return;
         }
         ArrayList<PlotId> plots;
@@ -427,7 +427,7 @@ public class MainUtil {
         final PlotId id_max = plots.get(plots.size() - 1);
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(uuid))) {
+            if ((myplot == null) || myplot.owner_ == null || !(myplot.owner_.equals(uuid))) {
                 return false;
             }
             final PlotId top = getTopPlot(myplot).id;
@@ -770,7 +770,7 @@ public class MainUtil {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
                 if (PlotSquared.getPlots(world).get(id) != null) {
-                    if (PlotSquared.getPlots(world).get(id).owner != null) {
+                    if (PlotSquared.getPlots(world).get(id).owner_ != null) {
                         return false;
                     }
                 }
@@ -782,7 +782,7 @@ public class MainUtil {
     public static boolean swap(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
         Plot p1 = PlotSquared.getPlots(world).get(current);
         Plot p2 = PlotSquared.getPlots(world).get(newPlot);
-        if (p1==null || p2 == null || p1.owner == null || !p1.owner.equals(p2.owner)) {
+        if (p1==null || p2 == null || p1.owner_ == null || !p1.owner_.equals(p2.owner_)) {
             return false;
         }
         // Swap blocks
@@ -807,7 +807,7 @@ public class MainUtil {
         final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(world, newPlot);
         final Location top = MainUtil.getPlotTopLoc(world, current);
         final Plot currentPlot = MainUtil.getPlot(world, current);
-        if (currentPlot.owner == null) {
+        if (currentPlot.owner_ == null) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
@@ -845,7 +845,7 @@ public class MainUtil {
         final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(world, newPlot);
         final Location top = MainUtil.getPlotTopLoc(world, current);
         final Plot currentPlot = MainUtil.getPlot(world, current);
-        if (currentPlot.owner == null) {
+        if (currentPlot.owner_ == null) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
@@ -862,7 +862,7 @@ public class MainUtil {
         for (final PlotId id : selection) {
             int x = id.x + offset_x;
             int y = id.y + offset_y;
-            Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
+            Plot plot = createPlotAbs(currentPlot.owner_, getPlot(world, new PlotId(x, y)));
             if (currentPlot.settings.flags != null && currentPlot.settings.flags.size() > 0) {
                 plot.settings.flags = currentPlot.settings.flags;
                 DBFunc.setFlags(world, plot, currentPlot.settings.flags);
