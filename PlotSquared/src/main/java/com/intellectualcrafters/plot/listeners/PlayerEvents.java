@@ -783,6 +783,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onTeleport(final PlayerTeleportEvent event) {
+        if (event.getTo() == null || event.getFrom() == null) {
+            return;
+        }
         final Location f = BukkitUtil.getLocation(event.getFrom());
         final Location t = BukkitUtil.getLocation(event.getTo());
         final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
