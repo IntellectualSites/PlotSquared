@@ -242,11 +242,16 @@ public class BukkitUtil extends BlockManager {
     
     @Override
     public int getBiomeFromString(final String biomeStr) {
-        final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
-        if (biome == null) {
+        try {
+            final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+            if (biome == null) {
+                return -1;
+            }
+            return Arrays.asList(Biome.values()).indexOf(biome);
+        }
+        catch (IllegalArgumentException e) {
             return -1;
         }
-        return Arrays.asList(Biome.values()).indexOf(biome);
     }
     
     @Override
