@@ -133,7 +133,7 @@ public abstract class FlagValue<T> {
         public Integer parse(final String t) {
             try {
                 final int value = Integer.parseInt(t);
-                if (value >= 0) {
+                if (value < 0) {
                     return null;
                 }
                 return value;
