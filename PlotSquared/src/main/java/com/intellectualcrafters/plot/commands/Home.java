@@ -63,7 +63,7 @@ public class Home extends SubCommand {
                 Plot temp;
                 if ((temp = isAlias(args[0])) != null) {
                     if (temp.hasOwner()) {
-                        if (temp.getOwner().equals(UUIDHandler.getUUID(plr))) {
+                        if (temp.isOwner(plr.getUUID())) {
                             MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
                             return true;
                         }

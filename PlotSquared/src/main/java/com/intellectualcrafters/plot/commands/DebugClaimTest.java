@@ -123,7 +123,7 @@ public class DebugClaimTest extends SubCommand {
                         }
                         if (uuid != null) {
                             MainUtil.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
-                            plot.owner = uuid;
+                            plot.owner_ = uuid;
                             plot.hasChanged = true;
                             plots.add(plot);
                         } else {

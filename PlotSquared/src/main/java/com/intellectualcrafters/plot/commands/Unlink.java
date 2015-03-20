@@ -56,7 +56,7 @@ public class Unlink extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
@@ -124,14 +124,14 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-                MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
+                MainUtil.setSign(UUIDHandler.getName(plot.owner_), plot);
             }
         }
         manager.finishPlotUnlink(plotworld, ids);
         for (final PlotId id : ids) {
             final Plot myPlot = MainUtil.getPlot(world, id);
             if (plot.hasOwner()) {
-                final String name = UUIDHandler.getName(myPlot.owner);
+                final String name = UUIDHandler.getName(myPlot.owner_);
                 if (name != null) {
                     MainUtil.setSign(name, myPlot);
                 }

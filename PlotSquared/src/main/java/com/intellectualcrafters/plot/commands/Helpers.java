@@ -52,7 +52,7 @@ public class Helpers extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -68,7 +68,7 @@ public class Helpers extends SubCommand {
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
-                if (plot.owner.equals(uuid)) {
+                if (plot.isOwner(uuid)) {
                     MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }

@@ -53,7 +53,7 @@ public class Denied extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -69,7 +69,7 @@ public class Denied extends SubCommand {
                 return false;
             }
             if (!plot.denied.contains(uuid)) {
-                if (plot.owner.equals(uuid)) {
+                if (plot.isOwner(uuid)) {
                     MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }

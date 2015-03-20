@@ -85,7 +85,7 @@ public class Merge extends SubCommand {
             return false;
         }
         final boolean admin = Permissions.hasPermission(plr, "plots.admin.command.merge");
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
+        if (!plot.isOwner(plr.getUUID()) && !admin) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -138,10 +138,10 @@ public class Merge extends SubCommand {
         boolean multiMerge = false;
         final HashSet<UUID> multiUUID = new HashSet<UUID>();
         HashSet<PlotId> multiPlots = new HashSet<>();
-        final UUID u1 = plot.getOwner();
+        final UUID u1 = plot.owner_;
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
-            UUID u2 = myplot.getOwner();
+            UUID u2 = myplot.owner_;
             if (myplot == null || u2 == null) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
@@ -190,7 +190,7 @@ public class Merge extends SubCommand {
                             }
                             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                             MainUtil.mergePlots(world, plots, true);
-                            MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
+                            MainUtil.setSign(UUIDHandler.getName(plot.owner_), plot);
                             MainUtil.update(loc);
                         }
                         MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
@@ -219,7 +219,7 @@ public class Merge extends SubCommand {
         }
         MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
         MainUtil.mergePlots(world, plots, true);
-        MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
+        MainUtil.setSign(UUIDHandler.getName(plot.owner_), plot);
         MainUtil.update(loc);
         return true;
     }

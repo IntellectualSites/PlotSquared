@@ -138,6 +138,18 @@ public class Plot implements Cloneable {
     public boolean hasOwner() {
         return this.owner_ != null;
     }
+    
+    public boolean isOwner(UUID uuid) {
+        return PlotHandler.isOwner(this, uuid);
+    }
+    
+    /**
+     * Get a list of owner UUIDs for a plot (supports multi-owner mega-plots)
+     * @return
+     */
+    public HashSet<UUID> getOwners() {
+        return PlotHandler.getOwners(this);
+    }
 
     /**
      * Check if the player is either the owner or on the helpers list
@@ -147,21 +159,7 @@ public class Plot implements Cloneable {
      * @return true if the player is added as a helper or is the owner
      */
     public boolean isAdded(final UUID uuid) {
-        if (this.owner_ == null) {
-            return false;
-        }
-        if (this.denied.contains(uuid)) {
-            return false;
-        }
-        if (this.helpers.contains(uuid) || this.helpers.contains(DBFunc.everyone)) {
-            return true;
-        }
-        if (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)) {
-            if (PlotHandler.isOnline(this)) {
-                return true;
-            }
-        }
-        return PlotHandler.isOwner(this, uuid);
+        return PlotHandler.isAdded(this, uuid);
     }
 
     /**

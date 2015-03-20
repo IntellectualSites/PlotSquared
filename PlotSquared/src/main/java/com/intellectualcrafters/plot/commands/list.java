@@ -151,7 +151,7 @@ public class list extends SubCommand {
             case "unowned": {
                 plots = new HashSet<>();
                 for (Plot plot : PlotSquared.getPlots()) {
-                    if (plot.owner == null) {
+                    if (plot.owner_ == null) {
                         plots.add(plot);
                     }
                 }
@@ -160,10 +160,10 @@ public class list extends SubCommand {
             case "unknown": {
                 plots = new HashSet<>();
                 for (Plot plot : PlotSquared.getPlots()) {
-                    if (plot.owner == null) {
+                    if (plot.owner_ == null) {
                         continue;
                     }
-                    if (UUIDHandler.getName(plot.owner) == null) {
+                    if (UUIDHandler.getName(plot.owner_) == null) {
                         plots.add(plot);
                     }
                 }
@@ -219,7 +219,7 @@ public class list extends SubCommand {
         // This might work xD
         for (int x = (page * 12); x < max; x++) {
             p = (Plot) plots.toArray()[x];
-            string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
+            string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner_))).append("\n");
         }
         string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.size() + "").replaceAll("%plot%", plots.size() == 1 ? "plot" : "plots"));
         MainUtil.sendMessage(player, string.toString());

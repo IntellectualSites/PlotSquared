@@ -52,7 +52,7 @@ public class Rate extends SubCommand {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;
         }
-        if (plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+        if (plot.isOwner(plr.getUUID())) {
             sendMessage(plr, C.RATING_NOT_YOUR_OWN);
             return true;
         }

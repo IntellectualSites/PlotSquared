@@ -39,7 +39,7 @@ public class Visit extends SubCommand {
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
         for (final Plot p : PlotSquared.getPlots()) {
-            if (p.hasOwner() && p.owner.equals(uuid)) {
+            if (p.hasOwner() && p.isOwner(uuid)) {
                 plots.add(p);
             }
         }

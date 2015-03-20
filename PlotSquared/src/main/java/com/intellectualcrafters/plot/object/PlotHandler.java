@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -72,5 +73,23 @@ public class PlotHandler {
         HashSet<UUID> owners = getOwners(plot1);
         owners.retainAll(getOwners(plot2));
         return owners.size() > 0;
+    }
+    
+    public static boolean isAdded(Plot plot, final UUID uuid) {
+        if (plot.owner_ == null) {
+            return false;
+        }
+        if (plot.denied.contains(uuid)) {
+            return false;
+        }
+        if (plot.helpers.contains(uuid) || plot.helpers.contains(DBFunc.everyone)) {
+            return true;
+        }
+        if (plot.trusted.contains(uuid) || plot.trusted.contains(DBFunc.everyone)) {
+            if (PlotHandler.isOnline(plot)) {
+                return true;
+            }
+        }
+        return PlotHandler.isOwner(plot, uuid);
     }
 }

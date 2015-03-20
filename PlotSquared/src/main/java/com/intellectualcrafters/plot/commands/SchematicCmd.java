@@ -222,7 +222,7 @@ public class SchematicCmd extends SubCommand {
                         }
                         final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
                         final CompoundTag sch = SchematicHandler.manager.getCompoundTag(worldname, plot.id);
-                        final String o = UUIDHandler.getName(plot.owner);
+                        final String o = UUIDHandler.getName(plot.owner_);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
@@ -303,7 +303,7 @@ public class SchematicCmd extends SubCommand {
                         }
                         final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
                         final CompoundTag sch = SchematicHandler.manager.getCompoundTag(world, plot.id);
-                        final String o = UUIDHandler.getName(plot.owner);
+                        final String o = UUIDHandler.getName(plot.owner_);
                         final String owner = o == null ? "unknown" : o;
                         if (sch == null) {
                             MainUtil.sendMessage(plr, "&7 - Skipped plot &c" + plot.id);

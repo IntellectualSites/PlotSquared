@@ -21,6 +21,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -110,11 +113,11 @@ public class Info extends SubCommand {
             return true;
         }
         String owner = "none";
-        if (plot.owner != null) {
-            owner = UUIDHandler.getName(plot.owner);
+        if (plot.owner_ == null) {
+            owner = "unowned";
         }
-        if (owner == null) {
-            owner = plot.owner.toString();
+        else {
+            owner = getPlayerList(plot.getOwners());
         }
         String info = C.PLOT_INFO.s();
         if (args.length == 1) {
@@ -170,11 +173,11 @@ public class Info extends SubCommand {
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
         String owner = "none";
-        if (plot.owner != null) {
-            owner = UUIDHandler.getName(plot.owner);
+        if (plot.owner_ == null) {
+            owner = "unowned";
         }
-        if (owner == null) {
-            owner = plot.owner.toString();
+        else {
+            owner = getPlayerList(plot.getOwners());
         }
         info = info.replaceAll("%alias%", alias);
         info = info.replaceAll("%id%", id.toString());
@@ -192,7 +195,8 @@ public class Info extends SubCommand {
         return info;
     }
 
-    private String getPlayerList(final ArrayList<UUID> l) {
+    private String getPlayerList(final Collection<UUID> uuids) {
+        ArrayList<UUID> l = new ArrayList<>(uuids);
         if ((l == null) || (l.size() < 1)) {
             return " none";
         }

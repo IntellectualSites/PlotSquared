@@ -62,7 +62,7 @@ public class Clear extends SubCommand {
                             Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.clear(world, plot, plot.owner == null, null);
+                                    MainUtil.clear(world, plot, plot.owner_ == null, null);
                                     PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
                                 }
                             };
@@ -110,7 +110,7 @@ public class Clear extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -122,7 +122,7 @@ public class Clear extends SubCommand {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
-                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
+                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner_ == null, new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

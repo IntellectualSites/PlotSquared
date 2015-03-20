@@ -50,7 +50,7 @@ public class Delete extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -62,7 +62,7 @@ public class Delete extends SubCommand {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+                if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
                     final double c = pWorld.SELL_PRICE;
                     if (c > 0d) {
                         EconHandler.depositPlayer(plr, c);

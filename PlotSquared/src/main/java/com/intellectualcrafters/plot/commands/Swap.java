@@ -52,7 +52,7 @@ public class Swap extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -66,7 +66,7 @@ public class Swap extends SubCommand {
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
             final Plot plot2 = PlotSquared.getPlots(world).get(plotid);
-            if (((plot2 == null) || !plot2.hasOwner() || (plot2.owner != UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+            if (((plot2 == null) || !plot2.hasOwner() || !(plot2.owner_.equals(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
                 return false;
             }
