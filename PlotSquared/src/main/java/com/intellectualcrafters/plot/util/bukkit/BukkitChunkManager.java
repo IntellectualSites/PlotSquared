@@ -115,12 +115,12 @@ public class BukkitChunkManager extends ChunkManager {
         final Location bot = new Location(world, x1, 0, z1);
         Plot plot;
         plot = MainUtil.getPlot(bot);
-        if ((plot != null) && (plot.owner_ != null)) {
+        if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
         final Location top = new Location(world, x2, 0, z2);
         plot = MainUtil.getPlot(top);
-        if ((plot != null) && (plot.owner_ != null)) {
+        if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
         return null;

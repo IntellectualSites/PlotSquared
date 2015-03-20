@@ -120,8 +120,8 @@ public class Purge extends SubCommand {
             final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
-                if (plot.owner_ != null) {
-                    final String name = UUIDHandler.getName(plot.owner_);
+                if (plot.owner != null) {
+                    final String name = UUIDHandler.getName(plot.owner);
                     if (name == null) {
                         ids.add(plot.id);
                     }
@@ -138,7 +138,7 @@ public class Purge extends SubCommand {
             final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
-                if (plot.owner_ == null) {
+                if (plot.owner == null) {
                     ids.add(plot.id);
                 }
             }

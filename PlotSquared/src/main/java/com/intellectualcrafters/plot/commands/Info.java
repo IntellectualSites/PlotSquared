@@ -113,7 +113,7 @@ public class Info extends SubCommand {
             return true;
         }
         String owner = "none";
-        if (plot.owner_ == null) {
+        if (plot.owner == null) {
             owner = "unowned";
         }
         else {
@@ -173,7 +173,7 @@ public class Info extends SubCommand {
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
         String owner = "none";
-        if (plot.owner_ == null) {
+        if (plot.owner == null) {
             owner = "unowned";
         }
         else {

@@ -98,8 +98,8 @@ public class Buy extends SubCommand {
             }
             EconHandler.withdrawPlayer(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner_), initPrice);
-            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner_);
+            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
+            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }
@@ -109,8 +109,8 @@ public class Buy extends SubCommand {
         
         for (PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id)) {
             Plot myPlot = MainUtil.getPlot(plot.world, myId);
-            myPlot.owner_ = plr.getUUID();
-            DBFunc.setOwner(plot, myPlot.owner_);
+            myPlot.owner = plr.getUUID();
+            DBFunc.setOwner(plot, myPlot.owner);
         }
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;

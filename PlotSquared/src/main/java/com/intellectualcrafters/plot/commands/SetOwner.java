@@ -52,7 +52,7 @@ public class SetOwner extends SubCommand {
     public boolean execute(final PlotPlayer plr, final String... args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || (plot.owner_ == null)) {
+        if ((plot == null) || (plot.owner == null)) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
@@ -75,9 +75,9 @@ public class SetOwner extends SubCommand {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
-            current.owner_ = uuid;
+            current.owner = uuid;
             PlotSquared.updatePlot(current);
-            DBFunc.setOwner(current, current.owner_);
+            DBFunc.setOwner(current, current.owner);
         }
         MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);

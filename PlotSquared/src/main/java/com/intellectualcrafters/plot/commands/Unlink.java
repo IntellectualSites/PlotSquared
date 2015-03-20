@@ -124,14 +124,14 @@ public class Unlink extends SubCommand {
                 if (ly) {
                     manager.createRoadSouth(plotworld, p);
                 }
-                MainUtil.setSign(UUIDHandler.getName(plot.owner_), plot);
+                MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
             }
         }
         manager.finishPlotUnlink(plotworld, ids);
         for (final PlotId id : ids) {
             final Plot myPlot = MainUtil.getPlot(world, id);
             if (plot.hasOwner()) {
-                final String name = UUIDHandler.getName(myPlot.owner_);
+                final String name = UUIDHandler.getName(myPlot.owner);
                 if (name != null) {
                     MainUtil.setSign(name, myPlot);
                 }

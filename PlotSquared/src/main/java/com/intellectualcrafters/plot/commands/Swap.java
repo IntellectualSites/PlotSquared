@@ -66,7 +66,7 @@ public class Swap extends SubCommand {
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
             final Plot plot2 = PlotSquared.getPlots(world).get(plotid);
-            if (((plot2 == null) || !plot2.hasOwner() || !(plot2.owner_.equals(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+            if (((plot2 == null) || !plot2.hasOwner() || !(plot2.owner.equals(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE, plotid.toString());
                 return false;
             }

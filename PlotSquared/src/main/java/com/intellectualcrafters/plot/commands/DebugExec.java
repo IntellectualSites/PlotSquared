@@ -97,7 +97,7 @@ public class DebugExec extends SubCommand {
                         for (final Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
                             final Plot plot = entry.getKey();
                             final Long stamp = entry.getValue();
-                            MainUtil.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner_) + " : " + stamp);
+                            MainUtil.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + stamp);
                         }
                         return true;
                     }

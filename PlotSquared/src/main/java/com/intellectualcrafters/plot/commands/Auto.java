@@ -193,7 +193,7 @@ public class Auto extends SubCommand {
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
                 final Plot plot = MainUtil.getPlot(worldname, getLastPlot(worldname));
-                if ((plot.owner_ == null)) {
+                if ((plot.owner == null)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                 }
@@ -207,7 +207,7 @@ public class Auto extends SubCommand {
                 MainUtil.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
-                if ((PlotSquared.getPlots(worldname).get(start) != null) && (PlotSquared.getPlots(worldname).get(start).owner_ != null)) {
+                if ((PlotSquared.getPlots(worldname).get(start) != null) && (PlotSquared.getPlots(worldname).get(start).owner != null)) {
                     continue;
                 } else {
                     lastPlot = false;

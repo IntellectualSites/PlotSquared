@@ -48,7 +48,7 @@ public class Plot implements Cloneable {
     /**
      * plot owner
      */
-    public UUID owner_;
+    public UUID owner;
     /**
      * Deny Entry
      */
@@ -90,8 +90,8 @@ public class Plot implements Cloneable {
     public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
         this.id = id;
         this.settings = new PlotSettings(this);
-        this.owner_ = owner;
-        this.deny_entry = this.owner_ == null;
+        this.owner = owner;
+        this.deny_entry = this.owner == null;
         this.helpers = helpers;
         this.denied = denied;
         this.trusted = new ArrayList<>();
@@ -113,8 +113,8 @@ public class Plot implements Cloneable {
     public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
-        this.owner_ = owner;
-        this.deny_entry = this.owner_ != null;
+        this.owner = owner;
+        this.deny_entry = this.owner != null;
         this.trusted = trusted;
         this.helpers = helpers;
         this.denied = denied;
@@ -136,7 +136,7 @@ public class Plot implements Cloneable {
      * @return false if there is no owner
      */
     public boolean hasOwner() {
-        return this.owner_ != null;
+        return this.owner != null;
     }
     
     public boolean isOwner(UUID uuid) {
@@ -205,7 +205,7 @@ public class Plot implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner_, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
         }
         return p;
     }

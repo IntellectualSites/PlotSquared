@@ -116,7 +116,7 @@ public class ExpireManager {
                     PlotSquared.log("&cDeleted expired plot: " + plot.id);
                     PlotSquared.log("&3 - World: " + plot.world);
                     if (plot.hasOwner()) {
-                        PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner_));
+                        PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
                     } else {
                         PlotSquared.log("&3 - Owner: Unowned");
                     }
@@ -159,7 +159,7 @@ public class ExpireManager {
         final HashMap<UUID, Long> remove = new HashMap<>();
         final Set<UUID> keep = new HashSet<>();
         for (final Plot plot : plots) {
-            final UUID uuid = plot.owner_;
+            final UUID uuid = plot.owner;
             if ((uuid == null) || remove.containsKey(uuid)) {
                 Long stamp;
                 if (uuid == null) {

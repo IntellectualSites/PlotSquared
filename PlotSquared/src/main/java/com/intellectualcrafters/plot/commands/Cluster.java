@@ -129,9 +129,9 @@ public class Cluster extends SubCommand {
                 // Add any existing plots to the current cluster
                 for (final Plot plot : PlotSquared.getPlots(plr.getLocation().getWorld()).values()) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
-                    if (cluster.equals(current) && !cluster.hasRights(plot.owner_)) {
-                        cluster.invited.add(plot.owner_);
-                        DBFunc.setInvited(world, cluster, plot.owner_);
+                    if (cluster.equals(current) && !cluster.hasRights(plot.owner)) {
+                        cluster.invited.add(plot.owner);
+                        DBFunc.setInvited(world, cluster, plot.owner);
                     }
                 }
                 if (!PlotSquared.isPlotWorld(world)) {
