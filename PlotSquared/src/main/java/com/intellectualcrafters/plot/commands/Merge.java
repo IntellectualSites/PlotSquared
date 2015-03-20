@@ -156,6 +156,7 @@ public class Merge extends SubCommand {
             }
             multiMerge = true;
             multiPlots.add(myid);
+            multiUUID.add(u2);
         }
         if (multiMerge) {
             for (final UUID uuid : multiUUID) {
