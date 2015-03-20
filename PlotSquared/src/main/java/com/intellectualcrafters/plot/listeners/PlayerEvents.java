@@ -682,7 +682,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void MobSpawn(final CreatureSpawnEvent event) {
-        if (event.getEntity() instanceof Player) {
+        Entity entity = event.getEntity();
+        if (entity instanceof Player) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getLocation());
@@ -707,14 +708,46 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Plot plot = MainUtil.getPlot(loc);
         if (plot != null && plot.owner != null) {
-            Flag capFlag = FlagManager.getPlotFlag(plot, "mob-cap");
-            if (capFlag == null) {
+            Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
+            Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
+            Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
+            if (!(entity instanceof Creature)) {
                 return;
             }
-            int cap = ((Integer) capFlag.getValue());
-            int mobs = ChunkManager.manager.countEntities(plot);
-            if (mobs >= cap) {
-                event.setCancelled(true);
+            if (entityFlag == null) {
+                if (animalFlag == null && (entity instanceof Animals)) {
+                    return;
+                }
+                if (monsterFlag == null && (entity instanceof Monster)) {
+                    return;
+                }
+            }
+            int[] mobs = ChunkManager.manager.countEntities(plot);
+            if (entity instanceof Creature) {
+                if (entityFlag != null) {
+                    int cap = ((Integer) entityFlag.getValue());
+                    if (mobs[0] >= cap) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            if (entity instanceof Animals) {
+                if (animalFlag != null) {
+                    int cap = ((Integer) animalFlag.getValue());
+                    if (mobs[1] >= cap) {
+                        event.setCancelled(true);
+                    }
+                }
+                return;
+            }
+            if (entity instanceof Monster) {
+                if (monsterFlag != null) {
+                    int cap = ((Integer) monsterFlag.getValue());
+                    if (mobs[2] >= cap) {
+                        event.setCancelled(true);
+                    }
+                }
             }
         }
     }

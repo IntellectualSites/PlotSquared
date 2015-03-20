@@ -22,7 +22,7 @@ public abstract class ChunkManager {
         return new ChunkLoc(x, z);
     }
     
-    public abstract int countEntities(Plot plot);
+    public abstract int[] countEntities(Plot plot);
 
     public abstract boolean loadChunk(String world, ChunkLoc loc);
     

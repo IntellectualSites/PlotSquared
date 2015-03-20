@@ -34,6 +34,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -867,8 +869,8 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public int countEntities(Plot plot) {
-        int count = 0;
+    public int[] countEntities(Plot plot) {
+        int[] count = new int[3];
         World world = BukkitUtil.getWorld(plot.world);
         
         Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
@@ -899,18 +901,33 @@ public class BukkitChunkManager extends ChunkManager {
         
         if (doWhole) {
             for (final Entity entity : entities) {
+                if (!(entity instanceof Creature)) {
+                    continue;
+                }
                 org.bukkit.Location loc = entity.getLocation();
                 Chunk chunk = loc.getChunk();
                 if (chunks.contains(chunk)) {
                     int X = chunk.getX();
                     int Z = chunk.getX();
                     if (X > bx && X < tx && Z > bz && Z < tz) {
-                        count++;
+                        count[0]++;
+                        if (entity instanceof Animals) {
+                            count[1]++;
+                        }
+                        else {
+                            count[2]++;
+                        }
                     }
                     else {
                         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
                         if (plot.id.equals(id)) {
-                            count++;
+                            count[0]++;
+                            if (entity instanceof Animals) {
+                                count[1]++;
+                            }
+                            else {
+                                count[2]++;
+                            }
                         }
                     }
                 }
@@ -923,17 +940,36 @@ public class BukkitChunkManager extends ChunkManager {
                 Entity[] ents = chunk.getEntities();
                 if (X == bx || X == tx || Z == bz || Z == tz) {
                     for (final Entity entity : ents) {
+                        if (!(entity instanceof Creature)) {
+                            continue;
+                        }
                         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
                         if (plot.id.equals(id)) {
-                            count++;
+                            count[0]++;
+                            if (entity instanceof Animals) {
+                                count[1]++;
+                            }
+                            else {
+                                count[2]++;
+                            }
                         }
                     }
                 }
                 else {
-                    count += ents.length;
+                    for (final Entity entity : ents) {
+                        if (!(entity instanceof Creature)) {
+                            continue;
+                        }
+                        count[0]++;
+                        if (entity instanceof Animals) {
+                            count[1]++;
+                        }
+                        else {
+                            count[2]++;
+                        }
+                    }
                 }
             }
-            return count;
         }
         return count;
     }

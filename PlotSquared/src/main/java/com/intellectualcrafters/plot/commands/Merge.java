@@ -159,7 +159,9 @@ public class Merge extends SubCommand {
         }
         if (multiMerge) {
             for (final UUID uuid : multiUUID) {
-                CmdConfirm.addPending(UUIDHandler.getPlayer(uuid), "merge request", new Runnable() {
+                PlotPlayer accepter = UUIDHandler.getPlayer(uuid);
+                MainUtil.sendMessage(accepter, "ADDING REQUEST FOR: " + accepter.getName());
+                CmdConfirm.addPending(accepter, "merge request", new Runnable() {
                     @Override
                     public void run() {
                         PlotPlayer accepter = UUIDHandler.getPlayer(uuid);
@@ -197,6 +199,7 @@ public class Merge extends SubCommand {
                     }
                 });
             }
+            MainUtil.sendMessage(plr, "SENT MERGE REQUEST!");
             return true;
         }
         final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
