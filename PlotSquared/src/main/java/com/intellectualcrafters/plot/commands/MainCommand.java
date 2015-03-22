@@ -20,16 +20,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.bukkit.PlayerFunctions;
+import org.bukkit.ChatColor;
+import org.bukkit.block.Biome;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * PlotSquared command class
@@ -40,18 +45,18 @@ public class MainCommand {
     /**
      * Main Permission Node
      */
-    private final static SubCommand[] _subCommands = new SubCommand[] { new Template(), new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Claim(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new SchematicCmd(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
+    private final static SubCommand[] _subCommands = new SubCommand[] { new Setup(), new DebugSaveTest(), new DebugLoadTest(), new CreateRoadSchematic(), new RegenAllRoads(), new DebugClear(), new Ban(), new Unban(), new OP(), new DEOP(), new Claim(), new Paste(), new Copy(), new Clipboard(), new Auto(), new Home(), new Visit(), new TP(), new Set(), new Clear(), new Delete(), new SetOwner(), new Denied(), new Helpers(), new Trusted(), new Info(), new list(), new Help(), new Debug(), new Schematic(), new plugin(), new Inventory(), new Purge(), new Reload(), new Merge(), new Unlink(), new Kick(), new Rate(), new DebugClaimTest(), new Inbox(), new Comment(), new Database(), new Unclaim(), new Swap(), new MusicSubcommand(), new DebugRoadRegen(), new Trim(), new DebugExec(), new FlagCmd(), new Target(), new DebugFixFlags(), new Move(), new Condense() };
     public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
         {
             addAll(Arrays.asList(_subCommands));
         }
     };
-    
+
     public static boolean no_permission(final PlotPlayer player, final String permission) {
-        MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
+        PlayerFunctions.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-    
+
     public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final PlotPlayer player) {
         final List<SubCommand> cmds = new ArrayList<>();
         for (final SubCommand c : subCommands) {
@@ -63,7 +68,7 @@ public class MainCommand {
         }
         return cmds;
     }
-    
+
     public static List<String> helpMenu(final PlotPlayer player, final SubCommand.CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
@@ -99,13 +104,13 @@ public class MainCommand {
         }
         return help;
     }
-
-    private static String t(final String s) {
-        return MainUtil.colorise('&', s);
-    }
     
-    public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
-        if (!Permissions.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
+    private static String t(final String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
+
+    public boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
+        if (!BukkitMain.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
             return no_permission(player, PlotSquared.MAIN_PERMISSION);
         }
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
@@ -116,7 +121,7 @@ public class MainCommand {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
-                return MainUtil.sendMessage(player, builder.toString());
+                return PlayerFunctions.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
             SubCommand.CommandCategory cato = null;
@@ -132,7 +137,7 @@ public class MainCommand {
                 for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
-                return MainUtil.sendMessage(player, builder.toString(), false);
+                return PlayerFunctions.sendMessage(player, builder.toString(), false);
             }
             final StringBuilder help = new StringBuilder();
             int page = 0;
@@ -158,7 +163,7 @@ public class MainCommand {
             for (final String string : helpMenu(player, cato, page)) {
                 help.append(string).append("\n");
             }
-            MainUtil.sendMessage(player, help.toString());
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', help.toString()));
             // return PlayerFunctions.sendMessage(player, help.toString());
         } else {
             for (final SubCommand command : subCommands) {
@@ -169,24 +174,58 @@ public class MainCommand {
                         if ((player != null) || !command.isPlayer) {
                             return command.execute(player, arguments);
                         } else {
-                            return !MainUtil.sendMessage(null, C.IS_CONSOLE);
+                            return !PlayerFunctions.sendMessage(null, C.IS_CONSOLE);
                         }
                     } else {
                         return no_permission(player, command.permission.permission.toLowerCase());
                     }
                 }
             }
-            MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
+            PlayerFunctions.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
             final String[] commands = new String[subCommands.size()];
             for (int x = 0; x < subCommands.size(); x++) {
                 commands[x] = subCommands.get(x).cmd;
             }
             /* Let's try to get a proper usage string */
             final String command = new StringComparison(args[0], commands).getBestMatch();
-            return MainUtil.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
+            return PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
             // PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new
             // StringComparsion(args[0], commands).getBestMatch());
         }
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
+        if (!(commandSender instanceof Player)) {
+            return null;
+        }
+        final Player player = (Player) commandSender;
+        if (strings.length < 1) {
+            if ((strings.length == 0) || "plots".startsWith(s)) {
+                return Arrays.asList("plots");
+            }
+        }
+        if (strings.length > 1) {
+            return null;
+        }
+        if (!command.getLabel().equalsIgnoreCase("plots")) {
+            return null;
+        }
+        final List<String> tabOptions = new ArrayList<>();
+        final String arg = strings[0].toLowerCase();
+        for (final SubCommand cmd : subCommands) {
+            if (cmd.permission.hasPermission(player)) {
+                if (cmd.cmd.startsWith(arg)) {
+                    tabOptions.add(cmd.cmd);
+                } else if (cmd.alias.get(0).startsWith(arg)) {
+                    tabOptions.add(cmd.alias.get(0));
+                }
+            }
+        }
+        if (tabOptions.size() > 0) {
+            return tabOptions;
+        }
+        return null;
     }
 }
