@@ -1,27 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import com.intellectualcrafters.plot.commands.Cluster;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.config.C;
@@ -34,37 +12,31 @@ import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.SquarePlotManager;
-import com.intellectualcrafters.plot.generator.SquarePlotWorld;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.generator.*;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 public class PlotSquared {
     public static final String MAIN_PERMISSION = "plots.use";
     public static final String ADMIN_PERMISSION = "plots.admin";
+    public static final Pattern generatorPattern = Pattern.compile("\\{PlotGenerator:[A-Za-z0-9.]*\\}");
+    private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
+    private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     public static File styleFile;
     public static YamlConfiguration style;
     public static File configFile;
@@ -75,14 +47,76 @@ public class PlotSquared {
     public static IPlotMain IMP = null; // Specific implementation of PlotSquared
     public static String VERSION = null;
     public static TaskManager TASK = null;
-    private static boolean LOADING_WORLD = false;
     public static Economy economy = null;
     public static WorldEditPlugin worldEdit = null;
-    private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
-    private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
+    public static Connection connection;
+    private static boolean LOADING_WORLD = false;
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private static MySQL mySQL;
-    public static Connection connection;
+
+    public PlotSquared(final IPlotMain imp_class) {
+        THIS = this;
+        IMP = imp_class;
+        VERSION = IMP.getVersion();
+        economy = IMP.getEconomy();
+        C.setupTranslations();
+        C.saveTranslations();
+        if (getJavaVersion() < 1.7) {
+            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            // Didn't know of any other link :D
+            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+            IMP.disable();
+            return;
+        }
+        if (getJavaVersion() < 1.8) {
+            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
+        }
+        TASK = IMP.getTaskManager();
+        if (Settings.KILL_ROAD_MOBS) {
+            IMP.runEntityTask();
+        }
+        if (C.ENABLED.s().length() > 0) {
+            log(C.ENABLED.s());
+        }
+        setupConfigs();
+        setupDefaultFlags();
+        setupDatabase();
+        // Events
+        IMP.registerCommands();
+        IMP.registerPlayerEvents();
+        IMP.registerInventoryEvents();
+        IMP.registerPlotPlusEvents();
+        IMP.registerForceFieldEvents();
+        IMP.registerWorldEditEvents();
+        // create UUIDWrapper
+        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
+        // create event util class
+        EventUtil.manager = IMP.initEventUtil();
+        // create Hybrid utility class
+        HybridUtils.manager = IMP.initHybridUtils();
+        // create setup util class
+        SetupUtils.manager = IMP.initSetupUtils();
+        // Set block
+        BlockManager.manager = IMP.initBlockManager();
+        // Set chunk
+        ChunkManager.manager = IMP.initChunkManager();
+        // PlotMe
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                if (IMP.initPlotMeConverter()) {
+                    log("&c=== IMPORTANT ===");
+                    log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                    log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                    log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                    log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
+                }
+            }
+        }, 200);
+        if (Settings.AUTO_CLEAR) {
+            ExpireManager.runTask();
+        }
+    }
 
     public static MySQL getMySQL() {
         return mySQL;
@@ -218,8 +252,12 @@ public class PlotSquared {
         return true;
     }
 
+    public static boolean generatorMatches(final Object o) {
+        return generatorPattern.matcher(o.toString()).matches();
+    }
+
     public static void loadWorld(final String world, final PlotGenerator generator) {
-        PlotWorld plotWorld = getPlotWorld(world); 
+        PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
             if (generator != null) {
                 generator.init(plotWorld);
@@ -406,166 +444,8 @@ public class PlotSquared {
         return connection;
     }
 
-    public PlotSquared(final IPlotMain imp_class) {
-        THIS = this;
-        IMP = imp_class;
-        VERSION = IMP.getVersion();
-        economy = IMP.getEconomy();
-        C.setupTranslations();
-        C.saveTranslations();
-        if (getJavaVersion() < 1.7) {
-            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-            // Didn't know of any other link :D
-            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
-            IMP.disable();
-            return;
-        }
-        if (getJavaVersion() < 1.8) {
-            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
-        }
-        TASK = IMP.getTaskManager();
-        if (Settings.KILL_ROAD_MOBS) {
-            IMP.runEntityTask();
-        }
-        if (C.ENABLED.s().length() > 0) {
-            log(C.ENABLED.s());
-        }
-        setupConfigs();
-        setupDefaultFlags();
-        setupDatabase();
-        // Events
-        IMP.registerCommands();
-        IMP.registerPlayerEvents();
-        IMP.registerInventoryEvents();
-        IMP.registerPlotPlusEvents();
-        IMP.registerForceFieldEvents();
-        IMP.registerWorldEditEvents();
-        // create UUIDWrapper
-        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
-        // create event util class
-        EventUtil.manager = IMP.initEventUtil();
-        // create Hybrid utility class
-        HybridUtils.manager = IMP.initHybridUtils();
-        // create setup util class
-        SetupUtils.manager = IMP.initSetupUtils();
-        // Set block
-        BlockManager.manager = IMP.initBlockManager();
-        // Set chunk
-        ChunkManager.manager = IMP.initChunkManager();
-        // PlotMe
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                if (IMP.initPlotMeConverter()) {
-                    log("&c=== IMPORTANT ===");
-                    log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                    log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                    log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                    log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
-                }
-            }
-        }, 200);
-        if (Settings.AUTO_CLEAR) {
-            ExpireManager.runTask();
-        }
-    }
-
-    public void disable() {
-        try {
-            connection.close();
-            mySQL.closeConnection();
-        } catch (NullPointerException | SQLException e) {
-            if (connection != null) {
-                log("&cCould not close mysql connection!");
-            }
-        }
-    }
-
     public static void log(final String message) {
         IMP.log(message);
-    }
-
-    public void setupDatabase() {
-        final String[] tables;
-        if (Settings.ENABLE_CLUSTERS) {
-            MainCommand.subCommands.add(new Cluster());
-            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments", "cluster" };
-        } else {
-            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
-        }
-        if (Settings.DB.USE_MYSQL) {
-            try {
-                mySQL = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                connection = mySQL.openConnection();
-                {
-                    if (DBFunc.dbManager == null) {
-                        DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
-                    }
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("mysql", true);
-                    } else {
-                        for (final String table : tables) {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
-                            if (!res.next()) {
-                                DBFunc.createTables("mysql", false);
-                            }
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-                log("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
-                if ((config == null) || config.getBoolean("debug")) {
-                    log("&d==== Here is an ugly stacktrace if you are interested in those things ====");
-                    e.printStackTrace();
-                    log("&d==== End of stacktrace ====");
-                    log("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
-                }
-                IMP.disable();
-                return;
-            }
-            plots = DBFunc.getPlots();
-            if (Settings.ENABLE_CLUSTERS) {
-                ClusterManager.clusters = DBFunc.getClusters();
-            }
-        } else if (Settings.DB.USE_MONGO) {
-            // DBFunc.dbManager = new MongoManager();
-            log(C.PREFIX.s() + "MongoDB is not yet implemented");
-        } else if (Settings.DB.USE_SQLITE) {
-            try {
-                connection = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
-                {
-                    DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("sqlite", true);
-                    } else {
-                        for (final String table : tables) {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
-                            if (!res.next()) {
-                                DBFunc.createTables("sqlite", false);
-                            }
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-                log(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
-                log("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
-                e.printStackTrace();
-                IMP.disable();
-                return;
-            }
-            plots = DBFunc.getPlots();
-            if (Settings.ENABLE_CLUSTERS) {
-                ClusterManager.clusters = DBFunc.getClusters();
-            }
-        } else {
-            log(C.PREFIX + "&cNo storage type is set!");
-            IMP.disable();
-            return;
-        }
     }
 
     public static void setupDefaultFlags() {
@@ -841,5 +721,99 @@ public class PlotSquared {
 
     public static Set<String> getPlotWorlds() {
         return plotworlds.keySet();
+    }
+
+    public void disable() {
+        try {
+            connection.close();
+            mySQL.closeConnection();
+        } catch (NullPointerException | SQLException e) {
+            if (connection != null) {
+                log("&cCould not close mysql connection!");
+            }
+        }
+    }
+
+    public void setupDatabase() {
+        final String[] tables;
+        if (Settings.ENABLE_CLUSTERS) {
+            MainCommand.subCommands.add(new Cluster());
+            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments", "cluster"};
+        } else {
+            tables = new String[]{"plot_trusted", "plot_ratings", "plot_comments"};
+        }
+        if (Settings.DB.USE_MYSQL) {
+            try {
+                mySQL = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                connection = mySQL.openConnection();
+                {
+                    if (DBFunc.dbManager == null) {
+                        DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
+                    }
+                    final DatabaseMetaData meta = connection.getMetaData();
+                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
+                    if (!res.next()) {
+                        DBFunc.createTables("mysql", true);
+                    } else {
+                        for (final String table : tables) {
+                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
+                            if (!res.next()) {
+                                DBFunc.createTables("mysql", false);
+                            }
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                log("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
+                if ((config == null) || config.getBoolean("debug")) {
+                    log("&d==== Here is an ugly stacktrace if you are interested in those things ====");
+                    e.printStackTrace();
+                    log("&d==== End of stacktrace ====");
+                    log("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
+                }
+                IMP.disable();
+                return;
+            }
+            plots = DBFunc.getPlots();
+            if (Settings.ENABLE_CLUSTERS) {
+                ClusterManager.clusters = DBFunc.getClusters();
+            }
+        } else if (Settings.DB.USE_MONGO) {
+            // DBFunc.dbManager = new MongoManager();
+            log(C.PREFIX.s() + "MongoDB is not yet implemented");
+        } else if (Settings.DB.USE_SQLITE) {
+            try {
+                connection = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
+                {
+                    DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
+                    final DatabaseMetaData meta = connection.getMetaData();
+                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
+                    if (!res.next()) {
+                        DBFunc.createTables("sqlite", true);
+                    } else {
+                        for (final String table : tables) {
+                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
+                            if (!res.next()) {
+                                DBFunc.createTables("sqlite", false);
+                            }
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                log(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
+                log("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
+                e.printStackTrace();
+                IMP.disable();
+                return;
+            }
+            plots = DBFunc.getPlots();
+            if (Settings.ENABLE_CLUSTERS) {
+                ClusterManager.clusters = DBFunc.getClusters();
+            }
+        } else {
+            log(C.PREFIX + "&cNo storage type is set!");
+            IMP.disable();
+            return;
+        }
     }
 }
