@@ -848,7 +848,14 @@ public class BukkitChunkManager extends ChunkManager {
         
         Location bot2 = MainUtil.getPlotBottomLoc(worldname, pos2).add(1, 0, 1);
         Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
+        swap(worldname, bot1, top1, bot2, top2);
         
+        clearAllEntities(MainUtil.getPlot(worldname, pos1));
+        clearAllEntities(MainUtil.getPlot(worldname, pos2));
+    }
+    
+    @Override
+    public void swap(final String worldname, final Location bot1, final Location top1, Location bot2, Location top2) {
         final RegionWrapper region1 = new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         final RegionWrapper region2 = new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
         final World world = Bukkit.getWorld(bot1.getWorld());
@@ -863,8 +870,6 @@ public class BukkitChunkManager extends ChunkManager {
                 swapChunk(world, chunk1, chunk2, region1, region2);
             }
         }
-        clearAllEntities(MainUtil.getPlot(worldname, pos1));
-        clearAllEntities(MainUtil.getPlot(worldname, pos2));
         // FIXME swap plots
     }
 

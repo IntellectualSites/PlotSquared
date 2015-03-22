@@ -41,4 +41,6 @@ public abstract class ChunkManager {
     public abstract void clearAllEntities(final Plot plot);
     
     public abstract void swap(String world, PlotId id, PlotId plotid);
+
+    public abstract void swap(String worldname, Location bot1, Location top1, Location bot2, Location top2);
 }
