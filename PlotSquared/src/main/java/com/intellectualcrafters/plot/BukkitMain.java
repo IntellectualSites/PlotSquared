@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -36,6 +37,7 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
+import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -101,6 +103,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
+        List<World> worlds = Bukkit.getWorlds();
+        if (worlds.size() > 0) {
+            UUIDHandler.cacheAll(worlds.get(0).getName());
+            for (World world : worlds) {
+                Bukkit.getServer().unloadWorld(world, true);
+            }
+        }
     }
 
     @Override
