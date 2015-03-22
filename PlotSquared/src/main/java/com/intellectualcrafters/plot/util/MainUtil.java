@@ -1095,12 +1095,21 @@ public class MainUtil {
 
     public static Plot getTopPlot(final Plot plot) {
         if (plot.settings.getMerged(2)) {
-            return getTopPlot(PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1)));
+            final Plot p = PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1));
+            if (p == null) {
+                return plot;
+            }
+            return getTopPlot(p);
         }
         if (plot.settings.getMerged(1)) {
-            return getTopPlot(PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y)));
+            final Plot p = PlotSquared.getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y));
+            if (p == null) {
+                return plot;
+            }
+            return getTopPlot(p);
         }
         return plot;
+        
     }
 
     public static PlotId getSize(final String world, final Plot plot) {
