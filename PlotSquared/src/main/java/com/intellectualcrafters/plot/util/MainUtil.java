@@ -801,6 +801,27 @@ public class MainUtil {
         DBFunc.dbManager.swapPlots(p2, p1);
         return true;
     }
+    
+    public static boolean swapData(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
+        Plot p1 = PlotSquared.getPlots(world).get(current);
+        Plot p2 = PlotSquared.getPlots(world).get(newPlot);
+        if (p1==null || p2 == null || p1.owner == null || !p1.owner.equals(p2.owner)) {
+            return false;
+        }
+        // Swap cached
+        PlotId temp = new PlotId(p1.id.x.intValue(), p1.id.y.intValue());
+        p1.id.x = p2.id.x.intValue();
+        p1.id.y = p2.id.y.intValue();
+        p2.id.x = temp.x;
+        p2.id.y = temp.y;
+        PlotSquared.getPlots(world).remove(p1.id);
+        PlotSquared.getPlots(world).remove(p2.id);
+        PlotSquared.getPlots(world).put(p1.id, p1);
+        PlotSquared.getPlots(world).put(p2.id, p2);
+        // Swap database
+        DBFunc.dbManager.swapPlots(p2, p1);
+        return true;
+    }
 
     public static boolean move(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
         final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(world, current);
