@@ -94,7 +94,18 @@ public abstract class PlotWorld {
         this.worldname = worldname;
     }
     
-    public boolean compare(PlotWorld plotworld) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PlotWorld plotworld = (PlotWorld) obj;
         ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotworld.getSettingNodes()) {
             Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
