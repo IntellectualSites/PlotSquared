@@ -831,6 +831,7 @@ public class MainUtil {
         PlotSquared.getPlots(world).put(p2.id, p2);
         // Swap database
         DBFunc.dbManager.swapPlots(p2, p1);
+        TaskManager.runTask(whenDone);
         return true;
     }
 
