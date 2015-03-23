@@ -256,6 +256,27 @@ public class PlotSquared {
         return generatorPattern.matcher(o.toString()).matches();
     }
 
+    public static Class<? extends PlotGenerator> getGenerator(final String s) {
+        if (!generatorPattern.matcher(s).matches()) {
+            throw new IllegalArgumentException("\"" + s + "\" is not a valid generator string");
+        }
+        String v = s.replaceFirst("\\{plotgenerator:", "").substring(0, s.length() - 2);
+        Class c = null;
+        try {
+            c = Class.forName(v);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        if (c == null) {
+            return null;
+        }
+        try {
+            return (Class<? extends PlotGenerator>) c;
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+
     public static void loadWorld(final String world, final PlotGenerator generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {

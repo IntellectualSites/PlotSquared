@@ -20,24 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.InfoInventory;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -109,7 +103,7 @@ public class Info extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
             return true;
         }
-        String owner = "none";
+        String owner = C.NONE.s();
         if (plot.owner != null) {
             owner = UUIDHandler.getName(plot.owner);
         }
@@ -161,15 +155,15 @@ public class Info extends SubCommand {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
-        final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
+        final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : C.NONE.s();
         final String biome = BlockManager.manager.getBiome(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1));
         final String helpers = getPlayerList(plot.helpers);
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
-        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
+        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : C.NONE.s());
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
-        String owner = "none";
+        String owner = C.NONE.s();
         if (plot.owner != null) {
             owner = UUIDHandler.getName(plot.owner);
         }
@@ -194,7 +188,7 @@ public class Info extends SubCommand {
 
     private String getPlayerList(final ArrayList<UUID> l) {
         if ((l == null) || (l.size() < 1)) {
-            return " none";
+            return " " + C.NONE.s();
         }
         final String c = C.PLOT_USER_LIST.s();
         final StringBuilder list = new StringBuilder();
@@ -210,14 +204,14 @@ public class Info extends SubCommand {
 
     private String getPlayerName(final UUID uuid) {
         if (uuid == null) {
-            return "unknown";
+            return C.UNKNOWN.s();
         }
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
-            return "everyone";
+            return C.EVERYONE.s();
         }
         final String name = UUIDHandler.getName(uuid);
         if (name == null) {
-            return "unknown";
+            return C.UNKNOWN.s();
         }
         return name;
     }

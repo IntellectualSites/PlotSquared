@@ -20,14 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import org.bukkit.ChatColor;
-
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
+import com.intellectualsites.translation.*;
 import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import org.bukkit.ChatColor;
 
 /**
  * Captions class.
@@ -187,6 +182,10 @@ public enum C {
     POSITION_SET("$1Home position set to your current location"),
     HOME_ARGUMENT("$2Use /plot set home [none]"),
     INVALID_POSITION("$2That is not a valid position value"),
+
+    NONE("none"),
+    EVERYONE("everyone"),
+    UNKNOWN("unknown"),
     /*
      * Time
      */
