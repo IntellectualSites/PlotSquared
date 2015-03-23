@@ -93,6 +93,20 @@ public abstract class PlotWorld {
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
     }
+    
+    public boolean compare(PlotWorld plotworld) {
+        ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds");
+        for (ConfigurationNode setting : plotworld.getSettingNodes()) {
+            Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
+            if (constant == null) {
+                return false;
+            }
+            if (!constant.equals(section.get(this.worldname + "." + setting.getConstant())))  {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * When a world is created, the following method will be called for each
