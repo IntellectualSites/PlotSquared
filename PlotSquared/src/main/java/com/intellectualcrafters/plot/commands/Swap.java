@@ -112,7 +112,7 @@ public class Swap extends SubCommand {
         
         // Swapping the plot data
         for (int i = 0; i < selection1.size(); i++) {
-            final boolean last = i == selection1.size() - 1; 
+            final boolean last = i == selection1.size() - 1;
             PlotId swaper = selection1.get(i);
             PlotId swapee = selection2.get(i);
             MainUtil.swapData(world, swaper, swapee, new Runnable() {

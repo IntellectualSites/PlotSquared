@@ -805,7 +805,18 @@ public class MainUtil {
     public static boolean swapData(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
         Plot p1 = PlotSquared.getPlots(world).get(current);
         Plot p2 = PlotSquared.getPlots(world).get(newPlot);
-        if (p1==null || p2 == null || p1.owner == null || !p1.owner.equals(p2.owner)) {
+        if (p1 == null || p1.owner == null) {
+            if (p2 != null && p2.owner != null) {
+                moveData(world, newPlot, current, whenDone);
+                return true;
+            }
+            return false;
+        }
+        if (p2 == null || p2.owner == null) {
+            if (p1 != null && p1.owner != null) {
+                moveData(world, current, newPlot, whenDone);
+                return true;
+            }
             return false;
         }
         // Swap cached
@@ -823,6 +834,33 @@ public class MainUtil {
         return true;
     }
 
+    public static boolean moveData(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
+        final Plot currentPlot = MainUtil.getPlot(world, current);
+        if (currentPlot.owner == null) {
+            TaskManager.runTaskLater(whenDone, 1);
+            return false;
+        }
+        final Plot pos1 = getBottomPlot(currentPlot);
+        final Plot pos2 = getTopPlot(currentPlot);
+        final PlotId size = MainUtil.getSize(world, currentPlot);
+        if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
+            TaskManager.runTaskLater(whenDone, 1);
+            return false;
+        }
+        final int offset_x = newPlot.x - pos1.id.x;
+        final int offset_y = newPlot.y - pos1.id.y;
+        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
+        for (final PlotId id : selection) {
+            DBFunc.movePlot(world, new PlotId(id.x, id.y), new PlotId(id.x + offset_x, id.y + offset_y));
+            final Plot plot = PlotSquared.getPlots(world).get(id);
+            PlotSquared.getPlots(world).remove(id);
+            plot.id.x += offset_x;
+            plot.id.y += offset_y;
+            PlotSquared.getPlots(world).put(plot.id, plot);
+        }
+        return true;
+    }
+    
     public static boolean move(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
         final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(world, current);
         final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(world, newPlot);
