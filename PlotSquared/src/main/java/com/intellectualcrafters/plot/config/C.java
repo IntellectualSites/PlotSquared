@@ -95,8 +95,11 @@ public enum C {
     /*
      * Swap
      */
+    SWAP_OVERLAP("$2The proposed areas are not allowed to overlap"),
+    SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions"),
     SWAP_SYNTAX("$2/plots swap <plot id>"),
     SWAP_SUCCESS("$4Successfully swapped plots"),
+    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes"),
     /*
      * Comment
      */
