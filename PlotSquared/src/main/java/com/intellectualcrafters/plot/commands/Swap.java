@@ -102,10 +102,17 @@ public class Swap extends SubCommand {
         final ArrayList<PlotId> selection2 = MainUtil.getPlotSelectionIds(bot2.id, top2.id);
 
         // Getting selections as location coordinates
-        Location pos1 = MainUtil.getPlotBottomLocAbs(world, bot1.id).add(1, 0, 1);
-        Location pos2 = MainUtil.getPlotTopLocAbs(world, top1.id);
-        Location pos3 = MainUtil.getPlotBottomLocAbs(world, bot2.id).add(1, 0, 1);
-        Location pos4 = MainUtil.getPlotTopLocAbs(world, top2.id);
+        Location pos1 = MainUtil.getPlotBottomLocAbs(world, bot1.id);
+        Location pos2 = MainUtil.getPlotTopLocAbs(world, top1.id).subtract(1, 0, 1);
+        Location pos3 = MainUtil.getPlotBottomLocAbs(world, bot2.id);
+        Location pos4 = MainUtil.getPlotTopLocAbs(world, top2.id).subtract(1, 0, 1);
+        
+        if (MainUtil.getPlot(pos2) != null) {
+            pos1.add(1, 0, 1);
+            pos2.add(1, 0, 1);
+            pos3.add(1, 0, 1);
+            pos4.add(1, 0, 1);
+        }
         
         // Swapping the blocks, states and entites
         ChunkManager.manager.swap(world, pos1, pos2, pos3, pos4);
