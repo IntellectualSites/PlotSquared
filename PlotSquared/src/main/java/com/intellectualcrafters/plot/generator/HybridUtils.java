@@ -85,8 +85,6 @@ public abstract class HybridUtils {
 
     public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
 
-    public abstract void regenerateChunkChunk(final String world, final ChunkLoc loc);
-    
     public abstract boolean scheduleRoadUpdate(final String world);
 
     public boolean regenerateRoad(final String world, final ChunkLoc chunk) {

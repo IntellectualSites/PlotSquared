@@ -68,7 +68,6 @@ public class BukkitHybridUtils extends HybridUtils {
         return ey;
     }
     
-    @Override
     public void regenerateChunkChunk(final String worldname, final ChunkLoc loc) {
         final World world = BukkitUtil.getWorld(worldname);
         final int sx = loc.x << 5;
@@ -90,59 +89,67 @@ public class BukkitHybridUtils extends HybridUtils {
         }
     }
     
+    public final ArrayList<ChunkLoc> getChunks(ChunkLoc region) {
+    	ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+    	final int sx = region.x << 5;
+        final int sz = region.z << 5;
+        for (int x = sx; x < (sx + 32); x++) {
+            for (int z = sz; z < (sz + 32); z++) {
+            	chunks.add(new ChunkLoc(x, z));
+            }
+        }
+        return chunks;
+    }
+    
     private static boolean UPDATE = false;
     private int task;
-    private long LAST = 0;
-    private double AV = 1000;
 
     @Override
     public boolean scheduleRoadUpdate(final String world) {
         if (BukkitHybridUtils.UPDATE) {
             return false;
         }
-        final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(world);
+        final List<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
+        final List<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
         final Plugin plugin = BukkitMain.THIS;
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                if (chunks.size() == 0) {
+                if (regions.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
                     PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                     return;
                 } else {
-                    if (LAST == 0) {
-                        LAST = System.currentTimeMillis();
-                    }
-                    long current = System.currentTimeMillis() - LAST;
-                    AV = Math.max(current, (current + AV * 5) / 6);
-                    LAST = System.currentTimeMillis();
-                    if (AV < 1500) {
-                        try {
-                            final ChunkLoc loc = chunks.get(0);
+                    try {
+                    	if (chunks.size() < 1024) {
+                    		final ChunkLoc loc = regions.get(0);
                             PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
-                            PlotSquared.log(" - Remaining: " + chunks.size());
-                            chunks.remove(0);
-                            regenerateChunkChunk(world, loc);
-                        } catch (final Exception e) {
-                            final ChunkLoc loc = chunks.get(0);
-                            PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
-                            final int sx = loc.x << 5;
-                            final int sz = loc.z << 5;
-                            for (int x = sx; x < (sx + 32); x++) {
-                                for (int z = sz; z < (sz + 32); z++) {
-                                    ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
-                                }
+                            PlotSquared.log(" - Remaining: " + regions.size());
+                    		chunks.addAll(getChunks(regions.get(0)));
+                    		regions.remove(0);
+                    	}
+                    	if (chunks.size() > 0) {
+                    		long diff = System.currentTimeMillis() + 50;
+                    		while (System.currentTimeMillis() < diff) {
+                    			ChunkLoc chunk = chunks.get(0);
+                    			chunks.remove(0);
+                    			regenerateRoad(world, chunk);
+                    			
+                    		}
+                    	}
+                    } catch (final Exception e) {
+                        final ChunkLoc loc = regions.get(0);
+                        PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        final int sx = loc.x << 5;
+                        final int sz = loc.z << 5;
+                        for (int x = sx; x < (sx + 32); x++) {
+                            for (int z = sz; z < (sz + 32); z++) {
+                                ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
                             }
-                            PlotSquared.log("&d - Potentially skipping 1024 chunks");
-                            PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
                         }
-                    }
-                    else {
-                        double tps = (20000.0/Math.min(AV, current));
-                        if (tps < 19) {
-                            System.out.print("waiting for chunks to unload...");
-                        }
+                        PlotSquared.log("&d - Potentially skipping 1024 chunks");
+                        PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
                     }
                 }
             }
