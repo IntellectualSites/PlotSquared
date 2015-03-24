@@ -21,10 +21,7 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.List;
-import java.util.Random;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;

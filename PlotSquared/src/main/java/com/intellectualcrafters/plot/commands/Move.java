@@ -20,11 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
@@ -55,18 +57,32 @@ public class Move extends SubCommand {
             return false;
         }
         final String world = loc.getWorld();
-        final PlotId plot2 = MainUtil.parseId(args[0]);
-        if ((plot2 == null)) {
+        final PlotId plot2id = MainUtil.parseId(args[0]);
+        if ((plot2id == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        if (plot1.id.equals(plot2)) {
+        String world2;
+        if (args.length == 2) {
+        	PlotWorld other = PlotSquared.getPlotWorld(args[1]);
+        	PlotWorld current = PlotSquared.getPlotWorld(loc.getWorld());
+        	if (other == null || current == null || !other.equals(current)) {
+        		MainUtil.sendMessage(plr, C.PLOTWORLD_INCOMPATIBLE);
+        		return false;
+        	}
+        	world2 = other.worldname;
+        }
+        else {
+        	world2 = world;
+        }
+        Plot plot2 = MainUtil.getPlot(world2, plot2id);
+        if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        if (MainUtil.move(world, plot1.id, plot2, new Runnable() {
+        if (MainUtil.move(plot1, plot2, new Runnable() {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.MOVE_SUCCESS);

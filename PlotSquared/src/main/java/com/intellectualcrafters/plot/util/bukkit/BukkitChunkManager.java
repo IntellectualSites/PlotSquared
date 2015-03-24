@@ -155,28 +155,34 @@ public class BukkitChunkManager extends ChunkManager {
         index.increment();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
+        
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-        final World world = Bukkit.getWorld(pos1.getWorld());
-        final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
-        final Chunk c2 = world.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
-        final Chunk c3 = world.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
-        final Chunk c4 = world.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
+        final World oldWorld = Bukkit.getWorld(pos1.getWorld());
+        final World newWorld = Bukkit.getWorld(newPos.getWorld());
+        
+        final Chunk c1 = newWorld.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
+        final Chunk c2 = newWorld.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
+        final Chunk c3 = newWorld.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
+        final Chunk c4 = newWorld.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
+        
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
         final int ex = pos2.getX();
         final int ez = pos2.getZ();
+        
         final int c1x = c1.getX();
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
         final int c3x = c3.getX();
         final int c3z = c3.getZ();
+        
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final ArrayList<Chunk> toGenerate = new ArrayList<>();
         // Load chunks
         for (int x = c2x; x <= c3x; x++) {
             for (int z = c2z; z <= c3z; z++) {
-                final Chunk chunk = world.getChunkAt(x, z);
+                final Chunk chunk = newWorld.getChunkAt(x, z);
                 toGenerate.add(chunk);
             }
         }
@@ -198,17 +204,17 @@ public class BukkitChunkManager extends ChunkManager {
                                 initMaps();
                                 for (int x = c1x; x <= c2x; x++) {
                                     for (int z = c1z; z <= c2z; z++) {
-                                        final Chunk chunk = world.getChunkAt(x, z);
+                                        final Chunk chunk = oldWorld.getChunkAt(x, z);
                                         chunks.add(chunk);
                                         chunk.load(false);
                                         saveEntitiesIn(chunk, region);
                                     }
                                 }
-                                restoreEntities(world, relX, relZ);
+                                restoreEntities(newWorld, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
                                 final Integer currentIndex = index.toInteger();
-                                final int maxY = world.getMaxHeight();
+                                final int maxY = oldWorld.getMaxHeight();
                                 final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                                     @Override
                                     public void run() {
@@ -216,17 +222,17 @@ public class BukkitChunkManager extends ChunkManager {
                                         while ((System.currentTimeMillis() - start) < 25) {
                                             final int xv = mx.intValue();
                                             for (int z = sz; z <= ez; z++) {
-                                                saveBlocks(world, maxY, xv, z);
+                                                saveBlocks(oldWorld, maxY, xv, z);
                                                 for (int y = 1; y <= maxY; y++) {
-                                                    final Block block = world.getBlockAt(xv, y, z);
+                                                    final Block block = oldWorld.getBlockAt(xv, y, z);
                                                     final int id = block.getTypeId();
                                                     final byte data = block.getData();
-                                                    BukkitSetBlockManager.setBlockManager.set(world, xv + relX, y, z + relZ, id, data);
+                                                    BukkitSetBlockManager.setBlockManager.set(newWorld, xv + relX, y, z + relZ, id, data);
                                                 }
                                             }
                                             mx.increment();
                                             if (xv == ex) { // done!
-                                                restoreBlocks(world, relX, relZ);
+                                                restoreBlocks(newWorld, relX, relZ);
                                                 BukkitSetBlockManager.setBlockManager.update(chunks);
                                                 for (final Chunk chunk : chunks) {
                                                     chunk.unload(true, true);

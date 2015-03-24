@@ -32,7 +32,7 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
 /**
  * Captions class.
  *
- * @author Citymonstret
+ * @author Citymonstret	
  */
 public enum C {
     /*
@@ -260,6 +260,7 @@ public enum C {
     NOT_IN_PLOT("$2You're not in a plot"),
     NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action"),
     NOT_IN_PLOT_WORLD("$2You're not in a plot world"),
+    PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible"),
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)"),
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot world (case sensitive)"),
     NO_PLOTS("$2You don't have any plots"),

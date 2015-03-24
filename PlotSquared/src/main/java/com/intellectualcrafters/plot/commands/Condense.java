@@ -98,7 +98,7 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "NO PLOTS FOUND");
                     return false;
                 }
-               MainUtil.move(worldname, to_move.get(0), free.get(0), new Runnable() {
+               MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), new Runnable() {
                     @Override
                     public void run() {
                         if (!TASK) {
@@ -140,7 +140,7 @@ public class Condense extends SubCommand {
                             return;
                         }
                         sendMessage("MOVING " + to_move.get(0) + " to " + free.get(0));
-                        MainUtil.move(worldname, to_move.get(0), free.get(0), this);
+                        MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), this);
                     }
                 });
                 TASK = true;

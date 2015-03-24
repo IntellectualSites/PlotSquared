@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -34,7 +33,6 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-08-01 for PlotSquared

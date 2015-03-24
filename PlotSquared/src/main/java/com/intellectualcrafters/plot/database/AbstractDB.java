@@ -328,5 +328,5 @@ public interface AbstractDB {
 
     public void resizeCluster(PlotCluster current, PlotClusterId resize);
 
-    public void movePlot(String world, PlotId originalPlot, PlotId newPlot);
+    public void movePlot(Plot originalPlot, Plot newPlot);
 }

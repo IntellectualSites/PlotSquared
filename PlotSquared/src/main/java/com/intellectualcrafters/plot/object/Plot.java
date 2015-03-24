@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * The plot class

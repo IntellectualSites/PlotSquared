@@ -50,8 +50,8 @@ public class DBFunc {
      */
     public static AbstractDB dbManager;
 
-    public static void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
-        dbManager.movePlot(world, originalPlot, newPlot);
+    public static void movePlot(final Plot originalPlot, final Plot newPlot) {
+        dbManager.movePlot(originalPlot, newPlot);
     }
 
     /**
