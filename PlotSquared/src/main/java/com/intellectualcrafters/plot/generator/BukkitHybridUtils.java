@@ -88,7 +88,6 @@ public class BukkitHybridUtils extends HybridUtils {
                 ChunkManager.manager.unloadChunk(worldname, new ChunkLoc(x, z));
             }
         }
-        BukkitSetBlockManager.setBlockManager.update(chunks2);
     }
     
     private static boolean UPDATE = false;
@@ -123,8 +122,8 @@ public class BukkitHybridUtils extends HybridUtils {
                             final ChunkLoc loc = chunks.get(0);
                             PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
                             PlotSquared.log(" - Remaining: " + chunks.size());
-                            regenerateChunkChunk(world, loc);
                             chunks.remove(0);
+                            regenerateChunkChunk(world, loc);
                         } catch (final Exception e) {
                             final ChunkLoc loc = chunks.get(0);
                             PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
