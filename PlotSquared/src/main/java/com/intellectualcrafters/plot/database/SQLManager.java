@@ -802,15 +802,15 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
+    public void movePlot(Plot original, final Plot newPlot) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final int id = getId(world, originalPlot);
+                    final int id = getId(original.world, original.id);
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
-                    stmt.setInt(1, newPlot.x);
-                    stmt.setInt(2, newPlot.y);
+                    stmt.setInt(1, newPlot.id.x);
+                    stmt.setInt(2, newPlot.id.y);
                     stmt.setInt(3, id);
                     stmt.executeUpdate();
                     stmt.close();
