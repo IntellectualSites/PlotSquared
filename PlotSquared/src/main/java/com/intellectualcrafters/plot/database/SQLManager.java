@@ -802,7 +802,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void movePlot(Plot original, final Plot newPlot) {
+    public void movePlot(final Plot original, final Plot newPlot) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
