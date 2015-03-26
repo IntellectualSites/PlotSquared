@@ -82,6 +82,47 @@ public class PlotId {
     public String toString() {
         return this.x + ";" + this.y;
     }
+    
+    public PlotId unpair(int hash) {
+        if (hash >= 0) {
+            if (hash % 2 == 0) {
+                // + +
+                hash /= 2;
+                int i = (int) (Math.abs(-1 + Math.sqrt(1 + 8 * hash)) / 2);
+                int idx = hash - ((i * (1 + i)) / 2);
+                int idy = ((i * (3 + i)) / 2) - hash;
+                return new PlotId(idx, idy);
+            }
+            else {
+                // + -
+                hash -= 1;
+                hash /= 2;
+                int i = (int) (Math.abs(-1 + Math.sqrt(1 + 8 * hash)) / 2);
+                int idx = hash - ((i * (1 + i)) / 2);
+                int idy = ((i * (3 + i)) / 2) - hash;
+                return new PlotId(idx, -idy);
+            }
+        }
+        else {
+            if (hash % 2 == 0) {
+                // - +
+                hash /= -2;
+                int i = (int) (Math.abs(-1 + Math.sqrt(1 + 8 * hash)) / 2);
+                int idx = hash - ((i * (1 + i)) / 2);
+                int idy = ((i * (3 + i)) / 2) - hash;
+                return new PlotId(-idx, idy);
+            }
+            else {
+                // - -
+                hash += 1;
+                hash /= -2;
+                int i = (int) (Math.abs(-1 + Math.sqrt(1 + 8 * hash)) / 2);
+                int idx = hash - ((i * (1 + i)) / 2);
+                int idy = ((i * (3 + i)) / 2) - hash;
+                return new PlotId(-idx, -idy);
+            }
+        }
+    }
 
     @Override
     public int hashCode() {
