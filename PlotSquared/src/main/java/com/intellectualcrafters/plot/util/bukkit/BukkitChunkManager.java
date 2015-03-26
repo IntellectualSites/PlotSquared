@@ -162,8 +162,6 @@ public class BukkitChunkManager extends ChunkManager {
         
         final Chunk c1 = newWorld.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
         final Chunk c2 = newWorld.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
-        final Chunk c3 = newWorld.getChunkAt((pos1.getX() + relX) >> 4, (pos1.getZ() + relZ) >> 4);
-        final Chunk c4 = newWorld.getChunkAt((pos2.getX() + relX) >> 4, (pos2.getZ() + relZ) >> 4);
         
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
@@ -174,14 +172,12 @@ public class BukkitChunkManager extends ChunkManager {
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
-        final int c3x = c3.getX();
-        final int c3z = c3.getZ();
         
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final ArrayList<Chunk> toGenerate = new ArrayList<>();
         // Load chunks
-        for (int x = c2x; x <= c3x; x++) {
-            for (int z = c2z; z <= c3z; z++) {
+        for (int x = c1x; x <= c2x; x++) {
+            for (int z = c1z; z <= c2z; z++) {
                 final Chunk chunk = newWorld.getChunkAt(x, z);
                 toGenerate.add(chunk);
             }
