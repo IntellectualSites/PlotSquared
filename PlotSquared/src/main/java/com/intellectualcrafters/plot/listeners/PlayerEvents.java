@@ -837,8 +837,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
         final Player player = event.getPlayer();
         if (isPlotWorld(q)) {
-            if (isInPlot(q)) {
-                final Plot plot = getCurrentPlot(q);
+            final Plot plot = getCurrentPlot(q);
+            if (plot != null) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.isDenied(pp.getUUID())) {
                     if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
@@ -854,8 +854,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             } else {
                 if (leftPlot(f, t)) {
-                    final Plot plot = getCurrentPlot(f);
-                    plotExit(player, plot);
+                    final Plot plot2 = getCurrentPlot(f);
+                    plotExit(player, plot2);
                 }
             }
             if ((q.getX() >= 29999999) || (q.getX() <= -29999999) || (q.getZ() >= 29999999) || (q.getZ() <= -29999999)) {
