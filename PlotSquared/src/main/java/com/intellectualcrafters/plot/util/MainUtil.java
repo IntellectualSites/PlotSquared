@@ -29,7 +29,6 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -171,20 +170,20 @@ public class MainUtil {
         }
     }
 
-    public static void update(final Location loc) {
-        final String world = loc.getWorld();
-        int ox = loc.getX() >> 4;
-        int oz = loc.getZ() >> 4;
-        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        final int distance = BukkitUtil.getViewDistance();
-        for (int cx = -distance; cx <= distance; cx++) {
-            for (int cz = -distance; cz <= distance; cz++) {
-                final ChunkLoc chunk = new ChunkLoc(ox + cx, oz + cz);
-                chunks.add(chunk);
-            }
-        }
-        BlockUpdateUtil.setBlockManager.update(world, chunks);
-    }
+//    public static void update(final Location loc) {
+//        final String world = loc.getWorld();
+//        int ox = loc.getX() >> 4;
+//        int oz = loc.getZ() >> 4;
+//        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+//        final int distance = BukkitUtil.getViewDistance();
+//        for (int cx = -distance; cx <= distance; cx++) {
+//            for (int cz = -distance; cz <= distance; cz++) {
+//                final ChunkLoc chunk = new ChunkLoc(ox + cx, oz + cz);
+//                chunks.add(chunk);
+//            }
+//        }
+//        BlockUpdateUtil.setBlockManager.update(world, chunks);
+//    }
 
     public static void createWorld(final String world, final String generator) {
     }
@@ -418,7 +417,6 @@ public class MainUtil {
             }
             merge = false;
         }
-        update(getPlotHome(world, plot));
     }
 
     private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
@@ -547,7 +545,6 @@ public class MainUtil {
                 MainUtil.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
-                update(location);
             }
         };
         manager.clearPlot(plotworld, plot, isDelete, run);
@@ -611,7 +608,6 @@ public class MainUtil {
         final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
         final int topZ = getPlotTopLoc(world, plot.id).getZ();
         BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, biome);
-        update(getPlotHome(world, plot));
     }
 
     public static int getHeighestBlock(final String world, final int x, final int z) {

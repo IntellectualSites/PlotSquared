@@ -22,7 +22,8 @@ package com.intellectualcrafters.plot.util.bukkit;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -33,6 +34,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * SetBlockFast class<br> Used to do fast world editing
@@ -52,6 +54,8 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     private static RefMethod methodGetByCombinedId;
     private static RefConstructor constructorBlockPosition;
 
+    public static HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
+    
     /**
      * Constructor
      *
@@ -63,6 +67,15 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
+        TaskManager.runTaskRepeat(new Runnable() {
+            
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                update(toUpdate.values());
+                toUpdate = new HashMap<>();
+            }
+        }, 20);
     }
 
     private ChunkLoc lastLoc = null;
@@ -270,8 +283,12 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         int Z = z >> 4;
         ChunkLoc loc = new ChunkLoc(X, Z);
         if (!loc.equals(lastLoc)) {
-            world.loadChunk(X, Z, false);
-            lastLoc = loc;
+            Chunk chunk = toUpdate.get(loc);
+            if (chunk == null) {
+                chunk = world.getChunkAt(X, Z);
+                toUpdate.put(loc, chunk);
+            }
+            chunk.load(false);
         }
         // check sign
         final Object w = methodGetHandle.of(world).call();
@@ -281,20 +298,14 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         methodA.of(chunk).call(pos, combined);
     }
     
-    /**
-     * Update chunks
-     *
-     * @param chunks chunks to be updated
-     */
     @Override
-    public void update(final List<Chunk> chunks) {
+    public void update(final Collection<Chunk> chunks) {
         if (chunks.size() == 0) {
             return;
         }
         if (!MainUtil.canSendChunk) {
-            final World world = chunks.get(0).getWorld();
             for (final Chunk chunk : chunks) {
-                world.refreshChunk(chunk.getX(), chunk.getZ());
+                chunk.unload();
                 chunk.load(false);
             }
             return;

@@ -193,7 +193,6 @@ public class Merge extends SubCommand {
                             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                             MainUtil.mergePlots(world, plots, true);
                             MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
-                            MainUtil.update(loc);
                         }
                         MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
                     }
@@ -223,7 +222,6 @@ public class Merge extends SubCommand {
         MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
         MainUtil.mergePlots(world, plots, true);
         MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
-        MainUtil.update(loc);
         return true;
     }
 }

@@ -70,7 +70,6 @@ public class Copy extends SubCommand {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.COPY_SUCCESS);
-                MainUtil.update(plr.getLocation());
             }
         })) {
             return true;

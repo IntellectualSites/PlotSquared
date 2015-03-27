@@ -86,7 +86,6 @@ public class Move extends SubCommand {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.MOVE_SUCCESS);
-                MainUtil.update(plr.getLocation());
             }
         })) {
             return true;

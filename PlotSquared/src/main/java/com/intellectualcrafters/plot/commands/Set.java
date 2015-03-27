@@ -246,7 +246,6 @@ public class Set extends SubCommand {
                     }
                 }
                 manager.setComponent(plotworld, plot.id, component, blocks);
-                MainUtil.update(loc);
                 MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                 return true;
             }

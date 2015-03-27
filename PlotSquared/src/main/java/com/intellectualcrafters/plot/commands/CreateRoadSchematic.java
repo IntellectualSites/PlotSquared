@@ -45,7 +45,6 @@ public class CreateRoadSchematic extends SubCommand {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);
-        MainUtil.update(loc);
         MainUtil.sendMessage(player, "&6Saved new road schematic");
         return true;
     }

@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -24,7 +24,7 @@ public class SetBlockSlow extends BukkitSetBlockManager {
     }
 
     @Override
-    public void update(final List<Chunk> chunks) {
+    public void update(final Collection<Chunk> chunks) {
         // TODO Auto-generated method stub
     }
 }

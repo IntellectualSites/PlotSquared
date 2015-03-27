@@ -139,7 +139,6 @@ public class SchematicCmd extends SubCommand {
                                     if (start > blen) {
                                         SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-                                        MainUtil.update(plr.getLocation());
                                         SchematicCmd.this.running = false;
                                         PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
                                         return;

@@ -1,17 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 

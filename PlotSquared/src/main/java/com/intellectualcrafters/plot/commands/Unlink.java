@@ -70,7 +70,6 @@ public class Unlink extends SubCommand {
                     MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
                     return;
                 }
-                MainUtil.update(plr.getLocation());
                 MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
             }
         };

@@ -125,7 +125,6 @@ public class Swap extends SubCommand {
                 public void run() {
                     if (last) {
                         MainUtil.sendMessage(plr, C.SWAP_SUCCESS);
-                        MainUtil.update(plr.getLocation());
                     }
                 }
             });

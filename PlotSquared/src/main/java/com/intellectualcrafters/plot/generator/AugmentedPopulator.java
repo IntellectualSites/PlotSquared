@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -19,9 +18,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
@@ -132,7 +129,6 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     populateBiome(world, x, z);
                     chunk.unload(true, true);
-                    BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                 }
             }, 20);
         } else {
@@ -148,7 +144,6 @@ public class AugmentedPopulator extends BlockPopulator {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
                     chunk.unload(true, true);
-                    BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                 }
             }, 40 + rand.nextInt(40));
         }
@@ -190,9 +185,6 @@ public class AugmentedPopulator extends BlockPopulator {
         }
         for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {
             Chunk chunk = world.getChunkAt(X, Z);
-            if (MainUtil.canSetFast) {
-                ((BukkitSetBlockManager) BlockUpdateUtil.setBlockManager).update(Arrays.asList(chunk));
-            }
             populator.populate(world, this.r, chunk);
         }
     }

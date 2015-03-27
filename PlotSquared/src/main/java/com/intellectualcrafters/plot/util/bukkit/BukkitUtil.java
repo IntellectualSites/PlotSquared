@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -95,17 +94,17 @@ public class BukkitUtil extends BlockManager {
         return world.getChunkAt(x, z);
     }
 
-    public static void update(final String world, final int x, final int z) {
-        final ArrayList<Chunk> chunks = new ArrayList<>();
-        final int distance = Bukkit.getViewDistance();
-        for (int cx = -distance; cx < distance; cx++) {
-            for (int cz = -distance; cz < distance; cz++) {
-                final Chunk chunk = getChunkAt(world, (x >> 4) + cx, (z >> 4) + cz);
-                chunks.add(chunk);
-            }
-        }
-        BukkitSetBlockManager.setBlockManager.update(chunks);
-    }
+//    public static void update(final String world, final int x, final int z) {
+//        final ArrayList<Chunk> chunks = new ArrayList<>();
+//        final int distance = Bukkit.getViewDistance();
+//        for (int cx = -distance; cx < distance; cx++) {
+//            for (int cz = -distance; cz < distance; cz++) {
+//                final Chunk chunk = getChunkAt(world, (x >> 4) + cx, (z >> 4) + cz);
+//                chunks.add(chunk);
+//            }
+//        }
+//        BukkitSetBlockManager.setBlockManager.update(chunks);
+//    }
 
     public static String getWorld(final Entity entity) {
         return entity.getWorld().getName();
