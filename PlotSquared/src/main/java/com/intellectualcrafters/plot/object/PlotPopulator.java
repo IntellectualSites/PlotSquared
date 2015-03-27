@@ -46,7 +46,7 @@ public abstract class PlotPopulator extends BlockPopulator {
             for (Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
                 for (Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
                     loc = entry.getKey();
-                    setBlock(loc.x, entry2.getKey(), loc.z, entry2.getValue());
+                    setBlock(loc.x - X, entry2.getKey(), loc.z - Z, entry2.getValue());
                 }
             }
         }
@@ -74,7 +74,7 @@ public abstract class PlotPopulator extends BlockPopulator {
      * @param data
      */
     public void setBlock(int x, int y, int z, byte data) {
-        world.getBlockAt(X + x, y, Z + z).setTypeId(data);
+        world.getBlockAt(X + x, y, Z + z).setData(data);
     }
     
     /**

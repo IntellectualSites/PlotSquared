@@ -65,7 +65,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
     }
     
     @Override
-    public short[][] generateExtBlockSections(final World world, final Random r, final int cx, final int cz, final BiomeGrid biomes) {
+    public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         final int prime = 13;
         int h = 1;
         h = (prime * h) + cx;
@@ -74,9 +74,9 @@ public abstract class PlotGenerator extends ChunkGenerator {
         this.result = new short[256 / 16][];
         PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
         Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
+        this.X = cx << 4;
+        this.Z = cz << 4;
         if (ChunkManager.FORCE_PASTE) {
-            X = cx << 4;
-            Z = cz << 4;
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     if (biomes != null) {
@@ -91,24 +91,35 @@ public abstract class PlotGenerator extends ChunkGenerator {
             }
             return this.result;
         }
-        this.result = generateChunk(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz, biomes, result);
+        generateChunk(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz, biomes);
         if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
             PlotLoc loc;
             for (Entry<PlotLoc, HashMap<Short, Short>> entry : ChunkManager.GENERATE_BLOCKS.entrySet()) {
                 for (Entry<Short, Short> entry2 : entry.getValue().entrySet()) {
                     loc = entry.getKey();
-                    setBlock(loc.x, entry2.getKey(), loc.z, entry2.getValue());
+                    setBlock(loc.x - X, entry2.getKey(), loc.z- Z, entry2.getValue());
                 }
             }
         }
         return result;
     }
     
-    private void setBlock(final int x, final int y, final int z, final short blkid) {
+    public void setBlock(final int x, final int y, final int z, final short blkid) {
         if (result[y >> 4] == null) {
             result[y >> 4] = new short[4096];
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
+    }
+    
+    public void setBlock(final int x, final int y, final int z, final short[] blkid) {
+        if (blkid.length == 1) {
+            setBlock(x, y, z, blkid[0]);
+        }
+        short id = blkid[random.random(blkid.length)];
+        if (result[y >> 4] == null) {
+            result[y >> 4] = new short[4096];
+        }
+        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = id;
     }
     
     /**
@@ -122,6 +133,14 @@ public abstract class PlotGenerator extends ChunkGenerator {
         int xx = X + x;
         int zz = Z + z;
         return ((xx >= plot.minX) && (xx <= plot.maxX) && (zz >= plot.minZ) && (zz <= plot.maxZ));
+    }
+    
+    /**
+     * Allow spawning everywhere
+     */
+    @Override
+    public boolean canSpawn(final World world, final int x, final int z) {
+        return true;
     }
     
     /**
@@ -143,7 +162,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
      * @param result
      * @return
      */
-    public abstract short[][] generateChunk(final World world, RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result);
+    public abstract void generateChunk(final World world, RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes);
     
     public abstract List<PlotPopulator> getPopulators(String world);
     

@@ -30,8 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotLoc;
@@ -40,7 +38,6 @@ import com.intellectualcrafters.plot.object.PlotPopulator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -
@@ -78,14 +75,6 @@ public class HybridGen extends PlotGenerator {
     short pathWidthUpper;
     boolean doState = false;
     int maxY = 0;
-    /**
-     * result object is returned for each generated chunk, do stuff to it
-     */
-    short[][] result;
-    /**
-     * Faster sudo-random number generator than java.util.random
-     */
-    private long state = 13;
 
     /**
      * Initialize variables, and create plotworld object used in calculations
@@ -131,7 +120,6 @@ public class HybridGen extends PlotGenerator {
      * Return the plot manager for this type of generator, or create one For square plots you may as well use the
      * default plot manager which comes with PlotSquared
      */
-    @Override
     public PlotManager getPlotManager() {
         if (HybridGen.manager == null) {
             HybridGen.manager = new HybridPlotManager();
@@ -140,59 +128,13 @@ public class HybridGen extends PlotGenerator {
     }
 
     /**
-     * Allow spawning everywhere
-     */
-    @Override
-    public boolean canSpawn(final World world, final int x, final int z) {
-        return true;
-    }
-
-    /**
      * Get a new plotworld class For square plots you can use the DefaultPlotWorld class which comes with PlotSquared
      */
-    @Override
     public PlotWorld getNewPlotWorld(final String world) {
         if (this.plotworld == null) {
             this.plotworld = new HybridPlotWorld(world);
         }
         return this.plotworld;
-    }
-
-    public final long nextLong() {
-        final long a = this.state;
-        this.state = xorShift64(a);
-        return a;
-    }
-
-    public final long xorShift64(long a) {
-        a ^= (a << 21);
-        a ^= (a >>> 35);
-        a ^= (a << 4);
-        return a;
-    }
-
-    public final int random(final int n) {
-        final long r = ((nextLong() >>> 32) * n) >> 32;
-        return (int) r;
-    }
-
-    private void setBlock(final short[][] result, final int x, final int y, final int z, final short[] blkids) {
-        if (blkids.length == 1) {
-            setBlock(result, x, y, z, blkids[0]);
-        } else {
-            final int i = random(blkids.length);
-            setBlock(result, x, y, z, blkids[i]);
-        }
-    }
-
-    /**
-     * Standard setblock method for world generation
-     */
-    private void setBlock(final short[][] result, final int x, final int y, final int z, final short blkid) {
-        if (result[y >> 4] == null) {
-            result[y >> 4] = new short[4096];
-        }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
 
     /**
@@ -207,31 +149,22 @@ public class HybridGen extends PlotGenerator {
     /**
      * Return the default spawn location for this world
      */
-    @Override
-    public Location getFixedSpawnLocation(final World world, final Random random) {
-        if (this.plotworld == null) {
-            return new Location(world, 0, 128, 0);
-        }
-        return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
-    }
+//    public Location getFixedSpawnLocation(final World world, final Random random) {
+//        if (this.plotworld == null) {
+//            return new Location(world, 0, 128, 0);
+//        }
+//        return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
+//    }
 
     /**
      * This part is a fucking mess. - Refer to a proper tutorial if you would like to learn how to make a world
      * generator
      */
-    @Override
-    public short[][] generateChunk(final World world, RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result) {
-        if (this.doState) {
-            final int prime = 13;
-            int h = 1;
-            h = (prime * h) + cx;
-            h = (prime * h) + cz;
-            this.state = h;
-        }
+    public void generateChunk(final World world, RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes) {
         if (this.plotworld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    setBlock(this.result, x, 0, z, (short) 7);
+                    setBlock(x, 0, z, (short) 7);
                 }
             }
         }
@@ -253,20 +186,20 @@ public class HybridGen extends PlotGenerator {
                     }
                     if (contains(region, x, z)) {
                         for (short y = 1; y < this.plotheight; y++) {
-                            setBlock(this.result, x, y, z, this.filling);
+                            setBlock(x, y, z, this.filling);
                         }
-                        setBlock(this.result, x, this.plotheight, z, this.plotfloors);
+                        setBlock(x, this.plotheight, z, this.plotfloors);
                         final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(this.result, x, this.plotheight + entry.getKey(), z, entry.getValue());
+                                setBlock(x, this.plotheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
                 }
             }
-            return this.result;
+            return;
         }
         int sx = ((cx << 4) % this.size);
         int sz = ((cz << 4) % this.size);
@@ -290,15 +223,15 @@ public class HybridGen extends PlotGenerator {
                 // inside plot
                 if (gx && gz && lx && lz) {
                     for (short y = 1; y < this.plotheight; y++) {
-                        setBlock(this.result, x, y, z, this.filling);
+                        setBlock(x, y, z, this.filling);
                     }
-                    setBlock(this.result, x, this.plotheight, z, this.plotfloors);
+                    setBlock(x, this.plotheight, z, this.plotfloors);
                     if (this.plotworld.PLOT_SCHEMATIC) {
                         final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(this.result, x, this.plotheight + entry.getKey(), z, entry.getValue());
+                                setBlock(x, this.plotheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
@@ -306,16 +239,16 @@ public class HybridGen extends PlotGenerator {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
                         for (short y = 1; y <= this.wallheight; y++) {
-                            setBlock(this.result, x, y, z, this.wallfilling);
+                            setBlock(x, y, z, this.wallfilling);
                         }
                         if (!this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                            setBlock(this.result, x, this.wallheight + 1, z, this.wall);
+                            setBlock(x, this.wallheight + 1, z, this.wall);
                         }
                     }
                     // road
                     else {
                         for (short y = 1; y <= this.roadheight; y++) {
-                            setBlock(this.result, x, y, z, this.roadblock);
+                            setBlock(x, y, z, this.roadblock);
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
@@ -323,13 +256,13 @@ public class HybridGen extends PlotGenerator {
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(this.result, x, this.roadheight + entry.getKey(), z, entry.getValue());
+                                setBlock(x, this.roadheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
                 }
             }
         }
-        return this.result;
+        return;
     }
 }
