@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
+import com.intellectualcrafters.plot.listeners.TNTListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
@@ -109,6 +110,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 Bukkit.getServer().unloadWorld(world, true);
             }
         }
+        getServer().getPluginManager().registerEvents(new TNTListener(), this);
     }
 
     @Override
