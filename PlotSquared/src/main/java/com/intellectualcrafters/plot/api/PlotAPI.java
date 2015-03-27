@@ -81,6 +81,9 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     @Deprecated
     public PlotAPI(final JavaPlugin plugin) {
     }
+    
+    public PlotAPI() {
+    }
 
     /**
      * Get all plots
