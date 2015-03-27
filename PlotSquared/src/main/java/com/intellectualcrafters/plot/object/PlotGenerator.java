@@ -40,10 +40,10 @@ public abstract class PlotGenerator extends ChunkGenerator {
     private int Z;
     private PseudoRandom random = new PseudoRandom();
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
         PlotSquared.loadWorld(world.getName(), this);
-//        world = Bukkit.getWorld(PlotSquared.GEN_WORLD);
         PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
         if (!plotworld.MOB_SPAWNING) {
             if (!plotworld.SPAWN_EGGS) {
@@ -61,7 +61,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             world.setMonsterSpawnLimit(-1);
             world.setWaterAnimalSpawnLimit(-1);
         }
-        return getPopulators(world.getName());
+        return (List<BlockPopulator>)(List<?>) getPopulators(world.getName());
     }
     
     @Override
@@ -111,6 +111,13 @@ public abstract class PlotGenerator extends ChunkGenerator {
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
     
+    /**
+     * check if a region contains a location. (x, z) must be between [0,15], [0,15]
+     * @param plot
+     * @param x
+     * @param z
+     * @return
+     */
     public boolean contains(final RegionWrapper plot, final int x, final int z) {
         int xx = X + x;
         int zz = Z + z;
@@ -138,7 +145,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
      */
     public abstract short[][] generateChunk(final World world, RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result);
     
-    public abstract List<BlockPopulator> getPopulators(String world);
+    public abstract List<PlotPopulator> getPopulators(String world);
     
     public abstract void init(PlotWorld plotworld);
     

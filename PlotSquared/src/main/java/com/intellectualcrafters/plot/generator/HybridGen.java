@@ -36,6 +36,7 @@ import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPopulator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -197,10 +198,10 @@ public class HybridGen extends PlotGenerator {
     /**
      * Return the block populator
      */
-    public List<BlockPopulator> getPopulators(final String world) {
+    public List<PlotPopulator> getPopulators(final String world) {
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-        return Arrays.asList((BlockPopulator) new HybridPop(this.plotworld));
+        return Arrays.asList((PlotPopulator) new HybridPop(this.plotworld));
     }
 
     /**
@@ -219,7 +220,7 @@ public class HybridGen extends PlotGenerator {
      * generator
      */
     @Override
-    public short[][] generateChunk(final World world, RegionWrapper plot, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result) {
+    public short[][] generateChunk(final World world, RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result) {
         if (this.doState) {
             final int prime = 13;
             int h = 1;
@@ -234,7 +235,7 @@ public class HybridGen extends PlotGenerator {
                 }
             }
         }
-        if (plot != null) {
+        if (region != null) {
             final int X = cx << 4;
             final int Z = cz << 4;
             int sx = ((X) % this.size);
@@ -250,7 +251,7 @@ public class HybridGen extends PlotGenerator {
                     if (biomes != null) {
                         biomes.setBiome(x, z, this.biome);
                     }
-                    if (isIn(plot, X + x, Z + z)) {
+                    if (contains(region, x, z)) {
                         for (short y = 1; y < this.plotheight; y++) {
                             setBlock(this.result, x, y, z, this.filling);
                         }
@@ -260,14 +261,6 @@ public class HybridGen extends PlotGenerator {
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
                                 setBlock(this.result, x, this.plotheight + entry.getKey(), z, entry.getValue());
-                            }
-                        }
-                    } else {
-                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
-                        final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
-                        if (blocks != null) {
-                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(this.result, x, entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
@@ -338,9 +331,5 @@ public class HybridGen extends PlotGenerator {
             }
         }
         return this.result;
-    }
-
-    public boolean isIn(final RegionWrapper plot, final int x, final int z) {
-        return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }
 }

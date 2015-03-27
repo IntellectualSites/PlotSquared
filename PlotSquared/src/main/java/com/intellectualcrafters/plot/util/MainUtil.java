@@ -54,6 +54,7 @@ public class MainUtil {
     static long state = 1;
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
+    static PseudoRandom random = new PseudoRandom();
     
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
         
@@ -567,7 +568,7 @@ public class MainUtil {
         for (int y = pos1.getY(); y < pos2.getY(); y++) {
             for (int x = pos1.getX(); x < pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
-                    final int i = PseudoRandom.random(blocks.length);
+                    final int i = random.random(blocks.length);
                     xl[index] = x;
                     yl[index] = y;
                     zl[index] = z;

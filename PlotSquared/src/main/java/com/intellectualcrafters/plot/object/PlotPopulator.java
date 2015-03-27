@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Map.Entry;
 
@@ -8,10 +9,15 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
-public abstract class PlotPopulator extends BlockPopulator{
+public abstract class PlotPopulator extends BlockPopulator {
+    
+    private PseudoRandom random = new PseudoRandom();
     
     private int X;
     private int Z;
@@ -22,7 +28,6 @@ public abstract class PlotPopulator extends BlockPopulator{
         this.world = world;
         this.X = chunk.getX() << 4;
         this.Z = chunk.getZ() << 4;
-        
         if (ChunkManager.FORCE_PASTE) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
@@ -35,13 +40,22 @@ public abstract class PlotPopulator extends BlockPopulator{
             }
             return;
         }
-        
+        populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, X, Z);
+        if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+            PlotLoc loc;
+            for (Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
+                for (Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
+                    loc = entry.getKey();
+                    setBlock(loc.x, entry2.getKey(), loc.z, entry2.getValue());
+                }
+            }
+        }
     }
     
     public abstract void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz);
     
     /**
-     * Set the id and data at a location (x, y, z) must be between [0,15], [0,255], [0,15]
+     * Set the id and data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
      * @param x
      * @param y
      * @param z
@@ -53,7 +67,7 @@ public abstract class PlotPopulator extends BlockPopulator{
     }
     
     /**
-     * Set the data at a location (x, y, z) must be between [0,15], [0,255], [0,15]
+     * Set the data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
      * @param x
      * @param y
      * @param z
@@ -63,6 +77,13 @@ public abstract class PlotPopulator extends BlockPopulator{
         world.getBlockAt(X + x, y, Z + z).setTypeId(data);
     }
     
+    /**
+     * check if a region contains a location. (x, z) must be between [0,15], [0,15]
+     * @param plot
+     * @param x
+     * @param z
+     * @return
+     */
     public boolean contains(final RegionWrapper plot, final int x, final int z) {
         int xx = X + x;
         int zz = Z + z;

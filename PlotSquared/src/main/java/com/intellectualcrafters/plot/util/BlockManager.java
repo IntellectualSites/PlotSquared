@@ -43,7 +43,7 @@ public abstract class BlockManager {
         final byte[] data = new byte[blocks.length];
         for (int i = 0; i < blocks.length; i++) {
             final PlotBlock[] current = blocks[i];
-            final int n = PseudoRandom.random(current.length);
+            final int n = MainUtil.random.random(current.length);
             id[i] = current[n].id;
             data[i] = current[n].data;
         }
