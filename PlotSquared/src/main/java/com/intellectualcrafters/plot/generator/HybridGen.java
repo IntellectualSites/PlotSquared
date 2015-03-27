@@ -31,11 +31,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
@@ -217,7 +219,7 @@ public class HybridGen extends PlotGenerator {
      * generator
      */
     @Override
-    public short[][] generateExtBlockSections(final World world, final Random random, final int cx, final int cz, final BiomeGrid biomes) {
+    public short[][] generateChunk(final World world, RegionWrapper plot, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes, final short[][] result) {
         if (this.doState) {
             final int prime = 13;
             int h = 1;
@@ -225,7 +227,6 @@ public class HybridGen extends PlotGenerator {
             h = (prime * h) + cz;
             this.state = h;
         }
-        this.result = new short[this.maxY / 16][];
         if (this.plotworld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
@@ -233,7 +234,6 @@ public class HybridGen extends PlotGenerator {
                 }
             }
         }
-        final RegionWrapper plot = ChunkManager.CURRENT_PLOT_CLEAR;
         if (plot != null) {
             final int X = cx << 4;
             final int Z = cz << 4;

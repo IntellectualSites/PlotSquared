@@ -48,7 +48,7 @@ public class Copy extends SubCommand {
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
         if (plot1 == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN))  {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);

@@ -11,8 +11,11 @@ import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public abstract class ChunkManager {
+    
     public static ChunkManager manager = null;
     public static RegionWrapper CURRENT_PLOT_CLEAR = null;
+    public static boolean FORCE_PASTE = false;
+    
     public static HashMap<PlotLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
     public static HashMap<PlotLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
 
