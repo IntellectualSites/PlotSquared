@@ -93,6 +93,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     @SuppressWarnings("deprecation")
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
+        
         // Start blockstate workaround //
         switch (id) {
             case 54:
@@ -112,11 +113,16 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 68:
             case 323:
             case 117:
+            case 116:
             case 28:
             case 66:
             case 157:
             case 61:
             case 62:
+            case 140:
+            case 146:
+            case 149:
+            case 150:
             case 158:
             case 23:
             case 123:
@@ -140,6 +146,8 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 return;
             }
         }
+        
+        // Start data value shortcut
         Block block = world.getBlockAt(x, y, z);
         int currentId = block.getTypeId();
         if (currentId == id) {
@@ -256,11 +264,16 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 68:
             case 323:
             case 117:
+            case 116:
             case 28:
             case 66:
             case 157:
             case 61:
             case 62:
+            case 140:
+            case 146:
+            case 149:
+            case 150:
             case 158:
             case 23:
             case 123:
