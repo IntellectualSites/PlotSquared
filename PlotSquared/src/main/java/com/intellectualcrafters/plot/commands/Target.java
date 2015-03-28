@@ -40,7 +40,7 @@ public class Target extends SubCommand {
             return false;
         }
         if (args.length == 1) {
-            final PlotId id = MainUtil.parseId(args[1]);
+            final PlotId id = MainUtil.parseId(args[0]);
             if (id == null) {
                 MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;

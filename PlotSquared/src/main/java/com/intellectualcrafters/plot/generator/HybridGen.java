@@ -144,15 +144,6 @@ public class HybridGen extends PlotGenerator {
         return Arrays.asList((PlotPopulator) new HybridPop(this.plotworld));
     }
 
-    /**
-     * Return the default spawn location for this world
-     */
-//    public Location getFixedSpawnLocation(final World world, final Random random) {
-//        if (this.plotworld == null) {
-//            return new Location(world, 0, 128, 0);
-//        }
-//        return new Location(world, 0, this.plotworld.ROAD_HEIGHT + 2, 0);
-//    }
 
     /**
      * This part is a fucking mess. - Refer to a proper tutorial if you would like to learn how to make a world
