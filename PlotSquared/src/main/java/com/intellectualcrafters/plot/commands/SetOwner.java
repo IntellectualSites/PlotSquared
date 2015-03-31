@@ -68,7 +68,7 @@ public class SetOwner extends SubCommand {
         PlotPlayer other = UUIDHandler.getPlayer(args[0]);
         if (other == null) {
         	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-        		MainUtil.sendMessage(plr, C.INVALID_PLAYER);
+        		MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
         		return false;
         	}
         }
