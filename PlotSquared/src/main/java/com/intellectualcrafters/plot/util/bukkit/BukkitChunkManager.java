@@ -747,7 +747,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
-        final PlotLoc loc = new PlotLoc((short) x, (short) z);
+        final PlotLoc loc = new PlotLoc(x, z);
         GENERATE_BLOCKS.put(loc, ids);
         GENERATE_DATA.put(loc, datas);
     }

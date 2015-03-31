@@ -143,7 +143,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     int x = item.x;
                     int y = item.y;
                     int z = item.z;
-                    PlotLoc loc = new PlotLoc((short) x, (short) z);
+                    PlotLoc loc = new PlotLoc(x, z);
                     if (!G_SCH_STATE.containsKey(loc)) {
                         G_SCH_STATE.put(loc, new HashSet<PlotItem>());
                     }

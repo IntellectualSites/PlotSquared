@@ -178,7 +178,7 @@ public class HybridGen extends PlotGenerator {
                             setBlock(x, y, z, this.filling);
                         }
                         setBlock(x, this.plotheight, z, this.plotfloors);
-                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                        final PlotLoc loc = new PlotLoc((X + x), (Z + z));
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
@@ -216,7 +216,7 @@ public class HybridGen extends PlotGenerator {
                     }
                     setBlock(x, this.plotheight, z, this.plotfloors);
                     if (this.plotworld.PLOT_SCHEMATIC) {
-                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
@@ -241,7 +241,7 @@ public class HybridGen extends PlotGenerator {
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                        final PlotLoc loc = new PlotLoc((short) absX, (short) absZ);
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {

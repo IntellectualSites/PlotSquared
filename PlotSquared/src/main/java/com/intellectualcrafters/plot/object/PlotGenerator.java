@@ -82,7 +82,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
                     if (biomes != null) {
                         biomes.setBiome(x, z, biome);
                     }
-                    final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                    final PlotLoc loc = new PlotLoc((X + x), (Z + z));
                     final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
                     for (final Entry<Short, Short> entry : blocks.entrySet()) {
                         setBlock(x, entry.getKey(), z, entry.getValue());
@@ -97,7 +97,13 @@ public abstract class PlotGenerator extends ChunkGenerator {
             for (Entry<PlotLoc, HashMap<Short, Short>> entry : ChunkManager.GENERATE_BLOCKS.entrySet()) {
                 for (Entry<Short, Short> entry2 : entry.getValue().entrySet()) {
                     loc = entry.getKey();
-                    setBlock(loc.x - X, entry2.getKey(), loc.z- Z, entry2.getValue());
+                    int xx = loc.x - X;
+                    int zz = loc.z - Z;
+                    if (xx >= 0 && xx < 16) {
+                    	if (zz >= 0 && zz < 16) {
+                    		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                    	}
+                    }
                 }
             }
         }

@@ -42,7 +42,13 @@ public abstract class PlotPopulator extends BlockPopulator {
             for (Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
                 for (Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
                     loc = entry.getKey();
-                    setBlock(loc.x - X, entry2.getKey(), loc.z - Z, entry2.getValue());
+                    int xx = loc.x - X;
+                    int zz = loc.z - Z;
+                    if (xx >= 0 && xx < 16) {
+                    	if (zz >= 0 && zz < 16) {
+                    		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                    	}
+                    }
                 }
             }
         }
