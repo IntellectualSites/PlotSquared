@@ -171,11 +171,11 @@ public class Inbox extends SubCommand {
                 } else {
                     final List<String> recipients = Arrays.asList("A", "O", "H", "T", "E");
                     int count = 1;
-                    final StringBuilder message = new StringBuilder();
+                    final StringBuilder message = new StringBuilder(C.COMMENT_HEADER.s()+"\n");
                     String prefix = "";
                     for (final PlotComment comment : comments) {
                         message.append(prefix).append("&c[").append(count).append("]&6[").append(recipients.get(tier2 == -1 ? 0 : tier2)).append("] &7").append(comment.senderName).append("&f: ").append(comment.comment);
-                        prefix = "\n" + C.PREFIX;
+                        prefix = "\n" + comment.id;
                         count++;
                     }
                     if (comments.size() == 0) {

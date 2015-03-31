@@ -27,8 +27,10 @@ public class PlotComment {
     public final String comment;
     public final int tier;
     public final String senderName;
+    public final PlotId id;
 
-    public PlotComment(final String comment, final String senderName, final int tier) {
+    public PlotComment(final PlotId id, final String comment, final String senderName, final int tier) {
+    	this.id = id;
         this.comment = comment;
         this.tier = tier;
         this.senderName = senderName;

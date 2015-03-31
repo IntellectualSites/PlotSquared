@@ -1084,7 +1084,7 @@ public class SQLManager implements AbstractDB {
             while (set.next()) {
                 final String sender = set.getString("sender");
                 final String msg = set.getString("comment");
-                comment = new PlotComment(msg, sender, tier);
+                comment = new PlotComment(plot.id, msg, sender, tier);
                 comments.add(comment);
             }
             statement.close();

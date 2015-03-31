@@ -107,6 +107,7 @@ public enum C {
     INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s"),
     COMMENT_REMOVED("$4Successfully deleted %s."),
     COMMENT_ADDED("$4A comment has been left"),
+    COMMENT_HEADER("$2====== Comments ======"),
     /*
      * Console
      */
