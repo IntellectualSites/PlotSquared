@@ -95,6 +95,7 @@ public class PlotMeConverter {
                     final Set<String> worlds = plotConfig.getConfigurationSection("worlds").getKeys(false);
                     stmt = connection.createStatement();
                     r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
+                    // TODO check if r contains UUID collumn -> assign var
                     while (r.next()) {
                         count++;
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -110,6 +111,7 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 owner = DBFunc.everyone;
                             } else {
+                            	// TODO check PlotMe table for UUID
                                 sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                                 continue;
                             }
@@ -128,6 +130,7 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 helper = DBFunc.everyone;
                             } else {
+                            	// TODO check PlotMe table for UUID
                                 sendMessage("&6Could not identify helper for plot: " + id);
                                 continue;
                             }
@@ -147,6 +150,7 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 denied = DBFunc.everyone;
                             } else {
+                            	// TODO check PlotMe table for UUID
                                 sendMessage("&6Could not identify denied for plot: " + id);
                                 continue;
                             }

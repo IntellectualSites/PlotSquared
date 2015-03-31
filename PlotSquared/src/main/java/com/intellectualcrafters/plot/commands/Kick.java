@@ -55,7 +55,8 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (!player.getLocation().getWorld().equals(loc.getWorld()) || !plot.equals(MainUtil.getPlot(loc))) {
+        Location otherLoc = player.getLocation();
+        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc))) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
             return false;
         }
