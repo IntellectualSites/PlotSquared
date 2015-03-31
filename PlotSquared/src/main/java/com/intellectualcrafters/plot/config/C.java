@@ -213,6 +213,7 @@ public enum C {
     NO_PERMISSION("$2You are lacking the permission node: $1%s"),
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots."),
+    CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%"),
@@ -437,6 +438,7 @@ public enum C {
      * Set Owner
      */
     SET_OWNER("$4You successfully set the plot owner"),
+    NOW_OWNER("$4You are now owner of plot %s"),
     /*
      * Signs
      */
