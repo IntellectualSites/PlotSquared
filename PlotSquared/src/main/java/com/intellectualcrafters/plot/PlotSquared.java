@@ -514,7 +514,7 @@ public class PlotSquared {
         // Set chunk
         ChunkManager.manager = IMP.initChunkManager();
         // PlotMe
-        if (Settings.CONVERT_PLOTME) {
+        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
@@ -773,6 +773,7 @@ public class PlotSquared {
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
+        options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
@@ -815,6 +816,7 @@ public class PlotSquared {
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
+        Settings.CACHE_PLOTME = config.getBoolean("plotme-convert.cache-uuids");
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
         Settings.METRICS = config.getBoolean("metrics");

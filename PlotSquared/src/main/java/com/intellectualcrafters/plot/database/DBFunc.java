@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +56,28 @@ public class DBFunc {
     public static void movePlot(final Plot originalPlot, final Plot newPlot) {
         dbManager.movePlot(originalPlot, newPlot);
     }
-
+    /**
+     * Check if a resultset contains a column
+     * @param rs
+     * @param columnName
+     * @return
+     * @throws SQLException
+     */
+    public static boolean hasColumn(ResultSet r, String name) {
+        try {
+            ResultSetMetaData meta = r.getMetaData();
+            int count = meta.getColumnCount();
+            for (int x = 1; x <= count; x++) {
+                if (name.equals(meta.getColumnName(x))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
     /**
      * Set the owner of a plot
      *

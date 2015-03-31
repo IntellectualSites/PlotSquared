@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -39,9 +40,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -96,6 +99,9 @@ public class PlotMeConverter {
                     stmt = connection.createStatement();
                     r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
                     // TODO check if r contains UUID collumn -> assign var
+                    
+                    boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
+                    
                     while (r.next()) {
                         count++;
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -110,15 +116,36 @@ public class PlotMeConverter {
                         if (owner == null) {
                             if (name.equals("*")) {
                                 owner = DBFunc.everyone;
-                            } else {
-                            	// TODO check PlotMe table for UUID
-                                sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
-                                continue;
+                            }
+                            else {
+                                if (checkUUID){
+                                    try {
+                                        byte[] bytes = r.getBytes("ownerid");
+                                        if (bytes != null) {
+                                            owner = UUID.nameUUIDFromBytes(bytes);
+                                            if (owner != null) {
+                                                UUIDHandler.add(new StringWrapper(name), owner);
+                                            }
+                                        }
+                                    }
+                                    catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (owner == null) {
+                                    sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                                    continue;
+                                }
                             }
                         }
                         final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
                         plots.get(world).put(id, plot);
                     }
+                    
+                    if (!Settings.CONVERT_PLOTME) {
+                        return;
+                    }
+                    
                     sendMessage(" - plotmeAllowed");
                     r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
                     while (r.next()) {
