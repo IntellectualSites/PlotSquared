@@ -29,6 +29,9 @@ public class TNTListener implements Listener {
     @EventHandler
     public void onExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
+        if (entity == null) {
+            return;
+        }
         World world = entity.getWorld();
         String worldname = world.getName();
         if (!PlotSquared.isPlotWorld(worldname)) {

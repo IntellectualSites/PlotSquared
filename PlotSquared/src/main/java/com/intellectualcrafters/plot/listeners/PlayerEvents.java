@@ -203,7 +203,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         plotEntry(player, plot);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void PlayerMove(final PlayerMoveEvent event) {
         final Location f = BukkitUtil.getLocation(event.getFrom());
         final Location t = BukkitUtil.getLocation(event.getTo());
@@ -252,7 +252,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (!plot.equals(getCurrentPlot(f))) {
                     plotEntry(player, plot);
                 }
-            } else if (leftPlot(f, t)) {
+            } 
+            else if (leftPlot(f, t)) {
                 plot = getCurrentPlot(f);
                 plotExit(player, plot);
             }
