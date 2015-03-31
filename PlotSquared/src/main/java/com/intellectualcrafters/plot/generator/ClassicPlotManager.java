@@ -33,7 +33,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return false;
     }
-
+    
     public boolean setFloor(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final Location pos1 = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid).add(1, 0, 1);

@@ -66,6 +66,10 @@ public class SQLManager implements AbstractDB {
     private final String prefix;
     // Private Final
     private Connection connection;
+    
+    public Connection getConnection() {
+        return this.connection;
+    }
 
     /**
      * Constructor
