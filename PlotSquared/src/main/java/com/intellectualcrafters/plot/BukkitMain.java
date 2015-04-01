@@ -107,7 +107,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());
             for (World world : worlds) {
-                Bukkit.getServer().unloadWorld(world, true);
+                Bukkit.getServer().unloadWorld(world, false);
             }
         }
     }
