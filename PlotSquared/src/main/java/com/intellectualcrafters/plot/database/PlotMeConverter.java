@@ -75,8 +75,10 @@ public class PlotMeConverter {
                     if (!plotMeFile.exists()) {
                         return;
                     }
+                    
                     sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
                     sendMessage("Connecting to PlotMe DB");
+                    
                     final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
                     int count = 0;
                     Connection connection;
@@ -90,6 +92,7 @@ public class PlotMeConverter {
                     }
                     sendMessage("Collecting plot data");
                     sendMessage(" - plotmePlots");
+                    
                     ResultSet r;
                     Statement stmt;
                     final HashMap<String, Integer> plotSize = new HashMap<>();
@@ -97,8 +100,7 @@ public class PlotMeConverter {
                     final Set<String> worlds = plotConfig.getConfigurationSection("worlds").getKeys(false);
                     stmt = connection.createStatement();
                     r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
-                    // TODO check if r contains UUID collumn -> assign var
-                    
+
                     boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
                     
                     while (r.next()) {
@@ -137,6 +139,9 @@ public class PlotMeConverter {
                                 }
                             }
                         }
+                        else {
+                            UUIDHandler.add(new StringWrapper(name), owner);
+                        }
                         final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
                         plots.get(world).put(id, plot);
                     }
@@ -156,7 +161,6 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 helper = DBFunc.everyone;
                             } else {
-                            	// TODO check PlotMe table for UUID
                                 sendMessage("&6Could not identify helper for plot: " + id);
                                 continue;
                             }
@@ -176,7 +180,6 @@ public class PlotMeConverter {
                             if (name.equals("*")) {
                                 denied = DBFunc.everyone;
                             } else {
-                            	// TODO check PlotMe table for UUID
                                 sendMessage("&6Could not identify denied for plot: " + id);
                                 continue;
                             }
@@ -302,26 +305,28 @@ public class PlotMeConverter {
                                     sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
                                     PlotSquared.removePlotWorld(actualWorldName);
                                     if (MV) {
-                                        // unload
+                                        // unload world with MV
                                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + actualWorldName);
                                         try {
                                             Thread.sleep(1000);
                                         } catch (final InterruptedException ex) {
                                             Thread.currentThread().interrupt();
                                         }
-                                        // load
+                                        // load world with MV
                                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + actualWorldName + " normal -g PlotSquared");
                                     } else if (MW) {
-                                        // unload
+                                        // unload world with MW
                                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + actualWorldName);
                                         try {
                                             Thread.sleep(1000);
                                         } catch (final InterruptedException ex) {
                                             Thread.currentThread().interrupt();
                                         }
-                                        // load
+                                        // load world with MW
                                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + actualWorldName + " plugin:PlotSquared");
                                     } else {
+                                        // Load using Bukkit API
+                                        // - User must set generator manually
                                         Bukkit.getServer().unloadWorld(world, true);
                                         final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen()).createWorld();
                                         myworld.save();
