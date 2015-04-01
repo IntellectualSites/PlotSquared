@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

@@ -1,8 +1,11 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -13,14 +16,82 @@ import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
+	
+	public void checkModified(final Plot plot, final int requiredChanges, final Runnable whenDone) {
+		TaskManager.index.increment();
+		
+		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+		final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        
+        int bx = bot.getX() >> 4;
+        int bz = bot.getZ() >> 4;
+        
+        int tx = top.getX() >> 4;
+        int tz = top.getZ() >> 4;
+        
+        int size = (tx-bx) << 4;
+        World world = BukkitUtil.getWorld(plot.world);
+        
+        final HashSet<Chunk> chunks = new HashSet<>();
+        for (int X = bx; X <= tx; X++) {
+            for (int Z = bz; Z <= tz; Z++) {
+                chunks.add(world.getChunkAt(X,Z));
+            }
+        }
+        
+        PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
+        if (!(plotworld instanceof ClassicPlotWorld)) {
+        	TaskManager.runTaskLater(whenDone, 1);
+        	return;
+        }
+        
+        final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
+        
+        final MutableInt count = new MutableInt(0);
+        
+        final Integer currentIndex = TaskManager.index.toInteger();
+        final Integer task = TaskManager.runTaskRepeat(new Runnable() {
+            @Override
+            public void run() {
+            	if (count.intValue() >= requiredChanges) {
+            		TaskManager.runTaskLater(whenDone, 1);
+            		Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.tasks.remove(currentIndex);
+                    return;
+            	}
+                if (chunks.size() == 0) {
+                    Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.tasks.remove(currentIndex);
+                    return;
+                }
+                final Chunk chunk = chunks.iterator().next();
+                int bx = Math.max(chunk.getX() >> 4, bot.getX());
+                int bz = Math.max(chunk.getZ() >> 4, bot.getZ());
+                int ex = Math.max((chunk.getX() >> 4) + 15, top.getX());
+                int ez = Math.max((chunk.getZ() >> 4) + 15, top.getZ());
+                // count changes
+                count.add(checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK));
+                count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK));
+            }
+        }, 1);
+        TaskManager.tasks.put(currentIndex, task);
+
+	}
     
     @Override
-    public int checkModified(final int threshhold, final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
+    public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
         final World world = BukkitUtil.getWorld(worldname);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
@@ -37,9 +108,6 @@ public class BukkitHybridUtils extends HybridUtils {
                     }
                     if (!same) {
                         count++;
-                        if (count > threshhold) {
-                            return -1;
-                        }
                     }
                 }
             }

@@ -59,9 +59,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitChunkManager extends ChunkManager {
-    public static MutableInt index = new MutableInt(0);
-    public static HashMap<Integer, Integer> tasks = new HashMap<>();
-
     @Override
     public ArrayList<ChunkLoc> getChunkChunks(final String world) {
         final String directory = Bukkit.getWorldContainer() + File.separator + world + File.separator + "region";
@@ -152,7 +149,7 @@ public class BukkitChunkManager extends ChunkManager {
      */
     @Override
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
-        index.increment();
+    	TaskManager.index.increment();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         
@@ -183,19 +180,19 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
         final Plugin plugin = BukkitMain.THIS;
-        final Integer currentIndex = index.toInteger();
+        final Integer currentIndex = TaskManager.index.toInteger();
         final int loadTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
                 while ((System.currentTimeMillis() - start) < 25) {
                     if (toGenerate.size() == 0) {
-                        Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
-                        tasks.remove(currentIndex);
+                        Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                        TaskManager.tasks.remove(currentIndex);
                         TaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
-                                index.increment();
+                            	TaskManager.index.increment();
                                 // Copy entities
                                 initMaps();
                                 for (int x = c1x; x <= c2x; x++) {
@@ -209,7 +206,7 @@ public class BukkitChunkManager extends ChunkManager {
                                 restoreEntities(newWorld, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
-                                final Integer currentIndex = index.toInteger();
+                                final Integer currentIndex = TaskManager.index.toInteger();
                                 final int maxY = oldWorld.getMaxHeight();
                                 final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                                     @Override
@@ -234,14 +231,14 @@ public class BukkitChunkManager extends ChunkManager {
                                                     chunk.unload(true, true);
                                                 }
                                                 TaskManager.runTask(whenDone);
-                                                Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
-                                                tasks.remove(currentIndex);
+                                                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                                                TaskManager.tasks.remove(currentIndex);
                                                 return;
                                             }
                                         }
                                     };
                                 }, 1, 1);
-                                tasks.put(currentIndex, task);
+                                TaskManager.tasks.put(currentIndex, task);
                             }
                         });
                         return;
@@ -253,13 +250,13 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }, 1l, 1l);
-        tasks.put(currentIndex, loadTask);
+        TaskManager.tasks.put(currentIndex, loadTask);
         return true;
     }
     
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
-        index.increment();
+    	TaskManager.index.increment();
         final Plugin plugin = BukkitMain.THIS;
         final World world = Bukkit.getWorld(pos1.getWorld());
         final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
@@ -282,14 +279,14 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
         final int maxY = world.getMaxHeight();
-        final Integer currentIndex = index.toInteger();
+        final Integer currentIndex = TaskManager.index.toInteger();
         final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
                 if (chunks.size() == 0) {
                     TaskManager.runTaskLater(whenDone, 1);
-                    Bukkit.getScheduler().cancelTask(tasks.get(currentIndex));
-                    tasks.remove(currentIndex);
+                    Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.tasks.remove(currentIndex);
                     return;
                 }
                 CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
@@ -346,7 +343,7 @@ public class BukkitChunkManager extends ChunkManager {
                 CURRENT_PLOT_CLEAR = null;
             }
         }, 1, 1);
-        tasks.put(currentIndex, task);
+        TaskManager.tasks.put(currentIndex, task);
         return true;
     }
 

@@ -16,41 +16,14 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class HybridUtils {
 
     public static HybridUtils manager;
+    
+    public abstract void checkModified(Plot plot, int requiredChanges, Runnable ifPassed);
 
-    public boolean checkModified(final Plot plot, int requiredChanges) {
-        final Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
-        final int botx = bottom.getX();
-        final int botz = bottom.getZ();
-        final int topx = top.getX();
-        final int topz = top.getZ();
-        final HybridPlotWorld hpw = (HybridPlotWorld) PlotSquared.getPlotWorld(plot.world);
-        final PlotBlock[] air = new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) };
-        int changes = checkModified(requiredChanges, plot.world, botx, topx, hpw.PLOT_HEIGHT, hpw.PLOT_HEIGHT, botz, topz, hpw.TOP_BLOCK);
-        if (changes == -1) {
-            return true;
-        }
-        requiredChanges -= changes;
-        changes = checkModified(requiredChanges, plot.world, botx, topx, hpw.PLOT_HEIGHT + 1, hpw.PLOT_HEIGHT + 1, botz, topz, air);
-        if (changes == -1) {
-            return true;
-        }
-        requiredChanges -= changes;
-        changes = checkModified(requiredChanges, plot.world, botx, topx, hpw.PLOT_HEIGHT + 2, BukkitUtil.getMaxHeight(plot.world) - 1, botz, topz, air);
-        if (changes == -1) {
-            return true;
-        }
-        requiredChanges -= changes;
-        changes = checkModified(requiredChanges, plot.world, botx, topx, 1, hpw.PLOT_HEIGHT - 1, botz, topz, hpw.MAIN_BLOCK);
-        return changes == -1;
-    }
-
-    public abstract int checkModified(final int threshhold, final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
+    public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
 
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.world;
