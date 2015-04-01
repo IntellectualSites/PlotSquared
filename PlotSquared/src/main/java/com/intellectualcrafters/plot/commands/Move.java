@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.commands.SubCommand.CommandCategory;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -37,7 +38,7 @@ import com.intellectualcrafters.plot.util.Permissions;
  */
 public class Move extends SubCommand {
     public Move() {
-        super("debugmove", "plots.move", "Move a plot", "move", "", CommandCategory.ACTIONS, true);
+        super(Command.MOVE, "Move a plot", "debugmove", CommandCategory.ACTIONS, true);
     }
 
     @Override
@@ -77,6 +78,9 @@ public class Move extends SubCommand {
         	world2 = world;
         }
         Plot plot2 = MainUtil.getPlot(world2, plot2id);
+        
+        System.out.print(plot1 + " | " + plot2);
+        
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");

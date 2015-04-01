@@ -859,7 +859,7 @@ public class MainUtil {
     
     public static boolean move(final Plot plot1, final Plot plot2, final Runnable whenDone) {
         final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
-        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
+        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot1.id);
         final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
         if (plot1.owner == null) {
             TaskManager.runTaskLater(whenDone, 1);
@@ -883,6 +883,9 @@ public class MainUtil {
             plot.id.y += offset_y;
             PlotSquared.getPlots(plot2.world).put(plot.id, plot);
         }
+        System.out.print("BOT: " + bot1);
+        System.out.print("TOP: " + top);
+        System.out.print(" ->  " + bot2);
         ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {
