@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -39,8 +40,6 @@ public class HybridPop extends PlotPopulator {
     final short pathWidthLower;
     final short pathWidthUpper;
     Biome biome;
-    private int X;
-    private int Z;
     private long state;
     private boolean doFilling = false;
     private boolean doFloor = false;
@@ -107,8 +106,6 @@ public class HybridPop extends PlotPopulator {
 
     @Override
     public void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz) {
-        this.X = cx << 4;
-        this.Z = cz << 4;
         PlotSquared.getPlotManager(world.getName());
         if (requiredRegion != null) {
             short sx = (short) ((this.X) % this.size);
@@ -119,6 +116,7 @@ public class HybridPop extends PlotPopulator {
             if (sz < 0) {
                 sz += this.size;
             }
+            
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     if (contains(requiredRegion, this.X + x, this.Z + z)) {
@@ -152,33 +150,29 @@ public class HybridPop extends PlotPopulator {
             }
             return;
         }
-        short sx = (short) ((this.X) % this.size);
-        short sz = (short) ((this.Z) % this.size);
+        int sx = (short) ((this.X) % this.size);
+        int sz = (short) ((this.Z) % this.size);
         if (sx < 0) {
             sx += this.size;
         }
         if (sz < 0) {
             sz += this.size;
         }
-        // Setting biomes
+        
         for (short x = 0; x < 16; x++) {
             for (short z = 0; z < 16; z++) {
-                final short absX = (short) ((sx + x) % this.size);
-                final short absZ = (short) ((sz + z) % this.size);
+                final int absX = ((sx + x) % this.size);
+                final int absZ = ((sz + z) % this.size);
                 final boolean gx = absX > this.pathWidthLower;
                 final boolean gz = absZ > this.pathWidthLower;
                 final boolean lx = absX < this.pathWidthUpper;
                 final boolean lz = absZ < this.pathWidthUpper;
                 // inside plot
                 if (gx && gz && lx && lz) {
-                    if (this.doFilling) {
-                        for (short y = 1; y < this.plotheight; y++) {
-                            setBlock(x, y, z, this.filling);
-                        }
+                    for (short y = 1; y < this.plotheight; y++) {
+                        setBlock(x, y, z, this.filling);
                     }
-                    if (this.doFloor) {
-                        setBlock(x, (short) this.plotheight, z, this.plotfloors);
-                    }
+                    setBlock(x, (short) this.plotheight, z, this.plotfloors);
                     if (this.plotworld.PLOT_SCHEMATIC) {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
@@ -201,21 +195,17 @@ public class HybridPop extends PlotPopulator {
                 } else {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
-                        if (this.wallfilling != 0) {
-                            for (short y = 1; y <= this.wallheight; y++) {
-                                setBlock(x, y, z, this.wallfilling);
-                            }
+                        for (short y = 1; y <= this.wallheight; y++) {
+                            setBlock(x, y, z, this.wallfilling);
                         }
-                        if ((this.wall != 0) && !this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                            setBlock(x, (short) (this.wallheight + 1), z, this.wall);
+                        if (!this.plotworld.ROAD_SCHEMATIC_ENABLED) {
+                            setBlock(x, this.wallheight + 1, z, this.wall);
                         }
                     }
                     // road
                     else {
-                        if (this.roadblock != 0) {
-                            for (short y = 1; y <= this.roadheight; y++) {
-                                setBlock(x, y, z, this.roadblock);
-                            }
+                        for (short y = 1; y <= this.roadheight; y++) {
+                            setBlock(x, y, z, this.roadblock);
                         }
                     }
                     if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {

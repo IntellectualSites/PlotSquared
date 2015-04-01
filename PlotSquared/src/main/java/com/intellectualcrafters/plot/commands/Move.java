@@ -79,8 +79,6 @@ public class Move extends SubCommand {
         }
         Plot plot2 = MainUtil.getPlot(world2, plot2id);
         
-        System.out.print(plot1 + " | " + plot2);
-        
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");

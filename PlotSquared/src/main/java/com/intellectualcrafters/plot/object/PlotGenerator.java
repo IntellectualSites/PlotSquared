@@ -36,8 +36,8 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 public abstract class PlotGenerator extends ChunkGenerator {
     
     private short[][] result;
-    private int X;
-    private int Z;
+    public int X;
+    public int Z;
     private PseudoRandom random = new PseudoRandom();
 
     @SuppressWarnings("unchecked")

@@ -111,7 +111,6 @@ public class HybridGen extends PlotGenerator {
         if (this.maxY == 0) {
             this.maxY = 256;
         }
-        
     }
 
     /**
@@ -190,14 +189,15 @@ public class HybridGen extends PlotGenerator {
             }
             return;
         }
-        int sx = ((cx << 4) % this.size);
-        int sz = ((cz << 4) % this.size);
+        int sx = (short) ((this.X) % this.size);
+        int sz = (short) ((this.Z) % this.size);
         if (sx < 0) {
             sx += this.size;
         }
         if (sz < 0) {
             sz += this.size;
         }
+        
         for (short x = 0; x < 16; x++) {
             for (short z = 0; z < 16; z++) {
                 if (biomes != null) {

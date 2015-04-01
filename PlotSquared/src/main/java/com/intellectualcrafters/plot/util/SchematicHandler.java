@@ -214,7 +214,6 @@ public abstract class SchematicHandler {
         }
         try {
             final File tmp = new File(path);
-            System.out.print("ABS: " + tmp.getAbsolutePath());
             tmp.getParentFile().mkdirs();
             final OutputStream stream = new FileOutputStream(path);
             final NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream));

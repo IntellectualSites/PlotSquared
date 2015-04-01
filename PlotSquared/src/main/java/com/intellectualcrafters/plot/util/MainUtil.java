@@ -859,7 +859,7 @@ public class MainUtil {
     
     public static boolean move(final Plot plot1, final Plot plot2, final Runnable whenDone) {
         final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
-        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot1.id);
+        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
         final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
         if (plot1.owner == null) {
             TaskManager.runTaskLater(whenDone, 1);
@@ -876,16 +876,15 @@ public class MainUtil {
         final int offset_y = plot2.id.y - pos1.id.y;
         final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
         for (final PlotId id : selection) {
-            DBFunc.movePlot(getPlot(plot1.world, new PlotId(id.x, id.y)), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
+            String worldOriginal = plot1.world;
+            PlotId idOriginal = new PlotId(id.x, id.y);
             final Plot plot = PlotSquared.getPlots(plot1.world).get(id);
             PlotSquared.getPlots(plot1.world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
             PlotSquared.getPlots(plot2.world).put(plot.id, plot);
+            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
         }
-        System.out.print("BOT: " + bot1);
-        System.out.print("TOP: " + top);
-        System.out.print(" ->  " + bot2);
         ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
             @Override
             public void run() {

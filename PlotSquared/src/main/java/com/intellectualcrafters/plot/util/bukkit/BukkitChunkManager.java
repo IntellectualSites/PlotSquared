@@ -200,10 +200,8 @@ public class BukkitChunkManager extends ChunkManager {
                                         final Chunk chunk = oldWorld.getChunkAt(x, z);
                                         chunks.add(chunk);
                                         chunk.load(false);
-                                        saveEntitiesIn(chunk, region);
                                     }
                                 }
-                                restoreEntities(newWorld, relX, relZ);
                                 // Copy blocks
                                 final MutableInt mx = new MutableInt(sx);
                                 final Integer currentIndex = TaskManager.index.toInteger();
@@ -225,7 +223,16 @@ public class BukkitChunkManager extends ChunkManager {
                                             }
                                             mx.increment();
                                             if (xv == ex) { // done!
+                                                for (int x = c1x; x <= c2x; x++) {
+                                                    for (int z = c1z; z <= c2z; z++) {
+                                                        final Chunk chunk = oldWorld.getChunkAt(x, z);
+                                                        chunks.add(chunk);
+                                                        chunk.load(false);
+                                                        saveEntitiesIn(chunk, region);
+                                                    }
+                                                }
                                                 restoreBlocks(newWorld, relX, relZ);
+                                                restoreEntities(newWorld, relX, relZ);                                                
                                                 BukkitSetBlockManager.setBlockManager.update(chunks);
                                                 for (final Chunk chunk : chunks) {
                                                     chunk.unload(true, true);

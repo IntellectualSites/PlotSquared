@@ -15,8 +15,8 @@ public abstract class PlotPopulator extends BlockPopulator {
     
     private PseudoRandom random = new PseudoRandom();
     
-    private int X;
-    private int Z;
+    public int X;
+    public int Z;
     private World world;
     
     @Override

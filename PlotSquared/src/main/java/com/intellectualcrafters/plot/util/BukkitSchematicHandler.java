@@ -61,7 +61,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 for (j = (pos1.getZ() / 16) * 16; j < (16 + ((pos2.getZ() / 16) * 16)); j += 16) {
                     boolean result = ChunkManager.manager.loadChunk(world, new ChunkLoc(i, j));
                     if (!result) {
-                        System.out.print("&cIllegal selection. Cannot save non-existent chunk at " + (i / 16) + ", " + (j / 16));
+                        PlotSquared.log("&cIllegal selection. Cannot save non-existent chunk at " + (i / 16) + ", " + (j / 16));
                         return null;
                     }
                 }
