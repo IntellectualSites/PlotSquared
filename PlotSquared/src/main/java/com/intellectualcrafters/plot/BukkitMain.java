@@ -110,8 +110,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 Bukkit.getServer().unloadWorld(world, true);
             }
         }
-        getServer().getPluginManager().registerEvents(new TNTListener(), this);
     }
+    
 
     @Override
     public void onDisable() {
@@ -370,5 +370,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public EventUtil initEventUtil() {
         return new BukkitEventUtil();
+    }
+
+    @Override
+    public void registerTNTListener() {
+        getServer().getPluginManager().registerEvents(new TNTListener(), this);
     }
 }

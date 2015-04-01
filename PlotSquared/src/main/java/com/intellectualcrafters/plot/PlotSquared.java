@@ -763,12 +763,10 @@ public class PlotSquared {
         final Map<String, Object> options = new HashMap<>();
         options.put("teleport.delay", 0);
         options.put("auto_update", false);
-        
         options.put("confirmation.clear", Settings.CONFIRM_CLEAR);
         options.put("confirmation.delete", Settings.CONFIRM_DELETE);
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
-        
-        
+        options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
@@ -788,9 +786,7 @@ public class PlotSquared {
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
-        
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
-        
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
@@ -804,13 +800,12 @@ public class PlotSquared {
         if (Settings.DEBUG) {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
-        
+        Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
-        
         Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");

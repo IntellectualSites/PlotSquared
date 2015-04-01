@@ -38,6 +38,8 @@ public interface IPlotMain {
     public void registerForceFieldEvents();
 
     public void registerWorldEditEvents();
+    
+    public void registerTNTListener();
 
     public Economy getEconomy();
 

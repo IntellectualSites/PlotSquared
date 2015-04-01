@@ -36,13 +36,17 @@ public class Settings {
     public static boolean PERMISSION_CACHING = false;
     public static boolean UUID_FROM_DISK = false;
     /**
-     *
+     * PlotMe settings
      */
     public static boolean CONVERT_PLOTME = true;
     public static boolean CACHE_PLOTME = false;
     public static boolean USE_PLOTME_ALIAS = false;
     /**
-     *
+     * TNT listener
+     */
+    public static boolean TNT_LISTENER = false;
+    /**
+     * Max auto claiming size
      */
     public static int MAX_AUTO_SIZE = 4;
     /**
@@ -61,14 +65,6 @@ public class Settings {
      * Teleport to path on login
      */
     public static boolean TELEPORT_ON_LOGIN = false;
-    /**
-     * Mob Cap Enabled
-     */
-    //    public static boolean MOB_CAP_ENABLED = false;
-    /**
-     * The Mob Cap
-     */
-    //    public static int MOB_CAP = 20;
     /**
      * Display titles
      */
