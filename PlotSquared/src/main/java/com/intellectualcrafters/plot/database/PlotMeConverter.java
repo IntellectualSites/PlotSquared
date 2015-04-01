@@ -25,10 +25,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,6 +64,91 @@ public class PlotMeConverter {
     private void sendMessage(final String message) {
         PlotSquared.log("&3PlotMe&8->&3PlotSquared&8: &7" + message);
     }
+    
+    public String getPlotMePath() {
+        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
+    }
+    
+    public FileConfiguration getPlotMeConfig(String dataFolder) {
+        final File plotMeFile = new File(dataFolder + "config.yml");
+        if (!plotMeFile.exists()) {
+            return null;
+        }
+        return YamlConfiguration.loadConfiguration(plotMeFile);
+    }
+    
+    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
+        try {
+            if (plotConfig.getBoolean("usemySQL")) {
+                final String user = plotConfig.getString("mySQLuname");
+                final String password = plotConfig.getString("mySQLpass");
+                final String con = plotConfig.getString("mySQLconn");
+                return DriverManager.getConnection(con, user, password);
+            } else {
+                return new SQLite(PlotSquared.THIS, dataFolder + File.separator + "plots.db").openConnection();
+            }
+        }
+        catch (SQLException | ClassNotFoundException e) {}
+        return null;
+    }
+    
+    public Set<String> getPlotMeWorlds(FileConfiguration plotConfig) {
+        return plotConfig.getConfigurationSection("worlds").getKeys(false);
+    }
+    
+    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+        ResultSet r;
+        Statement stmt;
+        final HashMap<String, Integer> plotSize = new HashMap<>();
+        final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
+        stmt = connection.createStatement();
+        r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
+
+        boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
+        
+        while (r.next()) {
+            final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
+            final String name = r.getString("owner");
+            final String world = getWorld(r.getString("world"));
+            if (!plotSize.containsKey(world)) {
+                final int size = r.getInt("topZ") - r.getInt("bottomZ");
+                plotSize.put(world, size);
+                plots.put(world, new HashMap<PlotId, Plot>());
+            }
+            UUID owner = UUIDHandler.getUUID(name);
+            if (owner == null) {
+                if (name.equals("*")) {
+                    owner = DBFunc.everyone;
+                }
+                else {
+                    if (checkUUID){
+                        try {
+                            byte[] bytes = r.getBytes("ownerid");
+                            if (bytes != null) {
+                                owner = UUID.nameUUIDFromBytes(bytes);
+                                if (owner != null) {
+                                    UUIDHandler.add(new StringWrapper(name), owner);
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (owner == null) {
+                        sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        continue;
+                    }
+                }
+            }
+            else {
+                UUIDHandler.add(new StringWrapper(name), owner);
+            }
+            final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+            plots.get(world).put(id, plot);
+        }
+        return plots;
+    }
 
     public void runAsync() throws Exception {
         // We have to make it wait a couple of seconds
@@ -69,81 +156,32 @@ public class PlotMeConverter {
             @Override
             public void run() {
                 try {
-                    final ArrayList<Plot> createdPlots = new ArrayList<>();
-                    final String dataFolder = new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
-                    final File plotMeFile = new File(dataFolder + "config.yml");
-                    if (!plotMeFile.exists()) {
+                    String dataFolder = getPlotMePath();
+                    FileConfiguration plotConfig = getPlotMeConfig(dataFolder);
+                    
+                    if (plotConfig == null) {
                         return;
+                    }
+                    
+                    Connection connection = getPlotMeConnection(plotConfig, dataFolder);
+                    
+                    if (connection == null) {
+                        sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
                     }
                     
                     sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
                     sendMessage("Connecting to PlotMe DB");
                     
-                    final FileConfiguration plotConfig = YamlConfiguration.loadConfiguration(plotMeFile);
-                    int count = 0;
-                    Connection connection;
-                    if (plotConfig.getBoolean("usemySQL")) {
-                        final String user = plotConfig.getString("mySQLuname");
-                        final String password = plotConfig.getString("mySQLpass");
-                        final String con = plotConfig.getString("mySQLconn");
-                        connection = DriverManager.getConnection(con, user, password);
-                    } else {
-                        connection = new SQLite(PlotSquared.THIS, dataFolder + File.separator + "plots.db").openConnection();
-                    }
+                    int plotCount = 0;
+                    final ArrayList<Plot> createdPlots = new ArrayList<>();
+                    
                     sendMessage("Collecting plot data");
                     sendMessage(" - plotmePlots");
                     
-                    ResultSet r;
-                    Statement stmt;
-                    final HashMap<String, Integer> plotSize = new HashMap<>();
-                    final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
-                    final Set<String> worlds = plotConfig.getConfigurationSection("worlds").getKeys(false);
-                    stmt = connection.createStatement();
-                    r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
-
-                    boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
-                    
-                    while (r.next()) {
-                        count++;
-                        final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-                        final String name = r.getString("owner");
-                        final String world = getWorld(r.getString("world"));
-                        if (!plotSize.containsKey(world)) {
-                            final int size = r.getInt("topZ") - r.getInt("bottomZ");
-                            plotSize.put(world, size);
-                            plots.put(world, new HashMap<PlotId, Plot>());
-                        }
-                        UUID owner = UUIDHandler.getUUID(name);
-                        if (owner == null) {
-                            if (name.equals("*")) {
-                                owner = DBFunc.everyone;
-                            }
-                            else {
-                                if (checkUUID){
-                                    try {
-                                        byte[] bytes = r.getBytes("ownerid");
-                                        if (bytes != null) {
-                                            owner = UUID.nameUUIDFromBytes(bytes);
-                                            if (owner != null) {
-                                                UUIDHandler.add(new StringWrapper(name), owner);
-                                            }
-                                        }
-                                    }
-                                    catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if (owner == null) {
-                                    sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
-                                    continue;
-                                }
-                            }
-                        }
-                        else {
-                            UUIDHandler.add(new StringWrapper(name), owner);
-                        }
-                        final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
-                        plots.get(world).put(id, plot);
+                    final Set<String> worlds = getPlotMeWorlds(plotConfig);
+                    HashMap<String, HashMap<PlotId, Plot>> plots = getPlotMePlots(connection);
+                    for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+                        plotCount += entry.getValue().size();
                     }
                     
                     if (!Settings.CONVERT_PLOTME) {
@@ -151,6 +189,8 @@ public class PlotMeConverter {
                     }
                     
                     sendMessage(" - plotmeAllowed");
+                    ResultSet r;
+                    Statement stmt = connection.createStatement();
                     r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
                     while (r.next()) {
                         final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -188,7 +228,7 @@ public class PlotMeConverter {
                             plots.get(world).get(id).denied.add(denied);
                         }
                     }
-                    sendMessage("Collected " + count + " plots from PlotMe");
+                    sendMessage("Collected " + plotCount + " plots from PlotMe");
                     for (final String world : plots.keySet()) {
                         sendMessage("Copying config for: " + world);
                         try {
