@@ -234,9 +234,6 @@ public class BukkitChunkManager extends ChunkManager {
                                                 restoreBlocks(newWorld, relX, relZ);
                                                 restoreEntities(newWorld, relX, relZ);                                                
                                                 BukkitSetBlockManager.setBlockManager.update(chunks);
-                                                for (final Chunk chunk : chunks) {
-                                                    chunk.unload(true, true);
-                                                }
                                                 TaskManager.runTask(whenDone);
                                                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                                                 TaskManager.tasks.remove(currentIndex);
@@ -344,7 +341,7 @@ public class BukkitChunkManager extends ChunkManager {
                         restoreBlocks(world, 0, 0);
                         restoreEntities(world, 0, 0);
                     }
-                    chunk.unload(true, true);
+                    MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
                     BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                 }
                 CURRENT_PLOT_CLEAR = null;

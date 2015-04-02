@@ -151,7 +151,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 final Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
                 regenerateRoad(worldname, new ChunkLoc(x, z));
-                ChunkManager.manager.unloadChunk(worldname, new ChunkLoc(x, z));
+                MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
             }
         }
     }

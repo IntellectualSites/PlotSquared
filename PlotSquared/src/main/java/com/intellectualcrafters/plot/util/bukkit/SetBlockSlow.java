@@ -6,6 +6,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import com.intellectualcrafters.plot.util.MainUtil;
+
 public class SetBlockSlow extends BukkitSetBlockManager {
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
@@ -25,6 +27,18 @@ public class SetBlockSlow extends BukkitSetBlockManager {
 
     @Override
     public void update(final Collection<Chunk> chunks) {
-        // TODO Auto-generated method stub
+        if (MainUtil.canSendChunk) {
+            try {
+                SendChunk.sendChunk(chunks);
+            } catch (final Throwable e) {
+                MainUtil.canSendChunk = false;
+            }
+        }
+        else {
+            for (Chunk chunk : chunks) {
+                chunk.unload();
+                chunk.load(true);
+            }
+        }
     }
 }

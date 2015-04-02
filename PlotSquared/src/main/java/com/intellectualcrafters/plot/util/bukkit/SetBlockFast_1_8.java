@@ -317,9 +317,9 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             return;
         }
         if (!MainUtil.canSendChunk) {
-            for (final Chunk chunk : chunks) {
-                chunk.unload();
-                chunk.load(false);
+            for (Chunk chunk : chunks) {
+                chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+                chunk.load(true);
             }
             return;
         }

@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -276,7 +277,7 @@ public class ClusterManager {
                 public void run() {
                     if ((populator == null) || (plotworld.TYPE == 0)) {
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
-                        chunk.unload(true, true);
+                        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
                     } else {
                         populator.populate(world, rand, chunk);
                     }

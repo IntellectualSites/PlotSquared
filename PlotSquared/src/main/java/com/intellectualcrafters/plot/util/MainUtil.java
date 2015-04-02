@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -170,6 +172,10 @@ public class MainUtil {
         }
     }
 
+    public static void update(String world, ChunkLoc loc) {
+        BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
+    }
+    
 //    public static void update(final Location loc) {
 //        final String world = loc.getWorld();
 //        int ox = loc.getX() >> 4;
@@ -862,14 +868,12 @@ public class MainUtil {
         final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
         final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
         if (plot1.owner == null) {
-            TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
         final Plot pos1 = getBottomPlot(plot1);
         final Plot pos2 = getTopPlot(plot1);
         final PlotId size = MainUtil.getSize(plot1.world, plot1);
         if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
-            TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
         final int offset_x = plot2.id.x - pos1.id.x;

@@ -32,9 +32,9 @@ public class BukkitSetupUtils extends SetupUtils {
                     final String name = plugin.getDescription().getName();
                     if (generator instanceof PlotGenerator) {
                         final PlotGenerator pgen = (PlotGenerator) generator;
-                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
+//                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
                             SetupUtils.generators.put(name, pgen);
-                        }
+//                        }
                     }
                 }
             }

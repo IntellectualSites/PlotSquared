@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
+import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
@@ -22,6 +23,8 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  * @author Empire92
  */
 public class SendChunk {
+    
+    private static boolean v1_7_10 = BukkitMain.checkVersion(1, 7, 10) && !BukkitMain.checkVersion(1, 8, 0);
     // Ref Class
     private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
@@ -58,6 +61,7 @@ public class SendChunk {
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
         for (final Chunk chunk : chunks) {
+            boolean unload = true;
             final Object c = methodGetHandle.of(chunk).call();
             final Object w = world.of(c).get();
             final Object p = players.of(w).get();
@@ -67,10 +71,21 @@ public class SendChunk {
                 diffx = Math.abs(x - (chunk.getX() << 4));
                 diffz = Math.abs(z - (chunk.getZ() << 4));
                 if ((diffx <= view) && (diffz <= view)) {
-                    final Object pair = ChunkCoordIntPairCon.create(chunk.getX(), chunk.getZ());
-                    final Object pq = chunkCoordIntPairQueue.of(ep).get();
-                    ((List) pq).add(pair);
+                    unload = false;
+                    if (v1_7_10) {
+                        chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+                        chunk.load(true);
+                    }
+                    else {
+                        final Object pair = ChunkCoordIntPairCon.create(chunk.getX(), chunk.getZ());
+                        final Object pq = chunkCoordIntPairQueue.of(ep).get();
+                        ((List) pq).add(pair);
+                    }
                 }
+            }
+            if (unload) {
+                chunk.unload(true, true);
+                System.out.print("UNLOADING CHUNK");
             }
         }
     }

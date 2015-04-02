@@ -71,6 +71,8 @@ public class SetBlockFast extends BukkitSetBlockManager {
         }, 20);
     }
 
+    private ChunkLoc lastLoc = null;
+    
     /**
      * Set the block at the location
      *
@@ -84,6 +86,19 @@ public class SetBlockFast extends BukkitSetBlockManager {
      */
     @Override
     public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
+        
+        int X = x >> 4;
+        int Z = z >> 4;
+        ChunkLoc loc = new ChunkLoc(X, Z);
+        if (!loc.equals(lastLoc)) {
+            Chunk chunk = toUpdate.get(loc);
+            if (chunk == null) {
+                chunk = world.getChunkAt(X, Z);
+                toUpdate.put(loc, chunk);
+            }
+            chunk.load(false);
+        }
+        
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object block = methodGetById.of(null).call(blockId);
@@ -101,9 +116,9 @@ public class SetBlockFast extends BukkitSetBlockManager {
             return;
         }
         if (!MainUtil.canSendChunk) {
-            for (final Chunk chunk : chunks) {
-                chunk.unload();
-                chunk.load(false);
+            for (Chunk chunk : chunks) {
+                chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+                chunk.load(true);
             }
             return;
         }
