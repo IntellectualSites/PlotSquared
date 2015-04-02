@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class SetupUtils {
@@ -15,5 +16,7 @@ public abstract class SetupUtils {
 
     public abstract void updateGenerators();
 
+    public abstract String getGenerator(PlotWorld plotworld);
+    
     public abstract String setupWorld(final SetupObject object);
 }

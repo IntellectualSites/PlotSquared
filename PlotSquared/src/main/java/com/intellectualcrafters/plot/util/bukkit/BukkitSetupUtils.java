@@ -1,11 +1,14 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
@@ -13,6 +16,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 
@@ -85,4 +89,24 @@ public class BukkitSetupUtils extends SetupUtils {
         return object.world;
     }
 
+    @Override
+    public String getGenerator(PlotWorld plotworld) {
+        if (SetupUtils.generators.size() == 0) {
+            updateGenerators();
+        }
+        World world = Bukkit.getWorld(plotworld.worldname);
+        if (world == null) {
+            return null;
+        }
+        ChunkGenerator generator = world.getGenerator();
+        if (!(generator instanceof PlotGenerator)) {
+            return null;
+        }
+        for (Entry<String, PlotGenerator> entry : generators.entrySet()) {
+            if (entry.getValue().getClass().getName().equals(generator.getClass().getName())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

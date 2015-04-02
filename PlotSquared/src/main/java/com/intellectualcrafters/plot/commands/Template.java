@@ -178,6 +178,10 @@ public class Template extends SubCommand {
     public static byte[] getBytes(PlotWorld plotworld) {
         ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds." + plotworld.worldname);
         YamlConfiguration config = new YamlConfiguration();
+        String generator = SetupUtils.manager.getGenerator(plotworld);
+        if (generator != null) {
+            config.set("generator.plugin", generator);
+        }
         for (String key : section.getKeys(true)) {
             config.set(key, section.get(key));
         }
