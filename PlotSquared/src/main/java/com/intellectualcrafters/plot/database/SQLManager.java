@@ -86,7 +86,7 @@ public class SQLManager implements AbstractDB {
         // Set timout
         // setTimout();
         // Public final
-        this.SET_OWNER = "UPDATE `" + this.prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ?";
+        this.SET_OWNER = "UPDATE `" + this.prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + this.prefix + "plot`";
         this.CREATE_PLOTS = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
         this.CREATE_SETTINGS = "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
@@ -124,6 +124,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(1, uuid.toString());
                     statement.setInt(2, plot.id.x);
                     statement.setInt(3, plot.id.y);
+                    statement.setString(4, plot.world);
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {
