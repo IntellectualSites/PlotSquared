@@ -85,7 +85,6 @@ public class SendChunk {
             }
             if (unload) {
                 chunk.unload(true, true);
-                System.out.print("UNLOADING CHUNK");
             }
         }
     }

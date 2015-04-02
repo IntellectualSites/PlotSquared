@@ -28,11 +28,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -134,6 +136,9 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void createAllSettingsAndHelpers(final ArrayList<Plot> mylist) {
+        
+        // TODO create settings
+        
         final int size = mylist.size();
         int packet;
         if (PlotSquared.getMySQL() != null) {
@@ -233,6 +238,104 @@ public class SQLManager implements AbstractDB {
             }
         }
     }
+    
+    public void createSettings(final ArrayList<Integer> mylist) {
+        final int size = mylist.size();
+        int packet;
+        if (PlotSquared.getMySQL() != null) {
+            packet = Math.min(size, 50000);
+        } else {
+            packet = Math.min(size, 50);
+        }
+        final int amount = size / packet;
+        for (int j = 0; j <= amount; j++) {
+            final List<Integer> ids = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
+            if (ids.size() == 0) {
+                return;
+            }
+            final StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
+            for (int i = 0; i < (ids.size() - 1); i++) {
+                statement.append("(?),");
+            }
+            statement.append("(?)");
+            PreparedStatement stmt = null;
+            try {
+                stmt = this.connection.prepareStatement(statement.toString());
+                for (int i = 0; i < ids.size(); i++) {
+                    final Integer id = ids.get(i);
+                    stmt.setInt((i * 1) + 1, id);
+                }
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final Exception e) {
+                try {
+                    
+                    /*
+                     * (" + "  `plot_plot_id` INT(11) NOT NULL," + "  
+                     * `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  
+                     * `rain` INT(1) DEFAULT 0," + "  
+                     * `custom_time` TINYINT(1) DEFAULT '0'," + "  
+                     * `time` INT(11) DEFAULT '8000'," + "  
+                     * `deny_entry` TINYINT(1) DEFAULT '0'," + "  
+                     * `alias` VARCHAR(50) DEFAULT NULL," + "  
+                     * `flags` VARCHAR(512) DEFAULT NULL," + "  
+                     * `merged` INT(11) DEFAULT NULL," + "  
+                     * `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + 
+                     * "  PRIMARY KEY (`plot_plot_id`)," + "  
+                     * UNIQUE KEY `unique_alias` (`alias`)" + ") 
+                     * ENGINE=InnoDB DEFAULT CHARSET=utf8")
+                     * 
+                     * plot_plot_id - nn
+                     * biome - FOREST
+                     * rain - 0
+                     * custom_time 0
+                     * time
+                     */
+                    
+                    StringBuilder unionstmt = new StringBuilder("INSERT INTO `" + this.prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ");
+                    for (int i = 0; i < (ids.size() - 2); i++) {
+                        unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+                    }
+                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+                    stmt = this.connection.prepareStatement(unionstmt.toString());
+                    for (int i = 0; i < ids.size(); i++) {
+                        Integer id = ids.get(i);
+                        stmt.setInt((i * 10) + 1, id);
+                        stmt.setNull((i * 10) + 2, 4);
+                        stmt.setNull((i * 10) + 3, 4);
+                        stmt.setNull((i * 10) + 4, 4);
+                        stmt.setNull((i * 10) + 5, 4);
+                        stmt.setNull((i * 10) + 6, 4);
+                        stmt.setNull((i * 10) + 7, 4);
+                        stmt.setNull((i * 10) + 8, 4);
+                        stmt.setNull((i * 10) + 9, 4);
+                        stmt.setString((i * 10) + 10, "DEFAULT");
+                    }
+                    stmt.executeUpdate();
+                    stmt.close();
+                }
+                catch (Exception e2) {
+                    e2.printStackTrace();
+                    PlotSquared.log("&6[WARN] " + "Could not bulk save. Conversion may be slower...");
+                    try {
+                        for (final Integer id : ids) {
+                            try {
+                                stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)");
+                                stmt.setInt(1, id);
+                                stmt.executeUpdate();
+                                stmt.close();
+                            } catch (final Exception e3) {
+                                PlotSquared.log("&c[ERROR] " + "Failed to save plot setting: " + id);
+                            }
+                        }
+                    } catch (final Exception e4) {
+                        e4.printStackTrace();
+                        PlotSquared.log("&c[ERROR] " + "Failed to save plot settings!");
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Create a plot
@@ -277,20 +380,6 @@ public class SQLManager implements AbstractDB {
                 stmt.close();
             } catch (final Exception e) {
                 try {
-                    // TODO UNION
-                    
-                    /*
-
-                        INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values 
-
-                        INSERT INTO 'tablename'
-                              SELECT 'data1' AS 'column1', 'data2' AS 'column2'
-                        UNION SELECT 'data3', 'data4'
-                        UNION SELECT 'data5', 'data6'
-                        UNION SELECT 'data7', 'data8'
-
-
-                     */
                     StringBuilder unionstmt = new StringBuilder("INSERT INTO `" + this.prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ");
                     for (int i = 0; i < (plots.size() - 2); i++) {
                         unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ? ");
@@ -522,31 +611,6 @@ public class SQLManager implements AbstractDB {
     @Override
     public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
         final LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<>();
-        try {
-            final DatabaseMetaData data = this.connection.getMetaData();
-            ResultSet rs = data.getColumns(null, null, this.prefix + "plot", "plot_id");
-            final boolean execute = rs.next();
-            if (execute) {
-                final Statement statement = this.connection.createStatement();
-                statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot` ADD `plot_id_x` int(11) DEFAULT 0");
-                statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot` ADD `plot_id_z` int(11) DEFAULT 0");
-                statement.addBatch("UPDATE `" + this.prefix + "plot` SET\n" + "    `plot_id_x` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, 1, LOCATE(';', `plot_id`) - 1)," + "        `plot_id`" + "    )," + "    `plot_id_z` = IF(" + "        LOCATE(';', `plot_id`) > 0," + "        SUBSTRING(`plot_id`, LOCATE(';', `plot_id`) + 1)," + "        NULL" + "    )");
-                statement.addBatch("ALTER TABLE `" + this.prefix + "plot` DROP `plot_id`");
-                statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_settings` ADD `flags` VARCHAR(512) DEFAULT NULL");
-                statement.executeBatch();
-                statement.close();
-            }
-            rs = data.getColumns(null, null, this.prefix + "plot_settings", "merged");
-            if (!rs.next()) {
-                final Statement statement = this.connection.createStatement();
-                statement.addBatch("ALTER TABLE `" + this.prefix + "plot_settings` ADD `merged` int(11) DEFAULT NULL");
-                statement.executeBatch();
-                rs.close();
-                statement.close();
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
         final HashMap<Integer, Plot> plots = new HashMap<>();
         Statement stmt = null;
         try {
@@ -648,6 +712,11 @@ public class SQLManager implements AbstractDB {
                 id = r.getInt("plot_plot_id");
                 final Plot plot = plots.get(id);
                 if (plot != null) {
+                    plots.remove(id);
+                    if (!newplots.containsKey(plot.world)) {
+                        newplots.put(plot.world, new HashMap<PlotId, Plot>());
+                    }
+                    newplots.get(plot.world).put(plot.id, plot);
                     final String b = r.getString("biome");
                     if (b != null) {
                         for (final Biome mybiome : Biome.values()) {
@@ -724,12 +793,8 @@ public class SQLManager implements AbstractDB {
             }
             stmt.close();
             r.close();
-            for (final Plot plot : plots.values()) {
-                final String world = plot.world;
-                if (!newplots.containsKey(world)) {
-                    newplots.put(world, new HashMap<PlotId, Plot>());
-                }
-                newplots.get(world).put(plot.id, plot);
+            if (plots.keySet().size() > 0) {
+                createSettings(new ArrayList<Integer>(plots.keySet()));
             }
             boolean invalidPlot = false;
             for (final String worldname : noExist.keySet()) {
