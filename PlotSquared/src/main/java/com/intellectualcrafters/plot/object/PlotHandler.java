@@ -79,6 +79,9 @@ public class PlotHandler {
         if (plot.owner == null) {
             return false;
         }
+        if (isOwner(plot, uuid)) {
+            return true;
+        }
         if (plot.denied.contains(uuid)) {
             return false;
         }
