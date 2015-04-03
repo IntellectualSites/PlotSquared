@@ -51,7 +51,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             if (cmd.permission.hasPermission(player)) {
                 if (cmd.cmd.startsWith(arg)) {
                     tabOptions.add(cmd.cmd);
-                } else if (cmd.alias.get(0).startsWith(arg)) {
+                } else if (cmd.alias.size() > 0 && cmd.alias.get(0).startsWith(arg)) {
                     tabOptions.add(cmd.alias.get(0));
                 }
             }

@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 	
-	public void checkModified(final Plot plot, final int requiredChanges, final Runnable whenDone) {
+	public void checkModified(final Plot plot, final int requiredChanges, final Runnable whenDone, final Runnable ifFailed) {
 		TaskManager.index.increment();
 		
 		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
@@ -72,6 +72,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     return;
             	}
                 if (chunks.size() == 0) {
+                    TaskManager.runTaskLater(ifFailed, 1);
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     return;

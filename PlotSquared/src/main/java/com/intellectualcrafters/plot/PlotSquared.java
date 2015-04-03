@@ -181,12 +181,28 @@ public class PlotSquared {
                 }
             }
         }
-        for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.plots.entrySet()) {
-            if (!entry.getKey().equals(priorityWorld)) {
-                for (Plot plot : entry.getValue().values()) {
+        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        Collections.sort(worlds);
+        for (String world : worlds) {
+            if (!world.equals(priorityWorld)) {
+                for (Plot plot : PlotSquared.plots.get(world).values()) {
                     if (plots.contains(plot)) {
                         newPlots.add(plot);
                     }
+                }
+            }
+        }
+        return newPlots;
+    }
+    
+    public static ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
+        ArrayList<Plot> newPlots = new ArrayList<>();
+        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        Collections.sort(worlds);
+        for (String world : worlds) {
+            for (Plot plot : PlotSquared.plots.get(world).values()) {
+                if (plots.contains(plot)) {
+                    newPlots.add(plot);
                 }
             }
         }

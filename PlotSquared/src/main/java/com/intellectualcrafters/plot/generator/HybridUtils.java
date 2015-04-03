@@ -21,7 +21,7 @@ public abstract class HybridUtils {
 
     public static HybridUtils manager;
     
-    public abstract void checkModified(Plot plot, int requiredChanges, Runnable ifPassed);
+    public abstract void checkModified(Plot plot, int requiredChanges, Runnable ifPassed, Runnable ifFailed);
 
     public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
 

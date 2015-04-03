@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.annotation.Nullable;
 
 /**
  * The {@code TAG_List} tag.
@@ -74,7 +73,6 @@ public final class ListTag extends Tag {
      *
      * @return the tag or null
      */
-    @Nullable
     public Tag getIfExists(final int index) {
         try {
             return this.value.get(index);

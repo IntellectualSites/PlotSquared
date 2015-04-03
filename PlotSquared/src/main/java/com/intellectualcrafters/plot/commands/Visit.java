@@ -55,7 +55,7 @@ public class Visit extends SubCommand {
         final UUID uuid = UUIDHandler.getUUID(username);
         List<Plot> plots = null;
         if (uuid != null) {
-            plots = PlotSquared.sortPlots(getPlots(uuid), plr.getLocation().getWorld());
+            plots = PlotSquared.sortPlotsByWorld(getPlots(uuid));
         }
         if ((uuid == null) || plots.isEmpty()) {
             return sendMessage(plr, C.FOUND_NO_PLOTS);

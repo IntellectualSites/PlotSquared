@@ -47,7 +47,7 @@ public class Home extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, String... args) {
-        final ArrayList<Plot> plots = PlotSquared.sortPlots(PlotSquared.getPlots(plr), plr.getLocation().getWorld());
+        final ArrayList<Plot> plots = PlotSquared.sortPlotsByWorld(PlotSquared.getPlots(plr));
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
