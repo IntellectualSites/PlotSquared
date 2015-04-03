@@ -224,6 +224,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 return true;
             case 65:
                 return true;
+            case 67:
+                return true;
             case 68:
                 return true;
             case 71:
