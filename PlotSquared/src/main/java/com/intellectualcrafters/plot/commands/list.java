@@ -192,12 +192,18 @@ public class list extends SubCommand {
             return false;
         }
         
-        displayPlots(plr, plots, page);
+        displayPlots(plr, plots, page, world);
         return true;
     }
     
-    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int page) {
-        ArrayList<Plot> plots = PlotSquared.sortPlots(oldPlots);
+    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int page, String world) {
+        ArrayList<Plot> plots;
+        if (world != null) {
+            plots = PlotSquared.sortPlots(oldPlots, world);
+        }
+        else {
+            plots = PlotSquared.sortPlots(oldPlots);
+        }
         if (page < 0) {
             page = 0;
         }

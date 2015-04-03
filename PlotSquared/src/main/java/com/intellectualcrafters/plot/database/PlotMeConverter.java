@@ -250,6 +250,7 @@ public class PlotMeConverter {
                                 height = 64;
                             }
                             PlotSquared.config.set("worlds." + world + ".road.height", height);
+                            PlotSquared.config.save(PlotSquared.configFile);
                         } catch (final Exception e) {
                             sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
                         }
@@ -300,6 +301,7 @@ public class PlotMeConverter {
                                 PlotSquared.config.set("worlds." + world + ".road.height", height);
                                 PlotSquared.config.set("worlds." + world + ".plot.height", height);
                                 PlotSquared.config.set("worlds." + world + ".wall.height", height);
+                                PlotSquared.config.save(PlotSquared.configFile);
                             }
                         } catch (final Exception e) {
                         }

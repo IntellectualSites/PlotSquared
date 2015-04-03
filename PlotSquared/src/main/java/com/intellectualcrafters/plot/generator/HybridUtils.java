@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -21,7 +22,7 @@ public abstract class HybridUtils {
 
     public static HybridUtils manager;
     
-    public abstract void checkModified(Plot plot, int requiredChanges, Runnable ifPassed, Runnable ifFailed);
+    public abstract void checkModified(final Plot plot, final RunnableVal whenDone);
 
     public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
 

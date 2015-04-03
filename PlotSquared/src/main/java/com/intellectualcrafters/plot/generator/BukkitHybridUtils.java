@@ -21,6 +21,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -29,7 +30,7 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 	
-	public void checkModified(final Plot plot, final int requiredChanges, final Runnable whenDone, final Runnable ifFailed) {
+	public void checkModified(final Plot plot, final RunnableVal whenDone) {
 		TaskManager.index.increment();
 		
 		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
@@ -41,7 +42,6 @@ public class BukkitHybridUtils extends HybridUtils {
         int tx = top.getX() >> 4;
         int tz = top.getZ() >> 4;
         
-        int size = (tx-bx) << 4;
         World world = BukkitUtil.getWorld(plot.world);
         
         final HashSet<Chunk> chunks = new HashSet<>();
@@ -53,6 +53,7 @@ public class BukkitHybridUtils extends HybridUtils {
         
         PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
         if (!(plotworld instanceof ClassicPlotWorld)) {
+            whenDone.value = -1;
         	TaskManager.runTaskLater(whenDone, 1);
         	return;
         }
@@ -65,23 +66,19 @@ public class BukkitHybridUtils extends HybridUtils {
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-            	if (count.intValue() >= requiredChanges) {
-            		TaskManager.runTaskLater(whenDone, 1);
-            		Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                    TaskManager.tasks.remove(currentIndex);
-                    return;
-            	}
                 if (chunks.size() == 0) {
-                    TaskManager.runTaskLater(ifFailed, 1);
+                    whenDone.value = 0;
+                    TaskManager.runTaskLater(whenDone, 1);
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     return;
                 }
                 final Chunk chunk = chunks.iterator().next();
+                chunks.iterator().remove();
                 int bx = Math.max(chunk.getX() >> 4, bot.getX());
                 int bz = Math.max(chunk.getZ() >> 4, bot.getZ());
-                int ex = Math.max((chunk.getX() >> 4) + 15, top.getX());
-                int ez = Math.max((chunk.getZ() >> 4) + 15, top.getZ());
+                int ex = Math.min((chunk.getX() >> 4) + 15, top.getX());
+                int ez = Math.min((chunk.getZ() >> 4) + 15, top.getZ());
                 // count changes
                 count.add(checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK));
                 count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK));

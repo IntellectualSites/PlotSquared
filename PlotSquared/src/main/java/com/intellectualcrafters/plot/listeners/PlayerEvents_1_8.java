@@ -23,6 +23,9 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
             if (!isInPlot(l)) {
+                if (!isPlotArea(l)) {
+                    return;
+                }
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
                     e.setCancelled(true);
