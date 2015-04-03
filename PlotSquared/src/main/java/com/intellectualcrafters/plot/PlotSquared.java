@@ -501,15 +501,16 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
         TASK = IMP.getTaskManager();
-        if (Settings.KILL_ROAD_MOBS) {
-            IMP.runEntityTask();
-        }
         if (C.ENABLED.s().length() > 0) {
             log(C.ENABLED.s());
         }
         setupConfigs();
         setupDefaultFlags();
         setupDatabase();
+        // Tasks
+        if (Settings.KILL_ROAD_MOBS) {
+            IMP.runEntityTask();
+        }
         // Events
         IMP.registerCommands();
         IMP.registerPlayerEvents();
@@ -550,6 +551,7 @@ public class PlotSquared {
         // Copy files
         copyFile("town.template");
         copyFile("skyblock.template");
+        showDebug();
     }
     
     public void copyFile(String file) {
@@ -595,7 +597,7 @@ public class PlotSquared {
             connection.close();
             mySQL.closeConnection();
         } catch (NullPointerException | SQLException e) {
-            if (connection != null) {
+            if (mySQL != null) {
                 log("&cCould not close mysql connection!");
             }
         }

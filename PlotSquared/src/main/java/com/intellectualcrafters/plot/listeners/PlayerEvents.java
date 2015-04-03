@@ -110,7 +110,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
     @EventHandler
-    public void onRedstoneEvent(BlockRedstoneEvent event) {
+    public static void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         if (!isPlotWorld(loc.getWorld())) {
@@ -159,9 +159,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         event.setNewCurrent(0);
     }
-      
+
     @EventHandler
-    public void onPhysicsEvent(BlockPhysicsEvent event) {
+    public static void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         if (!isPlotWorld(loc.getWorld())) {
