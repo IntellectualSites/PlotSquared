@@ -109,6 +109,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
+    @EventHandler
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -153,11 +154,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
             case POWERED_RAIL: {
-                event.setNewCurrent(0);
+                return;
             }
         }
+        event.setNewCurrent(0);
     }
       
+    @EventHandler
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
