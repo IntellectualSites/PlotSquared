@@ -116,6 +116,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return;
+        }
         Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
         if (redstone == null || (Boolean) redstone.getValue()) {
             return;
@@ -162,6 +165,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return;
+        }
         Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
         if (redstone == null || (Boolean) redstone.getValue()) {
             return;
