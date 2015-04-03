@@ -39,9 +39,11 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -107,6 +109,75 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
+    public void onRedstoneEvent(BlockRedstoneEvent event) {
+        Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
+        if (!isPlotWorld(loc.getWorld())) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
+        if (redstone == null || (Boolean) redstone.getValue()) {
+            return;
+        }
+        if (!isPlotArea(loc)) {
+            return;
+        }
+        switch (block.getType()) {
+            case REDSTONE_LAMP_OFF:
+            case REDSTONE_LAMP_ON:
+            case PISTON_BASE:
+            case PISTON_STICKY_BASE:
+            case IRON_DOOR_BLOCK:
+            case LEVER:
+            case WOODEN_DOOR:
+            case FENCE_GATE:
+            case WOOD_BUTTON:
+            case STONE_BUTTON:
+            case IRON_PLATE:
+            case WOOD_PLATE:
+            case STONE_PLATE:
+            case GOLD_PLATE:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
+            case IRON_TRAPDOOR:
+            case SPRUCE_FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case POWERED_RAIL: {
+                event.setNewCurrent(0);
+            }
+        }
+    }
+      
+    public void onPhysicsEvent(BlockPhysicsEvent event) {
+        Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
+        if (!isPlotWorld(loc.getWorld())) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
+        if (redstone == null || (Boolean) redstone.getValue()) {
+            return;
+        }
+        if (!isPlotArea(loc)) {
+            return;
+        }
+        switch (block.getType()) {
+            case REDSTONE_COMPARATOR_OFF:
+            case REDSTONE_COMPARATOR_ON: {
+                event.setCancelled(true);
+            }
+        }
+    }
+    
+    
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = (Projectile) event.getEntity();
