@@ -78,12 +78,18 @@ public class HybridPop extends PlotPopulator {
         this.wallheight = this.plotworld.WALL_HEIGHT;
         this.roadheight = this.plotworld.ROAD_HEIGHT;
         this.plotheight = this.plotworld.PLOT_HEIGHT;
-        if ((this.pathsize % 2) == 0) {
-            this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
-        } else {
-            this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+        if (this.pathsize == 0) {
+            this.pathWidthLower = (short) -1;
+            this.pathWidthUpper = (short) (this.plotsize + 1);
         }
-        this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+        else {
+            if ((this.pathsize % 2) == 0) {
+                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
+            } else {
+                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+            }
+            this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+        }
     }
 
     public final long nextLong() {
@@ -192,7 +198,7 @@ public class HybridPop extends PlotPopulator {
                             }
                         }
                     }
-                } else {
+                } else if (pathsize != 0) {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
                         for (short y = 1; y <= this.wallheight; y++) {

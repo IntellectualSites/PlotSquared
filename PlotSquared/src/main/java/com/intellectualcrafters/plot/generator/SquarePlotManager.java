@@ -35,10 +35,15 @@ public abstract class SquarePlotManager extends GridPlotManager {
     public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         int pathWidthLower;
-        if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
-        } else {
-            pathWidthLower = dpw.ROAD_WIDTH / 2;
+        if (dpw.ROAD_WIDTH == 0) {
+            pathWidthLower = -1;
+        }
+        else {
+            if ((dpw.ROAD_WIDTH % 2) == 0) {
+                pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
+            } else {
+                pathWidthLower = dpw.ROAD_WIDTH / 2;
+            }
         }
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int idx;

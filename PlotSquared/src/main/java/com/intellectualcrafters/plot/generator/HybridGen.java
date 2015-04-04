@@ -98,12 +98,18 @@ public class HybridGen extends PlotGenerator {
         this.wallheight = this.plotworld.WALL_HEIGHT;
         this.roadheight = this.plotworld.ROAD_HEIGHT;
         this.plotheight = this.plotworld.PLOT_HEIGHT;
-        if ((this.pathsize % 2) == 0) {
-            this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
-        } else {
-            this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+        if (this.pathsize == 0) {
+            this.pathWidthLower = (short) -1;
+            this.pathWidthUpper = (short) (this.plotsize + 1);
         }
-        this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+        else {
+            if ((this.pathsize % 2) == 0) {
+                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
+            } else {
+                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+            }
+            this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+        }
         this.biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         try {
             this.maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
@@ -129,7 +135,7 @@ public class HybridGen extends PlotGenerator {
      */
     public PlotWorld getNewPlotWorld(final String world) {
         if (this.plotworld == null) {
-            this.plotworld = new HybridPlotWorld(world);
+            this.plotworld = new HybridPlotWorld(world); 
         }
         return this.plotworld;
     }
@@ -224,7 +230,7 @@ public class HybridGen extends PlotGenerator {
                             }
                         }
                     }
-                } else {
+                } else if (pathsize != 0) {
                     // wall
                     if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
                         for (short y = 1; y <= this.wallheight; y++) {
