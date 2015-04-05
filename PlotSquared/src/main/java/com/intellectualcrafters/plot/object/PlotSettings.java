@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -160,9 +161,9 @@ public class PlotSettings {
             return null;
         }
         for (final PlotComment comment : this.comments) {
-            if (comment.tier == tier) {
-                c.add(comment);
-            }
+//            if (comment.tier == tier) {
+//                c.add(comment);
+//            }
         }
         return c;
     }

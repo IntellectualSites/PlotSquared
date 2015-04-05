@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.generator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.mutable.MutableInt;
@@ -67,21 +68,23 @@ public class BukkitHybridUtils extends HybridUtils {
             @Override
             public void run() {
                 if (chunks.size() == 0) {
-                    whenDone.value = 0;
+                    whenDone.value = count.intValue();
                     TaskManager.runTaskLater(whenDone, 1);
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     return;
                 }
-                final Chunk chunk = chunks.iterator().next();
-                chunks.iterator().remove();
-                int bx = Math.max(chunk.getX() >> 4, bot.getX());
-                int bz = Math.max(chunk.getZ() >> 4, bot.getZ());
-                int ex = Math.min((chunk.getX() >> 4) + 15, top.getX());
-                int ez = Math.min((chunk.getZ() >> 4) + 15, top.getZ());
+                Iterator<Chunk> iter = chunks.iterator();
+                final Chunk chunk = iter.next();
+                iter.remove();
+                int bx = Math.max(chunk.getX() << 4, bot.getX());
+                int bz = Math.max(chunk.getZ() << 4, bot.getZ());
+                int ex = Math.min((chunk.getX() << 4) + 15, top.getX());
+                int ez = Math.min((chunk.getZ() << 4) + 15, top.getZ());
                 // count changes
                 count.add(checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK));
                 count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK));
+                count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) }));
             }
         }, 1);
         TaskManager.tasks.put(currentIndex, task);
