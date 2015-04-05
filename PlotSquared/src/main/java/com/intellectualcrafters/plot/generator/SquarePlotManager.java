@@ -35,8 +35,10 @@ public abstract class SquarePlotManager extends GridPlotManager {
     public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         int pathWidthLower;
+        int end;
         if (dpw.ROAD_WIDTH == 0) {
             pathWidthLower = -1;
+            end = dpw.PLOT_WIDTH;
         }
         else {
             if ((dpw.ROAD_WIDTH % 2) == 0) {
@@ -44,6 +46,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             } else {
                 pathWidthLower = dpw.ROAD_WIDTH / 2;
             }
+            end = pathWidthLower + dpw.PLOT_WIDTH;
         }
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int idx;
@@ -64,7 +67,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
             idz = (z/size) + 1;
             z = (z % size);
         }
-        final int end = pathWidthLower + dpw.PLOT_WIDTH;
         final boolean northSouth = (z <= pathWidthLower) || (z > end);
         final boolean eastWest = (x <= pathWidthLower) || (x > end);
         if (northSouth || eastWest) {
@@ -81,10 +83,18 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int pathWidthLower;
-        if ((dpw.ROAD_WIDTH % 2) == 0) {
-            pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
-        } else {
-            pathWidthLower = dpw.ROAD_WIDTH / 2;
+        final int end;
+        if (dpw.ROAD_WIDTH == 0) {
+            pathWidthLower = -1;
+            end = dpw.PLOT_WIDTH;
+        }
+        else {
+            if ((dpw.ROAD_WIDTH % 2) == 0) {
+                pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
+            } else {
+                pathWidthLower = dpw.ROAD_WIDTH / 2;
+            }
+            end = pathWidthLower + dpw.PLOT_WIDTH;
         }
         int dx;
         int dz;
@@ -106,7 +116,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
             dz = (z/size) + 1;
             rz = (z % size);
         }
-        final int end = pathWidthLower + dpw.PLOT_WIDTH;
         final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
         final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
         if (northSouth && eastWest) {
