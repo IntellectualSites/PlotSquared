@@ -103,9 +103,14 @@ public enum C {
     /*
      * Comment
      */
-    COMMENT_SYNTAX("$2Use /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
+    NOT_VALID_INBOX_INDEX("$2No comment at index %s"),
+    INBOX_ITEM("$2 - $4%s"),
+    COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>"),
     INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s"),
-    COMMENT_REMOVED("$4Successfully deleted %s."),
+    NO_PERM_INBOX("$2You do not have permission for that inbox"),
+    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox"),
+    NO_PLOT_INBOX("$2You must  stand in or supply a plot argument"),
+    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'"),
     COMMENT_ADDED("$4A comment has been left"),
     COMMENT_HEADER("$2====== Comments ======"),
     /*

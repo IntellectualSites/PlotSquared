@@ -5,6 +5,10 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 
 public abstract class CommentInbox {
+    
+    @Override
+    public abstract String toString();
+    
     public abstract boolean canRead(Plot plot, PlotPlayer player);
     
     public abstract boolean canWrite(Plot plot, PlotPlayer player);
@@ -24,4 +28,8 @@ public abstract class CommentInbox {
     public abstract boolean getComments(Plot plot, RunnableVal whenDone);
     
     public abstract boolean addComment(Plot plot, PlotComment comment);
+    
+    public abstract boolean removeComment(Plot plot, PlotComment comment);
+    
+    public abstract boolean clearInbox(Plot plot);
 }

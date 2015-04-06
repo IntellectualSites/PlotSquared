@@ -25,11 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.CommentInbox;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -37,152 +42,141 @@ import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Inbox extends SubCommand {
     public Inbox() {
-        super(Command.INBOX, "Review the comments for a plot", "inbox", CommandCategory.ACTIONS, true);
+        super(Command.INBOX, "Review the comments for a plot", "inbox <inbox> [delete <index>|clear|page]", CommandCategory.ACTIONS, true);
+    }
+    
+    public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
+        PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
+        if (page < 0) {
+            page = 0;
+        }
+        // Get the total pages
+        // int totalPages = ((int) Math.ceil(12 *
+        final int totalPages = (int) Math.ceil(comments.length / 12);
+        if (page > totalPages) {
+            page = totalPages;
+        }
+        // Only display 12 per page
+        int max = (page * 12) + 12;
+        if (max > comments.length) {
+            max = comments.length;
+        }
+        final StringBuilder string = new StringBuilder();
+        string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("plot","review").replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
+        PlotComment c;
+        // This might work xD
+        for (int x = (page * 12); x < max; x++) {
+            c = comments[x];
+            String color;
+            if (player.getName().equals(c.senderName)) {
+                color = "&a";
+            }
+            else {
+                color = "&7";
+            }
+            string.append("&8[&7#" + x + "&8][&7" + c.world + ";" + c.id + "&8][&7#" + c.senderName + "&8]" + color + c.senderName +"&7 : " + color + c.comment + "\n");
+        }
+        MainUtil.sendMessage(player, string.toString());
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        boolean report = false;
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reports")) {
-                report = true;
+    public boolean execute(final PlotPlayer player, final String... args) {
+        final Plot plot = MainUtil.getPlot(player.getLocation());
+        if (args.length < 1) {
+            sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox <inbox> [delete <index>|clear|page]");
+            for (CommentInbox inbox : CommentManager.inboxes.values()) {
+                if (inbox.canRead(plot, player)) {
+                    sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                }
             }
-        }
-        final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) && !report) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if ((plot != null) && !plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        Integer tier;
-        final UUID uuid = plr.getUUID();
-        if (Permissions.hasPermission(plr, "plots.comment.admin")) {
-            tier = 0;
-        } else if ((plot != null) && plot.isOwner(uuid)) {
-            tier = 1;
-        } else if ((plot != null) && plot.helpers.contains(uuid)) {
-            tier = 2;
-        } else if ((plot != null) && plot.trusted.contains(uuid)) {
-            tier = 3;
-        } else {
-            tier = 4;
+        final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
+        if (inbox == null) {
+            sendMessage(player, C.INVALID_INBOX, StringUtils.join(CommentManager.inboxes.keySet(),", "));
+            return false;
         }
-        final boolean below;
-        if (args.length > 0) {
-            below = false;
-            switch (args[0].toLowerCase()) {
-                case "admin":
-                    if (tier <= 0) {
-                        tier = 0;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
-                        return false;
+        final int page;
+        if (args.length > 1) {
+            switch (args[1].toLowerCase()) {
+                case "delete": {
+                    if (!inbox.canModify(plot, player)) {
+                        sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
-                    break;
-                case "owner":
-                    if (tier <= 1) {
-                        tier = 1;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.owner");
-                        return false;
+                    if (args.length != 3) {
+                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
                     }
-                    break;
-                case "helper":
-                    if (tier <= 2) {
-                        tier = 2;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.helper");
-                        return false;
-                    }
-                    break;
-                case "trusted":
-                    if (tier <= 3) {
-                        tier = 3;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.trusted");
-                        return false;
-                    }
-                    break;
-                case "everyone":
-                    if (tier <= 4) {
-                        tier = 4;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.everyone");
-                        return false;
-                    }
-                    break;
-                case "reports":
-                    if (tier <= 0) {
-                        tier = -1;
-                    } else {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.inbox.admin");
-                        return false;
-                    }
-                    break;
-                default:
-                    MainUtil.sendMessage(plr, C.INVALID_INBOX, Arrays.copyOfRange(new String[] { "admin", "owner", "helper", "trusted", "everyone" }, Math.max(0, tier), 4));
-                    return false;
-            }
-        } else {
-            below = true;
-        }
-        final String world = loc.getWorld();
-        final int tier2 = tier;
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<PlotComment> comments = null;
-                if (tier2 == -1) {
-                    comments = DBFunc.getComments(world, null, 0, false);
-                } else {
-                    comments = plot.settings.getComments(tier2);
-                }
-                if (comments == null) {
-                    comments = DBFunc.getComments(world, plot, tier2, below);
-                    plot.settings.setComments(comments);
-                }
-                if (args.length == 2) {
-                    final String[] split = args[1].toLowerCase().split(":");
-                    if (!split[0].equals("clear")) {
-                        MainUtil.sendMessage(plr, "&c/plot inbox [tier] [clear][:#]");
-                        return;
-                    }
-                    if (split.length > 1) {
-                        try {
-                            final int index = Integer.parseInt(split[1]);
-                            final PlotComment comment = comments.get(index - 1);
-                            DBFunc.removeComment(world, plot, comment);
-                            plot.settings.removeComment(comment);
-                            MainUtil.sendMessage(plr, C.COMMENT_REMOVED, "1 comment");
-                            return;
-                        } catch (final Exception e) {
-                            MainUtil.sendMessage(plr, "&cInvalid index:\n/plot inbox [tier] [clear][:#]");
-                            return;
+                    final int index;
+                    try {
+                        index = Integer.parseInt(args[2]);
+                        if (index < 1) {
+                            sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
+                            return false;
                         }
                     }
-                    for (final PlotComment comment : comments) {
-                        DBFunc.removeComment(world, plot, comment);
+                    catch (NumberFormatException e) {
+                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
+                        return false;
                     }
-                    plot.settings.removeComments(comments);
-                    MainUtil.sendMessage(plr, C.COMMENT_REMOVED, "all comments in that category");
-                } else {
-                    final List<String> recipients = Arrays.asList("A", "O", "H", "T", "E");
-                    int count = 1;
-                    final StringBuilder message = new StringBuilder(C.COMMENT_HEADER.s());
-                    for (final PlotComment comment : comments) {
-                        message.append("\n&8[&7" + comment.id + "&8]" + "&c[" + count + "]&6[" + recipients.get(tier2 == -1 ? 0 : tier2) + "] &7" + comment.senderName + "&f: " + comment.comment);
-                        count++;
+                    
+                    if (!inbox.getComments(plot, new RunnableVal() {
+                        @Override
+                        public void run() {
+                            List<PlotComment> comments = (List<PlotComment>) value;
+                            if (index > comments.size()) {
+                                sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
+                            }
+                            PlotComment comment = comments.get(index - 1);
+                            inbox.removeComment(plot, comment);
+                            plot.settings.removeComment(comment);
+                            MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
+                        }
+                    })) {
+                        sendMessage(player, C.NOT_IN_PLOT);
+                        return false;
                     }
-                    if (comments.size() == 0) {
-                        message.append("&cNo messages.");
+                    return true;
+                }
+                case "clear": {
+                    if (!inbox.canModify(plot, player)) {
+                        sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
-                    MainUtil.sendMessage(plr, message.toString());
+                    inbox.clearInbox(plot);
+                    ArrayList<PlotComment> comments = plot.settings.getComments(inbox.toString());
+                    if (comments != null) {
+                        plot.settings.removeComments(comments);
+                    }
+                    MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
+                    return true;
+                }
+                default: {
+                    try {
+                        page = Integer.parseInt(args[1]) ;
+                    }
+                    catch (NumberFormatException e) {
+                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox <inbox> [delete <index>|clear|page]");
+                        return false;
+                    };
                 }
             }
-        });
+        }
+        else {
+            page = 1;
+        }
+        if (!inbox.canRead(plot, player)) {
+            sendMessage(player, C.NO_PERM_INBOX);
+            return false;
+        }
+        if (!inbox.getComments(plot, new RunnableVal() {
+            @Override
+            public void run() {
+                List<PlotComment> comments = (List<PlotComment>) value;
+                displayComments(player, comments, page);
+            }
+        })) {
+            sendMessage(player, C.NOT_IN_PLOT);
+            return false;
+        }
         return true;
     }
 }

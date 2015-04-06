@@ -237,6 +237,10 @@ public class DBFunc {
     public static void removeComment(final String world, final Plot plot, final PlotComment comment) {
         dbManager.removeComment(world, plot, comment);
     }
+    
+    public static void clearInbox(final Plot plot, final String inbox) {
+        dbManager.clearInbox(plot, inbox);
+    }
 
     /**
      * @param plot
@@ -249,8 +253,8 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, final boolean below) {
-        return dbManager.getComments(world, plot, tier, below);
+    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final String inbox) {
+        return dbManager.getComments(world, plot, inbox);
     }
 
     /**

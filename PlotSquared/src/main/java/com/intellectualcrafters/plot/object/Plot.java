@@ -173,22 +173,6 @@ public class Plot implements Cloneable {
     }
 
     /**
-     * Get the UUID of the owner
-     */
-//    public UUID getOwner() {
-//        return this.owner_;
-//    }
-
-    /**
-     * Set the owner
-     *
-     * @param uuid
-     */
-//    public void setOwner(final UUID uuid) {
-//        this.owner_ = uuid;
-//    }
-
-    /**
      * Get the plot ID
      */
     public PlotId getId() {

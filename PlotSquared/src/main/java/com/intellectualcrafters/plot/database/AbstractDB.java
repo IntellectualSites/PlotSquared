@@ -301,6 +301,13 @@ public interface AbstractDB {
      * @param comment Comment to remove
      */
     public void removeComment(final String world, final Plot plot, final PlotComment comment);
+    
+    /**
+     * Clear an inbox
+     * @param plot
+     * @param inbox
+     */
+    public void clearInbox(Plot plot, String inbox);
 
     /**
      * Set a plot comment
@@ -320,7 +327,7 @@ public interface AbstractDB {
      *
      * @return Plot Comments within the specified tier
      */
-    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, boolean below);
+    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final String inbox);
 
     public void createPlotAndSettings(Plot plot);
 

@@ -155,15 +155,15 @@ public class PlotSettings {
         return "";
     }
 
-    public ArrayList<PlotComment> getComments(final int tier) {
+    public ArrayList<PlotComment> getComments(final String inbox) {
         final ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
             return null;
         }
         for (final PlotComment comment : this.comments) {
-//            if (comment.tier == tier) {
-//                c.add(comment);
-//            }
+            if (comment.inbox.equals(inbox)) {
+                c.add(comment);
+            }
         }
         return c;
     }

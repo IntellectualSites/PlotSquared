@@ -57,6 +57,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
@@ -507,6 +508,7 @@ public class PlotSquared {
         setupConfigs();
         setupDefaultFlags();
         setupDatabase();
+        CommentManager.registerDefaultInboxes();    
         // Tasks
         if (Settings.KILL_ROAD_MOBS) {
             IMP.runEntityTask();
