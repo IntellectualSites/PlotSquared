@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 
 public class Inbox extends SubCommand {
     public Inbox() {
-        super(Command.INBOX, "Review the comments for a plot", "inbox <inbox> [delete <index>|clear|page]", CommandCategory.ACTIONS, true);
+        super(Command.INBOX, "Review the comments for a plot", "inbox [inbox] [delete <index>|clear|page]", CommandCategory.ACTIONS, true);
     }
     
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
@@ -77,21 +77,30 @@ public class Inbox extends SubCommand {
     public boolean execute(final PlotPlayer player, final String... args) {
         final Plot plot = MainUtil.getPlot(player.getLocation());
         if (args.length == 0) {
-            sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox <inbox> [delete <index>|clear|page]");
+            sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal() {
                         @Override
                         public void run() {
                             if (value != null) {
-                                int count = 0;
+                                int total = 0;
+                                int unread = 0;
                                 for (PlotComment comment : (ArrayList<PlotComment>) value) {
+                                    total++;
                                     if (comment.timestamp > player.getPreviousLogin()) {
-                                        count++;
+                                        unread++;
                                     }
                                 }
-                                if (count > 0) {
-                                    sendMessage(player, C.INBOX_ITEM, "&c" + inbox.toString() + " (" + count + ")");
+                                if (total != 0) {
+                                    String color;
+                                    if (unread > 0) {
+                                        color = "&c";
+                                    }
+                                    else {
+                                        color = "";
+                                    }
+                                    sendMessage(player, C.INBOX_ITEM, color + inbox.toString() + " (" + total + "/" + unread + ")");
                                     return;
                                 }
                             }
@@ -167,7 +176,7 @@ public class Inbox extends SubCommand {
                         page = Integer.parseInt(args[1]) ;
                     }
                     catch (NumberFormatException e) {
-                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox <inbox> [delete <index>|clear|page]");
+                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     };
                 }
