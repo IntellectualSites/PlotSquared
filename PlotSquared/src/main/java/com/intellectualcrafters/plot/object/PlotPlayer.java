@@ -8,6 +8,9 @@ import java.util.UUID;
  * @author Citymonstret
  */
 public interface PlotPlayer {
+    
+    public long getPreviousLogin();
+    
     public Location getLocation();
     
     public Location getLocationFull();

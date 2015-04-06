@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.flag.Flag;
@@ -52,7 +53,7 @@ public class PlotSettings {
     /**
      * Comments
      */
-    private ArrayList<PlotComment> comments = null;
+    private List<PlotComment> comments = null;
     /**
      * Flags
      */
@@ -168,7 +169,7 @@ public class PlotSettings {
         return c;
     }
 
-    public void setComments(final ArrayList<PlotComment> comments) {
+    public void setComments(final List<PlotComment> comments) {
         this.comments = comments;
     }
 
@@ -178,7 +179,7 @@ public class PlotSettings {
         }
     }
 
-    public void removeComments(final ArrayList<PlotComment> comments) {
+    public void removeComments(final List<PlotComment> comments) {
         for (final PlotComment comment : comments) {
             removeComment(comment);
         }

@@ -17,6 +17,7 @@ public class BukkitPlayer implements PlotPlayer {
     public HashSet<String> hasPerm = new HashSet<>();
     public HashSet<String> noPerm = new HashSet<>();
     private int op = 0;
+    private long last = 0;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -24,6 +25,13 @@ public class BukkitPlayer implements PlotPlayer {
      */
     public BukkitPlayer(final Player player) {
         this.player = player;
+    }
+    
+    public long getPreviousLogin() {
+        if (last == 0) {
+            last = player.getLastPlayed();
+        }
+        return last;
     }
 
     @Override

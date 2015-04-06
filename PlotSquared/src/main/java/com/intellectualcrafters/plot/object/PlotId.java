@@ -83,7 +83,7 @@ public class PlotId {
         return this.x + ";" + this.y;
     }
     
-    public PlotId unpair(int hash) {
+    public static PlotId unpair(int hash) {
         if (hash >= 0) {
             if (hash % 2 == 0) {
                 // + +

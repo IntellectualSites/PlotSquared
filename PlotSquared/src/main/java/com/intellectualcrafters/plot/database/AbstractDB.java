@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
@@ -327,7 +328,7 @@ public interface AbstractDB {
      *
      * @return Plot Comments within the specified tier
      */
-    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final String inbox);
+    public void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone);
 
     public void createPlotAndSettings(Plot plot);
 

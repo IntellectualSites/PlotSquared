@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,10 +21,12 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {

@@ -47,6 +47,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -104,6 +105,7 @@ public class SQLManager implements AbstractDB {
                 }
             }, 11000);
         }
+        updateTables();
     }
 
     /**
@@ -462,13 +464,7 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` (" + "`id` INT(11) NOT NULL AUTO_INCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(40) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" +
-            "`plot_plot_id` INT(11) NOT NULL," + 
-                    "`comment` VARCHAR(40) NOT NULL," + 
-            "`inbox` VARCHAR(40) NOT NULL," +
-            "`timestamp` INT(11) NOT NULL," + 
-                    "`sender` VARCHAR(40) NOT NULL" + 
-            ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)," + "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -484,7 +480,7 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`plot_plot_id` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(40) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP" + ")");
@@ -587,17 +583,24 @@ public class SQLManager implements AbstractDB {
     public void updateTables() {
         try {
             final DatabaseMetaData data = this.connection.getMetaData();
-            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot_id");
+            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
             if (!rs.next()) {
+                rs.close();
                 final Statement statement = this.connection.createStatement();
-                statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `inbox` VARCHAR(11) DEFAULT `public`");
-                statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `timestamp` INT(11) DEFAULT 0");
-                statement.addBatch("ALTER TABLE `" + this.prefix + "plot` DROP `tier`");
+                statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
+                if (PlotSquared.getMySQL() != null) {
+                    statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                }
+                else {
+                    statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
+                }
                 statement.executeBatch();
                 statement.close();
             }
         }
-        catch (SQLException e) {}
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1108,11 +1111,12 @@ public class SQLManager implements AbstractDB {
                 try {
                     PreparedStatement statement;
                     if (plot != null) {
-                        statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `comment` = ? AND `inbox` = ? AND `sender` = ?");
-                        statement.setInt(1, getId(world, plot.id));
-                        statement.setString(2, comment.comment);
-                        statement.setString(3, comment.inbox);
-                        statement.setString(4, comment.senderName);
+                        statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `comment` = ? AND `inbox` = ? AND `sender` = ?");
+                        statement.setString(1, plot.world);
+                        statement.setInt(2, plot.id.hashCode());
+                        statement.setString(3, comment.comment);
+                        statement.setString(4, comment.inbox);
+                        statement.setString(5, comment.senderName);
                     } else {
                         statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `comment` = ? AND `inbox` = ? AND `sender` = ?");
                         statement.setString(1, comment.comment);
@@ -1137,9 +1141,10 @@ public class SQLManager implements AbstractDB {
                 try {
                     PreparedStatement statement;
                     if (plot != null) {
-                        statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `inbox` = ?");
-                        statement.setInt(1, getId(plot.world, plot.id));
-                        statement.setString(2, inbox);
+                        statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
+                        statement.setString(1, plot.world);
+                        statement.setInt(2, plot.id.hashCode());
+                        statement.setString(3, inbox);
                     } else {
                         statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` `inbox` = ?");
                         statement.setString(1, inbox);
@@ -1155,39 +1160,50 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final String inbox) {
-        final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
-        try {
-            final PreparedStatement statement;
-            if (plot != null) {
-                statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `plot_plot_id` = ? AND `inbox` = ?");
-                statement.setInt(1, getId(plot.world, plot.id));
-                statement.setString(2, inbox);
-            } else {
-                statement = this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_comments` WHERE `inbox` = ?");
-                statement.setString(1, inbox);
-            }
-            final ResultSet set = statement.executeQuery();
-            PlotComment comment;
-            while (set.next()) {
-                final String sender = set.getString("sender");
-                final String msg = set.getString("comment");
-                final int timestamp = set.getInt("timestamp");
-                if (plot != null) {
-                    comment = new PlotComment(plot.world, plot.id, msg, sender, inbox, timestamp);
+    public void getComments(final String world, final Plot plot, final String inbox, final RunnableVal whenDone) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
+                try {
+                    final PreparedStatement statement;
+                    if (plot != null) {
+                        statement = connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
+                        statement.setString(1, plot.world);
+                        statement.setInt(2, plot.id.hashCode());
+                        statement.setString(3, inbox);
+                    } else {
+                        statement = connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `inbox` = ?");
+                        statement.setString(1, inbox);
+                    }
+                    final ResultSet set = statement.executeQuery();
+                    PlotComment comment;
+                    while (set.next()) {
+                        final String sender = set.getString("sender");
+                        final String world = set.getString("world");
+                        final int hash = set.getInt("hashcode");
+                        PlotId id;
+                        if (hash != 0) {
+                            id = PlotId.unpair(hash);
+                        }
+                        else {
+                            id = null;
+                        }
+                        final String msg = set.getString("comment");
+                        final long timestamp = set.getInt("timestamp") * 1000;
+                        comment = new PlotComment(world, id, msg, sender, inbox, timestamp);
+                        comments.add(comment);
+                        whenDone.value = comments;
+                        TaskManager.runTask(whenDone);
+                    }
+                    statement.close();
+                    set.close();
+                } catch (final SQLException e) {
+                    PlotSquared.log("&7[WARN] " + "Failed to fetch comment");
+                    e.printStackTrace();
                 }
-                else {
-                    comment = new PlotComment(null, null, msg, sender, inbox, timestamp);
-                }
-                comments.add(comment);
             }
-            statement.close();
-            set.close();
-        } catch (final SQLException e) {
-            PlotSquared.log("&7[WARN] " + "Failed to fetch comment");
-            e.printStackTrace();
-        }
-        return comments;
+        });
     }
 
     @Override
@@ -1196,12 +1212,13 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_comments` (`plot_plot_id`, `comment`, `inbox`, `timestamp`, `sender`) VALUES(?,?,?,?,?)");
-                    statement.setInt(1, getId(world, plot.id));
-                    statement.setString(2, comment.comment);
-                    statement.setString(3, comment.inbox);
-                    statement.setInt(4, (int) (comment.timestamp / 1000));
-                    statement.setString(5, comment.senderName);
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_comments` (`world`, `hashcode`, `comment`, `inbox`, `timestamp`, `sender`) VALUES(?,?,?,?,?,?)");
+                    statement.setString(1, plot.world);
+                    statement.setInt(2, plot.id.hashCode());
+                    statement.setString(3, comment.comment);
+                    statement.setString(4, comment.inbox);
+                    statement.setInt(5, (int) (comment.timestamp / 1000));
+                    statement.setString(6, comment.senderName);
                     statement.executeUpdate();
                     statement.close();
                 } catch (final SQLException e) {

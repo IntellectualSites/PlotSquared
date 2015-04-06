@@ -45,13 +45,17 @@ public class InboxOwner extends CommentInbox {
         if (comments != null) {
             whenDone.value = comments;
             TaskManager.runTask(whenDone);
+            return true;
         }
-        TaskManager.runTaskAsync(new Runnable() {
+        DBFunc.getComments(plot.world, plot, toString(), new RunnableVal() {
             @Override
             public void run() {
-                ArrayList<PlotComment> comments = DBFunc.getComments(plot.world, plot, toString());
-                whenDone.value = comments;
-                plot.settings.setComments(comments);
+                whenDone.value = value;
+                if (value != null) {
+                    for (PlotComment comment : (ArrayList<PlotComment>) value) {
+                        plot.settings.addComment(comment);
+                    }
+                }
                 TaskManager.runTask(whenDone);
             }
         });

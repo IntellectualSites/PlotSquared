@@ -1,17 +1,20 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;

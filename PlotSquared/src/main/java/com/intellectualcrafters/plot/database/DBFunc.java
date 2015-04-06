@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
@@ -253,8 +254,8 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final String inbox) {
-        return dbManager.getComments(world, plot, inbox);
+    public static void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone) {
+        dbManager.getComments(world, plot, inbox, whenDone);
     }
 
     /**

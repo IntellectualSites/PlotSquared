@@ -21,15 +21,11 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
@@ -37,8 +33,6 @@ import com.intellectualcrafters.plot.object.comment.CommentInbox;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Inbox extends SubCommand {
     public Inbox() {
@@ -62,7 +56,7 @@ public class Inbox extends SubCommand {
             max = comments.length;
         }
         final StringBuilder string = new StringBuilder();
-        string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("plot","review").replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
+        string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("plot","comment").replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
         PlotComment c;
         // This might work xD
         for (int x = (page * 12); x < max; x++) {
@@ -74,6 +68,7 @@ public class Inbox extends SubCommand {
             else {
                 color = "&7";
             }
+            System.out.print("PLOT INBOX: " +c.id);
             string.append("&8[&7#" + x + "&8][&7" + c.world + ";" + c.id + "&8][&7#" + c.senderName + "&8]" + color + c.senderName +"&7 : " + color + c.comment + "\n");
         }
         MainUtil.sendMessage(player, string.toString());
@@ -82,11 +77,30 @@ public class Inbox extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         final Plot plot = MainUtil.getPlot(player.getLocation());
-        if (args.length < 1) {
+        if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox <inbox> [delete <index>|clear|page]");
-            for (CommentInbox inbox : CommentManager.inboxes.values()) {
+            for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
-                    sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                    if (!inbox.getComments(plot, new RunnableVal() {
+                        @Override
+                        public void run() {
+                            if (value != null) {
+                                int count = 0;
+                                for (PlotComment comment : (ArrayList<PlotComment>) value) {
+                                    if (comment.timestamp > player.getPreviousLogin()) {
+                                        count++;
+                                    }
+                                }
+                                if (count > 0) {
+                                    sendMessage(player, C.INBOX_ITEM, "&c" + inbox.toString() + " (" + count + ")");
+                                    return;
+                                }
+                            }
+                            sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                        }
+                    })) {
+                        sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                    }
                 }
             }
             return false;
@@ -174,7 +188,12 @@ public class Inbox extends SubCommand {
                 displayComments(player, comments, page);
             }
         })) {
-            sendMessage(player, C.NOT_IN_PLOT);
+            if (plot == null) {
+                sendMessage(player, C.NOT_IN_PLOT);
+            }
+            else {
+                sendMessage(player, C.PLOT_UNOWNED);
+            }
             return false;
         }
         return true;
