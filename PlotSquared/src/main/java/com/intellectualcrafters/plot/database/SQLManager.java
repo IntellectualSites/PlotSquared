@@ -1194,8 +1194,8 @@ public class SQLManager implements AbstractDB {
                         comment = new PlotComment(world, id, msg, sender, inbox, timestamp);
                         comments.add(comment);
                         whenDone.value = comments;
-                        TaskManager.runTask(whenDone);
                     }
+                    TaskManager.runTask(whenDone);
                     statement.close();
                     set.close();
                 } catch (final SQLException e) {
