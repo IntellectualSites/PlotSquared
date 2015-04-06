@@ -68,7 +68,7 @@ public class Inbox extends SubCommand {
             else {
                 color = "&7";
             }
-            string.append("&8[&7#" + x + "&8][&7" + c.world + ";" + c.id + "&8][&7#" + c.senderName + "&8]" + color + c.senderName +"&7 : " + color + c.comment + "\n");
+            string.append("&8[&7#" + x + "&8][&7" + c.world + ";" + c.id + "&8][&6" + c.senderName + "&8]" + color + c.comment + "\n");
         }
         MainUtil.sendMessage(player, string.toString());
     }
