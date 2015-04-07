@@ -299,7 +299,7 @@ public class Cluster extends SubCommand {
                 // check uuid
                 final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
-                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[2]);
                     return false;
                 }
                 if (!cluster.isAdded(uuid)) {
@@ -435,7 +435,7 @@ public class Cluster extends SubCommand {
                 }
                 final UUID uuid = UUIDHandler.getUUID(args[2]);
                 if (uuid == null) {
-                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[2]);
                     return false;
                 }
                 if (args[1].toLowerCase().equals("add")) {
