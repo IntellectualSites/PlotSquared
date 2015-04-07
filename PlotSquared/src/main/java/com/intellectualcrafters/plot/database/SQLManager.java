@@ -583,20 +583,24 @@ public class SQLManager implements AbstractDB {
     public void updateTables() {
         try {
             final DatabaseMetaData data = this.connection.getMetaData();
-            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
-            if (!rs.next()) {
-                rs.close();
-                final Statement statement = this.connection.createStatement();
-                statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
-                if (PlotSquared.getMySQL() != null) {
-                    statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot");
+            if (rs.next()) {
+            rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
+                if (!rs.next()) {
+                    rs.close();
+                    final Statement statement = this.connection.createStatement();
+                    statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
+                    if (PlotSquared.getMySQL() != null) {
+                        statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                    }
+                    else {
+                        statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
+                    }
+                    statement.executeBatch();
+                    statement.close();
                 }
-                else {
-                    statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
-                }
-                statement.executeBatch();
-                statement.close();
             }
+            rs.close();
         }
         catch (SQLException e) {
             e.printStackTrace();

@@ -97,7 +97,25 @@ public class MainUtil {
         return count;
     }
     
-    public static Location getPlotFront(Plot plot) {
+    public static Location getDefaultHome(Plot plot) {
+        PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
+        if (plotworld.DEFAULT_HOME != null) {
+            final Location bot = getPlotBottomLoc(plot.world, plot.id);
+            final PlotManager manager = PlotSquared.getPlotManager(plot.world);
+            final int x;
+            final int z;
+            if (plotworld.DEFAULT_HOME.x == Integer.MAX_VALUE && plotworld.DEFAULT_HOME.z == Integer.MAX_VALUE) {
+                final Location top = getPlotTopLoc(plot.world, plot.id);
+                x = ((top.getX() - bot.getX()) / 2) + bot.getX();
+                z = ((top.getZ() - bot.getZ()) / 2) + bot.getZ();
+            }
+            else {
+                x = bot.getX() + plotworld.DEFAULT_HOME.x;
+                z = bot.getZ() + plotworld.DEFAULT_HOME.z;
+            }
+            final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(plot.world), plot).getY());
+            return new Location(plot.world, x, y, z);
+        }
         final Location top = getPlotTopLoc(plot.world, plot.id);
         final Location bot = getPlotBottomLoc(plot.world, plot.id);
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
@@ -110,18 +128,15 @@ public class MainUtil {
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
         final Plot bot = MainUtil.getBottomPlot(plot);
 
-        // TODO
-        //      boolean result = PlotSquared.IMP.callPlayerTeleportToPlotEvent(player, from, plot);
         boolean result = EventUtil.manager.callTeleport(player, from, plot);
-        // TOOD ^ remove that
 
         if (result) {
             final Location location;
-            if (plot.isAdded(player.getUUID())) {
+            if (PlotSquared.getPlotWorld(plot.world).HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
                 location = MainUtil.getPlotHome(bot.world, bot);
             }
             else {
-                location = getPlotFront(plot);
+                location = getDefaultHome(plot);
             }
             if ((Settings.TELEPORT_DELAY == 0) || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 sendMessage(player, C.TELEPORTED_TO_PLOT);
@@ -531,7 +546,6 @@ public class MainUtil {
         h = (prime * h) + pos1.getZ();
         state = h;
         System.currentTimeMillis();
-        final Location location = MainUtil.getPlotHomeDefault(plot);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
@@ -622,16 +636,6 @@ public class MainUtil {
             return 64;
         }
         return result;
-        //        for (int i = 1; i < world.getMaxHeight(); i++) {
-        //            id = world.getBlockAt(x, i, z).getTypeId();
-        //            if (id == 0) {
-        //                if (safe) {
-        //                    return i;
-        //                }
-        //                safe = true;
-        //            }
-        //        }
-        //        return 64;
     }
 
     /**
@@ -648,28 +652,11 @@ public class MainUtil {
         final Location bot = getPlotBottomLoc(w, plotid);
         final PlotManager manager = PlotSquared.getPlotManager(w);
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
-            final Location top = getPlotTopLoc(w, plotid);
-            final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
-            final int z = ((top.getZ() - bot.getZ()) / 2) + bot.getZ();
-            final int y = Math.max(getHeighestBlock(w, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(w), plot).getY());
-            return new Location(w, x, y, z);
+            return getDefaultHome(plot);
         } else {
             final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
             return bot.add(home.x, y, home.z);
         }
-    }
-
-    /**
-     * Retrieve the location of the default plot home position
-     *
-     * @param plot Plot
-     *
-     * @return the location
-     */
-    public static Location getPlotHomeDefault(final Plot plot) {
-        final Location l = getPlotBottomLoc(plot.world, plot.getId()).subtract(0, 0, 0);
-        l.setY(getHeighestBlock(plot.world, l.getX(), l.getZ()));
-        return l;
     }
 
     /**
