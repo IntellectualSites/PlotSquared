@@ -9,6 +9,10 @@ import java.util.UUID;
  */
 public interface PlotPlayer {
     
+    public void setTmpData(String key, Object value);
+    
+    public Object getTmpData(String key);
+    
     public long getPreviousLogin();
     
     public Location getLocation();

@@ -42,6 +42,12 @@ public class Settings {
     public static boolean CACHE_PLOTME = false;
     public static boolean USE_PLOTME_ALIAS = false;
     /**
+     * Chunk processor
+     */
+    public static boolean CHUNK_PROCESSOR = false;
+    public static int CHUNK_PROCESSOR_MAX_BLOCKSTATES = 4096;
+    public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
+    /**
      * TNT listener
      */
     public static boolean TNT_LISTENER = false;

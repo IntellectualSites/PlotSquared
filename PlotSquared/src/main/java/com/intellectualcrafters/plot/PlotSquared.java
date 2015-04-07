@@ -810,6 +810,11 @@ public class PlotSquared {
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
+        
+        options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
+        options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
+        options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
+        
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -820,6 +825,9 @@ public class PlotSquared {
         if (Settings.DEBUG) {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
+        
+        Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
+        
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");

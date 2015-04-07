@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.listeners.ChunkListener;
 import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
@@ -103,6 +104,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
+        
+        // Experimental
+        if (Settings.CHUNK_PROCESSOR) {
+            getServer().getPluginManager().registerEvents(new ChunkListener(), this);
+        }
+        
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());
