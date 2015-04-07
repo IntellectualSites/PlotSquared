@@ -277,7 +277,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (Settings.TELEPORT_ON_LOGIN) {
-            BukkitUtil.teleportPlayer(player, MainUtil.getPlotHomeDefault(plot));
+            MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
             MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
         }
         plotEntry(player, plot);

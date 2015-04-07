@@ -171,13 +171,19 @@ public class BukkitHybridUtils extends HybridUtils {
     
     private static boolean UPDATE = false;
     private int task;
+    private long last;
 
     @Override
     public boolean scheduleRoadUpdate(final String world) {
         if (BukkitHybridUtils.UPDATE) {
             return false;
         }
+        BukkitHybridUtils.UPDATE = true;
         final List<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
+        return scheduleRoadUpdate(world, regions);
+    }
+    
+    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> regions) {
         final List<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
         final Plugin plugin = BukkitMain.THIS;
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -196,15 +202,37 @@ public class BukkitHybridUtils extends HybridUtils {
                             PlotSquared.log(" - Remaining: " + regions.size());
                     		chunks.addAll(getChunks(regions.get(0)));
                     		regions.remove(0);
+                    		System.gc();
                     	}
                     	if (chunks.size() > 0) {
-                    		long diff = System.currentTimeMillis() + 50;
-                    		while (System.currentTimeMillis() < diff) {
-                    			ChunkLoc chunk = chunks.get(0);
-                    			chunks.remove(0);
-                    			regenerateRoad(world, chunk);
-                    			
+                    		long diff = System.currentTimeMillis() + 25;
+                    		if (System.currentTimeMillis() - last > 1000 && last != 0) {
+                    		    last = 0;
+                    		    PlotSquared.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 1 minute");
+                    		    while (chunks.size() > 0) {
+                                    ChunkLoc chunk = chunks.get(0);
+                                    chunks.remove(0);
+                                    regenerateRoad(world, chunk);
+                                    ChunkManager.manager.unloadChunk(world, chunk);
+                                }
+                                Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
+                                TaskManager.runTaskLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                       scheduleRoadUpdate(world, regions); 
+                                    }
+                                }, 1200);
+                                return;
                     		}
+                    		if (System.currentTimeMillis() - last < 50) {
+                        		while (System.currentTimeMillis() < diff) {
+                        			ChunkLoc chunk = chunks.get(0);
+                        			chunks.remove(0);
+                        			regenerateRoad(world, chunk);
+                        			ChunkManager.manager.unloadChunk(world, chunk);
+                        		}
+                    		}
+                    		last = System.currentTimeMillis();
                     	}
                     } catch (final Exception e) {
                         final ChunkLoc loc = regions.get(0);
@@ -221,7 +249,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     }
                 }
             }
-        }, 20, 20);
+        }, 1, 1);
         return true;
     }
 
