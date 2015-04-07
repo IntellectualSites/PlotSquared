@@ -401,7 +401,7 @@ public enum C {
      */
     DENIED_REMOVED("$4You successfully undenied the player from this plot"),
     DENIED_ADDED("$4You successfully denied the player from this plot"),
-    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot helpers remove <name>"),
+    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>"),
     WAS_NOT_DENIED("$2That player was not denied on this plot"),
     /*
      * Rain
