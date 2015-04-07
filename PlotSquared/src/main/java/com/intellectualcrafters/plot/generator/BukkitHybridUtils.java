@@ -208,7 +208,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     		long diff = System.currentTimeMillis() + 25;
                     		if (System.currentTimeMillis() - last > 1000 && last != 0) {
                     		    last = 0;
-                    		    PlotSquared.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 1 minute");
+                    		    PlotSquared.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                     		    while (chunks.size() > 0) {
                                     ChunkLoc chunk = chunks.get(0);
                                     chunks.remove(0);
@@ -221,7 +221,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     public void run() {
                                        scheduleRoadUpdate(world, regions); 
                                     }
-                                }, 1200);
+                                }, 600);
                                 return;
                     		}
                     		if (System.currentTimeMillis() - last < 50) {
