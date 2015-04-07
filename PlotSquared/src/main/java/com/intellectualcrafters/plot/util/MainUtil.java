@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -753,6 +754,37 @@ public class MainUtil {
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
+    public static boolean canClaim(PlotPlayer player, String world, final PlotId pos1, final PlotId pos2) {
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
+                final PlotId id = new PlotId(x, y);
+                Plot plot = getPlot(world, id);
+                if (!canClaim(player, plot)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public static boolean canClaim(PlotPlayer player, Plot plot) {
+        if (plot == null) {
+            return false;
+        }
+        if (Settings.ENABLE_CLUSTERS) {
+            PlotCluster cluster = ClusterManager.getCluster(plot);
+            if (cluster != null) {
+                if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
+                    return false;
+                }
+            }
+        }
+        if (plot.owner != null) {
+            return false;
+        }
+        return true;
+    }
+    
     public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {

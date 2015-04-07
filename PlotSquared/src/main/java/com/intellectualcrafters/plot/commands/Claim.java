@@ -93,7 +93,7 @@ public class Claim extends SubCommand {
         if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        if (plot.hasOwner()) {
+        if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
         final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
