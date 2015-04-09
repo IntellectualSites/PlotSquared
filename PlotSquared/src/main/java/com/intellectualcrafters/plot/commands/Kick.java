@@ -57,7 +57,7 @@ public class Kick extends SubCommand {
         }
         Location otherLoc = player.getLocation();
         if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc))) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));

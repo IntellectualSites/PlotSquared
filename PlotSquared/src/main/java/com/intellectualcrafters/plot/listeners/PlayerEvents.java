@@ -169,20 +169,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (!isPlotWorld(loc.getWorld())) {
             return;
         }
-        Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return;
-        }
-        Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
-        if (redstone == null || (Boolean) redstone.getValue()) {
-            return;
-        }
-        if (!isPlotArea(loc)) {
-            return;
-        }
         switch (block.getType()) {
             case REDSTONE_COMPARATOR_OFF:
             case REDSTONE_COMPARATOR_ON: {
+                Plot plot = MainUtil.getPlot(loc);
+                if (plot == null) {
+                    return;
+                }
+                Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
+                if (redstone == null || (Boolean) redstone.getValue()) {
+                    return;
+                }
+                if (!isPlotArea(loc)) {
+                    return;
+                }
                 event.setCancelled(true);
             }
         }
