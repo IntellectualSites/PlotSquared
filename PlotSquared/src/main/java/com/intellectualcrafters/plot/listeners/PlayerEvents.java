@@ -18,6 +18,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LargeFireball;
@@ -662,12 +663,30 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (plot != null) {
             BlockFace face = event.getDirection();
             Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
-            for (final Block b : event.getBlocks()) {
+            List<Block> blocks = event.getBlocks();
+            for (final Block b : blocks) {
                 Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
                 Plot newPlot = MainUtil.getPlot(bloc);
                 if (!plot.equals(newPlot)) {
                     event.setCancelled(true);
                     return;
+                }
+            }
+            org.bukkit.Location lastLoc;
+            if (blocks.size() > 0) {
+                lastLoc = blocks.get(blocks.size() - 1).getLocation().add(relative);
+            }
+            else {
+                lastLoc = event.getBlock().getLocation().add(relative);
+            }
+            Entity[] ents = lastLoc.getChunk().getEntities();
+            for (Entity entity : ents) {
+                if (entity instanceof FallingBlock) {
+                    org.bukkit.Location eloc = entity.getLocation();
+                    if (eloc.distanceSquared(lastLoc) < 2) {
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
             }
         }
