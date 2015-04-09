@@ -39,11 +39,13 @@ import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.TNTListener;
 import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -377,5 +379,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerTNTListener() {
         getServer().getPluginManager().registerEvents(new TNTListener(), this);
+    }
+
+    @Override
+    public void unregister(PlotPlayer player) {
+        BukkitUtil.removePlayer(player.getName());
     }
 }

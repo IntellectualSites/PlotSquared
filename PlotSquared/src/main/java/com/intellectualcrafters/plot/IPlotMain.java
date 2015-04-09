@@ -7,6 +7,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -56,6 +57,8 @@ public interface IPlotMain {
     public UUIDWrapper initUUIDHandler();
 
     public boolean initPlotMeConverter();
+    
+    public void unregister(PlotPlayer player);
 
     public ChunkGenerator getGenerator(String world, String name);
 }

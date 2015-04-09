@@ -19,7 +19,6 @@ public class BukkitPlayer implements PlotPlayer {
     public HashSet<String> noPerm = new HashSet<>();
     private int op = 0;
     private long last = 0;
-    private HashMap<String, Object> tmpData = null;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -120,21 +119,4 @@ public class BukkitPlayer implements PlotPlayer {
     public Location getLocationFull() {
         return BukkitUtil.getLocationFull(this.player);
     }
-
-    @Override
-    public void setTmpData(String key, Object value) {
-        if (tmpData == null) {
-            tmpData = new HashMap<>();
-        }
-        tmpData.put(key, value);
-    }
-
-    @Override
-    public Object getTmpData(String key) {
-        if (tmpData == null) {
-            return null;
-        }
-        return tmpData.get(key);
-    }
-
 }

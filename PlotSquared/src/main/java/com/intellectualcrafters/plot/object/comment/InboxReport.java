@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.object.comment;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;

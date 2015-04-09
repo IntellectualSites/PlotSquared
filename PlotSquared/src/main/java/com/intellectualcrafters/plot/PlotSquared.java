@@ -550,6 +550,11 @@ public class PlotSquared {
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }
+        
+        if (Settings.COMMENT_NOTIFICATION_INTERVAL > 0) {
+            CommentManager.runTask();
+        }
+        
         // Copy files
         copyFile("town.template");
         copyFile("skyblock.template");
@@ -780,6 +785,7 @@ public class PlotSquared {
 
     public static void setupConfig() {
         config.set("version", VERSION);
+        
         final Map<String, Object> options = new HashMap<>();
         options.put("teleport.delay", 0);
         options.put("auto_update", false);
@@ -810,11 +816,10 @@ public class PlotSquared {
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
-        
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
-        
+        options.put("comments.notifications.interval", Settings.COMMENT_NOTIFICATION_INTERVAL);
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -826,7 +831,10 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         
+        Settings.COMMENT_NOTIFICATION_INTERVAL = config.getInt("comments.notifications.interval");
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
+        Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
+        Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
         
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");

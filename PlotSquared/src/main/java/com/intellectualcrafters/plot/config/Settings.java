@@ -42,6 +42,10 @@ public class Settings {
     public static boolean CACHE_PLOTME = false;
     public static boolean USE_PLOTME_ALIAS = false;
     /**
+     * Comment system
+     */
+    public static int COMMENT_NOTIFICATION_INTERVAL = -1;
+    /**
      * Chunk processor
      */
     public static boolean CHUNK_PROCESSOR = false;

@@ -92,8 +92,10 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -997,14 +999,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler
     public static void onLeave(final PlayerQuitEvent event) {
-        final String name = event.getPlayer().getName();
-        if (SetupUtils.setupMap.containsKey(name)) {
-            SetupUtils.setupMap.remove(name);
-        }
-        CmdConfirm.removePending(name);
-        BukkitUtil.removePlayer(name);
+        PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
+        EventUtil.unregisterPlayer(pp);
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            final Collection<Plot> plots = PlotSquared.getPlots(name).values();
+            final Collection<Plot> plots = PlotSquared.getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
                 final PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
                 final PlotManager manager = PlotSquared.getPlotManager(plot.world);
