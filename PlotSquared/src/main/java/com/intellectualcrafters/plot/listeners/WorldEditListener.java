@@ -193,30 +193,27 @@ public class WorldEditListener implements Listener {
             PWE.removeMask(pp);
         }
     }
-
+    
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent e) {
         final Location t = e.getTo();
-        if (!isPlotWorld(t)) {
-            return;
-        }
         final Location f = e.getFrom();
-        if ((f.getX() == t.getX()) && (f.getZ() == t.getZ())) {
-            return;
-        }
-        final Player p = e.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(p);
-        if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-            if (!PWE.hasMask(pp)) {
-                return;
-            }
-        }
         final com.intellectualcrafters.plot.object.Location locf = BukkitUtil.getLocation(f);
         final com.intellectualcrafters.plot.object.Location loct = BukkitUtil.getLocation(t);
         if ((locf.getX() != loct.getX()) || (locf.getZ() != loct.getZ())) {
+            final Player p = e.getPlayer();
+            final PlotPlayer pp = BukkitUtil.getPlayer(p);
+            if (!isPlotWorld(t)) {
+                return;
+            }
             final PlotId idF = MainUtil.getPlotId(locf);
             final PlotId idT = MainUtil.getPlotId(loct);
             if ((idT != null) && !(idF == idT)) {
+                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                    if (!PWE.hasMask(pp)) {
+                        return;
+                    }
+                }
                 PWE.setMask(pp, loct, false);
             }
         }
