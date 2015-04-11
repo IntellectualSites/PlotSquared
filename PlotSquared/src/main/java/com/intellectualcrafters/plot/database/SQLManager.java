@@ -584,9 +584,9 @@ public class SQLManager implements AbstractDB {
     public void updateTables() {
         try {
             final DatabaseMetaData data = this.connection.getMetaData();
-            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot");
+            ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot_plot_id");
             if (rs.next()) {
-            rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
+                rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
                 if (!rs.next()) {
                     rs.close();
                     final Statement statement = this.connection.createStatement();

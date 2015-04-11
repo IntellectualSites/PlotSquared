@@ -67,7 +67,7 @@ public class FlagManager {
             }
         }
         if (PlotSquared.getAllPlotsRaw() != null) {
-            for (final Plot plot : PlotSquared.getPlots()) {
+            for (final Plot plot : PlotSquared.getPlotsRaw()) {
                 for (final Flag flag : plot.settings.flags) {
                     if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
                         flag.setKey(af);
@@ -319,7 +319,6 @@ public class FlagManager {
     public static AbstractFlag getFlag(final String string, final boolean create) {
         if ((getFlag(string) == null) && create) {
             final AbstractFlag flag = new AbstractFlag(string);
-            addFlag(flag);
             return flag;
         }
         return getFlag(string);

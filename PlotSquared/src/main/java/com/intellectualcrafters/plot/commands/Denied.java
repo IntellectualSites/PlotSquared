@@ -90,7 +90,7 @@ public class Denied extends SubCommand {
             }
             final PlotPlayer player = UUIDHandler.getPlayer(uuid);
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
-                final Plot pl = MainUtil.getPlot(loc);
+                final Plot pl = MainUtil.getPlot(player.getLocation());
                 if ((pl != null) && pl.id.equals(plot.id)) {
                     MainUtil.sendMessage(player, C.YOU_BE_DENIED);
                     player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));

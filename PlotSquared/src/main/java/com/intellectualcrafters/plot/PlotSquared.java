@@ -146,6 +146,14 @@ public class PlotSquared {
         return new LinkedHashSet<>(newplots);
     }
     
+    public static Set<Plot> getPlotsRaw() {
+        final ArrayList<Plot> newplots = new ArrayList<>();
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            newplots.addAll(entry.getValue().values());
+        }
+        return new LinkedHashSet<>(newplots);
+    }
+    
     public static ArrayList<Plot> sortPlots(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         newPlots.addAll(plots);
