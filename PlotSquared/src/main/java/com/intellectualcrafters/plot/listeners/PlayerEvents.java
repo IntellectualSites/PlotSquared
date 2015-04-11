@@ -812,7 +812,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (plot != null && plot.owner != null) {
             Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
             Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
-            Flag monsterFlag = FlagManager.getPlotFlag(plot, "mop-cap");
+            Flag monsterFlag = FlagManager.getPlotFlag(plot, "mob-cap");
             if (!(entity instanceof Creature)) {
                 return;
             }
