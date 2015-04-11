@@ -91,17 +91,22 @@ public class Helpers extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
-                final UUID uuid = DBFunc.everyone;
-                if (!plot.helpers.contains(uuid)) {
+                if (plot.helpers.size() == 0) {
                     MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
-                plot.removeHelper(uuid);
-                DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                for (UUID uuid : plot.helpers) {
+                    plot.removeHelper(uuid);
+                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                }
                 MainUtil.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
+            if (!plot.helpers.contains(uuid)) {
+                MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
+                return false;
+            }
             plot.removeHelper(uuid);
             DBFunc.removeHelper(loc.getWorld(), plot, uuid);
             EventUtil.manager.callHelper(plr, plot, uuid, false);
