@@ -2,6 +2,8 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.UUID;
 
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +20,10 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractAtEntityEvent e) {
+        Entity entity = e.getRightClicked();
+        if (!(entity instanceof ArmorStand)) {
+            return;
+        }
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         if (isPlotWorld(l)) {
             e.getPlayer();
