@@ -44,8 +44,8 @@ public class Flag {
         if (!StringUtils.isAlphanumericSpace(tempValue)) {
             throw new IllegalArgumentException("Flag must be alphanumerical (colours and some special characters are allowed)");
         }
-        if (value.length() > 48) {
-            throw new IllegalArgumentException("Value must be <= 48 characters");
+        if (value.length() > 128) {
+            throw new IllegalArgumentException("Value must be <= 128 characters");
         }
         this.key = key;
         this.value = key.parseValueRaw(value);
