@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -96,9 +97,9 @@ public class Helpers extends SubCommand {
                     return true;
                 }
                 for (UUID uuid : plot.helpers) {
-                    plot.removeHelper(uuid);
                     DBFunc.removeHelper(loc.getWorld(), plot, uuid);
                 }
+                plot.helpers = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }

@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -97,9 +98,9 @@ public class Trusted extends SubCommand {
                     return true;
                 }
                 for (UUID uuid : plot.trusted) {
-                    plot.removeTrusted(uuid);
                     DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
                 }
+                plot.trusted = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }

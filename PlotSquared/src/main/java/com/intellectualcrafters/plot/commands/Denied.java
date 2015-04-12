@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -105,9 +106,9 @@ public class Denied extends SubCommand {
                     return true;
                 }
                 for (UUID uuid : plot.denied) {
-                    plot.removeDenied(uuid);
                     DBFunc.removeDenied(loc.getWorld(), plot, uuid);
                 }
+                plot.denied = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.DENIED_REMOVED);
                 return true;
             }

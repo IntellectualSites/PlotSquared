@@ -110,7 +110,7 @@ public class WEListener implements Listener {
         HashSet<RegionWrapper> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         for (Plot plot : PlotSquared.getPlots(player.getLocation().getWorld()).values()) {
-            if (!plot.settings.getMerged(1) && !plot.settings.getMerged(2)) {
+            if (!plot.settings.getMerged(0) && !plot.settings.getMerged(3)) {
                 if (plot.isOwner(uuid) || plot.helpers.contains(uuid)) {
                     Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
                     Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
