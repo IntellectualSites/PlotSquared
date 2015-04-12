@@ -63,6 +63,7 @@ import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
@@ -351,13 +352,23 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
         }
         if (Settings.OFFLINE_MODE) {
-            UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            if (Settings.UUID_LOWERCASE) {
+                UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
+            }
+            else {
+                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            }
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {
             UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
             Settings.OFFLINE_MODE = false;
         } else {
-            UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            if (Settings.UUID_LOWERCASE) {
+                UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
+            }
+            else {
+                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+            }
             Settings.OFFLINE_MODE = true;
         }
         if (Settings.OFFLINE_MODE) {
