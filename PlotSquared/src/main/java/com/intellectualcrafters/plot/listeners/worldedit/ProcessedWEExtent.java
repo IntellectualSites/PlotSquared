@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.listeners.worldedit;
 
 import java.util.HashSet;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.sk89q.worldedit.Vector;
@@ -71,6 +72,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 BScount++;
                 if (BScount > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
                     BSblocked = true;
+                    PlotSquared.log("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
                 }
             }
         }
@@ -88,6 +90,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         Ecount++;
         if (Ecount > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
             Eblocked = true;
+            PlotSquared.log("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
         }
         if (WEListener.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
             return super.createEntity(location, entity);
