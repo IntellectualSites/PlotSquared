@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -102,11 +103,14 @@ public class WEListener implements Listener {
     
     public HashSet<RegionWrapper> getMask(PlotPlayer player) {
         HashSet<RegionWrapper> regions = new HashSet<>();
-        for (Plot plot : PlotSquared.getPlots(player)) {
+        UUID uuid = player.getUUID();
+        for (Plot plot : PlotSquared.getPlots(player.getLocation().getWorld()).values()) {
             if (!plot.settings.getMerged(1) && !plot.settings.getMerged(2)) {
-                Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-                Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-                regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ()));
+                if (plot.isOwner(uuid) || plot.helpers.contains(uuid)) {
+                    Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+                    Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
+                    regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ()));
+                }
             }
         }
         return regions;
