@@ -72,7 +72,12 @@ public class WEListener implements Listener {
                     return;
                 }
             } catch (IncompleteRegionException e) {}
-            event.setExtent(new WEExtent(mask, event.getExtent()));
+            if (Settings.CHUNK_PROCESSOR) {
+                event.setExtent(new ProcessedWEExtent(mask, event.getExtent()));
+            }
+            else {
+                event.setExtent(new WEExtent(mask, event.getExtent()));
+            }
         }
     }
     
