@@ -808,6 +808,7 @@ public class PlotSquared {
         options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
+        options.put("UUID.force-lowercase", Settings.UUID_LOWERCASE);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         options.put("console.color", Settings.CONSOLE_COLOR);
@@ -819,7 +820,6 @@ public class PlotSquared {
         options.put("clear.on.ban", false);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
         options.put("titles", Settings.TITLES);
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
@@ -871,6 +871,7 @@ public class PlotSquared {
         }
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
+        Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
     }
@@ -959,9 +960,6 @@ public class PlotSquared {
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-        Settings.API_URL = config.getString("uuid.api.location");
-        Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
-        Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
     }
 
     public static void showDebug() {

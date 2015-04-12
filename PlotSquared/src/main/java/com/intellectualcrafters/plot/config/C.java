@@ -86,6 +86,8 @@ public enum C {
      * WorldEdit masks
      */
     REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot."),
+    WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted."),
+    WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted."),
     /*
      * Records
      */

@@ -145,6 +145,7 @@ public class Settings {
      * Use offline mode storage
      */
     public static boolean OFFLINE_MODE = false;
+    public static boolean UUID_LOWERCASE = false;
     /**
      * Command confirmation
      */

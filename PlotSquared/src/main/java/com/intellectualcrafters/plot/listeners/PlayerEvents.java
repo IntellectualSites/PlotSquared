@@ -83,6 +83,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -93,13 +94,10 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -461,6 +459,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
+        WEListener.bypass.remove(player.getName());
         ((BukkitPlayer) player).hasPerm = new HashSet<>();
         ((BukkitPlayer) player).noPerm = new HashSet<>();
     }
@@ -1020,6 +1019,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public static void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         EventUtil.unregisterPlayer(pp);
+        WEListener.bypass.remove(pp.getName());
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PlotSquared.getPlots(pp.getName()).values();
             for (final Plot plot : plots) {

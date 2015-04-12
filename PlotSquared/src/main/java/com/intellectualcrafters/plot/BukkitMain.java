@@ -37,15 +37,14 @@ import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.TNTListener;
-import com.intellectualcrafters.plot.listeners.WorldEditListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
+import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -66,6 +65,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -260,7 +260,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 log("&cPlease use WorldEdit 6+ for masking support");
                 log("&c - http://builds.enginehub.org/job/worldedit");
             } else {
-                getServer().getPluginManager().registerEvents(new WorldEditListener(), this);
+                WEListener weClass = new WEListener();
+                WorldEdit.getInstance().getEventBus().register(weClass);
+                getServer().getPluginManager().registerEvents(weClass, this);
                 MainCommand.subCommands.add(new WE_Anywhere());
             }
         }

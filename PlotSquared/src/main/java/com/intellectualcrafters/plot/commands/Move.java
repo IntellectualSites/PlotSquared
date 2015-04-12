@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.SubCommand.CommandCategory;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;

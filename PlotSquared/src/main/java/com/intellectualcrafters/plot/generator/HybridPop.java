@@ -2,7 +2,6 @@ package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 import org.bukkit.World;
 import org.bukkit.block.Biome;
