@@ -18,6 +18,8 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.events.PlotDeleteEvent;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -159,6 +161,10 @@ public class ExpireManager {
         final HashMap<UUID, Long> remove = new HashMap<>();
         final Set<UUID> keep = new HashSet<>();
         for (final Plot plot : plots) {
+            final Flag keepFlag = FlagManager.getPlotFlag(plot, "keep");
+            if (keepFlag != null && (Boolean) keepFlag.getValue()) {
+                continue;
+            }
             final UUID uuid = plot.owner;
             if ((uuid == null) || remove.containsKey(uuid)) {
                 Long stamp;
