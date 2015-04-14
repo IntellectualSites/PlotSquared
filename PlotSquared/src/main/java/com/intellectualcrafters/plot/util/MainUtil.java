@@ -97,6 +97,14 @@ public class MainUtil {
         }
         return count;
     }
+
+    public static int getPlayerPlotCount(final PlotPlayer plr) {
+        int count = 0;
+        for (final String world : PlotSquared.getPlotWorldsString()) {
+            count += getPlayerPlotCount(world, plr);
+        }
+        return count;
+    }
     
     public static Location getDefaultHome(Plot plot) {
         PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);

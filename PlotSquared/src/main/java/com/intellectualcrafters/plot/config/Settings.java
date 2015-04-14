@@ -152,6 +152,10 @@ public class Settings {
     public static boolean CONFIRM_CLEAR = true;
     public static boolean CONFIRM_DELETE = true;
     public static boolean CONFIRM_UNLINK = true;
+    /**
+     * Use global plot limit?
+     */
+    public static boolean GLOBAL_LIMIT = false;
 
     /**
      * Database settings

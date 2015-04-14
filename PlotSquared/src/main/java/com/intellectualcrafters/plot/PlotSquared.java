@@ -828,6 +828,7 @@ public class PlotSquared {
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
         options.put("comments.notifications.interval", Settings.COMMENT_NOTIFICATION_INTERVAL);
+        options.put("global_limit", Settings.GLOBAL_LIMIT);
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
@@ -874,6 +875,7 @@ public class PlotSquared {
         Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
+        Settings.GLOBAL_LIMIT = config.getBoolean("global_limit");
     }
 
     public static void setupConfigs() {

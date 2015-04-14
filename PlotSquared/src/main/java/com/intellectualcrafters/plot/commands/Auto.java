@@ -119,7 +119,7 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
         final int diff = currentPlots - MainUtil.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {

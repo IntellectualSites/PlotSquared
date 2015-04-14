@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -68,7 +69,7 @@ public class Buy extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
         if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
