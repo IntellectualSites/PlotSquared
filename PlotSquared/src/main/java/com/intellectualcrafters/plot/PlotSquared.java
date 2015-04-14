@@ -709,7 +709,7 @@ public class PlotSquared {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
-        final List<String> intFlags = Arrays.asList("mob-cap", "animal-cap", "hostile-cap");
+        final List<String> intFlags = Arrays.asList("entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap");
         for (final String flag : stringFlags) {
             FlagManager.addFlag(new AbstractFlag(flag));
         }

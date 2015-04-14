@@ -28,6 +28,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -809,9 +810,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Plot plot = MainUtil.getPlot(loc);
         if (plot != null && plot.owner != null) {
-            Flag entityFlag = FlagManager.getPlotFlag(plot, "mob-cap");
+            Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
             Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
             Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
+            Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
+            Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
             if (!(entity instanceof Creature)) {
                 return;
             }
@@ -824,7 +827,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             }
             int[] mobs = ChunkManager.manager.countEntities(plot);
-            if (entity instanceof Creature) {
+            if (entity instanceof Creature || entity instanceof Vehicle) {
                 if (entityFlag != null) {
                     int cap = ((Integer) entityFlag.getValue());
                     if (mobs[0] >= cap) {
@@ -832,21 +835,39 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                 }
-            }
-            if (entity instanceof Animals) {
-                if (animalFlag != null) {
-                    int cap = ((Integer) animalFlag.getValue());
-                    if (mobs[1] >= cap) {
-                        event.setCancelled(true);
+                if (entity instanceof Creature) {
+                    if (mobFlag != null) {
+                        int cap = ((Integer) mobFlag.getValue());
+                        if (mobs[3] >= cap) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                    if (entity instanceof Animals) {
+                        if (animalFlag != null) {
+                            int cap = ((Integer) animalFlag.getValue());
+                            if (mobs[1] >= cap) {
+                                event.setCancelled(true);
+                            }
+                        }
+                        return;
+                    }
+                    else if (entity instanceof Monster) {
+                        if (monsterFlag != null) {
+                            int cap = ((Integer) monsterFlag.getValue());
+                            if (mobs[2] >= cap) {
+                                event.setCancelled(true);
+                            }
+                        }
                     }
                 }
-                return;
-            }
-            if (entity instanceof Monster) {
-                if (monsterFlag != null) {
-                    int cap = ((Integer) monsterFlag.getValue());
-                    if (mobs[2] >= cap) {
-                        event.setCancelled(true);
+                else {
+                    if (vehicleFlag != null) {
+                        int cap = ((Integer) vehicleFlag.getValue());
+                        if (mobs[4] >= cap) {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                 }
             }
