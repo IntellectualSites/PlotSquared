@@ -76,7 +76,7 @@ public class SetOwner extends SubCommand {
         else {
         	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
         		int size = plots.size();
-                final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr)) + size;
+                final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(loc.getWorld(), other)) + size;
         		if (currentPlots > MainUtil.getAllowedPlots(other)) {
                     sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                     return false;
