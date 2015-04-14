@@ -183,6 +183,17 @@ public abstract class SchematicHandler {
             }
         }
         final File file = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        return getSchematic(file);
+    }
+    
+    /**
+     * Get a schematic
+     *
+     * @param name to check
+     *
+     * @return schematic if found, else null
+     */
+    public Schematic getSchematic(File file) {
         if (!file.exists()) {
             PlotSquared.log(file.toString() + " doesn't exist");
             return null;

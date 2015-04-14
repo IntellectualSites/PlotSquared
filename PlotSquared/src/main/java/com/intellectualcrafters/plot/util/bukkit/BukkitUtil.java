@@ -293,4 +293,15 @@ public class BukkitUtil extends BlockManager {
         return false;
         
     }
+
+    @Override
+    public boolean isBlockSolid(PlotBlock block) {
+        try {
+            Material material = Material.getMaterial(block.id);
+            return material.isBlock() && material.isSolid() && material.isOccluding() && !material.hasGravity();
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
 }

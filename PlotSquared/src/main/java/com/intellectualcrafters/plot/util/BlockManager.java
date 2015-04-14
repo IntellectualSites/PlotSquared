@@ -6,6 +6,8 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 
 public abstract class BlockManager {
     public static BlockManager manager;
+    
+    public abstract boolean isBlockSolid(PlotBlock block);
 
     public abstract String[] getBiomeList();
     

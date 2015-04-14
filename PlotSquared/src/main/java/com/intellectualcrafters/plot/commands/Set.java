@@ -240,6 +240,12 @@ public class Set extends SubCommand {
                             return true;
                         }
                         blocks = new PlotBlock[] { new PlotBlock((short) BlockManager.manager.getBlockIdFromString(args[1]), (byte) 0) };
+                        for (PlotBlock block : blocks) {
+                            if (!BlockManager.manager.isBlockSolid(block)) {
+                                MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
+                                return false;
+                            }
+                        }
                     } catch (final Exception e2) {
                         MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
                         return false;
