@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -75,7 +76,7 @@ public class SetOwner extends SubCommand {
         else {
         	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
         		int size = plots.size();
-        		final int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), other) + size;
+                final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr)) + size;
         		if (currentPlots > MainUtil.getAllowedPlots(other)) {
                     sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                     return false;

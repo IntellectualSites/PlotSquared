@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -89,7 +90,7 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
         if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
