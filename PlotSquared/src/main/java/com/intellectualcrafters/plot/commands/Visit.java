@@ -70,10 +70,10 @@ public class Visit extends SubCommand {
         } catch (final Exception e) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        if ((i < 0) || (i >= plots.size())) {
+        if ((i < 1) || (i > plots.size())) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i));
+        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i - 1));
         return true;
     }
 }
