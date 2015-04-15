@@ -115,6 +115,17 @@ public class FlagManager {
         }
         return false;
     }
+    
+    public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
+        final Flag flag = getPlotFlag(plot, strFlag);
+        if (flag == null) {
+            return false;
+        }
+        if (flag.getValue() instanceof Boolean) {
+            return !(boolean) flag.getValue();
+        }
+        return false;
+    }
 
     /**
      * Get the value of a flag for a plot (ignores flag defaults)
