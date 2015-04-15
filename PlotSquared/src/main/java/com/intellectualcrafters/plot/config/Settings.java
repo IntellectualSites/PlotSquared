@@ -56,6 +56,10 @@ public class Settings {
      */
     public static boolean TNT_LISTENER = false;
     /**
+     * Check for falling blocks when pistons extend?
+     */
+    public static boolean PISTON_FALLING_BLOCK_CHECK = true;
+    /**
      * Max auto claiming size
      */
     public static int MAX_AUTO_SIZE = 4;
