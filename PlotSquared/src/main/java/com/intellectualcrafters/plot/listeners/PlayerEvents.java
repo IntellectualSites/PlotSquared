@@ -672,6 +672,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
+            if (!Settings.PISTON_FALLING_BLOCK_CHECK) {
+                return;
+            }
             org.bukkit.Location lastLoc;
             if (blocks.size() > 0) {
                 lastLoc = blocks.get(blocks.size() - 1).getLocation().add(relative);

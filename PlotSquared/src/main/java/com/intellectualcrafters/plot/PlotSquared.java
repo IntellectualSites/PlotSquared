@@ -801,6 +801,7 @@ public class PlotSquared {
         options.put("confirmation.delete", Settings.CONFIRM_DELETE);
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
+        options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
@@ -846,6 +847,7 @@ public class PlotSquared {
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
         
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
+        Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
