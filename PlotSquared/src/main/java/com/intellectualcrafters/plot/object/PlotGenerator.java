@@ -71,7 +71,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
         h = (prime * h) + cx;
         h = (prime * h) + cz;
         this.random.state = h;
-        this.result = new short[256 / 16][];
+        this.result = new short[16][];
         PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
         Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
         this.X = cx << 4;
