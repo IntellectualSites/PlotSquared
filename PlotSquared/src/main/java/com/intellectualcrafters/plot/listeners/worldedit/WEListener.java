@@ -134,7 +134,7 @@ public class WEListener implements Listener {
         }
         if (this.restrictedcmds.contains(cmd)) {
             final Plot plot = MainUtil.getPlot(pp.getLocation());
-            if ((plot == null) || !(plot.helpers.contains(DBFunc.everyone) || plot.helpers.contains(pp.getUUID()))) {
+            if ((plot == null) || (!plot.isOwner(pp.getUUID()) && !plot.helpers.contains(DBFunc.everyone) && !plot.helpers.contains(pp.getUUID()))) {
                 e.setCancelled(true);
             }
             return;
