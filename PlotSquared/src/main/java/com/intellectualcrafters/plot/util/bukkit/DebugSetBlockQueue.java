@@ -19,7 +19,7 @@ public class DebugSetBlockQueue {
         this.allocate = t;
     }
     
-    public DebugSetBlockQueue() {
+    public DebugSetBlockQueue(final Runnable whenDone) {
         blocks = new HashMap<>();
         TaskManager.index.increment();
         final int current = TaskManager.index.intValue();
@@ -29,6 +29,7 @@ public class DebugSetBlockQueue {
                 if (blocks.size() == 0) {
                     blocks = null;
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(current));
+                    TaskManager.runTask(whenDone);
                     return;
                 }
                 long start = System.currentTimeMillis() + allocate;
