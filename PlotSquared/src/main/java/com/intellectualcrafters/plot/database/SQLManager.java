@@ -586,18 +586,11 @@ public class SQLManager implements AbstractDB {
             final DatabaseMetaData data = this.connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot_plot_id");
             if (rs.next()) {
+                rs.close();
                 rs = data.getColumns(null, null, this.prefix + "plot_comments", "hashcode");
                 if (!rs.next()) {
                     rs.close();
                     try {
-                        final Statement statement = this.connection.createStatement();
-                        statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `inbox` VARCHAR(11) DEFAULT `public`");
-                        statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `timestamp` INT(11) DEFAULT 0");
-                        statement.addBatch("ALTER TABLE `" + this.prefix + "plot` DROP `tier`");
-                        statement.executeBatch();
-                        statement.close();
-                    }
-                    catch (SQLException e) {
                         final Statement statement = this.connection.createStatement();
                         statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
                         if (PlotSquared.getMySQL() != null) {
@@ -606,6 +599,14 @@ public class SQLManager implements AbstractDB {
                         else {
                             statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
                         }
+                        statement.executeBatch();
+                        statement.close();
+                    }
+                    catch (SQLException e) {
+                        final Statement statement = this.connection.createStatement();
+                        statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `inbox` VARCHAR(11) DEFAULT `public`");
+                        statement.addBatch("ALTER IGNORE TABLE `" + this.prefix + "plot_comments` ADD `timestamp` INT(11) DEFAULT 0");
+                        statement.addBatch("ALTER TABLE `" + this.prefix + "plot` DROP `tier`");
                         statement.executeBatch();
                         statement.close();
                     }

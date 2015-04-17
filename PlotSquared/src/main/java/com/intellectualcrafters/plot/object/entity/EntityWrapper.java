@@ -28,6 +28,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -51,6 +52,7 @@ public class EntityWrapper {
     public AgeableStats aged;
     public TameableStats tamed;
     private HorseStats horse;
+    private ArmorStandStats stand;
 
     public void storeInventory(final InventoryHolder held) {
         this.inventory = held.getInventory().getContents().clone();
@@ -317,6 +319,56 @@ public class EntityWrapper {
                 final ArmorStand stand = (ArmorStand) entity;
                 this.inventory = new ItemStack[] { stand.getItemInHand().clone(), stand.getHelmet().clone(), stand.getChestplate().clone(), stand.getLeggings().clone(), stand.getBoots().clone() };
                 storeLiving((LivingEntity) entity);
+                this.stand = new ArmorStandStats();
+                
+                EulerAngle head = stand.getHeadPose();
+                this.stand.head[0] = (float) head.getX();
+                this.stand.head[1] = (float) head.getY();
+                this.stand.head[2] = (float) head.getZ();
+                
+                EulerAngle body = stand.getBodyPose();
+                this.stand.body[0] = (float) body.getX();
+                this.stand.body[1] = (float) body.getY();
+                this.stand.body[2] = (float) body.getZ();
+                
+                EulerAngle leftLeg = stand.getLeftLegPose();
+                this.stand.leftLeg[0] = (float) leftLeg.getX();
+                this.stand.leftLeg[1] = (float) leftLeg.getY();
+                this.stand.leftLeg[2] = (float) leftLeg.getZ();
+                
+                EulerAngle rightLeg = stand.getRightLegPose();
+                this.stand.rightLeg[0] = (float) rightLeg.getX();
+                this.stand.rightLeg[1] = (float) rightLeg.getY();
+                this.stand.rightLeg[2] = (float) rightLeg.getZ();
+                
+                EulerAngle leftArm = stand.getLeftArmPose();
+                this.stand.leftArm[0] = (float) leftArm.getX();
+                this.stand.leftArm[1] = (float) leftArm.getY();
+                this.stand.leftArm[2] = (float) leftArm.getZ();
+
+                EulerAngle rightArm = stand.getRightArmPose();
+                this.stand.rightArm[0] = (float) rightArm.getX();
+                this.stand.rightArm[1] = (float) rightArm.getY();
+                this.stand.rightArm[2] = (float) rightArm.getZ();
+                
+                if (!stand.hasArms()) {
+                    this.stand.noarms = true;
+                }
+                if (!stand.hasBasePlate()) {
+                    this.stand.noplate = true;
+                }
+                if (!stand.hasGravity()) {
+                    this.stand.nogravity = true;
+                }
+                if (!stand.isVisible()) {
+                    this.stand.invisible = true;
+                }
+                if (stand.isSmall()) {
+                    this.stand.small = true;
+                }
+
+
+
                 return;
             }
             case ENDERMITE: // NEW
@@ -529,6 +581,45 @@ public class EntityWrapper {
                 }
                 if (this.inventory[4] != null) {
                     stand.setBoots(this.inventory[4]);
+                }
+                if (this.stand.head[0] != 0 || this.stand.head[1] != 0 || this.stand.head[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.head[0], this.stand.head[1], this.stand.head[2]);
+                    stand.setHeadPose(pose);
+                }
+                if (this.stand.body[0] != 0 || this.stand.body[1] != 0 || this.stand.body[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.body[0], this.stand.body[1], this.stand.body[2]);
+                    stand.setBodyPose(pose);
+                }
+                if (this.stand.leftLeg[0] != 0 || this.stand.leftLeg[1] != 0 || this.stand.leftLeg[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.leftLeg[0], this.stand.leftLeg[1], this.stand.leftLeg[2]);
+                    stand.setLeftLegPose(pose);
+                }
+                if (this.stand.rightLeg[0] != 0 || this.stand.rightLeg[1] != 0 || this.stand.rightLeg[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.rightLeg[0], this.stand.rightLeg[1], this.stand.rightLeg[2]);
+                    stand.setRightLegPose(pose);
+                }
+                if (this.stand.leftArm[0] != 0 || this.stand.leftArm[1] != 0 || this.stand.leftArm[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.leftArm[0], this.stand.leftArm[1], this.stand.leftArm[2]);
+                    stand.setLeftArmPose(pose);
+                }
+                if (this.stand.rightArm[0] != 0 || this.stand.rightArm[1] != 0 || this.stand.rightArm[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.rightArm[0], this.stand.rightArm[1], this.stand.rightArm[2]);
+                    stand.setRightArmPose(pose);
+                }
+                if (this.stand.invisible) {
+                    stand.setVisible(false);
+                }
+                if (this.stand.noarms) {
+                    stand.setArms(false);
+                }
+                if (this.stand.nogravity) {
+                    stand.setGravity(false);
+                }
+                if (this.stand.noplate) {
+                    stand.setBasePlate(false);
+                }
+                if (this.stand.small) {
+                    stand.setSmall(true);
                 }
                 restoreLiving((LivingEntity) entity);
                 return entity;
