@@ -7,7 +7,7 @@ public class ArmorStandStats {
     float[] rightLeg = new float[3];
     float[] leftArm = new float[3];
     float[] rightArm = new float[3];
-    public boolean noarms;
+    public boolean arms;
     public boolean noplate;
     public boolean nogravity;
     public boolean invisible;

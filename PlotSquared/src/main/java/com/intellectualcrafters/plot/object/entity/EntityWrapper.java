@@ -351,8 +351,8 @@ public class EntityWrapper {
                 this.stand.rightArm[1] = (float) rightArm.getY();
                 this.stand.rightArm[2] = (float) rightArm.getZ();
                 
-                if (!stand.hasArms()) {
-                    this.stand.noarms = true;
+                if (stand.hasArms()) {
+                    this.stand.arms = true;
                 }
                 if (!stand.hasBasePlate()) {
                     this.stand.noplate = true;
@@ -609,8 +609,8 @@ public class EntityWrapper {
                 if (this.stand.invisible) {
                     stand.setVisible(false);
                 }
-                if (this.stand.noarms) {
-                    stand.setArms(false);
+                if (this.stand.arms) {
+                    stand.setArms(true);
                 }
                 if (this.stand.nogravity) {
                     stand.setGravity(false);
