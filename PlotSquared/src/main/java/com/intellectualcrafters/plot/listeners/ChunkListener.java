@@ -3,10 +3,15 @@ package com.intellectualcrafters.plot.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
@@ -27,6 +32,39 @@ public class ChunkListener implements Listener {
     public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
+    
+    private int count = 0;
+    private Chunk lastChunk = null;
+    
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        count++;
+        if (count < Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+            lastChunk = null;
+            return;
+        }
+        Item entity = event.getEntity();
+        Chunk chunk = entity.getLocation().getChunk();
+        if (chunk == lastChunk) {
+            event.getEntity().remove();
+            event.setCancelled(true);
+            return;
+        }
+        if (!PlotSquared.isPlotWorld(chunk.getWorld().getName())) {
+            return;
+        }
+        Entity[] entities = chunk.getEntities();
+        if (entities.length > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+            PlotSquared.log("[PlotSquared] &cDetected unsafe entity creation (" + (chunk.getX() << 4) + "," + (chunk.getX() << 4) + "). Mitigating threat.");
+            event.getEntity().remove();
+            event.setCancelled(true);
+            lastChunk = chunk;
+        }
+        else {
+            count = 0;
+            lastChunk = null;
+        }
+    }
 
     public void cleanChunk(final Chunk chunk) {
         TaskManager.index.increment();
@@ -37,7 +75,7 @@ public class ChunkListener implements Listener {
                 if (!chunk.isLoaded()) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
-                    PlotSquared.log("&aSuccessfully processed and unloaded chunk!");
+                    PlotSquared.log("[PlotSquared] &aSuccessfully processed and unloaded chunk!");
                     chunk.unload(true, true);
                     return;
                 }
@@ -45,7 +83,7 @@ public class ChunkListener implements Listener {
                 if (tiles.length == 0) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
-                    PlotSquared.log("&aSuccessfully processed and unloaded chunk!");
+                    PlotSquared.log("[PlotSquared] &aSuccessfully processed and unloaded chunk!");
                     chunk.unload(true, true);
                     return;
                 }
@@ -55,7 +93,7 @@ public class ChunkListener implements Listener {
                     if (i >= tiles.length) {
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                         TaskManager.tasks.remove(currentIndex);
-                        PlotSquared.log("&aSuccessfully processed and unloaded chunk!");
+                        PlotSquared.log("[PlotSquared] &aSuccessfully processed and unloaded chunk!");
                         chunk.unload(true, true);
                         return;
                     }
@@ -77,11 +115,11 @@ public class ChunkListener implements Listener {
             for (Entity ent : entities) {
                 ent.remove();
             }
-            PlotSquared.log("&aPlotSquared detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
+            PlotSquared.log("[PlotSquared] &a detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
             if (unload) {
-                PlotSquared.log("&cPlotSquared detected unsafe chunk: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
+                PlotSquared.log("[PlotSquared] &c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

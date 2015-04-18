@@ -23,6 +23,8 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
+import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
+import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -39,12 +41,12 @@ public class WE_Anywhere extends SubCommand {
             return false;
         }
         if (Permissions.hasPermission(plr, "plots.worldedit.bypass")) {
-            if (WEListener.bypass.contains(plr.getName())) {
-                WEListener.bypass.remove(plr.getName());
+            if (WEManager.bypass.contains(plr.getName())) {
+                WEManager.bypass.remove(plr.getName());
                 MainUtil.sendMessage(plr, C.WORLDEDIT_RESTRICTED);
             }
             else {
-                WEListener.bypass.add(plr.getName());
+                WEManager.bypass.add(plr.getName());
                 MainUtil.sendMessage(plr, C.WORLDEDIT_UNMASKED);
             }
         }

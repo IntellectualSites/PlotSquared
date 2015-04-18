@@ -86,6 +86,10 @@ public enum C {
      * WorldEdit masks
      */
     REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot."),
+    WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%."),
+    WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%."),
+    WORLDEDIT_UNSAFE("$2Access to that command has been blocked"),
+    WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $3/plot wea"),
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted."),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted."),
     /*

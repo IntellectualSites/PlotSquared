@@ -85,6 +85,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
+import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -460,7 +461,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
-        WEListener.bypass.remove(player.getName());
+        if (PlotSquared.worldEdit != null) {
+            WEManager.bypass.remove(player.getName());
+        }
         ((BukkitPlayer) player).hasPerm = new HashSet<>();
         ((BukkitPlayer) player).noPerm = new HashSet<>();
     }
@@ -1043,7 +1046,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public static void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         EventUtil.unregisterPlayer(pp);
-        WEListener.bypass.remove(pp.getName());
+        if (PlotSquared.worldEdit != null) {
+            WEManager.bypass.remove(pp.getName());
+        }
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PlotSquared.getPlots(pp.getName()).values();
             for (final Plot plot : plots) {

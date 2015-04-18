@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.TNTListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
+import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
@@ -261,9 +262,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 log("&cPlease use WorldEdit 6+ for masking support");
                 log("&c - http://builds.enginehub.org/job/worldedit");
             } else {
-                WEListener weClass = new WEListener();
-                WorldEdit.getInstance().getEventBus().register(weClass);
-                getServer().getPluginManager().registerEvents(weClass, this);
+                getServer().getPluginManager().registerEvents(new WEListener(), this);
+                WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                 MainCommand.subCommands.add(new WE_Anywhere());
             }
         }

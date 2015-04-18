@@ -76,7 +76,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 }
             }
         }
-        if (WEListener.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
             return super.setBlock(location, block);
         }
         return false;
@@ -92,7 +92,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             Eblocked = true;
             PlotSquared.log("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
         }
-        if (WEListener.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;
@@ -100,7 +100,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     
     @Override
     public boolean setBiome(Vector2D position, BaseBiome biome) {
-        if (WEListener.maskContains(mask, position.getBlockX(), position.getBlockZ())) {
+        if (WEManager.maskContains(mask, position.getBlockX(), position.getBlockZ())) {
             return super.setBiome(position, biome);
         }
         return false;

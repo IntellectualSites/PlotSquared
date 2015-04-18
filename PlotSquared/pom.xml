@@ -8,7 +8,7 @@
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     <artifactId>PlotSquared</artifactId>
-    <version>2.9.15</version>
+    <version>2.9.16</version>
     <name>PlotSquared</name>
     <packaging>jar</packaging>
     <build>
@@ -16,23 +16,20 @@
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
-               <targetPath>.</targetPath>
                <filtering>true</filtering>
+               <excludes>
+		          <exclude>skyblock.template</exclude>
+		          <exclude>town.template</exclude>
+		      </excludes>
                <directory>${basedir}/src/main/resources/</directory>
+            </resource>
+            <resource>
+               <filtering>false</filtering>
                <includes>
-                   <include>
-                       plugin.yml
-                   </include>
-                   <include>
-                       LICENSE
-                   </include>
-                   <include>
-                       town.template
-                   </include>
-                   <include>
-                       skyblock.template
-                   </include>
-               </includes>
+		          <include>skyblock.template</include>
+		          <include>town.template</include>
+		      </includes>
+               <directory>${basedir}/src/main/resources/</directory>
             </resource>
         </resources>
         <plugins>

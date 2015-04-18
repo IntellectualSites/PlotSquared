@@ -795,89 +795,156 @@ public class PlotSquared {
         config.set("version", VERSION);
         
         final Map<String, Object> options = new HashMap<>();
-        options.put("teleport.delay", 0);
-        options.put("auto_update", false);
+        // Command confirmation
         options.put("confirmation.clear", Settings.CONFIRM_CLEAR);
         options.put("confirmation.delete", Settings.CONFIRM_DELETE);
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
+        
+        // Protection
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
+        
+        // Clusters
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
-        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
+        
+        // PlotMe
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
         options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
-        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
+        
+        // UUID
         options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("UUID.force-lowercase", Settings.UUID_LOWERCASE);
+        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
+        
+        // Mob stuff
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
-        options.put("console.color", Settings.CONSOLE_COLOR);
-        options.put("metrics", true);
-        options.put("debug", true);
+        
+        // Clearing + Expiry
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
         options.put("clear.check-disk", Settings.AUTO_CLEAR_CHECK_DISK);
         options.put("clear.on.ban", false);
-        options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
+        
+        // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
+        
+        // Caching
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
+        
+        // Titles
         options.put("titles", Settings.TITLES);
+        
+        // Teleportation
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
+        options.put("teleport.delay", 0);
+        
+        // WorldEdit
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
+        options.put("worldedit.max-volume", Settings.WE_MAX_VOLUME);
+        options.put("worldedit.max-iterations", Settings.WE_MAX_ITERATIONS);
+        
+        // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
+        
+        // Comments
         options.put("comments.notifications.interval", Settings.COMMENT_NOTIFICATION_INTERVAL);
+        
+        // Plot limits
         options.put("global_limit", Settings.GLOBAL_LIMIT);
+        options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
+
+        // Misc
+        options.put("console.color", Settings.CONSOLE_COLOR);
+        options.put("metrics", true);
+        options.put("debug", true);
+        options.put("auto_update", false);
+        
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
             }
         }
-        Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
-        Settings.DEBUG = config.getBoolean("debug");
-        if (Settings.DEBUG) {
-            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
-        }
         
-        Settings.COMMENT_NOTIFICATION_INTERVAL = config.getInt("comments.notifications.interval");
+        // Command confirmation
+        Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
+        Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
+        Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
+        
+        // Protection
+        Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
+        Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
+        
+        // Clusters
+        Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
+        
+        // PlotMe
+        Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
+        Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
+        Settings.CACHE_PLOTME = config.getBoolean("plotme-convert.cache-uuids");
+        
+        // UUID
+        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
+        Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
+        Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
+        
+        // Mob stuff
+        Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
+        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
+        
+        // Clearing + Expiry
+        Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
+        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
+        Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+        
+        // Schematics
+        Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        // Caching
+        Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
+        
+        // Titles
+        Settings.TITLES = config.getBoolean("titles");
+        
+        // Teleportation
+        Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
+        Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
+        
+        // WorldEdit
+        Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
+        Settings.WE_MAX_VOLUME = config.getLong("worldedit.max-volume");
+        Settings.WE_MAX_ITERATIONS = config.getLong("worldedit.max-iterations");
+        
+        // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
         
-        Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
-        Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
-        Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
-        Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
-        Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
-        Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
-        Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
-        Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
-        Settings.CONSOLE_COLOR = config.getBoolean("console.color");
-        Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
-        Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
-        Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
-        Settings.CACHE_PLOTME = config.getBoolean("plotme-convert.cache-uuids");
-        Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
-        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
-        Settings.METRICS = config.getBoolean("metrics");
-        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
-        Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
+        // Comments
+        Settings.COMMENT_NOTIFICATION_INTERVAL = config.getInt("comments.notifications.interval");
+        
+        // Plot limits
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
-        Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
-        Settings.TITLES = config.getBoolean("titles");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         if (Settings.MAX_PLOTS > 32767) {
             log("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
             Settings.MAX_PLOTS = 32767;
         }
-        Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
-        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
-        Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
-        Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
-        Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
         Settings.GLOBAL_LIMIT = config.getBoolean("global_limit");
+        
+        // Misc
+        Settings.DEBUG = config.getBoolean("debug");
+        if (Settings.DEBUG) {
+            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
+        }
+        Settings.CONSOLE_COLOR = config.getBoolean("console.color");
+        Settings.METRICS = config.getBoolean("metrics");
     }
 
     public static void setupConfigs() {

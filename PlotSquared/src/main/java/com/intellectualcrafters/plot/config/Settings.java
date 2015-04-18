@@ -32,7 +32,6 @@ public class Settings {
     /**
      * Default UUID_FECTHING: false
      */
-    public static boolean UUID_FECTHING = false;
     public static boolean PERMISSION_CACHING = false;
     public static boolean UUID_FROM_DISK = false;
     /**
@@ -67,6 +66,8 @@ public class Settings {
      * Default worldedit-require-selection-in-mask: false
      */
     public static boolean REQUIRE_SELECTION = true;
+    public static long WE_MAX_VOLUME = 500000;
+    public static long WE_MAX_ITERATIONS = 1000;
     /**
      * Default kill road mobs: true
      */
