@@ -118,15 +118,16 @@ public class WEListener implements Listener {
         final BlockVector pos1 = selection.getNativeMinimumPoint().toBlockVector();
         final BlockVector pos2 = selection.getNativeMaximumPoint().toBlockVector();
         HashSet<RegionWrapper> mask = WEManager.getMask(pp);
+        RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
         if (Settings.REQUIRE_SELECTION) {
             String arg = null;
-            if (mask.size() == 0) {
+            if (!WEManager.regionContains(region, mask)) {
                 arg = "pos1 + pos2";
             }
-            if (!WEManager.maskContains(mask, pos1.getBlockX(), pos1.getBlockZ())) {
+            else if (!WEManager.maskContains(mask, pos1.getBlockX(), pos1.getBlockZ())) {
                 arg = "pos1";
             }
-            if (!WEManager.maskContains(mask, pos2.getBlockX(), pos2.getBlockZ())) {
+            else if (!WEManager.maskContains(mask, pos2.getBlockX(), pos2.getBlockZ())) {
                 arg = "pos2";
             }
             if (arg != null) {
@@ -138,7 +139,6 @@ public class WEListener implements Listener {
                 return true;
             }
         }
-        RegionWrapper region = new RegionWrapper(pos1.getBlockX(), pos2.getBlockX(), pos1.getBlockZ(), pos2.getBlockZ());
         if (!WEManager.regionContains(region, mask)) {
             MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "pos1 + pos2");
             e.setCancelled(true);
@@ -155,7 +155,7 @@ public class WEListener implements Listener {
     public boolean onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(p);
-        if (!PlotSquared.isPlotWorld(p.getWorld().getName()) || Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+        if (!PlotSquared.isPlotWorld(p.getWorld().getName())) {
             return true;
         }
         String cmd = e.getMessage().toLowerCase();
