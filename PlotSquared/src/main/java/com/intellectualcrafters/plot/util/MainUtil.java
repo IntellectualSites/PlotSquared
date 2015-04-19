@@ -200,20 +200,25 @@ public class MainUtil {
         BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
     }
     
-//    public static void update(final Location loc) {
-//        final String world = loc.getWorld();
-//        int ox = loc.getX() >> 4;
-//        int oz = loc.getZ() >> 4;
-//        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-//        final int distance = BukkitUtil.getViewDistance();
-//        for (int cx = -distance; cx <= distance; cx++) {
-//            for (int cz = -distance; cz <= distance; cz++) {
-//                final ChunkLoc chunk = new ChunkLoc(ox + cx, oz + cz);
-//                chunks.add(chunk);
-//            }
-//        }
-//        BlockUpdateUtil.setBlockManager.update(world, chunks);
-//    }
+    public static void update(final Plot plot) {
+        Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        Location top = getPlotBottomLoc(plot.world, plot.id);
+        
+        int bx = bot.getX() >> 4;
+        int bz = bot.getZ() >> 4;
+        
+        int tx = 1 + (top.getX() >> 4);
+        int tz = 1 + (top.getZ() >> 4);
+        
+        ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        
+        for (int x = bx; x <= tx; x++) {
+            for (int z = bz; z <= tz; z++) {
+                chunks.add(new ChunkLoc(x, z));
+            }
+        }
+        BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
+    }
 
     public static void createWorld(final String world, final String generator) {
     }
@@ -637,6 +642,7 @@ public class MainUtil {
         final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
         final int topZ = getPlotTopLoc(world, plot.id).getZ();
         BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, biome);
+        update(plot);
     }
 
     public static int getHeighestBlock(final String world, final int x, final int z) {
