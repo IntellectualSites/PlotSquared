@@ -124,7 +124,7 @@ public class HybridPop extends PlotPopulator {
             
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    if (contains(requiredRegion, this.X + x, this.Z + z)) {
+                    if (contains(requiredRegion, x, z)) {
                         if (this.doFilling) {
                             for (short y = 1; y < this.plotheight; y++) {
                                 setBlock(x, y, z, this.filling);
