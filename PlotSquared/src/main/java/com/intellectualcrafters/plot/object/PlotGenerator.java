@@ -177,5 +177,6 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public abstract PlotWorld getNewPlotWorld(final String world);
 
     public abstract PlotManager getPlotManager();
-
+    
+    public void processSetup(SetupObject object, PlotPlayer player) {};
 }

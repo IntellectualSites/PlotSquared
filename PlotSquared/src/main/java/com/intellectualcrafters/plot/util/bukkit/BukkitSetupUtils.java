@@ -31,12 +31,12 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (generator != null) {
                     PlotSquared.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
-                    if (generator instanceof PlotGenerator) {
-                        final PlotGenerator pgen = (PlotGenerator) generator;
+//                    if (generator instanceof PlotGenerator) {
+//                        final PlotGenerator pgen = (PlotGenerator) generator;
 //                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
-                            SetupUtils.generators.put(name, pgen);
+                            SetupUtils.generators.put(name, generator);
 //                        }
-                    }
+//                    }
                 }
             }
         }
@@ -52,22 +52,25 @@ public class BukkitSetupUtils extends SetupUtils {
         if (object.type != 0) {
             PlotSquared.config.set("worlds." + world + "." + "generator.type", object.type);
             PlotSquared.config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PlotSquared.config.set("worlds." + world + "." + "generator.plugin", object.generator);
+            PlotSquared.config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
+            if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
+                PlotSquared.config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+            }
         }
         try {
             PlotSquared.config.save(PlotSquared.configFile);
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        if (object.type == 0) {
+        if (object.setupGenerator != null) {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.generator);
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
             } else {
                 if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.generator);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
                 } else {
                     final WorldCreator wc = new WorldCreator(object.world);
-                    wc.generator(object.generator);
+                    wc.generator(object.setupGenerator);
                     wc.environment(Environment.NORMAL);
                     Bukkit.createWorld(wc);
                 }
@@ -99,7 +102,7 @@ public class BukkitSetupUtils extends SetupUtils {
         if (!(generator instanceof PlotGenerator)) {
             return null;
         }
-        for (Entry<String, PlotGenerator> entry : generators.entrySet()) {
+        for (Entry<String, ChunkGenerator> entry : generators.entrySet()) {
             if (entry.getValue().getClass().getName().equals(generator.getClass().getName())) {
                 return entry.getKey();
             }

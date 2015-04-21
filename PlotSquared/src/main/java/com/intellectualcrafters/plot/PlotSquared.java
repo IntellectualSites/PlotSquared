@@ -564,19 +564,22 @@ public class PlotSquared {
         }
         
         // Copy files
-        copyFile("town.template");
-        copyFile("skyblock.template");
+        copyFile("town.template", "templates");
+        copyFile("skyblock.template", "templates");
+        copyFile("german.yml", "translations");
+        copyFile("s_chinese_unescaped.yml", "translations");
+        copyFile("s_chinese.yml", "translations");
         showDebug();
     }
     
-    public void copyFile(String file) {
+    public void copyFile(String file, String folder) {
         try {
             byte[] buffer = new byte[2048];
             File output = PlotSquared.IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
-            File newFile = new File((output + File.separator + "templates" + File.separator + file));
+            File newFile = new File((output + File.separator + folder + File.separator + file));
             if (newFile.exists()) {
                 return;
             }
