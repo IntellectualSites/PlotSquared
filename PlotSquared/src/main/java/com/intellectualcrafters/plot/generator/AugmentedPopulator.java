@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot.generator;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -16,6 +18,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -118,6 +121,53 @@ public class AugmentedPopulator extends BlockPopulator {
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
         if (this.plotworld.TERRAIN == 3) {
+            int X = chunk.getX() << 4;
+            int Z = chunk.getZ() << 4;
+            if (ChunkManager.FORCE_PASTE) {
+                for (short x = 0; x < 16; x++) {
+                    for (short z = 0; z < 16; z++) {
+                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                        final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
+                        HashMap<Short, Byte> datas = ChunkManager.GENERATE_DATA.get(loc);
+                        for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                            int y = entry.getKey();
+                            byte data;
+                            if (datas != null) {
+                                data = datas.get(y);
+                            }
+                            else {
+                                data = 0;
+                            }
+                            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, blocks.get(y), (byte) data);
+                        }
+                    }
+                }
+                return;
+            }
+            if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                PlotLoc loc;
+                for (Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
+                    HashMap<Short, Byte> datas = ChunkManager.GENERATE_DATA.get(entry.getKey());
+                    for (Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
+                        Short y = entry2.getKey();
+                        byte data;
+                        if (datas != null) {
+                            data = datas.get(y);
+                        }
+                        else {
+                            data = 0;
+                        }
+                        loc = entry.getKey();
+                        int xx = loc.x - X;
+                        int zz = loc.z - Z;
+                        if (xx >= 0 && xx < 16) {
+                            if (zz >= 0 && zz < 16) {
+                                BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, entry2.getValue(), (byte) data);
+                            }
+                        }
+                    }
+                }
+            }
             return;
         }
         final int X = chunk.getX();
