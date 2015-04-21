@@ -110,7 +110,8 @@ public class Setup extends SubCommand {
                 break;
             }
             case 1: { // choose world type
-                List<String> allTypes = Arrays.asList(new String[] { "default", "augmented", "partial" });
+                List<String> allTypes = Arrays.asList(new String[] { "default", "augmented", "partial"});
+                List<String> allDesc = Arrays.asList(new String[] { "Standard plot generation", "Plot generation with vanilla terrain", "Vanilla with clusters of plots"});
                 ArrayList<String> types = new ArrayList<>();
                 if (SetupUtils.generators.get(object.setupGenerator) instanceof PlotGenerator) {
                     types.add("default");
@@ -120,51 +121,55 @@ public class Setup extends SubCommand {
                     types.add("partial");
                 }
                 if ((args.length != 1) || !types.contains(args[0].toLowerCase())) {
-                    MainUtil.sendMessage(plr, "&cYou must choose a world type!" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots");
+                    MainUtil.sendMessage(plr, "&cYou must choose a world type!");
+                    for (String type : types) {
+                        int i = allTypes.indexOf(type);
+                        if (type.equals("default")) {
+                            MainUtil.sendMessage(plr, "&8 - &2" + type + " &8-&7 " + allDesc.get(i));
+                        }
+                        else {
+                            MainUtil.sendMessage(plr, "&8 - &7" + type + " &8-&7 " + allDesc.get(i));
+                        }
+                    }
                     return false;
                 }
                 object.type = allTypes.indexOf(args[0].toLowerCase());
+                ChunkGenerator gen = SetupUtils.generators.get(object.setupGenerator);
                 if (object.type == 0) {
                     object.current++;
                     if (object.step == null) {
-                        ChunkGenerator gen = SetupUtils.generators.get(object.setupGenerator);
-                        if (gen instanceof PlotGenerator) {
-                            object.plotManager = object.setupGenerator;
-                            object.step = ((PlotGenerator) SetupUtils.generators.get(object.setupGenerator)).getNewPlotWorld(null).getSettingNodes();
-                            ((PlotGenerator) gen).processSetup(object, plr);
-                        }
-                        else {
-                            
-                            
-                            MainUtil.sendMessage(plr, "&c[WARNING] The specified generator does not identify as PlotGenerator");
-                            MainUtil.sendMessage(plr, "&7Searching for a configuration script...");
-                            
-                            boolean script = false;
-                            // TODO allow external configuration scripts
-                            
-                            MainUtil.sendMessage(plr, "&cNo script has been found:");
-                            MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
-                            object.step = ((PlotGenerator) SetupUtils.generators.get("PlotSquared")).getNewPlotWorld(null).getSettingNodes();
-                        }
+                        object.plotManager = object.setupGenerator;
+                        object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
                     }
                     final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 } else {
+                    if (gen instanceof PlotGenerator) {
+                        object.plotManager = object.setupGenerator;
+                        object.setupGenerator = null;
+                        object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                    }
+                    else {
+                        object.plotManager = "PlotSquared";
+                        MainUtil.sendMessage(plr, "&c[WARNING] The specified generator does not identify as PlotGenerator");
+                        MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
+                        object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                    }
                     MainUtil.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
                 object.current++;
                 break;
             }
             case 2: { // Choose terrain
-                final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "all" });
+                final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "road", "all" });
                 if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
-                    MainUtil.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    MainUtil.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation&8 - &7ROAD&8 - &7Vanilla except for roads\n" + "&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
                 object.current++;
                 if (object.step == null) {
-                    object.step = SetupUtils.generators.get(object.generator).getNewPlotWorld(null).getSettingNodes();
+                    object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
                 }
                 final ConfigurationNode step = object.step[object.setup_index];
                 sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
@@ -211,11 +216,11 @@ public class Setup extends SubCommand {
                 object.world = args[0];
                 SetupUtils.setupMap.remove(plr.getName());
                 final String world;
-                if (object.manager == null) {
+                if (object.setupManager == null) {
                     world = SetupUtils.manager.setupWorld(object);
                 }
                 else {
-                    
+                    world = object.setupManager.setupWorld(object);
                 }
                 try {
                     plr.teleport(BlockManager.manager.getSpawn(world));

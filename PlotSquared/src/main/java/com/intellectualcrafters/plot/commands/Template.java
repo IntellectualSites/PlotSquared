@@ -90,14 +90,21 @@ public class Template extends SubCommand {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String generator = worldConfig.getString("generator.plugin");
-                if (generator == null) {
-                    generator = "PlotSquared";
+                String manager = worldConfig.getString("generator.plugin");
+                if (manager == null) {
+                    manager = "PlotSquared";
                 }
+                String generator = worldConfig.getString("generator.init");
+                if (generator == null) {
+                    generator = manager;
+                }
+                
                 int type = worldConfig.getInt("generator.type");
                 int terrain = worldConfig.getInt("generator.terrain");
+                
                 SetupObject setup = new SetupObject();
-                setup.generator = generator;
+                setup.plotManager = manager;
+                setup.setupGenerator = generator;
                 setup.type = type;
                 setup.terrain = terrain;
                 setup.step = new ConfigurationNode[0];

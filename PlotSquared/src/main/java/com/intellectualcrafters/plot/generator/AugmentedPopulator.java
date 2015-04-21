@@ -51,19 +51,36 @@ public class AugmentedPopulator extends BlockPopulator {
         }
     }
 
-    public BlockWrapper get(final int X, final int Z, final int i, final int j, final short[][] r, final boolean c) {
+    public BlockWrapper get(final int x, final int z, final int i, final int j, final short[][] r, final boolean c) {
         final int y = (i << 4) + (j >> 8);
         final int a = (j - ((y & 0xF) << 8));
-        final int z = (a >> 4);
-        final int x = a - (z << 4);
+        final int z1 = (a >> 4);
+        final int x1 = a - (z1 << 4);
         if (r[i] == null) {
-            return (c && (((Z + z) < this.bz) || ((Z + z) > this.tz) || ((X + x) < this.bx) || ((X + x) > this.tx))) ? null : new BlockWrapper(x, y, z, (short) 0, (byte) 0);
+            return (c && (((z + z1) < this.bz) || ((z + z1) > this.tz) || ((x + x1) < this.bx) || ((x + x1) > this.tx))) ? null : new BlockWrapper(x1, y, z1, (short) 0, (byte) 0);
         } else {
-            return (c && (((Z + z) < this.bz) || ((Z + z) > this.tz) || ((X + x) < this.bx) || ((X + x) > this.tx))) ? null : new BlockWrapper(x, y, z, r[i][j], (byte) 0);
+            return (c && (((z + z1) < this.bz) || ((z + z1) > this.tz) || ((x + x1) < this.bx) || ((x + x1) > this.tx))) ? null : new BlockWrapper(x1, y, z1, r[i][j], (byte) 0);
         }
     }
+    
+    private short[][] x_loc;
+    private short[][] y_loc;
+    private short[][] z_loc;
 
     public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
+        for (int i = 0; i < 16; i++) {
+            int i4 = i << 4;
+            for (int j = 0; j < 4096; j++) {
+                final int y = (i4) + (j >> 8);
+                final int a = (j - ((y & 0xF) << 8));
+                final int z1 = (a >> 4);
+                final int x1 = a - (z1 << 4);
+                x_loc[i][j] = (short) x1;
+                y_loc[i][j] = (short) y;
+                z_loc[i][j] = (short) z1;
+            }
+        }
+        
         this.cluster = cluster;
         this.generator = generator;
         this.plotworld = PlotSquared.getPlotWorld(world);
@@ -95,6 +112,10 @@ public class AugmentedPopulator extends BlockPopulator {
 
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
+        if (this.plotworld.TERRAIN == 3) {
+            // FIXME check CURRENT_PLOT_CLEAR && FORCE_PASTE
+            return;
+        }
         final int X = chunk.getX();
         final int Z = chunk.getZ();
         final int x = X << 4;
@@ -116,7 +137,7 @@ public class AugmentedPopulator extends BlockPopulator {
         } else {
             check = false;
         }
-        if (this.plotworld.TERRAIN == 2) {
+        if (this.plotworld.TERRAIN > 1) {
             final PlotId plot1 = this.manager.getPlotIdAbs(this.plotworld, x, 0, z);
             final PlotId plot2 = this.manager.getPlotIdAbs(this.plotworld, x2, 0, z2);
             if ((plot1 != null) && (plot2 != null) && plot1.equals(plot2)) {
@@ -129,7 +150,8 @@ public class AugmentedPopulator extends BlockPopulator {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    populateBiome(world, x, z);
+                    // Don't need to populate biome with this
+//                    populateBiome(world, x, z); 
                     MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
                 }
             }, 20);
@@ -161,28 +183,32 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
     }
-
+    
     private void populateBlocks(final World world, final Random rand, final int X, final int Z, final int x, final int z, final boolean check) {
         final short[][] result = this.generator.generateExtBlockSections(world, rand, X, Z, null);
-        final int length = result[0].length;
         for (int i = 0; i < result.length; i++) {
-            for (int j = 0; j < length; j++) {
-                final BlockWrapper blockInfo = get(x, z, i, j, result, check);
-                if (blockInfo == null) {
-                    continue;
-                }
-                final int xx = x + blockInfo.x;
-                final int zz = z + blockInfo.z;
-                if (this.p) {
-                    if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
-                        if (BukkitChunkManager.isIn(ChunkManager.CURRENT_PLOT_CLEAR, xx, zz)) {
-                            continue;
-                        }
-                    } else if (this.manager.getPlotIdAbs(this.plotworld, xx, 0, zz) != null) {
+            if (result[i] != null) {
+                for (int j = 0; j < 4096; j++) {
+                    int x1 = x_loc[i][j];
+                    int y = y_loc[i][j];
+                    int z1 = z_loc[i][j];
+                    short id = result[i][j];
+                    final int xx = x + x1;
+                    final int zz = z + z1;
+                    if (check && (((z + z1) < this.bz) || ((z + z1) > this.tz) || ((x + x1) < this.bx) || ((x + x1) > this.tx))) {
                         continue;
                     }
+                    if (this.p) {
+                        if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                            if (BukkitChunkManager.isIn(ChunkManager.CURRENT_PLOT_CLEAR, xx, zz)) {
+                                continue;
+                            }
+                        } else if (this.manager.getPlotIdAbs(this.plotworld, xx, 0, zz) != null) {
+                            continue;
+                        }
+                    }
+                    BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id, (byte) 0);
                 }
-                BukkitSetBlockManager.setBlockManager.set(world, xx, blockInfo.y, zz, blockInfo.id, (byte) 0);
             }
         }
         for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {

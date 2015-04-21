@@ -178,5 +178,5 @@ public abstract class PlotGenerator extends ChunkGenerator {
 
     public abstract PlotManager getPlotManager();
     
-    public void processSetup(SetupObject object, PlotPlayer player) {};
+    public void processSetup(SetupObject object) {};
 }

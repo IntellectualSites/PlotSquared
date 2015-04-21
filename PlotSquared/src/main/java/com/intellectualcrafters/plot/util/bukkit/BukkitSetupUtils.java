@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -44,6 +45,8 @@ public class BukkitSetupUtils extends SetupUtils {
     
     @Override
     public String setupWorld(final SetupObject object) {
+        SetupUtils.manager.updateGenerators();
+        ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);;
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
         for (final ConfigurationNode step : steps) {
