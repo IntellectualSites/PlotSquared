@@ -738,7 +738,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+    	Action action = event.getAction();
+        if (action == Action.LEFT_CLICK_BLOCK) {
             return;
         }
         final Block block = event.getClickedBlock();
@@ -758,7 +759,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                if (action != Action.PHYSICAL) {
+                	MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                }
                 event.setCancelled(true);
                 return;
             }
@@ -771,7 +774,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (Permissions.hasPermission(pp, "plots.admin.interact.other")) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
+                if (action != Action.PHYSICAL) {
+                	MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
+                }
                 event.setCancelled(true);
                 return;
             }
@@ -782,7 +787,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+        	if (action != Action.PHYSICAL) {
+        		MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+        	}
             event.setCancelled(true);
             return;
         }
