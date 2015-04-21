@@ -76,6 +76,19 @@ public abstract class PlotPopulator extends BlockPopulator {
      * @param data
      */
     public void setBlock(int x, int y, int z, byte data) {
+        if (data != 0) {
+            world.getBlockAt(X + x, y, Z + z).setData(data);
+        }
+    }
+    
+    /**
+     * Like setblock, but lacks the data != 0 check
+     * @param x
+     * @param y
+     * @param z
+     * @param data
+     */
+    public void setBlockAbs(int x, int y, int z, byte data) {
         world.getBlockAt(X + x, y, Z + z).setData(data);
     }
     

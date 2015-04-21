@@ -63,21 +63,26 @@ public class AugmentedPopulator extends BlockPopulator {
         }
     }
     
-    private short[][] x_loc;
-    private short[][] y_loc;
-    private short[][] z_loc;
+    private static short[][] x_loc;
+    private static short[][] y_loc;
+    private static short[][] z_loc;
 
     public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
-        for (int i = 0; i < 16; i++) {
-            int i4 = i << 4;
-            for (int j = 0; j < 4096; j++) {
-                final int y = (i4) + (j >> 8);
-                final int a = (j - ((y & 0xF) << 8));
-                final int z1 = (a >> 4);
-                final int x1 = a - (z1 << 4);
-                x_loc[i][j] = (short) x1;
-                y_loc[i][j] = (short) y;
-                z_loc[i][j] = (short) z1;
+        if (x_loc == null) {
+            x_loc = new short[16][4096];
+            y_loc = new short[16][4096];
+            z_loc = new short[16][4096];
+            for (int i = 0; i < 16; i++) {
+                int i4 = i << 4;
+                for (int j = 0; j < 4096; j++) {
+                    final int y = (i4) + (j >> 8);
+                    final int a = (j - ((y & 0xF) << 8));
+                    final int z1 = (a >> 4);
+                    final int x1 = a - (z1 << 4);
+                    x_loc[i][j] = (short) x1;
+                    y_loc[i][j] = (short) y;
+                    z_loc[i][j] = (short) z1;
+                }
             }
         }
         
@@ -113,7 +118,6 @@ public class AugmentedPopulator extends BlockPopulator {
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
         if (this.plotworld.TERRAIN == 3) {
-            // FIXME check CURRENT_PLOT_CLEAR && FORCE_PASTE
             return;
         }
         final int X = chunk.getX();
