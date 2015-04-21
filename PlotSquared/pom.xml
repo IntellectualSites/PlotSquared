@@ -28,6 +28,9 @@
                <includes>
 		          <include>skyblock.template</include>
 		          <include>town.template</include>
+		          <include>s_chinese.yml</include>
+		          <include>s_chinese_unescaped.yml</include>
+		          <include>german.yml</include>
 		      </includes>
                <directory>${basedir}/src/main/resources/</directory>
             </resource>
