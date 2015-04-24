@@ -665,36 +665,34 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
-        if (plot != null) {
-            BlockFace face = event.getDirection();
-            Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
-            List<Block> blocks = event.getBlocks();
-            for (final Block b : blocks) {
-                Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
-                Plot newPlot = MainUtil.getPlot(bloc);
-                if (!plot.equals(newPlot)) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            if (!Settings.PISTON_FALLING_BLOCK_CHECK) {
+        BlockFace face = event.getDirection();
+        Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
+        List<Block> blocks = event.getBlocks();
+        for (final Block b : blocks) {
+            Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
+            Plot newPlot = MainUtil.getPlot(bloc);
+            if (MainUtil.equals(plot, newPlot)) {
+                event.setCancelled(true);
                 return;
             }
-            org.bukkit.Location lastLoc;
-            if (blocks.size() > 0) {
-                lastLoc = blocks.get(blocks.size() - 1).getLocation().add(relative);
-            }
-            else {
-                lastLoc = event.getBlock().getLocation().add(relative);
-            }
-            Entity[] ents = lastLoc.getChunk().getEntities();
-            for (Entity entity : ents) {
-                if (entity instanceof FallingBlock) {
-                    org.bukkit.Location eloc = entity.getLocation();
-                    if (eloc.distanceSquared(lastLoc) < 2) {
-                        event.setCancelled(true);
-                        return;
-                    }
+        }
+        if (!Settings.PISTON_FALLING_BLOCK_CHECK) {
+            return;
+        }
+        org.bukkit.Location lastLoc;
+        if (blocks.size() > 0) {
+            lastLoc = blocks.get(blocks.size() - 1).getLocation().add(relative);
+        }
+        else {
+            lastLoc = event.getBlock().getLocation().add(relative);
+        }
+        Entity[] ents = lastLoc.getChunk().getEntities();
+        for (Entity entity : ents) {
+            if (entity instanceof FallingBlock) {
+                org.bukkit.Location eloc = entity.getLocation();
+                if (eloc.distanceSquared(lastLoc) < 2) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
@@ -729,15 +727,20 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final List<BlockState> blocks = e.getBlocks();
+        if (blocks.size() == 0) {
+            return;
+        }
+        Plot origin = MainUtil.getPlot(BukkitUtil.getLocation(blocks.get(0).getLocation()));
+        BlockState start = blocks.get(0);
         for (int i = blocks.size() - 1; i >= 0; i--) {
             final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
             final Plot plot = getCurrentPlot(loc);
-            if ((plot == null) || !plot.hasOwner()) {
+            if (MainUtil.equals(plot, origin)) {
                 e.getBlocks().remove(i);
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onInteract(final PlayerInteractEvent event) {
     	Action action = event.getAction();
