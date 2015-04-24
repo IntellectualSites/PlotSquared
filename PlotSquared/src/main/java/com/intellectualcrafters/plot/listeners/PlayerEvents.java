@@ -20,12 +20,14 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
@@ -1298,26 +1300,28 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             else if (damager instanceof Projectile) {
                 projectile = (Projectile) damager;
                 //Arrow, Egg, EnderPearl, Fireball, Fish, FishHook, LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion, WitherSkull
-                if (damager instanceof Arrow || damager instanceof LargeFireball || damager instanceof Fireball || damager instanceof SmallFireball) {
-                    ProjectileSource shooter = projectile.getShooter();
-                    if (shooter == null || !(shooter instanceof Player)) {
-                        return;
-                    }
-                    p = (Player) shooter;
-                }
-                else if (damager instanceof ThrownPotion) {
-                    ThrownPotion potion = (ThrownPotion) damager;
-                    Collection<PotionEffect> effects = potion.getEffects();
-                    for (PotionEffect effect : effects) {
-                        PotionEffectType type = effect.getType();
-                        if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM || type == PotionEffectType.INVISIBILITY  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
-                            ProjectileSource shooter = ((Projectile) damager).getShooter();
-                            if (shooter == null || !(shooter instanceof Player)) {
-                                return;
+                if (damager instanceof Projectile) {
+                    if (damager instanceof ThrownPotion) {
+                        ThrownPotion potion = (ThrownPotion) damager;
+                        Collection<PotionEffect> effects = potion.getEffects();
+                        for (PotionEffect effect : effects) {
+                            PotionEffectType type = effect.getType();
+                            if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM || type == PotionEffectType.INVISIBILITY  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
+                                ProjectileSource shooter = ((Projectile) damager).getShooter();
+                                if (shooter == null || !(shooter instanceof Player)) {
+                                    return;
+                                }
+                                p = (Player) shooter;
+                                break;
                             }
-                            p = (Player) shooter;
-                            break;
                         }
+                    }
+                    else {
+                        ProjectileSource shooter = projectile.getShooter();
+                        if (shooter == null || !(shooter instanceof Player)) {
+                            return;
+                        }
+                        p = (Player) shooter;
                     }
                 }
                 else {
