@@ -6,8 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -30,16 +33,10 @@ public class ChunkListener implements Listener {
         processChunk(event.getChunk(), false);
     }
     
-    private int count = 0;
     private Chunk lastChunk = null;
     
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
-        count++;
-        if (count < Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
-            lastChunk = null;
-            return;
-        }
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
         if (chunk == lastChunk) {
@@ -52,13 +49,34 @@ public class ChunkListener implements Listener {
         }
         Entity[] entities = chunk.getEntities();
         if (entities.length > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
-            PlotSquared.log("[PlotSquared] &cDetected unsafe entity creation (" + (chunk.getX() << 4) + "," + (chunk.getX() << 4) + "). Mitigating threat.");
             event.getEntity().remove();
             event.setCancelled(true);
             lastChunk = chunk;
         }
         else {
-            count = 0;
+            lastChunk = null;
+        }
+    }
+    
+    @EventHandler
+    public void onEntitySpawn(CreatureSpawnEvent event) {
+        LivingEntity entity = event.getEntity();
+        Chunk chunk = entity.getLocation().getChunk();
+        if (chunk == lastChunk) {
+            event.getEntity().remove();
+            event.setCancelled(true);
+            return;
+        }
+        if (!PlotSquared.isPlotWorld(chunk.getWorld().getName())) {
+            return;
+        }
+        Entity[] entities = chunk.getEntities();
+        if (entities.length > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+            event.getEntity().remove();
+            event.setCancelled(true);
+            lastChunk = chunk;
+        }
+        else {
             lastChunk = null;
         }
     }
@@ -110,7 +128,9 @@ public class ChunkListener implements Listener {
         BlockState[] tiles = chunk.getTileEntities();
         if (entities.length > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
             for (Entity ent : entities) {
-                ent.remove();
+                if (!(ent instanceof Player)) {
+                    ent.remove();
+                }
             }
             PlotSquared.log("[PlotSquared] &a detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
         }
