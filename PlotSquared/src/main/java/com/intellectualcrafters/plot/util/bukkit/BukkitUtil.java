@@ -151,7 +151,11 @@ public class BukkitUtil extends BlockManager {
     }
 
     public static void regenerateChunk(final String world, final int x, final int z) {
-        getWorld(world).regenerateChunk(x, z);
+        World worldObj = getWorld(world);
+        Chunk chunk = worldObj.getChunkAt(x, z);
+        if (chunk.isLoaded() || chunk.load(false)) {
+            worldObj.regenerateChunk(x, z);
+        }
     }
 
     public static PlotBlock getBlock(final Location loc) {

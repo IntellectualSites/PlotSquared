@@ -289,64 +289,67 @@ public class BukkitChunkManager extends ChunkManager {
         final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                if (chunks.size() == 0) {
-                    TaskManager.runTaskLater(whenDone, 1);
-                    Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                    TaskManager.tasks.remove(currentIndex);
-                    return;
-                }
-                CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-                final Chunk chunk = chunks.get(0);
-                chunks.remove(0);
-                final int x = chunk.getX();
-                final int z = chunk.getZ();
-                boolean loaded = true;
-                if (!chunk.isLoaded()) {
-                    final boolean result = chunk.load(false);
-                    if (!result) {
-                        loaded = false;
-                        ;
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 20) {
+                    if (chunks.size() == 0) {
+                        TaskManager.runTaskLater(whenDone, 1);
+                        Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                        TaskManager.tasks.remove(currentIndex);
+                        return;
                     }
+                    CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                    final Chunk chunk = chunks.get(0);
+                    chunks.remove(0);
+                    final int x = chunk.getX();
+                    final int z = chunk.getZ();
+                    boolean loaded = true;
                     if (!chunk.isLoaded()) {
-                        loaded = false;
-                    }
-                }
-                if (loaded) {
-                    initMaps();
-                    final int absX = x << 4;
-                    final int absZ = z << 4;
-                    boolean save = false;
-                    if ((x == c1x) || (z == c1z)) {
-                        save = true;
-                        for (int X = 0; X < 16; X++) {
-                            for (int Z = 0; Z < 16; Z++) {
-                                if ((((X + absX) < sx) || ((Z + absZ) < sz)) || (((X + absX) > ex) || ((Z + absZ) > ez))) {
-                                    saveBlocks(world, maxY, X + absX, Z + absZ);
-                                }
-                            }
+                        final boolean result = chunk.load(false);
+                        if (!result) {
+                            loaded = false;
+                            ;
                         }
-                    } else if ((x == c2x) || (z == c2z)) {
-                        for (int X = 0; X < 16; X++) {
+                        if (!chunk.isLoaded()) {
+                            loaded = false;
+                        }
+                    }
+                    if (loaded) {
+                        initMaps();
+                        final int absX = x << 4;
+                        final int absZ = z << 4;
+                        boolean save = false;
+                        if ((x == c1x) || (z == c1z)) {
                             save = true;
-                            for (int Z = 0; Z < 16; Z++) {
-                                if ((((X + absX) > ex) || ((Z + absZ) > ez)) || (((X + absX) < sx) || ((Z + absZ) < sz))) {
-                                    saveBlocks(world, maxY, X + absX, Z + absZ);
+                            for (int X = 0; X < 16; X++) {
+                                for (int Z = 0; Z < 16; Z++) {
+                                    if ((((X + absX) < sx) || ((Z + absZ) < sz)) || (((X + absX) > ex) || ((Z + absZ) > ez))) {
+                                        saveBlocks(world, maxY, X + absX, Z + absZ);
+                                    }
+                                }
+                            }
+                        } else if ((x == c2x) || (z == c2z)) {
+                            for (int X = 0; X < 16; X++) {
+                                save = true;
+                                for (int Z = 0; Z < 16; Z++) {
+                                    if ((((X + absX) > ex) || ((Z + absZ) > ez)) || (((X + absX) < sx) || ((Z + absZ) < sz))) {
+                                        saveBlocks(world, maxY, X + absX, Z + absZ);
+                                    }
                                 }
                             }
                         }
+                        if (save) {
+                            saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
+                        }
+                        world.regenerateChunk(x, z);
+                        if (save) {
+                            restoreBlocks(world, 0, 0);
+                            restoreEntities(world, 0, 0);
+                        }
+                        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
+                        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                     }
-                    if (save) {
-                        saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
-                    }
-                    world.regenerateChunk(x, z);
-                    if (save) {
-                        restoreBlocks(world, 0, 0);
-                        restoreEntities(world, 0, 0);
-                    }
-                    MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
-                    BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+                    CURRENT_PLOT_CLEAR = null;
                 }
-                CURRENT_PLOT_CLEAR = null;
             }
         }, 1, 1);
         TaskManager.tasks.put(currentIndex, task);
