@@ -86,11 +86,7 @@ public class PlotListener extends APlotListener {
         }
     }
 
-    public void plotEntry(final PlotPlayer player, final Plot plot) {
-        plotEntry(((BukkitPlayer) player).player, plot);
-    }
-
-    public void plotEntry(final Player pp, final Plot plot) {
+    public void plotEntry(final PlotPlayer pp, final Plot plot) {
         Player player = ((BukkitPlayer) pp).player;
         if (plot.hasOwner()) {
             final Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");

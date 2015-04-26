@@ -293,7 +293,7 @@ public class Set extends SubCommand {
 
     private String getBiomeList(final String[] biomes) {
         final StringBuilder builder = new StringBuilder();
-        builder.append(MainUtil.colorise('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
+        builder.append(MainUtil.colorise('&', C.NEED_BIOME.s()));
         for (final String b : biomes) {
             builder.append(getString(b));
         }

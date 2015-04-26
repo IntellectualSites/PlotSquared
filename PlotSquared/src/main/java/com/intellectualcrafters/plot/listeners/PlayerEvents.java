@@ -49,6 +49,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -284,7 +285,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
             MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
         }
-        plotEntry(player, plot);
+        plotEntry(pp, plot);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -323,8 +324,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             Plot plot = MainUtil.getPlot(t);
             if (plot != null) {
+                final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.denied.size() > 0) {
-                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     if (plot.isDenied(pp.getUUID())) {
                         if (!Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
@@ -334,7 +335,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
                 if (!plot.equals(MainUtil.getPlot(f))) {
-                    plotEntry(player, plot);
+                    plotEntry(pp, plot);
                 }
             } 
             else if (MainUtil.leftPlot(f, t)) {
@@ -1004,7 +1005,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 } else {
                     if (MainUtil.enteredPlot(f, t)) {
-                        plotEntry(player, plot);
+                        plotEntry(pp, plot);
                     }
                 }
             } else {
