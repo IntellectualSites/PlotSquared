@@ -21,18 +21,64 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public class DebugUUID extends SubCommand {
     public DebugUUID() {
-        super("debuguuid", "plots.admin", "Debug uuid conversion", "debuguuid", "uuidconvert", CommandCategory.DEBUG, false);
+        super("uuidconvert", "plots.admin", "Debug uuid conversion", "debuguuid", "debuguuid", CommandCategory.DEBUG, false);
     }
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
         if (player != null) {
             MainUtil.sendMessage(player, C.NOT_CONSOLE);
+            return false;
+        }
+        if (args.length == 0) {
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
+            return false;
+        }
+        
+        UUIDWrapper currentUUIDWrapper = UUIDHandler.uuidWrapper;
+        UUIDWrapper newWrapper = null;
+        
+        switch (args[0].toLowerCase()) {
+            case "lower": {
+                newWrapper = new LowerOfflineUUIDWrapper();
+                break;
+            }
+            case "offline": {
+                newWrapper = new OfflineUUIDWrapper();
+                break;
+            }
+            case "online": {
+                newWrapper = new DefaultUUIDWrapper();
+                break;
+            }
+            default: {
+                try {
+                    Class<?> clazz = Class.forName(args[0]);
+                    newWrapper = (UUIDWrapper) clazz.newInstance();
+                }
+                catch (Exception e) {
+                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
+                    return false;
+                }
+            }
+        }
+        
+        if (currentUUIDWrapper.getClass().getCanonicalName().equals(newWrapper.getClass().getCanonicalName())) {
+            MainUtil.sendMessage(player, "&cUUID mode already in use!");
             return false;
         }
         

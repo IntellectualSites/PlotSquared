@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.commands.Debug;
 import com.intellectualcrafters.plot.commands.DebugClaimTest;
 import com.intellectualcrafters.plot.commands.DebugClear;
 import com.intellectualcrafters.plot.commands.DebugExec;
+import com.intellectualcrafters.plot.commands.DebugFill;
 import com.intellectualcrafters.plot.commands.DebugFixFlags;
 import com.intellectualcrafters.plot.commands.DebugLoadTest;
 import com.intellectualcrafters.plot.commands.DebugRoadRegen;
@@ -209,6 +210,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         MainCommand.subCommands.add(new Template());
         MainCommand.subCommands.add(new Setup());
         MainCommand.subCommands.add(new DebugUUID());
+        MainCommand.subCommands.add(new DebugFill());
         MainCommand.subCommands.add(new DebugSaveTest());
         MainCommand.subCommands.add(new DebugLoadTest());
         MainCommand.subCommands.add(new CreateRoadSchematic());
