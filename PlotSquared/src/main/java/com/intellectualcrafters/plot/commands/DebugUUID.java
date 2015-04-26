@@ -20,37 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class DebugUUID extends SubCommand {
     public DebugUUID() {
-        super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
+        super("debuguuid", "plots.admin", "Debug uuid conversion", "debuguuid", "uuidconvert", CommandCategory.DEBUG, false);
     }
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
+        if (player != null) {
+            MainUtil.sendMessage(player, C.NOT_CONSOLE);
+            return false;
+        }
         
+        return true;
     }
 }
