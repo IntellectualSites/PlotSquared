@@ -21,12 +21,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;

@@ -6,9 +6,11 @@ import java.util.List;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 
 public abstract class ChunkManager {
     
@@ -24,6 +26,8 @@ public abstract class ChunkManager {
         final int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
+    
+    public abstract void setChunk(ChunkWrapper loc, PlotBlock[][] result);
     
     public abstract int[] countEntities(Plot plot);
 

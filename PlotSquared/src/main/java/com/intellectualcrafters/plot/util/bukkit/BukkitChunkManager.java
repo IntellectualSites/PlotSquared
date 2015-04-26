@@ -44,13 +44,16 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -973,6 +976,57 @@ public class BukkitChunkManager extends ChunkManager {
         else {
             count[4]++;
         }
+    }
+
+    @Override
+    public void setChunk(ChunkWrapper loc, PlotBlock[][] blocks) {
+        CURRENT_PLOT_CLEAR = new RegionWrapper(0,0,0,0);
+        World world = Bukkit.getWorld(loc.world);
+        Chunk chunk = world.getChunkAt(loc.x, loc.z);
+        final int cx = chunk.getX();
+        final int cz = chunk.getZ();
+        if (!chunk.isLoaded()) {
+            chunk.load(true);
+        }
+        initMaps();
+        final int absX = cx << 4;
+        final int absZ = cz << 4;
+        boolean save = false;
+        
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                saveBlocks(world, 255, absX + x, absZ + z);
+                PlotLoc pl = new PlotLoc(absX + x, absZ + z);
+                HashMap<Short, Short> ids = GENERATE_BLOCKS.get(pl);
+                HashMap<Short, Short> datas = GENERATE_BLOCKS.get(pl);
+                for (int i = 0; i < blocks.length; i++) {
+                    if (blocks[i] != null) {
+                        short y0 = (short) (i << 4);
+                        for (short y = y0; y < y0 + 16; y++) {
+                            int j = ((y & 0xF) << 8) | (z << 4) | x;
+                            PlotBlock block = blocks[i][j];
+                            if (block != null) {
+                                ids.put(y, block.id);
+                                if (block.data != 0) {
+                                    datas.put(y, block.id);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (save) {
+            saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
+        }
+        world.regenerateChunk(cx, cz);
+        if (save) {
+            restoreBlocks(world, 0, 0);
+            restoreEntities(world, 0, 0);
+        }
+        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
+        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+        CURRENT_PLOT_CLEAR = null;
     }
     
 }

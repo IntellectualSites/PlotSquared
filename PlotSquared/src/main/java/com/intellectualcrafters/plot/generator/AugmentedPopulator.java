@@ -66,11 +66,11 @@ public class AugmentedPopulator extends BlockPopulator {
         }
     }
     
-    private static short[][] x_loc;
-    private static short[][] y_loc;
-    private static short[][] z_loc;
+    public static short[][] x_loc;
+    public static short[][] y_loc;
+    public static short[][] z_loc;
 
-    public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
+    public static void initCache() {
         if (x_loc == null) {
             x_loc = new short[16][4096];
             y_loc = new short[16][4096];
@@ -88,7 +88,10 @@ public class AugmentedPopulator extends BlockPopulator {
                 }
             }
         }
-        
+    }
+    
+    public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
+        initCache();
         this.cluster = cluster;
         this.generator = generator;
         this.plotworld = PlotSquared.getPlotWorld(world);

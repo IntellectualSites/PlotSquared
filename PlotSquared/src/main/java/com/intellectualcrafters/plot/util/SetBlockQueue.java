@@ -6,12 +6,13 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class SetBlockQueue {
     
     private volatile static HashMap<ChunkWrapper, PlotBlock[][]> blocks;
-    private volatile static int allocate = 50;
+    private volatile static int allocate = 20;
     private volatile static boolean running = false;
     private volatile static boolean locked = false;
     private volatile static HashSet<Runnable> runnables;
@@ -31,6 +32,9 @@ public class SetBlockQueue {
     
     public synchronized static void init() {
         if (blocks == null) {
+            if (AugmentedPopulator.x_loc == null) {
+                AugmentedPopulator.initCache();
+            }
             blocks = new HashMap<>();
             runnables = new HashSet<>();
         }
@@ -66,16 +70,16 @@ public class SetBlockQueue {
                         int Z = chunk.z << 4;
                         PlotBlock[][] blocks = n.getValue();
                         String world = chunk.world;
+//                        ChunkManager.manager.setChunk(chunk, blocks);
                         for (int j = 0; j < blocks.length; j++) {
                             PlotBlock[] blocksj = blocks[j];
                             if (blocksj != null) {
                                 for (int k = 0; k < blocksj.length; k++) {
                                     PlotBlock block = blocksj[k];
                                     if (block != null) {
-                                        final int y = (j << 4) + (k >> 8);
-                                        final int a = (k - ((y & 0xF) << 8));
-                                        final int z = (a >> 4);
-                                        final int x = a - (z << 4);
+                                        int x = AugmentedPopulator.x_loc[j][k];
+                                        int y = AugmentedPopulator.y_loc[j][k];
+                                        int z = AugmentedPopulator.z_loc[j][k];
                                         BlockManager.manager.functionSetBlock(world, X + x, y, Z + z, block.id, block.data);
                                     }
                                 }
@@ -83,7 +87,7 @@ public class SetBlockQueue {
                         }
                     }
                 }
-            }, 5);
+            }, 2);
             TaskManager.tasks.put(current, task);
             running = true;
         }
@@ -146,9 +150,9 @@ public class SetBlockQueue {
     }
     
     public static class ChunkWrapper {
-        final int x; 
-        final int z;
-        final String world;
+        public final int x; 
+        public final int z;
+        public final String world;
         
         public ChunkWrapper(String world, int x, int z) {
             this.world = world;
