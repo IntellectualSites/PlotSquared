@@ -270,6 +270,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
+        if (PlotSquared.worldEdit != null) {
+            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                WEManager.bypass.add(pp.getName());
+            }
+        }
         final Location loc = BukkitUtil.getLocation(player.getLocation());
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
@@ -458,7 +463,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
         if (PlotSquared.worldEdit != null) {
-            WEManager.bypass.remove(player.getName());
+            if (!Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+                WEManager.bypass.remove(player.getName());
+            }
+            else {
+                WEManager.bypass.add(player.getName());
+            }
         }
         ((BukkitPlayer) player).hasPerm = new HashSet<>();
         ((BukkitPlayer) player).noPerm = new HashSet<>();
