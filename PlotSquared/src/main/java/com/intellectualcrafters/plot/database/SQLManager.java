@@ -97,13 +97,19 @@ public class SQLManager implements AbstractDB {
             TaskManager.runTaskRepeat(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        SQLManager.this.connection = PlotSquared.getMySQL().forceConnection();
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                    }
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                System.out.print("CONNECTIN");
+                                SQLManager.this.connection = PlotSquared.getMySQL().forceConnection();
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
-            }, 11000);
+            }, 1);
         }
         updateTables();
     }

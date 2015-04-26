@@ -141,9 +141,9 @@ public class ClusterManager {
     public static PlotCluster getCluster(final Plot plot) {
         return getCluster(plot.world, plot.id);
     }
-
-    public static PlotCluster getCluster(final Location loc) {
-        final String world = loc.getWorld();
+    
+    public static PlotCluster getClusterAbs(final Location loc) {
+        String world = loc.getWorld();
         if ((last != null) && last.world.equals(world)) {
             if (contains(last, loc)) {
                 return last;
@@ -163,6 +163,16 @@ public class ClusterManager {
             }
         }
         return null;
+    }
+    
+    public static PlotCluster getCluster(final Location loc) {
+        final String world = loc.getWorld();
+        PlotManager manager = PlotSquared.getPlotManager(world);
+        PlotId id = manager.getPlotIdAbs(PlotSquared.getPlotWorld(world), loc.getX(), loc.getY(), loc.getZ());
+        if (id != null) {
+            return getCluster(world, id);
+        }
+        return getClusterAbs(loc);
     }
 
     public static PlotCluster getCluster(final String world, final PlotId id) {

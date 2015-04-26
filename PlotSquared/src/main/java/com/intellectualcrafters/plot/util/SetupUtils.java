@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.bukkit.generator.ChunkGenerator;
 
-import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 

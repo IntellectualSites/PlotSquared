@@ -3,8 +3,6 @@ package com.intellectualcrafters.plot.listeners.worldedit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -16,26 +14,14 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldedit.event.extent.EditSessionEvent;
-import com.sk89q.worldedit.extension.platform.Actor;
-import com.sk89q.worldedit.extent.NullExtent;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
-import com.sk89q.worldedit.util.eventbus.Subscribe;
  
 public class WEListener implements Listener {
     

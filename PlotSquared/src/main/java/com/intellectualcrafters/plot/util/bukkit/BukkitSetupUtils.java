@@ -13,7 +13,6 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;

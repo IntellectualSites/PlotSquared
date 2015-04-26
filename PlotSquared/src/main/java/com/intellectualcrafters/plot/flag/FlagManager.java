@@ -94,6 +94,18 @@ public class FlagManager {
         }
         return null;
     }
+    
+    public static boolean isBooleanFlag(final Plot plot, final String key, final boolean defaultValue) {
+        final Flag flag = FlagManager.getPlotFlag(plot, key);
+        if (flag == null) {
+            return defaultValue;
+        }
+        final Object value = flag.getValue();
+        if (value instanceof Boolean) {
+            return (boolean) value;
+        }
+        return defaultValue;
+    }
 
     /**
      * Get the value of a flag for a plot (respects flag defaults)

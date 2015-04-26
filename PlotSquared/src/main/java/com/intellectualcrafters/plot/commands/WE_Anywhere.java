@@ -22,9 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
-import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;

@@ -25,7 +25,6 @@ import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.SchematicCmd;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;

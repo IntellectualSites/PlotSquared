@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 public class SetBlockQueue {
     

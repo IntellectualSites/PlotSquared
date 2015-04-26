@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -90,8 +90,6 @@ public class Set extends SubCommand {
                 break;
             }
         }
-        /* TODO: Implement option */
-        // final boolean advanced_permissions = true;
         if (!Permissions.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
@@ -127,7 +125,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_REMOVED);
-                PlotListener.plotEntry(plr, plot);
+                APlotListener.manager.plotEntry(plr, plot);
                 return true;
             }
             try {
@@ -144,7 +142,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_ADDED);
-                PlotListener.plotEntry(plr, plot);
+                APlotListener.manager.plotEntry(plr, plot);
                 return true;
             } catch (final Exception e) {
                 MainUtil.sendMessage(plr, "&c" + e.getMessage());

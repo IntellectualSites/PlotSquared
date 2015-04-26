@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -125,7 +125,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
-                PlotListener.plotEntry(player, plot);
+                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "remove": {
@@ -163,7 +163,7 @@ public class FlagCmd extends SubCommand {
                     }
                 }
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
-                PlotListener.plotEntry(player, plot);
+                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "add": {
@@ -203,7 +203,7 @@ public class FlagCmd extends SubCommand {
                 }
                 DBFunc.setFlags(plot.world, plot, plot.settings.flags);
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
-                PlotListener.plotEntry(player, plot);
+                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "list": {

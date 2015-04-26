@@ -19,15 +19,10 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
@@ -86,7 +81,6 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
@@ -115,10 +109,10 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
     @EventHandler
-    public static void onRedstoneEvent(BlockRedstoneEvent event) {
+    public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
-        if (!isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
@@ -129,7 +123,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (redstone == null || (Boolean) redstone.getValue()) {
             return;
         }
-        if (!isPlotArea(loc)) {
+        if (!MainUtil.isPlotArea(plot)) {
             return;
         }
         switch (block.getType()) {
@@ -166,10 +160,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler
-    public static void onPhysicsEvent(BlockPhysicsEvent event) {
+    public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
-        if (!isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
             return;
         }
         switch (block.getType()) {
@@ -183,7 +177,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (redstone == null || (Boolean) redstone.getValue()) {
                     return;
                 }
-                if (!isPlotArea(loc)) {
+                if (!MainUtil.isPlotArea(plot)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -196,11 +190,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = (Projectile) event.getEntity();
         Location loc = BukkitUtil.getLocation(entity);
-        if (!isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
-        if (!isPlotArea(loc)) {
+        if (!MainUtil.isPlotArea(loc)) {
             return;
         }
         ProjectileSource shooter = entity.getShooter();
@@ -252,7 +246,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onChunkLoad(final ChunkLoadEvent event) {
+    public void onChunkLoad(final ChunkLoadEvent event) {
         final String worldname = event.getWorld().getName();
         final Chunk chunk = event.getChunk();
         if (MainUtil.worldBorder.containsKey(worldname)) {
@@ -266,7 +260,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onJoin(final PlayerJoinEvent event) {
+    public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         if (!player.hasPlayedBefore()) {
             player.saveData();
@@ -289,7 +283,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public static void PlayerMove(final PlayerMoveEvent event) {
+    public void PlayerMove(final PlayerMoveEvent event) {
         final Location f = BukkitUtil.getLocation(event.getFrom());
         final Location t = BukkitUtil.getLocation(event.getTo());
         if ((f.getX() != t.getX()) || (f.getZ() != t.getZ())) {
@@ -298,7 +292,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 TaskManager.TELEPORT_QUEUE.remove(player.getName());
             }
             final String worldname = t.getWorld();
-            if (!isPlotWorld(worldname)) {
+            if (!PlotSquared.isPlotWorld(worldname)) {
                 return;
             }
             if (MainUtil.worldBorder.containsKey(worldname)) {
@@ -322,7 +316,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
-            Plot plot = getCurrentPlot(t);
+            Plot plot = MainUtil.getPlot(t);
             if (plot != null) {
                 if (plot.denied.size() > 0) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -334,22 +328,22 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         }
                     }
                 }
-                if (!plot.equals(getCurrentPlot(f))) {
+                if (!plot.equals(MainUtil.getPlot(f))) {
                     plotEntry(player, plot);
                 }
             } 
-            else if (leftPlot(f, t)) {
-                plot = getCurrentPlot(f);
-                plotExit(player, plot);
+            else if (MainUtil.leftPlot(f, t)) {
+                plot = MainUtil.getPlot(f);
+                plotExit(BukkitUtil.getPlayer(player), plot);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public static void onChat(final AsyncPlayerChatEvent event) {
+    public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
@@ -357,7 +351,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Location loc = BukkitUtil.getLocation(player);
-        final Plot plot = getCurrentPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return;
         }
@@ -368,7 +362,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (getCurrentPlot(BukkitUtil.getLocation(p)) == plot) {
+            if (MainUtil.getPlot(BukkitUtil.getLocation(p)) == plot) {
                 recipients.add(p);
             }
         }
@@ -378,14 +372,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public static void BlockDestroy(final BlockBreakEvent event) {
+    public void BlockDestroy(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        final Plot plot = getCurrentPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
             if (event.getBlock().getY() == 0) {
                 event.setCancelled(true);
@@ -420,7 +414,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
             return;
         }
-        if (isPlotArea(loc)) {
+        if (MainUtil.isPlotArea(loc)) {
             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
             event.setCancelled(true);
             return;
@@ -428,32 +422,32 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onBigBoom(final EntityExplodeEvent event) {
+    public void onBigBoom(final EntityExplodeEvent event) {
         Location loc = BukkitUtil.getLocation(event.getLocation());
         final String world = loc.getWorld();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
-        final Plot plot = getCurrentPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if ((plot != null) && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                 final Iterator<Block> iter = event.blockList().iterator();
                 while (iter.hasNext()) {
                     final Block b = iter.next();
-                    if (!plot.equals(getCurrentPlot(BukkitUtil.getLocation(b.getLocation())))) {
+                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(b.getLocation())))) {
                         iter.remove();
                     }
                 }
                 return;
             }
         }
-        if (isPlotArea(loc)) {
+        if (MainUtil.isPlotArea(loc)) {
             event.setCancelled(true);
         } else {
             final Iterator<Block> iter = event.blockList().iterator();
             while (iter.hasNext()) {
                 iter.next();
-                if (isPlotArea(loc)) {
+                if (MainUtil.isPlotArea(loc)) {
                     iter.remove();
                 }
             }
@@ -461,7 +455,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onWorldChanged(final PlayerChangedWorldEvent event) {
+    public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
         if (PlotSquared.worldEdit != null) {
             WEManager.bypass.remove(player.getName());
@@ -471,9 +465,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
+    public void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
         final String world = event.getBlock().getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final Entity e = event.getEntity();
@@ -486,16 +480,18 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Block b = event.getBlock();
             final Player p = (Player) e;
             final Location loc = BukkitUtil.getLocation(b.getLocation());
-            if (!isInPlot(loc)) {
-                final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
-                    event.setCancelled(true);
-                    return;
+            Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                if (MainUtil.isPlotAreaAbs(loc)) {
+                    final PlotPlayer pp = BukkitUtil.getPlayer(p);
+                    if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
             } else {
-                final Plot plot = getCurrentPlot(loc);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
                     if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
@@ -506,7 +502,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
                     if (!plot.isAdded(pp.getUUID())) {
                         if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
-                            if (isPlotArea(loc)) {
+                            if (MainUtil.isPlotArea(loc)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                                 event.setCancelled(true);
                                 return;
@@ -519,63 +515,57 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onEntityBlockForm(final EntityBlockFormEvent e) {
+    public void onEntityBlockForm(final EntityBlockFormEvent e) {
         final String world = e.getBlock().getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         if ((!(e.getEntity() instanceof Player))) {
-            if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
+            if (MainUtil.isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
                 e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBS(final BlockSpreadEvent e) {
+    public void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
-                }
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (MainUtil.isPlotRoad(loc)) {
+                e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBF(final BlockFormEvent e) {
+    public void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
-                }
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (MainUtil.isPlotRoad(loc)) {
+                e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBD(final BlockDamageEvent event) {
+    public void onBD(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
         if (player == null) {
             final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-            if (isPlotWorld(loc)) {
-                if (!isInPlot(loc)) {
-                    if (isPlotArea(loc)) {
-                        event.setCancelled(true);
-                    }
+            if (PlotSquared.isPlotWorld(loc.getWorld())) {
+                if (MainUtil.isPlotRoad(loc)) {
+                    event.setCancelled(true);
                 }
             }
         }
         final String world = player.getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        final Plot plot = getCurrentPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
             if (event.getBlock().getY() == 0) {
                 event.setCancelled(true);
@@ -610,7 +600,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
             return;
         }
-        if (isPlotArea(loc)) {
+        if (MainUtil.isPlotArea(loc)) {
             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
             event.setCancelled(true);
             return;
@@ -618,46 +608,40 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onFade(final BlockFadeEvent e) {
+    public void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
-                }
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (MainUtil.isPlotRoad(loc)) {
+                e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onChange(final BlockFromToEvent e) {
+    public void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
-                }
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (MainUtil.isPlotRoad(loc)) {
+                e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onGrow(final BlockGrowEvent e) {
+    public void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
-            if (!isInPlot(loc)) {
-                if (isPlotArea(BukkitUtil.getLocation(e.getBlock().getLocation()))) {
-                    e.setCancelled(true);
-                }
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (MainUtil.isPlotRoad(loc)) {
+                e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public static void onBlockPistonExtend(final BlockPistonExtendEvent event) {
+    public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         String world = loc.getWorld();
@@ -671,7 +655,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         for (final Block b : blocks) {
             Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
             Plot newPlot = MainUtil.getPlot(bloc);
-            if (MainUtil.equals(plot, newPlot)) {
+            if (!MainUtil.equals(plot, newPlot)) {
                 event.setCancelled(true);
                 return;
             }
@@ -698,23 +682,41 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
+    private boolean pistonBlocks = true;
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public static void onBlockPistonRetract(final BlockPistonRetractEvent event) {
+    public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         String world = loc.getWorld();
         if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
-        if (block.getType() != Material.PISTON_STICKY_BASE && block.getType() != Material.PISTON_MOVING_PIECE) {
+        if (block.getType() != Material.PISTON_STICKY_BASE && block.getType() != Material.PISTON_BASE && block.getType() != Material.PISTON_MOVING_PIECE) {
             return;
         }
+
         Plot plot = MainUtil.getPlot(loc);
-        if (plot != null) {
+        
+        if (pistonBlocks) {
+            try {
+                for (Block pulled : event.getBlocks()) {
+                    Plot other = MainUtil.getPlot(BukkitUtil.getLocation(pulled.getLocation()));
+                    if (!MainUtil.equals(plot, other)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            catch (Exception e) {
+                pistonBlocks = false;
+            }
+        }
+        if (!pistonBlocks && block.getType() != Material.PISTON_BASE) {
             BlockFace dir = event.getDirection();
             Location bloc = BukkitUtil.getLocation(block.getLocation().subtract(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             Plot newPlot = MainUtil.getPlot(bloc);
-            if (!plot.equals(newPlot)) {
+            if (!MainUtil.equals(plot, newPlot)) {
                 event.setCancelled(true);
                 return;
             }
@@ -722,8 +724,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onStructureGrow(final StructureGrowEvent e) {
-        if (!isPlotWorld(e.getWorld().getName())) {
+    public void onStructureGrow(final StructureGrowEvent e) {
+        if (!PlotSquared.isPlotWorld(e.getWorld().getName())) {
             return;
         }
         final List<BlockState> blocks = e.getBlocks();
@@ -734,15 +736,15 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         BlockState start = blocks.get(0);
         for (int i = blocks.size() - 1; i >= 0; i--) {
             final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
-            final Plot plot = getCurrentPlot(loc);
-            if (MainUtil.equals(plot, origin)) {
+            final Plot plot = MainUtil.getPlot(loc);
+            if (!MainUtil.equals(plot, origin)) {
                 e.getBlocks().remove(i);
             }
         }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onInteract(final PlayerInteractEvent event) {
+    public void onInteract(final PlayerInteractEvent event) {
     	Action action = event.getAction();
         if (action == Action.LEFT_CLICK_BLOCK) {
             return;
@@ -753,12 +755,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getClickedBlock().getLocation());
-        if (isInPlot(loc)) {
-            final Plot plot = getCurrentPlot(loc);
+        
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot != null) {
             if (!plot.hasOwner()) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
@@ -791,7 +794,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (Permissions.hasPermission(pp, "plots.admin.interact.road")) {
             return;
         }
-        if (isPlotArea(loc)) {
+        if (MainUtil.isPlotArea(loc)) {
         	if (action != Action.PHYSICAL) {
         		MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
         	}
@@ -801,17 +804,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void MobSpawn(final CreatureSpawnEvent event) {
+    public void MobSpawn(final CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getLocation());
         final String world = loc.getWorld();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
-        if (!isPlotArea(loc)) {
+        if (!MainUtil.isPlotArea(loc)) {
             return;
         }
         final PlotWorld pW = PlotSquared.getPlotWorld(world);
@@ -893,7 +896,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBlockIgnite(final BlockIgniteEvent e) {
+    public void onBlockIgnite(final BlockIgniteEvent e) {
         final Player player = e.getPlayer();
         final Block b = e.getBlock();
         final Location loc;
@@ -922,7 +925,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         } else {
             return;
         }
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         if (e.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
@@ -930,22 +933,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (player == null) {
-            if (isPlotArea(loc)) {
+            if (MainUtil.isPlotArea(loc)) {
                 e.setCancelled(true);
             }
             return;
         }
         final Player p = e.getPlayer();
-        if (!isInPlot(loc)) {
-            final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
-                e.setCancelled(true);
-                return;
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
+                final PlotPlayer pp = BukkitUtil.getPlayer(p);
+                if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    e.setCancelled(true);
+                    return;
+                }
             }
         } else {
-            final Plot plot = getCurrentPlot(loc);
-            if ((plot == null) || !plot.hasOwner()) {
+            if (!plot.hasOwner()) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
                 if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
@@ -956,7 +961,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
                 if (!plot.isAdded(pp.getUUID())) {
                     if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
-                        if (isPlotArea(loc)) {
+                        if (MainUtil.isPlotArea(loc)) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                             e.setCancelled(true);
                             return;
@@ -968,7 +973,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onTeleport(final PlayerTeleportEvent event) {
+    public void onTeleport(final PlayerTeleportEvent event) {
         if (event.getTo() == null || event.getFrom() == null) {
             return;
         }
@@ -976,26 +981,26 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Location t = BukkitUtil.getLocation(event.getTo());
         final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
         final Player player = event.getPlayer();
-        if (isPlotWorld(q)) {
-            final Plot plot = getCurrentPlot(q);
+        if (PlotSquared.isPlotWorld(q.getWorld())) {
+            final Plot plot = MainUtil.getPlot(q);
             if (plot != null) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.isDenied(pp.getUUID())) {
                     if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
                         return;
                     }
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.YOU_BE_DENIED);
+                    MainUtil.sendMessage(pp, C.YOU_BE_DENIED);
                     event.setCancelled(true);
                     return;
                 } else {
-                    if (enteredPlot(f, t)) {
+                    if (MainUtil.enteredPlot(f, t)) {
                         plotEntry(player, plot);
                     }
                 }
             } else {
-                if (leftPlot(f, t)) {
-                    final Plot plot2 = getCurrentPlot(f);
-                    plotExit(player, plot2);
+                if (MainUtil.leftPlot(f, t)) {
+                    final Plot plot2 = MainUtil.getPlot(f);
+                    APlotListener.manager.plotExit(BukkitUtil.getPlayer(player), plot2);
                 }
             }
             if ((q.getX() >= 29999999) || (q.getX() <= -29999999) || (q.getZ() >= 29999999) || (q.getZ() <= -29999999)) {
@@ -1006,22 +1011,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBucketEmpty(final PlayerBucketEmptyEvent e) {
+    public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         final BlockFace bf = e.getBlockFace();
         final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
             final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
-            if (!isInPlot(loc)) {
-                if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+            Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                if (MainUtil.isPlotAreaAbs(loc)) {
+                    if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                        return;
+                    }
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    e.setCancelled(true);
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
-                e.setCancelled(true);
-                return;
             } else {
-                final Plot plot = getCurrentPlot(loc);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                         return;
                     }
@@ -1036,7 +1043,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (Permissions.hasPermission(pp, "plots.admin.build.other")) {
                         return;
                     }
-                    if (isPlotArea(loc)) {
+                    if (MainUtil.isPlotArea(loc)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                         e.setCancelled(true);
                         return;
@@ -1047,7 +1054,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public static void onInventoryClick(final InventoryClickEvent event) {
+    public void onInventoryClick(final InventoryClickEvent event) {
         if (event.getInventory().getName().equalsIgnoreCase("PlotSquared Commands")) {
             event.setCancelled(true);
             return;
@@ -1055,7 +1062,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler
-    public static void onLeave(final PlayerQuitEvent event) {
+    public void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         EventUtil.unregisterPlayer(pp);
         if (PlotSquared.worldEdit != null) {
@@ -1074,22 +1081,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onBucketFill(final PlayerBucketFillEvent e) {
+    public void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!isInPlot(loc)) {
-                if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+            Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                if (MainUtil.isPlotAreaAbs(loc)) {
+                    if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                        return;
+                    }
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    e.setCancelled(true);
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
-                e.setCancelled(true);
-                return;
             } else {
-                final Plot plot = getCurrentPlot(loc);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                         return;
                     }
@@ -1105,7 +1114,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (Permissions.hasPermission(pp, "plots.admin.build.other")) {
                         return;
                     }
-                    if (isPlotArea(loc)) {
+                    if (MainUtil.isPlotArea(loc)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                         e.setCancelled(true);
                         return;
@@ -1116,21 +1125,23 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onHangingPlace(final HangingPlaceEvent e) {
+    public void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (isPlotWorld(loc)) {
+        if (PlotSquared.isPlotWorld(loc.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!isInPlot(loc)) {
-                if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
-                    e.setCancelled(true);
-                    return;
+            Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                if (MainUtil.isPlotAreaAbs(loc)) {
+                    if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                        e.setCancelled(true);
+                        return;
+                    }
                 }
             } else {
-                final Plot plot = getCurrentPlot(loc);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
                         e.setCancelled(true);
@@ -1141,7 +1152,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
-                        if (isPlotArea(loc)) {
+                        if (MainUtil.isPlotArea(loc)) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                             e.setCancelled(true);
                             return;
@@ -1153,22 +1164,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
+    public void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
         final Entity r = e.getRemover();
         if (r instanceof Player) {
             final Player p = (Player) r;
             final Location l = BukkitUtil.getLocation(e.getEntity());
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (isPlotWorld(l)) {
-                if (!isInPlot(l)) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
-                        e.setCancelled(true);
-                        return;
+            if (PlotSquared.isPlotWorld(l.getWorld())) {
+                Plot plot = MainUtil.getPlot(l);
+                if (plot == null) {
+                    if (MainUtil.isPlotAreaAbs(l)) {
+                        if (!Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
+                            e.setCancelled(true);
+                            return;
+                        }
                     }
                 } else {
-                    final Plot plot = getCurrentPlot(l);
-                    if ((plot == null) || !plot.hasOwner()) {
+                    if (!plot.hasOwner()) {
                         if (!Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
                             e.setCancelled(true);
@@ -1179,7 +1192,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!Permissions.hasPermission(pp, "plots.admin.destroy.other")) {
-                            if (isPlotArea(l)) {
+                            if (MainUtil.isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
                                 e.setCancelled(true);
                                 return;
@@ -1192,13 +1205,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
+    public void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        if (isPlotWorld(l)) {
+        if (PlotSquared.isPlotWorld(l.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!isInPlot(l)) {
-                if (!isPlotArea(l)) {
+            Plot plot = MainUtil.getPlot(l);
+            if (plot == null) {
+                if (!MainUtil.isPlotAreaAbs(l)) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
@@ -1207,8 +1221,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             } else {
-                final Plot plot = getCurrentPlot(l);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
                         e.setCancelled(true);
@@ -1229,7 +1242,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                     if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                        if (isPlotArea(l)) {
+                        if (MainUtil.isPlotArea(l)) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
                             e.setCancelled(true);
                             return;
@@ -1241,23 +1254,26 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onVehicleDestroy(final VehicleDestroyEvent e) {
+    public void onVehicleDestroy(final VehicleDestroyEvent e) {
         final Location l = BukkitUtil.getLocation(e.getVehicle());
-        if (isPlotWorld(l)) {
+        if (PlotSquared.isPlotWorld(l.getWorld())) {
             final Entity d = e.getAttacker();
             if (d instanceof Player) {
                 final Player p = (Player) d;
                 PlotSquared.getPlotWorld(l.getWorld());
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!isInPlot(l)) {
+                Plot plot = MainUtil.getPlot(l);
+                if (plot == null) {
+                    if (!MainUtil.isPlotAreaAbs(l)) {
+                        return;
+                    }
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.vehicle.break.road");
                         e.setCancelled(true);
                         return;
                     }
                 } else {
-                    final Plot plot = getCurrentPlot(l);
-                    if ((plot == null) || !plot.hasOwner()) {
+                    if (!plot.hasOwner()) {
                         if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.unowned")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.vehicle.break.unowned");
                             e.setCancelled(true);
@@ -1270,7 +1286,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.other")) {
-                            if (isPlotArea(l)) {
+                            if (MainUtil.isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
                                 e.setCancelled(true);
                                 return;
@@ -1283,7 +1299,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
+    public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEntity());
         final Entity damager = e.getDamager();
         final Entity victim = e.getEntity();
@@ -1294,7 +1310,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 TaskManager.TELEPORT_QUEUE.remove(name);
             }
         }
-        if (isPlotWorld(l)) {
+        if (PlotSquared.isPlotWorld(l.getWorld())) {
             Player p = null;
             Projectile projectile = null;
             if (damager instanceof Player) {
@@ -1339,7 +1355,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 } else if (aPlr && pW.PVP) {
                     return;
                 }
-                if (!isInPlot(l)) {
+                Plot plot = MainUtil.getPlot(l);
+                if (plot == null) {
+                    if (!MainUtil.isPlotAreaAbs(l)) {
+                        return;
+                    }
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
                     if (!Permissions.hasPermission(pp, "plots.admin.pve.road")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.road");
@@ -1347,8 +1367,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         return;
                     }
                 } else {
-                    final Plot plot = getCurrentPlot(l);
-                    if ((plot == null) || !plot.hasOwner()) {
+                    if (!plot.hasOwner()) {
                         final PlotPlayer pp = BukkitUtil.getPlayer(p);
                         if (!Permissions.hasPermission(pp, "plots.admin.pve.unowned")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.unowned");
@@ -1358,10 +1377,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (aPlr && booleanFlag(plot, "pvp", false)) {
+                    } else if (aPlr && FlagManager.isBooleanFlag(plot, "pvp", false)) {
                         return;
                     }
-                    if (!aPlr && booleanFlag(plot, "pve", false)) {
+                    if (!aPlr && FlagManager.isBooleanFlag(plot, "pve", false)) {
                         return;
                     }
                     assert plot != null;
@@ -1377,7 +1396,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             return;
                         }
                         if (!Permissions.hasPermission(pp, "plots.admin.pve.other")) {
-                            if (isPlotArea(l)) {
+                            if (MainUtil.isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.other");
                                 if (projectile != null) {
                                     projectile.remove();
@@ -1390,27 +1409,30 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 return;
             }
-            if ((damager instanceof Arrow) && isPlotArea(l) && (!(victim instanceof Creature))) {
+            if ((damager instanceof Arrow) && MainUtil.isPlotArea(l) && (!(victim instanceof Creature))) {
                 e.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public static void onPlayerEggThrow(final PlayerEggThrowEvent e) {
+    public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEgg().getLocation());
-        if (isPlotWorld(l)) {
+        if (PlotSquared.isPlotWorld(l.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!isInPlot(l)) {
+            Plot plot = MainUtil.getPlot(l);
+            if (plot == null) {
+                if (!MainUtil.isPlotAreaAbs(l)) {
+                    return;
+                }
                 if (!Permissions.hasPermission(pp, "plots.admin.projectile.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.road");
                     e.setHatching(false);
                     return;
                 }
             } else {
-                final Plot plot = getCurrentPlot(l);
-                if ((plot == null) || !plot.hasOwner()) {
+                if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.projectile.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.unowned");
                         e.setHatching(false);
@@ -1418,7 +1440,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 } else if (!plot.isAdded(pp.getUUID())) {
                     if (!Permissions.hasPermission(pp, "plots.admin.projectile.other")) {
-                        if (isPlotArea(l)) {
+                        if (MainUtil.isPlotArea(l)) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.other");
                             e.setHatching(false);
                             return;
@@ -1433,7 +1455,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void BlockCreate(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!isPlotWorld(world)) {
+        if (!PlotSquared.isPlotWorld(world)) {
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -1441,8 +1463,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        if (isInPlot(loc)) {
-            final Plot plot = getCurrentPlot(loc);
+        final Plot plot = MainUtil.getPlot(loc); 
+        if (plot != null) {
             if (!plot.hasOwner()) {
                 if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
                     return;
@@ -1465,8 +1487,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             return;
         }
-        if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-            if (isPlotArea(loc)) {
+        else if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
                 event.setCancelled(true);
                 return;

@@ -58,6 +58,54 @@ public class MainUtil {
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
     static PseudoRandom random = new PseudoRandom();
     
+    public static boolean isPlotArea(final Location location) {
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
+        if (plotworld.TYPE == 2) {
+            return ClusterManager.getCluster(location) != null;
+        }
+        return true;
+    }
+    
+    public static boolean isPlotAreaAbs(final Location location) {
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
+        if (plotworld.TYPE == 2) {
+            return ClusterManager.getClusterAbs(location) != null;
+        }
+        return true;
+    }
+    
+    public static boolean isPlotRoad(final Location location) {
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
+        if (plotworld.TYPE == 2) {
+            PlotCluster cluster = ClusterManager.getCluster(location);
+            if (cluster == null) {
+                return false;
+            }
+        }
+        PlotManager manager = PlotSquared.getPlotManager(location.getWorld());
+        return manager.getPlotId(plotworld, location.getX(), location.getY(), location.getZ()) == null;
+    }
+    
+    public static boolean isPlotArea(final Plot plot) {
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
+        if (plotworld.TYPE == 2) {
+            return ClusterManager.getCluster(plot) != null;
+        }
+        return true;
+    }
+    
+    public static boolean enteredPlot(final Location l1, final Location l2) {
+        final PlotId p1 = MainUtil.getPlotId(l1);
+        final PlotId p2 = MainUtil.getPlotId(l2);
+        return (p2 != null) && ((p1 == null) || !p1.equals(p2));
+    }
+
+    public static boolean leftPlot(final Location l1, final Location l2) {
+        final PlotId p1 = MainUtil.getPlotId(l1);
+        final PlotId p2 = MainUtil.getPlotId(l2);
+        return (p1 != null) && ((p2 == null) || !p1.equals(p2));
+    }
+    
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
         
         final Plot plot1 = PlotSquared.getPlots(world).get(pos1);

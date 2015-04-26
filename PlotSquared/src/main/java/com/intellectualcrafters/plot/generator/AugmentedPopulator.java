@@ -2,8 +2,8 @@ package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;

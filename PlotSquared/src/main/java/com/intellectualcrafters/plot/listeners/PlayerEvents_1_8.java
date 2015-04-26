@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -25,33 +26,34 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        if (isPlotWorld(l)) {
-            e.getPlayer();
-            final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
-            if (!isInPlot(l)) {
-                if (!isPlotArea(l)) {
-                    return;
-                }
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+        String world = l.getWorld();
+        if (!PlotSquared.isPlotWorld(world)) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(l);
+        PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
+        if (plot == null) {
+            if (!MainUtil.isPlotArea(l)) {
+                return;
+            }
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+                e.setCancelled(true);
+            }
+        }
+        else {
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
                     e.setCancelled(true);
                 }
-            } else {
-                final Plot plot = MainUtil.getPlot(l);
-                if ((plot == null) || !plot.hasOwner()) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+            }
+            else {
+                final UUID uuid = pp.getUUID();
+                if (!plot.isAdded(uuid)) {
+                    if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
                         e.setCancelled(true);
-                    }
-                } else {
-                    final UUID uuid = pp.getUUID();
-                    if (!plot.isAdded(uuid)) {
-                        if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                            if (isPlotArea(l)) {
-                                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
-                                e.setCancelled(true);
-                            }
-                        }
                     }
                 }
             }

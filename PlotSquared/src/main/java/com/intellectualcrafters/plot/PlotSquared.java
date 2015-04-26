@@ -48,6 +48,7 @@ import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -528,6 +529,10 @@ public class PlotSquared {
         IMP.registerPlotPlusEvents();
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
+        IMP.registerWorldEvents();
+        if (Settings.CHUNK_PROCESSOR) {
+            IMP.registerChunkProcessor();
+        }
         // create UUIDWrapper
         UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
         // create event util class
@@ -540,6 +545,9 @@ public class PlotSquared {
         BlockManager.manager = IMP.initBlockManager();
         // Set chunk
         ChunkManager.manager = IMP.initChunkManager();
+        // Plot listener
+        APlotListener.manager = IMP.initPlotListener();
+        
         // PlotMe
         if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
             TaskManager.runTaskLater(new Runnable() {
