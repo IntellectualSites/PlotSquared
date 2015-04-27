@@ -1888,4 +1888,33 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
+    @Override
+    public boolean deleteTables() {
+        try {
+            SQLManager.this.connection = PlotSquared.getMySQL().forceConnection();
+            final Statement stmt = this.connection.createStatement();
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_ratings`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_settings`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_comments`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_trusted`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_helpers`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_denied`");
+            stmt.executeBatch();
+            stmt.clearBatch();
+            stmt.close();
+            
+            PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`");
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

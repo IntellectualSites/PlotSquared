@@ -275,6 +275,7 @@ public class Plot implements Cloneable {
         return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
     }
 
+    
     /**
      * Get the plot hashcode
      *
@@ -283,23 +284,6 @@ public class Plot implements Cloneable {
      */
     @Override
     public int hashCode() {
-        final int x = this.id.x;
-        final int y = this.id.y;
-        if (x >= 0) {
-            if (y >= 0) {
-                return (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
-            } else {
-                final int y1 = -y;
-                return (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
-            }
-        } else {
-            final int x1 = -x;
-            if (y >= 0) {
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
-            } else {
-                final int y1 = -y;
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
-            }
-        }
+        return this.id.hashCode();
     }
 }

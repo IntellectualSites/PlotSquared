@@ -67,6 +67,7 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -547,6 +548,8 @@ public class PlotSquared {
         ChunkManager.manager = IMP.initChunkManager();
         // Plot listener
         APlotListener.manager = IMP.initPlotListener();
+        // Player manager
+        PlayerManager.manager = IMP.initPlayerManager();
         
         // PlotMe
         if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {

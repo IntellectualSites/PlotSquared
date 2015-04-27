@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -68,4 +69,6 @@ public interface IPlotMain {
     public void registerChunkProcessor();
 
     public void registerWorldEvents();
+
+    public PlayerManager initPlayerManager();
 }

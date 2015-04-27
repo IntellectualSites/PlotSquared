@@ -337,4 +337,11 @@ public interface AbstractDB {
     public void resizeCluster(PlotCluster current, PlotClusterId resize);
 
     public void movePlot(Plot originalPlot, Plot newPlot);
+    
+    public void createSettings(final ArrayList<Integer> mylist);
+    
+    /**
+     * Don't fuck with this one, unless you enjoy it rough
+     */
+    public boolean deleteTables();
 }

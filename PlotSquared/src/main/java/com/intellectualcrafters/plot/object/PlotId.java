@@ -124,23 +124,28 @@ public class PlotId {
         }
     }
 
+    private int hash;
+    
     @Override
     public int hashCode() {
-        if (this.x >= 0) {
-            if (this.y >= 0) {
-                return (this.x * this.x) + (3 * this.x) + (2 * this.x * this.y) + this.y + (this.y * this.y);
+        if (hash == 0) {
+            if (x >= 0) {
+                if (y >= 0) {
+                    hash = (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
+                } else {
+                    final int y1 = -y;
+                    hash = (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
+                }
             } else {
-                final int y1 = -this.y;
-                return (this.x * this.x) + (3 * this.x) + (2 * this.x * y1) + y1 + (y1 * y1) + 1;
-            }
-        } else {
-            final int x1 = -this.x;
-            if (this.y >= 0) {
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * this.y) + this.y + (this.y * this.y));
-            } else {
-                final int y1 = -this.y;
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
+                final int x1 = -x;
+                if (y >= 0) {
+                    hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
+                } else {
+                    final int y1 = -y;
+                    hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
+                }
             }
         }
+        return hash;
     }
 }

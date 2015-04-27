@@ -20,9 +20,28 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.AbstractDB;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
@@ -73,11 +92,184 @@ public class DebugUUID extends SubCommand {
             }
         }
         
+        if (args.length != 2 || !args[1].equals("-o")) {
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert " + args[0] + " - o");
+            MainUtil.sendMessage(player, "&cBe aware of the following!");
+            MainUtil.sendMessage(player, "&8 - &cIf the process is interrupted, all plots could be deleted");
+            MainUtil.sendMessage(player, "&8 - &cIf an error occurs, all plots could be deleted");
+            MainUtil.sendMessage(player, "&8 - &cPlot settings WILL be lost upon conversion");
+            MainUtil.sendMessage(player, "&cBACK UP YOUR DATABASE BEFORE USING THIS!!!");
+            MainUtil.sendMessage(player, "&7Retype the command with the override parameter when ready");
+            return false;
+        }
+        
         if (currentUUIDWrapper.getClass().getCanonicalName().equals(newWrapper.getClass().getCanonicalName())) {
             MainUtil.sendMessage(player, "&cUUID mode already in use!");
             return false;
         }
+        MainUtil.sendConsoleMessage("&6Beginning UUID mode conversion");
+        MainUtil.sendConsoleMessage("&7 - Disconnecting players");
+        for (PlotPlayer user : UUIDHandler.players.values()) {
+            PlayerManager.manager.kickPlayer(user, "PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
+        }
         
+        MainUtil.sendConsoleMessage("&7 - Initializing map");
+        
+        HashMap<UUID, UUID> uCMap = new HashMap<UUID, UUID>();
+        HashMap<UUID, UUID> uCReverse = new HashMap<UUID, UUID>();
+        
+        MainUtil.sendConsoleMessage("&7 - Collecting playerdata");
+
+        final HashSet<String> worlds = new HashSet<>();
+        worlds.add(Bukkit.getWorlds().get(0).getName());
+        worlds.add("world");
+        final HashSet<UUID> uuids = new HashSet<>();
+        final HashSet<String> names = new HashSet<>();
+        for (final String worldname : worlds) {
+            final File playerdataFolder = new File(worldname + File.separator + "playerdata");
+            String[] dat = playerdataFolder.list(new FilenameFilter() {
+                @Override
+                public boolean accept(final File f, final String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            if (dat != null) {
+                for (final String current : dat) {
+                    final String s = current.replaceAll(".dat$", "");
+                    try {
+                        final UUID uuid = UUID.fromString(s);
+                        uuids.add(uuid);
+                    } catch (final Exception e) {
+                        PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                    }
+                }
+            }
+            final File playersFolder = new File(worldname + File.separator + "players");
+            dat = playersFolder.list(new FilenameFilter() {
+                @Override
+                public boolean accept(final File f, final String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            if (dat != null) {
+                for (final String current : dat) {
+                    names.add(current.replaceAll(".dat$", ""));
+                }
+            }
+        }
+        
+        MainUtil.sendConsoleMessage("&7 - Populating map");
+        UUID uuid2;
+        final UUIDWrapper wrapper = new DefaultUUIDWrapper();
+        for (UUID uuid : uuids) {
+            try {
+                final OfflinePlotPlayer op = wrapper.getOfflinePlayer(uuid);
+                uuid = currentUUIDWrapper.getUUID(op);
+                uuid2 = newWrapper.getUUID(op);
+                if (!uuid.equals(uuid2)) {
+                    uCMap.put(uuid, uuid2);
+                    uCReverse.put(uuid2, uuid);
+                }
+            } catch (final Throwable e) {
+                PlotSquared.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+            }
+        }
+        for (final String name : names) {
+            final UUID uuid = currentUUIDWrapper.getUUID(name);
+            uuid2 = newWrapper.getUUID(name);
+            if (!uuid.equals(uuid2)) {
+                uCMap.put(uuid, uuid2);
+                uCReverse.put(uuid2, uuid);
+            }
+        }
+        if (uCMap.size() == 0) {
+            MainUtil.sendConsoleMessage("&c - Error! Attempting to repopulate");
+            for (OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
+                if (op.getLastPlayed() != 0) {
+                    String name = op.getName();
+                    StringWrapper wrap = new StringWrapper(name);
+                    UUID uuid = currentUUIDWrapper.getUUID(op);
+                    uuid2 = newWrapper.getUUID(op);
+                    if (!uuid.equals(uuid2)) {
+                        uCMap.put(uuid, uuid2);
+                        uCReverse.put(uuid2, uuid);
+                    }
+                }
+            }
+            if (uCMap.size() == 0) {
+                MainUtil.sendConsoleMessage("&cError. Failed to collect UUIDs!");
+                return false;
+            }
+            else {
+                MainUtil.sendConsoleMessage("&a - Successfully repopulated");
+            }
+        }
+        
+        MainUtil.sendConsoleMessage("&7 - Replacing cache");
+        for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
+            String name = UUIDHandler.getName(entry.getKey());
+            UUIDHandler.add(new StringWrapper(name), entry.getValue());
+        }
+        
+        MainUtil.sendConsoleMessage("&7 - Replacing wrapper");
+        UUIDHandler.uuidWrapper = newWrapper;
+        
+        MainUtil.sendConsoleMessage("&7 - Updating plot objects");
+        
+        for (Plot plot : PlotSquared.getPlots()) {
+            UUID value = uCMap.get(plot.owner);
+            if (value != null) {
+                plot.owner = value;
+            }
+            plot.helpers = new ArrayList<>();
+            plot.trusted = new ArrayList<>();
+            plot.denied = new ArrayList<>();
+        }
+        
+        MainUtil.sendConsoleMessage("&7 - Deleting database");
+        final AbstractDB database = DBFunc.dbManager;
+        boolean result = database.deleteTables();
+
+        MainUtil.sendConsoleMessage("&7 - Creating tables");
+        
+        try {
+            database.createTables(PlotSquared.getMySQL() != null ? "mysql" : "sqlite", true);
+            if (!result) {
+                MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
+                for (Plot plot : PlotSquared.getPlots()) {
+                    UUID value = uCReverse.get(plot.owner);
+                    if (value != null) {
+                        plot.owner = value;
+                    }
+                }
+                database.createPlots(new ArrayList<>(PlotSquared.getPlots()));
+                return false;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+        MainUtil.sendConsoleMessage("&7 - Populating tables");
+        
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots());
+                database.createPlots(plots);
+                int size = plots.size();
+                ArrayList<Integer> ids = new ArrayList<Integer>();
+                for (int i = 1; i <= size; i++) {
+                    ids.add(i);
+                }
+                database.createSettings(ids);
+                MainUtil.sendConsoleMessage("&aConversion complete!");
+            }
+        });
+        
+        MainUtil.sendConsoleMessage("&aIt is now safe for players to join");
+        MainUtil.sendConsoleMessage("&cConversion is still in progress, you will be notified when it is complete");
         return true;
     }
 }
