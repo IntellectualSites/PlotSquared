@@ -45,7 +45,6 @@ public class BukkitSetupUtils extends SetupUtils {
     @Override
     public String setupWorld(final SetupObject object) {
         SetupUtils.manager.updateGenerators();
-        ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);;
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
         for (final ConfigurationNode step : steps) {

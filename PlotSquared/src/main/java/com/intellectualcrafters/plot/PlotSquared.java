@@ -27,6 +27,7 @@ import java.util.zip.ZipInputStream;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.commands.Cluster;
@@ -361,18 +362,22 @@ public class PlotSquared {
                 final PlotGenerator gen_class = generator;
                 plotWorld = gen_class.getNewPlotWorld(world);
                 plotManager = gen_class.getPlotManager();
+                
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
+                
                 plotWorld.TYPE = 2;
                 plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
+                
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
+                
                 if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;

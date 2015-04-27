@@ -150,7 +150,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
     }
     
     /**
-     * <b>random</b> is a optimized random number generator.<br> 
+     * <b>random</b> is an optimized random number generator.<br> 
      *  - Change the state to have the same chunk random each time it generates<br>
      *  <b>requiredRegion</b> If a plot is being regenerated, you are only required to generate content in this area<br>
      *   - use the contains(RegionWrapper, x, z) method to check if the region contains a location<br>
@@ -172,11 +172,31 @@ public abstract class PlotGenerator extends ChunkGenerator {
     
     public abstract List<PlotPopulator> getPopulators(String world);
     
+    /**
+     * This is called when the generator is initialized. 
+     * You don't need to do anything with it necessarily.
+     * @param plotworld
+     */
     public abstract void init(PlotWorld plotworld);
     
+    /**
+     * Return a new instance of the PlotWorld for a world 
+     * @param world
+     * @return
+     */
     public abstract PlotWorld getNewPlotWorld(final String world);
 
+    /**
+     * Get the PlotManager class for this generator
+     * @return
+     */
     public abstract PlotManager getPlotManager();
     
+    /**
+     * If you need to do anything fancy for /plot setup<br>
+     *  - Otherwise it will just use the PlotWorld configuration<br>
+     * Feel free to extend BukkitSetupUtils and customize world creation
+     * @param object
+     */
     public void processSetup(SetupObject object) {};
 }

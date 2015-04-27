@@ -140,6 +140,7 @@ public class Setup extends SubCommand {
                     if (object.step == null) {
                         object.plotManager = object.setupGenerator;
                         object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                        ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);
                     }
                     final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
@@ -148,6 +149,7 @@ public class Setup extends SubCommand {
                         object.plotManager = object.setupGenerator;
                         object.setupGenerator = null;
                         object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                        ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);
                     }
                     else {
                         object.plotManager = "PlotSquared";

@@ -163,7 +163,9 @@ public class Info extends SubCommand {
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
-        final String biome = BlockManager.manager.getBiome(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1));
+        Location top = MainUtil.getPlotTopLoc(world, plot.id);
+        Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1,0,1);
+        final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
         final String helpers = getPlayerList(plot.helpers);
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
