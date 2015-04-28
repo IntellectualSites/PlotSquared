@@ -536,6 +536,9 @@ public class PlotSquared {
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
         IMP.registerWorldEvents();
+        if (Settings.TNT_LISTENER) {
+        	IMP.registerTNTListener();
+        }
         if (Settings.CHUNK_PROCESSOR) {
             IMP.registerChunkProcessor();
         }
