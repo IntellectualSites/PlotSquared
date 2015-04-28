@@ -719,7 +719,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 pistonBlocks = false;
             }
         }
