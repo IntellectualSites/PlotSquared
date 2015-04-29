@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
@@ -94,11 +95,11 @@ public class PlotSquared {
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    private static MySQL mySQL;
+    private static Database database;
     public static Connection connection;
 
-    public static MySQL getMySQL() {
-        return mySQL;
+    public static Database getDatabase() {
+        return database;
     }
 
     public static void updatePlot(final Plot plot) {
@@ -631,12 +632,9 @@ public class PlotSquared {
 
     public void disable() {
         try {
-            connection.close();
-            mySQL.closeConnection();
+            database.closeConnection();
         } catch (NullPointerException | SQLException e) {
-            if (mySQL != null) {
-                log("&cCould not close mysql connection!");
-            }
+            log("&cCould not close database connection!");
         }
     }
 
@@ -654,8 +652,8 @@ public class PlotSquared {
         }
         if (Settings.DB.USE_MYSQL) {
             try {
-                mySQL = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                connection = mySQL.openConnection();
+                database = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                connection = database.openConnection();
                 {
                     if (DBFunc.dbManager == null) {
                         DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
@@ -693,7 +691,8 @@ public class PlotSquared {
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                connection = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
+                this.database = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db"); 
+                connection = this.database.openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();

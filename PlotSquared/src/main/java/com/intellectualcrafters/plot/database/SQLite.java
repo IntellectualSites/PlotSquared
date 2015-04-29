@@ -107,4 +107,11 @@ public class SQLite extends Database {
         final Statement statement = this.connection.createStatement();
         return statement.executeUpdate(query);
     }
+
+    @Override
+    public Connection forceConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("org.sqlite.JDBC");
+        this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
+        return this.connection;
+    }
 }

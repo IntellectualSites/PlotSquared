@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLManager;
@@ -233,7 +234,7 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendConsoleMessage("&7 - Creating tables");
         
         try {
-            database.createTables(PlotSquared.getMySQL() != null ? "mysql" : "sqlite", true);
+            database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite", true);
             if (!result) {
                 MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
                 for (Plot plot : PlotSquared.getPlots()) {
@@ -254,6 +255,25 @@ public class DebugUUID extends SubCommand {
         catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+        
+        if (newWrapper instanceof OfflineUUIDWrapper) {
+            PlotSquared.config.set("UUID.force-lowercase", false);
+            PlotSquared.config.set("UUID.offline", true);
+        }
+        else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
+            PlotSquared.config.set("UUID.force-lowercase", true);
+            PlotSquared.config.set("UUID.offline", true);
+        }
+        else if (newWrapper instanceof DefaultUUIDWrapper) {
+            PlotSquared.config.set("UUID.force-lowercase", false);
+            PlotSquared.config.set("UUID.offline", false);
+        }
+        try {
+            PlotSquared.config.save(PlotSquared.configFile);
+        }
+        catch (Exception e) {
+            MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");
         }
         
         MainUtil.sendConsoleMessage("&7 - Populating tables");

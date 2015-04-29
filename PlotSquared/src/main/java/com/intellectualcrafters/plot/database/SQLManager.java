@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
@@ -94,12 +95,12 @@ public class SQLManager implements AbstractDB {
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
         this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
         // schedule reconnect
-        if (PlotSquared.getMySQL() != null) {
+        if (Settings.DB.USE_MYSQL) {
             TaskManager.runTaskRepeat(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        SQLManager.this.connection = PlotSquared.getMySQL().forceConnection();
+                        SQLManager.this.connection = PlotSquared.getDatabase().forceConnection();
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -325,7 +326,7 @@ public class SQLManager implements AbstractDB {
     	    return;
     	}
         int packet;
-        if (PlotSquared.getMySQL() != null) {
+        if (Settings.DB.USE_MYSQL) {
             packet = Math.min(size, 50000);
         } else {
             packet = Math.min(size, 50);
@@ -673,7 +674,7 @@ public class SQLManager implements AbstractDB {
                     try {
                         final Statement statement = this.connection.createStatement();
                         statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
-                        if (PlotSquared.getMySQL() != null) {
+                        if (Settings.DB.USE_MYSQL) {
                             statement.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
                         }
                         else {
@@ -1971,7 +1972,8 @@ public class SQLManager implements AbstractDB {
     @Override
     public boolean deleteTables() {
         try {
-            SQLManager.this.connection = PlotSquared.getMySQL().forceConnection();
+            SQLManager.this.connection.close();
+            SQLManager.this.connection = PlotSquared.getDatabase().forceConnection();
             final Statement stmt = this.connection.createStatement();
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
