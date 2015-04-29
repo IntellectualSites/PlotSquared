@@ -60,14 +60,7 @@ public interface AbstractDB {
      *
      * @param plots Plots for which the default table entries should be created
      */
-    public void createAllSettingsAndHelpers(final ArrayList<Plot> plots);
-
-    /**
-     * Create a plot
-     *
-     * @param plots Plots that should be created
-     */
-    public void createPlots(final ArrayList<Plot> plots);
+    public void createPlotsAndData(final ArrayList<Plot> plots, Runnable whenDone);
 
     /**
      * Create a plot
@@ -312,7 +305,7 @@ public interface AbstractDB {
 
     /**
      * Set a plot comment
-     *
+     * 
      * @param world   World in which the plot is located
      * @param plot    Plot Object
      * @param comment Comment to add
@@ -337,8 +330,6 @@ public interface AbstractDB {
     public void resizeCluster(PlotCluster current, PlotClusterId resize);
 
     public void movePlot(Plot originalPlot, Plot newPlot);
-    
-    public void createSettings(final ArrayList<Integer> mylist);
     
     /**
      * Don't fuck with this one, unless you enjoy it rough

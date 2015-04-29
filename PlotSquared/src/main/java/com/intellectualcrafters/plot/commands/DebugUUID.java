@@ -242,7 +242,12 @@ public class DebugUUID extends SubCommand {
                         plot.owner = value;
                     }
                 }
-                database.createPlots(new ArrayList<>(PlotSquared.getPlots()));
+                database.createPlotsAndData(new ArrayList<>(PlotSquared.getPlots()), new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendMessage(null, "&6Recovery was successful!");
+                    }
+                });
                 return false;
             }
         }
@@ -257,14 +262,12 @@ public class DebugUUID extends SubCommand {
             @Override
             public void run() {
                 ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots());
-                database.createPlots(plots);
-                int size = plots.size();
-                ArrayList<Integer> ids = new ArrayList<Integer>();
-                for (int i = 1; i <= size; i++) {
-                    ids.add(i);
-                }
-                database.createSettings(ids);
-                MainUtil.sendConsoleMessage("&aConversion complete!");
+                database.createPlotsAndData(plots, new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendConsoleMessage("&aConversion complete!");
+                    }
+                });
             }
         });
         

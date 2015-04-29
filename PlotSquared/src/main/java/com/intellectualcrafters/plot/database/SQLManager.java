@@ -47,6 +47,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.ClusterManager;
@@ -61,7 +62,7 @@ public class SQLManager implements AbstractDB {
     public final String GET_ALL_PLOTS;
     public final String CREATE_PLOTS;
     public final String CREATE_SETTINGS;
-    public final String CREATE_HELPERS;
+    public final String CREATE_TIERS;
     public final String CREATE_PLOT;
     public final String CREATE_CLUSTER;
     private final String prefix;
@@ -89,7 +90,7 @@ public class SQLManager implements AbstractDB {
         this.GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + this.prefix + "plot`";
         this.CREATE_PLOTS = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
         this.CREATE_SETTINGS = "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
-        this.CREATE_HELPERS = "INSERT INTO `" + this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) values ";
+        this.CREATE_TIERS = "INSERT INTO `" + this.prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
         this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
         // schedule reconnect
@@ -136,110 +137,193 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    @Override
-    public void createAllSettingsAndHelpers(final ArrayList<Plot> mylist) {
-        final int size = mylist.size();
-        int packet;
-        if (PlotSquared.getMySQL() != null) {
-            packet = Math.min(size, 50000);
-        } else {
-            packet = Math.min(size, 5000);
+    private class UUIDPair {
+        public final int id;
+        public final UUID uuid;
+        
+        public UUIDPair(int id, UUID uuid) {
+            this.id = id;
+            this.uuid = uuid;
         }
-        final int amount = size / packet;
-        for (int j = 0; j <= amount; j++) {
-            final List<Plot> plots = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
-            final HashMap<String, HashMap<PlotId, Integer>> stored = new HashMap<>();
-            final HashMap<Integer, ArrayList<UUID>> helpers = new HashMap<>();
-            try {
-                final PreparedStatement stmt = this.connection.prepareStatement(this.GET_ALL_PLOTS);
-                final ResultSet result = stmt.executeQuery();
-                while (result.next()) {
-                    final int id = result.getInt("id");
-                    final int idx = result.getInt("plot_id_x");
-                    final int idz = result.getInt("plot_id_z");
-                    final String world = result.getString("world");
-                    if (!stored.containsKey(world)) {
-                        stored.put(world, new HashMap<PlotId, Integer>());
-                    }
-                    stored.get(world).put(new PlotId(idx, idz), id);
-                }
-                result.close();
-                stmt.close();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            }
-            for (final Plot plot : plots) {
-                final String world = plot.world;
-                if (stored.containsKey(world)) {
-                    final Integer id = stored.get(world).get(plot.id);
-                    if (id != null) {
-                        helpers.put(id, plot.helpers);
-                    }
-                }
-            }
-            if (helpers.size() == 0) {
-                return;
-            }
-            // add plot settings
-            final Integer[] ids = helpers.keySet().toArray(new Integer[helpers.keySet().size()]);
-            StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
-            for (int i = 0; i < (ids.length - 1); i++) {
-                statement.append("(?),");
-            }
-            statement.append("(?)");
-            PreparedStatement stmt = null;
-            try {
-                stmt = this.connection.prepareStatement(statement.toString());
-                for (int i = 0; i < ids.length; i++) {
-                    stmt.setInt(i + 1, ids[i]);
-                }
-                stmt.executeUpdate();
-                stmt.close();
-            } catch (final SQLException e) {
-                for (final Integer id : ids) {
-                    createPlotSettings(id, null);
-                }
-            }
-            // add plot helpers
-            String prefix = "";
-            statement = new StringBuilder(this.CREATE_HELPERS);
-            for (final Integer id : helpers.keySet()) {
-                for (final UUID helper : helpers.get(id)) {
-                    statement.append(prefix + "(?, ?)");
-                    prefix = ",";
-                }
-            }
-            if (prefix.equals("")) {
-                return;
-            }
-            try {
-                stmt = this.connection.prepareStatement(statement.toString());
-                int counter = 0;
-                for (final Integer id : helpers.keySet()) {
-                    for (final UUID helper : helpers.get(id)) {
-                        stmt.setInt((counter * 2) + 1, id);
-                        stmt.setString((counter * 2) + 2, helper.toString());
-                        counter++;
-                    }
-                }
-                stmt.executeUpdate();
-                stmt.close();
-            } catch (final SQLException e) {
+    }
+    
+    private class SettingsPair {
+        public final int id;
+        public final PlotSettings settings;
+        
+        public SettingsPair(int id, PlotSettings settings) {
+            this.id = id;
+            this.settings = settings;
+        }
+    }
+    
+    @Override
+    public void createPlotsAndData(final ArrayList<Plot> myList, final Runnable whenDone) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    for (final Integer id : helpers.keySet()) {
-                        for (final UUID helper : helpers.get(id)) {
-                            setHelper(id, helper);
+                    // Create the plots
+                    createPlots(myList);
+                    
+                    // Creating datastructures
+                    HashMap<PlotId, Plot> plotMap = new HashMap<>();
+                    for (Plot plot : myList) {
+                        plotMap.put(plot.id, plot);
+                    }
+                    ArrayList<SettingsPair> settings = new ArrayList<>();
+                    ArrayList<UUIDPair> helpers = new ArrayList<>();
+                    ArrayList<UUIDPair> trusted = new ArrayList<>();
+                    ArrayList<UUIDPair> denied = new ArrayList<>();
+
+                    // Populating structures
+                    final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
+                    final ResultSet result = stmt.executeQuery();
+                    while (result.next()) {
+                        final int id = result.getInt("id");
+                        Plot plot = plotMap.get(id);
+                        if (plot != null) {
+                            settings.add(new SettingsPair(id, plot.settings));
+                            if (plot.denied != null) {
+                                for (UUID uuid : plot.denied) {
+                                    denied.add(new UUIDPair(id, uuid));
+                                }
+                            }
+                            if (plot.trusted != null) {
+                                for (UUID uuid : plot.trusted) {
+                                    trusted.add(new UUIDPair(id, uuid));
+                                }
+                            }
+                            if (plot.helpers != null) {
+                                for (UUID uuid : plot.helpers) {
+                                    helpers.add(new UUIDPair(id, uuid));
+                                }
+                            }
                         }
                     }
-                } catch (final Exception e2) {
+                    createSettings(settings);
+                    createTiers(helpers, "helpers");
+                    createTiers(trusted, "trusted");
+                    createTiers(denied, "denied");
+                    
+                    TaskManager.runTaskLater(whenDone, 20);
+                 } 
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    PlotSquared.log("&7[WARN] " + "Failed to set all helpers for plots");
                 }
-                PlotSquared.log("&7[WARN] " + "Failed to set all helpers for plots");
             }
-        }
+        });
+    }
+    
+    /**
+     * Create a plot
+     *
+     * @param myList list of plots to be created
+     */
+    public void createTiers(final ArrayList<UUIDPair> myList, final String tier) {
+        final StmtMod<UUIDPair> mod = new StmtMod<UUIDPair>() {
+            @Override
+            public String getCreateMySQL(int size) {
+                return getCreateMySQL(size, CREATE_TIERS.replaceAll("%tier%", tier), 2);
+            }
+
+            @Override
+            public String getCreateSQLite(int size) {
+                return getCreateSQLite(size, 
+                "INSERT INTO `" + prefix + "plot_" + tier + "` SELECT ? AS `plot_plot_id`, ? AS `user_uuid`", 2);
+            }
+
+            @Override
+            public String getCreateSQL() {
+                return "INSERT INTO `" + SQLManager.this.prefix + "plot_" + tier + "` (`plot_plot_id`, `user_uuid`) VALUES(?,?)";
+            }
+
+            @Override
+            public void setMySQL(PreparedStatement stmt, int i, UUIDPair pair) throws SQLException {
+                stmt.setInt((i * 2) + 1, pair.id);
+                stmt.setString((i * 2) + 2, pair.uuid.toString());
+            }
+
+            @Override
+            public void setSQLite(PreparedStatement stmt, int i, UUIDPair pair) throws SQLException {
+                stmt.setInt((i * 2) + 1, pair.id);
+                stmt.setString((i * 2) + 2, pair.uuid.toString());
+            }
+
+            @Override
+            public void setSQL(PreparedStatement stmt, UUIDPair pair) throws SQLException {
+                stmt.setInt(1, pair.id);
+                stmt.setString(2, pair.uuid.toString());
+            }
+        };
+        setBulk(myList, mod);
+    }
+    
+    /**
+     * Create a plot
+     *
+     * @param myList list of plots to be created
+     */
+    public void createPlots(final ArrayList<Plot> myList) {
+        final StmtMod<Plot> mod = new StmtMod<Plot>() {
+            @Override
+            public String getCreateMySQL(int size) {
+                return getCreateMySQL(size, CREATE_PLOTS, 4);
+            }
+
+            @Override
+            public String getCreateSQLite(int size) {
+                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
+            }
+
+            @Override
+            public String getCreateSQL() {
+                return CREATE_PLOT;
+            }
+
+            @Override
+            public void setMySQL(PreparedStatement stmt, int i, Plot plot) throws SQLException {
+                stmt.setInt((i * 4) + 1, plot.id.x);
+                stmt.setInt((i * 4) + 2, plot.id.y);
+                try {
+                    stmt.setString((i * 4) + 3, plot.owner.toString());
+                } catch (final Exception e) {
+                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
+                }
+                stmt.setString((i * 4) + 4, plot.world);
+            }
+
+            @Override
+            public void setSQLite(PreparedStatement stmt, int i, Plot plot) throws SQLException {
+                stmt.setNull((i * 6) + 1, 4);
+                stmt.setInt((i * 6) + 2, plot.id.x);
+                stmt.setInt((i * 6) + 3, plot.id.y);
+                try {
+                    stmt.setString((i * 6) + 4, plot.owner.toString());
+                } catch (final Exception e1) {
+                    stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
+                }
+                stmt.setString((i * 6) + 5, plot.world);
+                stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
+            }
+
+            @Override
+            public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
+                stmt.setInt(1, plot.id.x);
+                stmt.setInt(2, plot.id.y);
+                stmt.setString(3, plot.owner.toString());
+                stmt.setString(4, plot.world);
+            }
+        };
+        setBulk(myList, mod);
     }
     
     public <T> void setBulk(ArrayList<T> objList, StmtMod<T> mod) {
     	final int size = objList.size();
+    	if (size == 0) {
+    	    return;
+    	}
         int packet;
         if (PlotSquared.getMySQL() != null) {
             packet = Math.min(size, 50000);
@@ -295,32 +379,31 @@ public class SQLManager implements AbstractDB {
         }
     }
     
-    @Override
-    public void createSettings(final ArrayList<Integer> myList) {
-    	final StmtMod<Integer> mod = new StmtMod<Integer>() {
-			@Override
-			public String getCreateMySQL(int size) {
-				return getCreateMySQL(size, CREATE_SETTINGS, 1);
-			}
+    public void createSettings(final ArrayList<SettingsPair> myList) {
+        final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
+            @Override
+            public String getCreateMySQL(int size) {
+                return getCreateMySQL(size, CREATE_SETTINGS, 1);
+            }
 
-			@Override
-			public String getCreateSQLite(int size) {
-			    return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
-			}
+            @Override
+            public String getCreateSQLite(int size) {
+                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
+            }
 
-			@Override
-			public String getCreateSQL() {
-				return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)";
-			}
+            @Override
+            public String getCreateSQL() {
+                return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)";
+            }
 
-			@Override
-			public void setMySQL(PreparedStatement stmt, int i, Integer id) throws SQLException {
-                stmt.setInt((i * 1) + 1, id);
-			}
+            @Override
+            public void setMySQL(PreparedStatement stmt, int i, SettingsPair id) throws SQLException {
+                stmt.setInt((i * 1) + 1, id.id);
+            }
 
-			@Override
-			public void setSQLite(PreparedStatement stmt, int i, Integer id) throws SQLException {
-			    stmt.setInt((i * 10) + 1, id);
+            @Override
+            public void setSQLite(PreparedStatement stmt, int i, SettingsPair id) throws SQLException {
+                stmt.setInt((i * 10) + 1, id.id );
                 stmt.setNull((i * 10) + 2, 4);
                 stmt.setNull((i * 10) + 3, 4);
                 stmt.setNull((i * 10) + 4, 4);
@@ -330,76 +413,60 @@ public class SQLManager implements AbstractDB {
                 stmt.setNull((i * 10) + 8, 4);
                 stmt.setNull((i * 10) + 9, 4);
                 stmt.setString((i * 10) + 10, "DEFAULT");
-			}
+            }
 
-			@Override
-			public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
-			    stmt.setInt(1, id);
-			}
-		};
-		TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void setSQL(PreparedStatement stmt, SettingsPair id) throws SQLException {
+                stmt.setInt(1, id.id);
+            }
+        };
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 setBulk(myList, mod);
             }
         });
     }
-
-    /**
-     * Create a plot
-     *
-     * @param myList list of plots to be created
-     */
-    @Override
-    public void createPlots(final ArrayList<Plot> myList) {
-        final StmtMod<Plot> mod = new StmtMod<Plot>() {
+    
+    public void createEmptySettings(final ArrayList<Integer> myList) {
+        final StmtMod<Integer> mod = new StmtMod<Integer>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_PLOTS, 4);
+                return getCreateMySQL(size, CREATE_SETTINGS, 1);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
+                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
             }
 
             @Override
             public String getCreateSQL() {
-                return CREATE_PLOT;
+                return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)";
             }
 
             @Override
-            public void setMySQL(PreparedStatement stmt, int i, Plot plot) throws SQLException {
-                stmt.setInt((i * 4) + 1, plot.id.x);
-                stmt.setInt((i * 4) + 2, plot.id.y);
-                try {
-                    stmt.setString((i * 4) + 3, plot.owner.toString());
-                } catch (final Exception e) {
-                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
-                }
-                stmt.setString((i * 4) + 4, plot.world);
+            public void setMySQL(PreparedStatement stmt, int i, Integer id) throws SQLException {
+                stmt.setInt((i * 1) + 1, id);
             }
 
             @Override
-            public void setSQLite(PreparedStatement stmt, int i, Plot plot) throws SQLException {
-                stmt.setNull((i * 6) + 1, 4);
-                stmt.setInt((i * 6) + 2, plot.id.x);
-                stmt.setInt((i * 6) + 3, plot.id.y);
-                try {
-                    stmt.setString((i * 6) + 4, plot.owner.toString());
-                } catch (final Exception e1) {
-                    stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
-                }
-                stmt.setString((i * 6) + 5, plot.world);
-                stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
+            public void setSQLite(PreparedStatement stmt, int i, Integer id) throws SQLException {
+                stmt.setInt((i * 10) + 1, id );
+                stmt.setNull((i * 10) + 2, 4);
+                stmt.setNull((i * 10) + 3, 4);
+                stmt.setNull((i * 10) + 4, 4);
+                stmt.setNull((i * 10) + 5, 4);
+                stmt.setNull((i * 10) + 6, 4);
+                stmt.setNull((i * 10) + 7, 4);
+                stmt.setNull((i * 10) + 8, 4);
+                stmt.setNull((i * 10) + 9, 4);
+                stmt.setString((i * 10) + 10, "DEFAULT");
             }
 
             @Override
-            public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
-                stmt.setInt(1, plot.id.x);
-                stmt.setInt(2, plot.id.y);
-                stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.world);
+            public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
+                stmt.setInt(1, id);
             }
         };
         TaskManager.runTaskAsync(new Runnable() {
@@ -821,7 +888,7 @@ public class SQLManager implements AbstractDB {
             stmt.close();
             r.close();
             if (plots.keySet().size() > 0) {
-                createSettings(new ArrayList<Integer>(plots.keySet()));
+                createEmptySettings(new ArrayList<Integer>(plots.keySet()));
             }
             boolean invalidPlot = false;
             for (final String worldname : noExist.keySet()) {

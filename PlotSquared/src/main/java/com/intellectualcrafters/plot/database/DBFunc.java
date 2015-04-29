@@ -94,17 +94,8 @@ public class DBFunc {
      *
      * @param plots List containing all plot objects
      */
-    public static void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
-        dbManager.createAllSettingsAndHelpers(plots);
-    }
-
-    /**
-     * Create all plots
-     *
-     * @param plots A list containing plot objects
-     */
-    public static void createPlots(final ArrayList<Plot> plots) {
-        dbManager.createPlots(plots);
+    public static void createPlotsAndData(final ArrayList<Plot> plots, Runnable whenDone) {
+        dbManager.createPlotsAndData(plots, whenDone);
     }
 
     /**

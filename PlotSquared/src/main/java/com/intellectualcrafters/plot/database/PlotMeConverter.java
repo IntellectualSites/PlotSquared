@@ -321,9 +321,12 @@ public class PlotMeConverter {
                     }
                     sendMessage("Creating plot DB");
                     Thread.sleep(1000);
-                    DBFunc.createPlots(createdPlots);
-                    sendMessage("Creating settings/helpers DB");
-                    DBFunc.createAllSettingsAndHelpers(createdPlots);
+                    DBFunc.createPlotsAndData(createdPlots, new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMessage("&aDatabase conversion is now complete!");
+                        }
+                    });
                     sendMessage("Saving configuration...");
                     try {
                         PlotSquared.config.save(PlotSquared.configFile);
@@ -378,7 +381,7 @@ public class PlotMeConverter {
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }
-                            sendMessage("Conversion has finished");
+                            sendMessage("&cPlease wait until database conversion is complete. You will be notified when this happens");
                             PlotSquared.log("&c - Stop the server");
                             PlotSquared.log("&c - Disable 'plotme-convert.enabled' in the settings.yml");
                             PlotSquared.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");

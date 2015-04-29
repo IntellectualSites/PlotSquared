@@ -44,6 +44,11 @@ public abstract class TaskManager {
         }
     }
 
+    /**
+     * Run task later (delay in ticks)
+     * @param r
+     * @param delay
+     */
     public static void runTaskLater(final Runnable r, final int delay) {
         if (r != null) {
             PlotSquared.TASK.taskLater(r, delay);

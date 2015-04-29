@@ -53,9 +53,13 @@ public class Database extends SubCommand {
                     for (final Plot p : plots) {
                         ps.add(p);
                     }
-                    manager.createPlots(ps);
-                    manager.createAllSettingsAndHelpers(ps);
-                    sendMessageU(requester, "&6Database conversion finished");
+                    sendMessageU(requester, "&6Starting...");
+                    manager.createPlotsAndData(ps, new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMessageU(requester, "&6Database conversion finished!");
+                        }
+                    });
                 } catch (final Exception e) {
                     sendMessageU(requester, "Failed to insert plot objects, see stacktrace for info");
                     e.printStackTrace();

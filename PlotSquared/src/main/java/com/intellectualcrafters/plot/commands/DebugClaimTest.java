@@ -134,8 +134,12 @@ public class DebugClaimTest extends SubCommand {
             }
             if (plots.size() > 0) {
                 MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
-                DBFunc.createPlots(plots);
-                DBFunc.createAllSettingsAndHelpers(plots);
+                DBFunc.createPlotsAndData(plots, new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendMessage(null, "&6Database update finished!");
+                    }
+                });
                 for (final Plot plot : plots) {
                     PlotSquared.updatePlot(plot);
                 }
