@@ -182,7 +182,10 @@ public class SQLManager implements AbstractDB {
                     final ResultSet result = stmt.executeQuery();
                     while (result.next()) {
                         final int id = result.getInt("id");
-                        Plot plot = plotMap.get(id);
+                        int x = result.getInt("plot_id_x");
+                        int y = result.getInt("plot_id_z");
+                        PlotId plotId = new PlotId(x, y);
+                        Plot plot = plotMap.get(plotId);
                         if (plot != null) {
                             settings.add(new SettingsPair(id, plot.settings));
                             if (plot.denied != null) {
@@ -384,7 +387,7 @@ public class SQLManager implements AbstractDB {
         final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_SETTINGS, 1);
+                return getCreateMySQL(size, CREATE_SETTINGS, 10);
             }
 
             @Override
@@ -398,13 +401,57 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void setMySQL(PreparedStatement stmt, int i, SettingsPair id) throws SQLException {
-                stmt.setInt((i * 1) + 1, id.id);
+            public void setMySQL(PreparedStatement stmt, int i, SettingsPair pair) throws SQLException {
+//                stmt.setInt((i * 1) + 1, id.id);
+                // `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position`
+                
+                stmt.setInt((i * 10) + 1, pair.id ); // id
+                stmt.setNull((i * 10) + 2, 4);  // biome
+                stmt.setNull((i * 10) + 3, 4);  // rain
+                stmt.setNull((i * 10) + 4, 4);  // custom_time
+                stmt.setNull((i * 10) + 5, 4);  // time
+                stmt.setNull((i * 10) + 6, 4);  // deny_entry
+                if (pair.settings.getAlias().equals("")) {
+                    stmt.setNull((i * 10) + 7, 4);
+                }
+                else {
+                    stmt.setString((i * 10) + 7, pair.settings.getAlias());
+                }
+                if (pair.settings.flags == null) {
+                    stmt.setNull((i * 10) + 8, 4);
+                }
+                else {
+                    final StringBuilder flag_string = new StringBuilder();
+                    int k = 0;
+                    for (final Flag flag : pair.settings.flags) {
+                        if (k != 0) {
+                            flag_string.append(",");
+                        }
+                        flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+                        k++;
+                    }
+                    stmt.setString((i * 10) + 8, flag_string.toString());
+                }
+                boolean[] merged = pair.settings.getMerged();
+                int n = 0;
+                for (int j = 0; j < 4; ++j) {
+                    n = (n << 1) + (merged[j] ? 1 : 0);
+                }
+                stmt.setInt((i * 10) + 9, n);
+                BlockLoc loc = pair.settings.getPosition();
+                String position;
+                if (loc.y == 0) {
+                    position = "DEFAULT";
+                }
+                else {
+                    position = loc.x + "," + loc.y + "," + loc.z;
+                }
+                stmt.setString((i * 10) + 10, position);
             }
 
             @Override
-            public void setSQLite(PreparedStatement stmt, int i, SettingsPair id) throws SQLException {
-                stmt.setInt((i * 10) + 1, id.id );
+            public void setSQLite(PreparedStatement stmt, int i, SettingsPair pair) throws SQLException {
+                stmt.setInt((i * 10) + 1, pair.id );
                 stmt.setNull((i * 10) + 2, 4);
                 stmt.setNull((i * 10) + 3, 4);
                 stmt.setNull((i * 10) + 4, 4);
@@ -417,8 +464,8 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void setSQL(PreparedStatement stmt, SettingsPair id) throws SQLException {
-                stmt.setInt(1, id.id);
+            public void setSQL(PreparedStatement stmt, SettingsPair pair) throws SQLException {
+                stmt.setInt(1, pair.id);
             }
         };
         TaskManager.runTaskAsync(new Runnable() {
