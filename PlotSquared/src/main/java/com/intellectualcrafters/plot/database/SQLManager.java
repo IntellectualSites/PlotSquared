@@ -238,7 +238,105 @@ public class SQLManager implements AbstractDB {
         }
     }
     
+    public <T> void setBulk(ArrayList<T> objList, StmtMod<T> mod) {
+    	final int size = objList.size();
+        int packet;
+        if (PlotSquared.getMySQL() != null) {
+            packet = Math.min(size, 50000);
+        } else {
+            packet = Math.min(size, 50);
+        }
+        final int amount = size / packet;
+        for (int j = 0; j <= amount; j++) {
+            final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
+            if (subList.size() == 0) {
+                return;
+            }
+            String statement = mod.getCreateMySQL(packet);
+            PreparedStatement stmt = null;
+            try {
+                stmt = this.connection.prepareStatement(statement.toString());
+                for (int i = 0; i < subList.size(); i++) {
+                    final T obj = subList.get(i);
+                    mod.setMySQL(stmt,i , obj);
+                }
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (final Exception e) {
+                try {
+                	String unionstmt = mod.getCreateSQLite(packet);
+                    stmt = this.connection.prepareStatement(unionstmt.toString());
+                    for (int i = 0; i < subList.size(); i++) {
+                    	mod.setSQLite(stmt, i, subList.get(i));
+                    }
+                    stmt.executeUpdate();
+                    stmt.close();
+                }
+                catch (Exception e2) {
+                    e2.printStackTrace();
+                    PlotSquared.log("&6[WARN] " + "Could not bulk save!");
+                    try {
+                        for (final T obj : subList) {
+                            try {
+                                stmt = connection.prepareStatement(mod.getCreateSQL());
+                                mod.setSQL(stmt, obj);
+                                stmt.executeUpdate();
+                                stmt.close();
+                            } catch (final Exception e3) {
+                                PlotSquared.log("&c[ERROR] " + "Failed to save " + obj + "!");
+                            }
+                        }
+                    } catch (final Exception e4) {
+                        e4.printStackTrace();
+                        PlotSquared.log("&c[ERROR] " + "Failed to save all!");
+                    }
+                }
+            }
+        }
+    }
+    
     public void createSettings(final ArrayList<Integer> mylist) {
+    	StmtMod<Integer> mod = new StmtMod<Integer>() {
+
+			@Override
+			public String getCreateMySQL(int size) {
+				return getCreateMySQL(size, CREATE_SETTINGS, 1);
+			}
+
+			@Override
+			public String getCreateSQLite(int size) {
+				String query = "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ";
+				int params = 10;
+                for (int i = 0; i < (ids.size() - 2); i++) {
+                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+                }
+                unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+			}
+
+			@Override
+			public String getCreateSQL() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setMySQL(PreparedStatement stmt, int i, Integer obj) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void setSQLite(PreparedStatement stmt, int i, Integer obj) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void setSQL(PreparedStatement stmt, Integer obj) {
+				// TODO Auto-generated method stub
+			}
+		};
+    	
+    	String create1 = CREATE_SETTINGS;
+    	
         final int size = mylist.size();
         int packet;
         if (PlotSquared.getMySQL() != null) {
@@ -252,7 +350,7 @@ public class SQLManager implements AbstractDB {
             if (ids.size() == 0) {
                 return;
             }
-            final StringBuilder statement = new StringBuilder(this.CREATE_SETTINGS);
+            final StringBuilder statement = new StringBuilder(create1);
             for (int i = 0; i < (ids.size() - 1); i++) {
                 statement.append("(?),");
             }
