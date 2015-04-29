@@ -260,13 +260,13 @@ public class MainUtil {
     
     public static void update(final Plot plot) {
         Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        Location top = getPlotBottomLoc(plot.world, plot.id);
+        Location top = getPlotTopLoc(plot.world, plot.id);
         
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
         
-        int tx = 1 + (top.getX() >> 4);
-        int tz = 1 + (top.getZ() >> 4);
+        int tx = (top.getX() >> 4);
+        int tz = (top.getZ() >> 4);
         
         ArrayList<ChunkLoc> chunks = new ArrayList<>();
         
