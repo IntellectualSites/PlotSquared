@@ -295,9 +295,9 @@ public class SQLManager implements AbstractDB {
         }
     }
     
-    public void createSettings(final ArrayList<Integer> mylist) {
-    	StmtMod<Integer> mod = new StmtMod<Integer>() {
-
+    @Override
+    public void createSettings(final ArrayList<Integer> myList) {
+    	final StmtMod<Integer> mod = new StmtMod<Integer>() {
 			@Override
 			public String getCreateMySQL(int size) {
 				return getCreateMySQL(size, CREATE_SETTINGS, 1);
@@ -305,195 +305,109 @@ public class SQLManager implements AbstractDB {
 
 			@Override
 			public String getCreateSQLite(int size) {
-				String query = "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ";
-				int params = 10;
-                for (int i = 0; i < (ids.size() - 2); i++) {
-                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
-                }
-                unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+			    return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
 			}
 
 			@Override
 			public String getCreateSQL() {
-				// TODO Auto-generated method stub
-				return null;
+				return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)";
 			}
 
 			@Override
-			public void setMySQL(PreparedStatement stmt, int i, Integer obj) {
-				// TODO Auto-generated method stub
+			public void setMySQL(PreparedStatement stmt, int i, Integer id) throws SQLException {
+                stmt.setInt((i * 1) + 1, id);
 			}
 
 			@Override
-			public void setSQLite(PreparedStatement stmt, int i, Integer obj) {
-				// TODO Auto-generated method stub
+			public void setSQLite(PreparedStatement stmt, int i, Integer id) throws SQLException {
+			    stmt.setInt((i * 10) + 1, id);
+                stmt.setNull((i * 10) + 2, 4);
+                stmt.setNull((i * 10) + 3, 4);
+                stmt.setNull((i * 10) + 4, 4);
+                stmt.setNull((i * 10) + 5, 4);
+                stmt.setNull((i * 10) + 6, 4);
+                stmt.setNull((i * 10) + 7, 4);
+                stmt.setNull((i * 10) + 8, 4);
+                stmt.setNull((i * 10) + 9, 4);
+                stmt.setString((i * 10) + 10, "DEFAULT");
 			}
 
 			@Override
-			public void setSQL(PreparedStatement stmt, Integer obj) {
-				// TODO Auto-generated method stub
+			public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
+			    stmt.setInt(1, id);
 			}
 		};
-    	
-    	String create1 = CREATE_SETTINGS;
-    	
-        final int size = mylist.size();
-        int packet;
-        if (PlotSquared.getMySQL() != null) {
-            packet = Math.min(size, 50000);
-        } else {
-            packet = Math.min(size, 50);
-        }
-        final int amount = size / packet;
-        for (int j = 0; j <= amount; j++) {
-            final List<Integer> ids = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
-            if (ids.size() == 0) {
-                return;
+		TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                setBulk(myList, mod);
             }
-            final StringBuilder statement = new StringBuilder(create1);
-            for (int i = 0; i < (ids.size() - 1); i++) {
-                statement.append("(?),");
-            }
-            statement.append("(?)");
-            PreparedStatement stmt = null;
-            try {
-                stmt = this.connection.prepareStatement(statement.toString());
-                for (int i = 0; i < ids.size(); i++) {
-                    final Integer id = ids.get(i);
-                    stmt.setInt((i * 1) + 1, id);
-                }
-                stmt.executeUpdate();
-                stmt.close();
-            } catch (final Exception e) {
-                try {
-                    StringBuilder unionstmt = new StringBuilder("INSERT INTO `" + this.prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ");
-                    for (int i = 0; i < (ids.size() - 2); i++) {
-                        unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
-                    }
-                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
-                    stmt = this.connection.prepareStatement(unionstmt.toString());
-                    for (int i = 0; i < ids.size(); i++) {
-                        Integer id = ids.get(i);
-                        stmt.setInt((i * 10) + 1, id);
-                        stmt.setNull((i * 10) + 2, 4);
-                        stmt.setNull((i * 10) + 3, 4);
-                        stmt.setNull((i * 10) + 4, 4);
-                        stmt.setNull((i * 10) + 5, 4);
-                        stmt.setNull((i * 10) + 6, 4);
-                        stmt.setNull((i * 10) + 7, 4);
-                        stmt.setNull((i * 10) + 8, 4);
-                        stmt.setNull((i * 10) + 9, 4);
-                        stmt.setString((i * 10) + 10, "DEFAULT");
-                    }
-                    stmt.executeUpdate();
-                    stmt.close();
-                }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                    PlotSquared.log("&6[WARN] " + "Could not bulk save. Conversion may be slower...");
-                    try {
-                        for (final Integer id : ids) {
-                            try {
-                                stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)");
-                                stmt.setInt(1, id);
-                                stmt.executeUpdate();
-                                stmt.close();
-                            } catch (final Exception e3) {
-                                PlotSquared.log("&c[ERROR] " + "Failed to save plot setting: " + id);
-                            }
-                        }
-                    } catch (final Exception e4) {
-                        e4.printStackTrace();
-                        PlotSquared.log("&c[ERROR] " + "Failed to save plot settings!");
-                    }
-                }
-            }
-        }
+        });
     }
 
     /**
      * Create a plot
      *
-     * @param mylist list of plots to be created
+     * @param myList list of plots to be created
      */
     @Override
-    public void createPlots(final ArrayList<Plot> mylist) {
-        final int size = mylist.size();
-        int packet;
-        if (PlotSquared.getMySQL() != null) {
-            packet = Math.min(size, 50000);
-        } else {
-            packet = Math.min(size, 100);
-        }
-        final int amount = size / packet;
-        for (int j = 0; j <= amount; j++) {
-            final List<Plot> plots = mylist.subList(j * packet, Math.min(size, (j + 1) * packet));
-            if (plots.size() == 0) {
-                return;
+    public void createPlots(final ArrayList<Plot> myList) {
+        final StmtMod<Plot> mod = new StmtMod<Plot>() {
+            @Override
+            public String getCreateMySQL(int size) {
+                return getCreateMySQL(size, CREATE_PLOTS, 4);
             }
-            final StringBuilder statement = new StringBuilder(this.CREATE_PLOTS);
-            for (int i = 0; i < (plots.size() - 1); i++) {
-                statement.append("(?,?,?,?),");
+
+            @Override
+            public String getCreateSQLite(int size) {
+                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
             }
-            statement.append("(?,?,?,?)");
-            PreparedStatement stmt = null;
-            try {
-                stmt = this.connection.prepareStatement(statement.toString());
-                for (int i = 0; i < plots.size(); i++) {
-                    final Plot plot = plots.get(i);
-                    stmt.setInt((i * 4) + 1, plot.id.x);
-                    stmt.setInt((i * 4) + 2, plot.id.y);
-                    try {
-                        stmt.setString((i * 4) + 3, plot.owner.toString());
-                    } catch (final Exception e) {
-                        stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
-                    }
-                    stmt.setString((i * 4) + 4, plot.world);
-                }
-                stmt.executeUpdate();
-                stmt.close();
-            } catch (final Exception e) {
+
+            @Override
+            public String getCreateSQL() {
+                return CREATE_PLOT;
+            }
+
+            @Override
+            public void setMySQL(PreparedStatement stmt, int i, Plot plot) throws SQLException {
+                stmt.setInt((i * 4) + 1, plot.id.x);
+                stmt.setInt((i * 4) + 2, plot.id.y);
                 try {
-                    StringBuilder unionstmt = new StringBuilder("INSERT INTO `" + this.prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ");
-                    for (int i = 0; i < (plots.size() - 2); i++) {
-                        unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ? ");
-                    }
-                    unionstmt.append("UNION SELECT ?, ?, ?, ?, ?, ? ");
-                    stmt = this.connection.prepareStatement(unionstmt.toString());
-                    for (int i = 0; i < plots.size(); i++) {
-                        final Plot plot = plots.get(i);
-                        stmt.setNull((i * 6) + 1, 4);
-                        stmt.setInt((i * 6) + 2, plot.id.x);
-                        stmt.setInt((i * 6) + 3, plot.id.y);
-                        try {
-                            stmt.setString((i * 6) + 4, plot.owner.toString());
-                        } catch (final Exception e1) {
-                            stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
-                        }
-                        stmt.setString((i * 6) + 5, plot.world);
-                        stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
-                    }
-                    stmt.executeUpdate();
-                    stmt.close();
+                    stmt.setString((i * 4) + 3, plot.owner.toString());
+                } catch (final Exception e) {
+                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
                 }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                    PlotSquared.log("&6[WARN] " + "Could not bulk save. Conversion may be slower...");
-                    try {
-                        for (final Plot plot : plots) {
-                            try {
-                                createPlot(plot);
-                            } catch (final Exception e3) {
-                                PlotSquared.log("&c[ERROR] " + "Failed to save plot: " + plot.id);
-                            }
-                        }
-                    } catch (final Exception e4) {
-                        e4.printStackTrace();
-                        PlotSquared.log("&c[ERROR] " + "Failed to save plots!");
-                    }
-                }
+                stmt.setString((i * 4) + 4, plot.world);
             }
-        }
+
+            @Override
+            public void setSQLite(PreparedStatement stmt, int i, Plot plot) throws SQLException {
+                stmt.setNull((i * 6) + 1, 4);
+                stmt.setInt((i * 6) + 2, plot.id.x);
+                stmt.setInt((i * 6) + 3, plot.id.y);
+                try {
+                    stmt.setString((i * 6) + 4, plot.owner.toString());
+                } catch (final Exception e1) {
+                    stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
+                }
+                stmt.setString((i * 6) + 5, plot.world);
+                stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
+            }
+
+            @Override
+            public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
+                stmt.setInt(1, plot.id.x);
+                stmt.setInt(2, plot.id.y);
+                stmt.setString(3, plot.owner.toString());
+                stmt.setString(4, plot.world);
+            }
+        };
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                setBulk(myList, mod);
+            }
+        });
     }
 
     /**

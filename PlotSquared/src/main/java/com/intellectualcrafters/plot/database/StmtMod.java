@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.database;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -28,7 +29,7 @@ public abstract class StmtMod<T> {
 	public abstract String getCreateSQLite(int size);
 	public abstract String getCreateSQL();
 	
-	public abstract void setMySQL(PreparedStatement stmt, int i, T obj);
-	public abstract void setSQLite(PreparedStatement stmt, int i, T obj);
-	public abstract void setSQL(PreparedStatement stmt, T obj);
+	public abstract void setMySQL(PreparedStatement stmt, int i, T obj) throws SQLException;
+	public abstract void setSQLite(PreparedStatement stmt, int i, T obj) throws SQLException;
+	public abstract void setSQL(PreparedStatement stmt, T obj) throws SQLException;
 }
