@@ -45,22 +45,24 @@ public class Setup extends SubCommand {
     }
     
     public void displayGenerators(PlotPlayer plr) {
-        MainUtil.sendMessage(plr, "&6What generator do you want?");
+        StringBuffer message = new StringBuffer();
+        message.append("&6What generator do you want?");
         for (Entry<String, ChunkGenerator> entry : SetupUtils.generators.entrySet()) {
 //            + prefix + StringUtils.join(SetupUtils.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared")
             if (entry.getKey().equals("PlotSquared")) {
-                MainUtil.sendMessage(plr, "\n&8 - &2" + entry.getKey() + "(Hybrid Generator)");
+                message.append("\n&8 - &2" + entry.getKey() + "(Hybrid Generator)");
             }
             else if (entry.getValue() instanceof HybridGen) {
-                MainUtil.sendMessage(plr, "\n&8 - &7" + entry.getKey() + "(Hybrid Generator)");
+                message.append("\n&8 - &7" + entry.getKey() + "(Hybrid Generator)");
             }
             else if (entry.getValue() instanceof PlotGenerator) {
-                MainUtil.sendMessage(plr, "\n&8 - &7" + entry.getKey() + "(Plot Generator)");
+                message.append("\n&8 - &7" + entry.getKey() + "(Plot Generator)");
             }
             else {
-                MainUtil.sendMessage(plr, "\n&8 - &7" + entry.getKey() + "(Unknown structure)");
+                message.append("\n&8 - &7" + entry.getKey() + "(Unknown structure)");
             }
         }
+        MainUtil.sendMessage(plr, message.toString());
     }
 
     @Override

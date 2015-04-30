@@ -278,9 +278,6 @@ public class BukkitChunkManager extends ChunkManager {
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
-
-        System.out.print(4);
-        
         final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
         for (int x = c1x; x <= c2x; x++) {
             for (int z = c1z; z <= c2z; z++) {
@@ -297,13 +294,11 @@ public class BukkitChunkManager extends ChunkManager {
                 long start = System.currentTimeMillis();
                 while (System.currentTimeMillis() - start < 20) {
                     if (chunks.size() == 0) {
-                        System.out.print(5);
                         TaskManager.runTaskLater(whenDone, 1);
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                         TaskManager.tasks.remove(currentIndex);
                         return;
                     }
-                    System.out.print(6);
                     CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                     final Chunk chunk = chunks.get(0);
                     chunks.remove(0);
