@@ -107,7 +107,7 @@ public class ExpireManager {
                         return;
                     }
                     if (plot.settings.isMerged()) {
-                        Unlink.unlinkPlot(plot);
+                        MainUtil.unlinkPlot(plot);
                     }
                     final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
                     manager.clearPlot(plotworld, plot, false, null);

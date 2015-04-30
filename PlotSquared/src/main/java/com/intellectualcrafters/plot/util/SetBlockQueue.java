@@ -12,13 +12,17 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 public class SetBlockQueue {
     
     private volatile static HashMap<ChunkWrapper, PlotBlock[][]> blocks;
-    private volatile static int allocate = 20;
+    private volatile static int allocate = 25;
     private volatile static boolean running = false;
     private volatile static boolean locked = false;
     private volatile static HashSet<Runnable> runnables;
     
     public synchronized static void allocate(int t) {
         allocate = t;
+    }
+    
+    public static int getAllocate() {
+        return allocate;
     }
     
     public synchronized static void addNotify(Runnable whenDone) {

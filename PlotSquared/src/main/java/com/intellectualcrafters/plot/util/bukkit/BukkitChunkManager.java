@@ -61,6 +61,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitChunkManager extends ChunkManager {
@@ -292,8 +293,11 @@ public class BukkitChunkManager extends ChunkManager {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-                while (System.currentTimeMillis() - start < 20) {
+                int allocated = SetBlockQueue.getAllocate();
+                SetBlockQueue.allocate(0);
+                while (System.currentTimeMillis() - start < allocated) {
                     if (chunks.size() == 0) {
+                        SetBlockQueue.allocate(SetBlockQueue.getAllocate() + allocated);
                         TaskManager.runTaskLater(whenDone, 1);
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                         TaskManager.tasks.remove(currentIndex);

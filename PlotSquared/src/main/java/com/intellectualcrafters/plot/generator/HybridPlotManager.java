@@ -66,6 +66,27 @@ public class HybridPlotManager extends ClassicPlotManager {
         Template.zipAll(plotworld.worldname, files);
     }
 
+    @Override
+    public boolean createRoadEast(PlotWorld plotworld, Plot plot) {
+        super.createRoadEast(plotworld, plot);
+        // TODO schematic
+        return true;
+    }
+    
+    @Override
+    public boolean createRoadSouth(PlotWorld plotworld, Plot plot) {
+        super.createRoadSouth(plotworld, plot);
+        // TODO schematic
+        return true;
+    }
+    
+    @Override
+    public boolean createRoadSouthEast(PlotWorld plotworld, Plot plot) {
+        super.createRoadSouthEast(plotworld, plot);
+        // TODO schematic
+        return true;
+    }
+    
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the setCuboidAsync
      * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
