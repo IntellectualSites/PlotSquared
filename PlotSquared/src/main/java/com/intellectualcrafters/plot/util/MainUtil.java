@@ -601,6 +601,7 @@ public class MainUtil {
      */
     public static boolean clearAsPlayer(final Plot plot, final boolean isDelete, final Runnable whenDone) {
         if (runners.containsKey(plot)) {
+            System.out.print("RUNNABLE ALREADY");
             return false;
         }
         ChunkManager.manager.clearAllEntities(plot);
@@ -610,6 +611,7 @@ public class MainUtil {
     }
 
     public static void clear(final String world, final Plot plot, final boolean isDelete, final Runnable whenDone) {
+        System.out.print(1);
         final PlotManager manager = PlotSquared.getPlotManager(world);
         final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final int prime = 31;
@@ -620,20 +622,24 @@ public class MainUtil {
         System.currentTimeMillis();
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         runners.put(plot, 1);
+        System.out.print(2);
         if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
             final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
             ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
+                    System.out.print(3);
                     runners.remove(plot);
                     TaskManager.runTask(whenDone);
                 }
             });
             return;
         }
+        System.out.print(2.1);
         final Runnable run = new Runnable() {
             @Override
             public void run() {
+                System.out.print(3.1);
                 MainUtil.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
@@ -670,6 +676,22 @@ public class MainUtil {
         }
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
+    
+    public static void setCuboidAsync(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
+        if (blocks.length == 1) {
+            setSimpleCuboidAsync(world, pos1, pos2, blocks[0]);
+            return;
+        }
+        for (int y = pos1.getY(); y < pos2.getY(); y++) {
+            for (int x = pos1.getX(); x < pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+                    final int i = random.random(blocks.length);
+                    final PlotBlock block = blocks[i];
+                    SetBlockQueue.setBlock(world, x, y, z, block);
+                }
+            }
+        }
+    }
 
     public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
         final int length = (pos2.getX() - pos1.getX()) * (pos2.getY() - pos1.getY()) * (pos2.getZ() - pos1.getZ());
@@ -692,6 +714,16 @@ public class MainUtil {
             }
         }
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
+    }
+    
+    public static void setSimpleCuboidAsync(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
+        for (int y = pos1.getY(); y < pos2.getY(); y++) {
+            for (int x = pos1.getX(); x < pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+                    SetBlockQueue.setBlock(world, x, y, z, newblock);
+                }
+            }
+        }
     }
 
     public static void setBiome(final String world, final Plot plot, final String biome) {
