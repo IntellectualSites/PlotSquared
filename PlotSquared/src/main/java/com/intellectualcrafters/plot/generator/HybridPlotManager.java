@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -32,7 +33,10 @@ import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -69,21 +73,89 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override
     public boolean createRoadEast(PlotWorld plotworld, Plot plot) {
         super.createRoadEast(plotworld, plot);
-        // TODO schematic
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
+        PlotId id = plot.id;
+        PlotId id2 = new PlotId(id.x + 1, id.y);
+        Location bot = getPlotBottomLocAbs(hpw, id2);
+        Location top = getPlotTopLocAbs(hpw, id);
+        Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ() + 1);
+        Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ());
+        createRoadAbs(hpw, pos1, pos2);
         return true;
+    }
+    
+    public static void createRoadAbs(HybridPlotWorld hpw, Location pos1, Location pos2) {
+        final int sy = hpw.ROAD_HEIGHT;
+        final int size = hpw.SIZE;
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
+                short absX = (short) (x % size);
+                short absZ = (short) (z % size);
+                if (absX < 0) {
+                    absX += size;
+                }
+                if (absZ < 0) {
+                    absZ += size;
+                }
+                final PlotLoc loc = new PlotLoc(absX, absZ);
+                final HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
+                for (short y = (short) (hpw.ROAD_HEIGHT); y <= (hpw.ROAD_HEIGHT + hpw.SCHEMATIC_HEIGHT); y++) {
+                    SetBlockQueue.setBlock(hpw.worldname, x, y + y, z, 0);
+                }
+                if (blocks != null) {
+                    final HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
+                    if (datas == null) {
+                        for (final Short y : blocks.keySet()) {
+                            SetBlockQueue.setBlock(hpw.worldname, x, sy + y, z, blocks.get(y));
+                        }
+                    } else {
+                        for (final Short y : blocks.keySet()) {
+                            Byte data = datas.get(y);
+                            if (data == null) {
+                                data = 0;
+                            }
+                            SetBlockQueue.setBlock(hpw.worldname, x, sy + y, z, new PlotBlock(blocks.get(y), data));
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @Override
     public boolean createRoadSouth(PlotWorld plotworld, Plot plot) {
         super.createRoadSouth(plotworld, plot);
-        // TODO schematic
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
+        PlotId id = plot.id;
+        PlotId id2 = new PlotId(id.x, id.y + 1);
+        Location bot = getPlotBottomLocAbs(hpw, id2);
+        Location top = getPlotTopLocAbs(hpw, id);
+        Location pos1 = new Location(plot.world, bot.getX() + 1, 0, top.getZ() + 1);
+        Location pos2 = new Location(plot.world, top.getX(), 256, bot.getZ());
+        createRoadAbs(hpw, pos1, pos2);
         return true;
     }
     
     @Override
     public boolean createRoadSouthEast(PlotWorld plotworld, Plot plot) {
         super.createRoadSouthEast(plotworld, plot);
-        // TODO schematic
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
+        PlotId id = plot.id;
+        PlotId id2 = new PlotId(id.x + 1, id.y + 1);
+        Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
+        Location pos2 = getPlotBottomLocAbs(hpw, id2);
+        pos1.setY(0);
+        pos2.setY(256);
+        createRoadAbs(hpw, pos1, pos2);
         return true;
     }
     

@@ -461,8 +461,8 @@ public class MainUtil {
             }
             PlotId id = plot.id;
             PlotId id2 = new PlotId(id.x + 1, id.y + 1);
-            Location pos1 = getPlotTopLoc(plot.world, id).add(1, 0, 1);
-            Location pos2 = getPlotBottomLoc(plot.world, id2);
+            Location pos1 = getPlotTopLocAbs(plot.world, id).add(1, 0, 1);
+            Location pos2 = getPlotBottomLocAbs(plot.world, id2);
             pos1.setY(0);
             pos2.setY(256);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
@@ -486,7 +486,7 @@ public class MainUtil {
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
-            PlotSquared.getPlotManager(plot.world).removeRoadSouthEast(plotworld, plot);
+            PlotSquared.getPlotManager(plot.world).removeRoadEast(plotworld, plot);
         }
     }
     
@@ -504,7 +504,7 @@ public class MainUtil {
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
-            PlotSquared.getPlotManager(plot.world).removeRoadSouthEast(plotworld, plot);
+            PlotSquared.getPlotManager(plot.world).removeRoadSouth(plotworld, plot);
         }
     }
 
