@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.database.plotme;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -31,6 +33,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final String password = plotConfig.getString("mySQLpass");
                 final String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
+//                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
                 return new SQLite(PlotSquared.THIS, dataFolder + File.separator + "plots.db").openConnection();
             }
@@ -42,12 +45,11 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
         ResultSet r;
-        Statement stmt;
+        PreparedStatement stmt;
         final HashMap<String, Integer> plotSize = new HashMap<>();
         final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
-        stmt = connection.createStatement();
-        r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
-
+        stmt = connection.prepareStatement("SELECT * FROM `plotmePlots`");
+        r = stmt.executeQuery();
         boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
         
         while (r.next()) {
@@ -91,48 +93,61 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
             plots.get(world).put(id, plot);
         }
+        
         r.close();
         stmt.close();
         
-        stmt = connection.createStatement();
-        r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
-        while (r.next()) {
-            final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-            final String name = r.getString("player");
-            final String world = PlotMeConverter.getWorld(r.getString("world"));
-            UUID helper = UUIDHandler.getUUID(name);
-            if (helper == null) {
-                if (name.equals("*")) {
-                    helper = DBFunc.everyone;
-                } else {
-                    MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
-                    continue;
+        try {
+        
+            MainUtil.sendConsoleMessage(" - plotmeDenied");
+            stmt = connection.prepareStatement("SELECT * FROM `plotmeDenied`");
+            r = stmt.executeQuery();
+            
+            while (r.next()) {
+                final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
+                final String name = r.getString("player");
+                final String world = PlotMeConverter.getWorld(r.getString("world"));
+                UUID denied = UUIDHandler.getUUID(name);
+                if (denied == null) {
+                    if (name.equals("*")) {
+                        denied = DBFunc.everyone;
+                    } else {
+                        MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
+                        continue;
+                    }
+                }
+                if (plots.get(world).containsKey(id)) {
+                    plots.get(world).get(id).denied.add(denied);
                 }
             }
-            if (plots.get(world).containsKey(id)) {
-                plots.get(world).get(id).helpers.add(helper);
+            
+            stmt = connection.prepareStatement("SELECT * FROM `plotmeAllowed`");
+            r = stmt.executeQuery();
+            
+            while (r.next()) {
+                final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
+                final String name = r.getString("player");
+                final String world = PlotMeConverter.getWorld(r.getString("world"));
+                UUID helper = UUIDHandler.getUUID(name);
+                if (helper == null) {
+                    if (name.equals("*")) {
+                        helper = DBFunc.everyone;
+                    } else {
+                        MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
+                        continue;
+                    }
+                }
+                if (plots.get(world).containsKey(id)) {
+                    plots.get(world).get(id).helpers.add(helper);
+                }
             }
+            
+            r.close();
+            stmt.close();
+        
         }
-        
-        MainUtil.sendConsoleMessage(" - plotmeDenied");
-        r = stmt.executeQuery("SELECT * FROM `plotmeDenied`");
-        
-        while (r.next()) {
-            final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-            final String name = r.getString("player");
-            final String world = PlotMeConverter.getWorld(r.getString("world"));
-            UUID denied = UUIDHandler.getUUID(name);
-            if (denied == null) {
-                if (name.equals("*")) {
-                    denied = DBFunc.everyone;
-                } else {
-                    MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
-                    continue;
-                }
-            }
-            if (plots.get(world).containsKey(id)) {
-                plots.get(world).get(id).denied.add(denied);
-            }
+        catch (Exception e) {
+            
         }
         
         return plots;

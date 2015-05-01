@@ -410,11 +410,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public boolean initPlotMeConverter() {
-        try {
-            new PlotMeConverter().runAsync(new ClassicPlotMeConnector());
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        TaskManager.runTaskLaterAsync(new Runnable() {
+            @Override
+            public void run() {
+                new PlotMeConverter().run(new ClassicPlotMeConnector());                    
+            }
+        }, 20);
         if (Bukkit.getPluginManager().getPlugin("PlotMe") != null) {
             return true;
         }

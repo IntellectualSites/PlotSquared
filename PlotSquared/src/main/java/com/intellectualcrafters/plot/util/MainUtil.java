@@ -420,7 +420,7 @@ public class MainUtil {
                     if (ly) {
                         if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
                             if (removeRoads) { 
-                                manager.removeRoadSouthEast(plotworld, plot);
+                                MainUtil.removeRoadSouthEast(plotworld, plot);
                             }
                         }
                     }
@@ -512,7 +512,7 @@ public class MainUtil {
                 lesserPlot.settings.setMerged(2, true);
                 greaterPlot.settings.setMerged(0, true);
                 if (removeRoads) {
-                    manager.removeRoadSouth(plotworld, lesserPlot);
+                    MainUtil.removeRoadSouth(plotworld, lesserPlot);
                 }
             }
         } else {
@@ -520,7 +520,7 @@ public class MainUtil {
                 lesserPlot.settings.setMerged(1, true);
                 greaterPlot.settings.setMerged(3, true);
                 if (removeRoads) {
-                    manager.removeRoadEast(plotworld, lesserPlot);
+                    MainUtil.removeRoadEast(plotworld, lesserPlot);
                 }
             }
         }
