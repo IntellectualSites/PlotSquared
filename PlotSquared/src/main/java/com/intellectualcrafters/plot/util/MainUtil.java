@@ -458,6 +458,10 @@ public class MainUtil {
             PlotId id2 = new PlotId(id.x + 1, id.y + 1);
             Location pos1 = getPlotTopLoc(plot.world, id).add(1, 0, 1);
             Location pos2 = getPlotBottomLoc(plot.world, id2);
+            pos1.setY(0);
+            pos2.setY(256);
+            System.out.print(pos1);
+            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
@@ -472,7 +476,9 @@ public class MainUtil {
             Location bot = getPlotBottomLocAbs(plot.world, id2);
             Location top = getPlotTopLocAbs(plot.world, id);
             Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ() + 1);
-            Location pos2 = new Location(plot.world, bot.getX(), 0, top.getZ());
+            Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ());
+            System.out.print(pos1);
+            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
@@ -487,7 +493,9 @@ public class MainUtil {
             Location bot = getPlotBottomLocAbs(plot.world, id2);
             Location top = getPlotTopLocAbs(plot.world, id);
             Location pos1 = new Location(plot.world, bot.getX() + 1, 0, top.getZ() + 1);
-            Location pos2 = new Location(plot.world, top.getX(), 0, bot.getZ());
+            Location pos2 = new Location(plot.world, top.getX(), 256, bot.getZ());
+            System.out.print(pos1);
+            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
@@ -505,7 +513,6 @@ public class MainUtil {
      * @param greaterPlot
      */
     public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, final boolean removeRoads) {
-        final PlotManager manager = PlotSquared.getPlotManager(world);
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
         if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
             if (!lesserPlot.settings.getMerged(2)) {

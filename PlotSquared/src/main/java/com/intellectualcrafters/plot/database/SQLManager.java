@@ -285,7 +285,7 @@ public class SQLManager implements AbstractDB {
             public String getCreateSQL() {
                 return CREATE_PLOT;
             }
-
+ 
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Plot plot) throws SQLException {
                 stmt.setInt((i * 4) + 1, plot.id.x);
@@ -340,7 +340,7 @@ public class SQLManager implements AbstractDB {
             if (subList.size() == 0) {
                 return;
             }
-            String statement = mod.getCreateMySQL(packet);
+            String statement = mod.getCreateMySQL(subList.size());
             PreparedStatement stmt = null;
             try {
                 stmt = this.connection.prepareStatement(statement.toString());
@@ -352,7 +352,7 @@ public class SQLManager implements AbstractDB {
                 stmt.close();
             } catch (final Exception e) {
                 try {
-                	String unionstmt = mod.getCreateSQLite(packet);
+                	String unionstmt = mod.getCreateSQLite(subList.size());
                     stmt = this.connection.prepareStatement(unionstmt.toString());
                     for (int i = 0; i < subList.size(); i++) {
                     	mod.setSQLite(stmt, i, subList.get(i));

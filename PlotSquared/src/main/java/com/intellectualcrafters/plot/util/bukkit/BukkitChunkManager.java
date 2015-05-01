@@ -293,11 +293,8 @@ public class BukkitChunkManager extends ChunkManager {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-                int allocated = SetBlockQueue.getAllocate();
-                SetBlockQueue.allocate(0);
-                while (System.currentTimeMillis() - start < allocated) {
+                while (System.currentTimeMillis() - start < 20) {
                     if (chunks.size() == 0) {
-                        SetBlockQueue.allocate(SetBlockQueue.getAllocate() + allocated);
                         TaskManager.runTaskLater(whenDone, 1);
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                         TaskManager.tasks.remove(currentIndex);
@@ -313,7 +310,6 @@ public class BukkitChunkManager extends ChunkManager {
                         final boolean result = chunk.load(false);
                         if (!result) {
                             loaded = false;
-                            ;
                         }
                         if (!chunk.isLoaded()) {
                             loaded = false;

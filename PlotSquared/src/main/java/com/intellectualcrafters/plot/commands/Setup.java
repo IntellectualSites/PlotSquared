@@ -50,16 +50,16 @@ public class Setup extends SubCommand {
         for (Entry<String, ChunkGenerator> entry : SetupUtils.generators.entrySet()) {
 //            + prefix + StringUtils.join(SetupUtils.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared")
             if (entry.getKey().equals("PlotSquared")) {
-                message.append("\n&8 - &2" + entry.getKey() + "(Hybrid Generator)");
+                message.append("\n&8 - &2" + entry.getKey() + " (Hybrid Generator)");
             }
             else if (entry.getValue() instanceof HybridGen) {
-                message.append("\n&8 - &7" + entry.getKey() + "(Hybrid Generator)");
+                message.append("\n&8 - &7" + entry.getKey() + " (Hybrid Generator)");
             }
             else if (entry.getValue() instanceof PlotGenerator) {
-                message.append("\n&8 - &7" + entry.getKey() + "(Plot Generator)");
+                message.append("\n&8 - &7" + entry.getKey() + " (Plot Generator)");
             }
             else {
-                message.append("\n&8 - &7" + entry.getKey() + "(Unknown structure)");
+                message.append("\n&8 - &7" + entry.getKey() + " (Unknown structure)");
             }
         }
         MainUtil.sendMessage(plr, message.toString());
@@ -159,7 +159,7 @@ public class Setup extends SubCommand {
                         MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
                         object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
                     }
-                    MainUtil.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    MainUtil.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ROAD&8 - &7Terrain seperated by roads" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
                 object.current++;
                 break;
@@ -167,7 +167,7 @@ public class Setup extends SubCommand {
             case 2: { // Choose terrain
                 final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "road", "all" });
                 if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
-                    MainUtil.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation&8 - &7ROAD&8 - &7Vanilla except for roads\n" + "&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    MainUtil.sendMessage(plr, "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ROAD&8 - &7Terrain seperated by roads" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
