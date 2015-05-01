@@ -76,6 +76,7 @@ import com.intellectualcrafters.plot.commands.list;
 import com.intellectualcrafters.plot.commands.plugin;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.plotme.ClassicPlotMeConnector;
 import com.intellectualcrafters.plot.database.plotme.PlotMeConverter;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
@@ -410,7 +411,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public boolean initPlotMeConverter() {
         try {
-            new PlotMeConverter().runAsync();
+            new PlotMeConverter().runAsync(new ClassicPlotMeConnector());
         } catch (final Exception e) {
             e.printStackTrace();
         }
