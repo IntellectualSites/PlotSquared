@@ -217,7 +217,7 @@ public class DebugUUID extends SubCommand {
         
         MainUtil.sendConsoleMessage("&7 - Updating plot objects");
         
-        for (Plot plot : PlotSquared.getPlots()) {
+        for (Plot plot : PlotSquared.getPlotsRaw()) {
             UUID value = uCMap.get(plot.owner);
             if (value != null) {
                 plot.owner = value;
