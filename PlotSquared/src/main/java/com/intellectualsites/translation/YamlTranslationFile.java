@@ -137,6 +137,10 @@ public class YamlTranslationFile extends TranslationFile {
     @Override
     public void saveFile() {
         try {
+            if (!this.file.exists()) {
+                this.file.getParentFile().mkdirs();
+                this.file.createNewFile();
+            }
             final FileWriter writer = new FileWriter(this.file);
             // String s = getYaml().dump(map);
             if ((this.header != null) && !this.fancyHead) {
