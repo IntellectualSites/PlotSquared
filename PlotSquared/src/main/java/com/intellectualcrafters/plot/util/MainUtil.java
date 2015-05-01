@@ -94,21 +94,23 @@ public class MainUtil {
             myplot.settings.setMerged(new boolean[] { false, false, false, false });
             DBFunc.setMerged(world, myplot, myplot.settings.getMerged());
         }
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final boolean lx = x < pos2.x;
-                final boolean ly = y < pos2.y;
-                final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
-                if (lx) {
-                    manager.createRoadEast(plotworld, p);
-                    if (ly) {
-                        manager.createRoadSouthEast(plotworld, p);
+        if (plotworld.TERRAIN != 3) {
+            for (int x = pos1.x; x <= pos2.x; x++) {
+                for (int y = pos1.y; y <= pos2.y; y++) {
+                    final boolean lx = x < pos2.x;
+                    final boolean ly = y < pos2.y;
+                    final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
+                    if (lx) {
+                        manager.createRoadEast(plotworld, p);
+                        if (ly) {
+                            manager.createRoadSouthEast(plotworld, p);
+                        }
                     }
+                    if (ly) {
+                        manager.createRoadSouth(plotworld, p);
+                    }
+                    MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
                 }
-                if (ly) {
-                    manager.createRoadSouth(plotworld, p);
-                }
-                MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
             }
         }
         manager.finishPlotUnlink(plotworld, ids);
@@ -454,14 +456,15 @@ public class MainUtil {
     
     public static void removeRoadSouthEast(PlotWorld plotworld, Plot plot) {
         if (plotworld.TYPE != 0 && plotworld.TERRAIN > 1) {
+            if (plotworld.TERRAIN == 3) {
+                return;
+            }
             PlotId id = plot.id;
             PlotId id2 = new PlotId(id.x + 1, id.y + 1);
             Location pos1 = getPlotTopLoc(plot.world, id).add(1, 0, 1);
             Location pos2 = getPlotBottomLoc(plot.world, id2);
             pos1.setY(0);
             pos2.setY(256);
-            System.out.print(pos1);
-            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
@@ -471,14 +474,15 @@ public class MainUtil {
     
     public static void removeRoadEast(PlotWorld plotworld, Plot plot) {
         if (plotworld.TYPE != 0 && plotworld.TERRAIN > 1) {
+            if (plotworld.TERRAIN == 3) {
+                return;
+            }
             PlotId id = plot.id;
             PlotId id2 = new PlotId(id.x + 1, id.y);
             Location bot = getPlotBottomLocAbs(plot.world, id2);
             Location top = getPlotTopLocAbs(plot.world, id);
             Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ() + 1);
             Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ());
-            System.out.print(pos1);
-            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
@@ -488,14 +492,15 @@ public class MainUtil {
     
     public static void removeRoadSouth(PlotWorld plotworld, Plot plot) {
         if (plotworld.TYPE != 0 && plotworld.TERRAIN > 1) {
+            if (plotworld.TERRAIN == 3) {
+                return;
+            }
             PlotId id = plot.id;
             PlotId id2 = new PlotId(id.x, id.y + 1);
             Location bot = getPlotBottomLocAbs(plot.world, id2);
             Location top = getPlotTopLocAbs(plot.world, id);
             Location pos1 = new Location(plot.world, bot.getX() + 1, 0, top.getZ() + 1);
             Location pos2 = new Location(plot.world, top.getX(), 256, bot.getZ());
-            System.out.print(pos1);
-            System.out.print(pos2);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
