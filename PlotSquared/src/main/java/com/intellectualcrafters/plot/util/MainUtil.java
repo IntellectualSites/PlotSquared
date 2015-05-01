@@ -94,22 +94,26 @@ public class MainUtil {
             myplot.settings.setMerged(new boolean[] { false, false, false, false });
             DBFunc.setMerged(world, myplot, myplot.settings.getMerged());
         }
-        // FIXME unlink augmented
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final boolean lx = x < pos2.x;
-                final boolean ly = y < pos2.y;
-                final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
-                if (lx) {
-                    manager.createRoadEast(plotworld, p);
-                    if (ly) {
-                        manager.createRoadSouthEast(plotworld, p);
+        if (plotworld.TYPE != 0 && plotworld.TERRAIN < 2) {
+            // FIXME unlink augmented
+        }
+        else {
+            for (int x = pos1.x; x <= pos2.x; x++) {
+                for (int y = pos1.y; y <= pos2.y; y++) {
+                    final boolean lx = x < pos2.x;
+                    final boolean ly = y < pos2.y;
+                    final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
+                    if (lx) {
+                        manager.createRoadEast(plotworld, p);
+                        if (ly) {
+                            manager.createRoadSouthEast(plotworld, p);
+                        }
                     }
+                    if (ly) {
+                        manager.createRoadSouth(plotworld, p);
+                    }
+                    MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
                 }
-                if (ly) {
-                    manager.createRoadSouth(plotworld, p);
-                }
-                MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
             }
         }
         manager.finishPlotUnlink(plotworld, ids);

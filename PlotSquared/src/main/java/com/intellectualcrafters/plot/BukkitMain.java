@@ -76,7 +76,7 @@ import com.intellectualcrafters.plot.commands.list;
 import com.intellectualcrafters.plot.commands.plugin;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.PlotMeConverter;
+import com.intellectualcrafters.plot.database.plotme.PlotMeConverter;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;

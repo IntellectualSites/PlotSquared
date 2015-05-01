@@ -18,7 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.intellectualcrafters.plot.database;
+package com.intellectualcrafters.plot.database.plotme;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +42,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -77,80 +79,11 @@ public class PlotMeConverter {
         return YamlConfiguration.loadConfiguration(plotMeFile);
     }
     
-    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
-        try {
-            if (plotConfig.getBoolean("usemySQL")) {
-                final String user = plotConfig.getString("mySQLuname");
-                final String password = plotConfig.getString("mySQLpass");
-                final String con = plotConfig.getString("mySQLconn");
-                return DriverManager.getConnection(con, user, password);
-            } else {
-                return new SQLite(PlotSquared.THIS, dataFolder + File.separator + "plots.db").openConnection();
-            }
-        }
-        catch (SQLException | ClassNotFoundException e) {}
-        return null;
-    }
-    
     public Set<String> getPlotMeWorlds(FileConfiguration plotConfig) {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
     
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
-        ResultSet r;
-        Statement stmt;
-        final HashMap<String, Integer> plotSize = new HashMap<>();
-        final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
-        stmt = connection.createStatement();
-        r = stmt.executeQuery("SELECT * FROM `plotmePlots`");
-
-        boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
-        
-        while (r.next()) {
-            final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-            final String name = r.getString("owner");
-            final String world = getWorld(r.getString("world"));
-            if (!plotSize.containsKey(world)) {
-                final int size = r.getInt("topZ") - r.getInt("bottomZ");
-                plotSize.put(world, size);
-                plots.put(world, new HashMap<PlotId, Plot>());
-            }
-            UUID owner = UUIDHandler.getUUID(name);
-            if (owner == null) {
-                if (name.equals("*")) {
-                    owner = DBFunc.everyone;
-                }
-                else {
-                    if (checkUUID){
-                        try {
-                            byte[] bytes = r.getBytes("ownerid");
-                            if (bytes != null) {
-                                owner = UUID.nameUUIDFromBytes(bytes);
-                                if (owner != null) {
-                                    UUIDHandler.add(new StringWrapper(name), owner);
-                                }
-                            }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (owner == null) {
-                        sendMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
-                        continue;
-                    }
-                }
-            }
-            else {
-                UUIDHandler.add(new StringWrapper(name), owner);
-            }
-            final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
-            plots.get(world).put(id, plot);
-        }
-        return plots;
-    }
-
-    public void runAsync() throws Exception {
+    public void runAsync(final APlotMeConnector connector) throws Exception {
         // We have to make it wait a couple of seconds
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
@@ -163,7 +96,7 @@ public class PlotMeConverter {
                         return;
                     }
                     
-                    Connection connection = getPlotMeConnection(plotConfig, dataFolder);
+                    Connection connection = connector.getPlotMeConnection(plotConfig, dataFolder);
                     
                     if (connection == null) {
                         sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
@@ -179,7 +112,7 @@ public class PlotMeConverter {
                     sendMessage(" - plotmePlots");
                     
                     final Set<String> worlds = getPlotMeWorlds(plotConfig);
-                    HashMap<String, HashMap<PlotId, Plot>> plots = getPlotMePlots(connection);
+                    HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
                     for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                         plotCount += entry.getValue().size();
                     }
@@ -189,45 +122,7 @@ public class PlotMeConverter {
                     }
                     
                     sendMessage(" - plotmeAllowed");
-                    ResultSet r;
-                    Statement stmt = connection.createStatement();
-                    r = stmt.executeQuery("SELECT * FROM `plotmeAllowed`");
-                    while (r.next()) {
-                        final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-                        final String name = r.getString("player");
-                        final String world = getWorld(r.getString("world"));
-                        UUID helper = UUIDHandler.getUUID(name);
-                        if (helper == null) {
-                            if (name.equals("*")) {
-                                helper = DBFunc.everyone;
-                            } else {
-                                sendMessage("&6Could not identify helper for plot: " + id);
-                                continue;
-                            }
-                        }
-                        if (plots.get(world).containsKey(id)) {
-                            plots.get(world).get(id).helpers.add(helper);
-                        }
-                    }
-                    sendMessage(" - plotmeDenied");
-                    r = stmt.executeQuery("SELECT * FROM `plotmeDenied`");
-                    while (r.next()) {
-                        final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-                        final String name = r.getString("player");
-                        final String world = getWorld(r.getString("world"));
-                        UUID denied = UUIDHandler.getUUID(name);
-                        if (denied == null) {
-                            if (name.equals("*")) {
-                                denied = DBFunc.everyone;
-                            } else {
-                                sendMessage("&6Could not identify denied for plot: " + id);
-                                continue;
-                            }
-                        }
-                        if (plots.get(world).containsKey(id)) {
-                            plots.get(world).get(id).denied.add(denied);
-                        }
-                    }
+                    
                     sendMessage("Collected " + plotCount + " plots from PlotMe");
                     for (final String world : plots.keySet()) {
                         sendMessage("Copying config for: " + world);
@@ -346,6 +241,9 @@ public class PlotMeConverter {
                                 }
                                 for (final String worldname : worlds) {
                                     final World world = Bukkit.getWorld(getWorld(worldname));
+                                    if (world == null) {
+                                        sendMessage("&cInvalid world in PlotMe configuration: " + worldname);
+                                    }
                                     final String actualWorldName = world.getName();
                                     sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
                                     PlotSquared.removePlotWorld(actualWorldName);
@@ -394,7 +292,7 @@ public class PlotMeConverter {
         }, 20);
     }
 
-    public String getWorld(final String world) {
+    public static String getWorld(final String world) {
         for (final World newworld : Bukkit.getWorlds()) {
             if (newworld.getName().equalsIgnoreCase(world)) {
                 return newworld.getName();
