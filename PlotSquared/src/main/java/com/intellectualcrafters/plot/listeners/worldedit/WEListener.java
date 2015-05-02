@@ -36,11 +36,8 @@ public class WEListener implements Listener {
     public final HashSet<String> region  = new HashSet<>(Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count", "distr", "regen", "copy", "cut", "green", "setbiome"));
     public final HashSet<String> regionExtend = new HashSet<>(Arrays.asList("stack"));
     public final HashSet<String> unregioned = new HashSet<>(Arrays.asList("paste", "redo", "undo", "rotate", "flip", "generate", "schematic", "schem"));
-    public final HashSet<String> unsafe1 =  new HashSet<>(Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks", "sel poly"));
-    public final HashSet<String> unsafe2 =  new HashSet<>(Arrays.asList("sel poly", "worldedit reload"));
+    public final HashSet<String> unsafe1 =  new HashSet<>(Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
     public final HashSet<String> restricted = new HashSet<>(Arrays.asList("up"));
-    
-//    public final HashSet<String> allowSingleSlash = new HashSet<>(Arrays.asList("sel", ".s", "cs", "restore", "brush", "fixwater", "fixlava", "up", "worldedit", "mask", "gmask", "snapshot", "schem", "schematic", "remove", "fill", "pumpkins", "forestgen", "removenear", "ex", "butcher", "size", "snow"));
     
     public boolean checkCommand(List<String> list, String cmd) {
         for (String identifier : list) {
@@ -226,20 +223,12 @@ public class WEListener implements Listener {
                 }
                 return true;
             }
-            if (unsafe2.contains(reduced)) {
-                MainUtil.sendMessage(pp, C.WORLDEDIT_UNSAFE);
-                e.setCancelled(true);
-                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-                    MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
-                }
-                return true;
-            }
             if (regionExtend.contains(reduced)) {
                 return checkSelection(p, pp, getInt(split[1]), maxVolume, e);
             }
         }
         String reduced = reduceCmd(split[0], single);
-        if (unsafe1.contains(reduced)) {
+        if (Settings.WE_BLACKLIST.contains(reduced)) {
             MainUtil.sendMessage(pp, C.WORLDEDIT_UNSAFE);
             e.setCancelled(true);
             if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {

@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Updater and DB settings
  *
@@ -68,6 +71,7 @@ public class Settings {
     public static boolean REQUIRE_SELECTION = true;
     public static long WE_MAX_VOLUME = 500000;
     public static long WE_MAX_ITERATIONS = 1000;
+    public static List<String> WE_BLACKLIST = new ArrayList<>();
     /**
      * Default kill road mobs: true
      */

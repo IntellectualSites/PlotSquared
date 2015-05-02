@@ -866,6 +866,7 @@ public class PlotSquared {
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
         options.put("worldedit.max-volume", Settings.WE_MAX_VOLUME);
         options.put("worldedit.max-iterations", Settings.WE_MAX_ITERATIONS);
+        options.put("worldedit.blacklist", Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
         
         // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
@@ -941,6 +942,7 @@ public class PlotSquared {
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
         Settings.WE_MAX_VOLUME = config.getLong("worldedit.max-volume");
         Settings.WE_MAX_ITERATIONS = config.getLong("worldedit.max-iterations");
+        Settings.WE_BLACKLIST = config.getStringList("worldedit.blacklist");
         
         // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");

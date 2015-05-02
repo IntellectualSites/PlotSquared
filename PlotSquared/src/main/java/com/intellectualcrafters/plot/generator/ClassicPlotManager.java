@@ -277,7 +277,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         for (final PlotId id : plotIds) {
-            if (!block.equals(unclaim)) { 
+            if (block.id != 0 || !block.equals(unclaim)) { 
                 setWall(plotworld, id, new PlotBlock[] { block });
             }
         }
@@ -298,7 +298,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean claimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (!claim.equals(unclaim)) {
+        if (claim.id != 0 || !claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { claim });
         }
         return true;
@@ -308,7 +308,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (!claim.equals(unclaim)) {
+        if (unclaim.id != 0 || !claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { unclaim });
         }
         MainUtil.removeSign(plot);
