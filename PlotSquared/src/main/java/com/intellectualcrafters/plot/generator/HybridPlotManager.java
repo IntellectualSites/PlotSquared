@@ -81,8 +81,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
-        Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ() + 1);
-        Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ());
+        Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ());
+        Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ() + 1);
         createRoadAbs(hpw, pos1, pos2);
         return true;
     }
@@ -136,8 +136,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
-        Location pos1 = new Location(plot.world, bot.getX() + 1, 0, top.getZ() + 1);
-        Location pos2 = new Location(plot.world, top.getX(), 256, bot.getZ());
+        Location pos1 = new Location(plot.world, bot.getX(), 0, top.getZ() + 1);
+        Location pos2 = new Location(plot.world, top.getX() + 1, 256, bot.getZ());
         createRoadAbs(hpw, pos1, pos2);
         return true;
     }
