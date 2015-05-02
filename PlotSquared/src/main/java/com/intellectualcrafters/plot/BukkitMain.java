@@ -445,13 +445,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public UUIDWrapper initUUIDHandler() {
         final boolean checkVersion = checkVersion(1, 7, 6);
-        if (!checkVersion) {
-            log(C.PREFIX.s() + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
-            Settings.TITLES = false;
-            FlagManager.removeFlag(FlagManager.getFlag("titles"));
-        } else {
-            AbstractTitle.TITLE_CLASS = new DefaultTitle();
-        }
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
                 UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
@@ -471,6 +464,20 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
+        }
+        if (!checkVersion) {
+            log(C.PREFIX.s() + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+            Settings.TITLES = false;
+            FlagManager.removeFlag(FlagManager.getFlag("titles"));
+        } else {
+            AbstractTitle.TITLE_CLASS = new DefaultTitle();
+            
+            if (UUIDHandler.uuidWrapper instanceof DefaultUUIDWrapper) {
+                Settings.TWIN_MODE_UUID = true;
+            }
+            else if (UUIDHandler.uuidWrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
+                Settings.TWIN_MODE_UUID = true;
+            }
         }
         if (Settings.OFFLINE_MODE) {
             log(C.PREFIX.s() + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PlotSquared;
@@ -14,6 +17,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
@@ -82,15 +86,63 @@ public class UUIDHandler {
     public static boolean nameExists(final StringWrapper name) {
         return uuidMap.containsKey(name);
     }
+    
+    public static HashSet<UUID> getAllUUIDS() {
+        HashSet<UUID> uuids = new HashSet<UUID>();
+        for (Plot plot : PlotSquared.getPlotsRaw()) {
+            for (UUID uuid : plot.helpers) {
+                uuids.add(uuid);
+            }
+            for (UUID uuid : plot.trusted) {
+                uuids.add(uuid);
+            }
+            for (UUID uuid : plot.denied) {
+                uuids.add(uuid);
+            }
+            if (plot.owner != null) {
+                uuids.add(plot.owner);
+            }
+        }
+        return uuids;
+    }
 
     public static void cacheAll(final String world) {
         if (CACHED) {
             return;
         }
         PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching");
+        long start = System.currentTimeMillis();
         UUIDHandler.CACHED = true;
         
-        // OLD UUID CACHING SYSTEM
+        if (Settings.TWIN_MODE_UUID) {
+            HashSet<UUID> all = getAllUUIDS();
+            final File playerdataFolder = new File(world + File.separator + "playerdata");
+            String[] dat = playerdataFolder.list(new FilenameFilter() {
+                @Override
+                public boolean accept(final File f, final String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            if (dat != null) {
+                for (final String current : dat) {
+                    final String s = current.replaceAll(".dat$", "");
+                    try {
+                        final UUID uuid = UUID.fromString(s);
+                        if (all.contains(uuid)) {
+                            OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
+                            add(new StringWrapper(op.getName()), uuid);
+                        }
+                    } catch (final Exception e) {
+                        PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                    }
+                }
+            }
+            PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+            System.out.print(System.currentTimeMillis() - start);
+            System.out.print(Settings.TWIN_MODE_UUID);
+            return;
+        }
+        
         final HashSet<String> worlds = new HashSet<>();
         worlds.add(world);
         worlds.add("world");
@@ -161,6 +213,8 @@ public class UUIDHandler {
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+        System.out.print(System.currentTimeMillis() - start);
+        System.out.print(Settings.TWIN_MODE_UUID);
     }
 
     public static UUID getUUID(final PlotPlayer player) {
