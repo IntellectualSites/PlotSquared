@@ -138,7 +138,7 @@ public class HybridPop extends PlotPopulator {
                             final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                             if (blocks != null) {
                                 for (final short y : blocks.keySet()) {
-                                    setBlock(x, (short) (this.plotheight + y), z, blocks.get(y));
+                                    setBlockAbs(x, (short) (this.plotheight + y), z, blocks.get(y));
                                 }
                             }
                             if (this.plotworld.G_SCH_STATE != null) {
@@ -183,7 +183,7 @@ public class HybridPop extends PlotPopulator {
                         final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
-                                setBlock(x, (short) (this.plotheight + y), z, blocks.get(y));
+                                setBlockAbs(x, (short) (this.plotheight + y), z, blocks.get(y));
                             }
                         }
                         if (this.plotworld.G_SCH_STATE != null) {
@@ -218,7 +218,7 @@ public class HybridPop extends PlotPopulator {
                         final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
                             for (final short y : blocks.keySet()) {
-                                setBlock(x, (short) (this.roadheight + y), z, blocks.get(y));
+                                setBlockAbs(x, (short) (this.roadheight + y), z, blocks.get(y));
                             }
                         }
                     }
