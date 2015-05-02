@@ -78,10 +78,12 @@ public class StringComparison {
      */
     public static int compare(final String s1, final String s2) {
         int distance = StringUtils.getLevenshteinDistance(s1, s2);
-        if (s2.contains(s1) || s2.contains(s1)) {
+        if (s2.contains(s1)) {
+            distance -= (Math.min(s1.length(), s2.length()));
+        }
+        if (s2.startsWith(s1)) {
             distance -= 4;
         }
-//        distance += Math.abs(s1.length() - s2.length());
         return distance;
     }
 
