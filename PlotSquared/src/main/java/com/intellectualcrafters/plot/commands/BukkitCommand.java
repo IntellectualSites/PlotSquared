@@ -53,7 +53,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         }
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);
-        System.out.print("TAB OPTIONS");
         final String arg = strings[0].toLowerCase();
         for (final SubCommand cmd : MainCommand.subCommands) {
             if (!cmd.cmd.equalsIgnoreCase(best)) {

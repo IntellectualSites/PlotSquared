@@ -202,16 +202,7 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
         if (this.o) {
-            chunk.load(true);
             populateBlocks(world, rand, X, Z, x, z, check);
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    // Don't need to populate biome with this
-//                    populateBiome(world, x, z); 
-                    MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
-                }
-            }, 20);
         } else {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
@@ -224,7 +215,6 @@ public class AugmentedPopulator extends BlockPopulator {
                 public void run() {
                     chunk.load(true);
                     populateBlocks(world, rand, X, Z, x, z, check);
-                    MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
                 }
             }, 40 + rand.nextInt(40));
         }
@@ -252,7 +242,7 @@ public class AugmentedPopulator extends BlockPopulator {
                     short id = result[i][j];
                     final int xx = x + x1;
                     final int zz = z + z1;
-                    if (check && (((z + z1) < this.bz) || ((z + z1) > this.tz) || ((x + x1) < this.bx) || ((x + x1) > this.tx))) {
+                    if (check && (((zz) < this.bz) || ((zz) > this.tz) || ((xx) < this.bx) || ((xx) > this.tx))) {
                         continue;
                     }
                     if (this.p) {
@@ -265,6 +255,30 @@ public class AugmentedPopulator extends BlockPopulator {
                         }
                     }
                     BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id, (byte) 0);
+                }
+            }
+            else {
+                short y_min = y_loc[i][0];
+                if (y_min < 128) {
+                    for (int x1 = x; x1 < x + 16; x1++) {
+                        for (int z1 = z; z1 < z + 16; z1++) {
+                            if (check && (((z1) < this.bz) || ((z1) > this.tz) || ((x1) < this.bx) || ((x1) > this.tx))) {
+                                continue;
+                            }
+                            if (this.p) {
+                                if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                                    if (BukkitChunkManager.isIn(ChunkManager.CURRENT_PLOT_CLEAR, x1, z1)) {
+                                        continue;
+                                    }
+                                } else if (this.manager.getPlotIdAbs(this.plotworld, x1, 0, z1) != null) {
+                                    continue;
+                                }
+                            }
+                            for (int y = y_min; y < y_min + 16; y++) {
+                                BukkitSetBlockManager.setBlockManager.set(world, x1, y, z1, 0, (byte) 0);
+                            }
+                        }
+                    }
                 }
             }
         }

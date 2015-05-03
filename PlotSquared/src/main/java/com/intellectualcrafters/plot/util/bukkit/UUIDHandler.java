@@ -138,8 +138,6 @@ public class UUIDHandler {
                 }
             }
             PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
-            System.out.print(System.currentTimeMillis() - start);
-            System.out.print(Settings.TWIN_MODE_UUID);
             return;
         }
         
@@ -213,8 +211,6 @@ public class UUIDHandler {
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
-        System.out.print(System.currentTimeMillis() - start);
-        System.out.print(Settings.TWIN_MODE_UUID);
     }
 
     public static UUID getUUID(final PlotPlayer player) {
