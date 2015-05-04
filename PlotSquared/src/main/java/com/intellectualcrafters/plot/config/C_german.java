@@ -40,19 +40,16 @@ public enum C_german {
      */
     FAILED_CONFIRM("$2Es gibt keine zur Bestätigung ausstehenden Befehle!"),
     REQUIRES_CONFIRM("$2Bist du sicher, dass du diesen Befehl ausführen willst: $1%s$2?\n$2Die Änderung ist unwiderruflich! Wenn du sicher bist: $1/plot confirm"),
-
-
     /*
      * Move
      */
     MOVE_SUCCESS("$4Plot erfolgreich verschoben."),
-	COPY_SUCCESS("$4Plot erfolgreich kopiert."),
+    COPY_SUCCESS("$4Plot erfolgreich kopiert."),
     REQUIRES_UNOWNED("$2Der angegebene Ort ist bereits belegt."),
     /*
      * Compass
      */
-
-	 COMPASS_TARGET("$4Plot erfolgreich mit dem Kompass anvisiert."),
+    COMPASS_TARGET("$4Plot erfolgreich mit dem Kompass anvisiert."),
     /*
      * Cluster
      */
@@ -60,11 +57,9 @@ public enum C_german {
     CLUSTER_LIST_HEADING("$2Es gibt $1%s$2 Cluster in dieser Welt."),
     CLUSTER_LIST_ELEMENT("$2 - $1%s\n"),
     CLUSTER_INTERSECTION("$2Der vorgeschlagene Bereich überlappt mit $1%s$2 existierendem/n Cluster/n"),
-
     CLUSTER_ADDED("$4Cluster erfolgreich erstellt."),
     CLUSTER_DELETED("$4Cluster erfolgreich gelöscht."),
     CLUSTER_RESIZED("$4Größe des Clusters wurde erfolgreich geändert."),
-
     CLUSTER_ADDED_USER("$4Spieler erfolgreich zum Cluster hinzugefügt."),
     CANNOT_KICK_PLAYER("$2Du kannst diesen Spieler nicht kicken."),
 
@@ -74,24 +69,28 @@ public enum C_german {
     INVALID_CLUSTER("$1Clustername ungültig: $2%s"),
     CLUSTER_NOT_ADDED("$2Dieser Spieler war nicht zum Cluster hinzugefügt."),
     CLUSTER_CANNOT_LEAVE("$1Du musst deinen Besitz löschen oder transferieren bevor du gehen kannst."),
-
-
     CLUSTER_ADDED_HELPER("$4Helfer erfolgreich hinzugefügt."),
     CLUSTER_REMOVED_HELPER("$4Helfer erfolgreich vom Cluster entfernt."),
     CLUSTER_REGENERATED("$4Clusterregeneration erfolgreich gestartet"),
     CLUSTER_TELEPORTING("$4Teleportiere..."),
     CLUSTER_INFO("$1Aktueller Cluster: $2%id%\n$1Name: $2%name%\n$1Besitzer: $2%owner%\n$1Größe: $2%size%\n$1Rechte: $2%rights%"),
     CLUSTER_CURRENT_PLOTID("$1Aktueller Plot: $2%s"),
+	
+	
+	
+	
+	
+	
+	
+	
     /*
      * Border
      */
     BORDER("$2Du befindest dich ausserhalb der aktuellen Weltengrenze"),
-
     /*
      * Unclaim
      */
     UNCLAIM_SUCCESS("$4Dieser Plot gehört dir jetzt nicht mehr."),
-
     /*
      * WorldEdit masks
      */
@@ -462,7 +461,7 @@ public enum C_german {
      * Set Owner
      */
     SET_OWNER("$4lotbesitzer erfolgreich gesetzt."),
-	NOW_OWNER("$4Du bist jetzt Besitzer des Plots %s"),
+    NOW_OWNER("$4Du bist jetzt Besitzer des Plots %s"),
     /*
      * Signs
      */
