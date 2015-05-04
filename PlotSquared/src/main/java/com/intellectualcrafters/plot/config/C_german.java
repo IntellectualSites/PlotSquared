@@ -44,6 +44,7 @@ public enum C_german {
      * Move
      */
     MOVE_SUCCESS("$4Plot erfolgreich verschoben."),
+    COPY_SUCCESS("$4Plot erfolgreich kopiert."),
     REQUIRES_UNOWNED("$2Der angegebene Ort ist bereits belegt."),
     /*
      * Compass
@@ -61,6 +62,7 @@ public enum C_german {
     CLUSTER_RESIZED("$4Größe des Clusters wurde erfolgreich geändert."),
     CLUSTER_ADDED_USER("$4Spieler erfolgreich zum Cluster hinzugefügt."),
     CANNOT_KICK_PLAYER("$2Du kannst diesen Spieler nicht kicken."),
+
     CLUSTER_INVITED("$1Du wurdest in folgenden Cluster eingeladen: $2%s"),
     CLUSTER_REMOVED("$1Du wurdest aus folgendem Cluster enfernt: $2%s"),
     CLUSTER_KICKED_USER("$4Spieler erfolgreich gekickt."),
@@ -73,6 +75,14 @@ public enum C_german {
     CLUSTER_TELEPORTING("$4Teleportiere..."),
     CLUSTER_INFO("$1Aktueller Cluster: $2%id%\n$1Name: $2%name%\n$1Besitzer: $2%owner%\n$1Größe: $2%size%\n$1Rechte: $2%rights%"),
     CLUSTER_CURRENT_PLOTID("$1Aktueller Plot: $2%s"),
+	
+	
+	
+	
+	
+	
+	
+	
     /*
      * Border
      */
@@ -84,7 +94,14 @@ public enum C_german {
     /*
      * WorldEdit masks
      */
+	 
     REQUIRE_SELECTION_IN_MASK("$2%s deiner Selektion befindet sich nicht innerhalb deines Plots. Du kannst Änderungen nur innerhalb deines Plots vornehmen."),
+    WORLDEDIT_VOLUME("$2Du kannst die Menge %current% nicht auswählen. Die maximale Grenze liegt bei %max%."),
+    WORLDEDIT_ITERATIONS("$2Du kannst nicht %current% mal wiederholen. Die maximalen Wiederholungen liegen bei %max%."),
+    WORLDEDIT_UNSAFE("$2Der Zugriff auf diesen Befehl wurde verwehrt."),
+    WORLDEDIT_BYPASS("$2&oUm die Beschränkung außer Kraft zu setzen verwende $4/plot wea"),
+    WORLDEDIT_UNMASKED("$1Dein WorldEdit jetzt nicht mehr begrenzt."),
+    WORLDEDIT_RESTRICTED("$1Dein WorldEdit ist jetzt begrenzt."),
     /*
      * Records
      */
@@ -94,15 +111,26 @@ public enum C_german {
     /*
      * Swap
      */
+
+    SWAP_OVERLAP("$2Der geplante Bereich darf nicht überlappen."),
+    SWAP_DIMENSIONS("$2Die geplanten Bereiche müssen vergleichbare Dimensionen aufweisen."),
     SWAP_SYNTAX("$2/plots swap <plot id>"),
     SWAP_SUCCESS("$4Plots erfolgreich getauscht"),
+    STARTED_SWAP("$2Plot swap Aufgabe gestartet. Du erhälst eine Meldung wenn sie beendet ist."),
     /*
      * Comment
      */
-    COMMENT_SYNTAX("$2Syntax: /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
+    NOT_VALID_INBOX_INDEX("$2Keine Kommentar auf Seite %s"),
+    INBOX_ITEM("$2 - $4%s"),
+    COMMENT_SYNTAX("$2Verwende /plots comment [X;Z] <%s> <comment>"),
     INVALID_INBOX("$2Dieses Postfach ist ungültig.\n$1Akzeptierte Werte: %s"),
-    COMMENT_REMOVED("$4Erfolgreich gelöscht: %s."),
+    NO_PERM_INBOX("$2Du hast keine Berechtigung für dieses Postfach"),
+    NO_PERM_INBOX_MODIFY("$2Du hast keine Berechtigung"),
+    NO_PLOT_INBOX("$2Du musst ein einem Plot stehen oder einen solchen angeben."),
+    COMMENT_REMOVED("$4Kommentar/e n$2 - '$3%s$2' erfolgreich gelöscht."),
     COMMENT_ADDED("$4Ein Kommentar wurde hinterlassen."),
+    COMMENT_HEADER("$2====== Kommentare ======"),
+    COMMENT_SYNTAX("$2Syntax: /plots comment <everyone|trusted|helper|owner|admin> <Kommentar>"),
     /*
      * Console
      */
@@ -208,6 +236,7 @@ public enum C_german {
     NO_PERMISSION("$2Dir fehlt folgende Berechtigung: $1%s"),
     NO_PLOT_PERMS("$2Diese Aktion kann nur der Besitzer des Plots"),
     CANT_CLAIM_MORE_PLOTS("$2Du kannst keine weiteren Plots besitzen."),
+    CANT_TRANSFER_MORE_PLOTS("$2Du kannst keine weiteren Plots diesem Spieler schicken."),
     CANT_CLAIM_MORE_PLOTS_NUM("$2Du kannst nicht mehr als $1%s $2Plots auf einmal einnehmen."),
     YOU_BE_DENIED("$2Es ist dir nicht gestattet diesen Plot zu betreten."),
     NO_PERM_MERGE("$2Du bist nicht Besitzer des Plots $1%plot%"),
@@ -215,6 +244,11 @@ public enum C_german {
     UNLINK_IMPOSSIBLE("$2Die Trennung (unlink) funktioniert nur auf Megaplots."),
     UNLINK_SUCCESS("$2Trennung erfolgreich."),
     NO_MERGE_TO_MEGA("$2Füge einzelne Plots deinem Megaplot hinzu, nicht anders herum."),
+    MERGE_NOT_VALID("$2Diese Zusammenführanfrage ist nicht länger gültig."),
+    MERGE_ACCEPTED("$2Die Zusammenführanfrage wurde akzeptiert."),
+    SUCCESS_MERGE("$2Plots wurden zusammengeführt."),
+    MERGE_REQUESTED("$2Zusammenführanfrage erfolgreich verschickt."),
+    MERGE_REQUEST_CONFIRM("Zusammenführanfrage von %s"),
     /*
      * Commands
      */
@@ -251,6 +285,7 @@ public enum C_german {
     NOT_IN_PLOT("$2Du befindest dich nicht auf einem Plot."),
     NOT_IN_CLUSTER("$2Du musst dich innerhalb eines Plot Clusters befinden um das zu tun."),
     NOT_IN_PLOT_WORLD("$2Du befindest dich nicht in einer Plotwelt."),
+    PLOTWORLD_INCOMPATIBLE("$2Die beiden Welten müssen kompatibel sein."),
     NOT_VALID_WORLD("$2Das ist keine gültige Welt (Groß- / Kleinschreibung beachten)"),
     NOT_VALID_PLOT_WORLD("$2Das ist keine gültige Plotwelt (Groß- / Kleinschreibung beachten)"),
     NO_PLOTS("$2Du hast keine Plots"),
@@ -426,6 +461,7 @@ public enum C_german {
      * Set Owner
      */
     SET_OWNER("$4lotbesitzer erfolgreich gesetzt."),
+    NOW_OWNER("$4Du bist jetzt Besitzer des Plots %s"),
     /*
      * Signs
      */
@@ -485,6 +521,7 @@ public enum C_german {
      * Constructor for custom strings.
      */
     C_german() {
+
         /*
          * use setCustomString();
          */
