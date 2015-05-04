@@ -23,16 +23,12 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public class DebugFill extends SubCommand {
     public DebugFill() {
@@ -61,56 +57,72 @@ public class DebugFill extends SubCommand {
         final Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
         MainUtil.sendMessage(player, "&cPreparing task");
-        TaskManager.runTaskAsync(new Runnable() {
+        SetBlockQueue.addNotify(new Runnable() {
             @Override
             public void run() {
-                MainUtil.sendMessage(player, "&7 - Starting");
-                if (args[0].equalsIgnoreCase("all")) {
-                    for (int x = bottom.getX(); x <= top.getX(); x++) {
-                        for (int y = 0; y <= 255; y++) {
-                            for (int z = bottom.getZ(); z <= top.getZ(); z++) {
-                                SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                            }
-                        }
-                    }
-                }
-                else if (args[0].equals("outline")) {
-                    int x, z;
-                    z = bottom.getZ();
-                    for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
-                        for (int y = 1; y <= 255; y++) {
-                            SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                        }
-                    }
-                    x = top.getX();
-                    for (z = bottom.getZ(); z <= (top.getZ() - 1); z++) {
-                        for (int y = 1; y <= 255; y++) {
-                            SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                        }
-                    }
-                    z = top.getZ();
-                    for (x = top.getX(); x >= (bottom.getX() + 1); x--) {
-                        for (int y = 1; y <= 255; y++) {
-                            SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                        }
-                    }
-                    x = bottom.getX();
-                    for (z = top.getZ(); z >= (bottom.getZ() + 1); z--) {
-                        for (int y = 1; y <= 255; y++) {
-                            SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                        }
-                    }
-                    int y = 255;
-                    for (x = bottom.getX(); x <= top.getX(); x++) {
-                        for (z = bottom.getZ(); z <= top.getZ(); z++) {
-                            SetBlockQueue.setBlock(plot.world, x, y, z, 7);
-                        }
-                    }
-                }
-                SetBlockQueue.addNotify(new Runnable() {
+                TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.sendMessage(player, "&aFill task complete!");
+                        MainUtil.sendMessage(player, "&7 - Starting");
+                        if (args[0].equalsIgnoreCase("all")) {
+                            for (int x = bottom.getX(); x <= top.getX(); x++) {
+                                for (int y = 0; y <= 255; y++) {
+                                    for (int z = bottom.getZ(); z <= top.getZ(); z++) {
+                                        SetBlockQueue.setBlock(plot.world, x, y, z, 7);
+                                    }
+                                }
+                            }
+                            SetBlockQueue.addNotify(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainUtil.sendMessage(player, "&aFill task complete!");
+                                }
+                            });
+                        }
+                        else if (args[0].equals("outline")) {
+                            int x, z;
+                            z = bottom.getZ();
+                            for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
+                                for (int y = 1; y <= 255; y++) {
+                                    SetBlockQueue.setBlock(plot.world, x, y, z, 7);
+                                }
+                            }
+                            x = top.getX();
+                            for (z = bottom.getZ(); z <= (top.getZ() - 1); z++) {
+                                for (int y = 1; y <= 255; y++) {
+                                    SetBlockQueue.setBlock(plot.world, x, y, z, 7);
+                                }
+                            }
+                            z = top.getZ();
+                            for (x = top.getX(); x >= (bottom.getX() + 1); x--) {
+                                for (int y = 1; y <= 255; y++) {
+                                    SetBlockQueue.setBlock(plot.world, x, y, z, 7);
+                                }
+                            }
+                            x = bottom.getX();
+                            for (z = top.getZ(); z >= (bottom.getZ() + 1); z--) {
+                                for (int y = 1; y <= 255; y++) {
+                                    SetBlockQueue.setBlock(plot.world, x, y, z, 7);
+                                }
+                            }
+                            SetBlockQueue.addNotify(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainUtil.sendMessage(player, "&aWalls complete! The ceiling will take a while :(");
+                                    bottom.setY(255);
+                                    top.add(1,0,1);
+                                    SetBlockQueue.setSlow(true);
+                                    MainUtil.setSimpleCuboidAsync(plot.world, bottom, top, new PlotBlock((short) 7, (byte) 0));
+                                    SetBlockQueue.addNotify(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            MainUtil.sendMessage(player, "&aFill task complete!");
+                                            SetBlockQueue.setSlow(false);
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }

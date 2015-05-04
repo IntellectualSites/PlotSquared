@@ -31,6 +31,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
 public abstract class PlotGenerator extends ChunkGenerator {
@@ -43,8 +44,8 @@ public abstract class PlotGenerator extends ChunkGenerator {
     @SuppressWarnings("unchecked")
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        PlotSquared.loadWorld(world.getName(), this);
-        PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
+        PlotSquared.loadWorld(WorldEvents.getName(world), this);
+        PlotWorld plotworld = PlotSquared.getPlotWorld(WorldEvents.getName(world));
         if (!plotworld.MOB_SPAWNING) {
             if (!plotworld.SPAWN_EGGS) {
                 world.setSpawnFlags(false, false);
@@ -61,7 +62,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             world.setMonsterSpawnLimit(-1);
             world.setWaterAnimalSpawnLimit(-1);
         }
-        return (List<BlockPopulator>)(List<?>) getPopulators(world.getName());
+        return (List<BlockPopulator>)(List<?>) getPopulators(WorldEvents.getName(world));
     }
     
     @Override

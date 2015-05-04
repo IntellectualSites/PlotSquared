@@ -322,10 +322,20 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+        WorldEvents.lastWorld = world;
         if (!PlotSquared.setupPlotWorld(world, id)) {
             return null;
         }
-        return new HybridGen();
+        HybridGen result = new HybridGen();
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                if (WorldEvents.lastWorld != null && WorldEvents.lastWorld.equals(world)) {
+                    WorldEvents.lastWorld = null;
+                }
+            }
+        }, 20);
+        return result;
     }
 
     @Override

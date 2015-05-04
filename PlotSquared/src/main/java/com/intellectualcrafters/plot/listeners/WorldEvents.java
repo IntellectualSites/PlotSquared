@@ -13,17 +13,32 @@ import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class WorldEvents implements Listener {
+    
+    public static String lastWorld = null;
+    
+    public static String getName(World world) {
+        if (lastWorld != null) {
+            return lastWorld;
+        }
+        else {
+            return world.getName();
+        }
+    }
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onWorldInit(final WorldInitEvent event) {
         final World world = event.getWorld();
+        String name = getName(world);
         final ChunkGenerator gen = world.getGenerator();
         if (gen instanceof PlotGenerator) {
-            PlotSquared.loadWorld(world.getName(), (PlotGenerator) gen);
+            //
+            PlotSquared.loadWorld(name, (PlotGenerator) gen);
         } else {
-            if (PlotSquared.config.contains("worlds." + world.getName())) {
-                PlotSquared.loadWorld(world.getName(), null);
+            if (PlotSquared.config.contains("worlds." + name)) {
+                PlotSquared.loadWorld(name, null);
             }
         }
+        lastWorld = null;
     }
     
     @EventHandler

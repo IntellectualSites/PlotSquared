@@ -97,7 +97,7 @@ public class PlotSquared {
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private static Database database;
     public static Connection connection;
-
+    
     public static Database getDatabase() {
         return database;
     }

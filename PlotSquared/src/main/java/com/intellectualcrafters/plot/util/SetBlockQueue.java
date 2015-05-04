@@ -2,7 +2,6 @@ package com.intellectualcrafters.plot.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -16,6 +15,7 @@ public class SetBlockQueue {
     private volatile static boolean running = false;
     private volatile static boolean locked = false;
     private volatile static HashSet<Runnable> runnables;
+    private volatile static boolean slow = false;
     
     public synchronized static void allocate(int t) {
         allocate = t;
@@ -25,14 +25,22 @@ public class SetBlockQueue {
         return allocate;
     }
     
+    public static void setSlow(boolean value) {
+        slow = value;
+    }
+    
     public synchronized static void addNotify(Runnable whenDone) {
         if (runnables == null) {
             TaskManager.runTask(whenDone);
+            slow = false;
+            locked = false;
         }
         else {
             runnables.add(whenDone);
         }
     }
+    
+    private static long last;
     
     public synchronized static void init() {
         if (blocks == null) {
@@ -59,22 +67,48 @@ public class SetBlockQueue {
                         runnables = null;
                         blocks = null;
                         running = false;
+                        slow = false;
                         return;
                     }
-                    long start = System.currentTimeMillis() + allocate;
-                    Iterator<Entry<ChunkWrapper, PlotBlock[][]>> i = blocks.entrySet().iterator();
-                    while (System.currentTimeMillis() < start && i.hasNext()) {
+                    long newLast = System.currentTimeMillis();
+                    last = Math.max(newLast - 100, last);
+                    while (blocks.size() > 0 && (System.currentTimeMillis() - last < 100 + allocate)) {
                         if (locked) {
                             return;
                         }
-                        Entry<ChunkWrapper, PlotBlock[][]> n = i.next();
-                        i.remove();
+                        Entry<ChunkWrapper, PlotBlock[][]> n = blocks.entrySet().iterator().next();
                         ChunkWrapper chunk = n.getKey();
+                        PlotBlock[][] blocks = n.getValue();
                         int X = chunk.x << 4;
                         int Z = chunk.z << 4;
-                        PlotBlock[][] blocks = n.getValue();
                         String world = chunk.world;
-//                        ChunkManager.manager.setChunk(chunk, blocks);
+                        if (slow) {
+                            boolean once = false;
+                            for (int j = 0; j < blocks.length; j++) {
+                                PlotBlock[] blocksj = blocks[j];
+                                if (blocksj != null) {
+                                    long start = System.currentTimeMillis();
+                                    for (int k = 0; k < blocksj.length; k++) {
+                                        if (once && (System.currentTimeMillis() - start > allocate)) {
+                                            SetBlockQueue.blocks.put(n.getKey(), blocks);
+                                            return;
+                                        }
+                                        PlotBlock block = blocksj[k];
+                                        if (block != null) {
+                                            int x = AugmentedPopulator.x_loc[j][k];
+                                            int y = AugmentedPopulator.y_loc[j][k];
+                                            int z = AugmentedPopulator.z_loc[j][k];
+                                            BlockManager.manager.functionSetBlock(world, X + x, y, Z + z, block.id, block.data);
+                                            blocks[j][k] = null;
+                                            once = true;
+                                        }
+                                    }
+                                }
+                            }
+                            SetBlockQueue.blocks.remove(n.getKey());
+                            return;
+                        }
+                        SetBlockQueue.blocks.remove(n.getKey());
                         for (int j = 0; j < blocks.length; j++) {
                             PlotBlock[] blocksj = blocks[j];
                             if (blocksj != null) {
@@ -108,11 +142,13 @@ public class SetBlockQueue {
         z -= Z << 4;
         
         ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result = blocks.get(wrap);
+        PlotBlock[][] result; 
+        result = blocks.get(wrap);
         if (!blocks.containsKey(wrap)) {
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
+        
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];
         }
@@ -132,9 +168,9 @@ public class SetBlockQueue {
         int Z = z >> 4;
         x -= X << 4;
         z -= Z << 4;
-        
         ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result = blocks.get(wrap);
+        PlotBlock[][] result;
+        result = blocks.get(wrap);
         if (!blocks.containsKey(wrap)) {
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
