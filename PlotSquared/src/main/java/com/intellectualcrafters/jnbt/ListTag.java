@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.annotation.Nullable;
 
 /**
  * The {@code TAG_List} tag.
@@ -74,7 +73,6 @@ public final class ListTag extends Tag {
      *
      * @return the tag or null
      */
-    @Nullable
     public Tag getIfExists(final int index) {
         try {
             return this.value.get(index);
@@ -84,7 +82,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a byte array named with the given index. <p/> <p> If the index does not exist or its value is not a byte
+     * Get a byte array named with the given index.  <p> If the index does not exist or its value is not a byte
      * array tag, then an empty byte array will be returned. </p>
      *
      * @param index the index
@@ -101,7 +99,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a byte named with the given index. <p/> <p> If the index does not exist or its value is not a byte tag, then
+     * Get a byte named with the given index.  <p> If the index does not exist or its value is not a byte tag, then
      * {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -118,7 +116,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a double named with the given index. <p/> <p> If the index does not exist or its value is not a double tag,
+     * Get a double named with the given index.  <p> If the index does not exist or its value is not a double tag,
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -135,7 +133,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a double named with the given index, even if it's another type of number. <p/> <p> If the index does not
+     * Get a double named with the given index, even if it's another type of number.  <p> If the index does not
      * exist or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -162,7 +160,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a float named with the given index. <p/> <p> If the index does not exist or its value is not a float tag,
+     * Get a float named with the given index.  <p> If the index does not exist or its value is not a float tag,
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -179,7 +177,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a {@code int[]} named with the given index. <p/> <p> If the index does not exist or its value is not an int
+     * Get a {@code int[]} named with the given index.  <p> If the index does not exist or its value is not an int
      * array tag, then an empty array will be returned. </p>
      *
      * @param index the index
@@ -196,7 +194,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get an int named with the given index. <p/> <p> If the index does not exist or its value is not an int tag, then
+     * Get an int named with the given index.  <p> If the index does not exist or its value is not an int tag, then
      * {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -213,7 +211,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get an int named with the given index, even if it's another type of number. <p/> <p> If the index does not exist
+     * Get an int named with the given index, even if it's another type of number.  <p> If the index does not exist
      * or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -240,7 +238,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a list of tags named with the given index. <p/> <p> If the index does not exist or its value is not a list
+     * Get a list of tags named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty list will be returned. </p>
      *
      * @param index the index
@@ -257,7 +255,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a {@code TagList} named with the given index. <p/> <p> If the index does not exist or its value is not a list
+     * Get a {@code TagList} named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty tag list will be returned. </p>
      *
      * @param index the index
@@ -274,7 +272,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a list of tags named with the given index. <p/> <p> If the index does not exist or its value is not a list
+     * Get a list of tags named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty list will be returned. If the given index references a list but the list of of a different
      * type, then an empty list will also be returned. </p>
      *
@@ -300,7 +298,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a long named with the given index. <p/> <p> If the index does not exist or its value is not a long tag, then
+     * Get a long named with the given index.  <p> If the index does not exist or its value is not a long tag, then
      * {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -317,7 +315,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a long named with the given index, even if it's another type of number. <p/> <p> If the index does not exist
+     * Get a long named with the given index, even if it's another type of number.  <p> If the index does not exist
      * or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -344,7 +342,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a short named with the given index. <p/> <p> If the index does not exist or its value is not a short tag,
+     * Get a short named with the given index.  <p> If the index does not exist or its value is not a short tag,
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
@@ -361,7 +359,7 @@ public final class ListTag extends Tag {
     }
 
     /**
-     * Get a string named with the given index. <p/> <p> If the index does not exist or its value is not a string tag,
+     * Get a string named with the given index.  <p> If the index does not exist or its value is not a string tag,
      * then {@code ""} will be returned. </p>
      *
      * @param index the index

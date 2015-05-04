@@ -134,6 +134,7 @@ public final class NBTUtils {
      * @param items    the map to read from
      * @param key      the key to look for
      * @param expected the expected NBT class type
+     * @param <T>
      *
      * @return child tag
      */

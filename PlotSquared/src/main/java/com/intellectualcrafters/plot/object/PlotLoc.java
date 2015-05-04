@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.object;
 
 public class PlotLoc {
-    public short x;
-    public short z;
+    public int x;
+    public int z;
 
-    public PlotLoc(final short x, final short z) {
+    public PlotLoc(final int x, final int z) {
         this.x = x;
         this.z = z;
     }

@@ -6,6 +6,7 @@ description: >
              Easy, yet powerful Plot World generation and management.
 authors: [Citymonstret, Empire92]
 softdepend: [WorldEdit, BarAPI, CameraAPI, Vault]
+loadbefore: [MultiWorld, Multiverse-Core]
 database: false
 commands:
   plots:

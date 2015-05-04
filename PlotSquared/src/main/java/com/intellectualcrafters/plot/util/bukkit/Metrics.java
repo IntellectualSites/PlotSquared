@@ -128,7 +128,7 @@ public class Metrics {
      *
      * @param input
      *
-     * @return
+     * @return byte[] the file as a byte array
      */
     public static byte[] gzip(final String input) {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -185,7 +185,7 @@ public class Metrics {
      *
      * @param text
      *
-     * @return
+     * @return String
      */
     private static String escapeJSON(final String text) {
         final StringBuilder builder = new StringBuilder();

@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -92,7 +91,7 @@ public class Purge extends SubCommand {
             return false;
         }
         final String worldname = args[1];
-        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
+        if (!PlotSquared.getAllPlotsRaw().containsKey(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -106,17 +105,6 @@ public class Purge extends SubCommand {
             }
             DBFunc.purgeIds(worldname, ids);
             return finishPurge(DBid == Integer.MAX_VALUE ? 1 : 0);
-        }
-        final UUID uuid = UUIDHandler.getUUID(args[0]);
-        if (uuid != null) {
-            final Set<Plot> plots = PlotSquared.getPlots(worldname, uuid);
-            final Set<PlotId> ids = new HashSet<>();
-            for (final Plot plot : plots) {
-                ids.add(plot.id);
-            }
-            int length = ids.size();
-            DBFunc.purge(worldname, ids);
-            return finishPurge(length);
         }
         if (arg.equals("all")) {
             final Set<PlotId> ids = PlotSquared.getPlots(worldname).keySet();
@@ -157,6 +145,17 @@ public class Purge extends SubCommand {
             if (length == 0) {
                 return MainUtil.sendMessage(null, "&cNo plots found");
             }
+            DBFunc.purge(worldname, ids);
+            return finishPurge(length);
+        }
+        final UUID uuid = UUIDHandler.getUUID(args[0]);
+        if (uuid != null) {
+            final Set<Plot> plots = PlotSquared.getPlots(worldname, uuid);
+            final Set<PlotId> ids = new HashSet<>();
+            for (final Plot plot : plots) {
+                ids.add(plot.id);
+            }
+            int length = ids.size();
             DBFunc.purge(worldname, ids);
             return finishPurge(length);
         }

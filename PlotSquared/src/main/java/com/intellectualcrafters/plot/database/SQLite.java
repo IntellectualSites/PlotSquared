@@ -43,7 +43,6 @@ public class SQLite extends Database {
     /**
      * Creates a new SQLite instance
      *
-     * @param plugin     Plugin instance
      * @param dbLocation Location of the Database (Must end in .db)
      */
     public SQLite(final PlotSquared plotsquared, final String dbLocation) {
@@ -107,5 +106,12 @@ public class SQLite extends Database {
         }
         final Statement statement = this.connection.createStatement();
         return statement.executeUpdate(query);
+    }
+
+    @Override
+    public Connection forceConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("org.sqlite.JDBC");
+        this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
+        return this.connection;
     }
 }

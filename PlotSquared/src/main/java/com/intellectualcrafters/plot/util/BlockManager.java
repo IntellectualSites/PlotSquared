@@ -2,11 +2,12 @@ package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 
 public abstract class BlockManager {
     public static BlockManager manager;
+    
+    public abstract boolean isBlockSolid(PlotBlock block);
 
     public abstract String[] getBiomeList();
     
@@ -43,7 +44,7 @@ public abstract class BlockManager {
         final byte[] data = new byte[blocks.length];
         for (int i = 0; i < blocks.length; i++) {
             final PlotBlock[] current = blocks[i];
-            final int n = PseudoRandom.random(current.length);
+            final int n = MainUtil.random.random(current.length);
             id[i] = current[n].id;
             data[i] = current[n].data;
         }

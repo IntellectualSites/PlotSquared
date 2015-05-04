@@ -21,7 +21,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -93,7 +95,7 @@ public class Info extends SubCommand {
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
-            new InfoInventory(plot, player).build().display();
+            new InfoInventory(plot, player).build().display(); 
             return true;
         }
         final boolean hasOwner = plot.hasOwner();
@@ -110,11 +112,11 @@ public class Info extends SubCommand {
             return true;
         }
         String owner = "none";
-        if (plot.owner != null) {
-            owner = UUIDHandler.getName(plot.owner);
+        if (plot.owner == null) {
+            owner = "unowned";
         }
-        if (owner == null) {
-            owner = plot.owner.toString();
+        else {
+            owner = getPlayerList(plot.getOwners());
         }
         String info = C.PLOT_INFO.s();
         if (args.length == 1) {
@@ -162,7 +164,9 @@ public class Info extends SubCommand {
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
-        final String biome = BlockManager.manager.getBiome(MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1));
+        Location top = MainUtil.getPlotTopLoc(world, plot.id);
+        Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1,0,1);
+        final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
         final String helpers = getPlayerList(plot.helpers);
         final String trusted = getPlayerList(plot.trusted);
         final String denied = getPlayerList(plot.denied);
@@ -170,11 +174,11 @@ public class Info extends SubCommand {
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
         String owner = "none";
-        if (plot.owner != null) {
-            owner = UUIDHandler.getName(plot.owner);
+        if (plot.owner == null) {
+            owner = "unowned";
         }
-        if (owner == null) {
-            owner = plot.owner.toString();
+        else {
+            owner = getPlayerList(plot.getOwners());
         }
         info = info.replaceAll("%alias%", alias);
         info = info.replaceAll("%id%", id.toString());
@@ -186,13 +190,14 @@ public class Info extends SubCommand {
         info = info.replaceAll("%trusted%", trusted);
         info = info.replaceAll("%denied%", denied);
         info = info.replaceAll("%rating%", rating);
-        info = info.replaceAll("%flags%", flags);
+        info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
         return info;
     }
 
-    private String getPlayerList(final ArrayList<UUID> l) {
+    private String getPlayerList(final Collection<UUID> uuids) {
+        ArrayList<UUID> l = new ArrayList<>(uuids);
         if ((l == null) || (l.size() < 1)) {
             return " none";
         }

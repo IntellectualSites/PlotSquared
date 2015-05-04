@@ -20,13 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -40,12 +39,10 @@ import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class SchematicCmd extends SubCommand {
     private int counter = 0;
     private boolean running = false;
-    private Plot[] plots;
     private int task;
 
     public SchematicCmd() {
@@ -139,7 +136,6 @@ public class SchematicCmd extends SubCommand {
                                     if (start > blen) {
                                         SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
                                         sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-                                        MainUtil.update(plr.getLocation());
                                         SchematicCmd.this.running = false;
                                         PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
                                         return;
@@ -197,52 +193,24 @@ public class SchematicCmd extends SubCommand {
                 }
                 final HashMap<PlotId, Plot> plotmap = PlotSquared.getPlots(args[1]);
                 if ((plotmap == null) || (plotmap.size() == 0)) {
-                    MainUtil.sendMessage(null, "&cInvalid world. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                if (this.running) {
-                    MainUtil.sendMessage(null, "&cTask is already running.");
+                Collection<Plot> plots = plotmap.values();
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+					@Override
+					public void run() {
+						MainUtil.sendMessage(plr, "&aFinished mass export");
+					}
+				});
+                if (!result) {
+                	MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
-                PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
-                PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
-                final String worldname = args[1];
-                final Collection<Plot> values = plotmap.values();
-                this.plots = values.toArray(new Plot[values.size()]);
-                this.running = true;
-                this.counter = 0;
-                this.task = TaskManager.runTaskRepeat(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (SchematicCmd.this.counter >= SchematicCmd.this.plots.length) {
-                            PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
-                            SchematicCmd.this.running = false;
-                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
-                            return;
-                        }
-                        final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
-                        final CompoundTag sch = SchematicHandler.manager.getCompoundTag(worldname, plot.id);
-                        final String o = UUIDHandler.getName(plot.owner);
-                        final String owner = o == null ? "unknown" : o;
-                        if (sch == null) {
-                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
-                        } else {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.sendMessage(null, "&6ID: " + plot.id);
-                                    final boolean result = SchematicHandler.manager.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + worldname + "," + owner + ".schematic");
-                                    if (!result) {
-                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
-                                    } else {
-                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
-                                    }
-                                }
-                            });
-                        }
-                        SchematicCmd.this.counter++;
-                    }
-                }, 20);
+                else {
+                	PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
+                    PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
+                }
                 break;
             }
             case "export":
@@ -289,41 +257,22 @@ public class SchematicCmd extends SubCommand {
                         return false;
                     }
                 }
-                this.plots = new Plot[] { p2 };
-                this.running = true;
-                this.counter = 0;
-                this.task = TaskManager.runTaskRepeat(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (SchematicCmd.this.counter >= SchematicCmd.this.plots.length) {
-                            PlotSquared.log("&3PlotSquared&8->&3Schemaitc&8: &aFinished!");
-                            SchematicCmd.this.running = false;
-                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
-                            return;
-                        }
-                        final Plot plot = SchematicCmd.this.plots[SchematicCmd.this.counter];
-                        final CompoundTag sch = SchematicHandler.manager.getCompoundTag(world, plot.id);
-                        final String o = UUIDHandler.getName(plot.owner);
-                        final String owner = o == null ? "unknown" : o;
-                        if (sch == null) {
-                            MainUtil.sendMessage(plr, "&7 - Skipped plot &c" + plot.id);
-                        } else {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.sendMessage(plr, "&6ID: " + plot.id);
-                                    final boolean result = SchematicHandler.manager.save(sch, Settings.SCHEMATIC_SAVE_PATH + "/" + plot.id.x + ";" + plot.id.y + "," + world + "," + owner.trim() + ".schematic");
-                                    if (!result) {
-                                        MainUtil.sendMessage(plr, "&7 - Failed to save &c" + plot.id);
-                                    } else {
-                                        MainUtil.sendMessage(plr, "&7 - &aExport success: " + plot.id);
-                                    }
-                                }
-                            });
-                        }
-                        SchematicCmd.this.counter++;
-                    }
-                }, 60);
+                
+                Collection<Plot> plots = new ArrayList<Plot>();
+                plots.add(p2);
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+					@Override
+					public void run() {
+						MainUtil.sendMessage(plr, "&aFinished export");
+					}
+				});
+                if (!result) {
+                	MainUtil.sendMessage(plr, "&cTask is already running.");
+                    return false;
+                }
+                else {
+                	MainUtil.sendMessage(plr, "&7Starting export...");
+                }
                 break;
             }
             default: {

@@ -31,21 +31,16 @@ public class Flag {
      * player, you need to register it with PlotSquared.
      *
      * @param key   AbstractFlag
-     * @param value Value must be alphanumerical (can have spaces) and be <= 48 characters
+     * @param value Value must be alphanumerical (can have spaces) and be &lt;= 48 characters
      *
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
     public Flag(final AbstractFlag key, final String value) {
-        final char[] allowedCharacters = new char[] { '[', ']', '(', ')', ',', '_', '-', '.', ',', '?', '!', '&', ':', '\u00A7' };
-        String tempValue = value;
-        for (final char c : allowedCharacters) {
-            tempValue = tempValue.replace(c, 'c');
+        if (!StringUtils.isAsciiPrintable(value)) {
+            throw new IllegalArgumentException("Flag must be ascii");
         }
-        if (!StringUtils.isAlphanumericSpace(tempValue)) {
-            throw new IllegalArgumentException("Flag must be alphanumerical (colours and some special characters are allowed)");
-        }
-        if (value.length() > 48) {
-            throw new IllegalArgumentException("Value must be <= 48 characters");
+        if (value.length() > 128) {
+            throw new IllegalArgumentException("Value must be <= 128 characters");
         }
         this.key = key;
         this.value = key.parseValueRaw(value);

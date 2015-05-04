@@ -27,6 +27,7 @@ import java.util.zip.ZipInputStream;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.commands.Cluster;
@@ -35,6 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
@@ -48,14 +50,17 @@ import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
@@ -64,6 +69,7 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -89,11 +95,11 @@ public class PlotSquared {
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    private static MySQL mySQL;
+    private static Database database;
     public static Connection connection;
 
-    public static MySQL getMySQL() {
-        return mySQL;
+    public static Database getDatabase() {
+        return database;
     }
 
     public static void updatePlot(final Plot plot) {
@@ -136,8 +142,18 @@ public class PlotSquared {
 
     public static Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
-        for (final HashMap<PlotId, Plot> world : plots.values()) {
-            newplots.addAll(world.values());
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                newplots.addAll(entry.getValue().values());
+            }
+        }
+        return new LinkedHashSet<>(newplots);
+    }
+    
+    public static Set<Plot> getPlotsRaw() {
+        final ArrayList<Plot> newplots = new ArrayList<>();
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            newplots.addAll(entry.getValue().values());
         }
         return new LinkedHashSet<>(newplots);
     }
@@ -148,7 +164,21 @@ public class PlotSquared {
         Collections.sort(newPlots, new Comparator<Plot>() {
             @Override
             public int compare(Plot p1, Plot p2) {
-                return p1.hashCode() + p1.world.hashCode() - p2.hashCode() + p2.world.hashCode();
+                int h1 = p1.hashCode();
+                int h2 = p2.hashCode();
+                if (h1 < 0) {
+                    h1 = -h1*2 - 1;
+                }
+                else {
+                    h1*=2;
+                }
+                if (h2 < 0) {
+                    h2 = -h2*2 - 1;
+                }
+                else {
+                    h2*=2;
+                }
+                return h1-h2;
             }
         });
         return newPlots;
@@ -156,21 +186,39 @@ public class PlotSquared {
     
     public static ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
         ArrayList<Plot> newPlots = new ArrayList<>();
-        newPlots.addAll(plots);
-        Collections.sort(newPlots, new Comparator<Plot>() {
-            @Override
-            public int compare(Plot p1, Plot p2) {
-                int w1 = 0;
-                int w2 = 0;
-                if (!p1.world.equals(priorityWorld)) {
-                    w1 = p1.hashCode();
+        HashMap<PlotId, Plot> worldPlots = PlotSquared.plots.get(priorityWorld);
+        if (worldPlots != null) {
+            for (Plot plot : sortPlots(worldPlots.values())) {
+                if (plots.contains(plot)) {
+                    newPlots.add(plot);
                 }
-                if (!p2.world.equals(priorityWorld)) {
-                    w2 = p2.hashCode();
-                }
-                return p1.hashCode() + w1 - p2.hashCode() - w2;
             }
-        });
+        }
+        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        Collections.sort(worlds);
+        for (String world : worlds) {
+            if (!world.equals(priorityWorld)) {
+                for (Plot plot : PlotSquared.plots.get(world).values()) {
+                    if (plots.contains(plot)) {
+                        newPlots.add(plot);
+                    }
+                }
+            }
+        }
+        return newPlots;
+    }
+    
+    public static ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
+        ArrayList<Plot> newPlots = new ArrayList<>();
+        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        Collections.sort(worlds);
+        for (String world : worlds) {
+            for (Plot plot : PlotSquared.plots.get(world).values()) {
+                if (plots.contains(plot)) {
+                    newPlots.add(plot);
+                }
+            }
+        }
         return newPlots;
     }
 
@@ -188,7 +236,7 @@ public class PlotSquared {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
-                if (plot.getOwner().equals(uuid)) {
+                if (PlotHandler.isOwner(plot, uuid)) {
                     myplots.add(plot);
                 }
             }
@@ -229,7 +277,7 @@ public class PlotSquared {
             if (isPlotWorld(world)) {
                 for (final Plot plot : plots.get(world).values()) {
                     if (plot.hasOwner()) {
-                        if (plot.getOwner().equals(uuid)) {
+                        if (PlotHandler.isOwner(plot, uuid)) {
                             myplots.add(plot);
                         }
                     }
@@ -315,18 +363,22 @@ public class PlotSquared {
                 final PlotGenerator gen_class = generator;
                 plotWorld = gen_class.getNewPlotWorld(world);
                 plotManager = gen_class.getPlotManager();
+                
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
+                
                 plotWorld.TYPE = 2;
                 plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
+                
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
+                
                 if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
@@ -466,15 +518,17 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
         TASK = IMP.getTaskManager();
-        if (Settings.KILL_ROAD_MOBS) {
-            IMP.runEntityTask();
-        }
         if (C.ENABLED.s().length() > 0) {
             log(C.ENABLED.s());
         }
         setupConfigs();
         setupDefaultFlags();
         setupDatabase();
+        CommentManager.registerDefaultInboxes();    
+        // Tasks
+        if (Settings.KILL_ROAD_MOBS) {
+            IMP.runEntityTask();
+        }
         // Events
         IMP.registerCommands();
         IMP.registerPlayerEvents();
@@ -482,6 +536,13 @@ public class PlotSquared {
         IMP.registerPlotPlusEvents();
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
+        IMP.registerWorldEvents();
+        if (Settings.TNT_LISTENER) {
+        	IMP.registerTNTListener();
+        }
+        if (Settings.CHUNK_PROCESSOR) {
+            IMP.registerChunkProcessor();
+        }
         // create UUIDWrapper
         UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
         // create event util class
@@ -494,35 +555,51 @@ public class PlotSquared {
         BlockManager.manager = IMP.initBlockManager();
         // Set chunk
         ChunkManager.manager = IMP.initChunkManager();
+        // Plot listener
+        APlotListener.manager = IMP.initPlotListener();
+        // Player manager
+        PlayerManager.manager = IMP.initPlayerManager();
+        
         // PlotMe
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                if (IMP.initPlotMeConverter()) {
-                    log("&c=== IMPORTANT ===");
-                    log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                    log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                    log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                    log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml@'");
+        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (IMP.initPlotMeConverter()) {
+                        log("&c=== IMPORTANT ===");
+                        log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                        log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                        log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                        log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                    }
                 }
-            }
-        }, 200);
+            }, 200);
+        }
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
         }
+        
+        if (Settings.COMMENT_NOTIFICATION_INTERVAL > 0) {
+            CommentManager.runTask();
+        }
+        
         // Copy files
-        copyFile("town.template");
-        copyFile("skyblock.template");
+        copyFile("town.template", "templates");
+        copyFile("skyblock.template", "templates");
+        copyFile("german.yml", "translations");
+        copyFile("s_chinese_unescaped.yml", "translations");
+        copyFile("s_chinese.yml", "translations");
+        showDebug();
     }
     
-    public void copyFile(String file) {
+    public void copyFile(String file, String folder) {
         try {
             byte[] buffer = new byte[2048];
             File output = PlotSquared.IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
-            File newFile = new File((output + File.separator + "templates" + File.separator + file));
+            File newFile = new File((output + File.separator + folder + File.separator + file));
             if (newFile.exists()) {
                 return;
             }
@@ -555,12 +632,9 @@ public class PlotSquared {
 
     public void disable() {
         try {
-            connection.close();
-            mySQL.closeConnection();
+            database.closeConnection();
         } catch (NullPointerException | SQLException e) {
-            if (connection != null) {
-                log("&cCould not close mysql connection!");
-            }
+            log("&cCould not close database connection!");
         }
     }
 
@@ -578,8 +652,8 @@ public class PlotSquared {
         }
         if (Settings.DB.USE_MYSQL) {
             try {
-                mySQL = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                connection = mySQL.openConnection();
+                database = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                connection = database.openConnection();
                 {
                     if (DBFunc.dbManager == null) {
                         DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
@@ -617,7 +691,8 @@ public class PlotSquared {
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                connection = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db").openConnection();
+                this.database = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db"); 
+                connection = this.database.openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();
@@ -652,9 +727,10 @@ public class PlotSquared {
     }
 
     public static void setupDefaultFlags() {
-        final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit");
+        final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
+        final List<String> intFlags = Arrays.asList("entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap");
         for (final String flag : stringFlags) {
             FlagManager.addFlag(new AbstractFlag(flag));
         }
@@ -663,6 +739,9 @@ public class PlotSquared {
         }
         for (final String flag : booleanFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.BooleanValue()));
+        }
+        for (final String flag : intFlags) {
+            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
@@ -735,72 +814,160 @@ public class PlotSquared {
 
     public static void setupConfig() {
         config.set("version", VERSION);
-        final Map<String, Object> options = new HashMap<>();
-        options.put("teleport.delay", 0);
-        options.put("auto_update", false);
         
+        final Map<String, Object> options = new HashMap<>();
+        // Command confirmation
         options.put("confirmation.clear", Settings.CONFIRM_CLEAR);
         options.put("confirmation.delete", Settings.CONFIRM_DELETE);
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
         
+        // Protection
+        options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
+        options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         
+        // Clusters
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
+        
+        // PlotMe
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
-        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
+        options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
+        
+        // UUID
         options.put("UUID.offline", Settings.OFFLINE_MODE);
+        options.put("UUID.force-lowercase", Settings.UUID_LOWERCASE);
+        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
+        
+        // Mob stuff
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
-        options.put("console.color", Settings.CONSOLE_COLOR);
-        options.put("metrics", true);
-        options.put("debug", true);
+        
+        // Clearing + Expiry
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
         options.put("clear.check-disk", Settings.AUTO_CLEAR_CHECK_DISK);
         options.put("clear.on.ban", false);
-        options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
+        
+        // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
+        
+        // Caching
+        options.put("cache.permissions", Settings.PERMISSION_CACHING);
+        
+        // Titles
         options.put("titles", Settings.TITLES);
+        
+        // Teleportation
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
+        options.put("teleport.delay", 0);
+        
+        // WorldEdit
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
+        options.put("worldedit.max-volume", Settings.WE_MAX_VOLUME);
+        options.put("worldedit.max-iterations", Settings.WE_MAX_ITERATIONS);
+        options.put("worldedit.blacklist", Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
+        
+        // Chunk processor
+        options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
+        options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
+        options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
+        
+        // Comments
+        options.put("comments.notifications.interval", Settings.COMMENT_NOTIFICATION_INTERVAL);
+        
+        // Plot limits
+        options.put("global_limit", Settings.GLOBAL_LIMIT);
+        options.put("max_plots", Settings.MAX_PLOTS);
+        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
+
+        // Misc
+        options.put("console.color", Settings.CONSOLE_COLOR);
+        options.put("metrics", true);
+        options.put("debug", true);
+        options.put("auto_update", false);
+        
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
                 config.set(node.getKey(), node.getValue());
             }
         }
-        Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
-        Settings.DEBUG = config.getBoolean("debug");
-        if (Settings.DEBUG) {
-            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
-        }
         
+        // Command confirmation
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
         
-        Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
-        Settings.CONSOLE_COLOR = config.getBoolean("console.color");
-        Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
+        // Protection
+        Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
+        Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
+        
+        // Clusters
+        Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
+        
+        // PlotMe
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
+        Settings.CACHE_PLOTME = config.getBoolean("plotme-convert.cache-uuids");
+        
+        // UUID
+        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
+        Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
+        Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
+        
+        // Mob stuff
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
-        Settings.METRICS = config.getBoolean("metrics");
+        
+        // Clearing + Expiry
+        Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
-        Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
+        
+        // Schematics
+        Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        // Caching
+        Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
+        
+        // Titles
         Settings.TITLES = config.getBoolean("titles");
+        
+        // Teleportation
+        Settings.TELEPORT_DELAY = config.getInt("teleport.delay");
+        Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
+        
+        // WorldEdit
+        Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
+        Settings.WE_MAX_VOLUME = config.getLong("worldedit.max-volume");
+        Settings.WE_MAX_ITERATIONS = config.getLong("worldedit.max-iterations");
+        Settings.WE_BLACKLIST = config.getStringList("worldedit.blacklist");
+        
+        // Chunk processor
+        Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
+        Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
+        Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
+        
+        // Comments
+        Settings.COMMENT_NOTIFICATION_INTERVAL = config.getInt("comments.notifications.interval");
+        
+        // Plot limits
+        Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");
         Settings.MAX_PLOTS = config.getInt("max_plots");
         if (Settings.MAX_PLOTS > 32767) {
             log("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
             Settings.MAX_PLOTS = 32767;
         }
-        Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
-        Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
-        Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
-        Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
+        Settings.GLOBAL_LIMIT = config.getBoolean("global_limit");
+        
+        // Misc
+        Settings.DEBUG = config.getBoolean("debug");
+        if (Settings.DEBUG) {
+            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
+        }
+        Settings.CONSOLE_COLOR = config.getBoolean("console.color");
+        Settings.METRICS = config.getBoolean("metrics");
     }
 
     public static void setupConfigs() {
@@ -887,9 +1054,6 @@ public class PlotSquared {
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-        Settings.API_URL = config.getString("uuid.api.location");
-        Settings.CUSTOM_API = config.getBoolean("uuid.api.custom");
-        Settings.UUID_FECTHING = config.getBoolean("uuid.fetching");
     }
 
     public static void showDebug() {
@@ -935,5 +1099,9 @@ public class PlotSquared {
 
     public static Set<String> getPlotWorlds() {
         return plotworlds.keySet();
+    }
+    
+    public static Collection<PlotWorld> getPlotWorldObjects() {
+        return plotworlds.values();
     }
 }

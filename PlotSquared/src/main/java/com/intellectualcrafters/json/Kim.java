@@ -5,22 +5,22 @@ package com.intellectualcrafters.json;
  * byte. The last byte of a character never has the MSB reset. Every byte that is not the last byte has the MSB set. Kim
  * stands for "Keep it minimal". A Unicode character is never longer than 3 bytes. Every byte contributes 7 bits to the
  * character. ASCII is unmodified.
- * <p/>
+ * 
  * Kim UTF-8 one byte U+007F U+007F two bytes U+3FFF U+07FF three bytes U+10FFF U+FFFF four bytes U+10FFFF
- * <p/>
+ * 
  * Characters in the ranges U+0800..U+3FFF and U+10000..U+10FFFF will be one byte smaller when encoded in Kim compared
  * to UTF-8.
- * <p/>
+ * 
  * Kim is beneficial when using scripts such as Old South Arabian, Aramaic, Avestan, Balinese, Batak, Bopomofo,
  * Buginese, Buhid, Carian, Cherokee, Coptic, Cyrillic, Deseret, Egyptian Hieroglyphs, Ethiopic, Georgian, Glagolitic,
  * Gothic, Hangul Jamo, Hanunoo, Hiragana, Kanbun, Kaithi, Kannada, Katakana, Kharoshthi, Khmer, Lao, Lepcha, Limbu,
  * Lycian, Lydian, Malayalam, Mandaic, Meroitic, Miao, Mongolian, Myanmar, New Tai Lue, Ol Chiki, Old Turkic, Oriya,
  * Osmanya, Pahlavi, Parthian, Phags-Pa, Phoenician, Samaritan, Sharada, Sinhala, Sora Sompeng, Tagalog, Tagbanwa,
  * Takri, Tai Le, Tai Tham, Tamil, Telugu, Thai, Tibetan, Tifinagh, UCAS.
- * <p/>
+ * 
  * A kim object can be constructed from an ordinary UTF-16 string, or from a byte array. A kim object can produce a
  * UTF-16 string.
- * <p/>
+ * 
  * As with UTF-8, it is possible to detect character boundaries within a byte sequence. UTF-8 is one of the world's
  * great inventions. While Kim is more efficient, it is not clear that it is worth the expense of transition.
  *
@@ -197,7 +197,7 @@ public class Kim {
      * @param at the index of the char value. The first character is at 0.
      *
      * @throws JSONException if at does not point to a valid character.
-     * @returns a Unicode character between 0 and 0x10FFFF.
+     * @return a Unicode character between 0 and 0x10FFFF.
      */
     public int characterAt(final int at) throws JSONException {
         final int c = get(at);
@@ -239,7 +239,7 @@ public class Kim {
      *
      * @param obj the other kim with which to compare.
      *
-     * @returns true if this and obj are both kim objects containing identical byte sequences.
+     * @return true if this and obj are both kim objects containing identical byte sequences.
      */
     @Override
     public boolean equals(final Object obj) {

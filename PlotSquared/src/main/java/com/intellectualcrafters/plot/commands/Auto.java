@@ -119,8 +119,8 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
-        final int diff = currentPlots - MainUtil.getAllowedPlots(plr, currentPlots);
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
+        final int diff = currentPlots - MainUtil.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
@@ -179,7 +179,7 @@ public class Auto extends SubCommand {
             for (int i = 0; i <= max; i++) {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 final Plot current = MainUtil.getPlot(worldname, currentId);
-                if ((current != null) && (current.hasOwner() == false) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
+                if (MainUtil.canClaim(plr, current) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
                     Claim.claimPlot(plr, current, true, true);
                     return true;
                 }
@@ -193,7 +193,7 @@ public class Auto extends SubCommand {
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
                 final Plot plot = MainUtil.getPlot(worldname, getLastPlot(worldname));
-                if ((plot.owner == null)) {
+                if (MainUtil.canClaim(plr, plot)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                 }
@@ -213,7 +213,7 @@ public class Auto extends SubCommand {
                     lastPlot = false;
                 }
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
-                if (MainUtil.isUnowned(worldname, start, end)) {
+                if (MainUtil.canClaim(plr, worldname, start, end)) {
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             final Plot plot = MainUtil.getPlot(worldname, new PlotId(i, j));

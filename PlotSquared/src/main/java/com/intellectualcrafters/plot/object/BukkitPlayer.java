@@ -1,10 +1,12 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -13,9 +15,12 @@ public class BukkitPlayer implements PlotPlayer {
     public final Player player;
     UUID uuid;
     String name;
+    private int op = 0;
+    private long last = 0;
     public HashSet<String> hasPerm = new HashSet<>();
     public HashSet<String> noPerm = new HashSet<>();
-    private int op = 0;
+    
+    private HashMap<String, Object> meta;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -23,6 +28,13 @@ public class BukkitPlayer implements PlotPlayer {
      */
     public BukkitPlayer(final Player player) {
         this.player = player;
+    }
+    
+    public long getPreviousLogin() {
+        if (last == 0) {
+            last = player.getLastPlayed();
+        }
+        return last;
     }
 
     @Override
@@ -40,19 +52,22 @@ public class BukkitPlayer implements PlotPlayer {
     
     @Override
     public boolean hasPermission(final String perm) {
-        if (this.noPerm.contains(perm)) {
-            return false;
-        }
-        if (this.hasPerm.contains(perm)) {
+        if (Settings.PERMISSION_CACHING) {
+            if (this.noPerm.contains(perm)) {
+                return false;
+            }
+            if (this.hasPerm.contains(perm)) {
+                return true;
+            }
+            final boolean result = this.player.hasPermission(perm);
+            if (!result) {
+                this.noPerm.add(perm);
+                return false;
+            }
+            this.hasPerm.add(perm);
             return true;
         }
-        final boolean result = this.player.hasPermission(perm);
-        if (!result) {
-            this.noPerm.add(perm);
-            return false;
-        }
-        this.hasPerm.add(perm);
-        return true;
+        return this.player.hasPermission(perm);
     }
     
     @Override
@@ -107,4 +122,26 @@ public class BukkitPlayer implements PlotPlayer {
         return BukkitUtil.getLocationFull(this.player);
     }
 
+    @Override
+    public void setMeta(String key, Object value) {
+        if (this.meta == null) {
+            this.meta = new HashMap<String, Object>();
+        }
+        this.meta.put(key, value);
+    }
+
+    @Override
+    public Object getMeta(String key) {
+        if (this.meta != null) {
+            return this.meta.get(key);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteMeta(String key) {
+        if (this.meta != null) {
+            this.meta.remove(key);
+        }
+    }
 }

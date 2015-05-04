@@ -53,6 +53,7 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -64,7 +65,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  *
  * @author Citymonstret
  */
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings({ "deprecation"})
 public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
@@ -159,7 +160,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (booleanFlag(plot, "instabreak", false)) {
+        if (FlagManager.isBooleanFlag(plot, "instabreak", false)) {
             event.getBlock().breakNaturally();
         }
     }
@@ -174,7 +175,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (booleanFlag(plot, "invincible", false)) {
+        if (FlagManager.isBooleanFlag(plot, "invincible", false)) {
             event.setCancelled(true);
         }
     }
@@ -188,7 +189,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && booleanFlag(plot, "drop-protection", false)) {
+        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
@@ -202,7 +203,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && booleanFlag(plot, "item-drop", false)) {
+        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
     }
@@ -213,22 +214,24 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (FlagManager.getPlotFlag(plot, "greeting") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
         }
-        if (booleanFlag(plot, "notify-enter", false)) {
+        if (FlagManager.isBooleanFlag(plot, "notify-enter", false)) {
+            final Player trespasser = event.getPlayer();
+            final PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
+            if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
+                return;
+            }
             if (plot.hasOwner()) {
-                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
-                if (pp == null) {
-                    return;
-                }
-                final Player trespasser = event.getPlayer();
-                final PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
-                if (pp.getUUID().equals(pt.getUUID())) {
-                    return;
-                }
-                if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
-                    return;
-                }
-                if (pp.isOnline()) {
-                    MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                for (UUID owner : PlotHandler.getOwners(plot)) {
+                    final PlotPlayer pp = UUIDHandler.getPlayer(owner);
+                    if (pp == null) {
+                        return;
+                    }
+                    if (pp.getUUID().equals(pt.getUUID())) {
+                        return;
+                    }
+                    if (pp.isOnline()) {
+                        MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
+                    }
                 }
             }
         }
@@ -262,20 +265,22 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (healRunnable.containsKey(leaver)) {
             healRunnable.remove(leaver);
         }
-        if (booleanFlag(plot, "notify-leave", false)) {
+        if (FlagManager.isBooleanFlag(plot, "notify-leave", false)) {
+            if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
+                return;
+            }
             if (plot.hasOwner()) {
-                final PlotPlayer pp = UUIDHandler.getPlayer(plot.getOwner());
-                if (pp == null) {
-                    return;
-                }
-                if (pp.getUUID().equals(pl.getUUID())) {
-                    return;
-                }
-                if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
-                    return;
-                }
-                if (pp.isOnline()) {
-                    MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pl.getName()).replace("%plot", plot.getId().toString()));
+                for (UUID owner : PlotHandler.getOwners(plot)) {
+                    final PlotPlayer pp = UUIDHandler.getPlayer(owner);
+                    if (pp == null) {
+                        return;
+                    }
+                    if (pp.getUUID().equals(pl.getUUID())) {
+                        return;
+                    }
+                    if (pp.isOnline()) {
+                        MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", leaver.getName()).replace("%plot", plot.getId().toString()));
+                    }
                 }
             }
         }

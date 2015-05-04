@@ -32,8 +32,9 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * @author Citymonstret
@@ -59,14 +60,7 @@ public interface AbstractDB {
      *
      * @param plots Plots for which the default table entries should be created
      */
-    public void createAllSettingsAndHelpers(final ArrayList<Plot> plots);
-
-    /**
-     * Create a plot
-     *
-     * @param plots Plots that should be created
-     */
-    public void createPlots(final ArrayList<Plot> plots);
+    public void createPlotsAndData(final ArrayList<Plot> plots, Runnable whenDone);
 
     /**
      * Create a plot
@@ -115,8 +109,7 @@ public interface AbstractDB {
      * Get the id of a given plot cluster
      *
      * @param world Which the plot is located in
-     * @param pos1   bottom Plot ID
-     * @param pos2	 top Plot ID
+     * @param id cluster id
      *
      * @return Integer = Cluster Entry Id
      */
@@ -160,7 +153,6 @@ public interface AbstractDB {
     /**
      * Set cluster flags
      *
-     * @param world World in which the plot is located
      * @param cluster PlotCluster Object
      * @param flags flags to set (flag[])
      */
@@ -183,7 +175,7 @@ public interface AbstractDB {
      * Purgle a plot
      *
      * @param world World in which the plot is located
-     * @param id    Plot ID
+     * @param uniqueIds list of plot id (db) to be purged
      */
     public void purgeIds(final String world, final Set<Integer> uniqueIds);
 
@@ -219,7 +211,7 @@ public interface AbstractDB {
     /**
      *
      * @param id
-     * @return
+     * @return HashMap<String, Object>
      */
     public HashMap<String, Object> getClusterSettings(final int id);
 
@@ -276,13 +268,13 @@ public interface AbstractDB {
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be added
+     * @param uuid   Player uuid
      */
     public void removeDenied(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
-     * @param player Player that should be added
+     * @param uuid Player uuid that should be added
      */
     public void setDenied(final String world, final Plot plot, final UUID uuid);
 
@@ -303,10 +295,17 @@ public interface AbstractDB {
      * @param comment Comment to remove
      */
     public void removeComment(final String world, final Plot plot, final PlotComment comment);
+    
+    /**
+     * Clear an inbox
+     * @param plot
+     * @param inbox
+     */
+    public void clearInbox(Plot plot, String inbox);
 
     /**
      * Set a plot comment
-     *
+     * 
      * @param world   World in which the plot is located
      * @param plot    Plot Object
      * @param comment Comment to add
@@ -322,7 +321,7 @@ public interface AbstractDB {
      *
      * @return Plot Comments within the specified tier
      */
-    public ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, boolean below);
+    public void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone);
 
     public void createPlotAndSettings(Plot plot);
 
@@ -330,5 +329,10 @@ public interface AbstractDB {
 
     public void resizeCluster(PlotCluster current, PlotClusterId resize);
 
-    public void movePlot(String world, PlotId originalPlot, PlotId newPlot);
+    public void movePlot(Plot originalPlot, Plot newPlot);
+    
+    /**
+     * Don't fuck with this one, unless you enjoy it rough
+     */
+    public boolean deleteTables();
 }

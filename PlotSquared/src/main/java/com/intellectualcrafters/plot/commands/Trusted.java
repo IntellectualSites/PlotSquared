@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -53,7 +54,7 @@ public class Trusted extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.trusted")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.trusted")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -69,7 +70,7 @@ public class Trusted extends SubCommand {
                 return false;
             }
             if (!plot.trusted.contains(uuid)) {
-                if (plot.owner.equals(uuid)) {
+                if (plot.isOwner(uuid)) {
                     MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
@@ -92,17 +93,22 @@ public class Trusted extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
-                final UUID uuid = DBFunc.everyone;
-                if (!plot.trusted.contains(uuid)) {
-                    MainUtil.sendMessage(plr, C.T_WAS_NOT_ADDED);
+                if (plot.trusted.size() == 0) {
+                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
-                plot.removeTrusted(uuid);
-                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+                for (UUID uuid : plot.trusted) {
+                    DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+                }
+                plot.trusted = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.TRUSTED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
+            if (!plot.trusted.contains(uuid)) {
+                MainUtil.sendMessage(plr, C.T_WAS_NOT_ADDED);
+                return true;
+            }
             plot.removeTrusted(uuid);
             DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
             EventUtil.manager.callTrusted(plr, plot, uuid, false);

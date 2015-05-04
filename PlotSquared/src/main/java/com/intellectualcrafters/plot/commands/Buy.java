@@ -22,11 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -67,14 +69,14 @@ public class Buy extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(world, plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
+        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        if (plot.owner.equals(plr.getUUID())) {
+        if (PlotHandler.isOwner(plot, plr.getUUID())) {
             return sendMessage(plr, C.CANNOT_BUY_OWN);
         }
         final Flag flag = FlagManager.getPlotFlag(plot, "price");
@@ -104,8 +106,13 @@ public class Buy extends SubCommand {
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        plot.owner = plr.getUUID();
-        DBFunc.setOwner(plot, plot.owner);
+        Plot top = MainUtil.getTopPlot(plot);
+        
+        for (PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id)) {
+            Plot myPlot = MainUtil.getPlot(plot.world, myId);
+            myPlot.owner = plr.getUUID();
+            DBFunc.setOwner(plot, myPlot.owner);
+        }
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;
     }

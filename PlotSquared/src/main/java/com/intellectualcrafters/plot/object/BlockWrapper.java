@@ -25,7 +25,7 @@ import org.bukkit.block.Block;
 
 /**
  * Wrapper class for blocks, using pure data rather than the object.
- * <p/>
+ * 
  * Useful for NMS
  *
  * @author Empire92

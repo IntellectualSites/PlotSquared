@@ -21,6 +21,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +33,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -82,7 +85,7 @@ public class Merge extends SubCommand {
             return false;
         }
         final boolean admin = Permissions.hasPermission(plr, "plots.admin.command.merge");
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !admin) {
+        if (!plot.isOwner(plr.getUUID()) && !admin) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -105,39 +108,98 @@ public class Merge extends SubCommand {
         }
         PlotId bot = MainUtil.getBottomPlot(plot).id;
         PlotId top = MainUtil.getTopPlot(plot).id;
-        ArrayList<PlotId> plots;
+        ArrayList<PlotId> selPlots;
         final String world = loc.getWorld();
         switch (direction) {
             case 0: // north = -y
-                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
+                selPlots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
                 break;
             case 1: // east = +x
-                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
+                selPlots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
                 break;
             case 2: // south = +y
-                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
+                selPlots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
                 break;
             case 3: // west = -x
-                plots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
+                selPlots = MainUtil.getMaxPlotSelectionIds(world, new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
                 break;
             default:
                 return false;
         }
-        final PlotId botId = plots.get(0);
-        final PlotId topId = plots.get(plots.size() - 1);
+        final PlotId botId = selPlots.get(0);
+        final PlotId topId = selPlots.get(selPlots.size() - 1);
         final PlotId bot1 = MainUtil.getBottomPlot(MainUtil.getPlot(world, botId)).id;
         final PlotId bot2 = MainUtil.getBottomPlot(MainUtil.getPlot(world, topId)).id;
         final PlotId top1 = MainUtil.getTopPlot(MainUtil.getPlot(world, topId)).id;
         final PlotId top2 = MainUtil.getTopPlot(MainUtil.getPlot(world, botId)).id;
         bot = new PlotId(Math.min(bot1.x, bot2.x), Math.min(bot1.y, bot2.y));
         top = new PlotId(Math.max(top1.x, top2.x), Math.max(top1.y, top2.y));
-        plots = MainUtil.getMaxPlotSelectionIds(world, bot, top);
+        final ArrayList<PlotId> plots = MainUtil.getMaxPlotSelectionIds(world, bot, top);
+        boolean multiMerge = false;
+        final HashSet<UUID> multiUUID = new HashSet<UUID>();
+        HashSet<PlotId> multiPlots = new HashSet<>();
+        final UUID u1 = plot.owner;
         for (final PlotId myid : plots) {
             final Plot myplot = PlotSquared.getPlots(world).get(myid);
-            if ((myplot == null) || !myplot.hasOwner() || !(myplot.getOwner().equals(UUIDHandler.getUUID(plr)) || admin)) {
+            if (myplot == null || myplot.owner == null) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
             }
+            UUID u2 = myplot.owner;
+            if (u2.equals(u1)) {
+                continue;
+            }
+            PlotPlayer p2 = UUIDHandler.getPlayer(u2);
+            if (p2 == null) {
+                MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
+                return false;
+            }
+            multiMerge = true;
+            multiPlots.add(myid);
+            multiUUID.add(u2);
+        }
+        if (multiMerge) {
+            for (final UUID uuid : multiUUID) {
+                PlotPlayer accepter = UUIDHandler.getPlayer(uuid);
+                CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", plr.getName()), new Runnable() {
+                    @Override
+                    public void run() {
+                        PlotPlayer accepter = UUIDHandler.getPlayer(uuid);
+                        multiUUID.remove(uuid);
+                        if (multiUUID.size() == 0) {
+                            PlotPlayer pp = UUIDHandler.getPlayer(u1);
+                            if (pp == null) {
+                                sendMessage(accepter, C.MERGE_NOT_VALID);
+                                return;
+                            }
+                            final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
+                            if ((PlotSquared.economy != null) && plotWorld.USE_ECONOMY) {
+                                double cost = plotWorld.MERGE_PRICE;
+                                cost = plots.size() * cost;
+                                if (cost > 0d) {
+                                    if (EconHandler.getBalance(plr) < cost) {
+                                        sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
+                                        return;
+                                    }
+                                    EconHandler.withdrawPlayer(plr, cost);
+                                    sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+                                }
+                            }
+                            final boolean result = EventUtil.manager.callMerge(world, plot, plots);
+                            if (!result) {
+                                MainUtil.sendMessage(plr, "&cMerge has been cancelled");
+                                return;
+                            }
+                            MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
+                            MainUtil.mergePlots(world, plots, true);
+                            MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
+                        }
+                        MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
+                    }
+                });
+            }
+            MainUtil.sendMessage(plr, C.MERGE_REQUESTED);
+            return true;
         }
         final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
         if ((PlotSquared.economy != null) && plotWorld.USE_ECONOMY) {
@@ -157,10 +219,9 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, "&cMerge has been cancelled");
             return false;
         }
-        MainUtil.sendMessage(plr, "&cPlots have been merged");
+        MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
         MainUtil.mergePlots(world, plots, true);
         MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
-        MainUtil.update(loc);
         return true;
     }
 }

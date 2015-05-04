@@ -144,8 +144,7 @@ public abstract class SubCommand {
      * @param c    Caption
      * @param args Arguments (%s's)
      *
-     * @see com.intellectualcrafters.plot.util.bukkit.BukkitPlayerFunctions#sendMessage(org.bukkit.entity.Player,
-     * com.intellectualcrafters.plot.config.C, String...)
+     * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      */
     public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         MainUtil.sendMessage(plr, c, args);
@@ -161,31 +160,31 @@ public abstract class SubCommand {
     public enum CommandCategory {
         /**
          * Claiming Commands
-         * <p/>
+         * 
          * Such as: /plot claim
          */
         CLAIMING("Claiming"),
         /**
          * Teleportation Commands
-         * <p/>
+         * 
          * Such as: /plot visit
          */
         TELEPORT("Teleportation"),
         /**
          * Action Commands
-         * <p/>
+         * 
          * Such as: /plot clear
          */
         ACTIONS("Actions"),
         /**
          * Information Commands
-         * <p/>
+         * 
          * Such as: /plot info
          */
         INFO("Information"),
         /**
          * Debug Commands
-         * <p/>
+         * 
          * Such as: /plot debug
          */
         DEBUG("Debug");

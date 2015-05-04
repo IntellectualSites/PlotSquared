@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +64,10 @@ public class BukkitUtil extends BlockManager {
     public static Location getLocation(final org.bukkit.Location loc) {
         return new Location(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
+    
+    public static org.bukkit.Location getLocation(final Location loc) {
+        return new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
+    }
 
     public static World getWorld(final String string) {
         if (string == lastString) {
@@ -91,17 +94,17 @@ public class BukkitUtil extends BlockManager {
         return world.getChunkAt(x, z);
     }
 
-    public static void update(final String world, final int x, final int z) {
-        final ArrayList<Chunk> chunks = new ArrayList<>();
-        final int distance = Bukkit.getViewDistance();
-        for (int cx = -distance; cx < distance; cx++) {
-            for (int cz = -distance; cz < distance; cz++) {
-                final Chunk chunk = getChunkAt(world, (x >> 4) + cx, (z >> 4) + cz);
-                chunks.add(chunk);
-            }
-        }
-        BukkitSetBlockManager.setBlockManager.update(chunks);
-    }
+//    public static void update(final String world, final int x, final int z) {
+//        final ArrayList<Chunk> chunks = new ArrayList<>();
+//        final int distance = Bukkit.getViewDistance();
+//        for (int cx = -distance; cx < distance; cx++) {
+//            for (int cz = -distance; cz < distance; cz++) {
+//                final Chunk chunk = getChunkAt(world, (x >> 4) + cx, (z >> 4) + cz);
+//                chunks.add(chunk);
+//            }
+//        }
+//        BukkitSetBlockManager.setBlockManager.update(chunks);
+//    }
 
     public static String getWorld(final Entity entity) {
         return entity.getWorld().getName();
@@ -141,12 +144,18 @@ public class BukkitUtil extends BlockManager {
         }
     }
 
-    public static void refreshChunk(final String world, final int x, final int z) {
-        getWorld(world).refreshChunk(x, z);
+    public static void refreshChunk(final String name, final int x, final int z) {
+        World world = getWorld(name);
+        world.refreshChunk(x, z);
+        world.loadChunk(x, z);
     }
 
     public static void regenerateChunk(final String world, final int x, final int z) {
-        getWorld(world).regenerateChunk(x, z);
+        World worldObj = getWorld(world);
+        Chunk chunk = worldObj.getChunkAt(x, z);
+        if (chunk.isLoaded() || chunk.load(false)) {
+            worldObj.regenerateChunk(x, z);
+        }
     }
 
     public static PlotBlock getBlock(final Location loc) {
@@ -236,11 +245,16 @@ public class BukkitUtil extends BlockManager {
     
     @Override
     public int getBiomeFromString(final String biomeStr) {
-        final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
-        if (biome == null) {
+        try {
+            final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+            if (biome == null) {
+                return -1;
+            }
+            return Arrays.asList(Biome.values()).indexOf(biome);
+        }
+        catch (IllegalArgumentException e) {
             return -1;
         }
-        return Arrays.asList(Biome.values()).indexOf(biome);
     }
     
     @Override
@@ -282,5 +296,16 @@ public class BukkitUtil extends BlockManager {
         }
         return false;
         
+    }
+
+    @Override
+    public boolean isBlockSolid(PlotBlock block) {
+        try {
+            Material material = Material.getMaterial(block.id);
+            return material.isBlock() && material.isSolid() && material.isOccluding() && !material.hasGravity();
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

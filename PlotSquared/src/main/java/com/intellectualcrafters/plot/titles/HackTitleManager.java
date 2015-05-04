@@ -265,20 +265,17 @@ public class HackTitleManager {
      *
      * @param player
      *            Player
+     * @throws Exception 
      */
-    public void clearTitle(final Player player) {
+    public void clearTitle(final Player player) throws Exception {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
-            try {
-                // Send timings first
-                final Object handle = getHandle(player);
-                final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-                final Object[] actions = this.packetActions.getEnumConstants();
-                final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-                final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[3]);
-                sendPacket.invoke(connection, packet);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            // Send timings first
+            final Object handle = getHandle(player);
+            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            final Object[] actions = this.packetActions.getEnumConstants();
+            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[3]);
+            sendPacket.invoke(connection, packet);
         }
     }
 
@@ -287,20 +284,17 @@ public class HackTitleManager {
      *
      * @param player
      *            Player
+     * @throws Exception 
      */
-    public void resetTitle(final Player player) {
+    public void resetTitle(final Player player) throws Exception {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
-            try {
-                // Send timings first
-                final Object handle = getHandle(player);
-                final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-                final Object[] actions = this.packetActions.getEnumConstants();
-                final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-                final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[4]);
-                sendPacket.invoke(connection, packet);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            // Send timings first
+            final Object handle = getHandle(player);
+            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            final Object[] actions = this.packetActions.getEnumConstants();
+            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            final Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[4]);
+            sendPacket.invoke(connection, packet);
         }
     }
 
@@ -310,18 +304,13 @@ public class HackTitleManager {
      * @param player
      *            Player
      * @return Protocol version
+     * @throws Exception 
      */
-    private int getProtocolVersion(final Player player) {
-        int version = 0;
-        try {
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object networkManager = getValue("networkManager", connection);
-            version = (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
-            return version;
-        } catch (final Exception ex) {
-            ex.printStackTrace();
-        }
+    private int getProtocolVersion(final Player player) throws Exception {
+        final Object handle = getHandle(player);
+        final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+        final Object networkManager = getValue("networkManager", connection);
+        Integer version = (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
         return version;
     }
 

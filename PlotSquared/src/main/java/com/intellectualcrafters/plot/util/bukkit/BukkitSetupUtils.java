@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -11,8 +12,8 @@ import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 
@@ -30,12 +31,12 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (generator != null) {
                     PlotSquared.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
-                    if (generator instanceof PlotGenerator) {
-                        final PlotGenerator pgen = (PlotGenerator) generator;
-                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
-                            SetupUtils.generators.put(name, pgen);
-                        }
-                    }
+//                    if (generator instanceof PlotGenerator) {
+//                        final PlotGenerator pgen = (PlotGenerator) generator;
+//                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
+                            SetupUtils.generators.put(name, generator);
+//                        }
+//                    }
                 }
             }
         }
@@ -43,6 +44,7 @@ public class BukkitSetupUtils extends SetupUtils {
     
     @Override
     public String setupWorld(final SetupObject object) {
+        SetupUtils.manager.updateGenerators();
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
         for (final ConfigurationNode step : steps) {
@@ -51,22 +53,25 @@ public class BukkitSetupUtils extends SetupUtils {
         if (object.type != 0) {
             PlotSquared.config.set("worlds." + world + "." + "generator.type", object.type);
             PlotSquared.config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PlotSquared.config.set("worlds." + world + "." + "generator.plugin", object.generator);
+            PlotSquared.config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
+            if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
+                PlotSquared.config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+            }
         }
         try {
             PlotSquared.config.save(PlotSquared.configFile);
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        if (object.type == 0) {
+        if (object.setupGenerator != null) {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.generator);
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
             } else {
                 if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.generator);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
                 } else {
                     final WorldCreator wc = new WorldCreator(object.world);
-                    wc.generator(object.generator);
+                    wc.generator(object.setupGenerator);
                     wc.environment(Environment.NORMAL);
                     Bukkit.createWorld(wc);
                 }
@@ -85,4 +90,24 @@ public class BukkitSetupUtils extends SetupUtils {
         return object.world;
     }
 
+    @Override
+    public String getGenerator(PlotWorld plotworld) {
+        if (SetupUtils.generators.size() == 0) {
+            updateGenerators();
+        }
+        World world = Bukkit.getWorld(plotworld.worldname);
+        if (world == null) {
+            return null;
+        }
+        ChunkGenerator generator = world.getGenerator();
+        if (!(generator instanceof PlotGenerator)) {
+            return null;
+        }
+        for (Entry<String, ChunkGenerator> entry : generators.entrySet()) {
+            if (entry.getValue().getClass().getName().equals(generator.getClass().getName())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

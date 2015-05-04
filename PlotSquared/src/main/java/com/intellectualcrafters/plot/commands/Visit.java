@@ -39,7 +39,7 @@ public class Visit extends SubCommand {
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
         for (final Plot p : PlotSquared.getPlots()) {
-            if (p.hasOwner() && p.owner.equals(uuid)) {
+            if (p.hasOwner() && p.isOwner(uuid)) {
                 plots.add(p);
             }
         }
@@ -55,7 +55,7 @@ public class Visit extends SubCommand {
         final UUID uuid = UUIDHandler.getUUID(username);
         List<Plot> plots = null;
         if (uuid != null) {
-            plots = getPlots(uuid);
+            plots = PlotSquared.sortPlotsByWorld(getPlots(uuid));
         }
         if ((uuid == null) || plots.isEmpty()) {
             return sendMessage(plr, C.FOUND_NO_PLOTS);
@@ -70,10 +70,10 @@ public class Visit extends SubCommand {
         } catch (final Exception e) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        if ((i < 0) || (i >= plots.size())) {
+        if ((i < 1) || (i > plots.size())) {
             return sendMessage(plr, C.NOT_VALID_NUMBER);
         }
-        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i));
+        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i - 1));
         return true;
     }
 }

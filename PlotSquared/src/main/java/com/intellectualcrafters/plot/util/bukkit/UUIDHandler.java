@@ -1,7 +1,13 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -11,8 +17,10 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
@@ -78,25 +86,59 @@ public class UUIDHandler {
     public static boolean nameExists(final StringWrapper name) {
         return uuidMap.containsKey(name);
     }
+    
+    public static HashSet<UUID> getAllUUIDS() {
+        HashSet<UUID> uuids = new HashSet<UUID>();
+        for (Plot plot : PlotSquared.getPlotsRaw()) {
+            for (UUID uuid : plot.helpers) {
+                uuids.add(uuid);
+            }
+            for (UUID uuid : plot.trusted) {
+                uuids.add(uuid);
+            }
+            for (UUID uuid : plot.denied) {
+                uuids.add(uuid);
+            }
+            if (plot.owner != null) {
+                uuids.add(plot.owner);
+            }
+        }
+        return uuids;
+    }
 
     public static void cacheAll(final String world) {
         if (CACHED) {
             return;
         }
-        PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching");
+        PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching: " + world);
         UUIDHandler.CACHED = true;
-        
-        for (OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
-            if (op.getLastPlayed() != 0) {
-                String name = op.getName();
-                StringWrapper wrap = new StringWrapper(name);
-                UUID uuid = uuidWrapper.getUUID(op);
-                add(wrap, uuid);
+        if (Settings.TWIN_MODE_UUID) {
+            HashSet<UUID> all = getAllUUIDS();
+            final File playerdataFolder = new File(world + File.separator + "playerdata");
+            String[] dat = playerdataFolder.list(new FilenameFilter() {
+                @Override
+                public boolean accept(final File f, final String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            boolean check = all.size() == 0;
+            if (dat != null) {
+                for (final String current : dat) {
+                    final String s = current.replaceAll(".dat$", "");
+                    try {
+                        final UUID uuid = UUID.fromString(s);
+                        if (check || all.contains(uuid)) {
+                            OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
+                            add(new StringWrapper(op.getName()), uuid);
+                        }
+                    } catch (final Exception e) {
+                        PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                    }
+                }
             }
+            PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+            return;
         }
-        
-        // OLD UUID CACHING SYSTEM
-        /*
         final HashSet<String> worlds = new HashSet<>();
         worlds.add(world);
         worlds.add("world");
@@ -139,7 +181,7 @@ public class UUIDHandler {
         final UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
             try {
-                final BukkitOfflinePlayer player = wrapper.getOfflinePlayer(uuid);
+                final OfflinePlotPlayer player = wrapper.getOfflinePlayer(uuid);
                 uuid = UUIDHandler.uuidWrapper.getUUID(player);
                 final StringWrapper name = new StringWrapper(player.getName());
                 add(name, uuid);
@@ -152,8 +194,18 @@ public class UUIDHandler {
             final StringWrapper nameWrap = new StringWrapper(name);
             add(nameWrap, uuid);
         }
-        */
         
+        
+        if (uuidMap.size() == 0) {
+            for (OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
+                if (op.getLastPlayed() != 0) {
+                    String name = op.getName();
+                    StringWrapper wrap = new StringWrapper(name);
+                    UUID uuid = uuidWrapper.getUUID(op);
+                    add(wrap, uuid);
+                }
+            }
+        }
         // add the Everyone '*' UUID
         add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");

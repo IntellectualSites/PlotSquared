@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,8 +34,9 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotComment;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * DB Functions
@@ -50,10 +54,31 @@ public class DBFunc {
      */
     public static AbstractDB dbManager;
 
-    public static void movePlot(final String world, final PlotId originalPlot, final PlotId newPlot) {
-        dbManager.movePlot(world, originalPlot, newPlot);
+    public static void movePlot(final Plot originalPlot, final Plot newPlot) {
+        dbManager.movePlot(originalPlot, newPlot);
     }
-
+    /**
+     * Check if a resultset contains a column
+     * @param rs
+     * @param columnName
+     * @return
+     * @throws SQLException
+     */
+    public static boolean hasColumn(ResultSet r, String name) {
+        try {
+            ResultSetMetaData meta = r.getMetaData();
+            int count = meta.getColumnCount();
+            for (int x = 1; x <= count; x++) {
+                if (name.equals(meta.getColumnName(x))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
     /**
      * Set the owner of a plot
      *
@@ -69,17 +94,8 @@ public class DBFunc {
      *
      * @param plots List containing all plot objects
      */
-    public static void createAllSettingsAndHelpers(final ArrayList<Plot> plots) {
-        dbManager.createAllSettingsAndHelpers(plots);
-    }
-
-    /**
-     * Create all plots
-     *
-     * @param plots A list containing plot objects
-     */
-    public static void createPlots(final ArrayList<Plot> plots) {
-        dbManager.createPlots(plots);
+    public static void createPlotsAndData(final ArrayList<Plot> plots, Runnable whenDone) {
+        dbManager.createPlotsAndData(plots, whenDone);
     }
 
     /**
@@ -198,9 +214,9 @@ public class DBFunc {
     }
 
     /**
+     * 
      * @param id
-     *
-     * @return
+     * @return HashMap<String, Object>
      */
     public static HashMap<String, Object> getSettings(final int id) {
         return dbManager.getSettings(id);
@@ -212,6 +228,10 @@ public class DBFunc {
      */
     public static void removeComment(final String world, final Plot plot, final PlotComment comment) {
         dbManager.removeComment(world, plot, comment);
+    }
+    
+    public static void clearInbox(final Plot plot, final String inbox) {
+        dbManager.clearInbox(plot, inbox);
     }
 
     /**
@@ -225,13 +245,13 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static ArrayList<PlotComment> getComments(final String world, final Plot plot, final int tier, final boolean below) {
-        return dbManager.getComments(world, plot, tier, below);
+    public static void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone) {
+        dbManager.getComments(world, plot, inbox, whenDone);
     }
 
     /**
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeHelper(world, plot, uuid);
@@ -239,7 +259,7 @@ public class DBFunc {
 
     /**
      * @param cluster
-     * @param player
+     * @param uuid
      */
     public static void removeHelper(final PlotCluster cluster, final UUID uuid) {
         dbManager.removeHelper(cluster, uuid);
@@ -248,14 +268,12 @@ public class DBFunc {
     /**
      * @param world
      * @param cluster
-     * @param name
      */
     public static void createCluster(final String world, final PlotCluster cluster) {
         dbManager.createCluster(cluster);
     }
 
     /**
-     * @param world
      * @param current
      * @param resize
      */
@@ -265,7 +283,7 @@ public class DBFunc {
 
     /**
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeTrusted(world, plot, uuid);
@@ -273,8 +291,7 @@ public class DBFunc {
 
     /**
      *
-     * @param world
-     * @param plot
+     * @param cluster
      * @param uuid
      */
     public static void removeInvited(final PlotCluster cluster, final UUID uuid) {
@@ -282,8 +299,9 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setHelper(final String world, final Plot plot, final UUID uuid) {
         dbManager.setHelper(world, plot, uuid);
@@ -294,8 +312,9 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
         dbManager.setTrusted(world, plot, uuid);
@@ -306,16 +325,18 @@ public class DBFunc {
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void removeDenied(final String world, final Plot plot, final UUID uuid) {
         dbManager.removeDenied(world, plot, uuid);
     }
 
     /**
+     * @param world
      * @param plot
-     * @param player
+     * @param uuid
      */
     public static void setDenied(final String world, final Plot plot, final UUID uuid) {
         dbManager.setDenied(world, plot, uuid);

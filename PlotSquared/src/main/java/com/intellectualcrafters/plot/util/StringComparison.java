@@ -23,6 +23,9 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.util.StringUtil;
+
 /**
  * String comparison library
  *
@@ -36,10 +39,10 @@ public class StringComparison {
     private String bestMatch;
     /**
      * Match Value
-     * <p/>
+     * 
      * Can be checked for low match (< .25 or something)
      */
-    private double match = 0;
+    private double match = Integer.MAX_VALUE;
     /**
      * The actual object
      */
@@ -51,12 +54,13 @@ public class StringComparison {
      * @param input   Input Base Value
      * @param objects Objects to compare
      */
-    public StringComparison(final String input, final Object[] objects) {
-        double c;
+    public StringComparison(String input, final Object[] objects) {
+        int c;
         this.bestMatch = objects[0].toString();
         this.bestMatchObject = objects[0];
+        input = input.toLowerCase();
         for (final Object o : objects) {
-            if ((c = compare(input, o.toString())) > this.match) {
+            if ((c = compare(input, o.toString().toLowerCase())) < this.match) {
                 this.match = c;
                 this.bestMatch = o.toString();
                 this.bestMatchObject = o;
@@ -72,20 +76,15 @@ public class StringComparison {
      *
      * @return match
      */
-    public static double compare(final String s1, final String s2) {
-        final ArrayList p1 = wLetterPair(s1.toUpperCase()), p2 = wLetterPair(s2.toUpperCase());
-        int intersection = 0;
-        final int union = p1.size() + p2.size();
-        for (final Object aP1 : p1) {
-            for (final Object aP2 : p2) {
-                if (aP1.equals(aP2)) {
-                    intersection++;
-                    p2.remove(aP2);
-                    break;
-                }
-            }
+    public static int compare(final String s1, final String s2) {
+        int distance = StringUtils.getLevenshteinDistance(s1, s2);
+        if (s2.contains(s1)) {
+            distance -= (Math.min(s1.length(), s2.length()));
         }
-        return (2.0 * intersection) / union;
+        if (s2.startsWith(s1)) {
+            distance -= 4;
+        }
+        return distance;
     }
 
     /**

@@ -42,7 +42,7 @@ public class Kick extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.getOwner().equals(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.kick")) {
+        if (plot == null || ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.kick"))) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -55,8 +55,9 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (!player.getLocation().getWorld().equals(loc.getWorld()) || !plot.equals(MainUtil.getPlot(loc))) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER.s().replaceAll("%player%", args[0]));
+        Location otherLoc = player.getLocation();
+        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc))) {
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));

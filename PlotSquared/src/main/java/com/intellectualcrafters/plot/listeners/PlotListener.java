@@ -37,56 +37,23 @@ import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
  * @author Empire92
  */
-public class PlotListener {
-    public static void textures(final Player p) {
-        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && isPlotWorld(p.getWorld().getName())) {
+public class PlotListener extends APlotListener {
+    public void textures(final Player p) {
+        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PlotSquared.isPlotWorld(p.getWorld().getName())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }
 
-    public static boolean booleanFlag(final Plot plot, final String key, final boolean defaultValue) {
-        final Flag flag = FlagManager.getPlotFlag(plot, key);
-        if (flag == null) {
-            return defaultValue;
-        }
-        final Object value = flag.getValue();
-        if (value instanceof Boolean) {
-            return (boolean) value;
-        }
-        return defaultValue;
-    }
-
-    public static boolean isInPlot(final String world, final int x, final int y, final int z) {
-        return (MainUtil.getPlot(new Location(world, x, y, z)) != null);
-    }
-
-    public static boolean isPlotWorld(final String world) {
-        return PlotSquared.isPlotWorld(world);
-    }
-
-    public static boolean isPlotArea(final Location location) {
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(location.getWorld());
-        if (plotworld.TYPE == 2) {
-            return ClusterManager.getCluster(location) != null;
-        }
-        return true;
-    }
-
-    private static String getName(final UUID id) {
+    private String getName(final UUID id) {
         if (id == null) {
             return "none";
         }
@@ -97,39 +64,7 @@ public class PlotListener {
         return name;
     }
 
-    public static UUID getUUID(final String name) {
-        return UUIDHandler.getUUID(name);
-    }
-
-    public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = MainUtil.getPlotId(l1);
-        final PlotId p2 = MainUtil.getPlotId(l2);
-        return (p2 != null) && ((p1 == null) || !p1.equals(p2));
-    }
-
-    public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = MainUtil.getPlotId(l1);
-        final PlotId p2 = MainUtil.getPlotId(l2);
-        return (p1 != null) && ((p2 == null) || !p1.equals(p2));
-    }
-
-    public static boolean isPlotWorld(final Location l) {
-        return PlotSquared.isPlotWorld(l.getWorld());
-    }
-
-    public static boolean isInPlot(final Location loc) {
-        return getCurrentPlot(loc) != null;
-    }
-
-    public static Plot getCurrentPlot(final Location loc) {
-        final PlotId id = MainUtil.getPlotId(loc);
-        if (id == null) {
-            return null;
-        }
-        return MainUtil.getPlot(loc.getWorld(), id);
-    }
-
-    private static WeatherType getWeatherType(String str) {
+    private WeatherType getWeatherType(String str) {
         str = str.toLowerCase();
         if (str.equals("rain")) {
             return WeatherType.DOWNFALL;
@@ -138,7 +73,7 @@ public class PlotListener {
         }
     }
 
-    private static GameMode getGameMode(final String str) {
+    private GameMode getGameMode(final String str) {
         switch (str) {
             case "creative":
                 return GameMode.CREATIVE;
@@ -151,11 +86,8 @@ public class PlotListener {
         }
     }
 
-    public static void plotEntry(final PlotPlayer player, final Plot plot) {
-        plotEntry(((BukkitPlayer) player).player, plot);
-    }
-
-    public static void plotEntry(final Player player, final Plot plot) {
+    public void plotEntry(final PlotPlayer pp, final Plot plot) {
+        Player player = ((BukkitPlayer) pp).player;
         if (plot.hasOwner()) {
             final Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");
             if (gamemodeFlag != null) {
@@ -178,7 +110,7 @@ public class PlotListener {
             if (weatherFlag != null) {
                 player.setPlayerWeather(getWeatherType(weatherFlag.getValueString()));
             }
-            if ((booleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
+            if ((FlagManager.isBooleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
                 if (AbstractTitle.TITLE_CLASS != null) {
@@ -192,11 +124,10 @@ public class PlotListener {
         }
     }
 
-    public static void plotExit(final Player player, final Plot plot) {
-        {
-            final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
-            Bukkit.getPluginManager().callEvent(callEvent);
-        }
+    public void plotExit(final PlotPlayer pp, final Plot plot) {
+        Player player = ((BukkitPlayer) pp).player;
+        final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
+        Bukkit.getPluginManager().callEvent(callEvent);
         if (FlagManager.getPlotFlag(plot, "fly") != null) {
             player.setAllowFlight(Bukkit.getAllowFlight());
         }
@@ -211,7 +142,7 @@ public class PlotListener {
         }
     }
 
-    public static boolean getFlagValue(final String value) {
+    public boolean getFlagValue(final String value) {
         return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }
 }

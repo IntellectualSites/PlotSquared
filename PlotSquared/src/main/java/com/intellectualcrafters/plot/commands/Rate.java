@@ -26,7 +26,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Rate extends SubCommand {
     /*
@@ -52,7 +51,7 @@ public class Rate extends SubCommand {
             sendMessage(plr, C.RATING_NOT_OWNED);
             return true;
         }
-        if (plot.getOwner().equals(UUIDHandler.getUUID(plr))) {
+        if (plot.isOwner(plr.getUUID())) {
             sendMessage(plr, C.RATING_NOT_YOUR_OWN);
             return true;
         }

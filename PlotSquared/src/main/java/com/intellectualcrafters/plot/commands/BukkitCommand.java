@@ -11,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
@@ -46,13 +47,21 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         final List<String> tabOptions = new ArrayList<>();
+        final String[] commands = new String[MainCommand.subCommands.size()];
+        for (int x = 0; x < MainCommand.subCommands.size(); x++) {
+            commands[x] = MainCommand.subCommands.get(x).cmd;
+        }
+        String best = new StringComparison(strings[0], commands).getBestMatch();
+        tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
         for (final SubCommand cmd : MainCommand.subCommands) {
-            if (cmd.permission.hasPermission(player)) {
-                if (cmd.cmd.startsWith(arg)) {
-                    tabOptions.add(cmd.cmd);
-                } else if (cmd.alias.get(0).startsWith(arg)) {
-                    tabOptions.add(cmd.alias.get(0));
+            if (!cmd.cmd.equalsIgnoreCase(best)) {
+                if (cmd.permission.hasPermission(player)) {
+                    if (cmd.cmd.startsWith(arg)) {
+                        tabOptions.add(cmd.cmd);
+                    } else if (cmd.alias.size() > 0 && cmd.alias.get(0).startsWith(arg)) {
+                        tabOptions.add(cmd.alias.get(0));
+                    }
                 }
             }
         }

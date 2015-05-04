@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -15,6 +14,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -23,7 +23,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -142,9 +141,9 @@ public class ClusterManager {
     public static PlotCluster getCluster(final Plot plot) {
         return getCluster(plot.world, plot.id);
     }
-
-    public static PlotCluster getCluster(final Location loc) {
-        final String world = loc.getWorld();
+    
+    public static PlotCluster getClusterAbs(final Location loc) {
+        String world = loc.getWorld();
         if ((last != null) && last.world.equals(world)) {
             if (contains(last, loc)) {
                 return last;
@@ -164,6 +163,16 @@ public class ClusterManager {
             }
         }
         return null;
+    }
+    
+    public static PlotCluster getCluster(final Location loc) {
+        final String world = loc.getWorld();
+        PlotManager manager = PlotSquared.getPlotManager(world);
+        PlotId id = manager.getPlotIdAbs(PlotSquared.getPlotWorld(world), loc.getX(), loc.getY(), loc.getZ());
+        if (id != null) {
+            return getCluster(world, id);
+        }
+        return getClusterAbs(loc);
     }
 
     public static PlotCluster getCluster(final String world, final PlotId id) {
@@ -277,9 +286,8 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if ((populator == null) || (plotworld.TYPE == 0)) {
-                        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                         world.regenerateChunk(chunk.getX(), chunk.getZ());
-                        chunk.unload(true, true);
+                        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
                     } else {
                         populator.populate(world, rand, chunk);
                     }

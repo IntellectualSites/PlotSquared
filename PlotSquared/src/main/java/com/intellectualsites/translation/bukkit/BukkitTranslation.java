@@ -31,8 +31,6 @@ public class BukkitTranslation {
     /**
      * Get the universal parent based on the plugin data folder
      *
-     * @param plugin to check
-     *
      * @return parent folder
      */
     public static File getParent() {

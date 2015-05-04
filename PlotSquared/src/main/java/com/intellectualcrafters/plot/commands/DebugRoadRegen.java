@@ -43,9 +43,6 @@ public class DebugRoadRegen extends SubCommand {
         }
         final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
         final boolean result = HybridUtils.manager.regenerateRoad(world, chunk);
-        if (result) {
-            MainUtil.update(loc);
-        }
         MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
         return true;
     }

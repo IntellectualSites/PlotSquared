@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -53,7 +54,7 @@ public class Denied extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -69,7 +70,7 @@ public class Denied extends SubCommand {
                 return false;
             }
             if (!plot.denied.contains(uuid)) {
-                if (plot.owner.equals(uuid)) {
+                if (plot.isOwner(uuid)) {
                     MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
@@ -90,7 +91,7 @@ public class Denied extends SubCommand {
             }
             final PlotPlayer player = UUIDHandler.getPlayer(uuid);
             if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
-                final Plot pl = MainUtil.getPlot(loc);
+                final Plot pl = MainUtil.getPlot(player.getLocation());
                 if ((pl != null) && pl.id.equals(plot.id)) {
                     MainUtil.sendMessage(player, C.YOU_BE_DENIED);
                     player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
@@ -100,17 +101,22 @@ public class Denied extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
-                final UUID uuid = DBFunc.everyone;
-                if (!plot.denied.contains(uuid)) {
+                if (plot.denied.size() == 0) {
                     MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
-                plot.removeDenied(uuid);
-                DBFunc.removeDenied(loc.getWorld(), plot, uuid);
+                for (UUID uuid : plot.denied) {
+                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
+                }
+                plot.denied = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.DENIED_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
+            if (!plot.denied.contains(uuid)) {
+                MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
+                return true;
+            }
             plot.removeDenied(uuid);
             DBFunc.removeDenied(loc.getWorld(), plot, uuid);
             EventUtil.manager.callDenied(plr, plot, uuid, false);

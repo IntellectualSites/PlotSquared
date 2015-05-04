@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -74,7 +75,6 @@ public class Claim extends SubCommand {
                 SchematicHandler.manager.paste(sch, plot2, 0, 0);
             }
             PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
-            MainUtil.update(loc);
         }
         return result;
     }
@@ -90,11 +90,11 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr, currentPlots)) {
+        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        if (plot.hasOwner()) {
+        if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
         final PlotWorld world = PlotSquared.getPlotWorld(plot.world);

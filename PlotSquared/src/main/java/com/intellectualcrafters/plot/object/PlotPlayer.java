@@ -8,6 +8,9 @@ import java.util.UUID;
  * @author Citymonstret
  */
 public interface PlotPlayer {
+    
+    public long getPreviousLogin();
+    
     public Location getLocation();
     
     public Location getLocationFull();
@@ -27,4 +30,8 @@ public interface PlotPlayer {
     public String getName();
     
     public void setCompassTarget(Location loc);
+    
+    public void setMeta(String key, Object value);
+    public Object getMeta(String key);
+    public void deleteMeta(String key);
 }

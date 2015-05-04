@@ -31,7 +31,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
-     * <p/>
+     * 
      * Set the last boolean to false if you do not require a specific config node to be set while using the setup
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation

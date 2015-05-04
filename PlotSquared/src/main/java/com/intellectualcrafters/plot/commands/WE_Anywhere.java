@@ -21,14 +21,15 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.PWE;
 
 public class WE_Anywhere extends SubCommand {
     public WE_Anywhere() {
-        super("weanywhere", "plots.weanywhere", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
+        super("weanywhere", "plots.worldedit.bypass", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
     }
 
     @Override
@@ -37,12 +38,15 @@ public class WE_Anywhere extends SubCommand {
             MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
-        if (Permissions.hasPermission(plr, "plots.worldedit.bypass") && PWE.hasMask(plr)) {
-            PWE.removeMask(plr);
-            MainUtil.sendMessage(plr, "&6Cleared your WorldEdit mask");
-        } else {
-            PWE.setMask(plr, plr.getLocation(), true);
-            MainUtil.sendMessage(plr, "&6Updated your WorldEdit mask");
+        if (Permissions.hasPermission(plr, "plots.worldedit.bypass")) {
+            if (WEManager.bypass.contains(plr.getName())) {
+                WEManager.bypass.remove(plr.getName());
+                MainUtil.sendMessage(plr, C.WORLDEDIT_RESTRICTED);
+            }
+            else {
+                WEManager.bypass.add(plr.getName());
+                MainUtil.sendMessage(plr, C.WORLDEDIT_UNMASKED);
+            }
         }
         return true;
     }

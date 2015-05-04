@@ -12,7 +12,7 @@ public class DefaultTitle extends AbstractTitle {
             title.setSubtitleColor(sub_color);
             title.send(player);
         } catch (final Throwable e) {
-            AbstractTitle.TITLE_CLASS = new HackTitle();
+            AbstractTitle.TITLE_CLASS = new DefaultTitle_183();
             AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, head_color, sub_color);
         }
     }

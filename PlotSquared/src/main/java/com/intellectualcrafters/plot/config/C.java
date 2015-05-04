@@ -32,7 +32,7 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
 /**
  * Captions class.
  *
- * @author Citymonstret
+ * @author Citymonstret	
  */
 public enum C {
     /*
@@ -44,6 +44,7 @@ public enum C {
      * Move
      */
     MOVE_SUCCESS("$4Successfully moved plot."),
+    COPY_SUCCESS("$4Successfully copied plot."),
     REQUIRES_UNOWNED("$2The location specified is already occupied."),
     /*
      * Compass
@@ -85,6 +86,12 @@ public enum C {
      * WorldEdit masks
      */
     REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot."),
+    WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%."),
+    WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%."),
+    WORLDEDIT_UNSAFE("$2Access to that command has been blocked"),
+    WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea"),
+    WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted."),
+    WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted."),
     /*
      * Records
      */
@@ -94,15 +101,24 @@ public enum C {
     /*
      * Swap
      */
+    SWAP_OVERLAP("$2The proposed areas are not allowed to overlap"),
+    SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions"),
     SWAP_SYNTAX("$2/plots swap <plot id>"),
     SWAP_SUCCESS("$4Successfully swapped plots"),
+    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes"),
     /*
      * Comment
      */
-    COMMENT_SYNTAX("$2Use /plots comment <everyone|trusted|helper|owner|admin> <comment>"),
+    NOT_VALID_INBOX_INDEX("$2No comment at index %s"),
+    INBOX_ITEM("$2 - $4%s"),
+    COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>"),
     INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s"),
-    COMMENT_REMOVED("$4Successfully deleted %s."),
+    NO_PERM_INBOX("$2You do not have permission for that inbox"),
+    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox"),
+    NO_PLOT_INBOX("$2You must  stand in or supply a plot argument"),
+    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'"),
     COMMENT_ADDED("$4A comment has been left"),
+    COMMENT_HEADER("$2====== Comments ======"),
     /*
      * Console
      */
@@ -158,7 +174,7 @@ public enum C {
     /*
      * Title Stuff
      */
-    TITLE_ENTERED_PLOT("You entered plot %world%;%x%;%z%"),
+    TITLE_ENTERED_PLOT("Plot: %world%;%x%;%z%"),
     TITLE_ENTERED_PLOT_COLOR("GOLD"),
     TITLE_ENTERED_PLOT_SUB("Owned by %s"),
     TITLE_ENTERED_PLOT_SUB_COLOR("RED"),
@@ -171,7 +187,7 @@ public enum C {
     /*
      * Core Stuff
      */
-    PREFIX("$3[$1P\u00B2$3] "),
+    PREFIX("$3[$1P2$3] $2"),
     ENABLED("$1PlotSquared is now enabled"),
     EXAMPLE_MESSAGE("$2This is an example message &k!!!"),
     /*
@@ -208,6 +224,7 @@ public enum C {
     NO_PERMISSION("$2You are lacking the permission node: $1%s"),
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots."),
+    CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%"),
@@ -215,6 +232,11 @@ public enum C {
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot"),
     UNLINK_SUCCESS("$2Successfully unlinked plots."),
     NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot."),
+    MERGE_NOT_VALID("$2This merge request is no longer valid."),
+    MERGE_ACCEPTED("$2The merge request has been accepted"),
+    SUCCESS_MERGE("$2Plots have been merged!"),
+    MERGE_REQUESTED("$2Successfully sent a merge request"),
+    MERGE_REQUEST_CONFIRM("merge request from %s"),
     /*
      * Commands
      */
@@ -236,7 +258,7 @@ public enum C {
      * purge
      */
     PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>"),
-    PURGE_SUCCESS("$4Successfully purge %s plots"),
+    PURGE_SUCCESS("$4Successfully purged %s plots"),
     /*
      * trim
      */
@@ -251,6 +273,7 @@ public enum C {
     NOT_IN_PLOT("$2You're not in a plot"),
     NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action"),
     NOT_IN_PLOT_WORLD("$2You're not in a plot world"),
+    PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible"),
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)"),
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot world (case sensitive)"),
     NO_PLOTS("$2You don't have any plots"),
@@ -263,7 +286,7 @@ public enum C {
     /*
      * Biome
      */
-    NEED_BIOME("$2You have got to specify a biome"),
+    NEED_BIOME("$2You need to specify a valid biome."),
     BIOME_SET_TO("$2Plot biome set to $2"),
     /*
      * Teleport / Entry
@@ -370,7 +393,7 @@ public enum C {
     /*
      * PlotMe
      */
-    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/plots $2instead"),
+    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps &2or $1/p2 $2or $1/plots $2instead"),
     /*
      * Wait
      */
@@ -384,7 +407,7 @@ public enum C {
      */
     DENIED_REMOVED("$4You successfully undenied the player from this plot"),
     DENIED_ADDED("$4You successfully denied the player from this plot"),
-    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot helpers remove <name>"),
+    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>"),
     WAS_NOT_DENIED("$2That player was not denied on this plot"),
     /*
      * Rain
@@ -426,6 +449,7 @@ public enum C {
      * Set Owner
      */
     SET_OWNER("$4You successfully set the plot owner"),
+    NOW_OWNER("$4You are now owner of plot %s"),
     /*
      * Signs
      */

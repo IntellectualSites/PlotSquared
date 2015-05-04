@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.listeners.PlotListener;
+import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -90,8 +90,6 @@ public class Set extends SubCommand {
                 break;
             }
         }
-        /* TODO: Implement option */
-        // final boolean advanced_permissions = true;
         if (!Permissions.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
             return false;
@@ -127,7 +125,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_REMOVED);
-                PlotListener.plotEntry(plr, plot);
+                APlotListener.manager.plotEntry(plr, plot);
                 return true;
             }
             try {
@@ -144,7 +142,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_ADDED);
-                PlotListener.plotEntry(plr, plot);
+                APlotListener.manager.plotEntry(plr, plot);
                 return true;
             } catch (final Exception e) {
                 MainUtil.sendMessage(plr, "&c" + e.getMessage());
@@ -164,7 +162,7 @@ public class Set extends SubCommand {
             final String world = plr.getLocation().getWorld();
             final Location base = MainUtil.getPlotBottomLoc(world, plot.id);
             base.setY(0);
-            final Location relative = plr.getLocation().subtract(base.getX(), base.getZ(), base.getY());
+            final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
             final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ());
             plot.settings.setPosition(blockloc);
             DBFunc.setPosition(loc.getWorld(), plot, relative.getX() + "," + relative.getY() + "," + relative.getZ());
@@ -240,13 +238,18 @@ public class Set extends SubCommand {
                             return true;
                         }
                         blocks = new PlotBlock[] { new PlotBlock((short) BlockManager.manager.getBlockIdFromString(args[1]), (byte) 0) };
+                        for (PlotBlock block : blocks) {
+                            if (!BlockManager.manager.isBlockSolid(block)) {
+                                MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
+                                return false;
+                            }
+                        }
                     } catch (final Exception e2) {
                         MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
                         return false;
                     }
                 }
                 manager.setComponent(plotworld, plot.id, component, blocks);
-                MainUtil.update(loc);
                 MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                 return true;
             }
@@ -290,7 +293,7 @@ public class Set extends SubCommand {
 
     private String getBiomeList(final String[] biomes) {
         final StringBuilder builder = new StringBuilder();
-        builder.append(MainUtil.colorise('&', C.NOT_VALID_BLOCK_LIST_HEADER.s()));
+        builder.append(MainUtil.colorise('&', C.NEED_BIOME.s()));
         for (final String b : biomes) {
             builder.append(getString(b));
         }

@@ -33,7 +33,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         }
         return false;
     }
-
+    
     public boolean setFloor(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         final Location pos1 = MainUtil.getPlotBottomLoc(plotworld.worldname, plotid).add(1, 0, 1);
@@ -61,12 +61,13 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final int[] zl = new int[size];
         final PlotBlock[] bl = new PlotBlock[size];
         int i = 0;
+        PseudoRandom random = new PseudoRandom();
         for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
             for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[PseudoRandom.random(blocks.length)];
+                bl[i] = blocks[random.random(blocks.length)];
                 i++;
             }
         }
@@ -76,7 +77,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[PseudoRandom.random(blocks.length)];
+                bl[i] = blocks[random.random(blocks.length)];
                 i++;
             }
         }
@@ -86,7 +87,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[PseudoRandom.random(blocks.length)];
+                bl[i] = blocks[random.random(blocks.length)];
                 i++;
             }
         }
@@ -96,7 +97,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
                 xl[i] = x;
                 zl[i] = z;
                 yl[i] = y;
-                bl[i] = blocks[PseudoRandom.random(blocks.length)];
+                bl[i] = blocks[random.random(blocks.length)];
                 i++;
             }
         }
@@ -121,12 +122,13 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         int x, z;
         z = bottom.getZ();
         int i = 0;
+        PseudoRandom random = new PseudoRandom();
         final int y = dpw.WALL_HEIGHT + 1;
         for (x = bottom.getX(); x <= (top.getX() - 1); x++) {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[PseudoRandom.random(blocks.length)];
+            bl[i] = blocks[random.random(blocks.length)];
             i++;
         }
         x = top.getX();
@@ -134,7 +136,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[PseudoRandom.random(blocks.length)];
+            bl[i] = blocks[random.random(blocks.length)];
             i++;
         }
         z = top.getZ();
@@ -142,7 +144,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[PseudoRandom.random(blocks.length)];
+            bl[i] = blocks[random.random(blocks.length)];
             i++;
         }
         x = bottom.getX();
@@ -150,7 +152,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             xl[i] = x;
             zl[i] = z;
             yl[i] = y;
-            bl[i] = blocks[PseudoRandom.random(blocks.length)];
+            bl[i] = blocks[random.random(blocks.length)];
             i++;
         }
         BlockManager.setBlocks(plotworld.worldname, xl, yl, zl, bl);
@@ -188,7 +190,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final int ez = (sz + dpw.ROAD_WIDTH) - 1;
         final int sx = pos1.getX() - 1;
         final int ex = pos2.getX() + 2;
-        MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(plotworld.worldname, ex + 1, 257, ez), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(plotworld.worldname, ex + 1, 257, ez + 1), new PlotBlock((short) 0, (byte) 0));
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 0, sz), new Location(plotworld.worldname, ex, 1, ez + 1), new PlotBlock((short) 7, (byte) 0));
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz), new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, sz + 1), dpw.WALL_FILLING);
         MainUtil.setSimpleCuboid(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.WALL_HEIGHT + 1, sz), new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 2, sz + 1), dpw.WALL_BLOCK);
@@ -275,7 +277,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         for (final PlotId id : plotIds) {
-            if (!block.equals(unclaim)) { 
+            if (block.id != 0 || !block.equals(unclaim)) { 
                 setWall(plotworld, id, new PlotBlock[] { block });
             }
         }
@@ -296,7 +298,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean claimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (!claim.equals(unclaim)) {
+        if (claim.id != 0 || !claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { claim });
         }
         return true;
@@ -306,9 +308,10 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot) {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (!claim.equals(unclaim)) {
+        if (unclaim.id != 0 || !claim.equals(unclaim)) {
             setWall(plotworld, plot.id, new PlotBlock[] { unclaim });
         }
+        MainUtil.removeSign(plot);
         return true;
     }
 

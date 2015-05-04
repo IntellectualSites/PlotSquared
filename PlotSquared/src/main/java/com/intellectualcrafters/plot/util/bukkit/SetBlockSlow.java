@@ -1,10 +1,12 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public class SetBlockSlow extends BukkitSetBlockManager {
     @Override
@@ -24,7 +26,19 @@ public class SetBlockSlow extends BukkitSetBlockManager {
     }
 
     @Override
-    public void update(final List<Chunk> chunks) {
-        // TODO Auto-generated method stub
+    public void update(final Collection<Chunk> chunks) {
+        if (MainUtil.canSendChunk) {
+            try {
+                SendChunk.sendChunk(chunks);
+            } catch (final Throwable e) {
+                MainUtil.canSendChunk = false;
+            }
+        }
+        else {
+            for (Chunk chunk : chunks) {
+                chunk.unload();
+                chunk.load(true);
+            }
+        }
     }
 }

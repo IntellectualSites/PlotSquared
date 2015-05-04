@@ -20,8 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -87,9 +89,36 @@ public abstract class PlotWorld {
     public boolean WORLD_BORDER;
     public int TYPE = 0;
     public int TERRAIN = 0;
+    public boolean HOME_ALLOW_NONMEMBER;
+    public PlotLoc DEFAULT_HOME;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PlotWorld plotworld = (PlotWorld) obj;
+        ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds");
+        for (ConfigurationNode setting : plotworld.getSettingNodes()) {
+            Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
+            if (constant == null) {
+                return false;
+            }
+            if (!constant.equals(section.get(this.worldname + "." + setting.getConstant())))  {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -116,16 +145,45 @@ public abstract class PlotWorld {
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
-        final List<String> flags = config.getStringList("flags.default");
-        if (flags == null) {
-            this.DEFAULT_FLAGS = new Flag[] {};
-        } else {
+        
+        this.HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
+        String homeDefault = config.getString("home.default");
+        if (homeDefault.equalsIgnoreCase("side")) {
+            DEFAULT_HOME = null;
+        }
+        else if (homeDefault.equalsIgnoreCase("center")) {
+            DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+        else {
             try {
-                this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
-            } catch (final Exception e) {
-                PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
-                this.DEFAULT_FLAGS = new Flag[] {};
+                String[] split = homeDefault.split(",");
+                DEFAULT_HOME = new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
             }
+            catch (Exception e) {
+                DEFAULT_HOME = null;
+            }
+        }
+        
+        List<String> flags = config.getStringList("flags.default");
+        if (flags == null || flags.size() == 0) {
+            flags = config.getStringList("flags");
+            if (flags == null || flags.size() == 0) {
+                flags = new ArrayList<String>();
+                ConfigurationSection section = config.getConfigurationSection("flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    if (!key.equals("default")) {
+                        flags.add(key + ";" + section.get(key));
+                    }
+                }
+            }
+        }
+        try {
+            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
+            this.DEFAULT_FLAGS = new Flag[] {};
         }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");
@@ -164,6 +222,10 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
+        
+        options.put("home.default", "side");
+        options.put("home.allow-nonmembers", false);
+        
         if (Settings.ENABLE_CLUSTERS && (this.TYPE != 0)) {
             options.put("generator.terrain", this.TERRAIN);
             options.put("generator.type", this.TYPE);

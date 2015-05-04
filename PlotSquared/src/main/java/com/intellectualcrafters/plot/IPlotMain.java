@@ -7,9 +7,12 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -38,6 +41,8 @@ public interface IPlotMain {
     public void registerForceFieldEvents();
 
     public void registerWorldEditEvents();
+    
+    public void registerTNTListener();
 
     public Economy getEconomy();
 
@@ -54,6 +59,16 @@ public interface IPlotMain {
     public UUIDWrapper initUUIDHandler();
 
     public boolean initPlotMeConverter();
+    
+    public void unregister(PlotPlayer player);
 
     public ChunkGenerator getGenerator(String world, String name);
+
+    public APlotListener initPlotListener();
+
+    public void registerChunkProcessor();
+
+    public void registerWorldEvents();
+
+    public PlayerManager initPlayerManager();
 }

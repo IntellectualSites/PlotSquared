@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -88,7 +89,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             setupSchematics();
         } catch (final Exception e) {
             PlotSquared.log("&c - road schematics are disabled for this world.");
-            this.ROAD_SCHEMATIC_ENABLED = false;
         }
     }
 
@@ -143,7 +143,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     int x = item.x;
                     int y = item.y;
                     int z = item.z;
-                    PlotLoc loc = new PlotLoc((short) x, (short) z);
+                    PlotLoc loc = new PlotLoc(x, z);
                     if (!G_SCH_STATE.containsKey(loc)) {
                         G_SCH_STATE.put(loc, new HashSet<PlotItem>());
                     }
@@ -195,121 +195,110 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
     }
+    
+    public static byte wrap(byte data, int start) {
+        if (data >= start && data < start + 4) {
+            data = (byte) ((((data - start) + 2) % 4) + start);
+        }
+        return data;
+    }
+    
+    public static byte wrap2(byte data, int start) {
+        if (data >= start && data < start + 2) {
+            data = (byte) ((((data - start) + 1) % 2) + start);
+        }
+        return data;
+    }
 
-    public static boolean isRotate(final short id) {
+    public static byte rotate(final short id, byte data) {
         switch (id) {
-            case 23:
-                return true;
-            case 26:
-                return true;
-            case 27:
-                return true;
-            case 28:
-                return true;
-            case 29:
-                return true;
-            case 33:
-                return true;
-            case 53:
-                return true;
-            case 54:
-                return true;
-            case 55:
-                return true;
-            case 61:
-                return true;
-            case 62:
-                return true;
-            case 64:
-                return true;
-            case 65:
-                return true;
-            case 68:
-                return true;
-            case 71:
-                return true;
-            case 77:
-                return true;
-            case 86:
-                return true;
-            case 84:
-                return true;
-            case 93:
-                return true;
-            case 94:
-                return true;
-            case 96:
-                return true;
-            case 107:
-                return true;
-            case 108:
-                return true;
-            case 109:
-                return true;
-            case 111:
-                return true;
-            case 119:
-                return true;
-            case 128:
-                return true;
-            case 130:
-                return true;
-            case 131:
-                return true;
-            case 134:
-                return true;
-            case 135:
-                return true;
-            case 136:
-                return true;
-            case 143:
-                return true;
-            case 144:
-                return true;
-            case 145:
-                return true;
-            case 146:
-                return true;
-            case 149:
-                return true;
-            case 150:
-                return true;
-            case 156:
-                return true;
-            case 157:
-                return true;
-            case 158:
-                return true;
-            case 163:
-                return true;
-            case 164:
-                return true;
-            case 167:
-                return true;
-            case 180:
-                return true;
             case 183:
-                return true;
             case 184:
-                return true;
             case 185:
-                return true;
             case 186:
-                return true;
             case 187:
-                return true;
+            case 107:
+            case 53:
+            case 67:
+            case 108:
+            case 109:
+            case 114:
+            case 128:
+            case 134:
+            case 135:
+            case 136:
+            case 156:
+            case 163:
+            case 164:
+            case 180: {
+                data = wrap(data, 0);
+                data = wrap(data, 4);
+                return data;
+            }
+            
+            case 26:
+            case 86: {
+                data = wrap(data, 0);
+                return data;
+            }
+            case 64:
+            case 71:
             case 193:
-                return true;
             case 194:
-                return true;
             case 195:
-                return true;
             case 196:
-                return true;
             case 197:
-                return true;
+            case 93:
+            case 94:
+            case 131:
+            case 145:
+            case 149:
+            case 150:
+            case 96:
+            case 167: {
+                data = wrap(data, 0);
+                data = wrap(data, 4);
+                data = wrap(data, 8);
+                data = wrap(data, 12);
+                return data;
+            }
+            case 28:
+            case 66:
+            case 157:
+            case 27: {
+                data = wrap2(data, 0);
+                data = wrap2(data, 3);
+                if (data == 2) {
+                    data = 5;
+                }
+                else if (data == 5) {
+                    data = 2;
+                }
+                return data;
+            }
+            
+            case 23:
+            case 29:
+            case 33:
+            case 158:
+            case 54:
+            case 130:
+            case 146:
+            case 61:
+            case 62:
+            case 65:
+            case 68:
+            case 144: {
+                data = wrap(data, 2);
+                return data;
+            }
+            case 143:
+            case 77: {
+                data = wrap(data, 1);
+                return data;
+            }
             default:
-                return false;
+                return data;
         }
     }
 
@@ -325,12 +314,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             this.G_SCH.put(loc, new HashMap<Short, Short>());
         }
         this.G_SCH.get(loc).put(y, id);
-        if (isRotate(id)) {
-            if (rotate) {
-                data = (byte) ((data + 2) % 4);
+        if (rotate) {
+            byte newdata = rotate(id, data);
+            if (data == 0 && newdata == 0) {
+                return;
             }
-        } else if (data == 0) {
-            return;
+            data = newdata;
         }
         if (!this.G_SCH_DATA.containsKey(loc)) {
             this.G_SCH_DATA.put(loc, new HashMap<Short, Byte>());

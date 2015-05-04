@@ -53,15 +53,21 @@ public class FlagManager {
     /**
      * Register an AbstractFlag with PlotSquared
      *
-     * @param flag Flag to register
+     * @param af Flag to register
      *
-     * @return success?
+     * @return boolean success
      */
     public static boolean addFlag(final AbstractFlag af) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        af.getKey();
+        for (PlotWorld plotworld : PlotSquared.getPlotWorldObjects()) {
+            for (final Flag flag : plotworld.DEFAULT_FLAGS) {
+                if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
+                    flag.setKey(af);
+                }
+            }
+        }
         if (PlotSquared.getAllPlotsRaw() != null) {
-            for (final Plot plot : PlotSquared.getPlots()) {
+            for (final Plot plot : PlotSquared.getPlotsRaw()) {
                 for (final Flag flag : plot.settings.flags) {
                     if (flag.getAbstractFlag().getKey().equals(af.getKey())) {
                         flag.setKey(af);
@@ -88,12 +94,24 @@ public class FlagManager {
         }
         return null;
     }
+    
+    public static boolean isBooleanFlag(final Plot plot, final String key, final boolean defaultValue) {
+        final Flag flag = FlagManager.getPlotFlag(plot, key);
+        if (flag == null) {
+            return defaultValue;
+        }
+        final Object value = flag.getValue();
+        if (value instanceof Boolean) {
+            return (boolean) value;
+        }
+        return defaultValue;
+    }
 
     /**
      * Get the value of a flag for a plot (respects flag defaults)
      * @param plot
      * @param flag
-     * @return
+     * @return Flag
      */
     public static Flag getPlotFlag(final Plot plot, final String flag) {
         return getSettingFlag(plot.world, plot.settings, flag);
@@ -109,12 +127,23 @@ public class FlagManager {
         }
         return false;
     }
+    
+    public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
+        final Flag flag = getPlotFlag(plot, strFlag);
+        if (flag == null) {
+            return false;
+        }
+        if (flag.getValue() instanceof Boolean) {
+            return !(boolean) flag.getValue();
+        }
+        return false;
+    }
 
     /**
      * Get the value of a flag for a plot (ignores flag defaults)
      * @param plot
      * @param flag
-     * @return
+     * @return Flag
      */
     public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
         return getSettingFlagAbs(plot.settings, flag);
@@ -165,7 +194,7 @@ public class FlagManager {
     /**
      *
      * @param plot
-     * @return
+     * @return set of flags
      */
     public static Set<Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);
@@ -313,7 +342,6 @@ public class FlagManager {
     public static AbstractFlag getFlag(final String string, final boolean create) {
         if ((getFlag(string) == null) && create) {
             final AbstractFlag flag = new AbstractFlag(string);
-            addFlag(flag);
             return flag;
         }
         return getFlag(string);
@@ -333,7 +361,13 @@ public class FlagManager {
     public static Flag[] parseFlags(final List<String> flagstrings) {
         final Flag[] flags = new Flag[flagstrings.size()];
         for (int i = 0; i < flagstrings.size(); i++) {
-            final String[] split = flagstrings.get(i).split(";");
+            final String[] split;
+            if (flagstrings.get(i).contains(";")) {
+                split = flagstrings.get(i).split(";");
+            }
+            else {
+                split = flagstrings.get(i).split(":");
+            }
             if (split.length == 1) {
                 flags[i] = new Flag(getFlag(split[0], true), "");
             } else {

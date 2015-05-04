@@ -6,11 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
@@ -21,24 +25,92 @@ import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager = new BukkitSchematicHandler();
     
+    private boolean exportAll = false;
+    
+    public boolean exportAll(final Collection<Plot> plots, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
+    	if (exportAll) {
+    		return false;
+    	}
+    	if (plots.size() == 0) {
+    		return false;
+    	}
+    	exportAll = true;
+    	TaskManager.index.increment();
+    	final Integer currentIndex = TaskManager.index.toInteger();
+        final int task = TaskManager.runTaskRepeat(new Runnable() {
+            @Override
+            public void run() {
+            	if (plots.size() == 0) {
+            		Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.tasks.remove(currentIndex);
+                    TaskManager.runTask(ifSuccess);
+                    return;
+            	}
+            	Iterator<Plot> i = plots.iterator();
+            	final Plot plot = i.next();
+            	i.remove();
+                final CompoundTag sch = SchematicHandler.manager.getCompoundTag(plot.world, plot.id);
+                String o = UUIDHandler.getName(plot.owner);
+                if (o == null) {
+                	o = "unknown";
+                }
+                final String name;
+                if (namingScheme == null) {
+                	name = plot.id.x + ";" + plot.id.y + "," + plot.world + "," + o;
+                }
+                else {
+                	name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.id.toString()).replaceAll("%idx%", plot.id.x + "").replaceAll("%idy%", plot.id.y + "").replaceAll("%world%", plot.world);
+                }
+                final String directory;
+                if (outputDir == null) {
+                	directory = Settings.SCHEMATIC_SAVE_PATH;
+                }
+                else {
+                	directory = outputDir.getPath();
+                }
+                if (sch == null) {
+                    MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
+                } else {
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainUtil.sendMessage(null, "&6ID: " + plot.id);
+                            final boolean result = SchematicHandler.manager.save(sch, directory + File.separator + name + ".schematic");
+                            if (!result) {
+                                MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                            } else {
+                                MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                            }
+                        }
+                    });
+                }
+            }
+        }, 20);
+        TaskManager.tasks.put(currentIndex, task);
+    	return true;
+    }
+    
     /**
      * Paste a schematic
      *
-     * @param location  origin
-     * @param schematic schematic to paste
+     * @param schematic the schematic object to paste
      * @param plot      plot to paste in
+     * @param x_offset  offset x to paste it from plot origin
+     * @param z_offset  offset z to paste it from plot origin
      *
-     * @return true if succeeded
+     * @return boolean true if succeeded
      */
     public boolean paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
@@ -182,6 +254,17 @@ public abstract class SchematicHandler {
             }
         }
         final File file = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        return getSchematic(file);
+    }
+    
+    /**
+     * Get a schematic
+     *
+     * @param name to check
+     *
+     * @return schematic if found, else null
+     */
+    public Schematic getSchematic(File file) {
         if (!file.exists()) {
             PlotSquared.log(file.toString() + " doesn't exist");
             return null;

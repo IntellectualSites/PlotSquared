@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -52,7 +53,7 @@ public class Helpers extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.getOwner().equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
@@ -68,7 +69,7 @@ public class Helpers extends SubCommand {
                 return false;
             }
             if (!plot.helpers.contains(uuid)) {
-                if (plot.owner.equals(uuid)) {
+                if (plot.isOwner(uuid)) {
                     MainUtil.sendMessage(plr, C.ALREADY_OWNER);
                     return false;
                 }
@@ -91,17 +92,22 @@ public class Helpers extends SubCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args[1].equalsIgnoreCase("*")) {
-                final UUID uuid = DBFunc.everyone;
-                if (!plot.helpers.contains(uuid)) {
+                if (plot.helpers.size() == 0) {
                     MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
                     return true;
                 }
-                plot.removeHelper(uuid);
-                DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                for (UUID uuid : plot.helpers) {
+                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                }
+                plot.helpers = new ArrayList<>();
                 MainUtil.sendMessage(plr, C.HELPER_REMOVED);
                 return true;
             }
             final UUID uuid = UUIDHandler.getUUID(args[1]);
+            if (!plot.helpers.contains(uuid)) {
+                MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
+                return false;
+            }
             plot.removeHelper(uuid);
             DBFunc.removeHelper(loc.getWorld(), plot, uuid);
             EventUtil.manager.callHelper(plr, plot, uuid, false);

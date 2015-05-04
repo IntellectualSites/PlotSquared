@@ -188,7 +188,6 @@ public class JSONML {
      * Convert a well-formed (but not necessarily valid) XML string into a JSONArray using the JsonML transform. Each
      * XML tag is represented as a JSONArray in which the first element is the tag name. If the tag has attributes, then
      * the second element will be JSONObject containing the name/value pairs. If the tag contains children, then strings
-     * and JSONArrays will represent the child tags. Comments, prologs, DTDs, and <code>&lt;[ [ ]]></code> are ignored.
      *
      * @param string The source string.
      *
@@ -222,7 +221,7 @@ public class JSONML {
      * XML tag is represented as a JSONObject with a "tagName" property. If the tag has attributes, then the attributes
      * will be in the JSONObject as properties. If the tag contains children, the object will have a "childNodes"
      * property which will be an array of strings and JsonML JSONObjects.
-     * <p/>
+     * 
      * Comments, prologs, DTDs, and <code>&lt;[ [ ]]></code> are ignored.
      *
      * @param x An XMLTokener of the XML source text.
@@ -240,7 +239,7 @@ public class JSONML {
      * XML tag is represented as a JSONObject with a "tagName" property. If the tag has attributes, then the attributes
      * will be in the JSONObject as properties. If the tag contains children, the object will have a "childNodes"
      * property which will be an array of strings and JsonML JSONObjects.
-     * <p/>
+     * 
      * Comments, prologs, DTDs, and <code>&lt;[ [ ]]></code> are ignored.
      *
      * @param string The XML source text.

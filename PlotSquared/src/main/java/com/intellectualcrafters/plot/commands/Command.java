@@ -34,6 +34,7 @@ public enum Command {
     // (Rating system) (ratings can be stored as the average, and number of
     // ratings)
     // - /plot rate <number out of 10>
+    MOVE("move", ""),
     FLAG("flag", "f"),
     TARGET("target"),
     CLUSTER("cluster", "clusters"),

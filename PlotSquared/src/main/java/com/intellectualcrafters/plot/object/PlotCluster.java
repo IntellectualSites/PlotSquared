@@ -29,7 +29,7 @@ public class PlotCluster {
     public void setP2(final PlotId id) {
         this.pos2 = id;
     }
-
+    
     public PlotCluster(final String world, final PlotId pos1, final PlotId pos2, final UUID owner) {
         this.world = world;
         this.pos1 = pos1;
@@ -38,7 +38,7 @@ public class PlotCluster {
         this.settings = new PlotSettings(null);
     }
 
-    public boolean hasRights(final UUID uuid) {
+    public boolean isAdded(final UUID uuid) {
         return (this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited.contains(DBFunc.everyone) || this.helpers.contains(uuid) || this.helpers.contains(DBFunc.everyone));
     }
 

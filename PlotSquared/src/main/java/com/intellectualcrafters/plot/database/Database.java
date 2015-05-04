@@ -46,6 +46,8 @@ public abstract class Database {
     protected Database(final PlotSquared plotsquared) {
         this.plotsquared = plotsquared;
     }
+    
+    public abstract Connection forceConnection() throws SQLException, ClassNotFoundException ;
 
     /**
      * Opens a connection with the database

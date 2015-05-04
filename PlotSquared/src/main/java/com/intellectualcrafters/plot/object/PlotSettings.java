@@ -21,10 +21,12 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -51,7 +53,7 @@ public class PlotSettings {
     /**
      * Comments
      */
-    private ArrayList<PlotComment> comments = null;
+    private List<PlotComment> comments = null;
     /**
      * Flags
      */
@@ -154,20 +156,20 @@ public class PlotSettings {
         return "";
     }
 
-    public ArrayList<PlotComment> getComments(final int tier) {
+    public ArrayList<PlotComment> getComments(final String inbox) {
         final ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
             return null;
         }
         for (final PlotComment comment : this.comments) {
-            if (comment.tier == tier) {
+            if (comment.inbox.equals(inbox)) {
                 c.add(comment);
             }
         }
         return c;
     }
 
-    public void setComments(final ArrayList<PlotComment> comments) {
+    public void setComments(final List<PlotComment> comments) {
         this.comments = comments;
     }
 
@@ -177,7 +179,7 @@ public class PlotSettings {
         }
     }
 
-    public void removeComments(final ArrayList<PlotComment> comments) {
+    public void removeComments(final List<PlotComment> comments) {
         for (final PlotComment comment : comments) {
             removeComment(comment);
         }

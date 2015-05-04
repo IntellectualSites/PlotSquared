@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -60,14 +61,37 @@ public class SetOwner extends SubCommand {
             MainUtil.sendMessage(plr, C.NEED_USER);
             return false;
         }
-        if (!plot.owner.equals(UUIDHandler.getUUID(plr)) && !Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
-            return false;
-        }
-        final String world = loc.getWorld();
+        
         final PlotId bot = MainUtil.getBottomPlot(plot).id;
         final PlotId top = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
+        
+        PlotPlayer other = UUIDHandler.getPlayer(args[0]);
+        if (other == null) {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+        		MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+        		return false;
+        	}
+        }
+        else {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+        		int size = plots.size();
+                final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(loc.getWorld(), other)) + size;
+        		if (currentPlots > MainUtil.getAllowedPlots(other)) {
+                    sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
+                    return false;
+                }
+        	}
+        }
+        
+        if (!plot.isOwner(plr.getUUID())) {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+        		MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
+        		return false;
+        	}
+        }
+        
+        final String world = loc.getWorld();
         for (final PlotId id : plots) {
             final Plot current = PlotSquared.getPlots(world).get(id);
             final UUID uuid = getUUID(args[0]);
@@ -81,6 +105,9 @@ public class SetOwner extends SubCommand {
         }
         MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
+        if (other != null) {
+        	MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.id);
+        }
         return true;
     }
 }

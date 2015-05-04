@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * The plot class
@@ -138,43 +137,39 @@ public class Plot implements Cloneable {
     public boolean hasOwner() {
         return this.owner != null;
     }
+    
+    public boolean isOwner(UUID uuid) {
+        return PlotHandler.isOwner(this, uuid);
+    }
+    
+    /**
+     * Get a list of owner UUIDs for a plot (supports multi-owner mega-plots)
+     * @return
+     */
+    public HashSet<UUID> getOwners() {
+        return PlotHandler.getOwners(this);
+    }
 
     /**
      * Check if the player is either the owner or on the helpers list
      *
-     * @param player
+     * @param uuid
      *
      * @return true if the player is added as a helper or is the owner
      */
     public boolean isAdded(final UUID uuid) {
-        return ((this.helpers != null) && this.helpers.contains(DBFunc.everyone)) || ((this.helpers != null) && this.helpers.contains(uuid)) || ((this.owner != null) && this.owner.equals(uuid)) || ((this.owner != null) && (this.trusted != null) && (UUIDHandler.getPlayer(this.owner) != null) && (this.trusted.contains(uuid) || this.trusted.contains(DBFunc.everyone)));
+        return PlotHandler.isAdded(this, uuid);
     }
 
     /**
      * Should the player be allowed to enter?
      *
-     * @param player
+     * @param uuid
      *
-     * @return false if the player is allowed to enter
+     * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(final UUID uuid) {
         return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
-    }
-
-    /**
-     * Get the UUID of the owner
-     */
-    public UUID getOwner() {
-        return this.owner;
-    }
-
-    /**
-     * Set the owner
-     *
-     * @param player
-     */
-    public void setOwner(final UUID uuid) {
-        this.owner = uuid;
     }
 
     /**
@@ -187,7 +182,7 @@ public class Plot implements Cloneable {
     /**
      * Get a clone of the plot
      *
-     * @return
+     * @return Plot
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -280,31 +275,15 @@ public class Plot implements Cloneable {
         return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
     }
 
+    
     /**
      * Get the plot hashcode
      *
-     * @return integer. You can easily make this a character array <br> xI = c[0] x = c[1 -> xI...] yI = c[xI ... + 1] y
-     * = c[xI ... + 2 -> yI ...]
+     * @return integer. You can easily make this a character array <br> xI = c[0] x = c[1 -&gt; xI...] yI = c[xI ... + 1] y
+     * = c[xI ... + 2 -&gt; yI ...]
      */
     @Override
     public int hashCode() {
-        final int x = this.id.x;
-        final int y = this.id.y;
-        if (x >= 0) {
-            if (y >= 0) {
-                return (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
-            } else {
-                final int y1 = -y;
-                return (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
-            }
-        } else {
-            final int x1 = -x;
-            if (y >= 0) {
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
-            } else {
-                final int y1 = -y;
-                return -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
-            }
-        }
+        return this.id.hashCode();
     }
 }

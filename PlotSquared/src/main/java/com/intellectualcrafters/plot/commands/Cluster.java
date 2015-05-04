@@ -129,7 +129,7 @@ public class Cluster extends SubCommand {
                 // Add any existing plots to the current cluster
                 for (final Plot plot : PlotSquared.getPlots(plr.getLocation().getWorld()).values()) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
-                    if (cluster.equals(current) && !cluster.hasRights(plot.owner)) {
+                    if (cluster.equals(current) && !cluster.isAdded(plot.owner)) {
                         cluster.invited.add(plot.owner);
                         DBFunc.setInvited(world, cluster, plot.owner);
                     }
@@ -299,10 +299,10 @@ public class Cluster extends SubCommand {
                 // check uuid
                 final UUID uuid = UUIDHandler.getUUID(args[1]);
                 if (uuid == null) {
-                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[2]);
                     return false;
                 }
-                if (!cluster.hasRights(uuid)) {
+                if (!cluster.isAdded(uuid)) {
                     // add the user if not added
                     cluster.invited.add(uuid);
                     final String world = plr.getLocation().getWorld();
@@ -344,7 +344,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // Can't kick if the player is yourself, the owner, or not added to the cluster
-                if (uuid.equals(UUIDHandler.getUUID(plr)) || uuid.equals(cluster.owner) || !cluster.hasRights(uuid)) {
+                if (uuid.equals(UUIDHandler.getUUID(plr)) || uuid.equals(cluster.owner) || !cluster.isAdded(uuid)) {
                     MainUtil.sendMessage(plr, C.CANNOT_KICK_PLAYER, cluster.getName());
                     return false;
                 }
@@ -393,7 +393,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 final UUID uuid = UUIDHandler.getUUID(plr);
-                if (!cluster.hasRights(uuid)) {
+                if (!cluster.isAdded(uuid)) {
                     MainUtil.sendMessage(plr, C.CLUSTER_NOT_ADDED);
                     return false;
                 }
@@ -435,7 +435,7 @@ public class Cluster extends SubCommand {
                 }
                 final UUID uuid = UUIDHandler.getUUID(args[2]);
                 if (uuid == null) {
-                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
+                    MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[2]);
                     return false;
                 }
                 if (args[1].toLowerCase().equals("add")) {
@@ -466,7 +466,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 final UUID uuid = UUIDHandler.getUUID(plr);
-                if (!cluster.hasRights(uuid)) {
+                if (!cluster.isAdded(uuid)) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.tp.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp.other");
                         return false;
@@ -508,7 +508,7 @@ public class Cluster extends SubCommand {
                 }
                 final String name = cluster.getName();
                 final String size = ((cluster.getP2().x - cluster.getP1().x) + 1) + "x" + ((cluster.getP2().y - cluster.getP1().y) + 1);
-                final String rights = cluster.hasRights(UUIDHandler.getUUID(plr)) + "";
+                final String rights = cluster.isAdded(UUIDHandler.getUUID(plr)) + "";
                 String message = C.CLUSTER_INFO.s();
                 message = message.replaceAll("%id%", id);
                 message = message.replaceAll("%owner%", owner);

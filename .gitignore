@@ -63,6 +63,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
+\doc
 
 # External tool builders
 .externalToolBuilders/

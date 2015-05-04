@@ -41,8 +41,13 @@ public class DebugSaveTest extends SubCommand {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
             plots.addAll(PlotSquared.getPlots());
-            DBFunc.createPlots(plots);
-            DBFunc.createAllSettingsAndHelpers(plots);
+            MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
+            DBFunc.createPlotsAndData(plots, new Runnable() {
+                @Override
+                public void run() {
+                    MainUtil.sendMessage(null, "&6Database sync finished!");
+                }
+            });
         } else {
             MainUtil.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
         }

@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Updater and DB settings
  *
@@ -28,24 +31,47 @@ package com.intellectualcrafters.plot.config;
  */
 public class Settings {
     public static boolean ENABLE_CLUSTERS = false;
+    public static boolean FAST_CLEAR = false;
     /**
      * Default UUID_FECTHING: false
      */
-    public static boolean UUID_FECTHING = false;
+    public static boolean PERMISSION_CACHING = false;
     public static boolean UUID_FROM_DISK = false;
     /**
-     *
+     * PlotMe settings
      */
     public static boolean CONVERT_PLOTME = true;
+    public static boolean CACHE_PLOTME = false;
     public static boolean USE_PLOTME_ALIAS = false;
     /**
-     *
+     * Comment system
+     */
+    public static int COMMENT_NOTIFICATION_INTERVAL = -1;
+    /**
+     * Chunk processor
+     */
+    public static boolean CHUNK_PROCESSOR = false;
+    public static int CHUNK_PROCESSOR_MAX_BLOCKSTATES = 4096;
+    public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
+    /**
+     * TNT listener
+     */
+    public static boolean TNT_LISTENER = false;
+    /**
+     * Check for falling blocks when pistons extend?
+     */
+    public static boolean PISTON_FALLING_BLOCK_CHECK = true;
+    /**
+     * Max auto claiming size
      */
     public static int MAX_AUTO_SIZE = 4;
     /**
      * Default worldedit-require-selection-in-mask: false
      */
     public static boolean REQUIRE_SELECTION = true;
+    public static long WE_MAX_VOLUME = 500000;
+    public static long WE_MAX_ITERATIONS = 1000;
+    public static List<String> WE_BLACKLIST = new ArrayList<>();
     /**
      * Default kill road mobs: true
      */
@@ -58,14 +84,6 @@ public class Settings {
      * Teleport to path on login
      */
     public static boolean TELEPORT_ON_LOGIN = false;
-    /**
-     * Mob Cap Enabled
-     */
-    //    public static boolean MOB_CAP_ENABLED = false;
-    /**
-     * The Mob Cap
-     */
-    //    public static int MOB_CAP = 20;
     /**
      * Display titles
      */
@@ -135,13 +153,19 @@ public class Settings {
     /**
      * Use offline mode storage
      */
+    public static boolean TWIN_MODE_UUID = false;
     public static boolean OFFLINE_MODE = false;
+    public static boolean UUID_LOWERCASE = false;
     /**
      * Command confirmation
      */
     public static boolean CONFIRM_CLEAR = true;
     public static boolean CONFIRM_DELETE = true;
     public static boolean CONFIRM_UNLINK = true;
+    /**
+     * Use global plot limit?
+     */
+    public static boolean GLOBAL_LIMIT = false;
 
     /**
      * Database settings

@@ -48,10 +48,22 @@ public abstract class FlagValue<T> {
 
         @Override
         public Boolean parse(final String t) {
-            try {
-                return Boolean.parseBoolean(t);
-            } catch (final IllegalArgumentException e) {
-                return null;
+            switch (t.toLowerCase()) {
+                case "1":
+                case "yes":
+                case "allow":
+                case "true": {
+                    return true;
+                }
+                case "0":
+                case "no":
+                case "deny":
+                case "false": {
+                    return false;
+                }
+                default: {
+                    return null;
+                }
             }
         }
 
@@ -133,7 +145,7 @@ public abstract class FlagValue<T> {
         public Integer parse(final String t) {
             try {
                 final int value = Integer.parseInt(t);
-                if (value >= 0) {
+                if (value < 0) {
                     return null;
                 }
                 return value;

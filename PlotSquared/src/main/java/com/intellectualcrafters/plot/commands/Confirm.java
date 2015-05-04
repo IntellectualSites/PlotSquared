@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
  */
 public class Confirm extends SubCommand {
     public Confirm() {
-        super(Command.CONFIRM, "Confirm command execution", "confirm", CommandCategory.ACTIONS, true);
+        super("confirm", "plots.use", "Confirm an action", "confirm", "confirm", CommandCategory.ACTIONS, false);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Confirm extends SubCommand {
     		return false;
     	}
     	CmdConfirm.removePending(plr);
-    	if (System.currentTimeMillis() - command.timestamp > 10000) {
+    	if (System.currentTimeMillis() - command.timestamp > 20000) {
     	    MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
     	    return false;
     	}
