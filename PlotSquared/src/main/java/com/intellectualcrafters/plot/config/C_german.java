@@ -130,7 +130,6 @@ public enum C_german {
     COMMENT_REMOVED("$4Kommentar/e n$2 - '$3%s$2' erfolgreich gelöscht."),
     COMMENT_ADDED("$4Ein Kommentar wurde hinterlassen."),
     COMMENT_HEADER("$2====== Kommentare ======"),
-    COMMENT_SYNTAX("$2Syntax: /plots comment <everyone|trusted|helper|owner|admin> <Kommentar>"),
     /*
      * Console
      */
