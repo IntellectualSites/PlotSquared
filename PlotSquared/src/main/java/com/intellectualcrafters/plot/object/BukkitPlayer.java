@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -14,10 +15,12 @@ public class BukkitPlayer implements PlotPlayer {
     public final Player player;
     UUID uuid;
     String name;
-    public HashSet<String> hasPerm = new HashSet<>();
-    public HashSet<String> noPerm = new HashSet<>();
     private int op = 0;
     private long last = 0;
+    public HashSet<String> hasPerm = new HashSet<>();
+    public HashSet<String> noPerm = new HashSet<>();
+    
+    private HashMap<String, Object> meta;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -117,5 +120,28 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public Location getLocationFull() {
         return BukkitUtil.getLocationFull(this.player);
+    }
+
+    @Override
+    public void setMeta(String key, Object value) {
+        if (this.meta == null) {
+            this.meta = new HashMap<String, Object>();
+        }
+        this.meta.put(key, value);
+    }
+
+    @Override
+    public Object getMeta(String key) {
+        if (this.meta != null) {
+            return this.meta.get(key);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteMeta(String key) {
+        if (this.meta != null) {
+            this.meta.remove(key);
+        }
     }
 }

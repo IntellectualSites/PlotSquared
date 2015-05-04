@@ -187,7 +187,7 @@ public enum C {
     /*
      * Core Stuff
      */
-    PREFIX("$3[$1P2$3] "),
+    PREFIX("$3[$1P2$3] $2"),
     ENABLED("$1PlotSquared is now enabled"),
     EXAMPLE_MESSAGE("$2This is an example message &k!!!"),
     /*

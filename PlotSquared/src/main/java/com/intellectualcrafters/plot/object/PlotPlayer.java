@@ -30,4 +30,8 @@ public interface PlotPlayer {
     public String getName();
     
     public void setCompassTarget(Location loc);
+    
+    public void setMeta(String key, Object value);
+    public Object getMeta(String key);
+    public void deleteMeta(String key);
 }

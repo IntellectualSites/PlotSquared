@@ -329,6 +329,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (plot.isDenied(pp.getUUID())) {
                         if (!Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                            player.teleport(event.getFrom());
                             event.setCancelled(true);
                             return;
                         }

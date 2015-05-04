@@ -909,7 +909,7 @@ public class SQLManager implements AbstractDB {
                     }
                     final Set<Flag> flags = new HashSet<Flag>();
                     boolean exception = false;
-                    for (final String element : flags_string) {
+                    for (String element : flags_string) {
                         if (element.contains(":")) {
                             final String[] split = element.split(":");
                             try {
@@ -921,7 +921,13 @@ public class SQLManager implements AbstractDB {
                                 exception = true;
                             }
                         } else {
-                            flags.add(new Flag(FlagManager.getFlag(element, true), ""));
+                            element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
+                            if (StringUtils.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
+                                flags.add(new Flag(FlagManager.getFlag(element, true), ""));
+                            }
+                            else {
+                                System.out.print("INVALID FLAG: " + element);
+                            }
                         }
                     }
                     if (exception) {

@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -94,7 +95,7 @@ public class Info extends SubCommand {
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
-            new InfoInventory(plot, player).build().display();
+            new InfoInventory(plot, player).build().display(); 
             return true;
         }
         final boolean hasOwner = plot.hasOwner();
@@ -189,7 +190,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%trusted%", trusted);
         info = info.replaceAll("%denied%", denied);
         info = info.replaceAll("%rating%", rating);
-        info = info.replaceAll("%flags%", flags);
+        info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
         return info;
