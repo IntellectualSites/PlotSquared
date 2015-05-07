@@ -186,7 +186,7 @@ public class BukkitHybridUtils extends HybridUtils {
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                if (regions.size() == 0) {
+                if (regions.size() == 0 && chunks.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
                     PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
@@ -194,12 +194,14 @@ public class BukkitHybridUtils extends HybridUtils {
                 } else {
                     try {
                     	if (chunks.size() < 1024) {
-                    		final ChunkLoc loc = regions.get(0);
-                            PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
-                            PlotSquared.log(" - Remaining: " + regions.size());
-                    		chunks.addAll(getChunks(regions.get(0)));
-                    		regions.remove(0);
-                    		System.gc();
+                    	    if (regions.size() > 0) {
+                        		final ChunkLoc loc = regions.get(0);
+                                PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
+                                PlotSquared.log(" - Remaining: " + regions.size());
+                        		chunks.addAll(getChunks(loc));
+                        		regions.remove(0);
+                        		System.gc();
+                    	    }
                     	}
                     	if (chunks.size() > 0) {
                     		long diff = System.currentTimeMillis() + 25;
@@ -222,7 +224,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                 return;
                     		}
                     		if (System.currentTimeMillis() - last < 50) {
-                        		while (System.currentTimeMillis() < diff) {
+                        		while (System.currentTimeMillis() < diff && chunks.size() > 0) {
                         			ChunkLoc chunk = chunks.get(0);
                         			chunks.remove(0);
                         			regenerateRoad(world, chunk);
@@ -232,6 +234,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     		last = System.currentTimeMillis();
                     	}
                     } catch (final Exception e) {
+                        e.printStackTrace();
                         final ChunkLoc loc = regions.get(0);
                         PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                         final int sx = loc.x << 5;

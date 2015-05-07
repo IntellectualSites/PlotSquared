@@ -94,7 +94,11 @@ public class PlotSquared {
     public static WorldEditPlugin worldEdit = null;
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
+    
+    
     private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
+    
+    
     private static Database database;
     public static Connection connection;
     
