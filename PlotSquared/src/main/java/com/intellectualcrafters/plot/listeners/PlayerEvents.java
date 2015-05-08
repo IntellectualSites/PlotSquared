@@ -354,7 +354,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-        if (!plotworld.PLOT_CHAT) {
+        final PlotPlayer plr = BukkitUtil.getPlayer(player);
+        if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr.getMeta("chat"))) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(player);
