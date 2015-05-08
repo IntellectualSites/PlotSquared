@@ -114,7 +114,7 @@ public class UUIDHandler {
         UUIDHandler.CACHED = true;
         if (Settings.TWIN_MODE_UUID) {
             HashSet<UUID> all = getAllUUIDS();
-            final File playerdataFolder = new File(world + File.separator + "playerdata");
+            final File playerdataFolder = new File(Bukkit.getWorldContainer(), world + File.separator + "playerdata");
             String[] dat = playerdataFolder.list(new FilenameFilter() {
                 @Override
                 public boolean accept(final File f, final String s) {
@@ -146,7 +146,7 @@ public class UUIDHandler {
         final HashSet<String> names = new HashSet<>();
         for (final String worldname : worlds) {
             // Getting UUIDs
-            final File playerdataFolder = new File(worldname + File.separator + "playerdata");
+            final File playerdataFolder = new File(Bukkit.getWorldContainer(), worldname + File.separator + "playerdata");
             String[] dat = playerdataFolder.list(new FilenameFilter() {
                 @Override
                 public boolean accept(final File f, final String s) {
