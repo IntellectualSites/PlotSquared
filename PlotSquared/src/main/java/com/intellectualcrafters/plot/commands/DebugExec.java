@@ -59,80 +59,80 @@ public class DebugExec extends SubCommand {
                     if (ExpireManager.task != -1) {
                         Bukkit.getScheduler().cancelTask(ExpireManager.task);
                     } else {
-                        return MainUtil.sendMessage(null, "Task already halted");
+                        return MainUtil.sendMessage(player, "Task already halted");
                     }
                     ExpireManager.task = -1;
-                    return MainUtil.sendMessage(null, "Cancelled task.");
+                    return MainUtil.sendMessage(player, "Cancelled task.");
                 }
                 case "start-expire": {
                     if (ExpireManager.task == -1) {
                         ExpireManager.runTask();
                     } else {
-                        return MainUtil.sendMessage(null, "Plot expiry task already started");
+                        return MainUtil.sendMessage(player, "Plot expiry task already started");
                     }
-                    return MainUtil.sendMessage(null, "Started plot expiry task");
+                    return MainUtil.sendMessage(player, "Started plot expiry task");
                 }
                 case "update-expired": {
                     if (args.length > 1) {
                         final String world = args[1];
                         if (!BlockManager.manager.isWorld(world)) {
-                            return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
+                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                         }
-                        MainUtil.sendMessage(null, "Updating expired plot list");
+                        MainUtil.sendMessage(player, "Updating expired plot list");
                         ExpireManager.updateExpired(args[1]);
                         return true;
                     }
-                    return MainUtil.sendMessage(null, "Use /plot debugexec update-expired <world>");
+                    return MainUtil.sendMessage(player, "Use /plot debugexec update-expired <world>");
                 }
                 case "show-expired": {
                     if (args.length > 1) {
                         final String world = args[1];
                         if (!BlockManager.manager.isWorld(world)) {
-                            return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
+                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                         }
                         if (!ExpireManager.expiredPlots.containsKey(args[1])) {
-                            return MainUtil.sendMessage(null, "No task for world: " + args[1]);
+                            return MainUtil.sendMessage(player, "No task for world: " + args[1]);
                         }
-                        MainUtil.sendMessage(null, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
+                        MainUtil.sendMessage(player, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
                         for (final Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
                             final Plot plot = entry.getKey();
                             final Long stamp = entry.getValue();
-                            MainUtil.sendMessage(null, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + stamp);
+                            MainUtil.sendMessage(player, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + stamp);
                         }
                         return true;
                     }
-                    return MainUtil.sendMessage(null, "Use /plot debugexec show-expired <world>");
+                    return MainUtil.sendMessage(player, "Use /plot debugexec show-expired <world>");
                 }
                 case "seen": {
                     if (args.length != 2) {
-                        return MainUtil.sendMessage(null, "Use /plot debugexec seen <player>");
+                        return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
                     }
                     final UUID uuid = UUIDHandler.getUUID(args[1]);
                     if (uuid == null) {
-                        return MainUtil.sendMessage(null, "player not found: " + args[1]);
+                        return MainUtil.sendMessage(player, "player not found: " + args[1]);
                     }
                     final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
                     if ((op == null) || (op.getLastPlayed() == 0)) {
-                        return MainUtil.sendMessage(null, "player hasn't connected before: " + args[1]);
+                        return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]);
                     }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());
                     final Date date = new Date(stamp.getTime());
-                    MainUtil.sendMessage(null, "PLAYER: " + args[1]);
-                    MainUtil.sendMessage(null, "UUID: " + uuid);
-                    MainUtil.sendMessage(null, "Object: " + date.toGMTString());
-                    MainUtil.sendMessage(null, "GMT: " + date.toGMTString());
-                    MainUtil.sendMessage(null, "Local: " + date.toLocaleString());
+                    MainUtil.sendMessage(player, "PLAYER: " + args[1]);
+                    MainUtil.sendMessage(player, "UUID: " + uuid);
+                    MainUtil.sendMessage(player, "Object: " + date.toGMTString());
+                    MainUtil.sendMessage(player, "GMT: " + date.toGMTString());
+                    MainUtil.sendMessage(player, "Local: " + date.toLocaleString());
                     return true;
                 }
                 case "trim-check": {
                     if (args.length != 2) {
-                        MainUtil.sendMessage(null, "Use /plot debugexec trim-check <world>");
-                        MainUtil.sendMessage(null, "&7 - Generates a list of regions to trim");
-                        return MainUtil.sendMessage(null, "&7 - Run after plot expiry has run");
+                        MainUtil.sendMessage(player, "Use /plot debugexec trim-check <world>");
+                        MainUtil.sendMessage(player, "&7 - Generates a list of regions to trim");
+                        return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
                     if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(args[1])) {
-                        return MainUtil.sendMessage(null, "Invalid world: " + args[1]);
+                        return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();
                     final boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
@@ -162,7 +162,7 @@ public class DebugExec extends SubCommand {
                         }
                     });
                     if (!result) {
-                        MainUtil.sendMessage(null, "Trim task already started!");
+                        MainUtil.sendMessage(player, "Trim task already started!");
                     }
                     return result;
                 }
