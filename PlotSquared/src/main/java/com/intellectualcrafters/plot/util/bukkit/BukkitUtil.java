@@ -50,8 +50,13 @@ public class BukkitUtil extends BlockManager {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
+        String name = player.getName();
+        PlotPlayer pp = UUIDHandler.players.get(name);
+        if (pp != null) {
+            return pp;
+        }
         lastPlotPlayer = new BukkitPlayer(player);
-        UUIDHandler.players.put(lastPlotPlayer.getName(), lastPlotPlayer);
+        UUIDHandler.players.put(name, lastPlotPlayer);
         lastPlayer = player;
         return lastPlotPlayer;
     }

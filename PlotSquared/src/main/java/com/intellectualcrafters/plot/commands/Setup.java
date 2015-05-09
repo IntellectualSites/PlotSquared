@@ -144,6 +144,12 @@ public class Setup extends SubCommand {
                         object.step = ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
                         ((PlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);
                     }
+                    if (object.step.length == 0) {
+                        object.current = 4;
+                        MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
+                        object.setup_index = 0;
+                        return true;
+                    }
                     final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 } else {
