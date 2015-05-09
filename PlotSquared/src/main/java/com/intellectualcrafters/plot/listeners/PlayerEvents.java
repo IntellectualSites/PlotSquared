@@ -759,9 +759,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
     	Action action = event.getAction();
-        if (action == Action.LEFT_CLICK_BLOCK) {
-            return;
-        }
         final Block block = event.getClickedBlock();
         if (block == null) {
             return;
@@ -780,7 +777,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     return;
                 }
-                if (action != Action.PHYSICAL) {
+                if (action != Action.PHYSICAL && action != Action.LEFT_CLICK_BLOCK) {
                 	MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
                 }
                 event.setCancelled(true);
@@ -795,7 +792,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (Permissions.hasPermission(pp, "plots.admin.interact.other")) {
                     return;
                 }
-                if (action != Action.PHYSICAL) {
+                if (action != Action.PHYSICAL && action != Action.LEFT_CLICK_BLOCK) {
                 	MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
                 }
                 event.setCancelled(true);
@@ -808,7 +805,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-        	if (action != Action.PHYSICAL) {
+            if (action != Action.PHYSICAL && action != Action.LEFT_CLICK_BLOCK) {
         		MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
         	}
             event.setCancelled(true);

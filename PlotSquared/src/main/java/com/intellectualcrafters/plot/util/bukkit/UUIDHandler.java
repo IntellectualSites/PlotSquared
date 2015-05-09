@@ -136,6 +136,7 @@ public class UUIDHandler {
                     }
                 }
             }
+            add(new StringWrapper("*"), DBFunc.everyone);
             PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
             return;
         }
