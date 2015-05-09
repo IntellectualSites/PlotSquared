@@ -46,6 +46,11 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
  * @author Empire92
  */
 public class HybridGen extends PlotGenerator {
+    
+    public HybridGen(String world) {
+        super(world);
+    }
+
     /**
      * Set to static to re-use the same managet for all Default World Generators
      */

@@ -17,7 +17,7 @@ public class WorldEvents implements Listener {
     public static String lastWorld = null;
     
     public static String getName(World world) {
-        if (lastWorld != null) {
+        if (lastWorld != null && !lastWorld.equals("CheckingPlotSquaredGenerator")) {
             return lastWorld;
         }
         else {

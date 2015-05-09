@@ -350,7 +350,7 @@ public class PlotSquared {
                 try {
                     final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
                     if (gen_string == null) {
-                        generator = new HybridGen();
+                        generator = new HybridGen(world);
                     } else {
                         generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
                     }

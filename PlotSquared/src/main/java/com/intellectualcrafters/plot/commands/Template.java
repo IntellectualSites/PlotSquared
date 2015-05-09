@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -87,7 +88,8 @@ public class Template extends SubCommand {
                 PlotSquared.config.set("worlds." + world, worldConfig.get(""));
                 try {
                     PlotSquared.config.save(PlotSquared.configFile);
-                } catch (IOException e) {
+                    PlotSquared.config.load(PlotSquared.configFile);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 String manager = worldConfig.getString("generator.plugin");

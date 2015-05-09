@@ -328,7 +328,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (!PlotSquared.setupPlotWorld(world, id)) {
             return null;
         }
-        HybridGen result = new HybridGen();
+        HybridGen result = new HybridGen(world);
         TaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
@@ -440,7 +440,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if ((gen_plugin != null) && gen_plugin.isEnabled()) {
             return gen_plugin.getDefaultWorldGenerator(world, "");
         } else {
-            return new HybridGen();
+            return new HybridGen(world);
         }
     }
 

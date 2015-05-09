@@ -41,6 +41,10 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public int X;
     public int Z;
     private PseudoRandom random = new PseudoRandom();
+    
+    public PlotGenerator(String world) {
+        WorldEvents.lastWorld = world;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

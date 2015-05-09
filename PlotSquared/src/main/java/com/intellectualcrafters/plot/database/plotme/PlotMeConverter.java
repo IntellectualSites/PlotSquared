@@ -266,7 +266,7 @@ public class PlotMeConverter {
                                 // Load using Bukkit API
                                 // - User must set generator manually
                                 Bukkit.getServer().unloadWorld(world, true);
-                                final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen()).createWorld();
+                                final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen(actualWorldName)).createWorld();
                                 myworld.save();
                             }
                         }
