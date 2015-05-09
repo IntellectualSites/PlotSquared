@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.BukkitCommand;
 import com.intellectualcrafters.plot.commands.Buy;
+import com.intellectualcrafters.plot.commands.Chat;
 import com.intellectualcrafters.plot.commands.Claim;
 import com.intellectualcrafters.plot.commands.Clear;
 import com.intellectualcrafters.plot.commands.Comment;
@@ -261,6 +262,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         MainCommand.subCommands.add(new Condense());
         MainCommand.subCommands.add(new Confirm());
         MainCommand.subCommands.add(new Copy());
+        MainCommand.subCommands.add(new Chat());
         final BukkitCommand bcmd = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
         plotCommand.setExecutor(bcmd);

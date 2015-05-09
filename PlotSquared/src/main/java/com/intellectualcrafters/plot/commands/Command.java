@@ -76,7 +76,8 @@ public enum Command {
     UNBAN("unban", "unblock"),
     DATABASE("database", "convert"),
     CONFIRM("confirm"),
-    TP("tp", "tp");
+    TP("tp", "tp"),
+    CHAT("chat", "on|off", new CommandPermission("plots.chat"));
     /**
      * Command
      */
