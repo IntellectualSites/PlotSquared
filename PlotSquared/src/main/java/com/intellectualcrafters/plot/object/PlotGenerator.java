@@ -31,6 +31,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
@@ -74,6 +75,10 @@ public abstract class PlotGenerator extends ChunkGenerator {
         this.random.state = h;
         this.result = new short[16][];
         PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
+        if (plotworld == null) {
+            plotworld = getNewPlotWorld(world.getName());
+            PlotSquared.addPlotWorld(world.getName(), plotworld, getPlotManager());
+        }
         Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
         this.X = cx << 4;
         this.Z = cz << 4;
