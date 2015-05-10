@@ -111,8 +111,16 @@ public class PlotListener extends APlotListener {
                 player.setPlayerWeather(getWeatherType(weatherFlag.getValueString()));
             }
             if ((FlagManager.isBooleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
-                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "");
-                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner));
+                Flag greetingFlag = FlagManager.getPlotFlag(plot, "greeting");
+                String greeting;
+                if (greetingFlag != null) {
+                    greeting = greetingFlag.getValue() + "";
+                }
+                else {
+                    greeting = "";
+                }
+                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting);
+                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceFirst("%s", getName(plot.owner)).replaceAll("%greeting%", greeting);
                 if (AbstractTitle.TITLE_CLASS != null) {
                     AbstractTitle.TITLE_CLASS.sendTitle(player, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
                 }
