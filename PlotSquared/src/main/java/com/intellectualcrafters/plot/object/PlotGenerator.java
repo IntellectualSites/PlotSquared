@@ -70,6 +70,15 @@ public abstract class PlotGenerator extends ChunkGenerator {
         return (List<BlockPopulator>)(List<?>) getPopulators(WorldEvents.getName(world));
     }
     
+    private Biome getBiome(String input) {
+        for (Biome biome : Biome.values()) {
+            if (biome.name().equalsIgnoreCase(input)) {
+                return biome;
+            }
+        }
+        return Biome.FOREST;
+    }
+    
     @Override
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         final int prime = 13;
@@ -83,7 +92,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             plotworld = getNewPlotWorld(world.getName());
             PlotSquared.addPlotWorld(world.getName(), plotworld, getPlotManager());
         }
-        Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
+        Biome biome = getBiome(plotworld.PLOT_BIOME);
         this.X = cx << 4;
         this.Z = cz << 4;
         if (ChunkManager.FORCE_PASTE) {
