@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -31,12 +32,12 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
 public abstract class PlotGenerator extends ChunkGenerator {
     
+    private boolean loaded = false;
     private short[][] result;
     public int X;
     public int Z;
@@ -49,73 +50,87 @@ public abstract class PlotGenerator extends ChunkGenerator {
     @SuppressWarnings("unchecked")
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        PlotSquared.loadWorld(WorldEvents.getName(world), this);
-        PlotWorld plotworld = PlotSquared.getPlotWorld(WorldEvents.getName(world));
-        if (!plotworld.MOB_SPAWNING) {
-            if (!plotworld.SPAWN_EGGS) {
-                world.setSpawnFlags(false, false);
+        try {
+            if (!loaded) {
+                PlotSquared.loadWorld(WorldEvents.getName(world), this);
+                PlotWorld plotworld = PlotSquared.getPlotWorld(WorldEvents.getName(world));
+                if (!plotworld.MOB_SPAWNING) {
+                    if (!plotworld.SPAWN_EGGS) {
+                        world.setSpawnFlags(false, false);
+                    }
+                    world.setAmbientSpawnLimit(0);
+                    world.setAnimalSpawnLimit(0);
+                    world.setMonsterSpawnLimit(0);
+                    world.setWaterAnimalSpawnLimit(0);
+                }
+                else {
+                    world.setSpawnFlags(true, true);
+                    world.setAmbientSpawnLimit(-1);
+                    world.setAnimalSpawnLimit(-1);
+                    world.setMonsterSpawnLimit(-1);
+                    world.setWaterAnimalSpawnLimit(-1);
+                }
+                loaded = true;
+                return (List<BlockPopulator>)(List<?>) getPopulators(WorldEvents.getName(world));
             }
-            world.setAmbientSpawnLimit(0);
-            world.setAnimalSpawnLimit(0);
-            world.setMonsterSpawnLimit(0);
-            world.setWaterAnimalSpawnLimit(0);
         }
-        else {
-            world.setSpawnFlags(true, true);
-            world.setAmbientSpawnLimit(-1);
-            world.setAnimalSpawnLimit(-1);
-            world.setMonsterSpawnLimit(-1);
-            world.setWaterAnimalSpawnLimit(-1);
+        catch (Exception e) {
+            e.printStackTrace();
         }
-        return (List<BlockPopulator>)(List<?>) getPopulators(WorldEvents.getName(world));
+        return new ArrayList<BlockPopulator>();
     }
     
     @Override
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
-        final int prime = 13;
-        int h = 1;
-        h = (prime * h) + cx;
-        h = (prime * h) + cz;
-        this.random.state = h;
-        this.result = new short[16][];
-        PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
-        if (plotworld == null) {
-            plotworld = getNewPlotWorld(world.getName());
-            PlotSquared.addPlotWorld(world.getName(), plotworld, getPlotManager());
-        }
-        Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
-        this.X = cx << 4;
-        this.Z = cz << 4;
-        if (ChunkManager.FORCE_PASTE) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    if (biomes != null) {
-                        biomes.setBiome(x, z, biome);
+        try {
+            if (!loaded) {
+                PlotSquared.loadWorld(WorldEvents.getName(world), this);
+                loaded = true;
+            }
+            final int prime = 13;
+            int h = 1;
+            h = (prime * h) + cx;
+            h = (prime * h) + cz;
+            this.random.state = h;
+            this.result = new short[16][];
+            this.X = cx << 4;
+            this.Z = cz << 4;
+            if (ChunkManager.FORCE_PASTE) {
+                PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
+                Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
+                for (short x = 0; x < 16; x++) {
+                    for (short z = 0; z < 16; z++) {
+                        if (biomes != null) {
+                            biomes.setBiome(x, z, biome);
+                        }
+                        final PlotLoc loc = new PlotLoc((X + x), (Z + z));
+                        final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
+                        for (final Entry<Short, Short> entry : blocks.entrySet()) {
+                            setBlock(x, entry.getKey(), z, entry.getValue());
+                        }
                     }
-                    final PlotLoc loc = new PlotLoc((X + x), (Z + z));
-                    final HashMap<Short, Short> blocks = ChunkManager.GENERATE_BLOCKS.get(loc);
-                    for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                        setBlock(x, entry.getKey(), z, entry.getValue());
+                }
+                return this.result;
+            }
+            generateChunk(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz, biomes);
+            if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                PlotLoc loc;
+                for (Entry<PlotLoc, HashMap<Short, Short>> entry : ChunkManager.GENERATE_BLOCKS.entrySet()) {
+                    for (Entry<Short, Short> entry2 : entry.getValue().entrySet()) {
+                        loc = entry.getKey();
+                        int xx = loc.x - X;
+                        int zz = loc.z - Z;
+                        if (xx >= 0 && xx < 16) {
+                        	if (zz >= 0 && zz < 16) {
+                        		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                        	}
+                        }
                     }
                 }
             }
-            return this.result;
         }
-        generateChunk(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz, biomes);
-        if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
-            PlotLoc loc;
-            for (Entry<PlotLoc, HashMap<Short, Short>> entry : ChunkManager.GENERATE_BLOCKS.entrySet()) {
-                for (Entry<Short, Short> entry2 : entry.getValue().entrySet()) {
-                    loc = entry.getKey();
-                    int xx = loc.x - X;
-                    int zz = loc.z - Z;
-                    if (xx >= 0 && xx < 16) {
-                    	if (zz >= 0 && zz < 16) {
-                    		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
-                    	}
-                    }
-                }
-            }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
