@@ -926,7 +926,7 @@ public class SQLManager implements AbstractDB {
                                 flags.add(new Flag(FlagManager.getFlag(element, true), ""));
                             }
                             else {
-                                System.out.print("INVALID FLAG: " + element);
+                                PlotSquared.log("INVALID FLAG: " + element);
                             }
                         }
                     }

@@ -3,11 +3,16 @@ package com.intellectualsites.translation;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -24,6 +29,7 @@ public class YamlTranslationFile extends TranslationFile {
     private HashMap<String, String> map;
     private String[] header;
     private boolean fancyHead = false;
+    private boolean isC = false;
     private YamlTranslationFile instance;
     /**
      * YAML Object
@@ -37,10 +43,11 @@ public class YamlTranslationFile extends TranslationFile {
      * @param language translation language
      * @param name     project name
      */
-    public YamlTranslationFile(final File path, final TranslationLanguage language, final String name, final TranslationManager manager) {
+    public YamlTranslationFile(final File path, final TranslationLanguage language, final String name, final TranslationManager manager, final boolean isC) {
         this.language = language;
         this.name = name;
         this.manager = manager;
+        this.isC  = isC;
         if (!path.exists()) {
             if (!path.mkdirs()) {
                 throw new RuntimeException("Could not create: " + path.getAbsolutePath());
@@ -136,39 +143,54 @@ public class YamlTranslationFile extends TranslationFile {
      */
     @Override
     public void saveFile() {
-        try {
-            if (!this.file.exists()) {
-                this.file.getParentFile().mkdirs();
-                this.file.createNewFile();
+        if (this.isC()) {
+            YamlConfiguration conf = YamlConfiguration.loadConfiguration(this.file);
+            for (String key : this.map.keySet()) {
+                C c = C.valueOf(key.toUpperCase());
+                conf.set("locale." + c.getCat() + "." + key, this.map.get(key));
+                conf.set(key, null);
             }
-            final FileWriter writer = new FileWriter(this.file);
-            // String s = getYaml().dump(map);
-            if ((this.header != null) && !this.fancyHead) {
-                for (final String head : this.header) {
-                    writer.write("# " + head + "\n");
-                }
-            } else if ((this.header != null) && this.fancyHead) {
-                for (final String head : this.header) {
-                    writer.write(head);
-                }
+            try {
+                conf.save(this.file);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            final int length = this.map.size();
-            int current = 0;
-            for (final Map.Entry<String, String> entry : this.map.entrySet()) {
-                final String var = entry.getKey();
-                final String val = entry.getValue();
-                final String des = this.manager.getDescription(var);
-                if (des.equals("")) {
-                    writer.write(var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
-                } else {
-                    writer.write(des + "\n" + var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
+        } else {
+            try {
+                if (!this.file.exists()) {
+                    this.file.getParentFile().mkdirs();
+                    this.file.createNewFile();
                 }
-                ++current;
+                final FileWriter writer = new FileWriter(this.file);
+                // String s = getYaml().dump(map);
+                if ((this.header != null) && !this.fancyHead) {
+                    for (final String head : this.header) {
+                        writer.write("# " + head + "\n");
+                    }
+                } else if ((this.header != null) && this.fancyHead) {
+                    for (final String head : this.header) {
+                        writer.write(head);
+                    }
+                }
+                final int length = this.map.size();
+                int current = 0;
+                for (final Map.Entry<String, String> entry : this.map.entrySet()) {
+                    final String var = entry.getKey();
+                    final String val = entry.getValue();
+                    final String des = this.manager.getDescription(var);
+                    if (des.equals("")) {
+                        writer.write(var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
+                    } else {
+                        writer.write(des + "\n" + var + ": \"" + val + "\"" + (current < (length - 1) ? "\n" : ""));
+                    }
+                    ++current;
+                }
+                writer.close();
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
-            writer.close();
-        } catch (final Exception e) {
-            e.printStackTrace();
         }
+
     }
 
     /**
@@ -196,19 +218,58 @@ public class YamlTranslationFile extends TranslationFile {
      */
     @Override
     public YamlTranslationFile read() {
-        try {
-            this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        if (this.map == null) {
-            this.map = new HashMap<String, String>();
-        }
-        for (final Map.Entry<String, String> objects : this.map.entrySet()) {
-            final String key = objects.getKey();
-            final String val = objects.getValue();
-            this.manager.addTranslation(key, new TranslationAsset(null, val, this.language));
+        if (this.isC()) {
+            YamlConfiguration conf = YamlConfiguration.loadConfiguration(this.file);
+            if (conf.get("locale") == null) {
+                try {
+                    this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+                if (this.map == null) {
+                    this.map = new HashMap<String, String>();
+                }
+                for (final Map.Entry<String, String> objects : this.map.entrySet()) {
+                    final String key = objects.getKey();
+                    final String val = objects.getValue();
+                    this.manager.addTranslation(key, new TranslationAsset(null, val, this.language));
+                }
+                this.saveFile();
+            } else {
+                if (this.map == null) {
+                    this.map = new HashMap<String, String>();
+                }
+                for (String label : conf.getConfigurationSection("locale").getKeys(false)) {
+                    for (String key : conf.getConfigurationSection("locale." + label).getKeys(false)) {
+                        String val = conf.getString("locale." + label + "." + key);
+                        this.map.put(key, val);
+                        this.manager.addTranslation(key, new TranslationAsset(null, val, this.language));
+                    }
+                }
+            }
+        } else {
+            try {
+                this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            if (this.map == null) {
+                this.map = new HashMap<String, String>();
+            }
+            for (final Map.Entry<String, String> objects : this.map.entrySet()) {
+                final String key = objects.getKey();
+                final String val = objects.getValue();
+                this.manager.addTranslation(key, new TranslationAsset(null, val, this.language));
+            }
         }
         return this.instance;
+    }
+
+    public boolean isC() {
+        return isC;
+    }
+
+    public void setIsC(boolean isC) {
+        this.isC = isC;
     }
 }

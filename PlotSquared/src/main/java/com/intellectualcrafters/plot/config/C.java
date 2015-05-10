@@ -32,309 +32,309 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
 /**
  * Captions class.
  *
- * @author Citymonstret	
+ * @author Citymonstret 
  */
 public enum C {
     /*
      * Confirm
      */
-    FAILED_CONFIRM("$2You have no pending actions to confirm!"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2This cannot be undone! If you are sure: $1/plot confirm"),
+    FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
     /*
      * Move
      */
-    MOVE_SUCCESS("$4Successfully moved plot."),
-    COPY_SUCCESS("$4Successfully copied plot."),
-    REQUIRES_UNOWNED("$2The location specified is already occupied."),
+    MOVE_SUCCESS("$4Successfully moved plot.", "Move"),
+    COPY_SUCCESS("$4Successfully copied plot.", "Move"),
+    REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
     /*
      * Compass
      */
-    COMPASS_TARGET("$4Successfully targeted plot with compass"),
+    COMPASS_TARGET("$4Successfully targeted plot with compass", "Compass"),
     /*
      * Cluster
      */
-    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2, $4tp$2, $4sethome"),
-    CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world"),
-    CLUSTER_LIST_ELEMENT("$2 - $1%s\n"),
-    CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s"),
-    CLUSTER_ADDED("$4Successfully created the cluster."),
-    CLUSTER_DELETED("$4Successfully deleted the cluster."),
-    CLUSTER_RESIZED("$4Successfully resized the cluster."),
-    CLUSTER_ADDED_USER("$4Successfully added user to the cluster."),
-    CANNOT_KICK_PLAYER("$2You cannot kick that player"),
-    CLUSTER_INVITED("$1You have been invited to the following cluster: $2%s"),
-    CLUSTER_REMOVED("$1You have been removed from cluster: $2%s"),
-    CLUSTER_KICKED_USER("$4Successfully kicked the user"),
-    INVALID_CLUSTER("$1Invalid cluster name: $2%s"),
-    CLUSTER_NOT_ADDED("$2That player was not added to the plot cluster"),
-    CLUSTER_CANNOT_LEAVE("$1You must delete or transfer ownership before leaving"),
-    CLUSTER_ADDED_HELPER("$4Successfully added a helper to the cluster"),
-    CLUSTER_REMOVED_HELPER("$4Successfully removed a helper to the cluster"),
-    CLUSTER_REGENERATED("$4Successfully started cluster regeneration"),
-    CLUSTER_TELEPORTING("$4Teleporting..."),
-    CLUSTER_INFO("$1Current cluster: $2%id%\n$1Name: $2%name%\n$1Owner: $2%owner%\n$1Size: $2%size%\n$1Rights: $2%rights%"),
-    CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s"),
+    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
+    CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
+    CLUSTER_LIST_ELEMENT("$2 - $1%s\n", "Cluster"),
+    CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
+    CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
+    CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
+    CLUSTER_RESIZED("$4Successfully resized the cluster.", "Cluster"),
+    CLUSTER_ADDED_USER("$4Successfully added user to the cluster.", "Cluster"),
+    CANNOT_KICK_PLAYER("$2You cannot kick that player", "Cluster"),
+    CLUSTER_INVITED("$1You have been invited to the following cluster: $2%s", "Cluster"),
+    CLUSTER_REMOVED("$1You have been removed from cluster: $2%s", "Cluster"),
+    CLUSTER_KICKED_USER("$4Successfully kicked the user", "Cluster"),
+    INVALID_CLUSTER("$1Invalid cluster name: $2%s", "Cluster"),
+    CLUSTER_NOT_ADDED("$2That player was not added to the plot cluster", "Cluster"),
+    CLUSTER_CANNOT_LEAVE("$1You must delete or transfer ownership before leaving", "Cluster"),
+    CLUSTER_ADDED_HELPER("$4Successfully added a helper to the cluster", "Cluster"),
+    CLUSTER_REMOVED_HELPER("$4Successfully removed a helper to the cluster", "Cluster"),
+    CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
+    CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
+    CLUSTER_INFO("$1Current cluster: $2%id%\n$1Name: $2%name%\n$1Owner: $2%owner%\n$1Size: $2%size%\n$1Rights: $2%rights%", "Cluster"),
+    CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s", "Cluster"),
     /*
      * Border
      */
-    BORDER("$2You are outside the current map border"),
+    BORDER("$2You are outside the current map border", "Border"),
     /*
      * Unclaim
      */
-    UNCLAIM_SUCCESS("$4You successfully unclaimed the plot."),
+    UNCLAIM_SUCCESS("$4You successfully unclaimed the plot.", "Unclaim"),
     /*
      * WorldEdit masks
      */
-    REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot."),
-    WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%."),
-    WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%."),
-    WORLDEDIT_UNSAFE("$2Access to that command has been blocked"),
-    WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea"),
-    WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted."),
-    WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted."),
+    REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot.", "WorldEdit Masks"),
+    WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%.", "WorldEdit Masks"),
+    WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%.", "WorldEdit Masks"),
+    WORLDEDIT_UNSAFE("$2Access to that command has been blocked", "WorldEdit Masks"),
+    WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea", "WorldEdit Masks"),
+    WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
+    WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
     /*
      * Records
      */
-    RECORD_PLAY("$2%player $2started playing record $1%name"),
-    NOTIFY_ENTER("$2%player $2entered your plot ($1%plot$2)"),
-    NOTIFY_LEAVE("$2%player $2left your plot ($1%plot$2)"),
+    RECORD_PLAY("$2%player $2started playing record $1%name", "Records"),
+    NOTIFY_ENTER("$2%player $2entered your plot ($1%plot$2)", "Records"),
+    NOTIFY_LEAVE("$2%player $2left your plot ($1%plot$2)", "Records"),
     /*
      * Swap
      */
-    SWAP_OVERLAP("$2The proposed areas are not allowed to overlap"),
-    SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions"),
-    SWAP_SYNTAX("$2/plots swap <plot id>"),
-    SWAP_SUCCESS("$4Successfully swapped plots"),
-    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes"),
+    SWAP_OVERLAP("$2The proposed areas are not allowed to overlap", "Swap"),
+    SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
+    SWAP_SYNTAX("$2/plots swap <plot id>", "Swap"),
+    SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
+    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     /*
      * Comment
      */
-    NOT_VALID_INBOX_INDEX("$2No comment at index %s"),
-    INBOX_ITEM("$2 - $4%s"),
-    COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>"),
-    INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s"),
-    NO_PERM_INBOX("$2You do not have permission for that inbox"),
-    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox"),
-    NO_PLOT_INBOX("$2You must  stand in or supply a plot argument"),
-    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'"),
-    COMMENT_ADDED("$4A comment has been left"),
-    COMMENT_HEADER("$2====== Comments ======"),
+    NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
+    INBOX_ITEM("$2 - $4%s", "Comment"),
+    COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>", "Comment"),
+    INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s", "Comment"),
+    NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
+    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
+    NO_PLOT_INBOX("$2You must  stand in or supply a plot argument", "Comment"),
+    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
+    COMMENT_ADDED("$4A comment has been left", "Comment"),
+    COMMENT_HEADER("$2====== Comments ======", "Comment"),
     /*
      * Console
      */
-    NOT_CONSOLE("$2For safety reasons, this command can only be executed by console."),
-    IS_CONSOLE("$2This command can only be executed by a player."),
+    NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.", "Console"),
+    IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
     /*
      * Clipboard
      */
-    CLIPBOARD_SET("$2The current plot is now copied to your clipboard, use $1/plot paste$2 to paste it"),
-    PASTED("$4The plot selection was successfully pasted. It has been cleared from your clipboard."),
-    PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s"),
-    NO_CLIPBOARD("$2You don't have a selection in your clipboard"),
-    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2"),
+    CLIPBOARD_SET("$2The current plot is now copied to your clipboard, use $1/plot paste$2 to paste it", "Clipboard"),
+    PASTED("$4The plot selection was successfully pasted. It has been cleared from your clipboard.", "Clipboard"),
+    PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s", "Clipboard"),
+    NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
+    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     /*
      * Ratings
      */
-    RATING_NOT_VALID("$2You need to specify a number between 1 and 10"),
-    RATING_ALREADY_EXISTS("$2You have already rated plot $2%s"),
-    RATING_APPLIED("$4You successfully rated plot $2%s"),
-    RATING_NOT_YOUR_OWN("$2You cannot rate your own plot"),
-    RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone"),
+    RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),
+    RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"),
+    RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings"),
+    RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"),
+    RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone", "Ratings"),
     /*
      * Economy Stuff
      */
-    ECON_DISABLED("$2Economy is not enabled"),
-    CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s"),
-    NOT_FOR_SALE("$2This plot is not for sale"),
-    CANNOT_BUY_OWN("$2You cannot buy your own plot"),
-    PLOT_SOLD("$4Your plot; $1%s$4, has been sold to $1%s$4 for $1$%s"),
-    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s"),
-    ADDED_BALANCE("$1%s $2has been added to your balance"),
-    REMOVED_BALANCE("$1%s $2has been taken from your balance"),
+    ECON_DISABLED("$2Economy is not enabled", "Economy"),
+    CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s", "Economy"),
+    NOT_FOR_SALE("$2This plot is not for sale", "Economy"),
+    CANNOT_BUY_OWN("$2You cannot buy your own plot", "Economy"),
+    PLOT_SOLD("$4Your plot; $1%s$4, has been sold to $1%s$4 for $1$%s", "Economy"),
+    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s", "Economy"),
+    ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
+    REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
     /*
      * Setup Stuff
      */
-    SETUP_INIT("$1Usage: $2/plot setup <value>"),
-    SETUP_STEP("$3[$1Step %s$3] $1%s $2- $1Expecting: $2%s $1Default: $2%s"),
-    SETUP_INVALID_ARG("$2%s is not a valid argument for step %s. To cancel setup use: $1/plot setup cancel"),
-    SETUP_VALID_ARG("$2Value $1%s $2set to %s"),
-    SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml"),
-    SETUP_WORLD_TAKEN("$2%s is already a registered plotworld"),
-    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
-    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel"),
-    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s"),
+    SETUP_INIT("$1Usage: $2/plot setup <value>", "Setup"),
+    SETUP_STEP("$3[$1Step %s$3] $1%s $2- $1Expecting: $2%s $1Default: $2%s", "Setup"),
+    SETUP_INVALID_ARG("$2%s is not a valid argument for step %s. To cancel setup use: $1/plot setup cancel", "Setup"),
+    SETUP_VALID_ARG("$2Value $1%s $2set to %s", "Setup"),
+    SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml", "Setup"),
+    SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
+    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel", "Setup"),
+    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
      */
-    SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall"),
-    SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s"),
-    SCHEMATIC_VALID("$2That is a valid schematic"),
-    SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic"),
-    SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully"),
+    SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall", "Schematics"),
+    SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
+    SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
+    SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
+    SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"),
     /*
      * Title Stuff
      */
-    TITLE_ENTERED_PLOT("Plot: %world%;%x%;%z%"),
-    TITLE_ENTERED_PLOT_COLOR("GOLD"),
-    TITLE_ENTERED_PLOT_SUB("Owned by %s"),
-    TITLE_ENTERED_PLOT_SUB_COLOR("RED"),
-    TITLE_LEFT_PLOT("You left plot %s"),
-    TITLE_LEFT_PLOT_COLOR("GOLD"),
-    TITLE_LEFT_PLOT_SUB("Owned by %s"),
-    TITLE_LEFT_PLOT_SUB_COLOR("RED"),
-    PREFIX_GREETING("$1%id%$2> "),
-    PREFIX_FAREWELL("$1%id%$2> "),
+    TITLE_ENTERED_PLOT("Plot: %world%;%x%;%z%", "Titles"),
+    TITLE_ENTERED_PLOT_COLOR("GOLD", "Titles"),
+    TITLE_ENTERED_PLOT_SUB("Owned by %s", "Titles"),
+    TITLE_ENTERED_PLOT_SUB_COLOR("RED", "Titles"),
+    TITLE_LEFT_PLOT("You left plot %s", "Titles"),
+    TITLE_LEFT_PLOT_COLOR("GOLD", "Titles"),
+    TITLE_LEFT_PLOT_SUB("Owned by %s", "Titles"),
+    TITLE_LEFT_PLOT_SUB_COLOR("RED", "Titles"),
+    PREFIX_GREETING("$1%id%$2> ", "Titles"),
+    PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
     /*
      * Core Stuff
      */
-    PREFIX("$3[$1P2$3] $2"),
-    ENABLED("$1PlotSquared is now enabled"),
-    EXAMPLE_MESSAGE("$2This is an example message &k!!!"),
+    PREFIX("$3[$1P2$3] $2", "Core"),
+    ENABLED("$1PlotSquared is now enabled", "Core"),
+    EXAMPLE_MESSAGE("$2This is an example message &k!!!", "Core"),
     /*
      * Reload
      */
-    RELOADED_CONFIGS("$1Translations and world settings have been reloaded"),
-    RELOAD_FAILED("$2Failed to reload file configurations"),
+    RELOADED_CONFIGS("$1Translations and world settings have been reloaded", "Reload"),
+    RELOAD_FAILED("$2Failed to reload file configurations", "Reload"),
     /*
      * BarAPI
      */
-    BOSSBAR_CLEARING("$2Clearing plot: $1%id%"),
+    BOSSBAR_CLEARING("$2Clearing plot: $1%id%", "Bar API"),
     /*
      * Alias
      */
-    ALIAS_SET_TO("$2Plot alias set to $1%alias%"),
-    MISSING_ALIAS("$2You need to specify an alias"),
-    ALIAS_TOO_LONG("$2The alias must be < 50 characters in length"),
-    ALIAS_IS_TAKEN("$2That alias is already taken"),
+    ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
+    MISSING_ALIAS("$2You need to specify an alias", "Alias"),
+    ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
+    ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
     /*
      * Position
      */
-    MISSING_POSITION("$2You need to specify a position. Possible values: $1none"),
-    POSITION_SET("$1Home position set to your current location"),
-    HOME_ARGUMENT("$2Use /plot set home [none]"),
-    INVALID_POSITION("$2That is not a valid position value"),
+    MISSING_POSITION("$2You need to specify a position. Possible values: $1none", "Position"),
+    POSITION_SET("$1Home position set to your current location", "Position"),
+    HOME_ARGUMENT("$2Use /plot set home [none]", "Position"),
+    INVALID_POSITION("$2That is not a valid position value", "Position"),
     /*
      * Time
      */
-    TIME_FORMAT("$1%hours%, %min%, %sec%"),
+    TIME_FORMAT("$1%hours%, %min%, %sec%", "Time"),
     /*
      * Permission
      */
-    NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s"),
-    NO_PERMISSION("$2You are lacking the permission node: $1%s"),
-    NO_PLOT_PERMS("$2You must be the plot owner to perform this action"),
-    CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots."),
-    CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user"),
-    CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once"),
-    YOU_BE_DENIED("$2You are not allowed to enter this plot"),
-    NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%"),
-    UNLINK_REQUIRED("$2An unlink is required to do this."),
-    UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot"),
-    UNLINK_SUCCESS("$2Successfully unlinked plots."),
-    NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot."),
-    MERGE_NOT_VALID("$2This merge request is no longer valid."),
-    MERGE_ACCEPTED("$2The merge request has been accepted"),
-    SUCCESS_MERGE("$2Plots have been merged!"),
-    MERGE_REQUESTED("$2Successfully sent a merge request"),
-    MERGE_REQUEST_CONFIRM("merge request from %s"),
+    NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s", "Permission"),
+    NO_PERMISSION("$2You are lacking the permission node: $1%s", "Permission"),
+    NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
+    CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
+    CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
+    CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
+    YOU_BE_DENIED("$2You are not allowed to enter this plot", "Permission"),
+    NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Permission"),
+    UNLINK_REQUIRED("$2An unlink is required to do this.", "Permission"),
+    UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Permission"),
+    UNLINK_SUCCESS("$2Successfully unlinked plots.", "Permission"),
+    NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot.", "Permission"),
+    MERGE_NOT_VALID("$2This merge request is no longer valid.", "Permission"),
+    MERGE_ACCEPTED("$2The merge request has been accepted", "Permission"),
+    SUCCESS_MERGE("$2Plots have been merged!", "Permission"),
+    MERGE_REQUESTED("$2Successfully sent a merge request", "Permission"),
+    MERGE_REQUEST_CONFIRM("merge request from %s", "Permission"),
     /*
      * Commands
      */
-    NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand"),
-    DID_YOU_MEAN("$2Did you mean: $1%s"),
-    NAME_LITTLE("$2%s name is too short, $1%s$2<$1%s"),
-    NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands."),
-    SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: "),
-    COMMAND_SYNTAX("$1Usage: $2%s"),
+    NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "Commands"),
+    DID_YOU_MEAN("$2Did you mean: $1%s", "Commands"),
+    NAME_LITTLE("$2%s name is too short, $1%s$2<$1%s", "Commands"),
+    NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "Commands"),
+    SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "Commands"),
+    COMMAND_SYNTAX("$1Usage: $2%s", "Commands"),
     /*
      * Player not found
      */
-    INVALID_PLAYER("$2Player not found: $1%s."),
+    INVALID_PLAYER("$2Player not found: $1%s.", "Errors"),
     /*
      *
      */
-    COMMAND_WENT_WRONG("$2Something went wrong when executing that command..."),
+    COMMAND_WENT_WRONG("$2Something went wrong when executing that command...", "Errors"),
     /*
      * purge
      */
-    PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>"),
-    PURGE_SUCCESS("$4Successfully purged %s plots"),
+    PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>", "Purge"),
+    PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
     /*
      * trim
      */
-    TRIM_SYNTAX("Use /plot trim <all|x;y> <world>"),
-    TRIM_START("Starting a world trim task..."),
-    TRIM_IN_PROGRESS("A world trim task is already in progress!"),
-    NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action"),
+    TRIM_SYNTAX("Use /plot trim <all|x;y> <world>", "Trim"),
+    TRIM_START("Starting a world trim task...", "Trim"),
+    TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
+    NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action", "Trim"),
     /*
      * No <plot>
      */
-    NO_FREE_PLOTS("$2There are no free plots available"),
-    NOT_IN_PLOT("$2You're not in a plot"),
-    NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action"),
-    NOT_IN_PLOT_WORLD("$2You're not in a plot world"),
-    PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible"),
-    NOT_VALID_WORLD("$2That is not a valid world (case sensitive)"),
-    NOT_VALID_PLOT_WORLD("$2That is not a valid plot world (case sensitive)"),
-    NO_PLOTS("$2You don't have any plots"),
+    NO_FREE_PLOTS("$2There are no free plots available", "Errors"),
+    NOT_IN_PLOT("$2You're not in a plot", "Errors"),
+    NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action", "Errors"),
+    NOT_IN_PLOT_WORLD("$2You're not in a plot world", "Errors"),
+    PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible", "Errors"),
+    NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"),
+    NOT_VALID_PLOT_WORLD("$2That is not a valid plot world (case sensitive)", "Errors"),
+    NO_PLOTS("$2You don't have any plots", "Errors"),
     /*
      * Block List
      */
-    NOT_VALID_BLOCK_LIST_HEADER("$2That's not a valid block. Valid blocks are:\\n"),
-    BLOCK_LIST_ITEM(" $1%mat%$2,"),
-    BLOCK_LIST_SEPARATER("$1,$2 "),
+    NOT_VALID_BLOCK_LIST_HEADER("$2That's not a valid block. Valid blocks are:\\n", "Block List"),
+    BLOCK_LIST_ITEM(" $1%mat%$2,", "Block List"),
+    BLOCK_LIST_SEPARATER("$1,$2 ", "Block List"),
     /*
      * Biome
      */
-    NEED_BIOME("$2You need to specify a valid biome."),
-    BIOME_SET_TO("$2Plot biome set to $2"),
+    NEED_BIOME("$2You need to specify a valid biome.", "Biome"),
+    BIOME_SET_TO("$2Plot biome set to $2", "Biome"),
     /*
      * Teleport / Entry
      */
-    TELEPORTED_TO_PLOT("$1You have been teleported"),
-    TELEPORTED_TO_ROAD("$2You got teleported to the road"),
-    TELEPORT_IN_SECONDS("$1Teleporting in %s seconds. Do not move..."),
-    TELEPORT_FAILED("$2Teleportation cancelled due to movement or damage"),
+    TELEPORTED_TO_PLOT("$1You have been teleported", "Teleport"),
+    TELEPORTED_TO_ROAD("$2You got teleported to the road", "Teleport"),
+    TELEPORT_IN_SECONDS("$1Teleporting in %s seconds. Do not move...", "Teleport"),
+    TELEPORT_FAILED("$2Teleportation cancelled due to movement or damage", "Teleport"),
     /*
      * Set Block
      */
-    SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished."),
+    SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished.", "Set Block"),
     /*
      * Debug
      */
-    DEUBG_HEADER("$1Debug Information\\n"),
-    DEBUG_SECTION("$2>> $1&l%val%"),
-    DEBUG_LINE("$2>> $1%var%$2:$1 %val%\\n"),
+    DEUBG_HEADER("$1Debug Information\\n", "Debug"),
+    DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
+    DEBUG_LINE("$2>> $1%var%$2:$1 %val%\\n", "Debug"),
     /*
      * Invalid
      */
-    NOT_VALID_DATA("$2That's not a valid data id."),
-    NOT_VALID_BLOCK("$2That's not a valid block."),
-    NOT_VALID_NUMBER("$2That's not a valid number"),
-    NOT_VALID_PLOT_ID("$2That's not a valid plot id."),
-    PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7"),
-    NOT_YOUR_PLOT("$2That is not your plot."),
-    NO_SUCH_PLOT("$2There is no such plot"),
-    PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld"),
-    FOUND_NO_PLOTS("$2Found no plots with your search query"),
+    NOT_VALID_DATA("$2That's not a valid data id.", "Invalid"),
+    NOT_VALID_BLOCK("$2That's not a valid block.", "Invalid"),
+    NOT_VALID_NUMBER("$2That's not a valid number", "Invalid"),
+    NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
+    PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),
+    NOT_YOUR_PLOT("$2That is not your plot.", "Invalid"),
+    NO_SUCH_PLOT("$2There is no such plot", "Invalid"),
+    PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld", "Invalid"),
+    FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
     /*
      * Camera
      */
-    CAMERA_STARTED("$2You have entered camera mode for plot $1%s"),
-    CAMERA_STOPPED("$2You are no longer in camera mode"),
+    CAMERA_STARTED("$2You have entered camera mode for plot $1%s", "Camera"),
+    CAMERA_STOPPED("$2You are no longer in camera mode", "Camera"),
     /*
      * Need
      */
-    NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias"),
-    NEED_BLOCK("$2You've got to specify a block"),
-    NEED_PLOT_ID("$2You've got to specify a plot id."),
-    NEED_PLOT_WORLD("$2You've got to specify a plot world."),
-    NEED_USER("$2You need to specify a username"),
+    NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias", "Need"),
+    NEED_BLOCK("$2You've got to specify a block", "Need"),
+    NEED_PLOT_ID("$2You've got to specify a plot id.", "Need"),
+    NEED_PLOT_WORLD("$2You've got to specify a plot world.", "Need"),
+    NEED_USER("$2You need to specify a username", "Need"),
     /*
      * Info
      */
-    PLOT_UNOWNED("$2The current plot must have an owner to perform this action"),
-    PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed"),
+    PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
+    PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     /*
      * PLOT_INFO("" +
      * "$1ID$2: $4%id%$2\n" +
@@ -349,133 +349,133 @@ public enum C {
      * "$1Can build$2: $4%build%"
      * ),
      */
-    PLOT_INFO_HEADER("$3====== $1INFO $3======", false),
-    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%$1/$210$1\n" + "$1Helpers: $2%helpers%$1\n" + "$1Trusted: $2%trusted%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%"),
-    PLOT_INFO_HELPERS("$1Helpers:$2 %helpers%"),
-    PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%"),
-    PLOT_INFO_DENIED("$1Denied:$2 %denied%"),
-    PLOT_INFO_FLAGS("$1Flags:$2 %flags%"),
-    PLOT_INFO_BIOME("$1Biome:$2 %biome%"),
-    PLOT_INFO_RATING("$1Rating:$2 %rating%"),
-    PLOT_INFO_OWNER("$1Owner:$2 %owner%"),
-    PLOT_INFO_ID("$1ID:$2 %id%"),
-    PLOT_INFO_ALIAS("$1Alias:$2 %alias%"),
-    PLOT_INFO_SIZE("$1Size:$2 %size%"),
-    PLOT_USER_LIST(" $1%user%$2,"),
-    INFO_SYNTAX_CONSOLE("$2/plot info <world> X;Y"),
+    PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
+    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%$1/$210$1\n" + "$1Helpers: $2%helpers%$1\n" + "$1Trusted: $2%trusted%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
+    PLOT_INFO_HELPERS("$1Helpers:$2 %helpers%", "Info"),
+    PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
+    PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"),
+    PLOT_INFO_FLAGS("$1Flags:$2 %flags%", "Info"),
+    PLOT_INFO_BIOME("$1Biome:$2 %biome%", "Info"),
+    PLOT_INFO_RATING("$1Rating:$2 %rating%", "Info"),
+    PLOT_INFO_OWNER("$1Owner:$2 %owner%", "Info"),
+    PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
+    PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
+    PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
+    PLOT_USER_LIST(" $1%user%$2,", "Info"),
+    INFO_SYNTAX_CONSOLE("$2/plot info <world> X;Y", "Info"),
     /*
      * Generating
      */
-    GENERATING_COMPONENT("$1Started generating component from your settings"),
+    GENERATING_COMPONENT("$1Started generating component from your settings", "Working"),
     /*
      * Clearing
      */
-    CLEARING_PLOT("$2Clearing plot async."),
-    CLEARING_DONE("$4Clear completed! Took %sms."),
+    CLEARING_PLOT("$2Clearing plot async.", "Working"),
+    CLEARING_DONE("$4Clear completed! Took %sms.", "Working"),
     /*
      * Claiming
      */
-    PLOT_NOT_CLAIMED("$2Plot not claimed"),
-    PLOT_IS_CLAIMED("$2This plot is already claimed"),
-    CLAIMED("$4You successfully claimed the plot"),
+    PLOT_NOT_CLAIMED("$2Plot not claimed", "Working"),
+    PLOT_IS_CLAIMED("$2This plot is already claimed", "Working"),
+    CLAIMED("$4You successfully claimed the plot", "Working"),
     /*
      * List
      */
-    PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %word% plots"),
-    PLOT_LIST_HEADER("$1List of %word% plots"),
-    PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner"),
-    PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner"),
-    PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%."),
+    PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %word% plots", "List"),
+    PLOT_LIST_HEADER("$1List of %word% plots", "List"),
+    PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),
+    PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner", "List"),
+    PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%.", "List"),
     /*
      * Left
      */
-    LEFT_PLOT("$2You left a plot"),
+    LEFT_PLOT("$2You left a plot", "Left"),
     /*
      * PlotMe
      */
-    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps &2or $1/p2 $2or $1/plots $2instead"),
+    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps &2or $1/p2 $2or $1/plots $2instead", "Errors"),
     /*
      * Wait
      */
-    WAIT_FOR_TIMER("$2A setblock timer is bound to either the current plot or you. Please wait for it to finish"),
+    WAIT_FOR_TIMER("$2A setblock timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
     /*
      * Chat
      */
-    PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%"),
-    PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat."),
-    PLOT_CHAT_ON("$4Plot chat enabled."),
-    PLOT_CHAT_OFF("$4Plot chat disabled."),
+    PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%", "Chat"),
+    PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat.", "Chat"),
+    PLOT_CHAT_ON("$4Plot chat enabled.", "Chat"),
+    PLOT_CHAT_OFF("$4Plot chat disabled.", "Chat"),
     /*
      * Denied
      */
-    DENIED_REMOVED("$4You successfully undenied the player from this plot"),
-    DENIED_ADDED("$4You successfully denied the player from this plot"),
-    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>"),
-    WAS_NOT_DENIED("$2That player was not denied on this plot"),
+    DENIED_REMOVED("$4You successfully undenied the player from this plot", "Deny"),
+    DENIED_ADDED("$4You successfully denied the player from this plot", "Deny"),
+    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
+    WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
     /*
      * Rain
      */
-    NEED_ON_OFF("$2You need to specify a value. Possible values: $1on$2, $1off"),
-    SETTING_UPDATED("$4You successfully updated the setting"),
+    NEED_ON_OFF("$2You need to specify a value. Possible values: $1on$2, $1off", "Rain"),
+    SETTING_UPDATED("$4You successfully updated the setting", "Rain"),
     /*
      * Flag
      */
-    FLAG_KEY("$2Key: %s"),
-    FLAG_TYPE("$2Type: %s"),
-    FLAG_DESC("$2Desc: %s"),
-    NEED_KEY("$2Possible values: $1%values%"),
-    NOT_VALID_FLAG("$2That is not a valid flag"),
-    NOT_VALID_VALUE("$2Flag values must be alphanumerical"),
-    FLAG_NOT_IN_PLOT("$2The plot does not have that flag"),
-    FLAG_NOT_REMOVED("$2The flag could not be removed"),
-    FLAG_NOT_ADDED("$2The flag could not be added"),
-    FLAG_REMOVED("$4Successfully removed flag"),
-    FLAG_ADDED("$4Successfully added flag"),
+    FLAG_KEY("$2Key: %s", "Flag"),
+    FLAG_TYPE("$2Type: %s", "Flag"),
+    FLAG_DESC("$2Desc: %s", "Flag"),
+    NEED_KEY("$2Possible values: $1%values%", "Flag"),
+    NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
+    NOT_VALID_VALUE("$2Flag values must be alphanumerical", "Flag"),
+    FLAG_NOT_IN_PLOT("$2The plot does not have that flag", "Flag"),
+    FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),
+    FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
+    FLAG_REMOVED("$4Successfully removed flag", "Flag"),
+    FLAG_ADDED("$4Successfully added flag", "Flag"),
     /*
      * Helper
      */
-    HELPER_ADDED("$4You successfully added a helper to the plot"),
-    HELPER_REMOVED("$4You successfully removed a helper from the plot"),
-    HELPER_NEED_ARGUMENT("$2Arguments are missing. $1/plot helpers add <name> $2or $1/plot helpers remove <name>"),
-    WAS_NOT_ADDED("$2That player was not added as a helper on this plot"),
-    PLOT_REMOVED_HELPER("$1Plot %s of which you were added to has been deleted due to owner inactivity"),
+    HELPER_ADDED("$4You successfully added a helper to the plot", "Helper"),
+    HELPER_REMOVED("$4You successfully removed a helper from the plot", "Helper"),
+    HELPER_NEED_ARGUMENT("$2Arguments are missing. $1/plot helpers add <name> $2or $1/plot helpers remove <name>", "Helper"),
+    WAS_NOT_ADDED("$2That player was not added as a helper on this plot", "Helper"),
+    PLOT_REMOVED_HELPER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Helper"),
     /*
      * Trusted
      */
-    ALREADY_OWNER("$2That user is already the plot owner."),
-    ALREADY_ADDED("$2That user is already added to that category."),
-    TRUSTED_ADDED("$4You successfully added a trusted user to the plot"),
-    TRUSTED_REMOVED("$1You successfully removed a trusted user from the plot"),
-    TRUSTED_NEED_ARGUMENT("$2Arguments are missing. $1/plot trusted add <name> $2or $1/plot trusted remove <name>"),
-    T_WAS_NOT_ADDED("$2That player was not added as a trusted user on this plot"),
+    ALREADY_OWNER("$2That user is already the plot owner.", "Trusted"),
+    ALREADY_ADDED("$2That user is already added to that category.", "Trusted"),
+    TRUSTED_ADDED("$4You successfully added a trusted user to the plot", "Trusted"),
+    TRUSTED_REMOVED("$1You successfully removed a trusted user from the plot", "Trusted"),
+    TRUSTED_NEED_ARGUMENT("$2Arguments are missing. $1/plot trusted add <name> $2or $1/plot trusted remove <name>", "Trusted"),
+    T_WAS_NOT_ADDED("$2That player was not added as a trusted user on this plot", "Trusted"),
     /*
      * Set Owner
      */
-    SET_OWNER("$4You successfully set the plot owner"),
-    NOW_OWNER("$4You are now owner of plot %s"),
+    SET_OWNER("$4You successfully set the plot owner", "Owner"),
+    NOW_OWNER("$4You are now owner of plot %s", "Owner"),
     /*
      * Signs
      */
-    OWNER_SIGN_LINE_1("$1ID: $1%id%"),
-    OWNER_SIGN_LINE_2("$1Owner:"),
-    OWNER_SIGN_LINE_3("$2%plr%"),
-    OWNER_SIGN_LINE_4("$3Claimed"),
+    OWNER_SIGN_LINE_1("$1ID: $1%id%", "Signs"),
+    OWNER_SIGN_LINE_2("$1Owner:", "Signs"),
+    OWNER_SIGN_LINE_3("$2%plr%", "Signs"),
+    OWNER_SIGN_LINE_4("$3Claimed", "Signs"),
     /*
      * Help
      */
-    HELP_HEADER("$3====== $1Plot\u00B2 Help $3======"),
-    HELP_CATEGORY("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2,$1 Displaying: $2%dis%$3/$2%total%"),
-    HELP_INFO("$3====== $1Choose a Category $3======", false),
-    HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%"),
-    HELP_ITEM("$1%usage% [%alias%]\n $3- $2%desc%\n"),
+    HELP_HEADER("$3====== $1Plot\u00B2 Help $3======", "Help"),
+    HELP_CATEGORY("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2,$1 Displaying: $2%dis%$3/$2%total%", "Help"),
+    HELP_INFO("$3====== $1Choose a Category $3======", false, "Help"),
+    HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
+    HELP_ITEM("$1%usage% [%alias%]\n $3- $2%desc%\n", "Help"),
     /*
      * Direction
      */
-    DIRECTION("$1Current direction: %dir%"),
+    DIRECTION("$1Current direction: %dir%", "Help"),
     /*
      * Custom
      */
-    CUSTOM_STRING("-");
+    CUSTOM_STRING("-", "-");
     /**
      * Special Language
      *
@@ -504,6 +504,10 @@ public enum C {
      */
     private String s;
     /**
+     * What locale category should this translation fall under
+     */
+    private String cat;
+    /**
      * Should the string be prefixed?
      */
     private boolean prefix;
@@ -523,12 +527,13 @@ public enum C {
      * @param d default
      * @param prefix use prefix
      */
-    C(final String d, final boolean prefix) {
+    C(final String d, final boolean prefix, String cat) {
         this.d = d;
         if (this.s == null) {
             this.s = "";
         }
         this.prefix = prefix;
+        this.cat = cat.toLowerCase();
     }
 
     /**
@@ -536,13 +541,13 @@ public enum C {
      *
      * @param d default
      */
-    C(final String d) {
-        this(d, true);
+    C(final String d, String cat) {
+        this(d, true, cat.toLowerCase());
     }
 
     public static void setupTranslations() {
         manager = new TranslationManager();
-        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager).read();
+        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager, true).read();
         // register everything in this class
         for (final C c : values()) {
             manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
@@ -574,18 +579,6 @@ public enum C {
     public String s() {
         final String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
         return s.replace("$1", COLOR_1.toString()).replace("$2", COLOR_2.toString()).replace("$3", COLOR_3.toString()).replace("$4", COLOR_4.toString());
-        /*
-         * if (PlotSquared.translations != null) {
-         * final String t = PlotSquared.translations.getString(this.toString());
-         * if (t != null) {
-         * this.s = t;
-         * }
-         * }
-         * if (this.s.length() < 1) {
-         * return "";
-         * }
-         * return this.s.replace("\\n", "\n");
-         */
     }
 
     public boolean usePrefix() {
@@ -599,5 +592,13 @@ public enum C {
      */
     public String translated() {
         return ChatColor.translateAlternateColorCodes('&', this.s());
+    }
+
+    public String getCat() {
+        return cat;
+    }
+
+    public void setCat(String cat) {
+        this.cat = cat;
     }
 }

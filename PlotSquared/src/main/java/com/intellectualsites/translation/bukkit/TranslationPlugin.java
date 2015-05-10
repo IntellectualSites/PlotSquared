@@ -29,7 +29,7 @@ public class TranslationPlugin extends JavaPlugin {
             e.printStackTrace();
         }
         // Now let's create some default files :D
-        this.english = new YamlTranslationFile(BukkitTranslation.getParent(), TranslationLanguage.englishAmerican, getName(), manager).read().header("Example file", "@author Citymonstret");
+        this.english = new YamlTranslationFile(BukkitTranslation.getParent(), TranslationLanguage.englishAmerican, getName(), manager, true).read().header("Example file", "@author Citymonstret");
         // That created the file, read it, and made a default header
         getLogger().log(Level.INFO, BukkitTranslation.convert(manager.getTranslated("translator_loaded", TranslationLanguage.englishAmerican)));
     }
