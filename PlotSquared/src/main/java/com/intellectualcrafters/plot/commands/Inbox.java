@@ -40,6 +40,10 @@ public class Inbox extends SubCommand {
     }
     
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
+        if (oldComments == null || oldComments.size() == 0) {
+            MainUtil.sendMessage(player, C.INBOX_EMPTY);
+            return;
+        }
         PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
         if (page < 0) {
             page = 0;

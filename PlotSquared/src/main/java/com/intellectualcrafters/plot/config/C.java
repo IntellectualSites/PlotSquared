@@ -119,6 +119,7 @@ public enum C {
     COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
     COMMENT_HEADER("$2====== Comments ======", "Comment"),
+    INBOX_EMPTY("$2No comments","Comment"),
     /*
      * Console
      */
