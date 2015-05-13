@@ -9,12 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+import com.intellectualcrafters.plot.config.C;
 
 /**
  * The YAML implementation of TranslationFile Relies heavily on SnakeYAML
@@ -146,8 +145,11 @@ public class YamlTranslationFile extends TranslationFile {
         if (this.isC()) {
             YamlConfiguration conf = YamlConfiguration.loadConfiguration(this.file);
             for (String key : this.map.keySet()) {
-                C c = C.valueOf(key.toUpperCase());
-                conf.set("locale." + c.getCat() + "." + key, this.map.get(key));
+                try {
+                    C c = C.valueOf(key.toUpperCase());
+                    conf.set("locale." + c.getCat() + "." + key, this.map.get(key));
+                }
+                catch (IllegalArgumentException e) {}
                 conf.set(key, null);
             }
             try {
@@ -222,7 +224,7 @@ public class YamlTranslationFile extends TranslationFile {
             YamlConfiguration conf = YamlConfiguration.loadConfiguration(this.file);
             if (conf.get("locale") == null) {
                 try {
-                    this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
+                    this.map = (HashMap<String, String>) this.getYaml().load(new FileReader(this.file));
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
@@ -249,7 +251,7 @@ public class YamlTranslationFile extends TranslationFile {
             }
         } else {
             try {
-                this.map = (HashMap<String, String>) getYaml().load(new FileReader(this.file));
+                this.map = (HashMap<String, String>) this.getYaml().load(new FileReader(this.file));
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -266,7 +268,7 @@ public class YamlTranslationFile extends TranslationFile {
     }
 
     public boolean isC() {
-        return isC;
+        return this.isC;
     }
 
     public void setIsC(boolean isC) {
