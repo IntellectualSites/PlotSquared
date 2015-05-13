@@ -112,6 +112,7 @@ public class UUIDHandler {
         }
         PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching: " + world);
         UUIDHandler.CACHED = true;
+        add(new StringWrapper("*"), DBFunc.everyone);
         if (Settings.TWIN_MODE_UUID) {
             HashSet<UUID> all = getAllUUIDS();
             final File playerdataFolder = new File(Bukkit.getWorldContainer(), world + File.separator + "playerdata");
@@ -136,7 +137,6 @@ public class UUIDHandler {
                     }
                 }
             }
-            add(new StringWrapper("*"), DBFunc.everyone);
             PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
             return;
         }
@@ -207,8 +207,6 @@ public class UUIDHandler {
                 }
             }
         }
-        // add the Everyone '*' UUID
-        add(new StringWrapper("*"), DBFunc.everyone);
         PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
     }
 

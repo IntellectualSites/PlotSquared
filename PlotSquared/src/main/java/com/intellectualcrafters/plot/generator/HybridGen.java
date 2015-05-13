@@ -83,6 +83,9 @@ public class HybridGen extends PlotGenerator {
      * Initialize variables, and create plotworld object used in calculations
      */
     public void init(PlotWorld plotworld) {
+        if (plotworld != null) {
+            this.plotworld = (HybridPlotWorld) plotworld;
+        }
         this.plotsize = this.plotworld.PLOT_WIDTH;
         this.pathsize = this.plotworld.ROAD_WIDTH;
         this.roadblock = this.plotworld.ROAD_BLOCK.id;

@@ -89,6 +89,7 @@ import com.intellectualcrafters.plot.listeners.ForceFieldListener;
 import com.intellectualcrafters.plot.listeners.InventoryListener;
 import com.intellectualcrafters.plot.listeners.PlayerEvents;
 import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
+import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8_3;
 import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.listeners.PlotPlusListener;
 import com.intellectualcrafters.plot.listeners.TNTListener;
@@ -345,6 +346,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         if (checkVersion(1, 8, 0)) {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
+        }
+        if (checkVersion(1, 8, 3)) {
+            getServer().getPluginManager().registerEvents(new PlayerEvents_1_8_3(), this);
         }
     }
 

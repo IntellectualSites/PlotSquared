@@ -28,11 +28,13 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
+import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -134,9 +136,20 @@ public class Cluster extends SubCommand {
                         DBFunc.setInvited(world, cluster, plot.owner);
                     }
                 }
-                if (!PlotSquared.isPlotWorld(world)) {
+                PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+                if (plotworld == null) {
                     PlotSquared.config.createSection("worlds." + world);
                     PlotSquared.loadWorld(world, null);
+                }
+                else {
+                    final String gen_string = PlotSquared.config.getString("worlds." + world + "." + "generator.plugin");
+                    PlotGenerator generator;
+                    if (gen_string == null) {
+                        generator = new HybridGen(world);
+                    } else {
+                        generator = (PlotGenerator) PlotSquared.IMP.getGenerator(world, gen_string);
+                    }
+                    new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }
                 MainUtil.sendMessage(plr, C.CLUSTER_ADDED);
                 return true;
@@ -188,8 +201,6 @@ public class Cluster extends SubCommand {
                 DBFunc.delete(cluster);
                 if (plotworld.TYPE == 2) {
                     AugmentedPopulator.removePopulator(plr.getLocation().getWorld(), cluster);
-                }
-                for (final String set : ClusterManager.clusters.keySet()) {
                 }
                 ClusterManager.last = null;
                 ClusterManager.clusters.get(cluster.world).remove(cluster);
