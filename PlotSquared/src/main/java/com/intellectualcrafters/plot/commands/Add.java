@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -33,15 +32,15 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-public class Helpers extends SubCommand {
-    public Helpers() {
-        super(Command.HELPERS, "Manage plot helpers", "helpers {add|remove} {player}", CommandCategory.ACTIONS, true);
+public class Add extends SubCommand {
+    public Add() {
+        super(Command.ADD, "Allow a user to build while you are online", "add <player>", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 2) {
-            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
+        if (args.length != 1) {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot add <player>");
             return true;
         }
         final Location loc = plr.getLocation();
@@ -53,69 +52,41 @@ public class Helpers extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.helpers")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.add")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
-        if (args[0].equalsIgnoreCase("add")) {
-            UUID uuid;
-            if (args[1].equalsIgnoreCase("*")) {
-                uuid = DBFunc.everyone;
-            } else {
-                uuid = UUIDHandler.getUUID(args[1]);
-            }
-            if (uuid == null) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
-                return false;
-            }
-            if (!plot.helpers.contains(uuid)) {
-                if (plot.isOwner(uuid)) {
-                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-                    return false;
-                }
-                if (plot.trusted.contains(uuid)) {
-                    plot.trusted.remove(uuid);
-                    DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
-                }
-                if (plot.denied.contains(uuid)) {
-                    plot.denied.remove(uuid);
-                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-                }
-                plot.addHelper(uuid);
-                DBFunc.setHelper(loc.getWorld(), plot, uuid);
-                EventUtil.manager.callHelper(plr, plot, uuid, true);
-            } else {
-                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
-                return false;
-            }
-            MainUtil.sendMessage(plr, C.HELPER_ADDED);
-            return true;
-        } else if (args[0].equalsIgnoreCase("remove")) {
-            if (args[1].equalsIgnoreCase("*")) {
-                if (plot.helpers.size() == 0) {
-                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
-                    return true;
-                }
-                for (UUID uuid : plot.helpers) {
-                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
-                }
-                plot.helpers = new ArrayList<>();
-                MainUtil.sendMessage(plr, C.HELPER_REMOVED);
-                return true;
-            }
-            final UUID uuid = UUIDHandler.getUUID(args[1]);
-            if (!plot.helpers.contains(uuid)) {
-                MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
-                return false;
-            }
-            plot.removeHelper(uuid);
-            DBFunc.removeHelper(loc.getWorld(), plot, uuid);
-            EventUtil.manager.callHelper(plr, plot, uuid, false);
-            MainUtil.sendMessage(plr, C.HELPER_REMOVED);
+        UUID uuid;
+        if (args[0].equalsIgnoreCase("*")) {
+            uuid = DBFunc.everyone;
         } else {
-            MainUtil.sendMessage(plr, C.HELPER_NEED_ARGUMENT);
-            return true;
+            uuid = UUIDHandler.getUUID(args[0]);
         }
+        if (uuid == null) {
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            return false;
+        }
+        if (!plot.members.contains(uuid)) {
+            if (plot.isOwner(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_OWNER);
+                return false;
+            }
+            if (plot.trusted.contains(uuid)) {
+                plot.trusted.remove(uuid);
+                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+            }
+            if (plot.denied.contains(uuid)) {
+                plot.denied.remove(uuid);
+                DBFunc.removeDenied(loc.getWorld(), plot, uuid);
+            }
+            plot.addMember(uuid);
+            DBFunc.setMember(loc.getWorld(), plot, uuid);
+            EventUtil.manager.callMember(plr, plot, uuid, true);
+        } else {
+            MainUtil.sendMessage(plr, C.ALREADY_ADDED);
+            return false;
+        }
+        MainUtil.sendMessage(plr, C.MEMBER_ADDED);
         return true;
     }
 }

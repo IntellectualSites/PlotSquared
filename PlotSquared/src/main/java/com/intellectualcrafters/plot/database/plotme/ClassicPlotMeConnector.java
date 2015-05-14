@@ -230,7 +230,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     }
                 }
                 if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).helpers.add(helper);
+                    plots.get(world).get(id).trusted.add(helper);
                 }
             }
             

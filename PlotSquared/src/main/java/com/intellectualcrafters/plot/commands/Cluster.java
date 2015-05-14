@@ -451,10 +451,12 @@ public class Cluster extends SubCommand {
                 }
                 if (args[1].toLowerCase().equals("add")) {
                     cluster.helpers.add(uuid);
+                    DBFunc.setHelper(cluster, uuid);
                     return MainUtil.sendMessage(plr, C.CLUSTER_ADDED_HELPER);
                 }
                 if (args[1].toLowerCase().equals("remove")) {
                     cluster.helpers.remove(uuid);
+                    DBFunc.removeHelper(cluster, uuid);
                     return MainUtil.sendMessage(plr, C.CLUSTER_REMOVED_HELPER);
                 }
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");

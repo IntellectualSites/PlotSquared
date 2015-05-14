@@ -87,6 +87,7 @@ public class Rate extends SubCommand {
         } else {
             sendMessage(plr, C.COMMAND_WENT_WRONG);
         }
+        DBFunc.setRating(plot, plr.getUUID(), rating);
         return true;
     }
 }

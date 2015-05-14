@@ -84,8 +84,8 @@ public class MainUtil {
             if (plot == null) {
                 continue;
             }
-            if (plot.helpers != null) {
-                myplot.helpers = plot.helpers;
+            if (plot.trusted != null) {
+                myplot.trusted = plot.trusted;
             }
             if (plot.denied != null) {
                 myplot.denied = plot.denied;
@@ -1162,20 +1162,20 @@ public class MainUtil {
                 plot.settings.setMerged(currentPlot.settings.getMerged());
                 DBFunc.setMerged(world, plot, currentPlot.settings.getMerged());
             }
+            if (currentPlot.members != null && currentPlot.members.size() > 0) {
+                plot.members = currentPlot.members;
+                for (UUID member : plot.members) {
+                    DBFunc.setMember(world, plot, member);
+                }
+            }
             if (currentPlot.trusted != null && currentPlot.trusted.size() > 0) {
-                plot.trusted = currentPlot.trusted;
+                plot.members = currentPlot.trusted;
                 for (UUID trusted : plot.trusted) {
                     DBFunc.setTrusted(world, plot, trusted);
                 }
             }
-            if (currentPlot.helpers != null && currentPlot.helpers.size() > 0) {
-                plot.trusted = currentPlot.helpers;
-                for (UUID helpers : plot.helpers) {
-                    DBFunc.setHelper(world, plot, helpers);
-                }
-            }
             if (currentPlot.denied != null && currentPlot.denied.size() > 0) {
-                plot.trusted = currentPlot.denied;
+                plot.members = currentPlot.denied;
                 for (UUID denied : plot.denied) {
                     DBFunc.setDenied(world, plot, denied);
                 }

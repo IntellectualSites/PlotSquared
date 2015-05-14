@@ -53,7 +53,7 @@ public enum C {
     /*
      * Cluster
      */
-    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
+    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s\n", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
@@ -69,7 +69,7 @@ public enum C {
     CLUSTER_NOT_ADDED("$2That player was not added to the plot cluster", "Cluster"),
     CLUSTER_CANNOT_LEAVE("$1You must delete or transfer ownership before leaving", "Cluster"),
     CLUSTER_ADDED_HELPER("$4Successfully added a helper to the cluster", "Cluster"),
-    CLUSTER_REMOVED_HELPER("$4Successfully removed a helper to the cluster", "Cluster"),
+    CLUSTER_REMOVED_HELPER("$4Successfully removed a helper from the cluster", "Cluster"),
     CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
     CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
     CLUSTER_INFO("$1Current cluster: $2%id%\n$1Name: $2%name%\n$1Owner: $2%owner%\n$1Size: $2%size%\n$1Rights: $2%rights%", "Cluster"),
@@ -337,24 +337,10 @@ public enum C {
      */
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
-    /*
-     * PLOT_INFO("" +
-     * "$1ID$2: $4%id%$2\n" +
-     * "$1Alias$2: $4%alias%\n" +
-     * "$1Owner$2: $4%owner%\n" +
-     * "$1Helpers$2: $4%helpers%\n" +
-     * "$1Trusted$2: $4%trusted%\n" +
-     * "$1Denied$2: $4%denied%\n" +
-     * "$1Flags$2: $4%flags%\n" +
-     * "$1Biome$2: $4%biome%\n" +
-     * "$1Rating$2: $4%rating%$2/$410\n" +
-     * "$1Can build$2: $4%build%"
-     * ),
-     */
     PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%$1/$210$1\n" + "$1Helpers: $2%helpers%$1\n" + "$1Trusted: $2%trusted%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
-    PLOT_INFO_HELPERS("$1Helpers:$2 %helpers%", "Info"),
+    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%$1/$210$1\n" + "$1Trusted: $2%trusted%$1\n" + "$1Members: $2%members%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
+    PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
     PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"),
     PLOT_INFO_FLAGS("$1Flags:$2 %flags%", "Info"),
     PLOT_INFO_BIOME("$1Biome:$2 %biome%", "Info"),
@@ -434,22 +420,21 @@ public enum C {
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     /*
-     * Helper
-     */
-    HELPER_ADDED("$4You successfully added a helper to the plot", "Helper"),
-    HELPER_REMOVED("$4You successfully removed a helper from the plot", "Helper"),
-    HELPER_NEED_ARGUMENT("$2Arguments are missing. $1/plot helpers add <name> $2or $1/plot helpers remove <name>", "Helper"),
-    WAS_NOT_ADDED("$2That player was not added as a helper on this plot", "Helper"),
-    PLOT_REMOVED_HELPER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Helper"),
-    /*
      * Trusted
      */
-    ALREADY_OWNER("$2That user is already the plot owner.", "Trusted"),
-    ALREADY_ADDED("$2That user is already added to that category.", "Trusted"),
-    TRUSTED_ADDED("$4You successfully added a trusted user to the plot", "Trusted"),
-    TRUSTED_REMOVED("$1You successfully removed a trusted user from the plot", "Trusted"),
-    TRUSTED_NEED_ARGUMENT("$2Arguments are missing. $1/plot trusted add <name> $2or $1/plot trusted remove <name>", "Trusted"),
-    T_WAS_NOT_ADDED("$2That player was not added as a trusted user on this plot", "Trusted"),
+    TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
+    TRUSTED_REMOVED("$4You successfully removed a trusted user from the plot", "Trusted"),
+    WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
+    PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
+    /*
+     * Member
+     */
+    REMOVED_PLAYERS("$2Removed %s players from this plot.", "Member"),
+    ALREADY_OWNER("$2That user is already the plot owner.", "Member"),
+    ALREADY_ADDED("$2That user is already added to that category.", "Member"),
+    MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
+    MEMBER_REMOVED("$1You successfully removed a user from the plot", "Member"),
+    MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot", "Member"),
     /*
      * Set Owner
      */

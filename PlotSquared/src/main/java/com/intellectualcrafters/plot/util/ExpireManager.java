@@ -94,10 +94,16 @@ public class ExpireManager {
                     }
                     final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
                     Bukkit.getServer().getPluginManager().callEvent(event);
-                    for (final UUID helper : plot.helpers) {
+                    for (final UUID helper : plot.trusted) {
                         final PlotPlayer player = UUIDHandler.getPlayer(helper);
                         if (player != null) {
-                            MainUtil.sendMessage(player, C.PLOT_REMOVED_HELPER, plot.id.toString());
+                            MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                        }
+                    }
+                    for (final UUID helper : plot.members) {
+                        final PlotPlayer player = UUIDHandler.getPlayer(helper);
+                        if (player != null) {
+                            MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
                         }
                     }
                     final PlotManager manager = PlotSquared.getPlotManager(world);

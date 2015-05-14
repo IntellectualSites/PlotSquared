@@ -90,10 +90,10 @@ public class UUIDHandler {
     public static HashSet<UUID> getAllUUIDS() {
         HashSet<UUID> uuids = new HashSet<UUID>();
         for (Plot plot : PlotSquared.getPlotsRaw()) {
-            for (UUID uuid : plot.helpers) {
+            for (UUID uuid : plot.trusted) {
                 uuids.add(uuid);
             }
-            for (UUID uuid : plot.trusted) {
+            for (UUID uuid : plot.members) {
                 uuids.add(uuid);
             }
             for (UUID uuid : plot.denied) {

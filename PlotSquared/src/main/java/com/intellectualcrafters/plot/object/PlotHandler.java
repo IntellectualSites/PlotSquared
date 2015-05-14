@@ -85,10 +85,10 @@ public class PlotHandler {
         if (plot.denied.contains(uuid)) {
             return false;
         }
-        if (plot.helpers.contains(uuid) || plot.helpers.contains(DBFunc.everyone)) {
+        if (plot.trusted.contains(uuid) || plot.trusted.contains(DBFunc.everyone)) {
             return true;
         }
-        if (plot.trusted.contains(uuid) || plot.trusted.contains(DBFunc.everyone)) {
+        if (plot.members.contains(uuid) || plot.members.contains(DBFunc.everyone)) {
             if (PlotHandler.isOnline(plot)) {
                 return true;
             }

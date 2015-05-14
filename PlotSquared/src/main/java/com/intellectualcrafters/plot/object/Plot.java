@@ -53,13 +53,13 @@ public class Plot implements Cloneable {
      */
     public boolean deny_entry;
     /**
-     * List of helpers (with plot permissions)
-     */
-    public ArrayList<UUID> helpers;
-    /**
-     * List of trusted users (with plot permissions)
+     * List of trusted (with plot permissions)
      */
     public ArrayList<UUID> trusted;
+    /**
+     * List of members users (with plot permissions)
+     */
+    public ArrayList<UUID> members;
     /**
      * List of denied players
      */
@@ -83,17 +83,17 @@ public class Plot implements Cloneable {
      *
      * @param id
      * @param owner
-     * @param helpers
+     * @param trusted
      * @param denied
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> denied, final String world) {
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String world) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
         this.deny_entry = this.owner == null;
-        this.helpers = helpers;
+        this.trusted = trusted;
         this.denied = denied;
-        this.trusted = new ArrayList<>();
+        this.members = new ArrayList<>();
         this.settings.setAlias("");
         this.delete = false;
         this.settings.flags = new HashSet<Flag>();
@@ -105,17 +105,17 @@ public class Plot implements Cloneable {
      *
      * @param id
      * @param owner
-     * @param helpers
+     * @param trusted
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> helpers, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> members, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
         this.deny_entry = this.owner != null;
+        this.members = members;
         this.trusted = trusted;
-        this.helpers = helpers;
         this.denied = denied;
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
@@ -151,7 +151,7 @@ public class Plot implements Cloneable {
     }
 
     /**
-     * Check if the player is either the owner or on the helpers list
+     * Check if the player is either the owner or on the trusted list
      *
      * @param uuid
      *
@@ -188,7 +188,7 @@ public class Plot implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.helpers, this.trusted, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.trusted, this.members, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
         }
         return p;
     }
@@ -207,8 +207,8 @@ public class Plot implements Cloneable {
      *
      * @param uuid
      */
-    public void addHelper(final UUID uuid) {
-        this.helpers.add(uuid);
+    public void addTrusted(final UUID uuid) {
+        this.trusted.add(uuid);
     }
 
     /**
@@ -216,8 +216,8 @@ public class Plot implements Cloneable {
      *
      * @param uuid
      */
-    public void addTrusted(final UUID uuid) {
-        this.trusted.add(uuid);
+    public void addMember(final UUID uuid) {
+        this.members.add(uuid);
     }
 
     /**
@@ -248,7 +248,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void removeHelper(final UUID uuid) {
-        this.helpers.remove(uuid);
+        this.trusted.remove(uuid);
     }
 
     /**
@@ -257,7 +257,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void removeTrusted(final UUID uuid) {
-        this.trusted.remove(uuid);
+        this.members.remove(uuid);
     }
 
     @Override

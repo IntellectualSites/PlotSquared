@@ -20,33 +20,73 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.MainUtil;
+import java.util.UUID;
 
-public class Reload extends SubCommand {
-    public Reload() {
-        super("reload", "plots.admin.command.reload", "Reload configurations", "reload", CommandCategory.INFO, false);
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+public class Trust extends SubCommand {
+    public Trust() {
+        super(Command.TRUST, "Allow a player to build in a plot", "trust <player>", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        try {
-            // The following won't affect world generation, as that has to be
-            // loaded during startup unfortunately.
-            PlotSquared.config.load(PlotSquared.configFile);
-            PlotSquared.setupConfig();
-            C.setupTranslations();
-            for (final String pw : PlotSquared.getPlotWorlds()) {
-                final PlotWorld plotworld = PlotSquared.getPlotWorld(pw);
-                plotworld.loadDefaultConfiguration(PlotSquared.config.getConfigurationSection("worlds." + pw));
-            }
-            MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
-        } catch (final Exception e) {
-            MainUtil.sendMessage(plr, C.RELOAD_FAILED);
+        if (args.length != 1) {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot trust <player>");
+            return true;
         }
+        final Location loc = plr.getLocation();
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if ((plot == null) || !plot.hasOwner()) {
+            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            return false;
+        }
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.trust")) {
+            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+            return true;
+        }
+        UUID uuid;
+        if (args[0].equalsIgnoreCase("*")) {
+            uuid = DBFunc.everyone;
+        } else {
+            uuid = UUIDHandler.getUUID(args[0]);
+        }
+        if (uuid == null) {
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            return false;
+        }
+        if (!plot.trusted.contains(uuid)) {
+            if (plot.isOwner(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_OWNER);
+                return false;
+            }
+            if (plot.members.contains(uuid)) {
+                plot.members.remove(uuid);
+                DBFunc.removeMember(loc.getWorld(), plot, uuid);
+            }
+            if (plot.denied.contains(uuid)) {
+                plot.denied.remove(uuid);
+                DBFunc.removeDenied(loc.getWorld(), plot, uuid);
+            }
+            plot.addTrusted(uuid);
+            DBFunc.setTrusted(loc.getWorld(), plot, uuid);
+            EventUtil.manager.callTrusted(plr, plot, uuid, true);
+        } else {
+            MainUtil.sendMessage(plr, C.ALREADY_ADDED);
+            return false;
+        }
+        MainUtil.sendMessage(plr, C.TRUSTED_ADDED);
         return true;
     }
 }

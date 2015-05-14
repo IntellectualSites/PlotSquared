@@ -222,8 +222,8 @@ public class DebugUUID extends SubCommand {
             if (value != null) {
                 plot.owner = value;
             }
-            plot.helpers = new ArrayList<>();
             plot.trusted = new ArrayList<>();
+            plot.members = new ArrayList<>();
             plot.denied = new ArrayList<>();
         }
         

@@ -45,7 +45,7 @@ public abstract class EventUtil {
     
     public abstract void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
     
-    public abstract void callHelper(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
-    
     public abstract void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
+    
+    public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
 }

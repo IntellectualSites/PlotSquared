@@ -193,13 +193,13 @@ public class SQLManager implements AbstractDB {
                                     denied.add(new UUIDPair(id, uuid));
                                 }
                             }
-                            if (plot.trusted != null) {
-                                for (UUID uuid : plot.trusted) {
+                            if (plot.members != null) {
+                                for (UUID uuid : plot.members) {
                                     trusted.add(new UUIDPair(id, uuid));
                                 }
                             }
-                            if (plot.helpers != null) {
-                                for (UUID uuid : plot.helpers) {
+                            if (plot.trusted != null) {
+                                for (UUID uuid : plot.trusted) {
                                     helpers.add(new UUIDPair(id, uuid));
                                 }
                             }
@@ -835,7 +835,7 @@ public class SQLManager implements AbstractDB {
                 }
                 final Plot plot = plots.get(id);
                 if (plot != null) {
-                    plot.addHelper(user);
+                    plot.addTrusted(user);
                 } else {
                     PlotSquared.log("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
@@ -854,7 +854,7 @@ public class SQLManager implements AbstractDB {
                 }
                 final Plot plot = plots.get(id);
                 if (plot != null) {
-                    plot.addTrusted(user);
+                    plot.addMember(user);
                 } else {
                     PlotSquared.log("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
@@ -1409,7 +1409,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeHelper(final String world, final Plot plot, final UUID uuid) {
+    public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1428,7 +1428,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
+    public void removeMember(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1447,7 +1447,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setHelper(final String world, final Plot plot, final UUID uuid) {
+    public void setTrusted(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1484,7 +1484,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setTrusted(final String world, final Plot plot, final UUID uuid) {
+    public void setMember(final String world, final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1558,6 +1558,27 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
         }
         return 0.0d;
+    }
+    
+
+    @Override
+    public void setRating(final Plot plot, final UUID rater, final int value) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT IGNORE INTO `" + SQLManager.this.prefix + "plot_ratings` (`plot_plot_id`, `rating`, `player`) VALUES(?,?,?)");
+                    statement.setInt(1, getId(plot.world, plot.id));
+                    statement.setInt(2, value);
+                    statement.setString(3, rater.toString());
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (final SQLException e) {
+                    PlotSquared.log("&7[WARN] " + "Failed to set denied for plot " + plot.id);
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

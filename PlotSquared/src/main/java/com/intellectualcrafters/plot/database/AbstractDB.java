@@ -219,7 +219,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void removeHelper(final String world, final Plot plot, final UUID uuid);
+    public void removeTrusted(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param cluster   PlotCluster Object
@@ -231,7 +231,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void removeTrusted(final String world, final Plot plot, final UUID uuid);
+    public void removeMember(final String world, final Plot plot, final UUID uuid);
 
     /**
      *
@@ -244,7 +244,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void setHelper(final String world, final Plot plot, final UUID uuid);
+    public void setTrusted(final String world, final Plot plot, final UUID uuid);
 
     /**
      * @param cluster PlotCluster Object
@@ -256,7 +256,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be added
      */
-    public void setTrusted(final String world, final Plot plot, final UUID uuid);
+    public void setMember(final String world, final Plot plot, final UUID uuid);
 
     /**
      *
@@ -286,6 +286,14 @@ public interface AbstractDB {
      * @return Plot Ratings (pre-calculated)
      */
     public double getRatings(final Plot plot);
+    
+    /**
+     * Set a rating for a plot
+     * @param plot
+     * @param rater
+     * @param value
+     */
+    public void setRating(final Plot plot, UUID rater, int value);
 
     /**
      * Remove a plot comment

@@ -130,7 +130,7 @@ public class list extends SubCommand {
                 }
                 plots = new ArrayList<Plot>();
                 for (Plot plot : PlotSquared.getPlots()) {
-                    if (plot.helpers.contains(plr.getUUID()) || plot.trusted.contains(plr.getUUID())) {
+                    if (plot.trusted.contains(plr.getUUID()) || plot.members.contains(plr.getUUID())) {
                         plots.add(plot);
                     }
                 }

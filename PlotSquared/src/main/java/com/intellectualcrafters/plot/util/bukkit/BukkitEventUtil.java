@@ -99,12 +99,12 @@ public class BukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public void callHelper(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+    public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
     }
 
     @Override
-    public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+    public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotTrustedEvent(getPlayer(initiator), plot, player, added));
     }
     

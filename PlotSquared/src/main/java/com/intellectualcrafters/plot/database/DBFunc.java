@@ -90,7 +90,7 @@ public class DBFunc {
     }
 
     /**
-     * Create all settings + (helpers, denied, trusted)
+     * Create all settings + (trusted, denied, members)
      *
      * @param plots List containing all plot objects
      */
@@ -253,8 +253,8 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void removeHelper(final String world, final Plot plot, final UUID uuid) {
-        dbManager.removeHelper(world, plot, uuid);
+    public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
+        dbManager.removeTrusted(world, plot, uuid);
     }
 
     /**
@@ -285,8 +285,8 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
-        dbManager.removeTrusted(world, plot, uuid);
+    public static void removeMember(final String world, final Plot plot, final UUID uuid) {
+        dbManager.removeMember(world, plot, uuid);
     }
 
     /**
@@ -303,8 +303,8 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void setHelper(final String world, final Plot plot, final UUID uuid) {
-        dbManager.setHelper(world, plot, uuid);
+    public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
+        dbManager.setTrusted(world, plot, uuid);
     }
 
     public static void setHelper(final PlotCluster cluster, final UUID uuid) {
@@ -316,8 +316,8 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
-        dbManager.setTrusted(world, plot, uuid);
+    public static void setMember(final String world, final Plot plot, final UUID uuid) {
+        dbManager.setMember(world, plot, uuid);
     }
 
     public static void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
@@ -344,6 +344,10 @@ public class DBFunc {
 
     public static double getRatings(final Plot plot) {
         return dbManager.getRatings(plot);
+    }
+    
+    public static void setRating(Plot plot, UUID rater, int value) {
+        dbManager.setRating(plot, rater, value);
     }
 
     public static HashMap<String, HashSet<PlotCluster>> getClusters() {

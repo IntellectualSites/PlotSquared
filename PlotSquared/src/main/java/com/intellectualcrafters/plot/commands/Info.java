@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -103,8 +104,8 @@ public class Info extends SubCommand {
         boolean trustedEveryone;
         // Wildcard player {added}
         {
-            containsEveryone = (plot.helpers != null) && plot.helpers.contains(DBFunc.everyone);
-            trustedEveryone = (plot.trusted != null) && plot.trusted.contains(DBFunc.everyone);
+            containsEveryone = (plot.trusted != null) && plot.trusted.contains(DBFunc.everyone);
+            trustedEveryone = (plot.members != null) && plot.members.contains(DBFunc.everyone);
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
@@ -122,20 +123,18 @@ public class Info extends SubCommand {
         if (args.length == 1) {
             info = getCaption(args[0].toLowerCase());
             if (info == null) {
-                MainUtil.sendMessage(player, "&6Categories&7: &ahelpers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
+                MainUtil.sendMessage(player, "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
                 return false;
             }
         }
-        info = format(info, world, plot, player);
-        MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
-        MainUtil.sendMessage(player, info, false);
+        formatAndSend(info, world, plot, player);
         return true;
     }
 
     private String getCaption(final String string) {
         switch (string) {
-            case "helpers":
-                return C.PLOT_INFO_HELPERS.s();
+            case "trusted":
+                return C.PLOT_INFO_TRUSTED.s();
             case "alias":
                 return C.PLOT_INFO_ALIAS.s();
             case "biome":
@@ -148,8 +147,8 @@ public class Info extends SubCommand {
                 return C.PLOT_INFO_ID.s();
             case "size":
                 return C.PLOT_INFO_SIZE.s();
-            case "trusted":
-                return C.PLOT_INFO_TRUSTED.s();
+            case "members":
+                return C.PLOT_INFO_MEMBERS.s();
             case "owner":
                 return C.PLOT_INFO_OWNER.s();
             case "rating":
@@ -159,7 +158,7 @@ public class Info extends SubCommand {
         }
     }
 
-    private String format(String info, final String world, final Plot plot, final PlotPlayer player) {
+    private String formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player) {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
@@ -167,10 +166,13 @@ public class Info extends SubCommand {
         Location top = MainUtil.getPlotTopLoc(world, plot.id);
         Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1,0,1);
         final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
-        final String helpers = getPlayerList(plot.helpers);
         final String trusted = getPlayerList(plot.trusted);
+        final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
+        
+        // TODO async
         final String rating = String.format("%.1f", DBFunc.getRatings(plot));
+        
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
         String owner = "none";
@@ -186,14 +188,26 @@ public class Info extends SubCommand {
         info = info.replaceAll("%num%", num + "");
         info = info.replaceAll("%biome%", biome);
         info = info.replaceAll("%owner%", owner);
-        info = info.replaceAll("%helpers%", helpers);
+        info = info.replaceAll("%members%", members);
         info = info.replaceAll("%trusted%", trusted);
+        info = info.replaceAll("%helpers%", trusted);
         info = info.replaceAll("%denied%", denied);
         info = info.replaceAll("%rating%", rating);
         info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
-        return info;
+        
+        if (info.contains("%rating%")) {
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                }
+            });
+        }
+        
+        MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
+        MainUtil.sendMessage(player, info, false);
     }
 
     private String getPlayerList(final Collection<UUID> uuids) {

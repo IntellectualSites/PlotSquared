@@ -658,7 +658,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
     /**
      * Get the numbers of plots, which the player is able to build in
      *
-     * @param player Player, for whom we're getting the plots (trusted, helper and owner)
+     * @param player Player, for whom we're getting the plots (trusted, member and owner)
      *
      * @return the number of allowed plots
      *

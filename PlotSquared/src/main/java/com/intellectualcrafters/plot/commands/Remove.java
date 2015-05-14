@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
@@ -28,21 +28,20 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-public class Denied extends SubCommand {
-    public Denied() {
-        super(Command.DENIED, "Manage plot helpers", "denied {add|remove} {player}", CommandCategory.ACTIONS, true);
+public class Remove extends SubCommand {
+    public Remove() {
+        super(Command.REMOVE, "Remove a player from a plot", "remove <player>", CommandCategory.ACTIONS, true);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 2) {
-            MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
+        if (args.length != 1) {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot remove <player>");
             return true;
         }
         final Location loc = plr.getLocation();
@@ -54,76 +53,89 @@ public class Denied extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.denied")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.remove")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
-        if (args[0].equalsIgnoreCase("add")) {
-            UUID uuid;
-            if (args[1].equalsIgnoreCase("*")) {
-                uuid = DBFunc.everyone;
-            } else {
-                uuid = UUIDHandler.getUUID(args[1]);
-            }
-            if (uuid == null) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[1]);
-                return false;
-            }
-            if (!plot.denied.contains(uuid)) {
-                if (plot.isOwner(uuid)) {
-                    MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-                    return false;
+        int count = 0;
+        if (args[0].equals("unknown")) {
+            Iterator<UUID> i = plot.members.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                if (UUIDHandler.getName(uuid) == null) {
+                    DBFunc.removeMember(plot.world, plot, uuid);
+                    i.remove();
+                    count++;
                 }
+            }
+            i = plot.trusted.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                if (UUIDHandler.getName(uuid) == null) {
+                    DBFunc.removeTrusted(plot.world, plot, uuid);
+                    i.remove();
+                    count++;
+                }
+            }
+            i = plot.denied.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                if (UUIDHandler.getName(uuid) == null) {
+                    DBFunc.removeDenied(plot.world, plot, uuid);
+                    i.remove();
+                    count++;
+                }
+            }
+        }
+        else if (args[0].equals("*")){
+            Iterator<UUID> i = plot.members.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                DBFunc.removeMember(plot.world, plot, uuid);
+                i.remove();
+                count++;
+            }
+            i = plot.trusted.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                DBFunc.removeTrusted(plot.world, plot, uuid);
+                i.remove();
+                count++;
+            }
+            i = plot.denied.iterator();
+            while (i.hasNext()) {
+                UUID uuid = i.next();
+                DBFunc.removeDenied(plot.world, plot, uuid);
+                i.remove();
+                count++;
+            }
+        }
+        else {
+            UUID uuid = UUIDHandler.getUUID(args[0]);
+            if (uuid != null) {
                 if (plot.trusted.contains(uuid)) {
+                    DBFunc.removeTrusted(plot.world, plot, uuid);
                     plot.trusted.remove(uuid);
-                    DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
+                    count++;
                 }
-                if (plot.helpers.contains(uuid)) {
-                    plot.helpers.remove(uuid);
-                    DBFunc.removeHelper(loc.getWorld(), plot, uuid);
+                else if (plot.members.contains(uuid)) {
+                    DBFunc.removeMember(plot.world, plot, uuid);
+                    plot.members.remove(uuid);
+                    count++;
                 }
-                plot.addDenied(uuid);
-                DBFunc.setDenied(loc.getWorld(), plot, uuid);
-                EventUtil.manager.callDenied(plr, plot, uuid, true);
-            } else {
-                MainUtil.sendMessage(plr, C.ALREADY_ADDED);
-                return false;
-            }
-            final PlotPlayer player = UUIDHandler.getPlayer(uuid);
-            if (!uuid.equals(DBFunc.everyone) && (player != null) && player.isOnline()) {
-                final Plot pl = MainUtil.getPlot(player.getLocation());
-                if ((pl != null) && pl.id.equals(plot.id)) {
-                    MainUtil.sendMessage(player, C.YOU_BE_DENIED);
-                    player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
+                else if (plot.denied.contains(uuid)) {
+                    DBFunc.removeDenied(plot.world, plot, uuid);
+                    plot.denied.remove(uuid);
+                    count++;
                 }
             }
-            MainUtil.sendMessage(plr, C.DENIED_ADDED);
-            return true;
-        } else if (args[0].equalsIgnoreCase("remove")) {
-            if (args[1].equalsIgnoreCase("*")) {
-                if (plot.denied.size() == 0) {
-                    MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
-                    return true;
-                }
-                for (UUID uuid : plot.denied) {
-                    DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-                }
-                plot.denied = new ArrayList<>();
-                MainUtil.sendMessage(plr, C.DENIED_REMOVED);
-                return true;
-            }
-            final UUID uuid = UUIDHandler.getUUID(args[1]);
-            if (!plot.denied.contains(uuid)) {
-                MainUtil.sendMessage(plr, C.WAS_NOT_ADDED);
-                return true;
-            }
-            plot.removeDenied(uuid);
-            DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            EventUtil.manager.callDenied(plr, plot, uuid, false);
-            MainUtil.sendMessage(plr, C.DENIED_REMOVED);
-        } else {
-            MainUtil.sendMessage(plr, C.DENIED_NEED_ARGUMENT);
-            return true;
+        }
+        if (count == 0) {
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            return false;
+        }
+        else {
+            MainUtil.sendMessage(plr, C.REMOVED_PLAYERS, count + "");
         }
         return true;
     }

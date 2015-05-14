@@ -53,13 +53,13 @@ public class InfoInventory implements InventoryHolder {
     public InfoInventory build() {
         final UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(this.player));
         final ItemStack generalInfo = getItem(Material.EMERALD, "&cPlot Info", "&cID: &6" + this.plot.getId().toString(), "&cOwner: &6" + getName(this.plot.owner), "&cAlias: &6" + this.plot.settings.getAlias(), "&cBiome: &6" + this.plot.settings.getBiome().toString().replaceAll("_", "").toLowerCase(), "&cCan Build: &6" + this.plot.isAdded(uuid), "&cIs Denied: &6" + this.plot.isDenied(uuid));
-        final ItemStack helpers = getItem(Material.EMERALD, "&cHelpers", "&cAmount: &6" + this.plot.helpers.size(), "&8Click to view a list of the plot helpers");
-        final ItemStack trusted = getItem(Material.EMERALD, "&cTrusted", "&cAmount: &6" + this.plot.trusted.size(), "&8Click to view a list of trusted players");
+        final ItemStack trusted = getItem(Material.EMERALD, "&cTrusted", "&cAmount: &6" + this.plot.trusted.size(), "&8Click to view a list of the trusted users");
+        final ItemStack members = getItem(Material.EMERALD, "&cMembers", "&cAmount: &6" + this.plot.members.size(), "&8Click to view a list of plot members");
         final ItemStack denied = getItem(Material.EMERALD, "&cDenied", "&cAmount: &6" + this.plot.denied.size(), "&8Click to view a list of denied players");
         final ItemStack flags = getItem(Material.EMERALD, "&cFlags", "&cAmount: &6" + this.plot.settings.flags.size(), "&8Click to view a list of plot flags");
         this.inventory.setItem(2, generalInfo);
-        this.inventory.setItem(3, helpers);
-        this.inventory.setItem(4, trusted);
+        this.inventory.setItem(3, trusted);
+        this.inventory.setItem(4, members);
         this.inventory.setItem(5, denied);
         this.inventory.setItem(6, flags);
         return this;
