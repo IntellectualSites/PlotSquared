@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class Setup extends SubCommand {
     public Setup() {
-        super("setup", "plots.admin.command.setup", "Plotworld setup command", "setup", "create", CommandCategory.ACTIONS, true);
+        super("setup", "plots.admin.command.setup", "Plotworld setup command", "setup", "create", CommandCategory.ACTIONS, false);
     }
     
     public void displayGenerators(PlotPlayer plr) {
@@ -68,7 +68,13 @@ public class Setup extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         // going through setup
-        final String name = plr.getName();
+        String name;
+        if (plr == null) {
+            name = "*";
+        }
+        else {
+            name = plr.getName();
+        }
         if (!SetupUtils.setupMap.containsKey(name)) {
             final SetupObject object = new SetupObject();
             SetupUtils.setupMap.put(name, object);
@@ -79,12 +85,12 @@ public class Setup extends SubCommand {
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("cancel")) {
-                SetupUtils.setupMap.remove(plr.getName());
+                SetupUtils.setupMap.remove(name);
                 MainUtil.sendMessage(plr, "&aCancelled setup");
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
-                final SetupObject object = SetupUtils.setupMap.get(plr.getName());
+                final SetupObject object = SetupUtils.setupMap.get(name);
                 if (object.setup_index > 0) {
                     object.setup_index--;
                     final ConfigurationNode node = object.step[object.current];
@@ -224,7 +230,7 @@ public class Setup extends SubCommand {
                     MainUtil.sendMessage(plr, "&cThat world name is already taken!");
                 }
                 object.world = args[0];
-                SetupUtils.setupMap.remove(plr.getName());
+                SetupUtils.setupMap.remove(name);
                 final String world;
                 if (object.setupManager == null) {
                     world = SetupUtils.manager.setupWorld(object);
@@ -233,13 +239,15 @@ public class Setup extends SubCommand {
                     world = object.setupManager.setupWorld(object);
                 }
                 try {
-                    plr.teleport(BlockManager.manager.getSpawn(world));
+                    if (plr != null) {
+                        plr.teleport(BlockManager.manager.getSpawn(world));
+                    }
                 } catch (final Exception e) {
                     plr.sendMessage("&cAn error occured. See console for more information");
                     e.printStackTrace();
                 }
                 sendMessage(plr, C.SETUP_FINISHED, object.world);
-                SetupUtils.setupMap.remove(plr.getName());
+                SetupUtils.setupMap.remove(name);
             }
         }
         return false;
