@@ -583,10 +583,6 @@ public class PlotSquared {
             ExpireManager.runTask();
         }
         
-        if (Settings.COMMENT_NOTIFICATION_INTERVAL > 0) {
-            CommentManager.runTask();
-        }
-        
         // Copy files
         copyFile("town.template", "templates");
         copyFile("skyblock.template", "templates");
@@ -878,7 +874,7 @@ public class PlotSquared {
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
         
         // Comments
-        options.put("comments.notifications.interval", Settings.COMMENT_NOTIFICATION_INTERVAL);
+        options.put("comments.notifications.enabled", Settings.COMMENT_NOTIFICATIONS);
         
         // Plot limits
         options.put("global_limit", Settings.GLOBAL_LIMIT);
@@ -954,7 +950,7 @@ public class PlotSquared {
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
         
         // Comments
-        Settings.COMMENT_NOTIFICATION_INTERVAL = config.getInt("comments.notifications.interval");
+        Settings.COMMENT_NOTIFICATIONS = config.getBoolean("comments.notifications.enabled");
         
         // Plot limits
         Settings.MAX_AUTO_SIZE = config.getInt("claim.max-auto-area");

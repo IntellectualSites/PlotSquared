@@ -46,7 +46,7 @@ public class Settings {
     /**
      * Comment system
      */
-    public static int COMMENT_NOTIFICATION_INTERVAL = -1;
+    public static boolean COMMENT_NOTIFICATIONS = false;
     /**
      * Chunk processor
      */

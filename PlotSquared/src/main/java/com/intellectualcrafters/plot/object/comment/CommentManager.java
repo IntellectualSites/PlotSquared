@@ -1,36 +1,71 @@
 package com.intellectualcrafters.plot.object.comment;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang.mutable.MutableInt;
+import org.bukkit.ChatColor;
+
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 
 public class CommentManager {
     public static HashMap<String, CommentInbox> inboxes = new HashMap<>();
     
-    private static HashMap<String, Long> timestamps = new HashMap<>();
-    
-    public static void runTask() {
-//        TaskManager.runTaskRepeat(new Runnable() {
-//            
-//            @Override
-//            public void run() {
-//                
-//            }
-//        }, Settings.COMMENT_NOTIFICATION_INTERVAL * 1200);
-    }
-    
-    public static long getTimestamp(PlotPlayer player) {
-        Long time = timestamps.get(player.getName());
-        if (time == null) {
-            time = player.getPreviousLogin();
-            timestamps.put(player.getName(), time);
+    public static void sendTitle(final PlotPlayer player, final Plot plot) {
+        if (!Settings.COMMENT_NOTIFICATIONS) {
+            return;
         }
-        return time;
+        if (!plot.isOwner(player.getUUID())) {
+            return;
+        }
+        TaskManager.runTaskLaterAsync(new Runnable() {
+            @Override
+            public void run() {
+                Collection<CommentInbox> boxes = CommentManager.inboxes.values();
+                final AtomicInteger count = new AtomicInteger(0);
+                final AtomicInteger size = new AtomicInteger(boxes.size());
+                for (final CommentInbox inbox : inboxes.values()) {
+                    inbox.getComments(plot, new RunnableVal() {
+                        @Override
+                        public void run() {
+                            int total;
+                            if (value != null) {
+                                int num = 0;
+                                for (PlotComment comment : (ArrayList<PlotComment>) value) {
+                                    if (comment.timestamp > getTimestamp(player, inbox.toString())) {
+                                        num++;
+                                    }
+                                }
+                                total = count.addAndGet(num);
+                            }
+                            else {
+                                total = count.get();
+                            }
+                            if (size.decrementAndGet() == 0 && total > 0) {
+                                AbstractTitle.TITLE_CLASS.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total), ChatColor.GOLD, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                            }
+                        }
+                    });
+                }
+            }
+        }, 20);
     }
     
-    public static void setTime(PlotPlayer player) {
-        timestamps.put(player.getName(), System.currentTimeMillis());
+    public static long getTimestamp(PlotPlayer player, String inbox) {
+        Object meta = player.getMeta("inbox:"+inbox);
+        if (meta == null) {
+            return player.getPreviousLogin();
+        }
+        return (Long) meta;
     }
     
     public static void addInbox(CommentInbox inbox) {

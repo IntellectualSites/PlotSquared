@@ -92,7 +92,7 @@ public class Inbox extends SubCommand {
                                 int unread = 0;
                                 for (PlotComment comment : (ArrayList<PlotComment>) value) {
                                     total++;
-                                    if (comment.timestamp > player.getPreviousLogin()) {
+                                    if (comment.timestamp > CommentManager.getTimestamp(player, inbox.toString())) {
                                         unread++;
                                     }
                                 }
@@ -122,6 +122,7 @@ public class Inbox extends SubCommand {
             sendMessage(player, C.INVALID_INBOX, StringUtils.join(CommentManager.inboxes.keySet(),", "));
             return false;
         }
+        player.setMeta("inbox:" + inbox.toString(), System.currentTimeMillis());
         final int page;
         if (args.length > 1) {
             switch (args[1].toLowerCase()) {

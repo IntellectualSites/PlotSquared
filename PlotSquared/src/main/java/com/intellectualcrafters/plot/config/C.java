@@ -109,6 +109,7 @@ public enum C {
     /*
      * Comment
      */
+    INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
     NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
     INBOX_ITEM("$2 - $4%s", "Comment"),
     COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>", "Comment"),
