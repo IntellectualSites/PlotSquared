@@ -195,39 +195,41 @@ public class HybridPlotManager extends ClassicPlotManager {
         final int plotMaxZ = l2.getZ();
         Location mn = null;
         Location mx = null;
-        for (int i = startX; i < chunkX; i += 16) {
-            for (int j = startZ; j < chunkZ; j += 16) {
-                final Plot plot1 = MainUtil.getPlot(new Location(world, i, 0, j));
-                if ((plot1 != null) && (!plot1.getId().equals(plot.getId()))) {
-                    break;
-                }
-                final Plot plot2 = MainUtil.getPlot(new Location(world, i + 15, 0, j));
-                if ((plot2 != null) && (!plot2.getId().equals(plot.getId()))) {
-                    break;
-                }
-                final Plot plot3 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
-                if ((plot3 != null) && (!plot3.getId().equals(plot.getId()))) {
-                    break;
-                }
-                final Plot plot4 = MainUtil.getPlot(new Location(world, i, 0, j + 15));
-                if ((plot4 != null) && (!plot4.getId().equals(plot.getId()))) {
-                    break;
-                }
-                final Plot plot5 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
-                if ((plot5 != null) && (!plot5.getId().equals(plot.getId()))) {
-                    break;
-                }
-                if (mn == null) {
-                    mn = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
-                    mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                } else if ((mx.getZ() < (j + 15)) || (mx.getX() < (i + 15))) {
-                    mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                }
-                final int I = i;
-                final int J = j;
-                BukkitUtil.regenerateChunk(world, I / 16, J / 16);
-                if (!MainUtil.canSendChunk) {
-                    BukkitUtil.refreshChunk(world, I / 16, J / 16);
+        if (plotworld.TYPE == 0 && plotworld.TERRAIN == 0) {
+            for (int i = startX; i < chunkX; i += 16) {
+                for (int j = startZ; j < chunkZ; j += 16) {
+                    final Plot plot1 = MainUtil.getPlot(new Location(world, i, 0, j));
+                    if ((plot1 != null) && (!plot1.getId().equals(plot.getId()))) {
+                        break;
+                    }
+                    final Plot plot2 = MainUtil.getPlot(new Location(world, i + 15, 0, j));
+                    if ((plot2 != null) && (!plot2.getId().equals(plot.getId()))) {
+                        break;
+                    }
+                    final Plot plot3 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
+                    if ((plot3 != null) && (!plot3.getId().equals(plot.getId()))) {
+                        break;
+                    }
+                    final Plot plot4 = MainUtil.getPlot(new Location(world, i, 0, j + 15));
+                    if ((plot4 != null) && (!plot4.getId().equals(plot.getId()))) {
+                        break;
+                    }
+                    final Plot plot5 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
+                    if ((plot5 != null) && (!plot5.getId().equals(plot.getId()))) {
+                        break;
+                    }
+                    if (mn == null) {
+                        mn = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
+                        mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
+                    } else if ((mx.getZ() < (j + 15)) || (mx.getX() < (i + 15))) {
+                        mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
+                    }
+                    final int I = i;
+                    final int J = j;
+                    BukkitUtil.regenerateChunk(world, I / 16, J / 16);
+                    if (!MainUtil.canSendChunk) {
+                        BukkitUtil.refreshChunk(world, I / 16, J / 16);
+                    }
                 }
             }
         }
