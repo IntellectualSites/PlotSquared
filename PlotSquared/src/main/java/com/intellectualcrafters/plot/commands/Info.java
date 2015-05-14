@@ -158,7 +158,7 @@ public class Info extends SubCommand {
         }
     }
 
-    private String formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player) {
+    private void formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player) {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
@@ -169,9 +169,6 @@ public class Info extends SubCommand {
         final String trusted = getPlayerList(plot.trusted);
         final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
-        
-        // TODO async
-        final String rating = String.format("%.1f", DBFunc.getRatings(plot));
         
         final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
@@ -192,20 +189,22 @@ public class Info extends SubCommand {
         info = info.replaceAll("%trusted%", trusted);
         info = info.replaceAll("%helpers%", trusted);
         info = info.replaceAll("%denied%", denied);
-        info = info.replaceAll("%rating%", rating);
         info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
-        
+
         if (info.contains("%rating%")) {
+            final String newInfo = info;
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
+                    String info = newInfo.replaceAll("%rating%", String.format("%.1f", DBFunc.getRatings(plot)));
+                    MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
+                    MainUtil.sendMessage(player, info, false);
                 }
             });
+            return;
         }
-        
         MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
         MainUtil.sendMessage(player, info, false);
     }
