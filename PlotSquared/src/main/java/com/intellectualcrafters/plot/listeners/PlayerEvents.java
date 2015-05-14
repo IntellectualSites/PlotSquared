@@ -232,17 +232,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String message = event.getMessage();
-        if (message.toLowerCase().startsWith("/plotme")) {
-            final Plugin plotme = Bukkit.getPluginManager().getPlugin("PlotMe");
-            if (plotme == null) {
-                final Player player = event.getPlayer();
-                if (Settings.USE_PLOTME_ALIAS) {
-                    player.performCommand(message.replace("/plotme", "plots"));
-                } else {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
-                }
-                event.setCancelled(true);
+        if (message.toLowerCase().startsWith("/plotme") || message.toLowerCase().startsWith("/ap")) {
+            final Player player = event.getPlayer();
+            if (Settings.USE_PLOTME_ALIAS) {
+                player.performCommand(message.replace("/plotme", "plots"));
+            } else {
+                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
             }
+            event.setCancelled(true);
         }
     }
 

@@ -10,7 +10,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
 public abstract class APlotMeConnector {
-    public abstract Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder);
+    public abstract Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder);
     
     public abstract HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException;
 }

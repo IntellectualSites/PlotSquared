@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,16 +18,22 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
 
+    private String plugin;
+    
     @Override
-    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
+    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+        this.plugin = plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 final String user = plotConfig.getString("mySQLuname");
@@ -41,25 +48,99 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         catch (SQLException | ClassNotFoundException e) {}
         return null;
     }
+    
+    public void setMerged(HashMap<String, HashMap<PlotId, boolean[]>> merges, String world, PlotId id, int direction) {
+        HashMap<PlotId, boolean[]> plots = merges.get(world);
+        PlotId id2;
+        switch (direction) {
+            case 0: {
+                id2 = new PlotId(id.x, id.y);
+                break;
+            }
+            case 1: {
+                id2 = new PlotId(id.x, id.y);
+                break;
+            }
+            case 2: {
+                id2 = new PlotId(id.x, id.y);
+                break;
+            }
+            case 3: {
+                id2 = new PlotId(id.x, id.y);
+                break;
+            }
+            default: {
+                return;
+            }
+        }
+        boolean[] merge1;
+        boolean[] merge2;
+        if (plots.containsKey(id)) {
+            merge1 = plots.get(id);
+        }
+        else {
+            merge1 = new boolean[]{false, false, false, false};
+        }
+        if (plots.containsKey(id2)) {
+            merge2 = plots.get(id2);
+        }
+        else {
+            merge2 = new boolean[]{false, false, false, false};
+        }
+        merge1[direction] = true;
+        merge2[(direction + 2) % 4] = true;
+        plots.put(id, merge1);
+        plots.put(id2, merge1);
+    }
 
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
         ResultSet r;
         PreparedStatement stmt;
-        final HashMap<String, Integer> plotSize = new HashMap<>();
+        final HashMap<String, Integer> plotWidth = new HashMap<>();
+        final HashMap<String, Integer> roadWidth = new HashMap<>();
         final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
-        stmt = connection.prepareStatement("SELECT * FROM `plotmePlots`");
+        final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
+        stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
         r = stmt.executeQuery();
         boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
-        
+        boolean merge = !plugin.equals("plotme");
         while (r.next()) {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
             final String name = r.getString("owner");
-            final String world = PlotMeConverter.getWorld(r.getString("world"));
-            if (!plotSize.containsKey(world)) {
-                final int size = r.getInt("topZ") - r.getInt("bottomZ");
-                plotSize.put(world, size);
+            final String world = LikePlotMeConverter.getWorld(r.getString("world"));
+            if (!plots.containsKey(world)) {
+                int plot = PlotSquared.config.getInt("worlds." + world + ".plot.size");
+                int path = PlotSquared.config.getInt("worlds." + world + ".road.width");
+                plotWidth.put(world, plot);
+                roadWidth.put(world, path);
                 plots.put(world, new HashMap<PlotId, Plot>());
+                if (merge) {
+                    merges.put(world, new HashMap<PlotId,boolean[]>());
+                }
+            }
+            
+            if (merge) {
+                int tx = r.getInt("topX");
+                int tz = r.getInt("topZ");
+                int bx = r.getInt("bottomX");
+                int bz = r.getInt("bottomZ");
+                int path = roadWidth.get(world);
+                int plot = plotWidth.get(world);
+                Location top = getPlotTopLocAbs(path, plot, id);
+                Location bot = getPlotBottomLocAbs(path, plot, id);
+                if (tx > top.getX()) {
+                    setMerged(merges, world, id, 1);
+                }
+                if (tz > top.getZ()) {
+                    setMerged(merges, world, id, 2);
+                }
+                if (bx < bot.getX()) {
+                    setMerged(merges, world, id, 3);
+                }
+                if (bz > bot.getZ()) {
+                    setMerged(merges, world, id, 0);
+                }
             }
             UUID owner = UUIDHandler.getUUID(name);
             if (owner == null) {
@@ -94,19 +175,30 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             plots.get(world).put(id, plot);
         }
         
+        for (Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet()) {
+            String world = entry.getKey();
+            for (Entry<PlotId, boolean[]> entry2 : entry.getValue().entrySet()) {
+                HashMap<PlotId, Plot> newplots = plots.get(world);
+                Plot plot = newplots.get(entry2.getKey());
+                if (plot != null) {
+                    plot.settings.setMerged(entry2.getValue());
+                }
+            }
+        }
+        
         r.close();
         stmt.close();
         
         try {
         
-            MainUtil.sendConsoleMessage(" - plotmeDenied");
-            stmt = connection.prepareStatement("SELECT * FROM `plotmeDenied`");
+            MainUtil.sendConsoleMessage(" - " + plugin + "Denied");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Denied`");
             r = stmt.executeQuery();
             
             while (r.next()) {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
-                final String world = PlotMeConverter.getWorld(r.getString("world"));
+                final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID denied = UUIDHandler.getUUID(name);
                 if (denied == null) {
                     if (name.equals("*")) {
@@ -121,13 +213,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 }
             }
             
-            stmt = connection.prepareStatement("SELECT * FROM `plotmeAllowed`");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Allowed`");
             r = stmt.executeQuery();
             
             while (r.next()) {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
-                final String world = PlotMeConverter.getWorld(r.getString("world"));
+                final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID helper = UUIDHandler.getUUID(name);
                 if (helper == null) {
                     if (name.equals("*")) {
@@ -146,11 +238,24 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             stmt.close();
         
         }
-        catch (Exception e) {
-            
-        }
-        
+        catch (Exception e) {}
         return plots;
+    }
+    
+    public Location getPlotTopLocAbs(int path, int plot, final PlotId plotid) {
+        final int px = plotid.x;
+        final int pz = plotid.y;
+        final int x = (px * (path + plot)) - ((int) Math.floor(path / 2)) - 1;
+        final int z = (pz * (path + plot)) - ((int) Math.floor(path / 2)) - 1;
+        return new Location(null, x, 256, z);
+    }
+    
+    public Location getPlotBottomLocAbs(int path, int plot, final PlotId plotid) {
+        final int px = plotid.x;
+        final int pz = plotid.y;
+        final int x = (px * (path + plot)) - plot - ((int) Math.floor(path / 2)) - 1;
+        final int z = (pz * (path + plot)) - plot - ((int) Math.floor(path / 2)) - 1;
+        return new Location(null, x, 1, z);
     }
     
 }

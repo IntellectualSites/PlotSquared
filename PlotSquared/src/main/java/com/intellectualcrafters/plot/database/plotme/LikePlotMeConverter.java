@@ -23,16 +23,11 @@ package com.intellectualcrafters.plot.database.plotme;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -43,13 +38,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -57,18 +49,28 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  * @author Empire92
  */
-public class PlotMeConverter {
+public class LikePlotMeConverter {
+    private String plugin;
+
     /**
      * Constructor
      *
      * @param plugin Plugin Used to run the converter
      */
+    public LikePlotMeConverter(String plugin) {
+        this.plugin = plugin;
+    }
+    
     private void sendMessage(final String message) {
         PlotSquared.log("&3PlotMe&8->&3PlotSquared&8: &7" + message);
     }
     
     public String getPlotMePath() {
-        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
+        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + plugin + File.separator;
+    }
+    
+    public String getAthionPlotsPath() {
+        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + plugin + File.separator;
     }
     
     public FileConfiguration getPlotMeConfig(String dataFolder) {
@@ -83,43 +85,35 @@ public class PlotMeConverter {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
     
-    public void run(final APlotMeConnector connector) {
+    public boolean run(final APlotMeConnector connector) {
         try {
             String dataFolder = getPlotMePath();
             FileConfiguration plotConfig = getPlotMeConfig(dataFolder);
             
             if (plotConfig == null) {
-                return;
+                return false;
             }
             
-            Connection connection = connector.getPlotMeConnection(plotConfig, dataFolder);
+            Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
             
             if (connection == null) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
-                return;
+                return false;
             }
             
-            sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
-            sendMessage("Connecting to PlotMe DB");
+            sendMessage(plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
+            sendMessage("Connecting to " + plugin + " DB");
             
             int plotCount = 0;
             final ArrayList<Plot> createdPlots = new ArrayList<>();
             
             sendMessage("Collecting plot data");
-            sendMessage(" - plotmePlots");
+            
+            String dbPrefix = plugin.toLowerCase();
+            sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
-            HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
-            for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
-                plotCount += entry.getValue().size();
-            }
-            if (!Settings.CONVERT_PLOTME) {
-                return;
-            }
             
-            sendMessage(" - plotmeAllowed");
-            
-            sendMessage("Collected " + plotCount + " plots from PlotMe");
-            for (final String world : plots.keySet()) {
+            for (final String world : plotConfig.getConfigurationSection("worlds").getKeys(false)) {
                 sendMessage("Copying config for: " + world);
                 try {
                     final String plotMeWorldName = world.toLowerCase();
@@ -145,6 +139,18 @@ public class PlotMeConverter {
                     sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
                 }
             }
+            
+            HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
+            for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+                plotCount += entry.getValue().size();
+            }
+            if (!Settings.CONVERT_PLOTME) {
+                return false;
+            }
+            
+            sendMessage(" - " + dbPrefix + "Allowed");
+            
+            sendMessage("Collected " + plotCount + " plots from PlotMe");
             final File PLOTME_DG_FILE = new File(dataFolder + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
             if (PLOTME_DG_FILE.exists()) {
                 final YamlConfiguration PLOTME_DG_YML = YamlConfiguration.loadConfiguration(PLOTME_DG_FILE);
@@ -215,6 +221,7 @@ public class PlotMeConverter {
                 @Override
                 public void run() {
                     sendMessage("&aDatabase conversion is now complete!");
+                    PlotSquared.setAllPlotsRaw(DBFunc.getPlots());
                 }
             });
             sendMessage("Saving configuration...");
@@ -270,7 +277,6 @@ public class PlotMeConverter {
                                 myworld.save();
                             }
                         }
-                        PlotSquared.setAllPlotsRaw(DBFunc.getPlots());
                     } catch (final Exception e) {
                         e.printStackTrace();
                     }
@@ -284,6 +290,7 @@ public class PlotMeConverter {
         } catch (final Exception e) {
             PlotSquared.log("&/end/");
         }
+        return true;
     }
 
     public static String getWorld(final String world) {
