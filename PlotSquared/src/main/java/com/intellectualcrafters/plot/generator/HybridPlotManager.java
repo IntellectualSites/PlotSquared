@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
@@ -83,12 +84,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ());
         Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ() + 1);
-        createRoadAbs(hpw, pos1, pos2);
+        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
     
-    public static void createRoadAbs(HybridPlotWorld hpw, Location pos1, Location pos2) {
-        final int sy = hpw.ROAD_HEIGHT;
+    public void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, int height, boolean clear) {
         final int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
@@ -102,14 +102,16 @@ public class HybridPlotManager extends ClassicPlotManager {
                 }
                 final PlotLoc loc = new PlotLoc(absX, absZ);
                 final HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
-                for (short y = (short) (hpw.ROAD_HEIGHT); y <= (hpw.ROAD_HEIGHT + hpw.SCHEMATIC_HEIGHT); y++) {
-                    SetBlockQueue.setBlock(hpw.worldname, x, y + y, z, 0);
+                if (clear) {
+                    for (short y = (short) (height); y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
+                        SetBlockQueue.setBlock(hpw.worldname, x, y + y, z, 0);
+                    }
                 }
                 if (blocks != null) {
                     final HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
                     if (datas == null) {
                         for (final Short y : blocks.keySet()) {
-                            SetBlockQueue.setBlock(hpw.worldname, x, sy + y, z, blocks.get(y));
+                            SetBlockQueue.setBlock(hpw.worldname, x, height + y, z, blocks.get(y));
                         }
                     } else {
                         for (final Short y : blocks.keySet()) {
@@ -117,7 +119,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             if (data == null) {
                                 data = 0;
                             }
-                            SetBlockQueue.setBlock(hpw.worldname, x, sy + y, z, new PlotBlock(blocks.get(y), data));
+                            SetBlockQueue.setBlock(hpw.worldname, x, height + y, z, new PlotBlock(blocks.get(y), data));
                         }
                     }
                 }
@@ -138,7 +140,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plot.world, bot.getX(), 0, top.getZ() + 1);
         Location pos2 = new Location(plot.world, top.getX() + 1, 256, bot.getZ());
-        createRoadAbs(hpw, pos1, pos2);
+        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
     
@@ -155,7 +157,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
-        createRoadAbs(hpw, pos1, pos2);
+        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
     
@@ -244,6 +246,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                     MainUtil.setSimpleCuboidAsync(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT + 1, pos1.getZ()), new Location(world, pos2.getX() + 1, maxy + 1, pos2.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
                     MainUtil.setCuboidAsync(world, new Location(world, pos1.getX(), 1, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT, pos2.getZ() + 1), filling);
                     MainUtil.setCuboidAsync(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
+                    pastePlotSchematic(dpw, l1, l2);
                     SetBlockQueue.addNotify(whenDone);
                     return;
                 }
@@ -291,9 +294,18 @@ public class HybridPlotManager extends ClassicPlotManager {
                 MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, plotMaxX + 1, maxy + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
                 MainUtil.setCuboidAsync(world, new Location(world, max.getX(), 1, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
                 MainUtil.setCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
+                pastePlotSchematic(dpw, l1, l2);
                 SetBlockQueue.addNotify(whenDone);
             }
         });
         return true;
     }
+    
+    public void pastePlotSchematic(HybridPlotWorld plotworld, Location l1, Location l2) {
+        if (!plotworld.PLOT_SCHEMATIC) {
+            return;
+        }
+        createSchemAbs(plotworld, l1.add(1,0,1), l2, plotworld.PLOT_HEIGHT, false);
+    }
+    
 }
