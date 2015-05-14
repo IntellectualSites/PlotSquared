@@ -282,7 +282,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 }
             }
         }
-        for (final BlockPopulator populator : this.generator.getDefaultPopulators(world)) {
+        for (final BlockPopulator populator : this.generator.getPopulators(world.getName())) {
             Chunk chunk = world.getChunkAt(X, Z);
             populator.populate(world, this.r, chunk);
         }
