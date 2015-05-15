@@ -41,7 +41,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**

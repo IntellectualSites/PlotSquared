@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.titles;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;

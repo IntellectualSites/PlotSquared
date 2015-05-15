@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,6 @@ import org.bukkit.OfflinePlayer;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.Unlink;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -166,7 +166,9 @@ public class ExpireManager {
         final HashMap<Plot, Long> toRemove = new HashMap<>();
         final HashMap<UUID, Long> remove = new HashMap<>();
         final Set<UUID> keep = new HashSet<>();
-        for (final Plot plot : plots) {
+        Iterator<Plot> iter = plots.iterator();
+        while (iter.hasNext()) {
+            Plot plot = iter.next();
             final Flag keepFlag = FlagManager.getPlotFlag(plot, "keep");
             if (keepFlag != null && (Boolean) keepFlag.getValue()) {
                 continue;

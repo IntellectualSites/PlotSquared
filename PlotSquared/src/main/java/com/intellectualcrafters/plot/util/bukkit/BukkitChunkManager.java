@@ -44,10 +44,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -61,7 +59,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitChunkManager extends ChunkManager {

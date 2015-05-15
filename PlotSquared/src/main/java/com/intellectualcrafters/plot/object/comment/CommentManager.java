@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.ChatColor;
 
 import com.intellectualcrafters.plot.config.C;

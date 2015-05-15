@@ -35,7 +35,6 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;

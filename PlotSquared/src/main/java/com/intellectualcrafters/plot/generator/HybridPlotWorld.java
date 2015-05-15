@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.intellectualcrafters.plot.PlotSquared;

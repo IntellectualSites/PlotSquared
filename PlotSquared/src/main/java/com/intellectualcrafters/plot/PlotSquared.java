@@ -27,7 +27,6 @@ import java.util.zip.ZipInputStream;
 
 import net.milkbowl.vault.economy.Economy;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.intellectualcrafters.plot.commands.Cluster;

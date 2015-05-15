@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.util.StringUtil;
 
 /**
  * String comparison library
