@@ -57,6 +57,10 @@ public class BukkitSetupUtils extends SetupUtils {
             if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                 PlotSquared.config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
             }
+            ChunkGenerator gen = generators.get(object.setupGenerator);
+            if (gen instanceof PlotGenerator) {
+                object.setupGenerator = null;
+            }
         }
         try {
             PlotSquared.config.save(PlotSquared.configFile);

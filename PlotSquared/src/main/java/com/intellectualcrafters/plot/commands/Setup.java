@@ -48,9 +48,8 @@ public class Setup extends SubCommand {
         StringBuffer message = new StringBuffer();
         message.append("&6What generator do you want?");
         for (Entry<String, ChunkGenerator> entry : SetupUtils.generators.entrySet()) {
-//            + prefix + StringUtils.join(SetupUtils.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared")
             if (entry.getKey().equals("PlotSquared")) {
-                message.append("\n&8 - &2" + entry.getKey() + " (Hybrid Generator)");
+                message.append("\n&8 - &2" + entry.getKey() + " (Default Generator)");
             }
             else if (entry.getValue() instanceof HybridGen) {
                 message.append("\n&8 - &7" + entry.getKey() + " (Hybrid Generator)");
@@ -93,8 +92,8 @@ public class Setup extends SubCommand {
                 final SetupObject object = SetupUtils.setupMap.get(name);
                 if (object.setup_index > 0) {
                     object.setup_index--;
-                    final ConfigurationNode node = object.step[object.current];
-                    sendMessage(plr, C.SETUP_STEP, object.current + 1 + "", node.getDescription(), node.getType().getType(), node.getDefaultValue() + "");
+                    final ConfigurationNode node = object.step[object.setup_index];
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", node.getDescription(), node.getType().getType(), node.getDefaultValue() + "");
                     return false;
                 } else if (object.current > 0) {
                     object.current--;
