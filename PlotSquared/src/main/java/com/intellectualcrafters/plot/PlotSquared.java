@@ -918,7 +918,7 @@ public class PlotSquared {
         
         // Mob stuff
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
-        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathf" + "inding");
+        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         
         // Clearing + Expiry
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");

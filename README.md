@@ -6,7 +6,7 @@ PlotSquared - Plot Plugin Extraordinaire.
 Build the project using your favourite compiler (maven is the recommended way to build), then package the jar using `mvn package` **MAVEN IS REQUIRED TO BUILD AND PACKAGE THE JAR**
 
 ## API: ##
-The main API class can be found [here](https://github.com/IntellectualCrafters/PlotSquared/blob/master/PlotSquared/src/main/java/com/intellectualcrafters/plot/api/PlotAPI.java "API"). JavaDoc's can be found [here](http://ci.nixium.com/job/PlotSquared/javadoc/ "JDOCS").
+The main API class can be found [here](https://github.com/IntellectualCrafters/PlotSquared/blob/master/PlotSquared/src/main/java/com/intellectualcrafters/plot/api/PlotAPI.java "API"). JavaDoc's can be found [here](http://empcraft.com/plotsquared/doc/ "JDOCS").
 
 ## Links: ##
 
