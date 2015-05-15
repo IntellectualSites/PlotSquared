@@ -264,6 +264,7 @@ public class SchematicCmd extends SubCommand {
 					@Override
 					public void run() {
 						MainUtil.sendMessage(plr, "&aFinished export");
+						SchematicCmd.this.running = false;
 					}
 				});
                 if (!result) {

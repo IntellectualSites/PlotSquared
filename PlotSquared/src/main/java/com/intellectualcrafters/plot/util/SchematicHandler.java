@@ -61,7 +61,6 @@ public abstract class SchematicHandler {
             	Iterator<Plot> i = plots.iterator();
             	final Plot plot = i.next();
             	i.remove();
-                final CompoundTag sch = SchematicHandler.manager.getCompoundTag(plot.world, plot.id);
                 String o = UUIDHandler.getName(plot.owner);
                 if (o == null) {
                 	o = "unknown";
@@ -80,21 +79,27 @@ public abstract class SchematicHandler {
                 else {
                 	directory = outputDir.getPath();
                 }
-                if (sch == null) {
-                    MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
-                } else {
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainUtil.sendMessage(null, "&6ID: " + plot.id);
-                            final boolean result = SchematicHandler.manager.save(sch, directory + File.separator + name + ".schematic");
-                            if (!result) {
-                                MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
-                            } else {
-                                MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                if (PlotSquared.worldEdit != null) {
+                    new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
+                }
+                else {
+                    final CompoundTag sch = SchematicHandler.manager.getCompoundTag(plot.world, plot.id);
+                    if (sch == null) {
+                        MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
+                    } else {
+                        TaskManager.runTaskAsync(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainUtil.sendMessage(null, "&6ID: " + plot.id);
+                                final boolean result = SchematicHandler.manager.save(sch, directory + File.separator + name + ".schematic");
+                                if (!result) {
+                                    MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                                } else {
+                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }, 20);
