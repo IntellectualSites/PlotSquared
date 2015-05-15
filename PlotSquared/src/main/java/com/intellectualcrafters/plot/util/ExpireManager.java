@@ -65,7 +65,7 @@ public class ExpireManager {
     }
 
     public static void runTask() {
-        ExpireManager.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, new Runnable() {
+        ExpireManager.task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
                 for (final String world : PlotSquared.getPlotWorldsString()) {
@@ -131,7 +131,7 @@ public class ExpireManager {
                     return;
                 }
             }
-        }, 2400, 2400);
+        }, Settings.CLEAR_INTERVAL * 20);
     }
 
     public static boolean isExpired(final UUID uuid) {

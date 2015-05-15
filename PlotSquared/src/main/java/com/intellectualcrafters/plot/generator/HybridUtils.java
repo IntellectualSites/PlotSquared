@@ -75,6 +75,7 @@ public abstract class HybridUtils {
             boolean c1 = MainUtil.isPlotArea(new Location(plotworld.worldname, x, 1, z));
             boolean c2 = MainUtil.isPlotArea(new Location(plotworld.worldname, ex, 1, ez));
             if (!c1 && !c2) {
+                System.out.print("FALSE!");
                 return false;
             }
             else {
@@ -112,7 +113,8 @@ public abstract class HybridUtils {
                         }
                         boolean condition;
                         if (toCheck) {
-                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
+                            condition = manager.getPlotId(plotworld, x + X, 1, z + Z) == null;
+//                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
                         } else {
                             final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
                             final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
