@@ -187,7 +187,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%owner%", owner);
         info = info.replaceAll("%members%", members);
         info = info.replaceAll("%trusted%", trusted);
-        info = info.replaceAll("%helpers%", trusted);
+        info = info.replaceAll("%helpers%", members);
         info = info.replaceAll("%denied%", denied);
         info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
