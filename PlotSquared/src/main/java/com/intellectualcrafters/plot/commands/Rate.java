@@ -80,6 +80,7 @@ public class Rate extends SubCommand {
         }
         if (rated) {
             sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
+            return false;
         }
         final boolean success = true;
         if (success) {
