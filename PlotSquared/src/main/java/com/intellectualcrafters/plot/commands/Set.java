@@ -45,6 +45,7 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -58,7 +59,6 @@ public class Set extends SubCommand {
         super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         final Location loc = plr.getLocation();
@@ -249,8 +249,19 @@ public class Set extends SubCommand {
                         return false;
                     }
                 }
+                if (MainUtil.runners.containsKey(plot)) {
+                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                    return false;
+                }
+                MainUtil.runners.put(plot, 1);
                 manager.setComponent(plotworld, plot.id, component, blocks);
                 MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
+                SetBlockQueue.addNotify(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.runners.remove(plot);
+                    }
+                });
                 return true;
             }
         }
