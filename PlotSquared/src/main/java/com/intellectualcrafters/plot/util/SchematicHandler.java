@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,20 +40,22 @@ public abstract class SchematicHandler {
     
     private boolean exportAll = false;
     
-    public boolean exportAll(final Collection<Plot> plots, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
+    public boolean exportAll(final Collection<Plot> collection, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
     	if (exportAll) {
     		return false;
     	}
-    	if (plots.size() == 0) {
+    	if (collection.size() == 0) {
     		return false;
     	}
     	exportAll = true;
+    	final ArrayList<Plot> plots = new ArrayList<Plot>(collection);
     	TaskManager.index.increment();
     	final Integer currentIndex = TaskManager.index.toInteger();
         final int task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
             	if (plots.size() == 0) {
+            	    exportAll = false;
             		Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     TaskManager.runTask(ifSuccess);
