@@ -75,7 +75,6 @@ public abstract class HybridUtils {
             boolean c1 = MainUtil.isPlotArea(new Location(plotworld.worldname, x, 1, z));
             boolean c2 = MainUtil.isPlotArea(new Location(plotworld.worldname, ex, 1, ez));
             if (!c1 && !c2) {
-                System.out.print("FALSE!");
                 return false;
             }
             else {

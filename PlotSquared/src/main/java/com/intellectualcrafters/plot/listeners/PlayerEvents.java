@@ -65,6 +65,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -98,6 +99,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.sk89q.worldedit.function.EntityFunction;
 
 /**
  * Player Events involving plots
@@ -835,69 +837,60 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
+        if (checkEntity(entity, plot)) {
+            event.setCancelled(true);
+        }
+        
+    }
+    
+    public boolean checkEntity(Entity entity, Plot plot) {
         if (plot != null && plot.owner != null) {
             Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
-            Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
-            Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
-            Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
-            Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
-            if (!(entity instanceof Creature)) {
-                return;
-            }
-            if (entityFlag == null) {
-                if (animalFlag == null && (entity instanceof Animals)) {
-                    return;
-                }
-                if (monsterFlag == null && (entity instanceof Monster)) {
-                    return;
-                }
-            }
             int[] mobs = ChunkManager.manager.countEntities(plot);
-            if (entity instanceof Creature || entity instanceof Vehicle) {
-                if (entityFlag != null) {
-                    int cap = ((Integer) entityFlag.getValue());
-                    if (mobs[0] >= cap) {
-                        event.setCancelled(true);
-                        return;
+            if (entityFlag != null) {
+                int cap = ((Integer) entityFlag.getValue());
+                if (mobs[0] >= cap) {
+                    return true;
+                }
+            }
+            if (entity instanceof Creature) {
+                Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
+                if (mobFlag != null) {
+                    int cap = ((Integer) mobFlag.getValue());
+                    if (mobs[3] >= cap) {
+                        return true;
                     }
                 }
-                if (entity instanceof Creature) {
-                    if (mobFlag != null) {
-                        int cap = ((Integer) mobFlag.getValue());
-                        if (mobs[3] >= cap) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                    if (entity instanceof Animals) {
-                        if (animalFlag != null) {
-                            int cap = ((Integer) animalFlag.getValue());
-                            if (mobs[1] >= cap) {
-                                event.setCancelled(true);
-                            }
-                        }
-                        return;
-                    }
-                    else if (entity instanceof Monster) {
-                        if (monsterFlag != null) {
-                            int cap = ((Integer) monsterFlag.getValue());
-                            if (mobs[2] >= cap) {
-                                event.setCancelled(true);
-                            }
+                if (entity instanceof Animals) {
+                    Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
+                    if (animalFlag != null) {
+                        int cap = ((Integer) animalFlag.getValue());
+                        if (mobs[1] >= cap) {
+                            return true;
                         }
                     }
                 }
-                else {
-                    if (vehicleFlag != null) {
-                        int cap = ((Integer) vehicleFlag.getValue());
-                        if (mobs[4] >= cap) {
-                            event.setCancelled(true);
-                            return;
+                else if (entity instanceof Monster) {
+                    Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
+                    if (monsterFlag != null) {
+                        int cap = ((Integer) monsterFlag.getValue());
+                        if (mobs[2] >= cap) {
+                            return true;
                         }
+                    }
+                }
+            }
+            else if (entity instanceof Vehicle) {
+                Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
+                if (vehicleFlag != null) {
+                    int cap = ((Integer) vehicleFlag.getValue());
+                    if (mobs[4] >= cap) {
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -1255,6 +1248,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     }
                 }
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onVehicleCreate(final VehicleCreateEvent event) {
+        Vehicle entity = event.getVehicle();
+        Location loc = BukkitUtil.getLocation(entity);
+        Plot plot = MainUtil.getPlot(loc);
+        if (checkEntity(entity, plot)) {
+            entity.remove();
         }
     }
 
