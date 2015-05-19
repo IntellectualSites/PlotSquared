@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
@@ -123,6 +124,7 @@ import com.intellectualcrafters.plot.util.bukkit.SendChunk;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
 import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
+import com.intellectualcrafters.plot.util.bukkit.SetGenCB;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
@@ -172,7 +174,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());
             for (World world : worlds) {
-                Bukkit.getServer().unloadWorld(world, false);
+                try {
+                    SetGenCB.setGenerator(world);
+                } catch (Exception e) {
+                    log("Failed to reload world: " + world.getName());
+                    Bukkit.getServer().unloadWorld(world, false);
+                }
             }
         }
     }

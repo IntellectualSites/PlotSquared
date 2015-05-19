@@ -498,6 +498,7 @@ public class PlotSquared {
     }
 
     public PlotSquared(final IPlotMain imp_class) {
+        SetupUtils.generators = new HashMap<>();
         THIS = this;
         IMP = imp_class;
         try {
