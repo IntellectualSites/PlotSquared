@@ -153,27 +153,27 @@ public class BukkitChunkManager extends ChunkManager {
      */
     @Override
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
-    	TaskManager.index.increment();
+        TaskManager.index.increment();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
-        
+
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
-        
+
         final Chunk c1 = newWorld.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
         final Chunk c2 = newWorld.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
-        
+
         final int sx = pos1.getX();
         final int sz = pos1.getZ();
         final int ex = pos2.getX();
         final int ez = pos2.getZ();
-        
+
         final int c1x = c1.getX();
         final int c1z = c1.getZ();
         final int c2x = c2.getX();
         final int c2z = c2.getZ();
-        
+
         final ArrayList<Chunk> chunks = new ArrayList<>();
         final ArrayList<Chunk> toGenerate = new ArrayList<>();
         // Load chunks
@@ -196,7 +196,7 @@ public class BukkitChunkManager extends ChunkManager {
                         TaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
-                            	TaskManager.index.increment();
+                                TaskManager.index.increment();
                                 // Copy entities
                                 initMaps();
                                 for (int x = c1x; x <= c2x; x++) {
@@ -236,7 +236,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                     }
                                                 }
                                                 restoreBlocks(newWorld, relX, relZ);
-                                                restoreEntities(newWorld, relX, relZ);                                                
+                                                restoreEntities(newWorld, relX, relZ);
                                                 BukkitSetBlockManager.setBlockManager.update(chunks);
                                                 TaskManager.runTask(whenDone);
                                                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
@@ -261,10 +261,10 @@ public class BukkitChunkManager extends ChunkManager {
         TaskManager.tasks.put(currentIndex, loadTask);
         return true;
     }
-    
+
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
-    	TaskManager.index.increment();
+        TaskManager.index.increment();
         final Plugin plugin = BukkitMain.THIS;
         final World world = Bukkit.getWorld(pos1.getWorld());
         final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
@@ -290,8 +290,8 @@ public class BukkitChunkManager extends ChunkManager {
         final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                long start = System.currentTimeMillis();
-                while (System.currentTimeMillis() - start < 20) {
+                final long start = System.currentTimeMillis();
+                while ((System.currentTimeMillis() - start) < 20) {
                     if (chunks.size() == 0) {
                         TaskManager.runTaskLater(whenDone, 1);
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
@@ -402,8 +402,8 @@ public class BukkitChunkManager extends ChunkManager {
     public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region) {
         saveEntitiesIn(chunk, region, 0, 0, false);
     }
-    
-    public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region, int offset_x, int offset_z, boolean delete) {
+
+    public static void saveEntitiesIn(final Chunk chunk, final RegionWrapper region, final int offset_x, final int offset_z, final boolean delete) {
         for (final Entity entity : chunk.getEntities()) {
             final Location loc = BukkitUtil.getLocation(entity);
             final int x = loc.getX();
@@ -439,193 +439,257 @@ public class BukkitChunkManager extends ChunkManager {
 
     public static void restoreBlocks(final World world, final int x_offset, final int z_offset) {
         for (final BlockLoc loc : chestContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Chest) {
-                final Chest chest = (Chest) state;
-                chest.getInventory().setContents(chestContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Chest) {
+                    final Chest chest = (Chest) state;
+                    chest.getInventory().setContents(chestContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : signContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Sign) {
-                final Sign sign = (Sign) state;
-                int i = 0;
-                for (final String line : signContents.get(loc)) {
-                    sign.setLine(i, line);
-                    i++;
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Sign) {
+                    final Sign sign = (Sign) state;
+                    int i = 0;
+                    for (final String line : signContents.get(loc)) {
+                        sign.setLine(i, line);
+                        i++;
+                    }
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
-                state.update(true);
-            } else {
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : dispenserContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Dispenser) {
-                ((Dispenser) (state)).getInventory().setContents(dispenserContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Dispenser) {
+                    ((Dispenser) (state)).getInventory().setContents(dispenserContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : dropperContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Dropper) {
-                ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Dropper) {
+                    ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : beaconContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Beacon) {
-                ((Beacon) (state)).getInventory().setContents(beaconContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Beacon) {
+                    ((Beacon) (state)).getInventory().setContents(beaconContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : jukeDisc.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Jukebox) {
-                ((Jukebox) (state)).setPlaying(Material.getMaterial(jukeDisc.get(loc)));
-                state.update(true);
-            } else {
-                PlotSquared.log("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Jukebox) {
+                    ((Jukebox) (state)).setPlaying(Material.getMaterial(jukeDisc.get(loc)));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
+                PlotSquared.log("&c[WARN] Plot clear failed to regenerate jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : skullData.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Skull) {
-                final Object[] data = skullData.get(loc);
-                if (data[0] != null) {
-                    ((Skull) (state)).setOwner((String) data[0]);
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Skull) {
+                    final Object[] data = skullData.get(loc);
+                    if (data[0] != null) {
+                        ((Skull) (state)).setOwner((String) data[0]);
+                    }
+                    if (((Integer) data[1]) != 0) {
+                        ((Skull) (state)).setRotation(BlockFace.values()[(int) data[1]]);
+                    }
+                    if (((Integer) data[2]) != 0) {
+                        ((Skull) (state)).setSkullType(SkullType.values()[(int) data[2]]);
+                    }
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
-                if (((Integer) data[1]) != 0) {
-                    ((Skull) (state)).setRotation(BlockFace.values()[(int) data[1]]);
-                }
-                if (((Integer) data[2]) != 0) {
-                    ((Skull) (state)).setSkullType(SkullType.values()[(int) data[2]]);
-                }
-                state.update(true);
-            } else {
-                PlotSquared.log("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+            } catch (final Exception e) {
+                PlotSquared.log("&c[WARN] Plot clear failed to regenerate skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : hopperContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Hopper) {
-                ((Hopper) (state)).getInventory().setContents(hopperContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Hopper) {
+                    ((Hopper) (state)).getInventory().setContents(hopperContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : noteBlockContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof NoteBlock) {
-                ((NoteBlock) (state)).setNote(noteBlockContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof NoteBlock) {
+                    ((NoteBlock) (state)).setNote(noteBlockContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : brewTime.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof BrewingStand) {
-                ((BrewingStand) (state)).setBrewingTime(brewTime.get(loc));
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof BrewingStand) {
+                    ((BrewingStand) (state)).setBrewingTime(brewTime.get(loc));
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : spawnerData.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof CreatureSpawner) {
-                ((CreatureSpawner) (state)).setCreatureTypeId(spawnerData.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof CreatureSpawner) {
+                    ((CreatureSpawner) (state)).setCreatureTypeId(spawnerData.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : cmdData.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof CommandBlock) {
-                ((CommandBlock) (state)).setCommand(cmdData.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof CommandBlock) {
+                    ((CommandBlock) (state)).setCommand(cmdData.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : brewingStandContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof BrewingStand) {
-                ((BrewingStand) (state)).getInventory().setContents(brewingStandContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof BrewingStand) {
+                    ((BrewingStand) (state)).getInventory().setContents(brewingStandContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : furnaceTime.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Furnace) {
-                final Short[] time = furnaceTime.get(loc);
-                ((Furnace) (state)).setBurnTime(time[0]);
-                ((Furnace) (state)).setCookTime(time[1]);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Furnace) {
+                    final Short[] time = furnaceTime.get(loc);
+                    ((Furnace) (state)).setBurnTime(time[0]);
+                    ((Furnace) (state)).setCookTime(time[1]);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : furnaceContents.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Furnace) {
-                ((Furnace) (state)).getInventory().setContents(furnaceContents.get(loc));
-                state.update(true);
-            } else {
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Furnace) {
+                    ((Furnace) (state)).getInventory().setContents(furnaceContents.get(loc));
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                }
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : bannerBase.keySet()) {
-            final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
-            final BlockState state = block.getState();
-            if (state instanceof Banner) {
-                final Banner banner = (Banner) state;
-                final byte base = bannerBase.get(loc);
-                final ArrayList<Byte[]> colors = bannerColors.get(loc);
-                banner.setBaseColor(DyeColor.values()[base]);
-                for (final Byte[] color : colors) {
-                    banner.addPattern(new Pattern(DyeColor.getByDyeData(color[1]), PatternType.values()[color[0]]));
+            try {
+                final Block block = world.getBlockAt(loc.x + x_offset, loc.y, loc.z + z_offset);
+                final BlockState state = block.getState();
+                if (state instanceof Banner) {
+                    final Banner banner = (Banner) state;
+                    final byte base = bannerBase.get(loc);
+                    final ArrayList<Byte[]> colors = bannerColors.get(loc);
+                    banner.setBaseColor(DyeColor.values()[base]);
+                    for (final Byte[] color : colors) {
+                        banner.addPattern(new Pattern(DyeColor.getByDyeData(color[1]), PatternType.values()[color[0]]));
+                    }
+                    state.update(true);
+                } else {
+                    PlotSquared.log("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
-                state.update(true);
-            } else {
+            } catch (final Exception e) {
                 PlotSquared.log("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
     }
-    
+
     public static void saveBlocks(final World world, final int maxY, final int x, final int z) {
         saveBlocks(world, maxY, x, z, 0, 0);
     }
 
-    public static void saveBlocks(final World world, final int maxY, int x, int z, int offset_x, int offset_z) {
+    public static void saveBlocks(final World world, final int maxY, final int x, final int z, final int offset_x, final int offset_z) {
         final HashMap<Short, Short> ids = new HashMap<>();
         final HashMap<Short, Byte> datas = new HashMap<>();
         for (short y = 0; y < maxY; y++) {
@@ -775,7 +839,7 @@ public class BukkitChunkManager extends ChunkManager {
             if (plot.id.equals(id)) {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
-                    PlotPlayer pp = BukkitUtil.getPlayer(player); 
+                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     pp.teleport(MainUtil.getDefaultHome(plot));
                     APlotListener.manager.plotExit(pp, plot);
                 } else {
@@ -784,98 +848,95 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
     }
-    
+
     @Override
     public boolean loadChunk(final String world, final ChunkLoc loc) {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
     }
-    
+
     @Override
     public boolean unloadChunk(final String world, final ChunkLoc loc) {
         return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).unload(true, true);
     }
-    
-    public static void swapChunk(World world, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
+
+    public static void swapChunk(final World world, final Chunk pos1, final Chunk pos2, final RegionWrapper r1, final RegionWrapper r2) {
         initMaps();
-        int relX = (r2.minX - r1.minX);
-        int relZ = (r2.minZ - r1.minZ);
-        
+        final int relX = (r2.minX - r1.minX);
+        final int relZ = (r2.minZ - r1.minZ);
+
         saveEntitiesIn(pos1, r1, relX, relZ, true);
         saveEntitiesIn(pos2, r2, -relX, -relZ, true);
-        
-        int sx = pos1.getX() << 4;
-        int sz = pos1.getZ() << 4;
-        
-        int maxY = world.getMaxHeight();
-        
+
+        final int sx = pos1.getX() << 4;
+        final int sz = pos1.getZ() << 4;
+
+        final int maxY = world.getMaxHeight();
+
         for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
-            for (int z = Math.max(r1.minZ, sz); z <=  Math.min(r1.maxZ, sz + 15); z++) {
+            for (int z = Math.max(r1.minZ, sz); z <= Math.min(r1.maxZ, sz + 15); z++) {
                 saveBlocks(world, maxY, sx, sz, relX, relZ);
                 for (int y = 0; y < maxY; y++) {
-                    Block block1 = world.getBlockAt(x, y, z);
-                    int id1 = block1.getTypeId();
-                    byte data1 = block1.getData();
-                    int xx = x + relX;
-                    int zz = z + relZ;
-                    Block block2 = world.getBlockAt(xx, y, zz);
-                    int id2 = block2.getTypeId();
-                    byte data2 = block2.getData();
+                    final Block block1 = world.getBlockAt(x, y, z);
+                    final int id1 = block1.getTypeId();
+                    final byte data1 = block1.getData();
+                    final int xx = x + relX;
+                    final int zz = z + relZ;
+                    final Block block2 = world.getBlockAt(xx, y, zz);
+                    final int id2 = block2.getTypeId();
+                    final byte data2 = block2.getData();
                     if (id1 == 0) {
                         if (id2 != 0) {
                             BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
                             BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, 0, (byte) 0);
                         }
-                    }
-                    else if (id2 == 0) {
+                    } else if (id2 == 0) {
                         if (id1 != 0) {
                             BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
                             BukkitSetBlockManager.setBlockManager.set(world, x, y, z, 0, (byte) 0);
                         }
-                    }
-                    else if (id1 == id2) {
+                    } else if (id1 == id2) {
                         if (data1 != data2) {
                             block1.setData(data2);
                             block2.setData(data1);
                         }
-                    }
-                    else {
+                    } else {
                         BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
                         BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
                     }
-                    
+
                 }
             }
         }
         restoreBlocks(world, 0, 0);
         restoreEntities(world, 0, 0);
     }
-    
+
     @Override
     public void swap(final String worldname, final PlotId pos1, final PlotId pos2) {
-        Location bot1 = MainUtil.getPlotBottomLoc(worldname, pos1).add(1, 0, 1);
-        Location top1 = MainUtil.getPlotTopLoc(worldname, pos1);
-        
-        Location bot2 = MainUtil.getPlotBottomLoc(worldname, pos2).add(1, 0, 1);
-        Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
+        final Location bot1 = MainUtil.getPlotBottomLoc(worldname, pos1).add(1, 0, 1);
+        final Location top1 = MainUtil.getPlotTopLoc(worldname, pos1);
+
+        final Location bot2 = MainUtil.getPlotBottomLoc(worldname, pos2).add(1, 0, 1);
+        final Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
         swap(worldname, bot1, top1, bot2, top2);
-        
+
         clearAllEntities(MainUtil.getPlot(worldname, pos1));
         clearAllEntities(MainUtil.getPlot(worldname, pos2));
     }
-    
+
     @Override
-    public void swap(final String worldname, final Location bot1, final Location top1, Location bot2, Location top2) {
+    public void swap(final String worldname, final Location bot1, final Location top1, final Location bot2, final Location top2) {
         final RegionWrapper region1 = new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         final RegionWrapper region2 = new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
         final World world = Bukkit.getWorld(bot1.getWorld());
-        
+
         final int relX = bot2.getX() - bot1.getX();
         final int relZ = bot2.getZ() - bot1.getZ();
-        
-        for (int x = bot1.getX() >> 4; x <= top1.getX() >> 4; x++) {
-            for (int z = bot1.getZ() >> 4; z <= top1.getZ() >> 4; z++) {
-                Chunk chunk1 = world.getChunkAt(x, z);
-                Chunk chunk2 = world.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
+
+        for (int x = bot1.getX() >> 4; x <= (top1.getX() >> 4); x++) {
+            for (int z = bot1.getZ() >> 4; z <= (top1.getZ() >> 4); z++) {
+                final Chunk chunk1 = world.getChunkAt(x, z);
+                final Chunk chunk2 = world.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
                 swapChunk(world, chunk1, chunk2, region1, region2);
             }
         }
@@ -883,103 +944,98 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public int[] countEntities(Plot plot) {
-        int[] count = new int[5];
-        World world = BukkitUtil.getWorld(plot.world);
-        
-        Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
-        int bx = bot.getX() >> 4;
-        int bz = bot.getZ() >> 4;
-        
-        int tx = top.getX() >> 4;
-        int tz = top.getZ() >> 4;
-        
-        int size = (tx-bx) << 4;
-        
-        HashSet<Chunk> chunks = new HashSet<>();
-        for (int X = bx; X <= tx; X++) {
-            for (int Z = bz; Z <= tz; Z++) {
-                chunks.add(world.getChunkAt(X,Z));
-            }
-        }
-        
-        boolean doWhole = false;
-        List<Entity> entities = null;
-        if (size > 200) {
-            entities = world.getEntities();
-            if (entities.size() < 16 + (size * size / 64)) {
-                doWhole = true;
-            }
-        }
-        
-        if (doWhole) {
-            for (final Entity entity : entities) {
-                if (!(entity instanceof Creature || entity instanceof Vehicle)) {
-                    continue;
-                }
-                org.bukkit.Location loc = entity.getLocation();
-                Chunk chunk = loc.getChunk();
-                if (chunks.contains(chunk)) {
-                    int X = chunk.getX();
-                    int Z = chunk.getX();
-                    if (X > bx && X < tx && Z > bz && Z < tz) {
-                        count(count, entity);
-                    }
-                    else {
-                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
-                        if (plot.id.equals(id)) {
-                            count(count, entity);
-                        }
-                    }
+    public int[] countEntities(final Plot plot) {
+        final int[] count = new int[5];
+        final World world = BukkitUtil.getWorld(plot.world);
+
+        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        final int bx = bot.getX() >> 4;
+                            final int bz = bot.getZ() >> 4;
+
+                        final int tx = top.getX() >> 4;
+                        final int tz = top.getZ() >> 4;
+
+            final int size = (tx - bx) << 4;
+
+            final HashSet<Chunk> chunks = new HashSet<>();
+            for (int X = bx; X <= tx; X++) {
+                for (int Z = bz; Z <= tz; Z++) {
+                    chunks.add(world.getChunkAt(X, Z));
                 }
             }
-        }
-        else {
-            for (Chunk chunk : chunks) {
-                int X = chunk.getX();
-                int Z = chunk.getX();
-                Entity[] ents = chunk.getEntities();
-                for (final Entity entity : ents) {
-                    if (!(entity instanceof Creature || entity instanceof Vehicle)) {
+
+            boolean doWhole = false;
+            List<Entity> entities = null;
+            if (size > 200) {
+                entities = world.getEntities();
+                if (entities.size() < (16 + ((size * size) / 64))) {
+                    doWhole = true;
+                }
+            }
+
+            if (doWhole) {
+                for (final Entity entity : entities) {
+                    if (!((entity instanceof Creature) || (entity instanceof Vehicle))) {
                         continue;
                     }
-                	if (X == bx || X == tx || Z == bz || Z == tz) {
-                		final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
-                        if (plot.id.equals(id)) {
+                    final org.bukkit.Location loc = entity.getLocation();
+                    final Chunk chunk = loc.getChunk();
+                    if (chunks.contains(chunk)) {
+                        final int X = chunk.getX();
+                        final int Z = chunk.getX();
+                        if ((X > bx) && (X < tx) && (Z > bz) && (Z < tz)) {
+                            count(count, entity);
+                        } else {
+                            final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
+                            if (plot.id.equals(id)) {
+                                count(count, entity);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (final Chunk chunk : chunks) {
+                    final int X = chunk.getX();
+                    final int Z = chunk.getX();
+                    final Entity[] ents = chunk.getEntities();
+                    for (final Entity entity : ents) {
+                        if (!((entity instanceof Creature) || (entity instanceof Vehicle))) {
+                            continue;
+                        }
+                        if ((X == bx) || (X == tx) || (Z == bz) || (Z == tz)) {
+                            final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
+                            if (plot.id.equals(id)) {
+                                count(count, entity);
+                            }
+                        } else {
                             count(count, entity);
                         }
-                	}
-                	else {
-                	    count(count, entity);
-                	}
+                    }
                 }
             }
-        }
-        return count;
+            return count;
     }
-    
-    private void count(int[] count, Entity entity) {
+
+    private void count(final int[] count, final Entity entity) {
         count[0]++;
         if (entity instanceof Creature) {
             count[3]++;
             if (entity instanceof Animals) {
                 count[1]++;
-            }
-            else {
+            } else {
                 count[2]++;
             }
-        }
-        else {
+        } else {
             count[4]++;
         }
     }
 
     @Override
-    public void setChunk(ChunkWrapper loc, PlotBlock[][] blocks) {
-        CURRENT_PLOT_CLEAR = new RegionWrapper(0,0,0,0);
-        World world = Bukkit.getWorld(loc.world);
-        Chunk chunk = world.getChunkAt(loc.x, loc.z);
+    public void setChunk(final ChunkWrapper loc, final PlotBlock[][] blocks) {
+        CURRENT_PLOT_CLEAR = new RegionWrapper(0, 0, 0, 0);
+        final World world = Bukkit.getWorld(loc.world);
+        final Chunk chunk = world.getChunkAt(loc.x, loc.z);
         final int cx = chunk.getX();
         final int cz = chunk.getZ();
         if (!chunk.isLoaded()) {
@@ -988,20 +1044,20 @@ public class BukkitChunkManager extends ChunkManager {
         initMaps();
         final int absX = cx << 4;
         final int absZ = cz << 4;
-        boolean save = false;
-        
+        final boolean save = false;
+
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 saveBlocks(world, 255, absX + x, absZ + z);
-                PlotLoc pl = new PlotLoc(absX + x, absZ + z);
-                HashMap<Short, Short> ids = GENERATE_BLOCKS.get(pl);
-                HashMap<Short, Short> datas = GENERATE_BLOCKS.get(pl);
+                final PlotLoc pl = new PlotLoc(absX + x, absZ + z);
+                final HashMap<Short, Short> ids = GENERATE_BLOCKS.get(pl);
+                final HashMap<Short, Short> datas = GENERATE_BLOCKS.get(pl);
                 for (int i = 0; i < blocks.length; i++) {
                     if (blocks[i] != null) {
-                        short y0 = (short) (i << 4);
-                        for (short y = y0; y < y0 + 16; y++) {
-                            int j = ((y & 0xF) << 8) | (z << 4) | x;
-                            PlotBlock block = blocks[i][j];
+                        final short y0 = (short) (i << 4);
+                        for (short y = y0; y < (y0 + 16); y++) {
+                            final int j = ((y & 0xF) << 8) | (z << 4) | x;
+                            final PlotBlock block = blocks[i][j];
                             if (block != null) {
                                 ids.put(y, block.id);
                                 if (block.data != 0) {
@@ -1025,5 +1081,5 @@ public class BukkitChunkManager extends ChunkManager {
         BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
         CURRENT_PLOT_CLEAR = null;
     }
-    
+
 }
