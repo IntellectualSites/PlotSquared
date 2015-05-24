@@ -913,9 +913,7 @@ public class SQLManager implements AbstractDB {
                             break;
                         default:
                             try {
-                                final String[] split = pos.split(",");
-                                final BlockLoc loc = new BlockLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                                plot.settings.setPosition(loc);
+                                plot.settings.setPosition(BlockLoc.fromString(pos));
                             } catch (final Exception e) {
                             }
                     }
