@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
+import com.intellectualcrafters.plot.config.C;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,7 +50,6 @@ public class Inventory extends SubCommand {
         for (final SubCommand cmd : cmds) {
             inventory.addItem(getItem(cmd));
         }
-        // FIXME unchecked cast
         ((BukkitPlayer) plr).player.openInventory(inventory);
         return true;
     }
@@ -61,9 +61,9 @@ public class Inventory extends SubCommand {
             meta.setDisplayName(ChatColor.GREEN + cmd.cmd + ChatColor.DARK_GRAY + " [" + ChatColor.GREEN + cmd.alias + ChatColor.DARK_GRAY + "]");
             meta.setLore(new ArrayList<String>() {
                 {
-                    add(ChatColor.RED + "Category: " + ChatColor.GOLD + cmd.category.toString());
-                    add(ChatColor.RED + "Description: " + ChatColor.GOLD + cmd.description);
-                    add(ChatColor.RED + "Usage: " + ChatColor.GOLD + "/plot " + cmd.usage);
+                    add(C.INVENTORY_CATEGORY.s().replace("{category}", cmd.category.toString()));
+                    add(C.INVENTORY_DESC.s().replace("{desc}", cmd.description));
+                    add(C.INVENTORY_USAGE.s().replace("{usage}", "/plot " + cmd.usage));
                 }
             });
         }

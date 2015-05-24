@@ -35,6 +35,7 @@ import com.intellectualsites.translation.bukkit.BukkitTranslation;
  * @author Citymonstret 
  */
 public enum C {
+
     /*
      * Confirm
      */
@@ -126,6 +127,14 @@ public enum C {
      */
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.", "Console"),
     IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
+
+    /*
+    Inventory
+     */
+    INVENTORY_USAGE("&cUsage: &6{usage}", "Inventory"),
+    INVENTORY_DESC("&cDescription: &6{desc}", "Inventory"),
+    INVENTORY_CATEGORY("&cCategory: &6{category}", "Inventory"),
+
     /*
      * Clipboard
      */
