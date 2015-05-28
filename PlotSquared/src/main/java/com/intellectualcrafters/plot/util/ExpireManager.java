@@ -92,8 +92,6 @@ public class ExpireManager {
                         expiredPlots.get(world).remove(plot);
                         return;
                     }
-                    final PlotDeleteEvent event = new PlotDeleteEvent(world, plot.id);
-                    Bukkit.getServer().getPluginManager().callEvent(event);
                     for (final UUID helper : plot.trusted) {
                         final PlotPlayer player = UUIDHandler.getPlayer(helper);
                         if (player != null) {
@@ -119,7 +117,7 @@ public class ExpireManager {
                     manager.clearPlot(plotworld, plot, false, null);
                     MainUtil.removeSign(plot);
                     DBFunc.delete(world, plot);
-                    PlotSquared.removePlot(world, plot.id, true);
+                    PlotSquared.removePlot(world, plot.id, false);
                     expiredPlots.get(world).remove(plot);
                     PlotSquared.log("&cDeleted expired plot: " + plot.id);
                     PlotSquared.log("&3 - World: " + plot.world);

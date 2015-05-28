@@ -7,5 +7,5 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 public abstract class AbstractTitle {
     public static AbstractTitle TITLE_CLASS;
 
-    public abstract void sendTitle(PlotPlayer player, String head, String sub, ChatColor head_color, ChatColor sub_color);
+    public abstract void sendTitle(PlotPlayer player, String head, String sub, ChatColor head_color, ChatColor sub_color, int in, int delay, int out);
 }

@@ -257,9 +257,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+        BukkitUtil.removePlayer(player.getName());
         if (!player.hasPlayedBefore()) {
             player.saveData();
         }
@@ -326,7 +327,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     if (plot.isDenied(pp.getUUID())) {
                         if (!Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
-                            player.teleport(event.getFrom());
+                            if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(event.getFrom())))) {
+                                player.teleport(event.getFrom());
+                            }
+                            else {
+                                player.teleport(player.getWorld().getSpawnLocation());
+                            }
                             event.setCancelled(true);
                             return;
                         }
@@ -367,7 +373,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (MainUtil.getPlot(BukkitUtil.getLocation(p)) == plot) {
+            if (MainUtil.getPlot(BukkitUtil.getLocation(p)).equals(plot)) {
                 recipients.add(p);
             }
         }
@@ -984,6 +990,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (plot != null) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.isDenied(pp.getUUID())) {
+                    System.out.print(2);
                     if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
                         return;
                     }
@@ -1059,7 +1066,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler
+    @EventHandler(priority= EventPriority.MONITOR)
     public void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         EventUtil.unregisterPlayer(pp);
@@ -1076,6 +1083,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 PlotSquared.log(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }
+        BukkitUtil.removePlayer(pp.getName());
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

@@ -9,9 +9,9 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class HackTitle extends AbstractTitle {
     @Override
-    public void sendTitle(final PlotPlayer player, final String head, final String sub, final ChatColor head_color, final ChatColor sub_color) {
+    public void sendTitle(final PlotPlayer player, final String head, final String sub, final ChatColor head_color, final ChatColor sub_color, int in, int delay, int out) {
         try {
-            final HackTitleManager title = new HackTitleManager(head, sub, 1, 2, 1);
+            final HackTitleManager title = new HackTitleManager(head, sub, in, delay, out);
             title.setTitleColor(head_color);
             title.setSubtitleColor(sub_color);
             title.send(((BukkitPlayer) player).player);

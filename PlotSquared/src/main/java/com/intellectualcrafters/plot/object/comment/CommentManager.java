@@ -50,7 +50,7 @@ public class CommentManager {
                                 total = count.get();
                             }
                             if (size.decrementAndGet() == 0 && total > 0) {
-                                AbstractTitle.TITLE_CLASS.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total), ChatColor.GOLD, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                                AbstractTitle.TITLE_CLASS.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total), ChatColor.GOLD, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()), 1, 2, 1);
                             }
                         }
                     });
