@@ -115,12 +115,11 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     merges.put(world, new HashMap<PlotId,boolean[]>());
                 }
             }
-            
             if (merge) {
                 int tx = r.getInt("topX");
                 int tz = r.getInt("topZ");
-                int bx = r.getInt("bottomX");
-                int bz = r.getInt("bottomZ");
+                int bx = r.getInt("bottomX") - 1;
+                int bz = r.getInt("bottomZ") - 1;
                 int path = roadWidth.get(world);
                 int plot = plotWidth.get(world);
                 Location top = getPlotTopLocAbs(path, plot, id);

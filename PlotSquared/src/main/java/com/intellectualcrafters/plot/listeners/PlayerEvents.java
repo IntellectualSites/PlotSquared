@@ -990,7 +990,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (plot != null) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (plot.isDenied(pp.getUUID())) {
-                    System.out.print(2);
                     if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
                         return;
                     }
