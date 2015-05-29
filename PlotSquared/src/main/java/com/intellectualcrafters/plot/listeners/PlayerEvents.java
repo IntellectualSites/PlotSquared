@@ -94,6 +94,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -269,6 +270,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
+        ExpireManager.dates.put(uuid, System.currentTimeMillis());
         if (PlotSquared.worldEdit != null) {
             if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                 WEManager.bypass.add(pp.getName());
@@ -1068,6 +1070,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority= EventPriority.MONITOR)
     public void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
+        ExpireManager.dates.put(pp.getUUID(), System.currentTimeMillis());
         EventUtil.unregisterPlayer(pp);
         if (PlotSquared.worldEdit != null) {
             WEManager.bypass.remove(pp.getName());

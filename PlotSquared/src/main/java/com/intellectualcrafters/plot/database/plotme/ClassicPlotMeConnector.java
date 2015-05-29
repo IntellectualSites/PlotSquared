@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -89,6 +91,15 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         plots.put(id2, merge1);
     }
 
+    public static String getWorld(final String world) {
+        for (final World newworld : Bukkit.getWorlds()) {
+            if (newworld.getName().equalsIgnoreCase(world)) {
+                return newworld.getName();
+            }
+        }
+        return world;
+    }
+    
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
         ResultSet r;
@@ -108,6 +119,9 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             if (!plots.containsKey(world)) {
                 int plot = PlotSquared.config.getInt("worlds." + world + ".plot.size");
                 int path = PlotSquared.config.getInt("worlds." + world + ".road.width");
+                if (plot == 0 && path == 0) {
+                    
+                }
                 plotWidth.put(world, plot);
                 roadWidth.put(world, path);
                 plots.put(world, new HashMap<PlotId, Plot>());

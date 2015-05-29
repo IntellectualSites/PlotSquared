@@ -20,6 +20,7 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -130,6 +131,7 @@ public class UUIDHandler {
                         final UUID uuid = UUID.fromString(s);
                         if (check || all.contains(uuid)) {
                             OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
+                            ExpireManager.dates.put(uuid, op.getLastPlayed());
                             add(new StringWrapper(op.getName()), uuid);
                         }
                     } catch (final Exception e) {
@@ -183,6 +185,7 @@ public class UUIDHandler {
         for (UUID uuid : uuids) {
             try {
                 final OfflinePlotPlayer player = wrapper.getOfflinePlayer(uuid);
+                ExpireManager.dates.put(uuid, player.getLastPlayed());
                 uuid = UUIDHandler.uuidWrapper.getUUID(player);
                 final StringWrapper name = new StringWrapper(player.getName());
                 add(name, uuid);

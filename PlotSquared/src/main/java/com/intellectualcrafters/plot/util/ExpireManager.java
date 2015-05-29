@@ -1,10 +1,12 @@
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +19,6 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.events.PlotDeleteEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
@@ -29,9 +30,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class ExpireManager {
-    public static ConcurrentHashMap<String, HashMap<Plot, Long>> expiredPlots = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, List<Plot>> expiredPlots = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Boolean> updatingPlots = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Long> timestamp = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<UUID, Long> dates = new ConcurrentHashMap<>();
     public static int task;
 
     public static long getTimeStamp(final String world) {
@@ -48,13 +50,47 @@ public class ExpireManager {
         final long now = System.currentTimeMillis();
         if (now > getTimeStamp(world)) {
             timestamp.put(world, now + 86400000l);
+            
+            
+//            TaskManager.index.increment();
+//            final ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots(world).values());
+//            int value = TaskManager.index.intValue();
+//            int id = TaskManager.runTaskRepeat(new Runnable() {
+//                @Override
+//                public void run() {
+//                    long start = System.currentTimeMillis();
+//                    while (System.currentTimeMillis() - start < 15) {
+//                        Plot plot = plots.remove(0);
+//                        final Flag keepFlag = FlagManager.getPlotFlag(plot, "keep");
+//                        if (keepFlag != null && (Boolean) keepFlag.getValue()) {
+//                            continue;
+//                        }
+//                        
+//                        
+//                        final HashMap<Plot, Long> toRemove = new HashMap<>();
+//                        final HashMap<UUID, Long> remove = new HashMap<>();
+//                        final Set<UUID> keep = new HashSet<>();
+//                        Iterator<Plot> iter = plots.iterator();
+//                    }
+//                }
+//            }, 1);
+//            
+//            TaskManager.tasks.put(value, id);
+            
+            
+            
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    final HashMap<Plot, Long> plots = getOldPlots(world);
-                    PlotSquared.log("&cFound " + plots.size() + " expired plots for " + world + "!");
-                    expiredPlots.put(world, plots);
-                    updatingPlots.put(world, false);
+                    try {
+                        final List<Plot> plots = getOldPlots(world);
+                        PlotSquared.log("&cFound " + plots.size() + " expired plots for " + world + "!");
+                        expiredPlots.put(world, plots);
+                        updatingPlots.put(world, false);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return true;
@@ -80,7 +116,7 @@ public class ExpireManager {
                         updateExpired(world);
                         return;
                     }
-                    final Set<Plot> plots = expiredPlots.get(world).keySet();
+                    final List<Plot> plots = expiredPlots.get(world);
                     if ((plots == null) || (plots.size() == 0)) {
                         if (updateExpired(world)) {
                             return;
@@ -138,13 +174,26 @@ public class ExpireManager {
         }
         final String name = UUIDHandler.getName(uuid);
         if (name != null) {
-            final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
-            if (op.hasPlayedBefore()) {
-                final long last = op.getLastPlayed();
-                final long compared = System.currentTimeMillis() - last;
-                if (compared >= (86400000l * Settings.AUTO_CLEAR_DAYS)) {
-                    return true;
+            long last;
+            if (dates.contains(uuid)) {
+                last = dates.get(uuid);
+            }
+            else {
+                final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+                if (op.hasPlayedBefore()) {
+                    last = op.getLastPlayed();
+                    dates.put(uuid, last);
                 }
+                else {
+                    return false;
+                }
+            }
+            if (last == 0) {
+                return false;
+            }
+            final long compared = System.currentTimeMillis() - last;
+            if (compared >= (86400000l * Settings.AUTO_CLEAR_DAYS)) {
+                return true;
             }
         }
         return false;
@@ -159,11 +208,9 @@ public class ExpireManager {
         return true;
     }
 
-    public static HashMap<Plot, Long> getOldPlots(final String world) {
+    public static List<Plot> getOldPlots(final String world) {
         final Collection<Plot> plots = PlotSquared.getPlots(world).values();
-        final HashMap<Plot, Long> toRemove = new HashMap<>();
-        final HashMap<UUID, Long> remove = new HashMap<>();
-        final Set<UUID> keep = new HashSet<>();
+        final List<Plot> toRemove = new ArrayList<>();
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
             Plot plot = iter.next();
@@ -172,31 +219,15 @@ public class ExpireManager {
                 continue;
             }
             final UUID uuid = plot.owner;
-            if ((uuid == null) || remove.containsKey(uuid)) {
-                Long stamp;
-                if (uuid == null) {
-                    stamp = 0l;
-                } else {
-                    stamp = remove.get(uuid);
-                }
-                toRemove.put(plot, stamp);
-                continue;
-            }
-            if (keep.contains(uuid)) {
+            if (uuid == null) {
+                toRemove.add(plot);
                 continue;
             }
             final PlotPlayer player = UUIDHandler.getPlayer(uuid);
             if (player != null) {
-                keep.add(uuid);
                 continue;
             }
-            final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-            if ((op == null) || (op.getLastPlayed() == 0)) {
-                continue;
-            }
-            long last = op.getLastPlayed();
-            long compared = System.currentTimeMillis() - last;
-            if (compared >= (86400000l * Settings.AUTO_CLEAR_DAYS)) {
+            if (isExpired(plot)) {
                 if (Settings.AUTO_CLEAR_CHECK_DISK) {
                     final String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
@@ -204,6 +235,7 @@ public class ExpireManager {
                     if (BukkitMain.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
+                            final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
                             filename = op.getUUID() + ".dat";
                         } catch (final Throwable e) {
                             filename = uuid.toString() + ".dat";
@@ -221,10 +253,9 @@ public class ExpireManager {
                             PlotSquared.log("Could not find file: " + filename);
                         } else {
                             try {
-                                last = playerFile.lastModified();
-                                compared = System.currentTimeMillis() - last;
+                                long last = playerFile.lastModified();
+                                long compared = System.currentTimeMillis() - last;
                                 if (compared < (86400000l * Settings.AUTO_CLEAR_DAYS)) {
-                                    keep.add(uuid);
                                     continue;
                                 }
                             } catch (final Exception e) {
@@ -233,11 +264,8 @@ public class ExpireManager {
                         }
                     }
                 }
-                toRemove.put(plot, last);
-                remove.put(uuid, last);
-                continue;
+                toRemove.add(plot);
             }
-            keep.add(uuid);
         }
         return toRemove;
     }
