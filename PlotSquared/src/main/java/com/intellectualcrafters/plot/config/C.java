@@ -409,6 +409,7 @@ public enum C {
     DENIED_ADDED("$4You successfully denied the player from this plot", "Deny"),
     DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
     WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
+    YOU_GOT_DENIED("$4You are denied from the plot you were previously on, and got teleported to spawn", "Deny"),
     /*
      * Rain
      */

@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot;
 
 import java.io.File;
+import java.util.UUID;
 
+import com.intellectualcrafters.plot.config.C;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.generator.ChunkGenerator;
@@ -25,6 +27,8 @@ public interface IPlotMain {
     public void disable();
 
     public String getVersion();
+
+    public void handleKick(UUID uuid, C c);
 
     public TaskManager getTaskManager();
 

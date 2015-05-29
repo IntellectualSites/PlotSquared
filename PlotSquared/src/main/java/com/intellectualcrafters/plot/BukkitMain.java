@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -217,6 +219,14 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public String getVersion() {
         return this.getDescription().getVersion();
+    }
+
+    @Override
+    public void handleKick(UUID uuid, C c) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && player.isOnline()) {
+            MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
+        }
     }
 
     @Override
