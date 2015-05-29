@@ -94,10 +94,8 @@ public class DebugExec extends SubCommand {
                             return MainUtil.sendMessage(player, "No task for world: " + args[1]);
                         }
                         MainUtil.sendMessage(player, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
-                        for (final Entry<Plot, Long> entry : ExpireManager.expiredPlots.get(args[1]).entrySet()) {
-                            final Plot plot = entry.getKey();
-                            final Long stamp = entry.getValue();
-                            MainUtil.sendMessage(player, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + stamp);
+                        for (final Plot plot : ExpireManager.expiredPlots.get(args[1])) {
+                            MainUtil.sendMessage(player, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + ExpireManager.dates.get(plot.owner));
                         }
                         return true;
                     }
