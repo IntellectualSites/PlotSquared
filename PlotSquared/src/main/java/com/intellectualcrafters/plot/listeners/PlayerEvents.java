@@ -375,7 +375,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (MainUtil.getPlot(BukkitUtil.getLocation(p)).equals(plot)) {
+            if (plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
                 recipients.add(p);
             }
         }
