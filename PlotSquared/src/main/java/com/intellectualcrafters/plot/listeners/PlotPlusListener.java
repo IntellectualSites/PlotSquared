@@ -51,6 +51,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -143,9 +144,13 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         if (meta != null) {
+            int id = meta.getMaterial().getId();
+            FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
+            player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
             for (final Player p : plotPlayers) {
-                p.playEffect(p.getLocation(), Effect.RECORD_PLAY, meta.getMaterial());
-                MainUtil.sendMessage(pp, C.RECORD_PLAY.s().replaceAll("%player", player.getName()).replaceAll("%name", meta.toString()));
+                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
+                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, id);
+                APlotListener.manager.plotEntry(BukkitUtil.getPlayer(p), plot);
             }
         }
     }

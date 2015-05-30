@@ -144,4 +144,9 @@ public class BukkitPlayer implements PlotPlayer {
             this.meta.remove(key);
         }
     }
+    
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

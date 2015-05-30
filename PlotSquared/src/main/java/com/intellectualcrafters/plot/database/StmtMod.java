@@ -11,9 +11,9 @@ public abstract class StmtMod<T> {
 	public String getCreateMySQL(int size, String query, int params) {
 		final StringBuilder statement = new StringBuilder(query);
         for (int i = 0; i < size - 1; i++) {
-            statement.append(StringUtils.repeat("(?),", params));
+            statement.append("(" + StringUtils.repeat(",(?)", params).substring(1) + "),");
         }
-        statement.append(StringUtils.repeat(",(?)", params).substring(1));
+        statement.append("(" + StringUtils.repeat(",(?)", params).substring(1) + ")");
         return statement.toString();
 	}
 	

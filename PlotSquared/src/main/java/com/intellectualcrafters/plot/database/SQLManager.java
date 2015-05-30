@@ -329,56 +329,116 @@ public class SQLManager implements AbstractDB {
     	}
         int packet;
         if (Settings.DB.USE_MYSQL) {
-            packet = Math.min(size, 50000);
+            packet = Math.min(size, 5000);
         } else {
             packet = Math.min(size, 50);
         }
         final int amount = size / packet;
-        for (int j = 0; j <= amount; j++) {
-            final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
-            if (subList.size() == 0) {
-                return;
-            }
-            String statement = mod.getCreateMySQL(subList.size());
-            PreparedStatement stmt = null;
-            try {
-                stmt = this.connection.prepareStatement(statement.toString());
+        
+        try {
+            int count = 0;
+            PreparedStatement preparedStmt = null;
+            String statement = null;
+            int last = -1;
+            for (int j = 0; j <= amount; j++) {
+                final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                if (subList.size() == 0) {
+                    return;
+                }
+                if (last == -1) {
+                    last = subList.size();
+                    statement = mod.getCreateMySQL(subList.size());
+                    preparedStmt = this.connection.prepareStatement(statement.toString());
+                }
+                if (subList.size() != last || (count % 5000 == 0 && count > 0)) {
+                    preparedStmt.executeBatch();
+                    preparedStmt.close();
+                    
+                    statement = mod.getCreateMySQL(subList.size());
+                    preparedStmt = this.connection.prepareStatement(statement.toString());
+                }
                 for (int i = 0; i < subList.size(); i++) {
+                    count++;
                     final T obj = subList.get(i);
-                    mod.setMySQL(stmt,i , obj);
+                    mod.setMySQL(preparedStmt, i , obj);
                 }
-                stmt.executeUpdate();
-                stmt.close();
-            } catch (final Exception e) {
+                last = subList.size();
+                preparedStmt.addBatch();
+            }
+            PlotSquared.log("&aSuccess 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            preparedStmt.executeBatch();
+            preparedStmt.clearParameters();
+            preparedStmt.close();
+            return;
+        }
+        catch (Exception e) {
+            if (Settings.DB.USE_MYSQL) {
+                e.printStackTrace();
+                PlotSquared.log("&cERROR 1: " + " | " + objList.get(0).getClass().getCanonicalName());
+            }
+        }
+        
+        try {
+            int count = 0;
+            PreparedStatement preparedStmt = null;
+            String statement = null;
+            int last = -1;
+            for (int j = 0; j <= amount; j++) {
+                final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                if (subList.size() == 0) {
+                    return;
+                }
+                if (last == -1) {
+                    last = subList.size();
+                    statement = mod.getCreateSQLite(subList.size());
+                    preparedStmt = this.connection.prepareStatement(statement.toString());
+                }
+                if (subList.size() != last || (count % 5000 == 0 && count > 0)) {
+                    preparedStmt.executeBatch();
+                    preparedStmt.close();
+                    
+                    statement = mod.getCreateSQLite(subList.size());
+                    preparedStmt = this.connection.prepareStatement(statement.toString());
+                }
+                for (int i = 0; i < subList.size(); i++) {
+                    count++;
+                    final T obj = subList.get(i);
+                    mod.setSQLite(preparedStmt, i , obj);
+                }
+                last = subList.size();
+                preparedStmt.addBatch();
+            }
+            PlotSquared.log("&aSuccess 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            preparedStmt.executeBatch();
+            preparedStmt.clearParameters();
+            preparedStmt.close();
+            return;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            PlotSquared.log("&cERROR 2: " + " | " + objList.get(0).getClass().getCanonicalName());
+        }
+        
+        PlotSquared.log("&6[WARN] " + "Could not bulk save!");
+        try {
+            PreparedStatement preparedStmt = null;
+            String nonBulk = mod.getCreateSQL();
+            preparedStmt = this.connection.prepareStatement(nonBulk.toString());
+            for (final T obj : objList) {   
                 try {
-                	String unionstmt = mod.getCreateSQLite(subList.size());
-                    stmt = this.connection.prepareStatement(unionstmt.toString());
-                    for (int i = 0; i < subList.size(); i++) {
-                    	mod.setSQLite(stmt, i, subList.get(i));
-                    }
-                    stmt.executeUpdate();
-                    stmt.close();
-                }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                    PlotSquared.log("&6[WARN] " + "Could not bulk save!");
-                    try {
-                        for (final T obj : subList) {   
-                            try {
-                                stmt = connection.prepareStatement(mod.getCreateSQL());
-                                mod.setSQL(stmt, obj);
-                                stmt.executeUpdate();
-                                stmt.close();
-                            } catch (final Exception e3) {
-                                PlotSquared.log("&c[ERROR] " + "Failed to save " + obj + "!");
-                            }
-                        }
-                    } catch (final Exception e4) {
-                        e4.printStackTrace();
-                        PlotSquared.log("&c[ERROR] " + "Failed to save all!");
-                    }
+                    mod.setSQL(preparedStmt, obj);
+                    preparedStmt.addBatch();
+                } catch (final Exception e3) {
+                    PlotSquared.log("&c[ERROR] " + "Failed to save " + obj + "!");
                 }
             }
+            PlotSquared.log("&aSuccess 3");
+            preparedStmt.executeBatch();
+            preparedStmt.close();
+        }
+        catch (Exception e3) {
+            e3.printStackTrace();
+            PlotSquared.log("&c[ERROR] " + "Failed to save all!");
         }
     }
     
@@ -386,7 +446,7 @@ public class SQLManager implements AbstractDB {
         final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_SETTINGS, 10);
+                return getCreateMySQL(size, "INSERT INTO `" + prefix + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,`position`) VALUES ", 10);
             }
 
             @Override
@@ -397,7 +457,6 @@ public class SQLManager implements AbstractDB {
             @Override
             public String getCreateSQL() {
                 return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)";
-//                return "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,`position`) VALUES(?,?,?,?,?,?,?,?,?,?)";
             }
 
             @Override

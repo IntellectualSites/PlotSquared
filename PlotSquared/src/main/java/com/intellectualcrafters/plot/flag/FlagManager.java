@@ -179,6 +179,19 @@ public class FlagManager {
         DBFunc.setFlags(plot.world, plot, plot.settings.flags);
         return true;
     }
+    
+    public static boolean addPlotFlagAbs(final Plot plot, final Flag flag) {
+        final boolean result = EventUtil.manager.callFlagAdd(flag, plot);
+        if (!result) {
+            return false;
+        }
+        final Flag hasFlag = getPlotFlag(plot, flag.getKey());
+        if (hasFlag != null) {
+            plot.settings.flags.remove(hasFlag);
+        }
+        plot.settings.flags.add(flag);
+        return true;
+    }
 
     public static boolean addClusterFlag(final PlotCluster cluster, final Flag flag) {
         //TODO plot cluster flag event

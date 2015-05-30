@@ -25,7 +25,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 
@@ -65,12 +67,16 @@ public class PlotListener extends APlotListener {
         return name;
     }
 
-    private WeatherType getWeatherType(String str) {
-        str = str.toLowerCase();
-        if (str.equals("rain")) {
-            return WeatherType.DOWNFALL;
-        } else {
-            return WeatherType.CLEAR;
+    private void setWeather(Player player, String str) {
+        switch (str.toLowerCase()) {
+            case "clear": {
+                player.setPlayerWeather(WeatherType.CLEAR);
+                return;
+            }
+            case "rain": {
+                player.setPlayerWeather(WeatherType.DOWNFALL);
+                return;
+            }
         }
     }
 
@@ -109,7 +115,7 @@ public class PlotListener extends APlotListener {
             }
             final Flag weatherFlag = FlagManager.getPlotFlag(plot, "weather");
             if (weatherFlag != null) {
-                player.setPlayerWeather(getWeatherType(weatherFlag.getValueString()));
+                setWeather(player, weatherFlag.getValueString());
             }
             if ((FlagManager.isBooleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
                 Flag greetingFlag = FlagManager.getPlotFlag(plot, "greeting");
@@ -130,6 +136,14 @@ public class PlotListener extends APlotListener {
                 final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
                 Bukkit.getPluginManager().callEvent(callEvent);
             }
+            Flag musicFlag = FlagManager.getPlotFlag(plot, "music");
+            if (musicFlag != null) {
+                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
+                Integer id = (Integer) musicFlag.getValue();
+                if (id != 0) {
+                    player.playEffect(player.getLocation(), Effect.RECORD_PLAY, Material.getMaterial(id));
+                }
+            }
             CommentManager.sendTitle(pp, plot);
         }
     }
@@ -149,6 +163,9 @@ public class PlotListener extends APlotListener {
         }
         if (FlagManager.getPlotFlag(plot, "weather") != null) {
             player.resetPlayerWeather();
+        }
+        if (FlagManager.getPlotFlag(plot, "music") != null) {
+            player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
         }
     }
 
