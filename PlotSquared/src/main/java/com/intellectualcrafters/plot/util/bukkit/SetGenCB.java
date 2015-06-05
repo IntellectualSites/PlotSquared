@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 public class SetGenCB {
     public static void setGenerator(World world) throws Exception {
         SetupUtils.manager.updateGenerators();
-        PlotSquared.removePlotWorld(world.getName());
+        PlotSquared.removePlotWorldAbs(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
             return;

@@ -2,8 +2,10 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -78,6 +80,7 @@ import com.intellectualcrafters.plot.commands.list;
 import com.intellectualcrafters.plot.commands.plugin;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.plotme.ClassicPlotMeConnector;
 import com.intellectualcrafters.plot.database.plotme.LikePlotMeConverter;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -97,6 +100,8 @@ import com.intellectualcrafters.plot.listeners.TNTListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;

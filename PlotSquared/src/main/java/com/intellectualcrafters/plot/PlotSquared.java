@@ -130,6 +130,11 @@ public class PlotSquared {
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
+    
+    public static void removePlotWorldAbs(final String world) {
+        plotmanagers.remove(world);
+        plotworlds.remove(world);
+    }
 
     public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
