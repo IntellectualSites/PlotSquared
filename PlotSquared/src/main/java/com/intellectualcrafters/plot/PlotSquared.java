@@ -63,6 +63,7 @@ import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Logger;
@@ -89,7 +90,6 @@ public class PlotSquared {
     public static String VERSION = null;
     public static TaskManager TASK = null;
     private static boolean LOADING_WORLD = false;
-    public static Economy economy = null;
     public static WorldEditPlugin worldEdit = null;
     private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
@@ -510,7 +510,7 @@ public class PlotSquared {
             log("Could not determine file path");
         }
         VERSION = IMP.getVersion();
-        economy = IMP.getEconomy();
+        EconHandler.manager = IMP.getEconomyHandler();
         C.setupTranslations();
         C.saveTranslations();
         if (getJavaVersion() < 1.7) {

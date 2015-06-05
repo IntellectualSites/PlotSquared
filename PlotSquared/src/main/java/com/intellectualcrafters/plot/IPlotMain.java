@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
+
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.generator.ChunkGenerator;
@@ -13,6 +14,7 @@ import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -48,7 +50,7 @@ public interface IPlotMain {
     
     public void registerTNTListener();
 
-    public Economy getEconomy();
+    public EconHandler getEconomyHandler();
 
     public BlockManager initBlockManager();
     

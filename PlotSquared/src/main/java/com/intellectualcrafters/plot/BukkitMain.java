@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.object.BukkitPlayer;
+
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -109,12 +110,14 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitEconHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitEventUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
@@ -411,13 +414,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public Economy getEconomy() {
-        if ((getServer().getPluginManager().getPlugin("Vault") != null) && getServer().getPluginManager().getPlugin("Vault").isEnabled()) {
-            final RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-            if (economyProvider != null) {
-                MainCommand.subCommands.add(new Buy());
-                return economyProvider.getProvider();
-            }
+    public EconHandler getEconomyHandler() {
+        BukkitEconHandler econ = new BukkitEconHandler();
+        if (econ.init()) {
+            return econ;
         }
         return null;
     }

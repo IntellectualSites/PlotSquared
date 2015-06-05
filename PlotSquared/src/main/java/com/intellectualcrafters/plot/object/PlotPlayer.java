@@ -31,6 +31,27 @@ public interface PlotPlayer {
     
     public void setCompassTarget(Location loc);
     
+    /**
+     * Set player data that will persist restarts
+     *  - Please note that this is not intended to store large values
+     *  - For session only data use meta
+     * @param key
+     * @param value
+     */
+    public void setAttribute(String key);
+    
+    /**
+     * The attribute will be either true or false
+     * @param key
+     */
+    public boolean getAttribute(String key);
+    
+    /**
+     * Remove an attribute from a player
+     * @param key
+     */
+    public void removeAttribute(String key);
+    
     public void setMeta(String key, Object value);
     public Object getMeta(String key);
     public void deleteMeta(String key);
