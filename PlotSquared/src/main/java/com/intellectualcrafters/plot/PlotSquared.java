@@ -25,12 +25,8 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.intellectualcrafters.plot.commands.Cluster;
-import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
@@ -718,6 +714,9 @@ public class PlotSquared {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
+        if (Settings.PHYSICS_LISTENER) {
+            FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
+        }
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
@@ -802,6 +801,7 @@ public class PlotSquared {
         // Protection
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
+        options.put("protection.physics-listener.enabled", Settings.PHYSICS_LISTENER);
         
         // Clusters
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
@@ -880,6 +880,7 @@ public class PlotSquared {
         // Protection
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
+        Settings.PHYSICS_LISTENER = config.getBoolean("protection.physics-listener.enabled");
         
         // Clusters
         Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");

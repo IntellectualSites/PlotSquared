@@ -2,13 +2,8 @@ package com.intellectualcrafters.plot;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.object.BukkitPlayer;
-
-import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,13 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.commands.Add;
 import com.intellectualcrafters.plot.commands.Auto;
 import com.intellectualcrafters.plot.commands.BukkitCommand;
-import com.intellectualcrafters.plot.commands.Buy;
 import com.intellectualcrafters.plot.commands.Chat;
 import com.intellectualcrafters.plot.commands.Claim;
 import com.intellectualcrafters.plot.commands.Clear;
@@ -561,7 +554,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void registerChunkProcessor() {
         getServer().getPluginManager().registerEvents(new ChunkListener(), this);
     }
-
+    
     @Override
     public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);

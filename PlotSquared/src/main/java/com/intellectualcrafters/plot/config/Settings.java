@@ -62,6 +62,10 @@ public class Settings {
      */
     public static boolean PISTON_FALLING_BLOCK_CHECK = true;
     /**
+     *  Physics listener
+     */
+    public static boolean PHYSICS_LISTENER = false;
+    /**
      * Max auto claiming size
      */
     public static int MAX_AUTO_SIZE = 4;

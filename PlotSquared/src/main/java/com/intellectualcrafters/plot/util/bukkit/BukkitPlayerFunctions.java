@@ -25,18 +25,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 /**

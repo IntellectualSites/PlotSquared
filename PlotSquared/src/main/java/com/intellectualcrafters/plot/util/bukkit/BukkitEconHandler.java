@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.BukkitPlayer;

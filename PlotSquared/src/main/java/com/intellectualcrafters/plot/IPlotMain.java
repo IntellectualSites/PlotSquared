@@ -3,12 +3,9 @@ package com.intellectualcrafters.plot;
 import java.io.File;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.config.C;
-
-import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.generator.ChunkGenerator;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;

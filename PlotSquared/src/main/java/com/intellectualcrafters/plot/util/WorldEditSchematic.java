@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
+
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -10,7 +11,6 @@ import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.regions.CuboidRegion;
 
 public class WorldEditSchematic {
     public void saveSchematic(String file, final String world, final PlotId id) {

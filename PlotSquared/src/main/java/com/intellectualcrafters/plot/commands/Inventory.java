@@ -22,13 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 
-import com.intellectualcrafters.plot.config.C;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 

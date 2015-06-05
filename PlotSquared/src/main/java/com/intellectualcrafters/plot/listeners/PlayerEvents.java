@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
@@ -100,7 +102,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.sk89q.worldedit.function.EntityFunction;
 
 /**
  * Player Events involving plots
@@ -160,6 +161,30 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         event.setNewCurrent(0);
     }
+    
+    public static void sendBlockChange(final org.bukkit.Location bloc, final Material type, final byte data) {
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                String world = bloc.getWorld().getName();
+                int x = bloc.getBlockX();
+                int z = bloc.getBlockZ();
+                int distance = Bukkit.getViewDistance() * 16;
+                for (PlotPlayer player : UUIDHandler.players.values()) {
+                    Location loc = player.getLocation();
+                    if (loc.getWorld().equals(world)) {
+                        if (16 * (Math.abs(loc.getX() - x)/16) > distance) {
+                            continue;
+                        }
+                        if (16 * (Math.abs(loc.getZ() - z)/16) > distance) {
+                            continue;
+                        }
+                        ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
+                    }
+                }
+            }
+        }, 3);
+    }
 
     @EventHandler
     public void onPhysicsEvent(BlockPhysicsEvent event) {
@@ -182,6 +207,16 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (!MainUtil.isPlotArea(plot)) {
                     return;
                 }
+                event.setCancelled(true);
+                return;
+            }
+        }
+        if (Settings.PHYSICS_LISTENER && block.getType().hasGravity()) {
+            Plot plot = MainUtil.getPlot(loc);
+            if (plot == null) {
+                return;
+            }
+            if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                 event.setCancelled(true);
             }
         }
@@ -644,6 +679,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
+            else if (Settings.PHYSICS_LISTENER) {
+                Plot plot = MainUtil.getPlot(loc);
+                if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                    e.setCancelled(true);
+                }
+            }
         }
     }
 
@@ -848,7 +889,30 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (checkEntity(entity, plot)) {
             event.setCancelled(true);
         }
-        
+    }
+    
+    @EventHandler(ignoreCancelled=true, priority=EventPriority.HIGHEST)
+    public void onEntityFall(EntityChangeBlockEvent event) {
+        if (!Settings.PHYSICS_LISTENER) {
+            return;
+        }
+        if (event.getEntityType() != EntityType.FALLING_BLOCK) {
+            return;
+        }
+        Block block = event.getBlock();
+        World world = block.getWorld();
+        String worldname = world.getName();
+        if (!PlotSquared.isPlotWorld(worldname)) {
+            return;
+        }
+        Location loc = BukkitUtil.getLocation(block.getLocation());
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            return;
+        }
+        if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+            event.setCancelled(true);
+        }
     }
     
     public boolean checkEntity(Entity entity, Plot plot) {
@@ -1469,7 +1533,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
     public void BlockCreate(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -1477,30 +1541,29 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, "plots.admin")) {
-            return;
-        }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         final Plot plot = MainUtil.getPlot(loc); 
         if (plot != null) {
             if (!plot.hasOwner()) {
-                if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
+                if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    event.setCancelled(true);
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
-                event.setCancelled(true);
-                return;
             }
-            if (!plot.isAdded(pp.getUUID())) {
+            else if (!plot.isAdded(pp.getUUID())) {
                 final Flag place = FlagManager.getPlotFlag(plot, "place");
                 final Block block = event.getBlock();
-                if ((place != null) && ((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
-                    return;
-                }
-                if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) && !Permissions.hasPermission(pp, "plots.admin.build.other")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
                     event.setCancelled(true);
                     return;
+                }
+            }
+            if (Settings.PHYSICS_LISTENER) {
+                if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                    Block block = event.getBlockPlaced();
+                    sendBlockChange(block.getLocation(), block.getType(), block.getData());
                 }
             }
             return;
