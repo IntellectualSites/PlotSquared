@@ -144,6 +144,11 @@ public enum C {
     NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
     CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     /*
+     * 
+     */
+    TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
+    TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
+    /*
      * Ratings
      */
     RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),

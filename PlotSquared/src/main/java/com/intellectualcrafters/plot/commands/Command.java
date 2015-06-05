@@ -43,6 +43,8 @@ public enum Command {
     UNTRUST("untrust", "ut"),
     UNDENY("undeny", "ud"),
     
+    TOGGLE("toggle", "attribute"),
+    
     MOVE("move"),
     FLAG("flag", "f"),
     TARGET("target"),

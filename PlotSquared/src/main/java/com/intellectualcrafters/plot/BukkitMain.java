@@ -72,6 +72,7 @@ import com.intellectualcrafters.plot.commands.Swap;
 import com.intellectualcrafters.plot.commands.TP;
 import com.intellectualcrafters.plot.commands.Target;
 import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.commands.Toggle;
 import com.intellectualcrafters.plot.commands.Trim;
 import com.intellectualcrafters.plot.commands.Trust;
 import com.intellectualcrafters.plot.commands.Unclaim;
@@ -250,6 +251,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         MainCommand.subCommands.add(new Visit());
         MainCommand.subCommands.add(new TP());
         MainCommand.subCommands.add(new Set());
+        MainCommand.subCommands.add(new Toggle());
         MainCommand.subCommands.add(new Clear());
         MainCommand.subCommands.add(new Delete());
         MainCommand.subCommands.add(new SetOwner());
