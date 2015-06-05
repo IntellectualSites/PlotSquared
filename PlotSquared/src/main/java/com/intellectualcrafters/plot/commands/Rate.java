@@ -20,12 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Rate extends SubCommand {
     /*
@@ -56,39 +61,31 @@ public class Rate extends SubCommand {
             return true;
         }
         final String arg = args[0];
-        boolean o = false;
-        for (final char c : arg.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                o = true;
-                break;
+        final int rating;
+        if (StringUtils.isNumeric(arg) && arg.length() < 3 && arg.length() > 0) {
+            rating = Integer.parseInt(arg);
+            if (rating > 10) {
+                sendMessage(plr, C.RATING_NOT_VALID);
+                return false;
             }
         }
-        int rating = 0;
-        if (!o) {
-            rating = Integer.parseInt(arg);
-        }
-        if (o || ((rating < 0) || (rating > 10))) {
+        else {
             sendMessage(plr, C.RATING_NOT_VALID);
-            return true;
-        }
-        // TODO implement check for already rated
-        boolean rated = true;
-        try {
-            DBFunc.getRatings(plot);
-        } catch (final Exception e) {
-            rated = false;
-        }
-        if (rated) {
-            sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
             return false;
         }
-        final boolean success = true;
-        if (success) {
-            sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
-        } else {
-            sendMessage(plr, C.COMMAND_WENT_WRONG);
-        }
-        DBFunc.setRating(plot, plr.getUUID(), rating);
+        final UUID uuid = plr.getUUID();
+        // TODO implement check for already rated
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                if (DBFunc.hasRated(plot.world, plot.id, uuid)) {
+                    sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
+                    return;
+                }
+                DBFunc.setRating(plot, uuid, rating);
+                sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
+            }
+        });
         return true;
     }
 }

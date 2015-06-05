@@ -76,7 +76,7 @@ public interface AbstractDB {
      *
      * @throws SQLException If the database manager is unable to create the tables
      */
-    public void createTables(final String database, final boolean add_constraint) throws Exception;
+    public void createTables(final String database) throws Exception;
 
     /**
      * Delete a plot
@@ -286,6 +286,13 @@ public interface AbstractDB {
      * @return Plot Ratings (pre-calculated)
      */
     public double getRatings(final Plot plot);
+    
+    /**
+     * if uuid has rated
+     * @param uuid
+     * @return
+     */
+    public boolean hasRated(String world, PlotId id, UUID uuid);
     
     /**
      * Set a rating for a plot

@@ -233,7 +233,7 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendConsoleMessage("&7 - Creating tables");
         
         try {
-            database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite", true);
+            database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
             if (!result) {
                 MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
                 for (Plot plot : PlotSquared.getPlots()) {

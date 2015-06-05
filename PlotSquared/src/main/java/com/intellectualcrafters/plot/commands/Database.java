@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
@@ -23,8 +24,6 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  * @author Citymonstret
  */
 public class Database extends SubCommand {
-    final String[] tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
-
     public Database() {
         super(Command.DATABASE, "Convert/Backup Storage", "database [type] [...details]", CommandCategory.DEBUG, false);
     }
@@ -106,18 +105,7 @@ public class Database extends SubCommand {
                 }
                 final SQLManager manager = new SQLManager(n, prefix);
                 try {
-                    final DatabaseMetaData meta = n.getMetaData();
-                    ResultSet set = meta.getTables(null, null, prefix + "plot", null);
-                    if (!set.next()) {
-                        manager.createTables("mysql", true);
-                    } else {
-                        for (final String s : this.tables) {
-                            set = meta.getTables(null, null, prefix + s, null);
-                            if (!set.next()) {
-                                manager.createTables("mysql", false);
-                            }
-                        }
-                    }
+                    manager.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
                 } catch (final SQLException e) {
                     e.printStackTrace();
                     return sendMessage(plr, "Could not create the required tables and/or load the database") && sendMessage(plr, "Please see the stacktrace for more information");

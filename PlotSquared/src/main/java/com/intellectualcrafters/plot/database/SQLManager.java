@@ -673,7 +673,34 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      */
     @Override
-    public void createTables(final String database, final boolean add_constraint) throws SQLException {
+    public void createTables(final String database) throws SQLException {
+        final String[] tables;
+        if (Settings.ENABLE_CLUSTERS) {
+            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster" };
+        }
+        else {
+            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings" };
+        }
+        final DatabaseMetaData meta = connection.getMetaData();
+        int create = 0;
+        for (final String s : tables) {
+            ResultSet set = meta.getTables(null, null, prefix + s, null);
+            if (!set.next()) {
+                create++;
+            }
+            set.close();
+        }
+        if (create == 0) {
+            return;
+        }
+        boolean add_constraint;
+        if (create == tables.length) {
+            add_constraint = true;
+        }
+        else {
+            add_constraint = false;
+        }
+        PlotSquared.log("Creating tables");
         final boolean mysql = database.equals("mysql");
         final Statement stmt = this.connection.createStatement();
         if (mysql) {
@@ -683,7 +710,7 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," +  "`comment` VARCHAR(40) NOT NULL," +  "`inbox` VARCHAR(40) NOT NULL," + "`timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)," + "  UNIQUE KEY `unique_alias` (`alias`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_rating` ( `plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8");
             if (add_constraint) {
                 stmt.addBatch("ALTER TABLE `" + this.prefix + "plot_settings` ADD CONSTRAINT `" + this.prefix + "plot_settings_ibfk_1` FOREIGN KEY (`plot_plot_id`) REFERENCES `" + this.prefix + "plot` (`id`) ON DELETE CASCADE");
             }
@@ -698,7 +725,7 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_trusted` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_comments` (" + "`world` VARCHAR(40) NOT NULL, `hashcode` INT(11) NOT NULL," + "`comment` VARCHAR(40) NOT NULL," + "`inbox` VARCHAR(40) NOT NULL, `timestamp` INT(11) NOT NULL," + "`sender` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_settings` (" + "  `plot_plot_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0'," + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL," + "  `merged` INT(11) DEFAULT NULL," + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT'," + "  PRIMARY KEY (`plot_plot_id`)" + ")");
-            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_ratings` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL, PRIMARY KEY(`plot_plot_id`))");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_rating` (`plot_plot_id` INT(11) NOT NULL, `rating` INT(2) NOT NULL, `player` VARCHAR(40) NOT NULL)");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster` (" + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`pos1_x` INT(11) NOT NULL," + "`pos1_z` INT(11) NOT NULL," + "`pos2_x` INT(11) NOT NULL," + "`pos2_z` INT(11) NOT NULL," + "`owner` VARCHAR(40) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_helpers` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "cluster_invited` (" + "`cluster_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ")");
@@ -1604,7 +1631,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public double getRatings(final Plot plot) {
         try {
-            final PreparedStatement statement = this.connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + this.prefix + "plot_ratings` WHERE `plot_plot_id` = ? ");
+            final PreparedStatement statement = this.connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
             statement.setInt(1, getId(plot.world, plot.id));
             final ResultSet set = statement.executeQuery();
             double rating = 0;
@@ -1628,7 +1655,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT IGNORE INTO `" + SQLManager.this.prefix + "plot_ratings` (`plot_plot_id`, `rating`, `player`) VALUES(?,?,?)");
+                    final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_rating` (`plot_plot_id`, `rating`, `player`) VALUES(?,?,?)");
                     statement.setInt(1, getId(plot.world, plot.id));
                     statement.setInt(2, value);
                     statement.setString(3, rater.toString());
@@ -2142,7 +2169,7 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
             stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_ratings`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_rating`");
             stmt.addBatch("DROP TABLE `" + prefix + "plot_settings`");
             stmt.addBatch("DROP TABLE `" + prefix + "plot_comments`");
             stmt.addBatch("DROP TABLE `" + prefix + "plot_trusted`");
@@ -2161,5 +2188,25 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean hasRated(String world, PlotId id, UUID uuid) {
+        try {
+            PreparedStatement stmt = SQLManager.this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? AND `player` = ?");
+            stmt.setInt(1, getId(world, id));
+            stmt.setString(2, uuid.toString());
+            final ResultSet r = stmt.executeQuery();
+            if (r.next()) {
+                stmt.close();
+                return true;
+            }
+            stmt.close();
+            return false;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

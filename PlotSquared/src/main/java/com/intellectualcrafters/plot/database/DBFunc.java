@@ -121,8 +121,8 @@ public class DBFunc {
      *
      * @throws Exception
      */
-    public static void createTables(final String database, final boolean add_constraint) throws Exception {
-        dbManager.createTables(database, add_constraint);
+    public static void createTables(final String database) throws Exception {
+        dbManager.createTables(database);
     }
 
     /**
@@ -344,6 +344,10 @@ public class DBFunc {
 
     public static double getRatings(final Plot plot) {
         return dbManager.getRatings(plot);
+    }
+    
+    public static boolean hasRated(String world, PlotId id, final UUID uuid) {
+        return dbManager.hasRated(world, id, uuid);
     }
     
     public static void setRating(Plot plot, UUID rater, int value) {

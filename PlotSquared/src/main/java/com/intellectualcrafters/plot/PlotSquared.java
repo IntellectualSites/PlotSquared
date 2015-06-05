@@ -645,13 +645,6 @@ public class PlotSquared {
     }
 
     public void setupDatabase() {
-        final String[] tables;
-        if (Settings.ENABLE_CLUSTERS) {
-            MainCommand.subCommands.add(new Cluster());
-            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments", "cluster" };
-        } else {
-            tables = new String[] { "plot_trusted", "plot_ratings", "plot_comments" };
-        }
         if (Settings.DB.USE_MYSQL) {
             try {
                 database = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
@@ -660,18 +653,7 @@ public class PlotSquared {
                     if (DBFunc.dbManager == null) {
                         DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     }
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("mysql", true);
-                    } else {
-                        for (final String table : tables) {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
-                            if (!res.next()) {
-                                DBFunc.createTables("mysql", false);
-                            }
-                        }
-                    }
+                    DBFunc.createTables("mysql");
                 }
             } catch (final Exception e) {
                 log("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
@@ -699,16 +681,7 @@ public class PlotSquared {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();
                     ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    if (!res.next()) {
-                        DBFunc.createTables("sqlite", true);
-                    } else {
-                        for (final String table : tables) {
-                            res = meta.getTables(null, null, Settings.DB.PREFIX + table, null);
-                            if (!res.next()) {
-                                DBFunc.createTables("sqlite", false);
-                            }
-                        }
-                    }
+                    DBFunc.createTables("sqlite");
                 }
             } catch (final Exception e) {
                 log(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
