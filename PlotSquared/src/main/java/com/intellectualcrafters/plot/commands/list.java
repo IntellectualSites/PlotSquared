@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
@@ -60,7 +61,7 @@ public class list extends SubCommand {
         final StringBuilder builder = new StringBuilder();
         builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
         if (plr != null) {
-            if (PlotSquared.economy != null) {
+            if (EconHandler.manager != null) {
                 builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "forsale", "<player>", "<world>"}));
             }
             else {
@@ -161,7 +162,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.forsale");
                     return false;
                 }
-                if (PlotSquared.economy == null) {
+                if (EconHandler.manager == null) {
                     break;
                 }
                 plots = new HashSet<>();

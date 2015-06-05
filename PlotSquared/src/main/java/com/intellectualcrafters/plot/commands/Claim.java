@@ -98,13 +98,13 @@ public class Claim extends SubCommand {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
         final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
-        if ((PlotSquared.economy != null) && world.USE_ECONOMY) {
+        if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {
-                if (EconHandler.getBalance(plr) < cost) {
+                if (EconHandler.manager.getMoney(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                EconHandler.withdrawPlayer(plr, cost);
+                EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

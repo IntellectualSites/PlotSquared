@@ -46,7 +46,7 @@ public class Buy extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (PlotSquared.economy == null) {
+        if (EconHandler.manager == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
         final Location loc = plr.getLocation();
@@ -93,13 +93,13 @@ public class Buy extends SubCommand {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
         }
-        if ((PlotSquared.economy != null) && (price > 0d)) {
-            if (EconHandler.getBalance(plr) < price) {
+        if ((EconHandler.manager != null) && (price > 0d)) {
+            if (EconHandler.manager.getMoney(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }
-            EconHandler.withdrawPlayer(plr, price);
+            EconHandler.manager.withdrawMoney(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            EconHandler.depositPlayer(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
+            EconHandler.manager.depositMoney(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
             final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");

@@ -51,10 +51,10 @@ public class Unclaim extends SubCommand {
         }
         assert plot != null;
         final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
-        if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
+        if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
-                EconHandler.depositPlayer(plr, c);
+                EconHandler.manager.depositMoney(plr, c);
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }

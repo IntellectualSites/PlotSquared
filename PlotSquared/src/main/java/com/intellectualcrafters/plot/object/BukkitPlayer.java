@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -148,5 +152,26 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public void setAttribute(String key) {
+        Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
+        if (perm == null) {
+            perm = new Permission(key, PermissionDefault.FALSE);
+            Bukkit.getServer().getPluginManager().addPermission(perm);
+            Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
+        }
+        EconHandler.manager.setPermission(this, key, true);
+    }
+
+    @Override
+    public boolean getAttribute(String key) {
+        return player.hasPermission(key);
+    }
+
+    @Override
+    public void removeAttribute(String key) {
+        EconHandler.manager.setPermission(this, key, false);
     }
 }

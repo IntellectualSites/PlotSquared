@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.util.EconHandler;
 
 /**
  * @author Jesse Boyd
@@ -139,7 +140,7 @@ public abstract class PlotWorld {
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use") && (PlotSquared.economy != null);
+        this.USE_ECONOMY = config.getBoolean("economy.use") && (EconHandler.manager != null);
         this.PLOT_PRICE = config.getDouble("economy.prices.claim");
         this.MERGE_PRICE = config.getDouble("economy.prices.merge");
         this.SELL_PRICE = config.getDouble("economy.prices.sell");

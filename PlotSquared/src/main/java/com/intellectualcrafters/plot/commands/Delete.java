@@ -62,10 +62,10 @@ public class Delete extends SubCommand {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
+                if ((EconHandler.manager != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
                     final double c = pWorld.SELL_PRICE;
                     if (c > 0d) {
-                        EconHandler.depositPlayer(plr, c);
+                        EconHandler.manager.depositMoney(plr, c);
                         sendMessage(plr, C.ADDED_BALANCE, c + "");
                     }
                 }

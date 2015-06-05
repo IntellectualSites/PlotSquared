@@ -173,15 +173,15 @@ public class Merge extends SubCommand {
                                 return;
                             }
                             final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
-                            if ((PlotSquared.economy != null) && plotWorld.USE_ECONOMY) {
+                            if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
                                 double cost = plotWorld.MERGE_PRICE;
                                 cost = plots.size() * cost;
                                 if (cost > 0d) {
-                                    if (EconHandler.getBalance(plr) < cost) {
+                                    if (EconHandler.manager.getMoney(plr) < cost) {
                                         sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                                         return;
                                     }
-                                    EconHandler.withdrawPlayer(plr, cost);
+                                    EconHandler.manager.withdrawMoney(plr, cost);
                                     sendMessage(plr, C.REMOVED_BALANCE, cost + "");
                                 }
                             }
@@ -202,15 +202,15 @@ public class Merge extends SubCommand {
             return true;
         }
         final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
-        if ((PlotSquared.economy != null) && plotWorld.USE_ECONOMY) {
+        if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;
             if (cost > 0d) {
-                if (EconHandler.getBalance(plr) < cost) {
+                if (EconHandler.manager.getMoney(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_MERGE, cost + "");
                     return false;
                 }
-                EconHandler.withdrawPlayer(plr, cost);
+                EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

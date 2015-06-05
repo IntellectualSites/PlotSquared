@@ -67,6 +67,31 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Merges all plots in the arraylist (with cost)
+     *
+     * @param plr
+     * @param world
+     * @param plotIds
+     *
+     * @return boolean
+     */
+    public static boolean mergePlots(final PlotPlayer player, final String world, final ArrayList<PlotId> plotIds) {
+        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        if ((EconHandler.manager != null) && plotworld.USE_ECONOMY) {
+            final double cost = plotIds.size() * plotworld.MERGE_PRICE;
+            if (cost > 0d) {
+                if (EconHandler.manager.getMoney(player) < cost) {
+                    MainUtil.sendMessage(player, C.CANNOT_AFFORD_MERGE, "" + cost);
+                    return false;
+                }
+                EconHandler.manager.withdrawMoney(player, cost);
+                MainUtil.sendMessage(player, C.REMOVED_BALANCE, cost + "");
+            }
+        }
+        return MainUtil.mergePlots(world, plotIds, true);
+    }
+    
     public static boolean unlinkPlot(final Plot plot) {
         final String world = plot.world;
         final PlotId pos1 = MainUtil.getBottomPlot(plot).id;

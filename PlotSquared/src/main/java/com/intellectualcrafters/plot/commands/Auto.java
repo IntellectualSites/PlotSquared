@@ -130,16 +130,15 @@ public class Auto extends SubCommand {
             return false;
         }
         final PlotWorld pWorld = PlotSquared.getPlotWorld(world);
-        if ((PlotSquared.economy != null) && pWorld.USE_ECONOMY) {
+        if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr.getName()) < cost) {
+                if (EconHandler.manager.getMoney(plr) < cost) {
                     sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.withdrawPlayer(plr, cost);
+                EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }

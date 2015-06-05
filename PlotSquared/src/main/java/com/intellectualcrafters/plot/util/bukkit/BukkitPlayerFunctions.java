@@ -27,12 +27,14 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -67,32 +69,6 @@ public class BukkitPlayerFunctions {
         if (!MainUtil.clearAsPlayer(plot, isDelete, whenDone)) {
             MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
         }
-    }
-
-    /**
-     * Merges all plots in the arraylist (with cost)
-     *
-     * @param plr
-     * @param world
-     * @param plotIds
-     *
-     * @return boolean
-     */
-    public static boolean mergePlots(final Player plr, final String world, final ArrayList<PlotId> plotIds) {
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-        if ((PlotSquared.economy != null) && plotworld.USE_ECONOMY) {
-            final double cost = plotIds.size() * plotworld.MERGE_PRICE;
-            if (cost > 0d) {
-                final Economy economy = PlotSquared.economy;
-                if (economy.getBalance(plr) < cost) {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.CANNOT_AFFORD_MERGE, "" + cost);
-                    return false;
-                }
-                EconHandler.withdrawPlayer(BukkitUtil.getPlayer(plr), cost);
-                MainUtil.sendMessage(BukkitUtil.getPlayer(plr), C.REMOVED_BALANCE, cost + "");
-            }
-        }
-        return MainUtil.mergePlots(world, plotIds, true);
     }
 
     public static String getPlayerName(final UUID uuid) {
