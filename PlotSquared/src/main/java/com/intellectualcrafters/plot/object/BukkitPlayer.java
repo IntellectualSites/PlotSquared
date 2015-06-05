@@ -156,6 +156,7 @@ public class BukkitPlayer implements PlotPlayer {
 
     @Override
     public void setAttribute(String key) {
+        key = "plotsquared_user_attributes." + key;
         Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
         if (perm == null) {
             perm = new Permission(key, PermissionDefault.FALSE);
@@ -167,11 +168,13 @@ public class BukkitPlayer implements PlotPlayer {
 
     @Override
     public boolean getAttribute(String key) {
+        key = "plotsquared_user_attributes." + key;
         return player.hasPermission(key);
     }
 
     @Override
     public void removeAttribute(String key) {
+        key = "plotsquared_user_attributes." + key;
         EconHandler.manager.setPermission(this, key, false);
     }
 }
