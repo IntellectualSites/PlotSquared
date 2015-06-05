@@ -128,9 +128,7 @@ public class PlotListener extends APlotListener {
                 }
                 final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceFirst("%s", getName(plot.owner));
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceFirst("%s", getName(plot.owner));
-                if (AbstractTitle.TITLE_CLASS != null) {
-                    AbstractTitle.TITLE_CLASS.sendTitle(pp, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()), 1, 2, 1);
-                }
+                AbstractTitle.sendTitle(pp, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
             }
             {
                 final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
