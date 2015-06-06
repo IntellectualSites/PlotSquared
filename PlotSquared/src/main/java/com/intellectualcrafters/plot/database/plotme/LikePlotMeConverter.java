@@ -22,6 +22,11 @@ package com.intellectualcrafters.plot.database.plotme;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +90,17 @@ public class LikePlotMeConverter {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
     
+    public void updateBukkitYml(String plugin) {
+        try {
+            Path path = Paths.get("bukkit.yml");
+            Charset charset = StandardCharsets.UTF_8;
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
+            content = content.replaceAll(plugin, "PlotSquared");
+            Files.write(path, content.getBytes(charset));
+        } catch (Exception e) {};
+    }
+    
     public boolean run(final APlotMeConnector connector) {
         try {
             String dataFolder = getPlotMePath();
@@ -112,6 +128,9 @@ public class LikePlotMeConverter {
             String dbPrefix = plugin.toLowerCase();
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
+            
+            sendMessage("Updating bukkit.yml");
+            updateBukkitYml(plugin);
             
             for (final String world : plotConfig.getConfigurationSection("worlds").getKeys(false)) {
                 sendMessage("Copying config for: " + world);
