@@ -18,12 +18,16 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.ClassicPlotManager;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class ExpireManager {
@@ -47,35 +51,6 @@ public class ExpireManager {
         final long now = System.currentTimeMillis();
         if (now > getTimeStamp(world)) {
             timestamp.put(world, now + 86400000l);
-            
-            
-//            TaskManager.index.increment();
-//            final ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots(world).values());
-//            int value = TaskManager.index.intValue();
-//            int id = TaskManager.runTaskRepeat(new Runnable() {
-//                @Override
-//                public void run() {
-//                    long start = System.currentTimeMillis();
-//                    while (System.currentTimeMillis() - start < 15) {
-//                        Plot plot = plots.remove(0);
-//                        final Flag keepFlag = FlagManager.getPlotFlag(plot, "keep");
-//                        if (keepFlag != null && (Boolean) keepFlag.getValue()) {
-//                            continue;
-//                        }
-//                        
-//                        
-//                        final HashMap<Plot, Long> toRemove = new HashMap<>();
-//                        final HashMap<UUID, Long> remove = new HashMap<>();
-//                        final Set<UUID> keep = new HashSet<>();
-//                        Iterator<Plot> iter = plots.iterator();
-//                    }
-//                }
-//            }, 1);
-//            
-//            TaskManager.tasks.put(value, id);
-            
-            
-            
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
@@ -147,18 +122,39 @@ public class ExpireManager {
                         MainUtil.unlinkPlot(plot);
                     }
                     final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-                    manager.clearPlot(plotworld, plot, false, null);
-                    MainUtil.removeSign(plot);
-                    DBFunc.delete(world, plot);
-                    PlotSquared.removePlot(world, plot.id, false);
-                    expiredPlots.get(world).remove(plot);
-                    PlotSquared.log("&cDeleted expired plot: " + plot.id);
-                    PlotSquared.log("&3 - World: " + plot.world);
-                    if (plot.hasOwner()) {
-                        PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
-                    } else {
-                        PlotSquared.log("&3 - Owner: Unowned");
+                    RunnableVal run = new RunnableVal() {
+                        @Override
+                        public void run() {
+                            int changed = (int) this.value;
+                            if (changed >= Settings.MIN_BLOCKS_CHANGED) {
+                                PlotSquared.log("&aKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
+                                expiredPlots.get(world).remove(plot);
+                                return;
+                            }
+                            manager.clearPlot(plotworld, plot, false, null);
+                            MainUtil.removeSign(plot);
+                            DBFunc.delete(world, plot);
+                            PlotSquared.removePlot(world, plot.id, false);
+                            expiredPlots.get(world).remove(plot);
+                            PlotSquared.log("&cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                            PlotSquared.log("&3 - World: " + plot.world);
+                            if (plot.hasOwner()) {
+                                PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
+                            } else {
+                                PlotSquared.log("&3 - Owner: Unowned");
+                            }
+                        }
+                    };
+                    if (Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+                        HybridUtils.manager.checkModified(plot, run);
                     }
+                    else {
+                        run.value = -1;
+                        run.run();
+                    }
+                    
+                    
                     return;
                 }
             }

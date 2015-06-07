@@ -415,10 +415,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public EconHandler getEconomyHandler() {
-        BukkitEconHandler econ = new BukkitEconHandler();
-        if (econ.init()) {
-            return econ;
+        try {
+            BukkitEconHandler econ = new BukkitEconHandler();
+            if (econ.init()) {
+                return econ;
+            }
         }
+        catch (Throwable e) {};
         return null;
     }
 

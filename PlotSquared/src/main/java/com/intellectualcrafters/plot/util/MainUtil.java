@@ -773,7 +773,7 @@ public class MainUtil {
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                MainUtil.setBiome(world, plot, "FOREST");
+//                MainUtil.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
             }

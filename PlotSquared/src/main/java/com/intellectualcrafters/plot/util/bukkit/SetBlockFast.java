@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -86,7 +87,10 @@ public class SetBlockFast extends BukkitSetBlockManager {
      */
     @Override
     public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
-        
+        if (blockId == -1) {
+            world.getBlockAt(x, y, z).setData(data, false);
+            return;
+        }
         int X = x >> 4;
         int Z = z >> 4;
         ChunkLoc loc = new ChunkLoc(X, Z);

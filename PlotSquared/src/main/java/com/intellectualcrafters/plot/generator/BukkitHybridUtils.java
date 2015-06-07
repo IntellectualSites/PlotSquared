@@ -167,7 +167,7 @@ public class BukkitHybridUtils extends HybridUtils {
     }
     
     private static boolean UPDATE = false;
-    private int task;
+    public int task;
     private long last;
 
     @Override
@@ -180,12 +180,23 @@ public class BukkitHybridUtils extends HybridUtils {
         return scheduleRoadUpdate(world, regions);
     }
     
-    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> regions) {
-        final List<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+    public static List<ChunkLoc> regions;
+    public static List<ChunkLoc> chunks = new ArrayList<>();
+    public static String world;
+    
+    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> rgs) {
+        BukkitHybridUtils.regions = rgs;
+        BukkitHybridUtils.world = world;
+        chunks = new ArrayList<ChunkLoc>();
         final Plugin plugin = BukkitMain.THIS;
+        final MutableInt count = new MutableInt(0);
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
+                count.increment();
+                if (count.intValue() % 20 == 0) {
+                    PlotSquared.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 1024) + "%");
+                }
                 if (regions.size() == 0 && chunks.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
                     PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
@@ -205,7 +216,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     	}
                     	if (chunks.size() > 0) {
                     		long diff = System.currentTimeMillis() + 25;
-                    		if (System.currentTimeMillis() - last > 1000 && last != 0) {
+                    		if (System.currentTimeMillis() - last > 1200 && last != 0) {
                     		    last = 0;
                     		    PlotSquared.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                     		    while (chunks.size() > 0) {
@@ -220,10 +231,10 @@ public class BukkitHybridUtils extends HybridUtils {
                                     public void run() {
                                        scheduleRoadUpdate(world, regions); 
                                     }
-                                }, 600);
+                                }, 2400);
                                 return;
                     		}
-                    		if (System.currentTimeMillis() - last < 50) {
+                    		if (System.currentTimeMillis() - last < 1000) {
                         		while (System.currentTimeMillis() < diff && chunks.size() > 0) {
                         			ChunkLoc chunk = chunks.get(0);
                         			chunks.remove(0);
@@ -249,7 +260,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     }
                 }
             }
-        }, 1, 1);
+        }, 20, 20);
         return true;
     }
 

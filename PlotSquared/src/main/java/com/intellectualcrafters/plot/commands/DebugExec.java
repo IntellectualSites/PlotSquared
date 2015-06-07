@@ -34,11 +34,14 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -62,6 +65,40 @@ public class DebugExec extends SubCommand {
                     }
                     ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
+                }
+                case "start-rgar": {
+                    if (args.length != 2) {
+                        PlotSquared.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        return false;
+                    }
+                    boolean result;
+                    if (BukkitHybridUtils.regions != null) {
+                        result = ((BukkitHybridUtils)(HybridUtils.manager)).scheduleRoadUpdate(args[1], BukkitHybridUtils.regions);
+                    }
+                    else {
+                        result = HybridUtils.manager.scheduleRoadUpdate(args[1]);
+                    }
+                    if (!result) {
+                        PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        return false;
+                    }
+                    return true;
+                }
+                case "stop-rgar": {
+                    if (((BukkitHybridUtils)(HybridUtils.manager)).task == 0) {
+                        PlotSquared.log("&cTASK NOT RUNNING!");
+                        return false;
+                    }
+                    Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
+                    PlotSquared.log("&cCancelling task...");
+                    while (BukkitHybridUtils.chunks.size() > 0) {
+                        ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
+                        BukkitHybridUtils.chunks.remove(0);
+                        ((BukkitHybridUtils)(HybridUtils.manager)).regenerateRoad(BukkitHybridUtils.world, chunk);
+                        ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
+                    }
+                    PlotSquared.log("&cCancelled!");
+                    return true;
                 }
                 case "start-expire": {
                     if (ExpireManager.task == -1) {

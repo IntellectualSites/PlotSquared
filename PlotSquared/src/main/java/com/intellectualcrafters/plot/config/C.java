@@ -450,6 +450,7 @@ public enum C {
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
     MEMBER_REMOVED("$1You successfully removed a user from the plot", "Member"),
     MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot", "Member"),
+    PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
     /*
      * Set Owner
      */

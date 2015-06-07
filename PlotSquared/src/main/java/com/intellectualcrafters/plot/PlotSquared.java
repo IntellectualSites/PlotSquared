@@ -832,6 +832,7 @@ public class PlotSquared {
         options.put("clear.on.ban", false);
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
+        options.put("clear.keep-if-modified", Settings.MIN_BLOCKS_CHANGED);
         
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -908,9 +909,10 @@ public class PlotSquared {
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
+        Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
-        
         Settings.CLEAR_INTERVAL = config.getInt("clear.auto.clear-interval-seconds");
+        Settings.MIN_BLOCKS_CHANGED = config.getInt("clear.keep-if-modified");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");

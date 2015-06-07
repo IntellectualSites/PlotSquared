@@ -159,6 +159,29 @@ public class SetBlockQueue {
     private static int lastInt = 0;
     private static PlotBlock lastBlock = new PlotBlock((short) 0, (byte) 0);
     
+    public static void setData(final String world, int x, final int y, int z, final byte data) {
+        locked = true;
+        if (!running) {
+            init();
+        }
+        int X = x >> 4;
+        int Z = z >> 4;
+        x -= X << 4;
+        z -= Z << 4;
+        ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
+        PlotBlock[][] result;
+        result = blocks.get(wrap);
+        if (!blocks.containsKey(wrap)) {
+            result = new PlotBlock[16][];
+            blocks.put(wrap, result);
+        }
+        if (result[y >> 4] == null) {
+            result[y >> 4] = new PlotBlock[4096];
+        }
+        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = new PlotBlock((short) -1, data);
+        locked = false;
+    }
+    
     public static void setBlock(final String world, int x, final int y, int z, final int id) {
         locked = true;
         if (!running) {

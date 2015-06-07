@@ -22,8 +22,11 @@ package com.intellectualcrafters.plot.util.bukkit;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -71,9 +74,18 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             
             @Override
             public void run() {
-                // TODO Auto-generated method stub
-                update(toUpdate.values());
-                toUpdate = new HashMap<>();
+                int count = 0;
+                ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                Iterator<Entry<ChunkLoc, Chunk>> i = toUpdate.entrySet().iterator();
+                while (i.hasNext() && count < 1024) {
+                    chunks.add(i.next().getValue());
+                    i.remove();
+                    count++;
+                }
+                if (count == 0) {
+                    return;
+                }
+                update(chunks);
             }
         }, 20);
     }
@@ -93,7 +105,10 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     @SuppressWarnings("deprecation")
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
-        
+        if (id == -1) {
+            world.getBlockAt(x, y, z).setData(data, false);
+            return;
+        }
         // Start blockstate workaround //
         switch (id) {
             case 54:

@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -76,6 +77,10 @@ public class Add extends SubCommand {
                 DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
             }
             if (plot.denied.contains(uuid)) {
+                if (plot.members.size() + plot.trusted.size() >= PlotSquared.getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+                    MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
+                    return false;
+                }
                 plot.denied.remove(uuid);
                 DBFunc.removeDenied(loc.getWorld(), plot, uuid);
             }
@@ -84,6 +89,10 @@ public class Add extends SubCommand {
             EventUtil.manager.callMember(plr, plot, uuid, true);
         } else {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
+            return false;
+        }
+        if (plot.members.size() + plot.trusted.size() >= PlotSquared.getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+            MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
             return false;
         }
         MainUtil.sendMessage(plr, C.MEMBER_ADDED);

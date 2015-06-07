@@ -1459,10 +1459,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
-                    } else if (aPlr && FlagManager.isBooleanFlag(plot, "pvp", false)) {
+                    } else if (aPlr && FlagManager.isPlotFlagTrue(plot, "pvp")) {
                         return;
                     }
-                    if (!aPlr && FlagManager.isBooleanFlag(plot, "pve", false)) {
+                    if (!aPlr && FlagManager.isPlotFlagTrue(plot, "pve")) {
                         return;
                     }
                     assert plot != null;

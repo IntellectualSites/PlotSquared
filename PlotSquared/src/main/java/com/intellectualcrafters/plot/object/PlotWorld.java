@@ -59,6 +59,7 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
+    public final static int MAX_PLOT_MEMBERS_DEFAULT = 128;
     // are plot clusters enabled
     // require claim in cluster
     // TODO make this configurable
@@ -68,6 +69,7 @@ public abstract class PlotWorld {
         BLOCKS = new int[] { 1, 2, 3, 4, 5, 7, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 35, 41, 42, 43, 45, 47, 48, 49, 52, 56, 57, 58, 61, 62, 73, 74, 80, 82, 84, 86, 87, 88, 91, 97, 98, 99, 100, 103, 110, 112, 120, 121, 123, 124, 125, 129, 133, 153, 155, 159, 162, 165, 166, 168, 170, 172, 173, 174, 179, 181 };
     }
     public final String worldname;
+    public int MAX_PLOT_MEMBERS;
     public boolean AUTO_MERGE;
     public boolean ALLOW_SIGNS;
     public boolean MOB_SPAWNING;
@@ -134,6 +136,7 @@ public abstract class PlotWorld {
         }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
+        this.MAX_PLOT_MEMBERS = config.getInt("limits.max-members");
         this.ALLOW_SIGNS = config.getBoolean("plot.create_signs");
         this.PLOT_BIOME = (String) Configuration.BIOME.parseString(config.getString("plot.biome"));
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
@@ -223,7 +226,7 @@ public abstract class PlotWorld {
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);
         options.put("world.border", PlotWorld.WORLD_BORDER_DEFAULT);
-        
+        options.put("limits.max-members", PlotWorld.MAX_PLOT_MEMBERS_DEFAULT);
         options.put("home.default", "side");
         options.put("home.allow-nonmembers", false);
         
