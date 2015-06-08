@@ -25,7 +25,6 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.RUtils;
 
 public class Debug extends SubCommand {
     public Debug() {
@@ -63,9 +62,6 @@ public class Debug extends SubCommand {
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PlotSquared.getPlots().size()));
-            information.append(getSection(section, "RAM"));
-            information.append(getLine(line, "Free Ram", RUtils.getFreeRam() + "MB"));
-            information.append(getLine(line, "Total Ram", RUtils.getTotalRam() + "MB"));
             information.append(getSection(section, "Messages"));
             information.append(getLine(line, "Total Messages", C.values().length));
             information.append(getLine(line, "View all captions", "/plot debug msg"));

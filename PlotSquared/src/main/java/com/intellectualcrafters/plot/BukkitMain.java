@@ -25,6 +25,7 @@ import com.intellectualcrafters.plot.commands.BukkitCommand;
 import com.intellectualcrafters.plot.commands.Chat;
 import com.intellectualcrafters.plot.commands.Claim;
 import com.intellectualcrafters.plot.commands.Clear;
+import com.intellectualcrafters.plot.commands.Cluster;
 import com.intellectualcrafters.plot.commands.Comment;
 import com.intellectualcrafters.plot.commands.Condense;
 import com.intellectualcrafters.plot.commands.Confirm;
@@ -253,6 +254,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         MainCommand.subCommands.add(new Clear());
         MainCommand.subCommands.add(new Delete());
         MainCommand.subCommands.add(new SetOwner());
+        if (Settings.ENABLE_CLUSTERS) {
+            MainCommand.subCommands.add(new Cluster());
+        }
         
         MainCommand.subCommands.add(new Trust());
         MainCommand.subCommands.add(new Add());

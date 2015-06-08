@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.generator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -150,6 +151,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
+        
+        this.ROAD_SCHEMATIC_ENABLED = true;
+        
         if ((schem1 == null) || (schem2 == null) || (this.ROAD_WIDTH == 0)) {
             PlotSquared.log(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
@@ -192,7 +196,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        this.ROAD_SCHEMATIC_ENABLED = true;
     }
     
     public static byte wrap(byte data, int start) {
