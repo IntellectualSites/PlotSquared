@@ -204,9 +204,7 @@ public class Trim extends SubCommand {
     public static ArrayList<Plot> expired = null;
 
     public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
-        for (final ChunkLoc loc : chunks) {
-            ChunkManager.manager.deleteRegionFile(world, loc);
-        }
+        ChunkManager.manager.deleteRegionFiles(world, chunks);
     }
 
     public static void sendMessage(final String message) {

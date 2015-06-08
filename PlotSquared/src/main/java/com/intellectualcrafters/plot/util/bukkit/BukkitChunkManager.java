@@ -101,9 +101,29 @@ public class BukkitChunkManager extends ChunkManager {
             public void run() {
                 final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 final File file = new File(directory);
-                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                PlotSquared.log("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {}
+            }
+        });
+    }
+    
+    @Override
+    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                for (ChunkLoc loc : chunks) {
+                    final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+                    final File file = new File(directory);
+                    PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    if (file.exists()) {
+                        file.delete();
+                    }
                 }
             }
         });

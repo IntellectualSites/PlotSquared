@@ -1052,6 +1052,8 @@ public class MainUtil {
         p2.id.y = temp.y;
         PlotSquared.getPlots(world).remove(p1.id);
         PlotSquared.getPlots(world).remove(p2.id);
+        p1.id.recalculateHash();
+        p2.id.recalculateHash();
         PlotSquared.getPlots(world).put(p1.id, p1);
         PlotSquared.getPlots(world).put(p2.id, p2);
         // Swap database
@@ -1084,6 +1086,8 @@ public class MainUtil {
         p2.id.y = temp.y;
         PlotSquared.getPlots(world).remove(p1.id);
         PlotSquared.getPlots(world).remove(p2.id);
+        p1.id.recalculateHash();
+        p2.id.recalculateHash();
         PlotSquared.getPlots(world).put(p1.id, p1);
         PlotSquared.getPlots(world).put(p2.id, p2);
         // Swap database
@@ -1113,6 +1117,7 @@ public class MainUtil {
             PlotSquared.getPlots(plot1.world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
+            plot.id.recalculateHash();
             PlotSquared.getPlots(plot2.world).put(plot.id, plot);
         }
         TaskManager.runTaskLater(whenDone, 1);
@@ -1142,6 +1147,7 @@ public class MainUtil {
             PlotSquared.getPlots(plot1.world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
+            plot.id.recalculateHash();
             PlotSquared.getPlots(plot2.world).put(plot.id, plot);
             DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
         }

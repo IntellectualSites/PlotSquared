@@ -126,6 +126,11 @@ public class PlotId {
 
     private int hash;
     
+    public void recalculateHash() {
+        this.hash = 0;
+        hashCode();
+    }
+    
     @Override
     public int hashCode() {
         if (hash == 0) {
