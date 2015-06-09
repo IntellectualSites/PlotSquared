@@ -46,26 +46,22 @@ public class BukkitEconHandler extends EconHandler {
 
     @Override
     public double getMoney(PlotPlayer player) {
-        econ.getBalance(player.getName());
-        return 0;
+        return econ.getBalance(player.getName());
     }
 
     @Override
-    public double withdrawMoney(PlotPlayer player, double amount) {
+    public void withdrawMoney(PlotPlayer player, double amount) {
         econ.withdrawPlayer(player.getName(), amount);
-        return 0;
     }
 
     @Override
-    public double depositMoney(PlotPlayer player, double amount) {
+    public void depositMoney(PlotPlayer player, double amount) {
         econ.depositPlayer(player.getName(), amount);
-        return 0;
     }
 
     @Override
-    public double depositMoney(OfflinePlotPlayer player, double amount) {
+    public void depositMoney(OfflinePlotPlayer player, double amount) {
         econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
-        return 0;
     }
 
     @Override

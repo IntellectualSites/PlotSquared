@@ -126,7 +126,7 @@ public class ExpireManager {
                         @Override
                         public void run() {
                             int changed = (int) this.value;
-                            if (changed >= Settings.MIN_BLOCKS_CHANGED) {
+                            if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
                                 PlotSquared.log("&aKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                 FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
                                 expiredPlots.get(world).remove(plot);

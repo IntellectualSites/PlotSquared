@@ -194,10 +194,6 @@ public enum C {
     TITLE_ENTERED_PLOT_COLOR("GOLD", "Titles"),
     TITLE_ENTERED_PLOT_SUB("Owned by %s", "Titles"),
     TITLE_ENTERED_PLOT_SUB_COLOR("RED", "Titles"),
-    TITLE_LEFT_PLOT("You left plot %s", "Titles"),
-    TITLE_LEFT_PLOT_COLOR("GOLD", "Titles"),
-    TITLE_LEFT_PLOT_SUB("Owned by %s", "Titles"),
-    TITLE_LEFT_PLOT_SUB_COLOR("RED", "Titles"),
     PREFIX_GREETING("$1%id%$2> ", "Titles"),
     PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
     /*

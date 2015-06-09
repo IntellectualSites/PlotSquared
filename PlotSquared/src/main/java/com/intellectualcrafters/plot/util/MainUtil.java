@@ -67,6 +67,12 @@ public class MainUtil {
         return true;
     }
     
+    public static Location getPlotCenter(Plot plot) {
+        Location bot = getPlotBottomLoc(plot.world, plot.id);
+        Location top = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        return new Location(plot.world, bot.getX() + (top.getX() - bot.getX()) / 2, 0, bot.getZ() + (top.getZ() - bot.getZ()) / 2);
+    }
+    
     /**
      * Merges all plots in the arraylist (with cost)
      *

@@ -39,10 +39,13 @@ import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -108,7 +111,7 @@ public class PlotListener extends APlotListener {
             if (timeFlag != null) {
                 try {
                     final long time = (long) timeFlag.getValue();
-                    player.setPlayerTime(time, true);
+                    player.setPlayerTime(time, false);
                 } catch (final Exception e) {
                     FlagManager.removePlotFlag(plot, "time");
                 }
@@ -126,8 +129,12 @@ public class PlotListener extends APlotListener {
                 else {
                     greeting = "";
                 }
-                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceFirst("%s", getName(plot.owner));
-                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceFirst("%s", getName(plot.owner));
+                String alias = plot.settings.getAlias();
+                if (alias.length() == 0) {
+                    alias = plot.toString();
+                }
+                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceAll("%s", getName(plot.owner)).replaceAll("%alias%", alias);
+                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceAll("%s", getName(plot.owner)).replaceAll("%alias%", alias);
                 AbstractTitle.sendTitle(pp, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
             }
             {
@@ -139,7 +146,10 @@ public class PlotListener extends APlotListener {
                 player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
                 Integer id = (Integer) musicFlag.getValue();
                 if (id != 0) {
-                    player.playEffect(player.getLocation(), Effect.RECORD_PLAY, Material.getMaterial(id));
+                    Location center = MainUtil.getPlotCenter(plot);
+                    org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
+                    newLoc.setY(Math.min((((int) player.getLocation().getBlockY())/16) * 16, 240));
+                    player.playEffect(newLoc, Effect.RECORD_PLAY, Material.getMaterial(id));
                 }
             }
             CommentManager.sendTitle(pp, plot);
@@ -163,7 +173,12 @@ public class PlotListener extends APlotListener {
             player.resetPlayerWeather();
         }
         if (FlagManager.getPlotFlag(plot, "music") != null) {
-            player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
+            Location center = MainUtil.getPlotCenter(plot);
+            for (int i = 0; i < 256; i+= 16) {
+                org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
+                newLoc.setY(i);
+                player.playEffect(newLoc, Effect.RECORD_PLAY, 0);
+            }
         }
     }
 

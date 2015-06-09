@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class SetBlockQueue {
@@ -129,6 +130,16 @@ public class SetBlockQueue {
             TaskManager.tasks.put(current, task);
             running = true;
         }
+    }
+    
+    public static void setChunk(final String world, ChunkLoc loc, PlotBlock[][] result) {
+        locked = true;
+        if (!running) {
+            init();
+        }
+        ChunkWrapper wrap = new ChunkWrapper(world, loc.x, loc.z);
+        blocks.put(wrap, result);
+        locked = false;
     }
      
     public static void setBlock(final String world, int x, final int y, int z, final PlotBlock block) {

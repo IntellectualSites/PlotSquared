@@ -374,7 +374,11 @@ public class PlotSquared {
                     config.createSection(path);
                 }
                 
-                plotWorld.TYPE = 2;
+                System.out.print("GENERATOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                System.out.print(generator != null);
+                System.out.print(generator instanceof PlotGenerator);
+                
+                plotWorld.TYPE = generator instanceof PlotGenerator ? 0 : 2;
                 plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
