@@ -95,6 +95,22 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
+    public void regenerateChunk(String world, ChunkLoc loc) {
+        World worldObj = Bukkit.getWorld(world);
+        worldObj.regenerateChunk(loc.x, loc.z);
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            Location playerLoc = BukkitUtil.getLocation(player.getLocation());
+            if (playerLoc.getX() >> 4 == loc.x && playerLoc.getZ() >> 4 == loc.z) {
+                final Plot plot = MainUtil.getPlot(playerLoc);
+                if (plot != null) {
+                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
+                    pp.teleport(MainUtil.getDefaultHome(plot));
+                }
+            }
+        }
+    }
+
+    @Override
     public void deleteRegionFile(final String world, final ChunkLoc loc) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -360,12 +376,13 @@ public class BukkitChunkManager extends ChunkManager {
                         if (save) {
                             saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
                         }
-                        world.regenerateChunk(x, z);
+                        ChunkLoc loc = new ChunkLoc(chunk.getX(), chunk.getZ());
+                        regenerateChunk(world.getName(), loc);
                         if (save) {
                             restoreBlocks(world, 0, 0);
                             restoreEntities(world, 0, 0);
                         }
-                        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
+                        MainUtil.update(world.getName(), loc);
                         BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
                     }
                     CURRENT_PLOT_CLEAR = null;
@@ -1092,12 +1109,13 @@ public class BukkitChunkManager extends ChunkManager {
         if (save) {
             saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
         }
-        world.regenerateChunk(cx, cz);
+        ChunkLoc chunkLoc = new ChunkLoc(chunk.getX(), chunk.getZ());
+        regenerateChunk(world.getName(), chunkLoc);
         if (save) {
             restoreBlocks(world, 0, 0);
             restoreEntities(world, 0, 0);
         }
-        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
+        MainUtil.update(world.getName(), chunkLoc);
         BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
         CURRENT_PLOT_CLEAR = null;
     }

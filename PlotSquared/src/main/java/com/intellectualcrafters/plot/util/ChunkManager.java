@@ -37,6 +37,8 @@ public abstract class ChunkManager {
 
     public abstract List<ChunkLoc> getChunkChunks(String world);
 
+    public abstract void regenerateChunk(String world, ChunkLoc loc);
+
     public abstract void deleteRegionFile(final String world, final ChunkLoc loc);
     
     public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks);

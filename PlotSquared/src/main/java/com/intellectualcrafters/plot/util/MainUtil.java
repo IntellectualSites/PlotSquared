@@ -272,7 +272,7 @@ public class MainUtil {
                 z = bot.getZ() + plotworld.DEFAULT_HOME.z;
             }
             final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(plot.world), plot).getY());
-            return new Location(plot.world, x, y, z);
+            return new Location(plot.world, x, y + 1, z);
         }
         final Location top = getPlotTopLoc(plot.world, plot.id);
         final Location bot = getPlotBottomLoc(plot.world, plot.id);
@@ -280,7 +280,7 @@ public class MainUtil {
         final int z = bot.getZ();
         PlotManager manager = PlotSquared.getPlotManager(plot.world);
         final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getPlotWorld(plot.world), plot).getY());
-        return new Location(plot.world, x, y, z);
+        return new Location(plot.world, x, y + 1, z);
     }
 
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
