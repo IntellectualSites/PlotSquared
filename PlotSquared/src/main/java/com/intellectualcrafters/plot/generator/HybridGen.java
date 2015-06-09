@@ -170,17 +170,17 @@ public class HybridGen extends PlotGenerator {
                 }
             }
         }
+
+        int sx = (short) ((this.X) % this.size);
+        int sz = (short) ((this.Z) % this.size);
+        if (sx < 0) {
+            sx += this.size;
+        }
+        if (sz < 0) {
+            sz += this.size;
+        }
+
         if (region != null) {
-            final int X = cx << 4;
-            final int Z = cz << 4;
-            int sx = ((X) % this.size);
-            int sz = ((Z) % this.size);
-            if (sx < 0) {
-                sx += this.size;
-            }
-            if (sz < 0) {
-                sz += this.size;
-            }
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     if (biomes != null) {
@@ -191,7 +191,9 @@ public class HybridGen extends PlotGenerator {
                             setBlock(x, y, z, this.filling);
                         }
                         setBlock(x, this.plotheight, z, this.plotfloors);
-                        final PlotLoc loc = new PlotLoc((X + x), (Z + z));
+                        final int absX = ((sx + x) % this.size);
+                        final int absZ = ((sz + z) % this.size);
+                        final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                         if (blocks != null) {
                             for (final Entry<Short, Short> entry : blocks.entrySet()) {
@@ -202,14 +204,6 @@ public class HybridGen extends PlotGenerator {
                 }
             }
             return;
-        }
-        int sx = (short) ((this.X) % this.size);
-        int sz = (short) ((this.Z) % this.size);
-        if (sx < 0) {
-            sx += this.size;
-        }
-        if (sz < 0) {
-            sz += this.size;
         }
         
         for (short x = 0; x < 16; x++) {
