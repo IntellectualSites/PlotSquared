@@ -112,16 +112,17 @@ public class HybridPop extends PlotPopulator {
     @Override
     public void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz) {
         PlotSquared.getPlotManager(world.getName());
+
+        int sx = (short) ((this.X) % this.size);
+        int sz = (short) ((this.Z) % this.size);
+        if (sx < 0) {
+            sx += this.size;
+        }
+        if (sz < 0) {
+            sz += this.size;
+        }
+
         if (requiredRegion != null) {
-            short sx = (short) ((this.X) % this.size);
-            short sz = (short) ((this.Z) % this.size);
-            if (sx < 0) {
-                sx += this.size;
-            }
-            if (sz < 0) {
-                sz += this.size;
-            }
-            
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     if (contains(requiredRegion, x, z)) {
@@ -134,7 +135,9 @@ public class HybridPop extends PlotPopulator {
                             setBlock(x, (short) this.plotheight, z, this.plotfloors);
                         }
                         if (this.plotworld.PLOT_SCHEMATIC) {
-                            final PlotLoc loc = new PlotLoc((short) (this.X + x), (short) (this.Z + z));
+                            final int absX = ((sx + x) % this.size);
+                            final int absZ = ((sz + z) % this.size);
+                            final PlotLoc loc = new PlotLoc(absX, absZ);
                             final HashMap<Short, Byte> blocks = this.plotworld.G_SCH_DATA.get(loc);
                             if (blocks != null) {
                                 for (final short y : blocks.keySet()) {
@@ -154,14 +157,6 @@ public class HybridPop extends PlotPopulator {
                 }
             }
             return;
-        }
-        int sx = (short) ((this.X) % this.size);
-        int sz = (short) ((this.Z) % this.size);
-        if (sx < 0) {
-            sx += this.size;
-        }
-        if (sz < 0) {
-            sz += this.size;
         }
         
         for (short x = 0; x < 16; x++) {
