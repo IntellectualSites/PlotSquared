@@ -26,17 +26,11 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         final String testWorld = "CheckingPlotSquaredGenerator";
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            System.out.print(plugin.getName());
             if (plugin.isEnabled()) {
-                System.out.print(" - enabled");
                 final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
-                    System.out.print(" - non null");
                     PlotSquared.removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
-                    if (generator instanceof PlotGenerator) {
-                        System.out.print(" - ps gen");
-                    }
 //                        final PlotGenerator pgen = (PlotGenerator) generator;
 //                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
                             SetupUtils.generators.put(name, generator);

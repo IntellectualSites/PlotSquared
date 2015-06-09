@@ -438,6 +438,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 e.printStackTrace();
                 BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
             }
+            try {
+                new SendChunk();
+                MainUtil.canSendChunk = true;
+            } catch (final Throwable e) {
+                MainUtil.canSendChunk = false;
+            }
         } else {
             try {
                 BukkitSetBlockManager.setBlockManager = new SetBlockFast();
@@ -447,12 +453,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }
         BlockUpdateUtil.setBlockManager = BukkitSetBlockManager.setBlockManager;
-        try {
-            new SendChunk();
-            MainUtil.canSendChunk = true;
-        } catch (final Throwable e) {
-            MainUtil.canSendChunk = false;
-        }
         return BlockManager.manager = new BukkitUtil();
     }
 
