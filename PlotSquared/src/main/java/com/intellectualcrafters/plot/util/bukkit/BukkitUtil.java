@@ -19,11 +19,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
@@ -157,7 +159,7 @@ public class BukkitUtil extends BlockManager {
         World worldObj = getWorld(world);
         Chunk chunk = worldObj.getChunkAt(x, z);
         if (chunk.isLoaded() || chunk.load(false)) {
-            worldObj.regenerateChunk(x, z);
+            ChunkManager.manager.regenerateChunk(world, new ChunkLoc(x, z));
         }
     }
 
