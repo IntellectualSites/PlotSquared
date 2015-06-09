@@ -286,8 +286,9 @@ public class ClusterManager {
                 @Override
                 public void run() {
                     if ((populator == null) || (plotworld.TYPE == 0)) {
-                        world.regenerateChunk(chunk.getX(), chunk.getZ());
-                        MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
+                        ChunkLoc loc = new ChunkLoc(chunk.getX(), chunk.getZ());
+                        ChunkManager.manager.regenerateChunk(world.getName(), loc);
+                        MainUtil.update(world.getName(), loc);
                     } else {
                         populator.populate(world, rand, chunk);
                     }
