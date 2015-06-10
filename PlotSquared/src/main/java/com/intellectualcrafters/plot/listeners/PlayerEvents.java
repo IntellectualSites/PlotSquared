@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
@@ -267,8 +268,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
-        final String message = event.getMessage();
-        if (message.toLowerCase().startsWith("/plotme") || message.toLowerCase().startsWith("/ap")) {
+        final String message = event.getMessage().toLowerCase().replaceAll("/", "");
+        String[] split = message.split(" ");
+        PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
+        if (cmd != null) {
+            return;
+        }
+        if (split[0].equals("plotme") || split[0].equals("ap")) {
             final Player player = event.getPlayer();
             if (Settings.USE_PLOTME_ALIAS) {
                 player.performCommand(message.replace("/plotme", "plots"));
