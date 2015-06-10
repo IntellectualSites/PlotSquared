@@ -98,10 +98,10 @@ public class BukkitChunkManager extends ChunkManager {
     public void regenerateChunk(String world, ChunkLoc loc) {
         World worldObj = Bukkit.getWorld(world);
         worldObj.regenerateChunk(loc.x, loc.z);
-        for (final Player player : Bukkit.getOnlinePlayers()) {
-            Location playerLoc = BukkitUtil.getLocation(player.getLocation());
-            if (playerLoc.getX() >> 4 == loc.x && playerLoc.getZ() >> 4 == loc.z) {
-                final Plot plot = MainUtil.getPlot(playerLoc);
+        for (final Player player : worldObj.getPlayers()) {
+            org.bukkit.Location locObj = player.getLocation();
+            if (locObj.getBlockX() >> 4 == loc.x && locObj.getBlockZ() >> 4 == loc.z && !locObj.getBlock().isEmpty()) {
+                final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(locObj));
                 if (plot != null) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     pp.teleport(MainUtil.getDefaultHome(plot));
