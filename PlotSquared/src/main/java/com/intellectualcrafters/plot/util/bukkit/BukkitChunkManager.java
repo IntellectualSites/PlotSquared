@@ -96,14 +96,14 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override
     public void regenerateChunk(String world, ChunkLoc loc) {
-        World bukkitWorld = Bukkit.getWorld(world);
-        bukkitWorld.regenerateChunk(loc.x, loc.z);
-        Chunk chunk = bukkitWorld.getChunkAt(loc.x, loc.z);
-        for (final Entity entity : chunk.getEntities()) {
-            if (entity instanceof Player) {
-                final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(entity.getLocation()));
+        World worldObj = Bukkit.getWorld(world);
+        worldObj.regenerateChunk(loc.x, loc.z);
+        for (final Player player : worldObj.getPlayers()) {
+            org.bukkit.Location locObj = player.getLocation();
+            if (locObj.getBlockX() >> 4 == loc.x && locObj.getBlockZ() >> 4 == loc.z && !locObj.getBlock().isEmpty()) {
+                final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(locObj));
                 if (plot != null) {
-                    final PlotPlayer pp = BukkitUtil.getPlayer((Player) entity);
+                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     pp.teleport(MainUtil.getDefaultHome(plot));
                 }
             }
