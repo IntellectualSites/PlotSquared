@@ -410,7 +410,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
+            if (p.hasPermission("plots.admin.command.chat") || plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
                 recipients.add(p);
             }
         }
