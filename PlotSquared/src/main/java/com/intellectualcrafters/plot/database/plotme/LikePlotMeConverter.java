@@ -241,6 +241,10 @@ public class LikePlotMeConverter {
                 @Override
                 public void run() {
                     sendMessage("&aDatabase conversion is now complete!");
+                    PlotSquared.log("&c - Stop the server");
+                    PlotSquared.log("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
+                    PlotSquared.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                    PlotSquared.log("&c - Start the server");
                     PlotSquared.setAllPlotsRaw(DBFunc.getPlots());
                 }
             });
@@ -300,11 +304,7 @@ public class LikePlotMeConverter {
                     } catch (final Exception e) {
                         e.printStackTrace();
                     }
-                    sendMessage("&cPlease wait until database conversion is complete. You will be notified when this happens");
-                    PlotSquared.log("&c - Stop the server");
-                    PlotSquared.log("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
-                    PlotSquared.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                    PlotSquared.log("&c - Start the server");
+                    sendMessage("&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
                 }
             });
         } catch (final Exception e) {

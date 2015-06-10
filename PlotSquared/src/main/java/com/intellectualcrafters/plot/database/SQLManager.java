@@ -353,7 +353,6 @@ public class SQLManager implements AbstractDB {
                 if (subList.size() != last || (count % 5000 == 0 && count > 0)) {
                     preparedStmt.executeBatch();
                     preparedStmt.close();
-                    
                     statement = mod.getCreateMySQL(subList.size());
                     preparedStmt = this.connection.prepareStatement(statement.toString());
                 }
@@ -377,7 +376,6 @@ public class SQLManager implements AbstractDB {
                 PlotSquared.log("&cERROR 1: " + " | " + objList.get(0).getClass().getCanonicalName());
             }
         }
-        
         try {
             int count = 0;
             PreparedStatement preparedStmt = null;

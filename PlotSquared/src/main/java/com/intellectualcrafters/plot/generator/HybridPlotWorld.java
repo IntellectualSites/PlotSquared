@@ -151,13 +151,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        
-        this.ROAD_SCHEMATIC_ENABLED = true;
-        
         if ((schem1 == null) || (schem2 == null) || (this.ROAD_WIDTH == 0)) {
             PlotSquared.log(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
+        this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
         this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
         final DataCollection[] blocks1 = schem1.getBlockCollection();

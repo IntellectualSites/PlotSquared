@@ -8,7 +8,6 @@
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     <artifactId>PlotSquared</artifactId>
-    <version>2.11.18</version>
     <name>PlotSquared</name>
     <packaging>jar</packaging>
     <build>

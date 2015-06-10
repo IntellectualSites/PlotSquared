@@ -73,9 +73,4 @@ public class BukkitEconHandler extends EconHandler {
             perms.playerRemove(((BukkitPlayer) player).player, perm);
         }
     }
-
-    @Override
-    public boolean getPermission(PlotPlayer player, String perm) {
-        return player.hasPermission(perm);
-    }
 }

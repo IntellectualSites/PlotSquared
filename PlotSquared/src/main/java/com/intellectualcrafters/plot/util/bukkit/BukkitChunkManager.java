@@ -97,6 +97,7 @@ public class BukkitChunkManager extends ChunkManager {
     @Override
     public void regenerateChunk(String world, ChunkLoc loc) {
         World worldObj = Bukkit.getWorld(world);
+//        Chunk chunk = worldObj.getChunkAt(loc.x, loc.z);
         worldObj.regenerateChunk(loc.x, loc.z);
         for (final Player player : worldObj.getPlayers()) {
             org.bukkit.Location locObj = player.getLocation();

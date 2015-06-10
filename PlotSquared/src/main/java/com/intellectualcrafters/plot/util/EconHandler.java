@@ -11,5 +11,4 @@ public abstract class EconHandler {
     public abstract void depositMoney(PlotPlayer player, double amount);
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
     public abstract void setPermission(PlotPlayer player, String perm, boolean value);
-    public abstract boolean getPermission(PlotPlayer player, String perm);
 }
