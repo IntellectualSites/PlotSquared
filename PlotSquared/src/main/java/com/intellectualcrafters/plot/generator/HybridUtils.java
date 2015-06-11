@@ -59,14 +59,15 @@ public abstract class HybridUtils {
 
     public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
 
-    public abstract boolean scheduleRoadUpdate(final String world);
+    public abstract boolean scheduleRoadUpdate(final String world, int extend);
 
-    public boolean regenerateRoad(final String world, final ChunkLoc chunk) {
+    public boolean regenerateRoad(final String world, final ChunkLoc chunk, int extend) {
         final int x = chunk.x << 4;
         final int z = chunk.z << 4;
         final int ex = x + 15;
         final int ez = z + 15;
         final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
+        extend = Math.min(extend, 255 - plotworld.ROAD_HEIGHT - plotworld.SCHEMATIC_HEIGHT);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
@@ -125,7 +126,7 @@ public abstract class HybridUtils {
                             final int sy = plotworld.ROAD_HEIGHT;
                             final PlotLoc loc = new PlotLoc(absX, absZ);
                             final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
-                            for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT); y++) {
+                            for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend); y++) {
                                 BlockManager.manager.functionSetBlock(world, x + X, y, z + Z, 0, (byte) 0);
                             }
                             if (blocks != null) {

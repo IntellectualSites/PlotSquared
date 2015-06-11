@@ -148,7 +148,7 @@ public class BukkitHybridUtils extends HybridUtils {
             for (int z = sz; z < (sz + 32); z++) {
                 final Chunk chunk = world.getChunkAt(x, z);
                 chunks2.add(chunk);
-                regenerateRoad(worldname, new ChunkLoc(x, z));
+                regenerateRoad(worldname, new ChunkLoc(x, z), 0);
                 MainUtil.update(world.getName(), new ChunkLoc(chunk.getX(), chunk.getZ()));
             }
         }
@@ -171,20 +171,20 @@ public class BukkitHybridUtils extends HybridUtils {
     private long last;
 
     @Override
-    public boolean scheduleRoadUpdate(final String world) {
+    public boolean scheduleRoadUpdate(final String world, int extend) {
         if (BukkitHybridUtils.UPDATE) {
             return false;
         }
         BukkitHybridUtils.UPDATE = true;
         final List<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
-        return scheduleRoadUpdate(world, regions);
+        return scheduleRoadUpdate(world, regions, extend);
     }
     
     public static List<ChunkLoc> regions;
     public static List<ChunkLoc> chunks = new ArrayList<>();
     public static String world;
     
-    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> rgs) {
+    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> rgs, final int extend) {
         BukkitHybridUtils.regions = rgs;
         BukkitHybridUtils.world = world;
         chunks = new ArrayList<ChunkLoc>();
@@ -195,7 +195,7 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 count.increment();
                 if (count.intValue() % 20 == 0) {
-                    PlotSquared.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 1024) + "%");
+                    PlotSquared.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }
                 if (regions.size() == 0 && chunks.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
@@ -222,14 +222,14 @@ public class BukkitHybridUtils extends HybridUtils {
                     		    while (chunks.size() > 0) {
                                     ChunkLoc chunk = chunks.get(0);
                                     chunks.remove(0);
-                                    regenerateRoad(world, chunk);
+                                    regenerateRoad(world, chunk, extend);
                                     ChunkManager.manager.unloadChunk(world, chunk);
                                 }
                                 Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                                 TaskManager.runTaskLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                       scheduleRoadUpdate(world, regions); 
+                                       scheduleRoadUpdate(world, regions, extend); 
                                     }
                                 }, 2400);
                                 return;
@@ -238,7 +238,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         		while (System.currentTimeMillis() < diff && chunks.size() > 0) {
                         			ChunkLoc chunk = chunks.get(0);
                         			chunks.remove(0);
-                        			regenerateRoad(world, chunk);
+                        			regenerateRoad(world, chunk, extend);
                         			ChunkManager.manager.unloadChunk(world, chunk);
                         		}
                     		}

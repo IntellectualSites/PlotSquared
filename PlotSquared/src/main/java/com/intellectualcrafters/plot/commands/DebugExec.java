@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -72,11 +73,15 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     boolean result;
+                    if (!PlotSquared.isPlotWorld(args[1])) {
+                        MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
+                        return false;
+                    }
                     if (BukkitHybridUtils.regions != null) {
-                        result = ((BukkitHybridUtils)(HybridUtils.manager)).scheduleRoadUpdate(args[1], BukkitHybridUtils.regions);
+                        result = ((BukkitHybridUtils)(HybridUtils.manager)).scheduleRoadUpdate(args[1], BukkitHybridUtils.regions, 0);
                     }
                     else {
-                        result = HybridUtils.manager.scheduleRoadUpdate(args[1]);
+                        result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
                     }
                     if (!result) {
                         PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
@@ -94,7 +99,7 @@ public class DebugExec extends SubCommand {
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
-                        ((BukkitHybridUtils)(HybridUtils.manager)).regenerateRoad(BukkitHybridUtils.world, chunk);
+                        ((BukkitHybridUtils)(HybridUtils.manager)).regenerateRoad(BukkitHybridUtils.world, chunk, 0);
                         ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
                     }
                     PlotSquared.log("&cCancelled!");

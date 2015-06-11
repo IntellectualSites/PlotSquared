@@ -240,7 +240,7 @@ public class SchematicCmd extends SubCommand {
                 } else {
                     if (args.length == 3) {
                         try {
-                            world = args[0];
+                            world = args[1];
                             final String[] split = args[2].split(";");
                             final PlotId i = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                             if ((PlotSquared.getPlots(world) == null) || (PlotSquared.getPlots(world).get(i) == null)) {

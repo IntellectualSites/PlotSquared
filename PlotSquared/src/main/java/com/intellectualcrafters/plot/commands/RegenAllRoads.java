@@ -42,9 +42,20 @@ public class RegenAllRoads extends SubCommand {
             sendMessage(player, C.NOT_CONSOLE);
             return false;
         }
-        if (args.length != 1) {
+        if (args.length < 1) {
             sendMessage(player, C.NEED_PLOT_WORLD);
             return false;
+        }
+        int height = 0;
+        if (args.length == 2) {
+            try {
+                height = Integer.parseInt(args[1]);
+            }
+            catch (NumberFormatException e) {
+                sendMessage(player, C.NOT_VALID_NUMBER);
+                sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+                return false;
+            }
         }
         final String name = args[0];
         final PlotManager manager = PlotSquared.getPlotManager(name);
@@ -57,7 +68,7 @@ public class RegenAllRoads extends SubCommand {
         PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
         PlotSquared.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
-        final boolean result = HybridUtils.manager.scheduleRoadUpdate(name);
+        final boolean result = HybridUtils.manager.scheduleRoadUpdate(name, height);
         if (!result) {
             PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
