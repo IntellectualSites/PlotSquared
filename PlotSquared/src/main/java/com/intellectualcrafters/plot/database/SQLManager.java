@@ -343,7 +343,7 @@ public class SQLManager implements AbstractDB {
             for (int j = 0; j <= amount; j++) {
                 final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
                 if (subList.size() == 0) {
-                    return;
+                    break;
                 }
                 if (last == -1) {
                     last = subList.size();
@@ -364,7 +364,7 @@ public class SQLManager implements AbstractDB {
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PlotSquared.log("&aSuccess 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.log("&aBatch 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -406,7 +406,7 @@ public class SQLManager implements AbstractDB {
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PlotSquared.log("&aSuccess 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.log("&aBatch 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -430,7 +430,7 @@ public class SQLManager implements AbstractDB {
                     PlotSquared.log("&c[ERROR] " + "Failed to save " + obj + "!");
                 }
             }
-            PlotSquared.log("&aSuccess 3");
+            PlotSquared.log("&aBatch 3");
             preparedStmt.executeBatch();
             preparedStmt.close();
         }

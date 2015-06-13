@@ -1465,6 +1465,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             e.setCancelled(true);
                             return;
                         }
+                        return;
                     } else if (aPlr && FlagManager.isPlotFlagTrue(plot, "pvp")) {
                         return;
                     }
