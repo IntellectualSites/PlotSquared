@@ -90,9 +90,13 @@ public class LikePlotMeConverter {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
     
-    public void updateBukkitYml(String plugin) {
+    public void updateWorldYml(String plugin, String location) {
         try {
-            Path path = Paths.get("bukkit.yml");
+            Path path = Paths.get(location);
+            File file = new File(location);
+            if (!file.exists()) {
+                return;
+            }
             Charset charset = StandardCharsets.UTF_8;
             String content = new String(Files.readAllBytes(path), charset);
             content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
@@ -130,8 +134,8 @@ public class LikePlotMeConverter {
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
             
             sendMessage("Updating bukkit.yml");
-            updateBukkitYml(plugin);
-            
+            updateWorldYml(plugin, "bukkit.yml");
+            updateWorldYml(plugin, "plugins/Multiverse-Core/worlds.yml");
             for (final String world : plotConfig.getConfigurationSection("worlds").getKeys(false)) {
                 sendMessage("Copying config for: " + world);
                 try {
