@@ -126,11 +126,17 @@ public class ExpireManager {
                         @Override
                         public void run() {
                             int changed = (int) this.value;
-                            if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
-                                PlotSquared.log("&aKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
-                                expiredPlots.get(world).remove(plot);
-                                return;
+                            if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+                                if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
+                                    PlotSquared.log("&aKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
+                                    expiredPlots.get(world).remove(plot);
+                                    return;
+                                }
+                                else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
+                                    expiredPlots.get(world).remove(plot);
+                                    return;
+                                }
                             }
                             manager.clearPlot(plotworld, plot, false, null);
                             MainUtil.removeSign(plot);
@@ -146,7 +152,7 @@ public class ExpireManager {
                             }
                         }
                     };
-                    if (Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+                    if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
                         HybridUtils.manager.checkModified(plot, run);
                     }
                     else {

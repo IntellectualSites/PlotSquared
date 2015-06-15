@@ -832,6 +832,7 @@ public class PlotSquared {
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
         options.put("clear.keep-if-modified", Settings.MIN_BLOCKS_CHANGED);
+        options.put("clear.ignore-if-modified", Settings.MIN_BLOCKS_CHANGED_IGNORED);
         
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -913,6 +914,7 @@ public class PlotSquared {
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.CLEAR_INTERVAL = config.getInt("clear.auto.clear-interval-seconds");
         Settings.MIN_BLOCKS_CHANGED = config.getInt("clear.keep-if-modified");
+        Settings.MIN_BLOCKS_CHANGED_IGNORED = config.getInt("clear.ignore-if-modified");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");

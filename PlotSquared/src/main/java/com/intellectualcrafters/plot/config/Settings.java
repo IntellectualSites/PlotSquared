@@ -147,6 +147,7 @@ public class Settings {
     public static int AUTO_CLEAR_DAYS = 360;
     public static boolean AUTO_CLEAR_CHECK_DISK = false;
     public static int MIN_BLOCKS_CHANGED = -1;
+    public static int MIN_BLOCKS_CHANGED_IGNORED = -1;
     public static int CLEAR_INTERVAL = 120;
     /**
      * API Location
