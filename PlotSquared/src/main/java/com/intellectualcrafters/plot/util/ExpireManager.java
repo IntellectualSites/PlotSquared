@@ -118,9 +118,6 @@ public class ExpireManager {
                         expiredPlots.get(world).remove(plot);
                         return;
                     }
-                    if (plot.settings.isMerged()) {
-                        MainUtil.unlinkPlot(plot);
-                    }
                     final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
                     RunnableVal run = new RunnableVal() {
                         @Override
@@ -134,9 +131,13 @@ public class ExpireManager {
                                     return;
                                 }
                                 else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
+                                    PlotSquared.log("&aIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                     expiredPlots.get(world).remove(plot);
                                     return;
                                 }
+                            }
+                            if (plot.settings.isMerged()) {
+                                MainUtil.unlinkPlot(plot);
                             }
                             manager.clearPlot(plotworld, plot, false, null);
                             MainUtil.removeSign(plot);

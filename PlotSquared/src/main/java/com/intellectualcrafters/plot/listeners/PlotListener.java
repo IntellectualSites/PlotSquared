@@ -145,11 +145,14 @@ public class PlotListener extends APlotListener {
             if (musicFlag != null) {
                 player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
                 Integer id = (Integer) musicFlag.getValue();
-                if (id != 0) {
+                if (id >= 2256 && id <= 2267) {
                     Location center = MainUtil.getPlotCenter(plot);
                     org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
                     newLoc.setY(Math.min((((int) player.getLocation().getBlockY())/16) * 16, 240));
-                    player.playEffect(newLoc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                    try {
+                        player.playEffect(newLoc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                    }
+                    catch (Exception e) {}
                 }
             }
             CommentManager.sendTitle(pp, plot);

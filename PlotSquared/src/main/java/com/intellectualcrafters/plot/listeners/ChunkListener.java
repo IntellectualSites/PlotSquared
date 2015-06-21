@@ -3,13 +3,18 @@ package com.intellectualcrafters.plot.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -35,7 +40,7 @@ public class ChunkListener implements Listener {
     
     private Chunk lastChunk = null;
     
-    @EventHandler
+    @EventHandler(priority=EventPriority.LOWEST)
     public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
@@ -58,7 +63,25 @@ public class ChunkListener implements Listener {
         }
     }
     
-    @EventHandler
+    private long last = 0;
+    private int count = 0;
+    
+    @EventHandler(priority=EventPriority.LOWEST)
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        long now = System.currentTimeMillis();
+        if (now - last < 20) {
+            if (count > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+                event.setCancelled(true);
+            }
+            count++;
+        }
+        else {
+            count = 0;
+        }
+        last = now;
+    }
+    
+    @EventHandler(priority=EventPriority.LOWEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         LivingEntity entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
