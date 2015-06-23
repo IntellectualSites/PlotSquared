@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -46,6 +47,15 @@ public class BukkitUtil extends BlockManager {
         return getWorld(world) != null;
     }
 
+    public static PlotPlayer getPlayer(final OfflinePlayer op) {
+        if (op.isOnline()) {
+            return getPlayer(op.getPlayer());
+        }
+        Player player = OfflinePlayerUtil.loadPlayer(op);
+        player.loadData();
+        return new BukkitPlayer(player);
+    }
+    
     public static PlotPlayer getPlayer(final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;

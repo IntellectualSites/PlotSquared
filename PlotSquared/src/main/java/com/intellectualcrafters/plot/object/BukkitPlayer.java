@@ -177,4 +177,16 @@ public class BukkitPlayer implements PlotPlayer {
         key = "plotsquared_user_attributes." + key;
         EconHandler.manager.setPermission(this, key, false);
     }
+
+    @Override
+    public void loadData() {
+        if (!player.isOnline()) {
+            player.loadData();
+        }
+    }
+
+    @Override
+    public void saveData() {
+        player.saveData();
+    }
 }

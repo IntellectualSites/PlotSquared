@@ -31,6 +31,10 @@ public interface PlotPlayer {
     
     public void setCompassTarget(Location loc);
     
+    public void loadData();
+    
+    public void saveData();
+    
     /**
      * Set player data that will persist restarts
      *  - Please note that this is not intended to store large values
