@@ -21,6 +21,8 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -96,7 +98,7 @@ public class Plot implements Cloneable {
         this.members = new ArrayList<>();
         this.settings.setAlias("");
         this.delete = false;
-        this.settings.flags = new HashSet<Flag>();
+        this.settings.flags = new HashMap<>();
         this.world = world;
     }
 
@@ -109,7 +111,7 @@ public class Plot implements Cloneable {
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> members, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Set<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> members, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
@@ -121,10 +123,11 @@ public class Plot implements Cloneable {
         this.settings.setPosition(position);
         this.settings.setMerged(merged);
         this.delete = false;
+        this.settings.flags = new HashMap<>();
         if (flags != null) {
-            this.settings.flags = flags;
-        } else {
-            this.settings.flags = new HashSet<Flag>();
+            for (Flag flag : flags) {
+                this.settings.flags.put(flag.getKey(), flag);
+            }
         }
         this.world = world;
     }
@@ -188,7 +191,7 @@ public class Plot implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         final Plot p = (Plot) super.clone();
         if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.trusted, this.members, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags, this.world, this.settings.getMerged());
+            return new Plot(this.id, this.owner, this.trusted, this.members, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags.values(), this.world, this.settings.getMerged());
         }
         return p;
     }

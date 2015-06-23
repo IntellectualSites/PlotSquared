@@ -79,7 +79,7 @@ public abstract class PlotWorld {
     public boolean SCHEMATIC_ON_CLAIM;
     public String SCHEMATIC_FILE;
     public List<String> SCHEMATICS;
-    public Flag[] DEFAULT_FLAGS;
+    public HashMap<String, Flag> DEFAULT_FLAGS;
     public boolean USE_ECONOMY;
     public double PLOT_PRICE;
     public double MERGE_PRICE;
@@ -187,7 +187,7 @@ public abstract class PlotWorld {
         } catch (final Exception e) {
             e.printStackTrace();
             PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
-            this.DEFAULT_FLAGS = new Flag[] {};
+            this.DEFAULT_FLAGS = new HashMap<>();
         }
         this.PVP = config.getBoolean("event.pvp");
         this.PVE = config.getBoolean("event.pve");

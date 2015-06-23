@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+import com.intellectualcrafters.plot.events.ClusterFlagRemoveEvent;
 import com.intellectualcrafters.plot.events.PlayerClaimPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
@@ -25,6 +26,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -106,6 +108,11 @@ public class BukkitEventUtil extends EventUtil {
     @Override
     public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotTrustedEvent(getPlayer(initiator), plot, player, added));
+    }
+
+    @Override
+    public boolean callFlagRemove(Flag flag, PlotCluster cluster) {
+        return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
     
 }

@@ -1193,7 +1193,7 @@ public class MainUtil {
             Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
             if (currentPlot.settings.flags != null && currentPlot.settings.flags.size() > 0) {
                 plot.settings.flags = currentPlot.settings.flags;
-                DBFunc.setFlags(world, plot, currentPlot.settings.flags);
+                DBFunc.setFlags(world, plot, currentPlot.settings.flags.values());
             }
             if (currentPlot.settings.isMerged()) {
                 plot.settings.setMerged(currentPlot.settings.getMerged());

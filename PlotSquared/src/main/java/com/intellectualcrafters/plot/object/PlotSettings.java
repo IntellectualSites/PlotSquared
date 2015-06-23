@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class PlotSettings {
     /**
      * Flags
      */
-    public Set<Flag> flags;
+    public HashMap<String, Flag> flags;
     /**
      * Home Position
      */

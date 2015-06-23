@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
@@ -34,6 +35,8 @@ public abstract class EventUtil {
     public abstract boolean callFlagAdd(final Flag flag, final Plot plot);
     
     public abstract boolean callFlagRemove(final Flag flag, final Plot plot);
+    
+    public abstract boolean callFlagRemove(final Flag flag, final PlotCluster cluster);
     
     public abstract boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots);
     

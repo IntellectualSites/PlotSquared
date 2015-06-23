@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -238,12 +239,12 @@ public class list extends SubCommand {
             return false;
         }
         
-        displayPlots(plr, plots, page, world);
+        displayPlots(plr, plots, 12, page, world);
         return true;
     }
     
-    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int page, String world) {
-        ArrayList<Plot> plots;
+    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int pageSize, int page, String world) {
+        List<Plot> plots;
         if (world != null) {
             plots = PlotSquared.sortPlots(oldPlots, world);
         }
@@ -253,18 +254,20 @@ public class list extends SubCommand {
         if (page < 0) {
             page = 0;
         }
-        // Get the total pages
-        // int totalPages = ((int) Math.ceil(12 *
-        // (PlotSquared.getPlotsSorted().size()) / 100));
-        final int totalPages = (int) Math.ceil(plots.size() / 12);
+        final int totalPages = (int) Math.ceil(plots.size() / pageSize);
         if (page > totalPages) {
             page = totalPages;
         }
         // Only display 12!
-        int max = (page * 12) + 12;
+        int max = (page * pageSize) + pageSize;
         if (max > plots.size()) {
             max = plots.size();
         }
+        
+        plots = plots.subList(page * pageSize, max);
+        
+        
+        
         final StringBuilder string = new StringBuilder();
         string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
         Plot p;

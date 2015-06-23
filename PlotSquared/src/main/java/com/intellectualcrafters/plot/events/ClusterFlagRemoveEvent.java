@@ -18,95 +18,73 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.intellectualcrafters.plot.flag;
+package com.intellectualcrafters.plot.events;
 
-import org.apache.commons.lang.StringUtils;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
 
 /**
- * Created 2014-09-23 for PlotSquared
+ * Called when a flag is removed from a plot
  *
  * @author Citymonstret
  * @author Empire92
  */
-public class AbstractFlag {
-    public final String key;
-    public final FlagValue<?> value;
-
-    public AbstractFlag(final String key) {
-        this(key, new FlagValue.StringValue());
-    }
+public class ClusterFlagRemoveEvent extends Event implements Cancellable {
+    private static HandlerList handlers = new HandlerList();
+    private final PlotCluster cluster;
+    private final Flag flag;
+    private boolean cancelled;
 
     /**
-     * AbstractFlag is a parameter used in creating a new Flag<br>
-     * The key must be alphabetical characters and &lt;= 16 characters in length
-     * @param key
-     */
-    public AbstractFlag(final String key, final FlagValue<?> value) {
-        if (!StringUtils.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
-            throw new IllegalArgumentException("Flag must be alphabetic characters");
-        }
-        if (key.length() > 16) {
-            throw new IllegalArgumentException("Key must be <= 16 characters");
-        }
-        this.key = key.toLowerCase();
-        if (value == null) {
-            this.value = new FlagValue.StringValue();
-        } else {
-            this.value = value;
-        }
-    }
-
-    public boolean isList() {
-        return this.value instanceof FlagValue.ListValue;
-    }
-
-    public Object parseValueRaw(final String value) {
-        try {
-            return this.value.parse(value);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    public String toString(final Object t) {
-        return this.value.toString(t);
-    }
-
-    public String getValueDesc() {
-        return this.value.getDescription();
-    }
-
-    /**
-     * AbstractFlag key
+     * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
-     * @return String
+     * @param flag Flag that was removed
+     * @param plot Plot from which the flag was removed
      */
-    public String getKey() {
-        return this.key;
+    public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster) {
+        this.cluster = cluster;
+        this.flag = flag;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    /**
+     * Get the cluster involved
+     *
+     * @return PlotCluster
+     */
+    public PlotCluster getCluster() {
+        return this.cluster;
+    }
+
+    /**
+     * Get the flag involved
+     *
+     * @return Flag
+     */
+    public Flag getFlag() {
+        return this.flag;
     }
 
     @Override
-    public String toString() {
-        return this.key;
-    }
-    
-    @Override
-    public int hashCode() {
-        return this.key.hashCode();
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof AbstractFlag)) {
-            return false;
-        }
-        final AbstractFlag otherObj = (AbstractFlag) other;
-        return (otherObj.key.equals(this.key));
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(final boolean b) {
+        this.cancelled = b;
     }
 }

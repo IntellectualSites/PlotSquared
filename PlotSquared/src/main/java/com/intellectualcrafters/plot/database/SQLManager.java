@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -477,7 +478,7 @@ public class SQLManager implements AbstractDB {
                 else {
                     final StringBuilder flag_string = new StringBuilder();
                     int k = 0;
-                    for (final Flag flag : pair.settings.flags) {
+                    for (final Flag flag : pair.settings.flags.values()) {
                         if (k != 0) {
                             flag_string.append(",");
                         }
@@ -523,7 +524,7 @@ public class SQLManager implements AbstractDB {
                 else {
                     final StringBuilder flag_string = new StringBuilder();
                     int k = 0;
-                    for (final Flag flag : pair.settings.flags) {
+                    for (final Flag flag : pair.settings.flags.values()) {
                         if (k != 0) {
                             flag_string.append(",");
                         }
@@ -1022,7 +1023,7 @@ public class SQLManager implements AbstractDB {
                             flags_string = new String[] {};
                         }
                     }
-                    final Set<Flag> flags = new HashSet<Flag>();
+                    final HashMap<String, Flag> flags = new HashMap<>();
                     boolean exception = false;
                     for (String element : flags_string) {
                         if (element.contains(":")) {
@@ -1030,7 +1031,7 @@ public class SQLManager implements AbstractDB {
                             try {
                                 final String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                 final Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
-                                flags.add(flag);
+                                flags.put(flag.getKey(), flag);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 exception = true;
@@ -1038,7 +1039,8 @@ public class SQLManager implements AbstractDB {
                         } else {
                             element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                             if (StringUtils.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                flags.add(new Flag(FlagManager.getFlag(element, true), ""));
+                                Flag flag = new Flag(FlagManager.getFlag(element, true), "");
+                                flags.put(flag.getKey(), flag);
                             }
                             else {
                                 PlotSquared.log("INVALID FLAG: " + element);
@@ -1047,7 +1049,8 @@ public class SQLManager implements AbstractDB {
                     }
                     if (exception) {
                         PlotSquared.log("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
-                        setFlags(id, flags.toArray(new Flag[0]));
+                        PlotSquared.log("&c" + myflags);
+                        setFlags(id, flags.values());
                     }
                     plot.settings.flags = flags;
                 } else {
@@ -1154,7 +1157,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
+    public void setFlags(final String world, final Plot plot, final Collection<Flag> flags) {
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (final Flag flag : flags) {
@@ -1181,13 +1184,7 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    public void setFlags(final int id, final Flag[] flags) {
-        final ArrayList<Flag> newflags = new ArrayList<Flag>();
-        for (final Flag flag : flags) {
-            if ((flag != null) && (flag.getKey() != null) && !flag.getKey().equals("")) {
-                newflags.add(flag);
-            }
-        }
+    public void setFlags(final int id, final Collection<Flag> newflags) {
         final String flag_string = StringUtils.join(newflags, ",");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -1858,7 +1855,7 @@ public class SQLManager implements AbstractDB {
                             flags_string = new String[] {};
                         }
                     }
-                    final Set<Flag> flags = new HashSet<Flag>();
+                    final HashMap<String, Flag> flags = new HashMap<>();
                     boolean exception = false;
                     for (final String element : flags_string) {
                         if (element.contains(":")) {
@@ -1866,18 +1863,19 @@ public class SQLManager implements AbstractDB {
                             try {
                                 final String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
                                 final Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
-                                flags.add(flag);
+                                flags.put(flag.getKey(), flag);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 exception = true;
                             }
                         } else {
-                            flags.add(new Flag(FlagManager.getFlag(element, true), ""));
+                            Flag flag = new Flag(FlagManager.getFlag(element, true), "");
+                            flags.put(flag.getKey(), flag);
                         }
                     }
                     if (exception) {
-                        PlotSquared.log("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
-                        setFlags(id, flags.toArray(new Flag[0]));
+                        PlotSquared.log("&cCluster " + id + " had an invalid flag. A fix has been attempted.");
+                        PlotSquared.log("&c" + myflags);
                     }
                     cluster.settings.flags = flags;
                 } else {
@@ -1909,7 +1907,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final PlotCluster cluster, final Set<Flag> flags) {
+    public void setFlags(final PlotCluster cluster, final Collection<Flag> flags) {
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (final Flag flag : flags) {

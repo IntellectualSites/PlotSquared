@@ -61,6 +61,9 @@ public class SendChunk {
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
         for (final Chunk chunk : chunks) {
+            if (!chunk.isLoaded()) {
+                continue;
+            }
             boolean unload = true;
             final Object c = methodGetHandle.of(chunk).call();
             final Object w = world.of(c).get();

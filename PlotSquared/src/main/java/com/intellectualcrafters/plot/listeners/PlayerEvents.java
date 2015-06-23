@@ -123,11 +123,24 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (plot == null) {
             return;
         }
+        
+        if (Settings.REDSTONE_DISABLER) {
+            if (UUIDHandler.getPlayer(plot.owner) == null) {
+                boolean disable = true;
+                for (UUID trusted : plot.trusted) {
+                    if (UUIDHandler.getPlayer(trusted) != null) {
+                        disable = false;
+                        break;
+                    }
+                }
+                if (disable) {
+                    event.setNewCurrent(0);
+                    return;
+                }
+            }
+        }
         Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
         if (redstone == null || (Boolean) redstone.getValue()) {
-            return;
-        }
-        if (!MainUtil.isPlotArea(plot)) {
             return;
         }
         switch (block.getType()) {

@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -181,11 +182,11 @@ public class DBFunc {
         dbManager.setMerged(world, plot, merged);
     }
 
-    public static void setFlags(final String world, final Plot plot, final Set<Flag> flags) {
+    public static void setFlags(final String world, final Plot plot, final Collection<Flag> flags) {
         dbManager.setFlags(world, plot, flags);
     }
 
-    public static void setFlags(final PlotCluster cluster, final Set<Flag> flags) {
+    public static void setFlags(final PlotCluster cluster, final Collection<Flag> flags) {
         dbManager.setFlags(cluster, flags);
     }
 

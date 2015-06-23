@@ -803,6 +803,7 @@ public class PlotSquared {
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
         
         // Protection
+        options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         options.put("protection.physics-listener.enabled", Settings.PHYSICS_LISTENER);
@@ -885,6 +886,7 @@ public class PlotSquared {
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
         
         // Protection
+        Settings.REDSTONE_DISABLER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         Settings.PHYSICS_LISTENER = config.getBoolean("protection.physics-listener.enabled");

@@ -21,6 +21,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -56,19 +59,17 @@ public class DebugFixFlags extends SubCommand {
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
         for (final Plot plot : PlotSquared.getPlots(world).values()) {
-            final Set<Flag> flags = plot.settings.flags;
-            final ArrayList<Flag> toRemove = new ArrayList<Flag>();
-            for (final Flag flag : flags) {
-                final AbstractFlag af = FlagManager.getFlag(flag.getKey());
-                if (af == null) {
-                    toRemove.add(flag);
+            final HashMap<String, Flag> flags = plot.settings.flags;
+            Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
+            boolean changed = false;
+            while (i.hasNext()) {
+                if (FlagManager.getFlag(i.next().getKey()) == null) {
+                    changed = true;
+                    i.remove();
                 }
             }
-            for (final Flag flag : toRemove) {
-                plot.settings.flags.remove(flag);
-            }
-            if (toRemove.size() > 0) {
-                DBFunc.setFlags(plot.world, plot, plot.settings.flags);
+            if (changed) {
+                DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
             }
         }
         MainUtil.sendMessage(plr, "&aDone!");

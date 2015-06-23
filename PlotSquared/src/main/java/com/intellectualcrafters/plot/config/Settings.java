@@ -58,6 +58,10 @@ public class Settings {
      */
     public static boolean TNT_LISTENER = false;
     /**
+     * Redstone disabler
+     */
+    public static boolean REDSTONE_DISABLER = false;
+    /**
      * Check for falling blocks when pistons extend?
      */
     public static boolean PISTON_FALLING_BLOCK_CHECK = true;

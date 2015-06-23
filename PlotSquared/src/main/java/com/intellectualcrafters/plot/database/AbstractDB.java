@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -148,7 +149,7 @@ public interface AbstractDB {
      * @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
-    public void setFlags(final String world, final Plot plot, final Set<Flag> flags);
+    public void setFlags(final String world, final Plot plot, final Collection<Flag> flags);
 
     /**
      * Set cluster flags
@@ -156,7 +157,7 @@ public interface AbstractDB {
      * @param cluster PlotCluster Object
      * @param flags flags to set (flag[])
      */
-    public void setFlags(final PlotCluster cluster, final Set<Flag> flags);
+    public void setFlags(final PlotCluster cluster, final Collection<Flag> flags);
 
     /**
      * Rename a cluster
