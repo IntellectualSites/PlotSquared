@@ -89,63 +89,70 @@ public class SchematicCmd extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final Schematic schematic = SchematicHandler.manager.getSchematic(file2);
-                        if (schematic == null) {
-                            sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
-                            SchematicCmd.this.running = false;
-                            return;
-                        }
-                        final int x;
-                        final int z;
-                        final Plot plot2 = MainUtil.getPlot(loc);
-                        final Dimension dem = schematic.getSchematicDimension();
-                        final Location bot = MainUtil.getPlotBottomLoc(loc.getWorld(), plot2.id).add(1, 0, 1);
-                        final int length2 = MainUtil.getPlotWidth(loc.getWorld(), plot2.id);
-                        if ((dem.getX() > length2) || (dem.getZ() > length2)) {
-                            sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
-                            SchematicCmd.this.running = false;
-                            return;
-                        }
-                        if ((dem.getX() != length2) || (dem.getZ() != length2)) {
-                            final Location loc = plr.getLocation();
-                            x = Math.min(length2 - dem.getX(), loc.getX() - bot.getX());
-                            z = Math.min(length2 - dem.getZ(), loc.getZ() - bot.getZ());
-                        } else {
-                            x = 0;
-                            z = 0;
-                        }
-                        final DataCollection[] b = schematic.getBlockCollection();
-                        final int sy = BlockManager.manager.getHeighestBlock(bot);
-                        final int WIDTH = schematic.getSchematicDimension().getX();
-                        final int LENGTH = schematic.getSchematicDimension().getZ();
-                        final Location l1;
-                        if (!(schematic.getSchematicDimension().getY() == BukkitUtil.getMaxHeight(loc.getWorld()))) {
-                             l1 = bot.add(0, sy - 1, 0);
-                        }
-                         else {
-                             l1 = bot;
-                         }
-                        
-                        final int blen = b.length - 1;
-                        SchematicCmd.this.task = TaskManager.runTaskRepeat(new Runnable() {
-                            @Override
-                            public void run() {
-                                boolean result = false;
-                                while (!result) {
-                                    final int start = SchematicCmd.this.counter * 5000;
-                                    if (start > blen) {
-                                        SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
-                                        sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
-                                        SchematicCmd.this.running = false;
-                                        PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
-                                        return;
-                                    }
-                                    final int end = Math.min(start + 5000, blen);
-                                    result = SchematicHandler.manager.pastePart(loc.getWorld(), b, l1, x, z, start, end, WIDTH, LENGTH);
-                                    SchematicCmd.this.counter++;
-                                }
+                        try {
+                            final Schematic schematic = SchematicHandler.manager.getSchematic(file2);
+                            if (schematic == null) {
+                                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
+                                SchematicCmd.this.running = false;
+                                return;
                             }
-                        }, 1);
+                            final int x;
+                            final int z;
+                            final Plot plot2 = MainUtil.getPlot(loc);
+                            final Dimension dem = schematic.getSchematicDimension();
+                            final Location bot = MainUtil.getPlotBottomLoc(loc.getWorld(), plot2.id).add(1, 0, 1);
+                            final int length2 = MainUtil.getPlotWidth(loc.getWorld(), plot2.id);
+                            if ((dem.getX() > length2) || (dem.getZ() > length2)) {
+                                sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", dem.getX(), dem.getZ(), length2));
+                                SchematicCmd.this.running = false;
+                                return;
+                            }
+                            if ((dem.getX() != length2) || (dem.getZ() != length2)) {
+                                final Location loc = plr.getLocation();
+                                x = Math.min(length2 - dem.getX(), loc.getX() - bot.getX());
+                                z = Math.min(length2 - dem.getZ(), loc.getZ() - bot.getZ());
+                            } else {
+                                x = 0;
+                                z = 0;
+                            }
+                            final DataCollection[] b = schematic.getBlockCollection();
+                            final int sy = BlockManager.manager.getHeighestBlock(bot);
+                            final int WIDTH = schematic.getSchematicDimension().getX();
+                            final int LENGTH = schematic.getSchematicDimension().getZ();
+                            final Location l1;
+                            if (!(schematic.getSchematicDimension().getY() == BukkitUtil.getMaxHeight(loc.getWorld()))) {
+                                 l1 = bot.add(0, sy - 1, 0);
+                            }
+                             else {
+                                 l1 = bot;
+                             }
+                            
+                            final int blen = b.length - 1;
+                            SchematicCmd.this.task = TaskManager.runTaskRepeat(new Runnable() {
+                                @Override
+                                public void run() {
+                                    boolean result = false;
+                                    while (!result) {
+                                        final int start = SchematicCmd.this.counter * 5000;
+                                        if (start > blen) {
+                                            SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
+                                            sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
+                                            SchematicCmd.this.running = false;
+                                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
+                                            return;
+                                        }
+                                        final int end = Math.min(start + 5000, blen);
+                                        result = SchematicHandler.manager.pastePart(loc.getWorld(), b, l1, x, z, start, end, WIDTH, LENGTH);
+                                        SchematicCmd.this.counter++;
+                                    }
+                                }
+                            }, 1);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            SchematicCmd.this.running = false;
+                            MainUtil.sendMessage(plr, "&cAn error occured, see console for more information");
+                        }
                     }
                 });
                 break;
