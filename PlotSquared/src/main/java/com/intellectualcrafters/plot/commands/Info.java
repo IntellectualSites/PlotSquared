@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -53,46 +54,35 @@ public class Info extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, String... args) {
-        Plot plot;
-        String world;
-        if (player != null) {
-            final Location loc = player.getLocation();
-            world = loc.getWorld();
-            if (!PlotSquared.isPlotWorld(world)) {
-                MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
+        String arg = null;
+        if (args.length > 0) arg = args[0] + "";
+        switch (arg) {
+            case "trusted":
+            case "alias":
+            case "biome":
+            case "denied":
+            case "flags":
+            case "id":
+            case "size":
+            case "members":
+            case "owner":
+            case "rating":
+                arg = null;
+        }
+        Plot plot = MainUtil.getPlotFromString(player, arg, true);
+        if (plot == null) {
+            if (player == null) {
                 return false;
             }
-            plot = MainUtil.getPlot(loc);
-            if (plot == null) {
-                return !sendMessage(player, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(player, C.NOT_IN_PLOT);
+            return false;
+        }
+        if (arg != null) {
+            if (args.length == 1) {
+                args = new String[0];
             }
-        } else {
-            if (args.length < 2) {
-                MainUtil.sendMessage(null, C.INFO_SYNTAX_CONSOLE);
-                return false;
-            }
-            final PlotWorld plotworld = PlotSquared.getPlotWorld(args[0]);
-            if (plotworld == null) {
-                MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
-                return false;
-            }
-            try {
-                final String[] split = args[1].split(";");
-                final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = MainUtil.getPlot(plotworld.worldname, id);
-                if (plot == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
-                    return false;
-                }
-                world = args[0];
-                if (args.length == 3) {
-                    args = new String[] { args[2] };
-                } else {
-                    args = new String[0];
-                }
-            } catch (final Exception e) {
-                MainUtil.sendMessage(player, C.INFO_SYNTAX_CONSOLE);
-                return false;
+            else {
+                args = new String[] { args[1] };
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
@@ -127,7 +117,7 @@ public class Info extends SubCommand {
                 return false;
             }
         }
-        formatAndSend(info, world, plot, player);
+        formatAndSend(info, plot.world, plot, player);
         return true;
     }
 
@@ -209,10 +199,10 @@ public class Info extends SubCommand {
         MainUtil.sendMessage(player, info, false);
     }
 
-    private String getPlayerList(final Collection<UUID> uuids) {
+    public static String getPlayerList(final Collection<UUID> uuids) {
         ArrayList<UUID> l = new ArrayList<>(uuids);
         if ((l == null) || (l.size() < 1)) {
-            return " none";
+            return C.NONE.s();
         }
         final String c = C.PLOT_USER_LIST.s();
         final StringBuilder list = new StringBuilder();
@@ -226,7 +216,7 @@ public class Info extends SubCommand {
         return list.toString();
     }
 
-    private String getPlayerName(final UUID uuid) {
+    public static String getPlayerName(final UUID uuid) {
         if (uuid == null) {
             return "unknown";
         }

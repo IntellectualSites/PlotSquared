@@ -262,7 +262,7 @@ public class Plot implements Cloneable {
     public void removeTrusted(final UUID uuid) {
         this.members.remove(uuid);
     }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

@@ -232,7 +232,7 @@ public class ExpireManager {
                     final String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
                     String filename = null;
-                    if (BukkitMain.checkVersion(1, 7, 5)) {
+                    if (PlotSquared.IMP.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
                             final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);

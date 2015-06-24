@@ -138,6 +138,10 @@ public class Settings {
      */
     public static boolean CONSOLE_COLOR = true;
     /**
+     * Fancy chat e.g. for /plot list
+     */
+    public static boolean FANCY_CHAT = true;
+    /**
      * The delay (in seconds) before teleportation commences
      */
     public static int TELEPORT_DELAY;

@@ -142,22 +142,25 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public static BukkitMain THIS = null;
     public static PlotSquared MAIN = null;
 
-    public static boolean checkVersion(final int major, final int minor, final int minor2) {
-        try {
-            final String[] version = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            final int a = Integer.parseInt(version[0]);
-            final int b = Integer.parseInt(version[1]);
-            int c = 0;
-            if (version.length == 3) {
-                c = Integer.parseInt(version[2]);
+    private int[] version;
+    
+    @Override
+    public boolean checkVersion(final int major, final int minor, final int minor2) {
+        if (version == null) {
+            try {
+                version = new int[3];
+                final String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+                version[0] = Integer.parseInt(split[0]);
+                version[1] = Integer.parseInt(split[1]);
+                if (version.length == 3) {
+                    version[2] = Integer.parseInt(split[2]);
+                }
             }
-            if ((a > major) || ((a == major) && (b > minor)) || ((a == major) && (b == minor) && (c >= minor2))) {
-                return true;
+            catch (Exception e) {
+                return false;
             }
-            return false;
-        } catch (final Exception e) {
-            return false;
         }
+        return (version[0] > major) || ((version[0] == major) && (version[1] > minor)) || ((version[0] == major) && (version[1] == minor) && (version[2] >= minor2));
     }
 
     @Override

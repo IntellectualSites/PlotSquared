@@ -870,6 +870,7 @@ public class PlotSquared {
 
         // Misc
         options.put("console.color", Settings.CONSOLE_COLOR);
+        options.put("chat.fancy", Settings.FANCY_CHAT);
         options.put("metrics", true);
         options.put("debug", true);
         options.put("auto_update", false);
@@ -961,6 +962,14 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
+        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 7, 0)) {
+            System.out.print("FANCY CHAT =======================================");
+            System.out.print("FANCY CHAT =======================================");
+            System.out.print("FANCY CHAT =======================================");
+            System.out.print(!config.getBoolean("chat.fancy"));
+            System.out.print(!IMP.checkVersion(1, 7, 0));
+            Settings.FANCY_CHAT = false;
+        }
         Settings.METRICS = config.getBoolean("metrics");
     }
 

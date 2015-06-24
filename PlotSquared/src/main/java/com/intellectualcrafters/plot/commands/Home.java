@@ -70,11 +70,11 @@ public class Home extends SubCommand {
                     MainUtil.sendMessage(plr, C.NOT_YOUR_PLOT);
                     return false;
                 }
-                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                 return true;
             }
             if ((id > (plots.size())) || (id < 1)) {
-                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER);
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                 return false;
             }
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(id - 1));

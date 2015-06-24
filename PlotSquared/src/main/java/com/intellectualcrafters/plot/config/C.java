@@ -322,7 +322,7 @@ public enum C {
      */
     NOT_VALID_DATA("$2That's not a valid data id.", "Invalid"),
     NOT_VALID_BLOCK("$2That's not a valid block.", "Invalid"),
-    NOT_VALID_NUMBER("$2That's not a valid number", "Invalid"),
+    NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
     PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),
     NOT_YOUR_PLOT("$2That is not your plot.", "Invalid"),
@@ -345,6 +345,7 @@ public enum C {
     /*
      * Info
      */
+    NONE("None", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
@@ -360,7 +361,7 @@ public enum C {
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
-    INFO_SYNTAX_CONSOLE("$2/plot info <world> X;Y", "Info"),
+    INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
     /*
      * Generating
      */
@@ -379,7 +380,7 @@ public enum C {
     /*
      * List
      */
-    PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %word% plots", "List"),
+    PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"),
     PLOT_LIST_HEADER("$1List of %word% plots", "List"),
     PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),
     PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner", "List"),

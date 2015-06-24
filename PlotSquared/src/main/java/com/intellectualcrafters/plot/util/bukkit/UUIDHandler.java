@@ -222,19 +222,24 @@ public class UUIDHandler {
     }
 
     public static String getName(final UUID uuid) {
+        System.out.print(uuid);
         if (uuid == null) {
+            System.out.print(1);
             return null;
         }
         // check online
         final PlotPlayer player = UUIDHandler.getPlayer(uuid);
         if (player != null) {
+            System.out.print(2);
             return player.getName();
         }
         // check cache
         final StringWrapper name = UUIDHandler.uuidMap.inverse().get(uuid);
         if (name != null) {
+            System.out.print(3);
             return name.value;
         }
+        System.out.print(4);
         return null;
     }
 

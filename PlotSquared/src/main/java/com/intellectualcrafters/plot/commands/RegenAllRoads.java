@@ -52,7 +52,7 @@ public class RegenAllRoads extends SubCommand {
                 height = Integer.parseInt(args[1]);
             }
             catch (NumberFormatException e) {
-                sendMessage(player, C.NOT_VALID_NUMBER);
+                sendMessage(player, C.NOT_VALID_NUMBER, "(0, 256)");
                 sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }

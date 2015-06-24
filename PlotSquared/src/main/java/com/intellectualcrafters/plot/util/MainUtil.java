@@ -73,6 +73,63 @@ public class MainUtil {
         return new Location(plot.world, bot.getX() + (top.getX() - bot.getX()) / 2, 0, bot.getZ() + (top.getZ() - bot.getZ()) / 2);
     }
     
+    public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+        if (arg == null) {
+            if (player == null) {
+                if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                return null;
+            }
+            return getPlot(player.getLocation());
+        }
+        String worldname = null;
+        PlotId id = null;
+        if (player != null) {
+            worldname = player.getLocation().getWorld();
+        }
+        String[] split = arg.split(";|,");
+        if (split.length == 3) {
+            worldname = split[0];
+            id = PlotId.fromString(split[1] + ";" + split[2]);
+        }
+        else if (split.length == 2) {
+            id = PlotId.fromString(arg);
+        }
+        else {
+            if (worldname == null) {
+                if (PlotSquared.getPlotWorlds().size() == 0) {
+                    if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                    return null;
+                }
+                worldname = PlotSquared.getPlotWorlds().iterator().next();
+            }
+            for (Plot p : PlotSquared.getPlots(worldname).values()) {
+                String name = p.settings.getAlias();
+                if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
+                    return p;
+                }
+            }
+            for (String world : PlotSquared.getPlotWorlds()) {
+                if (!world.endsWith(worldname)) {
+                    for (Plot p : PlotSquared.getPlots(world).values()) {
+                        String name = p.settings.getAlias();
+                        if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
+                            return p;
+                        }  
+                    }
+                }
+            }
+        }
+        if (worldname == null || !PlotSquared.isPlotWorld(worldname)) {
+            if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+            return null;
+        }
+        if (id == null) {
+            if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID); 
+            return null;
+        }
+        return getPlot(worldname, id);
+    }
+    
     /**
      * Merges all plots in the arraylist (with cost)
      *

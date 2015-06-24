@@ -27,10 +27,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
+
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -38,6 +43,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.chat.FancyMessage;
 
 /**
  * @author Citymonstret
@@ -239,11 +245,11 @@ public class list extends SubCommand {
             return false;
         }
         
-        displayPlots(plr, plots, 12, page, world);
+        displayPlots(plr, plots, 12, page, world, args);
         return true;
     }
     
-    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int pageSize, int page, String world) {
+    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int pageSize, int page, String world, String[] args) {
         List<Plot> plots;
         if (world != null) {
             plots = PlotSquared.sortPlots(oldPlots, world);
@@ -264,20 +270,179 @@ public class list extends SubCommand {
             max = plots.size();
         }
         
-        plots = plots.subList(page * pageSize, max);
+        List<Plot> subList = plots.subList(page * pageSize, max);
         
-        
-        
-        final StringBuilder string = new StringBuilder();
-        string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
-        Plot p;
-        // This might work xD
-        for (int x = (page * 12); x < max; x++) {
-            p = (Plot) plots.toArray()[x];
-            string.append(C.PLOT_LIST_ITEM_ORDERED.s().replaceAll("%in", x + 1 + "").replaceAll("%id", p.id.toString()).replaceAll("%world", p.world).replaceAll("%owner", getName(p.owner))).append("\n");
+        // Header
+        String header = C.PLOT_LIST_HEADER_PAGED.s()
+                .replaceAll("%cur", page + 1 + "")
+                .replaceAll("%max", totalPages + 1 + "")
+                .replaceAll("%amount%", plots.size() + "")
+                .replaceAll("%word%", "all");
+        MainUtil.sendMessage(player, header);
+
+        int i = page * pageSize;
+        for (Plot plot : subList) {
+            if (plot.settings.isMerged()) {
+                if (!MainUtil.getBottomPlot(plot).equals(plot)) {
+                    continue;
+                }
+            }
+            i++;
+            if (Settings.FANCY_CHAT) {
+                ChatColor color;
+                if (player == null) {
+                    color = ChatColor.GOLD;
+                }
+                else if (plot.isOwner(player.getUUID())) {
+                    color = ChatColor.BLUE;
+                }
+                else if (plot.isAdded(player.getUUID())) {
+                    color = ChatColor.DARK_GREEN;
+                }
+                else if (plot.isDenied(player.getUUID())) {
+                    color = ChatColor.RED;
+                }
+                else {
+                    color = ChatColor.GOLD;
+                }
+                FancyMessage trusted =
+                        new FancyMessage(
+                        ChatColor.stripColor(
+                        ChatColor.translateAlternateColorCodes('&', 
+                        C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", Info.getPlayerList(plot.trusted)))))
+                        .color(ChatColor.GOLD);
+                
+                FancyMessage members =
+                        new FancyMessage(
+                        ChatColor.stripColor(
+                        ChatColor.translateAlternateColorCodes('&', 
+                        C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.members)))))
+                        .color(ChatColor.GOLD);
+                String strFlags = StringUtils.join(plot.settings.flags.values(), ",");
+                if (strFlags.length() == 0) {
+                    strFlags = C.NONE.s();
+                }
+                FancyMessage flags =
+                        new FancyMessage(
+                        ChatColor.stripColor(
+                        ChatColor.translateAlternateColorCodes('&', 
+                        C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))))
+                        .color(ChatColor.GOLD);
+                
+                FancyMessage message = new FancyMessage("")
+                .then("[")
+                .color(ChatColor.DARK_GRAY)
+                .then(i + "")
+                .command("/plot visit " + plot.toString())
+                .tooltip("/plot visit " + plot.toString())
+                .color(ChatColor.GOLD)
+                .then("]")
+                
+                // teleport tooltip
+                
+                .color(ChatColor.DARK_GRAY)
+                .then(" " + plot.toString())
+                
+                .formattedTooltip(trusted, members, flags)
+                .command("/plot info " + plot.toString())
+                
+                .color(color)
+                .then(" - ")
+                .color(ChatColor.GRAY);
+                String prefix = "";
+                for (UUID uuid : plot.getOwners()) {
+                    String name = UUIDHandler.getName(uuid);
+                    if (name == null) {
+                        message = message
+                                .then(prefix)
+                                .color(ChatColor.DARK_GRAY)
+                                .then("unknown")
+                                .color(ChatColor.GRAY)
+                                .tooltip(uuid.toString())
+                                .suggest(uuid.toString());
+                    }
+                    else {
+                        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+                        if (pp != null) {
+                            message = message
+                                    .then(prefix)
+                                    .color(ChatColor.DARK_GRAY)
+                                    .then(name).color(ChatColor.GOLD)
+                                    .formattedTooltip(new FancyMessage("Online").color(ChatColor.DARK_GREEN));
+                        }
+                        else {
+                            message = message
+                                    .then(prefix)
+                                    .color(ChatColor.DARK_GRAY)
+                                    .then(name).color(ChatColor.GOLD)
+                                    .formattedTooltip(new FancyMessage("Offline").color(ChatColor.RED));
+                        }
+                    }
+                    prefix = ", ";
+                }
+                message.send(((BukkitPlayer) player).player);
+            }
+            else {
+                String message = C.PLOT_LIST_ITEM.s()
+                .replaceAll("%in", i + 1 + "")
+                .replaceAll("%id", plot.id.toString())
+                .replaceAll("%world", plot.world)
+                .replaceAll("%owner", getName(plot.owner))
+                
+                // Unused
+                
+                .replaceAll("%trusted%", "")
+                .replaceAll("%members%", "")
+                .replaceAll("%tp%", "");
+                MainUtil.sendMessage(player, message);
+            }
         }
-        string.append(C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.size() + "").replaceAll("%plot%", plots.size() == 1 ? "plot" : "plots"));
-        MainUtil.sendMessage(player, string.toString());
+        if (Settings.FANCY_CHAT) {
+            if (page < totalPages && page > 0) {
+                // back | next 
+                new FancyMessage("")
+                .then("<-")
+                .color(ChatColor.GOLD)
+                .command("/plot list " + args[0] + " " + (page))
+                .then(" | ")
+                .color(ChatColor.DARK_GRAY)
+                .then("->")
+                .color(ChatColor.GOLD)
+                .command("/plot list " + args[0] + " " + (page + 2))
+                .send(((BukkitPlayer) player).player);
+                return;
+            }
+            if (page == 0) {
+                // next
+                new FancyMessage("")
+                .then("<-")
+                .color(ChatColor.DARK_GRAY)
+                .then(" | ")
+                .color(ChatColor.DARK_GRAY)
+                .then("->")
+                .color(ChatColor.GOLD)
+                .command("/plot list " + args[0] + " " + (page + 2))
+                .send(((BukkitPlayer) player).player);
+                return;
+            }
+            if (page == totalPages) {
+                // back
+                new FancyMessage("")
+                .then("<-")
+                .color(ChatColor.GOLD)
+                .command("/plot list " + args[0] + " " + (page))
+                .then(" | ")
+                .color(ChatColor.DARK_GRAY)
+                .then("->")
+                .color(ChatColor.DARK_GRAY)
+                .send(((BukkitPlayer) player).player);
+                return;
+            }
+        }
+        else {
+            String footer = C.PLOT_LIST_FOOTER.s().replaceAll("%word%", "There is").replaceAll("%num%", plots.size() + "").replaceAll("%plot%", plots.size() == 1 ? "plot" : "plots"); 
+            MainUtil.sendMessage(player, footer);
+        }
     }
     
     private String getArgumentList(final String[] strings) {

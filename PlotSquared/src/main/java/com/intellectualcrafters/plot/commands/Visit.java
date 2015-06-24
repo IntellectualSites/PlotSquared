@@ -27,8 +27,10 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Visit extends SubCommand {
@@ -49,31 +51,105 @@ public class Visit extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
-            return sendMessage(plr, C.NEED_USER);
+            return sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit <player|alias|world|id> [#]");
         }
-        final String username = args[0];
-        final UUID uuid = UUIDHandler.getUUID(username);
-        List<Plot> plots = null;
-        if (uuid != null) {
-            plots = PlotSquared.sortPlotsByWorld(getPlots(uuid));
+        ArrayList<Plot> plots = new ArrayList<>();
+        UUID user = UUIDHandler.getUUID(args[0]);
+        if (user != null ) {
+            // do plots by username
+            plots.addAll(PlotSquared.getPlots(user));
         }
-        if ((uuid == null) || plots.isEmpty()) {
-            return sendMessage(plr, C.FOUND_NO_PLOTS);
+        else if (PlotSquared.isPlotWorld(args[0])) {
+            // do plots by world
+            plots.addAll(PlotSquared.getPlots(args[0]).values());
         }
-        if (args.length < 2) {
-            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
-            return true;
+        else {
+            Plot plot = MainUtil.getPlotFromString(plr, args[0], false);
+            if (plot == null) {
+                return false;
+            }
+            plots.add(plot);
         }
-        int i;
-        try {
-            i = Integer.parseInt(args[1]);
-        } catch (final Exception e) {
-            return sendMessage(plr, C.NOT_VALID_NUMBER);
+        if (plots.size() == 0) {
+            sendMessage(plr, C.FOUND_NO_PLOTS);
+            return false;
         }
-        if ((i < 1) || (i > plots.size())) {
-            return sendMessage(plr, C.NOT_VALID_NUMBER);
+        int index = 0;
+        if (args.length == 2) {
+            try {
+                index = Integer.parseInt(args[1]) - 1;
+                if (index < 0 || index >= plots.size()) {
+                    sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
+                    sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
+                    return false;
+                }
+            }
+            catch (Exception e) {
+                sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
+                sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
+                return false;
+            }
         }
-        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i - 1));
+        
+        Plot plot = plots.get(index);
+        if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(plr, "plots.visit.unowned")) {
+                sendMessage(plr, C.NO_PERMISSION, "plots.visit.unowned");
+                return false;
+            }
+        }
+        else if (plot.isOwner(plr.getUUID())) {
+            if (!Permissions.hasPermission(plr, "plots.visit.owned") && !Permissions.hasPermission(plr, "plots.home")) {
+                sendMessage(plr, C.NO_PERMISSION, "plots.visit.unowned, plots.home");
+                return false;
+            }
+        }
+        else if (plot.isAdded(plr.getUUID())) {
+            if (!Permissions.hasPermission(plr, "plots.visit.shared")) {
+                sendMessage(plr, C.NO_PERMISSION, "plots.visit.shared");
+                return false;
+            }
+        }
+        else {
+            if (!Permissions.hasPermission(plr, "plots.visit.other")) {
+                sendMessage(plr, C.NO_PERMISSION, "plots.visit.other");
+                return false;
+            }
+        }
+        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(index));
         return true;
+        
+//        
+//        // from alias
+//        
+//        
+//        id = PlotId.fromString(args[0]);
+//        
+//        
+//        
+//        final String username = args[0];
+//        final UUID uuid = UUIDHandler.getUUID(username);
+//        List<Plot> plots = null;
+//        if (uuid != null) {
+//            plots = PlotSquared.sortPlotsByWorld(getPlots(uuid));
+//        }
+//        if ((uuid == null) || plots.isEmpty()) {
+//            return sendMessage(plr, C.FOUND_NO_PLOTS);
+//        }
+//        if (args.length < 2) {
+//            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
+//            return true;
+//        }
+//        int i;
+//        try {
+//            i = Integer.parseInt(args[1]);
+//        } catch (final Exception e) {
+//            return sendMessage(plr, C.NOT_VALID_NUMBER);
+//        }
+//        if ((i < 1) || (i > plots.size())) {
+//            return sendMessage(plr, C.NOT_VALID_NUMBER);
+//        }
+//        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i - 1));
+//        return true;
     }
 }
