@@ -264,7 +264,7 @@ public class list extends SubCommand {
         if (page > totalPages) {
             page = totalPages;
         }
-        // Only display 12!
+        // Only display pageSize!
         int max = (page * pageSize) + pageSize;
         if (max > plots.size()) {
             max = plots.size();
@@ -333,8 +333,8 @@ public class list extends SubCommand {
                 .then("[")
                 .color(ChatColor.DARK_GRAY)
                 .then(i + "")
-                .command("/plot visit " + plot.toString())
-                .tooltip("/plot visit " + plot.toString())
+                .command("/plot visit " + plot.world + ";" + plot.id)
+                .tooltip("/plot visit " + plot.world + ";" + plot.id)
                 .color(ChatColor.GOLD)
                 .then("]")
                 
@@ -344,7 +344,7 @@ public class list extends SubCommand {
                 .then(" " + plot.toString())
                 
                 .formattedTooltip(trusted, members, flags)
-                .command("/plot info " + plot.toString())
+                .command("/plot info " + plot.world + ";" + plot.id)
                 
                 .color(color)
                 .then(" - ")
@@ -412,7 +412,7 @@ public class list extends SubCommand {
                 .send(((BukkitPlayer) player).player);
                 return;
             }
-            if (page == 0) {
+            if (page == 0 && totalPages != 0) {
                 // next
                 new FancyMessage("")
                 .then("<-")
@@ -425,7 +425,7 @@ public class list extends SubCommand {
                 .send(((BukkitPlayer) player).player);
                 return;
             }
-            if (page == totalPages) {
+            if (page == totalPages && totalPages != 0) {
                 // back
                 new FancyMessage("")
                 .then("<-")

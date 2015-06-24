@@ -963,11 +963,6 @@ public class PlotSquared {
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
         if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 7, 0)) {
-            System.out.print("FANCY CHAT =======================================");
-            System.out.print("FANCY CHAT =======================================");
-            System.out.print("FANCY CHAT =======================================");
-            System.out.print(!config.getBoolean("chat.fancy"));
-            System.out.print(!IMP.checkVersion(1, 7, 0));
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");

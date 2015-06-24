@@ -56,20 +56,23 @@ public class Info extends SubCommand {
     public boolean execute(final PlotPlayer player, String... args) {
         String arg = null;
         if (args.length > 0) arg = args[0] + "";
-        switch (arg) {
-            case "trusted":
-            case "alias":
-            case "biome":
-            case "denied":
-            case "flags":
-            case "id":
-            case "size":
-            case "members":
-            case "owner":
-            case "rating":
-                arg = null;
+        if (arg != null) {
+            switch (arg) {
+                case "trusted":
+                case "alias":
+                case "inv":
+                case "biome":
+                case "denied":
+                case "flags":
+                case "id":
+                case "size":
+                case "members":
+                case "owner":
+                case "rating":
+                    arg = null;
+            }
         }
-        Plot plot = MainUtil.getPlotFromString(player, arg, true);
+        Plot plot = MainUtil.getPlotFromString(player, arg, false);
         if (plot == null) {
             if (player == null) {
                 return false;
