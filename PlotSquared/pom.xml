@@ -31,6 +31,7 @@
 		          <include>s_chinese.yml</include>
 		          <include>s_chinese_unescaped.yml</include>
 		          <include>german.yml</include>
+		          <include>italian.yml</include>
 		      </includes>
                <directory>${basedir}/src/main/resources/</directory>
             </resource>

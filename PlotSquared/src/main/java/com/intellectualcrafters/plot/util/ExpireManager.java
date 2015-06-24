@@ -56,7 +56,7 @@ public class ExpireManager {
                 public void run() {
                     try {
                         final List<Plot> plots = getOldPlots(world);
-                        PlotSquared.log("&cFound " + plots.size() + " expired plots for " + world + "!");
+                        PlotSquared.log("&7[&5Expire&dManager&7] &3Found " + plots.size() + " expired plots for " + world + "!");
                         expiredPlots.put(world, plots);
                         updatingPlots.put(world, false);
                     }
@@ -76,93 +76,112 @@ public class ExpireManager {
         ExpireManager.task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                for (final String world : PlotSquared.getPlotWorldsString()) {
-                    if (!ExpireManager.updatingPlots.containsKey(world)) {
-                        ExpireManager.updatingPlots.put(world, false);
-                    }
-                    final Boolean updating = ExpireManager.updatingPlots.get(world);
-                    if (updating) {
-                        return;
-                    }
-                    if (!expiredPlots.containsKey(world)) {
-                        updateExpired(world);
-                        return;
-                    }
-                    final List<Plot> plots = expiredPlots.get(world);
-                    if ((plots == null) || (plots.size() == 0)) {
-                        if (updateExpired(world)) {
+                try {
+                    for (final String world : PlotSquared.getPlotWorldsString()) {
+                        if (!ExpireManager.updatingPlots.containsKey(world)) {
+                            ExpireManager.updatingPlots.put(world, false);
+                        }
+                        final Boolean updating = ExpireManager.updatingPlots.get(world);
+                        if (updating) {
+                            PlotSquared.log("&7[&5Expire&dManager&7] &3Waiting on fetch...");
                             return;
                         }
-                        continue;
-                    }
-                    final Plot plot = plots.iterator().next();
-                    if (!isExpired(plot)) {
-                        expiredPlots.get(world).remove(plot);
-                        return;
-                    }
-                    for (final UUID helper : plot.trusted) {
-                        final PlotPlayer player = UUIDHandler.getPlayer(helper);
-                        if (player != null) {
-                            MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                        if (!expiredPlots.containsKey(world)) {
+                            PlotSquared.log("&7[&5Expire&dManager&7] &3Updating expired plots for: " + world);
+                            updateExpired(world);
+                            return;
                         }
-                    }
-                    for (final UUID helper : plot.members) {
-                        final PlotPlayer player = UUIDHandler.getPlayer(helper);
-                        if (player != null) {
-                            MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                        final List<Plot> plots = expiredPlots.get(world);
+                        if ((plots == null) || (plots.size() == 0)) {
+                            if (updateExpired(world)) {
+                                PlotSquared.log("&7[&5Expire&dManager&7] &3Re-evaluating expired plots for: " + world);
+                                return;
+                            }
+                            continue;
                         }
-                    }
-                    final PlotManager manager = PlotSquared.getPlotManager(world);
-                    if (manager == null) {
-                        PlotSquared.log("&cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
-                        expiredPlots.get(world).remove(plot);
-                        return;
-                    }
-                    final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-                    RunnableVal run = new RunnableVal() {
-                        @Override
-                        public void run() {
-                            int changed = (int) this.value;
-                            if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
-                                if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
-                                    PlotSquared.log("&aKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
-                                    expiredPlots.get(world).remove(plot);
-                                    return;
-                                }
-                                else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
-                                    PlotSquared.log("&aIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                    expiredPlots.get(world).remove(plot);
-                                    return;
-                                }
-                            }
-                            if (plot.settings.isMerged()) {
-                                MainUtil.unlinkPlot(plot);
-                            }
-                            manager.clearPlot(plotworld, plot, false, null);
-                            MainUtil.removeSign(plot);
-                            DBFunc.delete(world, plot);
-                            PlotSquared.removePlot(world, plot.id, false);
+                        final Plot plot = plots.iterator().next();
+                        if (!isExpired(plot)) {
                             expiredPlots.get(world).remove(plot);
-                            PlotSquared.log("&cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                            PlotSquared.log("&3 - World: " + plot.world);
-                            if (plot.hasOwner()) {
-                                PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
-                            } else {
-                                PlotSquared.log("&3 - Owner: Unowned");
+                            PlotSquared.log("&7[&5Expire&dManager&7] &bSkipping no longer expired: " + plot);
+                            return;
+                        }
+                        for (final UUID helper : plot.trusted) {
+                            final PlotPlayer player = UUIDHandler.getPlayer(helper);
+                            if (player != null) {
+                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
                             }
                         }
-                    };
-                    if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
-                        HybridUtils.manager.checkModified(plot, run);
+                        for (final UUID helper : plot.members) {
+                            final PlotPlayer player = UUIDHandler.getPlayer(helper);
+                            if (player != null) {
+                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                            }
+                        }
+                        final PlotManager manager = PlotSquared.getPlotManager(world);
+                        if (manager == null) {
+                            PlotSquared.log("&7[&5Expire&dManager&7] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                            expiredPlots.get(world).remove(plot);
+                            return;
+                        }
+                        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+                        RunnableVal run = new RunnableVal() {
+                            @Override
+                            public void run() {
+                                int changed = (int) this.value;
+                                if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+                                    if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
+                                        PlotSquared.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
+                                        expiredPlots.get(world).remove(plot);
+                                        return;
+                                    }
+                                    else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
+                                        PlotSquared.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
+                                        expiredPlots.get(world).remove(plot);
+                                        return;
+                                    }
+                                }
+                                if (plot.settings.isMerged()) {
+                                    MainUtil.unlinkPlot(plot);
+                                }
+                                manager.clearPlot(plotworld, plot, false, null);
+                                MainUtil.removeSign(plot);
+                                DBFunc.delete(world, plot);
+                                PlotSquared.removePlot(world, plot.id, false);
+                                expiredPlots.get(world).remove(plot);
+                                PlotSquared.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                PlotSquared.log("&3 - World: " + plot.world);
+                                if (plot.hasOwner()) {
+                                    PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
+                                } else {
+                                    PlotSquared.log("&3 - Owner: Unowned");
+                                }
+                            }
+                        };
+                        if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+                            Flag flag = FlagManager.getPlotFlagAbs(plot, "modified-blocks");
+                            if (flag != null) {
+                                if ((Integer) flag.getValue() > Settings.MIN_BLOCKS_CHANGED_IGNORED) {
+                                    PlotSquared.log("&7[&5Expire&dManager&7] &bSkipping modified: " + plot);
+                                    expiredPlots.get(world).remove(plot);
+                                    this.run();
+                                    return;
+                                }
+                            }
+                            else {
+                                HybridUtils.manager.checkModified(plot, run);
+                            }
+                        }
+                        else {
+                            run.value = -1;
+                            run.run();
+                        }
+                        return;
                     }
-                    else {
-                        run.value = -1;
-                        run.run();
-                    }
-                    
-                    
-                    return;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }, Settings.CLEAR_INTERVAL * 20);

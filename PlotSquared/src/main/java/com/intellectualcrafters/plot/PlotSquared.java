@@ -591,6 +591,7 @@ public class PlotSquared {
         copyFile("german.yml", "translations");
         copyFile("s_chinese_unescaped.yml", "translations");
         copyFile("s_chinese.yml", "translations");
+        copyFile("italian.yml", "translations");
         showDebug();
     }
     

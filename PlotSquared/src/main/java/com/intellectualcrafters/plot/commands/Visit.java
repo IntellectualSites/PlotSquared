@@ -100,7 +100,7 @@ public class Visit extends SubCommand {
         }
         else if (plot.isOwner(plr.getUUID())) {
             if (!Permissions.hasPermission(plr, "plots.visit.owned") && !Permissions.hasPermission(plr, "plots.home")) {
-                sendMessage(plr, C.NO_PERMISSION, "plots.visit.unowned, plots.home");
+                sendMessage(plr, C.NO_PERMISSION, "plots.visit.owned, plots.home");
                 return false;
             }
         }
