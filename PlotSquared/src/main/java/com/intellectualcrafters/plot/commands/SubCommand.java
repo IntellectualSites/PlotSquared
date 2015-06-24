@@ -150,7 +150,7 @@ public abstract class SubCommand {
         MainUtil.sendMessage(plr, c, args);
         return true;
     }
-
+    
     /**
      * CommandCategory
      *

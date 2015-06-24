@@ -39,7 +39,7 @@ public class Purge extends SubCommand {
     public Purge() {
         super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
     }
-
+    
     public PlotId getId(final String id) {
         try {
             final String[] split = id.split(";");

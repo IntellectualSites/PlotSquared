@@ -288,9 +288,9 @@ public class list extends SubCommand {
                 }
             }
             i++;
-            if (Settings.FANCY_CHAT) {
+            if (player != null && Settings.FANCY_CHAT) {
                 ChatColor color;
-                if (player == null) {
+                if (plot.owner == null) {
                     color = ChatColor.GOLD;
                 }
                 else if (plot.isOwner(player.getUUID())) {
@@ -397,7 +397,7 @@ public class list extends SubCommand {
                 MainUtil.sendMessage(player, message);
             }
         }
-        if (Settings.FANCY_CHAT) {
+        if (player != null && Settings.FANCY_CHAT) {
             if (page < totalPages && page > 0) {
                 // back | next 
                 new FancyMessage("")

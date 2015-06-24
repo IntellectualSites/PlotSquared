@@ -123,7 +123,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (plot == null) {
             return;
         }
-        
         if (Settings.REDSTONE_DISABLER) {
             if (UUIDHandler.getPlayer(plot.owner) == null) {
                 boolean disable = true;
@@ -225,7 +224,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 return;
             }
         }
-        if (Settings.PHYSICS_LISTENER && block.getType().hasGravity()) {
+        if (block.getType().hasGravity()) {
             Plot plot = MainUtil.getPlot(loc);
             if (plot == null) {
                 return;
@@ -698,7 +697,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
-            else if (Settings.PHYSICS_LISTENER) {
+            else {
                 Plot plot = MainUtil.getPlot(loc);
                 if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                     e.setCancelled(true);
@@ -912,9 +911,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     
     @EventHandler(ignoreCancelled=true, priority=EventPriority.HIGHEST)
     public void onEntityFall(EntityChangeBlockEvent event) {
-        if (!Settings.PHYSICS_LISTENER) {
-            return;
-        }
         if (event.getEntityType() != EntityType.FALLING_BLOCK) {
             return;
         }
@@ -1580,11 +1576,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
-            if (Settings.PHYSICS_LISTENER) {
-                if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
-                    Block block = event.getBlockPlaced();
-                    sendBlockChange(block.getLocation(), block.getType(), block.getData());
-                }
+            if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                Block block = event.getBlockPlaced();
+                sendBlockChange(block.getLocation(), block.getType(), block.getData());
             }
             return;
         }

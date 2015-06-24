@@ -718,9 +718,7 @@ public class PlotSquared {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
-        if (Settings.PHYSICS_LISTENER) {
-            FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
-        }
+        FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
@@ -806,7 +804,6 @@ public class PlotSquared {
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
-        options.put("protection.physics-listener.enabled", Settings.PHYSICS_LISTENER);
         
         // Clusters
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
@@ -890,7 +887,6 @@ public class PlotSquared {
         Settings.REDSTONE_DISABLER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
-        Settings.PHYSICS_LISTENER = config.getBoolean("protection.physics-listener.enabled");
         
         // Clusters
         Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
@@ -902,7 +898,7 @@ public class PlotSquared {
         
         // UUID
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
-        Settings.UUID_LOWERCASE = config.getBoolean("UUID.force-lowercase");
+        Settings.UUID_LOWERCASE = Settings.OFFLINE_MODE && config.getBoolean("UUID.force-lowercase");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
         
         // Mob stuff
