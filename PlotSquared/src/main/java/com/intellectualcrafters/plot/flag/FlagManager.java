@@ -50,8 +50,44 @@ public class FlagManager {
     // - Plot clear interval
     // - Mob cap
     // - customized plot composition
+    
+    private final static HashSet<String> reserved = new HashSet<>();
+    
     private final static HashSet<AbstractFlag> flags = new HashSet<>();
 
+    /**
+     * Reserve a flag so that it cannot be set by players
+     * @param flag
+     */
+    public static void reserveFlag(String flag) {
+        reserved.add(flag);
+    }
+    
+    /**
+     * Get if a flag is reserved
+     * @param flag
+     * @return
+     */
+    public static boolean isReserved(String flag) {
+        return reserved.contains(flag);
+    }
+    
+    /**
+     * Get the reserved flags
+     * @return
+     */
+    public static HashSet<String> getReservedFlags() {
+        return (HashSet<String>) reserved.clone();
+    }
+    
+    /**
+     * Unreserve a flag
+     * @param flag
+     */
+    public static void unreserveFlag(String flag) {
+        reserved.remove(flag);
+    }
+    
     /**
      * Register an AbstractFlag with PlotSquared
      *
@@ -60,6 +96,10 @@ public class FlagManager {
      * @return boolean success
      */
     public static boolean addFlag(AbstractFlag af) {
+        return addFlag(af, false);
+    }
+    
+    public static boolean addFlag(AbstractFlag af, boolean reserved) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
         for (PlotWorld plotworld : PlotSquared.getPlotWorldObjects()) {
             Flag flag = plotworld.DEFAULT_FLAGS.get(af.getKey());
@@ -75,7 +115,11 @@ public class FlagManager {
                 }
             }
         }
-        return (getFlag(af.getKey()) == null) && flags.add(af);
+        if ((getFlag(af.getKey()) == null) && flags.add(af)) {
+            if (reserved) reserveFlag(af.getKey());
+            return true;
+        }
+        return false;
     }
 
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {

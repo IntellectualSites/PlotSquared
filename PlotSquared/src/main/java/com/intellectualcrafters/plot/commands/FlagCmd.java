@@ -71,6 +71,10 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
+        if (args.length > 1 && FlagManager.isReserved(args[1])) {
+            MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
+            return false;
+        }
         switch (args[0].toLowerCase()) {
             case "info": {
                 if (!Permissions.hasPermission(player, "plots.set.flag")) {

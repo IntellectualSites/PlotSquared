@@ -106,7 +106,7 @@ public class Set extends SubCommand {
             } catch (final Exception e) {
                 af = new AbstractFlag(args[1].toLowerCase());
             }
-            if (!FlagManager.getFlags().contains(af)) {
+            if (!FlagManager.getFlags().contains(af) || FlagManager.isReserved(af.getKey())) {
                 MainUtil.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }

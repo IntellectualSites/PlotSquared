@@ -718,6 +718,7 @@ public class PlotSquared {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
+        FlagManager.addFlag(new AbstractFlag("modified-blocks", new FlagValue.IntegerValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
