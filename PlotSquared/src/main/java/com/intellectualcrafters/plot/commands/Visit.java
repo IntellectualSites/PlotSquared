@@ -64,7 +64,7 @@ public class Visit extends SubCommand {
             plots.addAll(PlotSquared.getPlots(args[0]).values());
         }
         else {
-            Plot plot = MainUtil.getPlotFromString(plr, args[0], false);
+            Plot plot = MainUtil.getPlotFromString(plr, args[0], true);
             if (plot == null) {
                 return false;
             }

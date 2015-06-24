@@ -35,6 +35,7 @@ import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -54,7 +55,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList(new String[] { "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
+        final List<String> allowed_params = Arrays.asList(new String[] { "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
@@ -66,6 +67,14 @@ public class DebugExec extends SubCommand {
                     }
                     ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
+                }
+                case "reset-modified": {
+                    for (Plot plot : PlotSquared.getPlots()) {
+                        if (FlagManager.getPlotFlag(plot, "modified-blocks") != null) {
+                            FlagManager.removePlotFlag(plot, "modified-blocks");
+                        }
+                    }
+                    return MainUtil.sendMessage(player, "Cleared modified flag!");    
                 }
                 case "start-rgar": {
                     if (args.length != 2) {
