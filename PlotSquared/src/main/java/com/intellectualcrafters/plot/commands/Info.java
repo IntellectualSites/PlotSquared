@@ -72,7 +72,7 @@ public class Info extends SubCommand {
                     arg = null;
             }
         }
-        Plot plot = MainUtil.getPlotFromString(player, arg, false);
+        Plot plot = MainUtil.getPlotFromString(player, arg, player == null);
         if (plot == null) {
             if (player == null) {
                 return false;

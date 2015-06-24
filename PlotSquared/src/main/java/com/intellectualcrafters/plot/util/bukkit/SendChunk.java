@@ -11,6 +11,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.BukkitMain;
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
@@ -24,7 +25,7 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
  */
 public class SendChunk {
     
-    private static boolean v1_7_10 = BukkitMain.checkVersion(1, 7, 10) && !BukkitMain.checkVersion(1, 8, 0);
+    private static boolean v1_7_10 = PlotSquared.IMP.checkVersion(1, 7, 10) && !PlotSquared.IMP.checkVersion(1, 8, 0);
     // Ref Class
     private static final RefClass classWorld = getRefClass("{nms}.World");
     private static final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
