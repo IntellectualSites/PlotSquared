@@ -212,6 +212,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public static byte rotate(final short id, byte data) {
         switch (id) {
+            case 162:
+            case 17: {
+                if (data >= 4 && data < 12) {
+                    if (data >= 8) {
+                        return (byte) (data - 4);
+                    }
+                    return (byte) (data + 4);
+                }
+                return data;
+            }
             case 183:
             case 184:
             case 185:
