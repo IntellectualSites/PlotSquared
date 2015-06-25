@@ -97,6 +97,7 @@ public class FlagCmd extends SubCommand {
                 MainUtil.sendMessage(player, C.FLAG_TYPE, af.value.getClass().getSimpleName());
                 // Flag type description
                 MainUtil.sendMessage(player, C.FLAG_DESC, af.getValueDesc());
+                return true;
             }
             case "set": {
                 if (!Permissions.hasPermission(player, "plots.set.flag")) {
