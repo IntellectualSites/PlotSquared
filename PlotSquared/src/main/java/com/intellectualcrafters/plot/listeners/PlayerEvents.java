@@ -72,6 +72,9 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Tree;
+import org.bukkit.material.Wool;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -826,6 +829,17 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Block block = event.getClickedBlock();
         if (block == null) {
             return;
+        }
+        Material type = block.getType();
+        if (true || type.isSolid() && type.isBlock() && type.isOccluding()) {
+            BlockState state = block.getState();
+            MaterialData data = state.getData();
+            if (data instanceof Tree || data instanceof Wool || state.getData().getClass().equals(MaterialData.class)) {
+                Class<? extends BlockState> clazz = state.getClass();
+                if (clazz.getSimpleName().equals("CraftBlockState")) {
+                    return;
+                }
+            }
         }
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();

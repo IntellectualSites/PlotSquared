@@ -124,10 +124,10 @@ public class ExpireManager {
                             return;
                         }
                         final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-                        RunnableVal run = new RunnableVal() {
+                        RunnableVal run = new RunnableVal<Integer>() {
                             @Override
                             public void run() {
-                                int changed = (int) this.value;
+                                int changed = (Integer) this.value;
                                 if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
                                     if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
                                         PlotSquared.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));

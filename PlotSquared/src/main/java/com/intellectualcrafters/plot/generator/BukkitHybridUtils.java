@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.BukkitMain;
@@ -18,7 +22,9 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -28,27 +34,60 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 	
-	public void checkModified(final Plot plot, final RunnableVal whenDone) {
-		TaskManager.index.increment();
-		
-		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-		final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+    @Override
+    public void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
+        // TODO Auto-generated method stub
+        // int diff, int variety, int verticies, int rotation, int height_sd
         
+        /*
+         * diff: compare to base by looping through all blocks
+         * variety: add to hashset for each plotblock
+         * height_sd: loop over all blocks and get top block
+         * 
+         * verticies: store air map and compare with neighbours
+         * for each block check the adjacent
+         *  - Store all blocks then go through in second loop
+         *  - recheck each block
+         * 
+         */
+        World world = Bukkit.getWorld(plot.world);
+        ChunkGenerator gen = world.getGenerator();
+        BiomeGrid base = new BiomeGrid() { @Override public void setBiome(int a, int b, Biome c) {} @Override public Biome getBiome(int a, int b) {return null;}};
+        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
-        
         int tx = top.getX() >> 4;
         int tz = top.getZ() >> 4;
+        Random r = new Random();
+        for (int X = bx; X <= tx; X++) {
+            for (int Z = bz; Z <= tz; Z++) {
+                Chunk chunk = world.getChunkAt(X, Z);
+                short[][] result = gen.generateExtBlockSections(world, r, x, z, base);
+                for (int x = 0; x < 16; x++) {
+                    
+                }
+            }
+        }
         
+        short[] [] result = gen.generateExtBlockSections(world, null, x, z, )
+    }
+    
+	public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
+		TaskManager.index.increment();
+		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+		final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        int bx = bot.getX() >> 4;
+        int bz = bot.getZ() >> 4;
+        int tx = top.getX() >> 4;
+        int tz = top.getZ() >> 4;
         World world = BukkitUtil.getWorld(plot.world);
-        
         final HashSet<Chunk> chunks = new HashSet<>();
         for (int X = bx; X <= tx; X++) {
             for (int Z = bz; Z <= tz; Z++) {
                 chunks.add(world.getChunkAt(X,Z));
             }
         }
-        
         PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
         if (!(plotworld instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
@@ -263,5 +302,4 @@ public class BukkitHybridUtils extends HybridUtils {
         }, 20, 20);
         return true;
     }
-
 }
