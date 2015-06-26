@@ -205,10 +205,6 @@ public class FlagManager {
         if (!result) {
             return false;
         }
-        final Flag hasFlag = getPlotFlag(plot, flag.getKey());
-        if (hasFlag != null) {
-            plot.settings.flags.remove(hasFlag);
-        }
         plot.settings.flags.put(flag.getKey(), flag);
         DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
         return true;
@@ -247,7 +243,7 @@ public class FlagManager {
             map = new HashMap<>();
         }
         else {
-            map = plotworld.DEFAULT_FLAGS;
+            map = (HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone();
         }
         map.putAll(settings.flags);
         return map.values();
