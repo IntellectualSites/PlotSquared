@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -12,8 +13,11 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
+import org.bukkit.material.Directional;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.BukkitMain;
@@ -34,6 +38,24 @@ import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 	
+    public double getMean(int[] array) {
+        double count = 0;
+        for (int i : array) {
+            count += i;
+        }
+        return count / array.length; 
+    }
+    
+    public double getSD(int[] array) {
+        double av = getMean(array);
+        double sd = 0;
+        for (int i=0; i<array.length;i++)
+        {
+            sd += Math.pow(Math.abs(array[i] - av), 2);
+        }
+        return Math.sqrt(sd/array.length);
+    }
+    
     @Override
     public void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
         // TODO Auto-generated method stub
@@ -53,24 +75,92 @@ public class BukkitHybridUtils extends HybridUtils {
         World world = Bukkit.getWorld(plot.world);
         ChunkGenerator gen = world.getGenerator();
         BiomeGrid base = new BiomeGrid() { @Override public void setBiome(int a, int b, Biome c) {} @Override public Biome getBiome(int a, int b) {return null;}};
-        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        ClassicPlotWorld cpw = (ClassicPlotWorld) PlotSquared.getPlotWorld(plot.world);
+        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 - cpw.ROAD_WIDTH, 0, 1 - cpw.ROAD_WIDTH);
+        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id).add(cpw.ROAD_WIDTH, 0, cpw.ROAD_WIDTH);
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
         int tx = top.getX() >> 4;
         int tz = top.getZ() >> 4;
         Random r = new Random();
-        for (int X = bx; X <= tx; X++) {
-            for (int Z = bz; Z <= tz; Z++) {
+        AugmentedPopulator.initCache();
+        for (int X = bx + 1; X < tx; X++) {
+            for (int Z = bz + 1; Z < tz; Z++) {
                 Chunk chunk = world.getChunkAt(X, Z);
-                short[][] result = gen.generateExtBlockSections(world, r, x, z, base);
+                short[][] result = gen.generateExtBlockSections(world, r, X, Z, base);
+                short[][] current = new short[16][];
+                // load current chunk into a PlotBlock[][] map;
+                long changes = 0;
+                long rotations = 0;
+                long materialdata = 0;
+                HashSet<Short> variety = new HashSet<>();
+                int[] height = new int[256];
+                
+                int collumn_index = 0;
                 for (int x = 0; x < 16; x++) {
-                    
+                    for (int z = 0; z < 16; z++) {
+                        int max = 0;
+                        for (int y = 0; y < 256; y++) {
+                            Block block = chunk.getBlock(x, y, z);
+                            int i = y >> 4;
+                            int j = ((y & 0xF) << 8) | (z << 4) | x;
+                            short id = (short) block.getTypeId();
+                            if (id != 0) {
+                                if (y > max) {
+                                    max = y;
+                                }
+                                BlockState state = block.getState();
+                                MaterialData data = state.getData();
+                                if (data instanceof Directional) {
+                                    rotations++;
+                                }
+                                else if (!data.getClass().equals(MaterialData.class)) {
+                                    materialdata++;
+                                }
+                                else {
+                                    variety.add(id);
+                                }
+                            }
+                            if (current[i] == null) {
+                                current[i] = new short[4096];
+                            }
+                            current[i][j] = id;
+                            if (result[i] == null && id != 0 || result[i] != null && result[i][j] != id) {
+                                changes++;
+                            }
+                        }
+                        height[collumn_index] = max;
+                        collumn_index++;
+                        // compare blocks
+                        // calculate variety
+                    }
                 }
+                long verticies = 0;
+                for (int x = 1; x < 15; x++) {
+                    for (int z = 1; z < 15; z++) {
+                        for (int y = 1; y < 255; y++) {
+                            short id = current[y >> 4][((y & 0xF) << 8) | (z << 4) | x];
+                            if (id == 0) continue;
+                            if (current[(y + 1) >> 4][(((y + 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
+                            if (current[(y - 1) >> 4][(((y - 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
+                            if (current[y >> 4][((y & 0xF) << 8) | ((z + 1) << 4) | x] != 0) verticies--;
+                            if (current[y >> 4][((y & 0xF) << 8) | ((z - 1) << 4) | x] != 0) verticies--;
+                            if (current[y >> 4][((y & 0xF) << 8) | (z << 4) | (x + 1)] != 0) verticies--;
+                            if (current[y >> 4][((y & 0xF) << 8) | (z << 4) | (x - 1)] != 0) verticies--;
+                            verticies += 6;
+                        }   
+                    }
+                }
+                
+                System.out.print("===============");
+                System.out.print(" - changes: " + changes);
+                System.out.print(" - rotations: " + rotations);
+                System.out.print(" - data: " + materialdata);
+                System.out.print(" - variety: " + variety.size());
+                System.out.print(" - sd: " + getSD(height));
+                System.out.print(" - verticies: " + verticies);
             }
         }
-        
-        short[] [] result = gen.generateExtBlockSections(world, null, x, z, )
     }
     
 	public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {

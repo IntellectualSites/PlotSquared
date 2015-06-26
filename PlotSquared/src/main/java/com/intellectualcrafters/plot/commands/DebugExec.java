@@ -55,10 +55,15 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList(new String[] { "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
+        final List<String> allowed_params = Arrays.asList(new String[] { "analyze", "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
+                case "analyze": {
+                    Plot plot = MainUtil.getPlot(player.getLocation());
+                    HybridUtils.manager.analyzePlot(plot, null);
+                    return true;
+                }
                 case "stop-expire": {
                     if (ExpireManager.task != -1) {
                         Bukkit.getScheduler().cancelTask(ExpireManager.task);
