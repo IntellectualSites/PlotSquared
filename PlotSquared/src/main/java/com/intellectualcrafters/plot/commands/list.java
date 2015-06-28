@@ -22,10 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -69,13 +72,13 @@ public class list extends SubCommand {
         builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
         if (plr != null) {
             if (EconHandler.manager != null) {
-                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "forsale", "<player>", "<world>"}));
+                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>", "forsale",}));
             }
             else {
-                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "<player>", "<world>"}));
+                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
             }
         } else {
-            builder.append(getArgumentList(new String[] { "world", "all", "unowned", "unknown", "<player>", "<world>"}));
+            builder.append(getArgumentList(new String[] { "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
         }
         MainUtil.sendMessage(plr, builder.toString());
     }
@@ -99,7 +102,7 @@ public class list extends SubCommand {
             }
         }
         
-        Collection<Plot> plots = null;
+        List<Plot> plots = null;
         
         String world;
         if (plr != null) {
@@ -114,8 +117,8 @@ public class list extends SubCommand {
                 world = worlds.iterator().next();
             }
         }
-        
         String arg = args[0].toLowerCase();
+        boolean sort = true;
         switch (arg) {
             case "mine": {
                 if (plr == null) {
@@ -125,7 +128,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.mine");
                     return false;
                 }
-                plots = PlotSquared.getPlots(plr);
+                plots = new ArrayList<>(PlotSquared.getPlots(plr));
                 break;
             }
             case "shared": {
@@ -153,7 +156,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
-                plots = PlotSquared.getPlots(world).values();
+                plots = new ArrayList<>(PlotSquared.getPlots(world).values());
                 break;
             }
             case "all": {
@@ -161,7 +164,41 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.all");
                     return false;
                 }
-                plots = PlotSquared.getPlots();
+                plots = new ArrayList<>(PlotSquared.getPlots());
+                break;
+            }
+            case "top": {
+                if (!Permissions.hasPermission(plr, "plots.list.top")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.top");
+                    return false;
+                }
+                plots = new ArrayList<>(PlotSquared.getPlots());
+                Collections.sort(plots, new Comparator<Plot>() {
+                    @Override
+                    public int compare(Plot p1, Plot p2) {
+                        double v1 = 0;
+                        double v2 = 0;
+                        if (p1.settings.ratings != null && p1.settings.ratings.size() > 0) {
+                            for (Entry<UUID, Integer> entry : p1.settings.ratings.entrySet()) {
+                                v1 += entry.getValue() * entry.getValue();
+                            }
+                            v1 /= p1.settings.ratings.size();
+                            v2 += p2.settings.ratings.size();
+                        }
+                        if (p2.settings.ratings != null && p2.settings.ratings.size() > 0) {
+                            for (Entry<UUID, Integer> entry : p2.settings.ratings.entrySet()) {
+                                v2 += entry.getValue() * entry.getValue();
+                            }
+                            v2 /= p2.settings.ratings.size();
+                            v2 += p2.settings.ratings.size();
+                        }
+                        if (v2 == v1 && v2 != 0) {
+                            return p2.settings.ratings.size() - p1.settings.ratings.size();
+                        }
+                        return (int) Math.signum(v2 - v1);
+                    }
+                });
+                sort = false;
                 break;
             }
             case "forsale": {
@@ -172,7 +209,7 @@ public class list extends SubCommand {
                 if (EconHandler.manager == null) {
                     break;
                 }
-                plots = new HashSet<>();
+                plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.getPlots()) {
                     final Flag price = FlagManager.getPlotFlag(plot, "price");
                     if (price != null) {
@@ -186,7 +223,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unowned");
                     return false;
                 }
-                plots = new HashSet<>();
+                plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.getPlots()) {
                     if (plot.owner == null) {
                         plots.add(plot);
@@ -199,7 +236,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unknown");
                     return false;
                 }
-                plots = new HashSet<>();
+                plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.getPlots()) {
                     if (plot.owner == null) {
                         continue;
@@ -220,7 +257,7 @@ public class list extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + args[0]);
                         return false;
                     }
-                    plots = PlotSquared.getPlots(args[0]).values();
+                    plots = new ArrayList<>(PlotSquared.getPlots(args[0]).values());
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0]);
@@ -229,7 +266,7 @@ public class list extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");
                         return false;
                     }
-                    plots = PlotSquared.getPlots(uuid);
+                    plots = new ArrayList<>(PlotSquared.getPlots(uuid));
                     break;
                 }
             }
@@ -244,18 +281,18 @@ public class list extends SubCommand {
             MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return false;
         }
-        
-        displayPlots(plr, plots, 12, page, world, args);
+        displayPlots(plr, plots, 12, page, world, args, sort);
         return true;
     }
     
-    public void displayPlots(PlotPlayer player, Collection<Plot> oldPlots, int pageSize, int page, String world, String[] args) {
-        List<Plot> plots;
-        if (world != null) {
-            plots = PlotSquared.sortPlots(oldPlots, world);
-        }
-        else {
-            plots = PlotSquared.sortPlots(oldPlots);
+    public void displayPlots(PlotPlayer player, List<Plot> plots, int pageSize, int page, String world, String[] args, boolean sort) {
+        if (sort) {
+            if (world != null) {
+                plots = PlotSquared.sortPlots(plots, world);
+            }
+            else {
+                plots = PlotSquared.sortPlots(plots);
+            }
         }
         if (page < 0) {
             page = 0;

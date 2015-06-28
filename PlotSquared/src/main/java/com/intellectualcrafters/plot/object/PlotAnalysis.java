@@ -1,19 +1,18 @@
 package com.intellectualcrafters.plot.object;
 
 public class PlotAnalysis {
-    public final long diff;
-    public final long variety;
-    public final long verticies;
-    public final long rotation;
-    public final long height_sd;
-    public final long regularity;
+    public int changes_total;
+    public int rotations_total;
+    public int data_total;
+    public int variety_total;
+    public int verticies_total;
+    public double height_total;
     
-    public PlotAnalysis(int diff, int variety, int verticies, int rotation, int height_sd, int regularity) {
-        this.diff = diff;
-        this.variety = variety;
-        this.verticies = verticies;
-        this.rotation = rotation;
-        this.height_sd = height_sd;
-        this.regularity = regularity;
-    }
+    public double changes_sd;
+    public double rotations_sd;
+    public double data_sd;
+    public double variety_sd;
+    public double uniformity_sd;
+    public double verticies_sd;
+    public double height_sd;
 }

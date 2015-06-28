@@ -839,6 +839,7 @@ public class PlotSquared {
         
         // Caching
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
+        options.put("cache.ratings", Settings.CACHE_RATINGS);
         
         // Titles
         options.put("titles", Settings.TITLES);
@@ -922,6 +923,7 @@ public class PlotSquared {
         
         // Caching
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
+        Settings.CACHE_RATINGS = config.getBoolean("cache.ratings");
         
         // Titles
         Settings.TITLES = config.getBoolean("titles");

@@ -20,10 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -38,7 +45,7 @@ public class Rate extends SubCommand {
      * alias, CommandCategory category
      */
     public Rate() {
-        super("rate", "plots.rate", "Rate the plot", "rate {0-10}", "rt", CommandCategory.ACTIONS, true);
+        super("rate", "plots.rate", "Rate the plot", "rate [#|next]", "rt", CommandCategory.ACTIONS, true);
     }
 
     @Override
@@ -61,6 +68,39 @@ public class Rate extends SubCommand {
             return true;
         }
         final String arg = args[0];
+        
+        if (arg.equalsIgnoreCase("next")) {
+            ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots());
+            Collections.sort(plots, new Comparator<Plot>() {
+                @Override
+                public int compare(Plot p1, Plot p2) {
+                    int v1 = 0;
+                    int v2 = 0;
+                    if (p1.settings.ratings != null) {
+                        for (Entry<UUID, Integer> entry : p1.settings.ratings.entrySet()) {
+                            v1 -= 11 - entry.getValue();
+                        }
+                    }
+                    if (p2.settings.ratings != null) {
+                        for (Entry<UUID, Integer> entry : p2.settings.ratings.entrySet()) {
+                            v2 -= 11 - entry.getValue();
+                        }
+                    }
+                    return v2 - v1;
+                }
+            });
+            UUID uuid = plr.getUUID();
+            for (Plot p : plots) {
+                if (plot.settings.ratings == null || !plot.settings.ratings.containsKey(uuid)) {
+                    MainUtil.teleportPlayer(plr, plr.getLocation(), p);
+                    MainUtil.sendMessage(plr, C.RATE_THIS);
+                    return true;
+                }
+            }
+            MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
+            return false;
+        }
+        
         final int rating;
         if (StringUtils.isNumeric(arg) && arg.length() < 3 && arg.length() > 0) {
             rating = Integer.parseInt(arg);
@@ -74,18 +114,29 @@ public class Rate extends SubCommand {
             return false;
         }
         final UUID uuid = plr.getUUID();
-        // TODO implement check for already rated
-        TaskManager.runTaskAsync(new Runnable() {
+        final Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (DBFunc.hasRated(plot.world, plot.id, uuid)) {
+                if (plot.settings.ratings.containsKey(uuid)) {
                     sendMessage(plr, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
+                plot.settings.ratings.put(uuid, rating);
                 DBFunc.setRating(plot, uuid, rating);
                 sendMessage(plr, C.RATING_APPLIED, plot.getId().toString());
             }
-        });
+        };
+        if (plot.settings.ratings == null) {
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override
+                public void run() {
+                    plot.settings.ratings = DBFunc.getRatings(plot);
+                    run.run();
+                }
+            });
+            return true;
+        }
+        run.run();
         return true;
     }
 }

@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PlotSquared;
@@ -1551,5 +1552,24 @@ public class MainUtil {
             return null;
         }
         return getPlot(loc.getWorld(), id);
+    }
+
+    public static double getAverageRating(Plot plot) {
+        HashMap<UUID, Integer> rating;
+        if (plot.settings.ratings != null) {
+            rating = plot.settings.ratings;
+        }
+        else {
+            rating = DBFunc.getRatings(plot);
+        }
+        if (rating == null || rating.size() == 0) {
+            return 0;
+        }
+        double val = 0;
+        for (Entry<UUID, Integer> entry : rating.entrySet()) {
+            val += entry.getValue();
+        }
+        System.out.print(val);
+        return val / (double) rating.size();
     }
 }

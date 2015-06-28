@@ -191,7 +191,7 @@ public class Info extends SubCommand {
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    String info = newInfo.replaceAll("%rating%", String.format("%.1f", DBFunc.getRatings(plot)));
+                    String info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)));
                     MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
                     MainUtil.sendMessage(player, info, false);
                 }

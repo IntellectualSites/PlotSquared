@@ -286,14 +286,7 @@ public interface AbstractDB {
      *
      * @return Plot Ratings (pre-calculated)
      */
-    public double getRatings(final Plot plot);
-    
-    /**
-     * if uuid has rated
-     * @param uuid
-     * @return
-     */
-    public boolean hasRated(String world, PlotId id, UUID uuid);
+    public HashMap<UUID, Integer> getRatings(final Plot plot);
     
     /**
      * Set a rating for a plot

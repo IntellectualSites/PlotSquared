@@ -90,10 +90,6 @@ public class Set extends SubCommand {
                 break;
             }
         }
-        if (!Permissions.hasPermission(plr, "plots.set." + args[0].toLowerCase())) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + args[0].toLowerCase());
-            return false;
-        }
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
                 final String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
@@ -150,6 +146,10 @@ public class Set extends SubCommand {
             }
         }
         if (args[0].equalsIgnoreCase("home")) {
+            if (!Permissions.hasPermission(plr, "plots.set.home")) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.home");
+                return false;
+            }
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("none")) {
                     plot.settings.setPosition(null);
@@ -169,6 +169,10 @@ public class Set extends SubCommand {
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
+            if (!Permissions.hasPermission(plr, "plots.set.alias")) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.alias");
+                return false;
+            }
             if (args.length < 2) {
                 MainUtil.sendMessage(plr, C.MISSING_ALIAS);
                 return false;
@@ -193,6 +197,10 @@ public class Set extends SubCommand {
             return true;
         }
         if (args[0].equalsIgnoreCase("biome")) {
+            if (!Permissions.hasPermission(plr, "plots.set.biome")) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.biome");
+                return false;
+            }
             if (args.length < 2) {
                 MainUtil.sendMessage(plr, C.NEED_BIOME);
                 return true;

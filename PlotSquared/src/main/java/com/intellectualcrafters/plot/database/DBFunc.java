@@ -343,12 +343,8 @@ public class DBFunc {
         dbManager.setDenied(world, plot, uuid);
     }
 
-    public static double getRatings(final Plot plot) {
+    public static HashMap<UUID, Integer> getRatings(final Plot plot) {
         return dbManager.getRatings(plot);
-    }
-    
-    public static boolean hasRated(String world, PlotId id, final UUID uuid) {
-        return dbManager.hasRated(world, id, uuid);
     }
     
     public static void setRating(Plot plot, UUID rater, int value) {

@@ -151,6 +151,7 @@ public enum C {
     /*
      * Ratings
      */
+    RATE_THIS("$2Rate this plot!", "Ratings"),
     RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),
     RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"),
     RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings"),

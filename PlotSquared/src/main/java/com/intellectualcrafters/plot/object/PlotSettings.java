@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -55,6 +56,12 @@ public class PlotSettings {
      * Comments
      */
     private List<PlotComment> comments = null;
+    
+    /**
+     * The ratings for a plot
+     */
+    public HashMap<UUID, Integer> ratings;
+    
     /**
      * Flags
      */

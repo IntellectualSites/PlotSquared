@@ -41,7 +41,9 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
@@ -61,7 +63,24 @@ public class DebugExec extends SubCommand {
             switch (arg) {
                 case "analyze": {
                     Plot plot = MainUtil.getPlot(player.getLocation());
-                    HybridUtils.manager.analyzePlot(plot, null);
+                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                        @Override
+                        public void run() {
+                            System.out.print("changes_sd: " + this.value.changes_sd);
+                            System.out.print("changes_total: " + this.value.changes_total);
+                            System.out.print("data_sd: " + this.value.data_sd);
+                            System.out.print("data_total: " + this.value.data_total);
+                            System.out.print("height_sd: " + this.value.height_sd);
+                            System.out.print("height_total: " + this.value.height_total);
+                            System.out.print("rotations_sd: " + this.value.rotations_sd);
+                            System.out.print("rotations_total: " + this.value.rotations_total);
+                            System.out.print("uniformity_sd: " + this.value.uniformity_sd);
+                            System.out.print("variety_sd: " + this.value.variety_sd);
+                            System.out.print("variety_total: " + this.value.variety_total);
+                            System.out.print("verticies_sd: " + this.value.verticies_sd);
+                            System.out.print("verticies_total: " + this.value.verticies_total);
+                        }
+                    });
                     return true;
                 }
                 case "stop-expire": {
@@ -108,6 +127,7 @@ public class DebugExec extends SubCommand {
                         PlotSquared.log("&cTASK NOT RUNNING!");
                         return false;
                     }
+                    ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
                     Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
                     PlotSquared.log("&cCancelling task...");
                     while (BukkitHybridUtils.chunks.size() > 0) {

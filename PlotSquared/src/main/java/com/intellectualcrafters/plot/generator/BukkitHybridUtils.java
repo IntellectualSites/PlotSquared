@@ -46,6 +46,24 @@ public class BukkitHybridUtils extends HybridUtils {
         return count / array.length; 
     }
     
+    public double getMean(double[] array) {
+        double count = 0;
+        for (double i : array) {
+            count += i;
+        }
+        return count / array.length; 
+    }
+    
+    public double getSD(double[] array) {
+        double av = getMean(array);
+        double sd = 0;
+        for (int i=0; i<array.length;i++)
+        {
+            sd += Math.pow(Math.abs(array[i] - av), 2);
+        }
+        return Math.sqrt(sd/array.length);
+    }
+    
     public double getSD(int[] array) {
         double av = getMean(array);
         double sd = 0;
@@ -56,8 +74,15 @@ public class BukkitHybridUtils extends HybridUtils {
         return Math.sqrt(sd/array.length);
     }
     
+    public int mod(int x) {
+        if (x < 0) {
+            return (x % 16) + 16;
+        }
+        return x % 16;
+    }
+    
     @Override
-    public void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
+    public void analyzePlot(Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
         // TODO Auto-generated method stub
         // int diff, int variety, int verticies, int rotation, int height_sd
         
@@ -72,33 +97,98 @@ public class BukkitHybridUtils extends HybridUtils {
          *  - recheck each block
          * 
          */
-        World world = Bukkit.getWorld(plot.world);
-        ChunkGenerator gen = world.getGenerator();
-        BiomeGrid base = new BiomeGrid() { @Override public void setBiome(int a, int b, Biome c) {} @Override public Biome getBiome(int a, int b) {return null;}};
+        final World world = Bukkit.getWorld(plot.world);
+        final ChunkGenerator gen = world.getGenerator();
+        if (gen == null) {
+            return;
+        }
+        final BiomeGrid base = new BiomeGrid() { @Override public void setBiome(int a, int b, Biome c) {} @Override public Biome getBiome(int a, int b) {return null;}};
         ClassicPlotWorld cpw = (ClassicPlotWorld) PlotSquared.getPlotWorld(plot.world);
-        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 - cpw.ROAD_WIDTH, 0, 1 - cpw.ROAD_WIDTH);
-        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id).add(cpw.ROAD_WIDTH, 0, cpw.ROAD_WIDTH);
-        int bx = bot.getX() >> 4;
-        int bz = bot.getZ() >> 4;
-        int tx = top.getX() >> 4;
-        int tz = top.getZ() >> 4;
-        Random r = new Random();
+        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id).add(1, 0, 1);
+        final int bx = bot.getX() >> 4;
+        final int bz = bot.getZ() >> 4;
+        final int tx = top.getX() >> 4;
+        final int tz = top.getZ() >> 4;
+        final Random r = new Random();
         AugmentedPopulator.initCache();
-        for (int X = bx + 1; X < tx; X++) {
-            for (int Z = bz + 1; Z < tz; Z++) {
+        
+        final PlotAnalysis analysis = new PlotAnalysis();
+        
+        int num_chunks = (tx - bx + 1) * (tz - bz + 1);
+        
+        short[][][] oldblocks = new short[256][top.getX() - bot.getX() + 1][top.getZ() - bot.getZ() + 1];
+        short[][][] newblocks = new short[256][top.getX() - bot.getX() + 1][top.getZ() - bot.getZ() + 1];
+        
+        final List<Chunk> chunks = new ArrayList<>();
+        
+        for (int X = bx; X <= tx; X++) {
+            for (int Z = bz; Z <= tz; Z++) {
                 Chunk chunk = world.getChunkAt(X, Z);
-                short[][] result = gen.generateExtBlockSections(world, r, X, Z, base);
+                chunks.add(chunk);
+            }
+        }
+        
+        final double[] changes_sd = new double[num_chunks];
+        final double[] rotations_sd = new double[num_chunks];
+        final double[] data_sd = new double[num_chunks];
+        final double[] variety_sd = new double[num_chunks];
+        final double[] uniformity_sd = new double[num_chunks];
+        final double[] verticies_sd = new double[num_chunks];
+        final double[] height_sd = new double[num_chunks];
+        
+        final HashSet<Short> variety = new HashSet<>();
+        
+        TaskManager.index.increment();
+        final Integer currentIndex = TaskManager.index.toInteger();
+        final Integer task = TaskManager.runTaskRepeat(new Runnable() {
+            @Override
+            public void run() {
+                int index = chunks.size() - 1;
+                if (index == -1) {
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            PlotSquared.TASK.cancelTask(TaskManager.tasks.get(currentIndex));
+                            analysis.variety_total = variety.size();
+                            analysis.changes_sd = getSD(changes_sd);
+                            analysis.rotations_sd = getSD(rotations_sd);
+                            analysis.data_sd = getSD(data_sd);
+                            analysis.uniformity_sd = getSD(uniformity_sd);
+                            analysis.variety_sd = getSD(variety_sd);
+                            analysis.verticies_sd = getSD(verticies_sd);
+                            analysis.height_sd = getSD(height_sd);
+                            whenDone.value = analysis;
+                            whenDone.run();
+                        }
+                    });
+                    return;
+                }
+                Chunk chunk = chunks.remove(0);
+                int X = chunk.getX();
+                int Z = chunk.getZ();
+                short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
                 short[][] current = new short[16][];
-                // load current chunk into a PlotBlock[][] map;
+                int minX;
+                int minZ;
+                int maxX;
+                int maxZ;
+                if (X == bx) minX = mod(bot.getX());
+                else minX = 0;
+                if (Z == bz) minZ = mod(bot.getZ());
+                else minZ = 0;
+                if (X == tx) maxX = mod(top.getX());
+                else maxX = 16;
+                if (Z == tz) maxZ = mod(top.getZ());
+                else maxZ = 16;
                 long changes = 0;
                 long rotations = 0;
                 long materialdata = 0;
-                HashSet<Short> variety = new HashSet<>();
                 int[] height = new int[256];
                 
                 int collumn_index = 0;
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
+                for (int x = minX; x < maxX; x++) {
+                    for (int z = minZ; z < maxZ; z++) {
                         int max = 0;
                         for (int y = 0; y < 256; y++) {
                             Block block = chunk.getBlock(x, y, z);
@@ -131,16 +221,17 @@ public class BukkitHybridUtils extends HybridUtils {
                         }
                         height[collumn_index] = max;
                         collumn_index++;
-                        // compare blocks
-                        // calculate variety
                     }
                 }
                 long verticies = 0;
-                for (int x = 1; x < 15; x++) {
-                    for (int z = 1; z < 15; z++) {
-                        for (int y = 1; y < 255; y++) {
+                int[] uniformity = new int[254];
+                for (int y = 1; y < 255; y++) {
+                    HashSet<Integer> blocks = new HashSet<>();
+                    for (int x = minX + 1; x < maxX - 1; x++) {
+                        for (int z = minZ + 1; z < maxZ - 1; z++) {
                             short id = current[y >> 4][((y & 0xF) << 8) | (z << 4) | x];
                             if (id == 0) continue;
+                            blocks.add((int) id);
                             if (current[(y + 1) >> 4][(((y + 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
                             if (current[(y - 1) >> 4][(((y - 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
                             if (current[y >> 4][((y & 0xF) << 8) | ((z + 1) << 4) | x] != 0) verticies--;
@@ -150,17 +241,25 @@ public class BukkitHybridUtils extends HybridUtils {
                             verticies += 6;
                         }   
                     }
+                    uniformity[y-1] = blocks.size();
                 }
+                analysis.changes_total += changes;
+                analysis.rotations_total += rotations;
+                analysis.data_total += materialdata;
+                analysis.verticies_total += verticies;
+                double tmp = getSD(height);
+                analysis.height_total += tmp;
                 
-                System.out.print("===============");
-                System.out.print(" - changes: " + changes);
-                System.out.print(" - rotations: " + rotations);
-                System.out.print(" - data: " + materialdata);
-                System.out.print(" - variety: " + variety.size());
-                System.out.print(" - sd: " + getSD(height));
-                System.out.print(" - verticies: " + verticies);
-            }
-        }
+                changes_sd[index] = changes;
+                rotations_sd[index] = rotations;
+                data_sd[index] = materialdata;
+                uniformity_sd[index] = getSD(uniformity);
+                variety_sd[index] = variety.size();
+                verticies_sd[index] = verticies;
+                height_sd[index] = tmp;
+            };
+        }, 1);
+        TaskManager.tasks.put(currentIndex, task);
     }
     
 	public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {

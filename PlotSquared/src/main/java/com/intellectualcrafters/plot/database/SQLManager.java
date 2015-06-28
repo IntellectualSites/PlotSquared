@@ -910,6 +910,29 @@ public class SQLManager implements AbstractDB {
                 p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", null, null, worldname, new boolean[] { false, false, false, false });
                 plots.put(id, p);
             }
+            
+            if (Settings.CACHE_RATINGS) {
+                r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`");
+                while (r.next()) {
+                    id = r.getInt("plot_plot_id");
+                    o = r.getString("player");
+                    user = uuids.get(o);
+                    if (user == null) {
+                        user = UUID.fromString(o);
+                        uuids.put(o, user);
+                    }
+                    final Plot plot = plots.get(id);
+                    if (plot != null) {
+                        if (plot.settings.ratings == null ) {
+                            plot.settings.ratings = new HashMap<UUID, Integer>();
+                        }
+                        plot.settings.ratings.put(user, r.getInt("rating"));
+                    } else {
+                        PlotSquared.log("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+                    }
+                }
+            }
+            
             /*
              * Getting helpers
              */
@@ -1624,23 +1647,24 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public double getRatings(final Plot plot) {
+    public HashMap<UUID, Integer> getRatings(final Plot plot) {
+        HashMap<UUID, Integer> map = new HashMap<UUID, Integer>();
         try {
-            final PreparedStatement statement = this.connection.prepareStatement("SELECT AVG(`rating`) AS `rating` FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
+            final PreparedStatement statement = this.connection.prepareStatement("SELECT `rating`, `player` FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
             statement.setInt(1, getId(plot.world, plot.id));
             final ResultSet set = statement.executeQuery();
-            double rating = 0;
-            while (set.next()) {
-                rating = set.getDouble("rating");
+            while(set.next()) {
+                UUID uuid = UUID.fromString(set.getString("player"));
+                int rating = set.getInt("rating");
+                map.put(uuid, rating);
             }
             statement.close();
             set.close();
-            return rating;
         } catch (final SQLException e) {
             PlotSquared.log("&7[WARN] " + "Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
-        return 0.0d;
+        return map;
     }
     
 
@@ -2184,25 +2208,5 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
             return false;
         }
-    }
-
-    @Override
-    public boolean hasRated(String world, PlotId id, UUID uuid) {
-        try {
-            PreparedStatement stmt = SQLManager.this.connection.prepareStatement("SELECT * FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? AND `player` = ?");
-            stmt.setInt(1, getId(world, id));
-            stmt.setString(2, uuid.toString());
-            final ResultSet r = stmt.executeQuery();
-            if (r.next()) {
-                stmt.close();
-                return true;
-            }
-            stmt.close();
-            return false;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }

@@ -947,9 +947,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public boolean checkEntity(Entity entity, Plot plot) {
         if (plot != null && plot.owner != null) {
             Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
-            int[] mobs = ChunkManager.manager.countEntities(plot);
+            int[] mobs = null;
             if (entityFlag != null) {
                 int cap = ((Integer) entityFlag.getValue());
+                if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                 if (mobs[0] >= cap) {
                     return true;
                 }
@@ -958,6 +959,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
                 if (mobFlag != null) {
                     int cap = ((Integer) mobFlag.getValue());
+                    if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                     if (mobs[3] >= cap) {
                         return true;
                     }
@@ -966,6 +968,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
                     if (animalFlag != null) {
                         int cap = ((Integer) animalFlag.getValue());
+                        if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                         if (mobs[1] >= cap) {
                             return true;
                         }
@@ -975,6 +978,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
                     if (monsterFlag != null) {
                         int cap = ((Integer) monsterFlag.getValue());
+                        if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                         if (mobs[2] >= cap) {
                             return true;
                         }
@@ -985,6 +989,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
                 if (vehicleFlag != null) {
                     int cap = ((Integer) vehicleFlag.getValue());
+                    if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                     if (mobs[4] >= cap) {
                         return true;
                     }
