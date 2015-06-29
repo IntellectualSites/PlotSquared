@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue.PlotBlockListValue;
 import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -46,6 +47,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -238,24 +240,50 @@ public class Set extends SubCommand {
                 }
                 PlotBlock[] blocks;
                 try {
-                    blocks = (PlotBlock[]) Configuration.BLOCKLIST.parseString(args[1]);
-                } catch (final Exception e) {
-                    try {
-                        if (args.length < 2) {
-                            MainUtil.sendMessage(plr, C.NEED_BLOCK);
-                            return true;
-                        }
-                        blocks = new PlotBlock[] { new PlotBlock((short) BlockManager.manager.getBlockIdFromString(args[1]), (byte) 0) };
-                        for (PlotBlock block : blocks) {
-                            if (!BlockManager.manager.isBlockSolid(block)) {
-                                MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
-                                return false;
-                            }
-                        }
-                    } catch (final Exception e2) {
-                        MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK);
-                        return false;
+                    if (args.length < 2) {
+                        MainUtil.sendMessage(plr, C.NEED_BLOCK);
+                        return true;
                     }
+//                    if (!Configuration.BLOCKLIST.validateValue(args[1])) {
+//                        MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
+//                        return false;
+//                    }
+                    String[] split = args[1].split(",");
+                    blocks = Configuration.BLOCKLIST.parseString(args[1]);
+                    for (int i = 0; i < blocks.length; i++) {
+                        PlotBlock block = blocks[i];
+                        if (block == null) {
+                            MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, split[i]);
+                            String name;
+                            if (split[i].contains("%")) {
+                                name = split[i].split("%")[1];
+                            }
+                            else {
+                                name = split[i];
+                            }
+                            StringComparison<PlotBlock>.ComparisonResult match = BlockManager.manager.getClosestBlock(name);
+                            if (match != null) {
+                                name = BlockManager.manager.getClosestMatchingName(match.best);
+                                if (name != null) {
+                                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, name.toLowerCase());
+                                }
+                            }
+                            return false;
+                        }
+                        else if (!BlockManager.manager.isBlockSolid(block)) {
+                            MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                            return false;
+                        }
+                    }
+                    for (PlotBlock block : blocks) {
+                        if (!BlockManager.manager.isBlockSolid(block)) {
+                            MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                            return false;
+                        }
+                    }
+                } catch (final Exception e2) {
+                    MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
+                    return false;
                 }
                 if (MainUtil.runners.containsKey(plot)) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);

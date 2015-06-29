@@ -239,7 +239,7 @@ public abstract class PlotWorld {
          * Saving generator specific settings
          */
         for (final ConfigurationNode setting : settings) {
-            options.put(setting.getConstant(), setting.getType().parseObject(setting.getValue()));
+            options.put(setting.getConstant(), setting.getValue());
         }
         for (final String option : options.keySet()) {
             if (!config.contains(option)) {

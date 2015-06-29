@@ -3,11 +3,16 @@ package com.intellectualcrafters.plot.util;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.StringComparison.ComparisonResult;
 
 public abstract class BlockManager {
     public static BlockManager manager;
     
     public abstract boolean isBlockSolid(PlotBlock block);
+    
+    public abstract StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name);
+    
+    public abstract String getClosestMatchingName(PlotBlock block);
 
     public abstract String[] getBiomeList();
     

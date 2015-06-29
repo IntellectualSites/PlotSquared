@@ -102,7 +102,7 @@ public class FlagManager {
     public static boolean addFlag(AbstractFlag af, boolean reserved) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
         for (PlotWorld plotworld : PlotSquared.getPlotWorldObjects()) {
-            Flag flag = plotworld.DEFAULT_FLAGS.get(af.getKey());
+            Flag flag = ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(af.getKey());
             if (flag != null) {
                 flag.setKey(af);
             }
@@ -129,7 +129,7 @@ public class FlagManager {
             if (plotworld == null) {
                 return null;
             }
-            return plotworld.DEFAULT_FLAGS.get(id);
+            return ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(id);
         }
         return flag;
     }

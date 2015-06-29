@@ -92,13 +92,18 @@ public class DebugExec extends SubCommand {
                     ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
                 }
-                case "reset-modified": {
+                case "remove-flag": {
+                    if (args.length != 2) {
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec reset-flat <flag>");
+                        return false;
+                    }
+                    String flag = args[1];
                     for (Plot plot : PlotSquared.getPlots()) {
-                        if (FlagManager.getPlotFlag(plot, "modified-blocks") != null) {
-                            FlagManager.removePlotFlag(plot, "modified-blocks");
+                        if (FlagManager.getPlotFlag(plot, flag) != null) {
+                            FlagManager.removePlotFlag(plot, flag);
                         }
                     }
-                    return MainUtil.sendMessage(player, "Cleared modified flag!");    
+                    return MainUtil.sendMessage(player, "Cleared flag: " + flag);    
                 }
                 case "start-rgar": {
                     if (args.length != 2) {

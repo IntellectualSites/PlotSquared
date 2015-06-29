@@ -21,9 +21,11 @@
 package com.intellectualcrafters.plot.config;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.StringComparison;
 
 /**
  * Main Configuration Utility
@@ -32,29 +34,29 @@ import com.intellectualcrafters.plot.util.BlockManager;
  */
 @SuppressWarnings("unused")
 public class Configuration {
-    public static final SettingValue STRING = new SettingValue("STRING") {
+    public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {
         @Override
         public boolean validateValue(final String string) {
             return true;
         }
 
         @Override
-        public Object parseString(final String string) {
+        public String parseString(final String string) {
             return string;
         }
     };
-    public static final SettingValue STRINGLIST = new SettingValue("STRINGLIST") {
+    public static final SettingValue<String[]> STRINGLIST = new SettingValue<String[]>("STRINGLIST") {
         @Override
         public boolean validateValue(final String string) {
             return true;
         }
 
         @Override
-        public Object parseString(final String string) {
+        public String[] parseString(final String string) {
             return string.split(",");
         }
     };
-    public static final SettingValue INTEGER = new SettingValue("INTEGER") {
+    public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -66,11 +68,11 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public Integer parseString(final String string) {
             return Integer.parseInt(string);
         }
     };
-    public static final SettingValue BOOLEAN = new SettingValue("BOOLEAN") {
+    public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -82,11 +84,11 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public Boolean parseString(final String string) {
             return Boolean.parseBoolean(string);
         }
     };
-    public static final SettingValue DOUBLE = new SettingValue("DOUBLE") {
+    public static final SettingValue<Double> DOUBLE = new SettingValue<Double>("DOUBLE") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -98,11 +100,11 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public Double parseString(final String string) {
             return Double.parseDouble(string);
         }
     };
-    public static final SettingValue BIOME = new SettingValue("BIOME") {
+    public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -117,19 +119,14 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public String parseString(final String string) {
             if (validateValue(string)) {
                 return string.toUpperCase();
             }
             return "FOREST";
         }
-
-        @Override
-        public Object parseObject(final Object object) {
-            return object.toString();
-        }
     };
-    public static final SettingValue BLOCK = new SettingValue("BLOCK") {
+    public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -147,7 +144,7 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public PlotBlock parseString(final String string) {
             if (string.contains(":")) {
                 final String[] split = string.split(":");
                 return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
@@ -155,13 +152,8 @@ public class Configuration {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
         }
-
-        @Override
-        public Object parseObject(final Object object) {
-            return object;
-        }
     };
-    public static final SettingValue BLOCKLIST = new SettingValue("BLOCKLIST") {
+    public static final SettingValue<PlotBlock[]> BLOCKLIST = new SettingValue<PlotBlock[]>("BLOCKLIST") {
         @Override
         public boolean validateValue(final String string) {
             try {
@@ -171,12 +163,9 @@ public class Configuration {
                         Integer.parseInt(split[0]);
                         block = split[1];
                     }
-                    if (block.contains(":")) {
-                        final String[] split = block.split(":");
-                        Short.parseShort(split[0]);
-                        Short.parseShort(split[1]);
-                    } else {
-                        Short.parseShort(block);
+                    StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(block);
+                    if (value == null || value.match > 1) {
+                        return false;
                     }
                 }
                 return true;
@@ -186,33 +175,34 @@ public class Configuration {
         }
 
         @Override
-        public Object parseString(final String string) {
+        public PlotBlock[] parseString(final String string) {
             final String[] blocks = string.split(",");
             final ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
             final PlotBlock[] values = new PlotBlock[blocks.length];
             final int[] counts = new int[blocks.length];
             int min = 100;
             for (int i = 0; i < blocks.length; i++) {
-                if (blocks[i].contains("%")) {
-                    final String[] split = blocks[i].split("%");
-                    blocks[i] = split[1];
-                    final int value = Integer.parseInt(split[0]);
-                    counts[i] = value;
-                    if (value < min) {
-                        min = value;
+                try {
+                    if (blocks[i].contains("%")) {
+                        final String[] split = blocks[i].split("%");
+                        blocks[i] = split[1];
+                        final int value = Integer.parseInt(split[0]);
+                        counts[i] = value;
+                        if (value < min) {
+                            min = value;
+                        }
+                    } else {
+                        counts[i] = 1;
+                        if (1 < min) {
+                            min = 1;
+                        }
                     }
-                } else {
-                    counts[i] = 1;
-                    if (1 < min) {
-                        min = 1;
+                    StringComparison<PlotBlock>.ComparisonResult result = BlockManager.manager.getClosestBlock(blocks[i]);
+                    if (result != null && result.match < 2) {
+                        values[i] = result.best;
                     }
                 }
-                if (blocks[i].contains(":")) {
-                    final String[] split = blocks[i].split(":");
-                    values[i] = new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-                } else {
-                    values[i] = new PlotBlock(Short.parseShort(blocks[i]), (byte) 0);
-                }
+                catch (Exception e) {}
             }
             final int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {
@@ -222,11 +212,6 @@ public class Configuration {
                 }
             }
             return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
-        }
-
-        @Override
-        public Object parseObject(final Object object) {
-            return object;
         }
     };
 
@@ -248,7 +233,7 @@ public class Configuration {
     /**
      * Create your own SettingValue object to make the management of plotworld configuration easier
      */
-    public static abstract class SettingValue {
+    public static abstract class SettingValue<T> {
         private final String type;
 
         public SettingValue(final String type) {
@@ -259,11 +244,7 @@ public class Configuration {
             return this.type;
         }
 
-        public Object parseObject(final Object object) {
-            return object;
-        }
-
-        public abstract Object parseString(final String string);
+        public abstract T parseString(final String string);
 
         public abstract boolean validateValue(final String string);
     }

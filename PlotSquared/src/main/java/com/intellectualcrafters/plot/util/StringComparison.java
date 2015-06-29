@@ -31,11 +31,11 @@ import org.apache.commons.lang.StringUtils;
  * @author Citymonstret
  */
 @SuppressWarnings("unused")
-public class StringComparison {
+public class StringComparison<T> {
     /**
      * Best Match
      */
-    private String bestMatch;
+    private T bestMatch;
     /**
      * Match Value
      * 
@@ -45,7 +45,7 @@ public class StringComparison {
     /**
      * The actual object
      */
-    private Object bestMatchObject;
+    private T bestMatchObject;
 
     /**
      * Constructor
@@ -53,15 +53,24 @@ public class StringComparison {
      * @param input   Input Base Value
      * @param objects Objects to compare
      */
-    public StringComparison(String input, final Object[] objects) {
+    public StringComparison(String input, final T[] objects) {
+        init(input, objects);
+    }
+    
+    /**
+     * You should call init(...) when you are ready to get a String comparison value
+     */
+    public StringComparison() {}
+    
+    public void init(String input, final T[] objects) {
         int c;
-        this.bestMatch = objects[0].toString();
+        this.bestMatch = objects[0];
         this.bestMatchObject = objects[0];
         input = input.toLowerCase();
-        for (final Object o : objects) {
+        for (final T o : objects) {
             if ((c = compare(input, o.toString().toLowerCase())) < this.match) {
                 this.match = c;
-                this.bestMatch = o.toString();
+                this.bestMatch = o;
                 this.bestMatchObject = o;
             }
         }
@@ -93,7 +102,7 @@ public class StringComparison {
      *
      * @return ArrayList
      */
-    public static ArrayList wLetterPair(final String s) {
+    public static ArrayList<String> wLetterPair(final String s) {
         final ArrayList<String> aPairs = new ArrayList<>();
         final String[] wo = s.split("\\s");
         for (final String aWo : wo) {
@@ -124,7 +133,7 @@ public class StringComparison {
      *
      * @return match object
      */
-    public Object getMatchObject() {
+    public T getMatchObject() {
         return this.bestMatchObject;
     }
 
@@ -134,7 +143,7 @@ public class StringComparison {
      * @return match value
      */
     public String getBestMatch() {
-        return this.bestMatch;
+        return this.bestMatch.toString();
     }
 
     /**
@@ -142,7 +151,16 @@ public class StringComparison {
      *
      * @return object[] containing: double, String
      */
-    public Object[] getBestMatchAdvanced() {
-        return new Object[] { this.match, this.bestMatch };
+    public ComparisonResult getBestMatchAdvanced() {
+        return new ComparisonResult(this.match, this.bestMatch);
+    }
+    
+    public class ComparisonResult {
+        public T best;
+        public final double match;
+        public ComparisonResult(double match, T best) {
+            this.match = match;
+            this.best = best;
+        }
     }
 }

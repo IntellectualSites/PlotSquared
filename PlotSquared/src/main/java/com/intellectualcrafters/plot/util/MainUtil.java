@@ -1569,7 +1569,6 @@ public class MainUtil {
         for (Entry<UUID, Integer> entry : rating.entrySet()) {
             val += entry.getValue();
         }
-        System.out.print(val);
         return val / (double) rating.size();
     }
 }

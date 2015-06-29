@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -18,6 +19,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sandstone;
+import org.bukkit.material.Step;
+import org.bukkit.material.Tree;
+import org.bukkit.material.Wool;
 
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -27,6 +33,8 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringComparison.ComparisonResult;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
@@ -317,10 +325,58 @@ public class BukkitUtil extends BlockManager {
     public boolean isBlockSolid(PlotBlock block) {
         try {
             Material material = Material.getMaterial(block.id);
-            return material.isBlock() && material.isSolid() && material.isOccluding() && !material.hasGravity();
+            if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
+                Class<? extends MaterialData> data = material.getData();
+                if (data.equals(MaterialData.class) || data.equals(Tree.class) || data.equals(Sandstone.class) || data.equals(Wool.class) || data.equals(Step.class)) {
+                    return true;
+                }
+            }
+            return false;
         }
         catch (Exception e) {
             return false;
         }
+    }
+    
+    @Override
+    public String getClosestMatchingName(PlotBlock block) {
+        try {
+            return Material.getMaterial(block.id).name();
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
+    @Override
+    public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
+        try {
+            double match;
+            short id;
+            byte data;
+            String[] split = name.split(":");
+            if (split.length == 2) {
+                data = Byte.parseByte(split[1]);
+                name = split[0];
+            }
+            else {
+                data = 0;
+            }
+            if (StringUtils.isNumeric(split[0])) {
+                id = Short.parseShort(split[0]);
+                match = 0;
+            }
+            else {
+                StringComparison<Material>.ComparisonResult comparison = new StringComparison<Material>(name, Material.values()).getBestMatchAdvanced();
+                match = comparison.match;
+                id = (short) comparison.best.getId(); 
+            }
+            PlotBlock block = new PlotBlock(id, data);
+            StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
+            return outer.new ComparisonResult(match, block);
+            
+        }
+        catch (Exception e) {}
+        return null;
     }
 }

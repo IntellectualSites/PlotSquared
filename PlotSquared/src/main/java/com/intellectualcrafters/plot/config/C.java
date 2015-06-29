@@ -293,7 +293,6 @@ public enum C {
     /*
      * Block List
      */
-    NOT_VALID_BLOCK_LIST_HEADER("$2That's not a valid block. Valid blocks are:\\n", "Block List"),
     BLOCK_LIST_ITEM(" $1%mat%$2,", "Block List"),
     BLOCK_LIST_SEPARATER("$1,$2 ", "Block List"),
     /*
@@ -322,7 +321,8 @@ public enum C {
      * Invalid
      */
     NOT_VALID_DATA("$2That's not a valid data id.", "Invalid"),
-    NOT_VALID_BLOCK("$2That's not a valid block.", "Invalid"),
+    NOT_VALID_BLOCK("$2That's not a valid block: %s", "Invalid"),
+    NOT_ALLOWED_BLOCK("$2That block is not allowed: %s", "Invalid"),
     NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
     PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),

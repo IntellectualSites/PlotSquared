@@ -831,10 +831,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Material type = block.getType();
-        if (true || type.isSolid() && type.isBlock() && type.isOccluding()) {
+        if (action == Action.RIGHT_CLICK_BLOCK && type.isSolid() && type.isBlock() && type.isOccluding() && !type.isBurnable()) {
             BlockState state = block.getState();
-            MaterialData data = state.getData();
-            if (data instanceof Tree || data instanceof Wool || state.getData().getClass().equals(MaterialData.class)) {
+            if (state.getData().getClass().equals(MaterialData.class)) {
                 Class<? extends BlockState> clazz = state.getClass();
                 if (clazz.getSimpleName().equals("CraftBlockState")) {
                     return;
