@@ -232,6 +232,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
             MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
+            player.teleport(player.getWorld().getSpawnLocation());
         }
     }
 
