@@ -264,7 +264,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
         ExpireManager.dates.put(uuid, System.currentTimeMillis());
-        if (PlotSquared.worldEdit != null) {
+        if (PlotSquared.getInstance().worldEdit != null) {
             if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                 WEManager.bypass.add(pp.getName());
             }
@@ -463,7 +463,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
-        if (PlotSquared.worldEdit != null) {
+        if (PlotSquared.getInstance().worldEdit != null) {
             if (!Permissions.hasPermission(player, "plots.worldedit.bypass")) {
                 WEManager.bypass.remove(player.getName());
             }
@@ -1126,11 +1126,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         ExpireManager.dates.put(pp.getUUID(), System.currentTimeMillis());
         EventUtil.unregisterPlayer(pp);
-        if (PlotSquared.worldEdit != null) {
+        if (PlotSquared.getInstance().worldEdit != null) {
             WEManager.bypass.remove(pp.getName());
         }
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            final Collection<Plot> plots = PlotSquared.getPlots(pp.getName()).values();
+            final Collection<Plot> plots = PlotSquared.getInstance().getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
                 final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
                 final PlotManager manager = PlotSquared.getInstance().getPlotManager(plot.world);

@@ -36,12 +36,12 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PlotSquared.config.load(PlotSquared.configFile);
+            PlotSquared.getInstance().config.load(PlotSquared.getInstance().configFile);
             PlotSquared.getInstance().setupConfig();
             C.setupTranslations();
             for (final String pw : PlotSquared.getInstance().getPlotWorlds()) {
                 final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(pw);
-                plotworld.loadDefaultConfiguration(PlotSquared.config.getConfigurationSection("worlds." + pw));
+                plotworld.loadDefaultConfiguration(PlotSquared.getInstance().config.getConfigurationSection("worlds." + pw));
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {

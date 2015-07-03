@@ -93,7 +93,7 @@ public class WEListener implements Listener {
     }
     
     public boolean checkSelection(Player p, PlotPlayer pp, int modifier, long max, Cancellable e) {
-        final Selection selection = PlotSquared.worldEdit.getSelection(p);
+        final Selection selection = PlotSquared.getInstance().worldEdit.getSelection(p);
         if (selection == null) {
             return true;
         }

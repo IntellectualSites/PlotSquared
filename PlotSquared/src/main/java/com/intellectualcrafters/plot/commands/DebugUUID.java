@@ -256,19 +256,19 @@ public class DebugUUID extends SubCommand {
         }
         
         if (newWrapper instanceof OfflineUUIDWrapper) {
-            PlotSquared.config.set("UUID.force-lowercase", false);
-            PlotSquared.config.set("UUID.offline", true);
+            PlotSquared.getInstance().config.set("UUID.force-lowercase", false);
+            PlotSquared.getInstance().config.set("UUID.offline", true);
         }
         else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
-            PlotSquared.config.set("UUID.force-lowercase", true);
-            PlotSquared.config.set("UUID.offline", true);
+            PlotSquared.getInstance().config.set("UUID.force-lowercase", true);
+            PlotSquared.getInstance().config.set("UUID.offline", true);
         }
         else if (newWrapper instanceof DefaultUUIDWrapper) {
-            PlotSquared.config.set("UUID.force-lowercase", false);
-            PlotSquared.config.set("UUID.offline", false);
+            PlotSquared.getInstance().config.set("UUID.force-lowercase", false);
+            PlotSquared.getInstance().config.set("UUID.offline", false);
         }
         try {
-            PlotSquared.config.save(PlotSquared.configFile);
+            PlotSquared.getInstance().config.save(PlotSquared.getInstance().configFile);
         }
         catch (Exception e) {
             MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");

@@ -130,16 +130,16 @@ public class Cluster extends SubCommand {
                 }
                 PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
                 if (plotworld == null) {
-                    PlotSquared.config.createSection("worlds." + world);
+                    PlotSquared.getInstance().config.createSection("worlds." + world);
                     PlotSquared.getInstance().loadWorld(world, null);
                 }
                 else {
-                    final String gen_string = PlotSquared.config.getString("worlds." + world + "." + "generator.plugin");
+                    final String gen_string = PlotSquared.getInstance().config.getString("worlds." + world + "." + "generator.plugin");
                     PlotGenerator generator;
                     if (gen_string == null) {
                         generator = new HybridGen(world);
                     } else {
-                        generator = (PlotGenerator) PlotSquared.IMP.getGenerator(world, gen_string);
+                        generator = (PlotGenerator) PlotSquared.getInstance().IMP.getGenerator(world, gen_string);
                     }
                     new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }

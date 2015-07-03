@@ -33,7 +33,7 @@ public class WorldEvents implements Listener {
             //
             PlotSquared.getInstance().loadWorld(name, (PlotGenerator) gen);
         } else {
-            if (PlotSquared.config.contains("worlds." + name)) {
+            if (PlotSquared.getInstance().config.contains("worlds." + name)) {
                 PlotSquared.getInstance().loadWorld(name, null);
             }
         }

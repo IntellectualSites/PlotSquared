@@ -92,7 +92,7 @@ public class TP extends SubCommand {
             }
             return null;
         }
-        for (final Plot p : PlotSquared.getPlots(world).values()) {
+        for (final Plot p : PlotSquared.getInstance().getPlots(world).values()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }

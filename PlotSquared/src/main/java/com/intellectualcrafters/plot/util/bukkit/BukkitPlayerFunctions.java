@@ -85,8 +85,8 @@ public class BukkitPlayerFunctions {
     }
 
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
-        final Plot plot1 = PlotSquared.getPlots(world).get(pos1);
-        final Plot plot2 = PlotSquared.getPlots(world).get(pos2);
+        final Plot plot1 = PlotSquared.getInstance().getPlots(world).get(pos1);
+        final Plot plot2 = PlotSquared.getInstance().getPlots(world).get(pos2);
         if (plot1 != null) {
             pos1 = MainUtil.getBottomPlot(plot1).id;
         }
@@ -118,8 +118,8 @@ public class BukkitPlayerFunctions {
         if (id == null) {
             return null;
         }
-        if (PlotSquared.getPlots(world).containsKey(id)) {
-            return PlotSquared.getPlots(world).get(id);
+        if (PlotSquared.getInstance().getPlots(world).containsKey(id)) {
+            return PlotSquared.getInstance().getPlots(world).get(id);
         }
         return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
     }

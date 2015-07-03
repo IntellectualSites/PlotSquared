@@ -41,14 +41,15 @@ public class PlotSquared implements PlotSquaredMain {
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     public WorldEditPlugin worldEdit = null;
+    public File configFile;
+    public YamlConfiguration config;
+    public YamlConfiguration storage;
+    public IPlotMain IMP = null; // Specific implementation of PlotSquared
+    public TaskManager TASK;
     private File styleFile;
     private YamlConfiguration style;
-    private File configFile;
-    private YamlConfiguration config;
     private File storageFile;
-    private YamlConfiguration storage;
     private File FILE = null; // This file
-    private IPlotMain IMP = null; // Specific implementation of PlotSquared
     private String VERSION = null;
     private boolean LOADING_WORLD = false;
     private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
@@ -77,7 +78,7 @@ public class PlotSquared implements PlotSquaredMain {
         if (getJavaVersion() < 1.8) {
             log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
         }
-        TaskManager TASK = IMP.getTaskManager();
+        this.TASK = IMP.getTaskManager();
         if (C.ENABLED.s().length() > 0) {
             log(C.ENABLED.s());
         }
@@ -405,7 +406,7 @@ public class PlotSquared implements PlotSquaredMain {
         final PlotGenerator plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
-        if (!LOADING_WORLD && (generator != null) && (generator instanceof PlotGenerator)) {
+        if (!LOADING_WORLD && (generator != null)) {
             plotGenerator = generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
@@ -487,99 +488,6 @@ public class PlotSquared implements PlotSquaredMain {
                 gen_class.init(plotWorld);
             }
         }
-    }
-
-    @Override
-    public boolean setupPlotWorld(final String world, final String id) {
-        if ((id != null) && (id.length() > 0)) {
-            // save configuration
-            final String[] split = id.split(",");
-            final HybridPlotWorld plotworld = new HybridPlotWorld(world);
-            final int width = SquarePlotWorld.PLOT_WIDTH_DEFAULT;
-            final int gap = SquarePlotWorld.ROAD_WIDTH_DEFAULT;
-            final int height = ClassicPlotWorld.PLOT_HEIGHT_DEFAULT;
-            final PlotBlock[] floor = ClassicPlotWorld.TOP_BLOCK_DEFAULT;
-            final PlotBlock[] main = ClassicPlotWorld.MAIN_BLOCK_DEFAULT;
-            final PlotBlock wall = ClassicPlotWorld.WALL_FILLING_DEFAULT;
-            final PlotBlock border = ClassicPlotWorld.WALL_BLOCK_DEFAULT;
-            for (final String element : split) {
-                final String[] pair = element.split("=");
-                if (pair.length != 2) {
-                    log("&cNo value provided for: &7" + element);
-                    return false;
-                }
-                final String key = pair[0].toLowerCase();
-                final String value = pair[1];
-                try {
-                    switch (key) {
-                        case "s":
-                        case "size": {
-                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
-                            break;
-                        }
-                        case "g":
-                        case "gap": {
-                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
-                            break;
-                        }
-                        case "h":
-                        case "height": {
-                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
-                            break;
-                        }
-                        case "f":
-                        case "floor": {
-                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
-                            break;
-                        }
-                        case "m":
-                        case "main": {
-                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
-                            break;
-                        }
-                        case "w":
-                        case "wall": {
-                            ClassicPlotWorld.WALL_FILLING_DEFAULT = Configuration.BLOCK.parseString(value);
-                            break;
-                        }
-                        case "b":
-                        case "border": {
-                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = Configuration.BLOCK.parseString(value);
-                            break;
-                        }
-                        default: {
-                            log("&cKey not found: &7" + element);
-                            return false;
-                        }
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    log("&cInvalid value: &7" + value + " in arg " + element);
-                    return false;
-                }
-            }
-            try {
-                final String root = "worlds." + world;
-                if (!config.contains(root)) {
-                    config.createSection(root);
-                }
-                plotworld.saveConfiguration(config.getConfigurationSection(root));
-                ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.WALL_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.TOP_BLOCK_DEFAULT = floor;
-                ClassicPlotWorld.MAIN_BLOCK_DEFAULT = main;
-                ClassicPlotWorld.WALL_BLOCK_DEFAULT = border;
-                ClassicPlotWorld.WALL_FILLING_DEFAULT = wall;
-                SquarePlotWorld.PLOT_WIDTH_DEFAULT = width;
-                SquarePlotWorld.ROAD_WIDTH_DEFAULT = gap;
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
     }
 
     @Override
@@ -782,7 +690,6 @@ public class PlotSquared implements PlotSquaredMain {
         } else {
             log(C.PREFIX + "&cNo storage type is set!");
             IMP.disable();
-            return;
         }
     }
 

@@ -120,7 +120,7 @@ public class Trim extends SubCommand {
                         empty.addAll(chunks);
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
-                        PlotSquared.TASK.cancelTask(Trim.TASK_ID);
+                        PlotSquared.getInstance().TASK.cancelTask(Trim.TASK_ID);
                         return;
                     }
                     final Plot plot = plots.get(0);

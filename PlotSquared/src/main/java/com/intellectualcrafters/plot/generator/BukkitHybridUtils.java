@@ -233,7 +233,7 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 int index = chunks.size() - 1;
                 if (index == -1) {
-                    PlotSquared.TASK.cancelTask(TaskManager.tasks.get(currentIndex));
+                    PlotSquared.getInstance().TASK.cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.runTaskAsync(run);
                     return;
                 }

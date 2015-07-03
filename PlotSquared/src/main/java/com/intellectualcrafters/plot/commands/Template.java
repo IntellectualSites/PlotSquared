@@ -48,12 +48,12 @@ public class Template extends SubCommand {
     public static boolean extractAllFiles(String world, String template) {
         byte[] buffer = new byte[2048];
         try {
-            File folder = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
+            File folder = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "templates");
             if (!folder.exists()) {
                 return false;
             }
             File input = new File(folder + File.separator + template + ".template");
-            File output = PlotSquared.IMP.getDirectory();
+            File output = PlotSquared.getInstance().IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -81,7 +81,7 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotWorld plotworld) {
-        ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds." + plotworld.worldname);
+        ConfigurationSection section = PlotSquared.getInstance().config.getConfigurationSection("worlds." + plotworld.worldname);
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotworld);
         if (generator != null) {
@@ -94,7 +94,7 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(final String world, Set<FileBytes> files) throws IOException {
-        File output = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates");
+        File output = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "templates");
         output.mkdirs();
         FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
         ZipOutputStream zos = new ZipOutputStream(fos);
@@ -140,12 +140,12 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] +".template");
                     return false;
                 }
-                File worldFile = new File(PlotSquared.IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
+                File worldFile = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PlotSquared.config.set("worlds." + world, worldConfig.get(""));
+                PlotSquared.getInstance().config.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PlotSquared.config.save(PlotSquared.configFile);
-                    PlotSquared.config.load(PlotSquared.configFile);
+                    PlotSquared.getInstance().config.save(PlotSquared.getInstance().configFile);
+                    PlotSquared.getInstance().config.load(PlotSquared.getInstance().configFile);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

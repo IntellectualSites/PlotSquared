@@ -814,8 +814,8 @@ public class SQLManager implements AbstractDB {
         Statement stmt = null;
         try {
             Set<String> worlds = new HashSet<>();
-            if (PlotSquared.config.contains("worlds")) {
-                worlds = PlotSquared.config.getConfigurationSection("worlds").getKeys(false);
+            if (PlotSquared.getInstance().config.contains("worlds")) {
+                worlds = PlotSquared.getInstance().config.getConfigurationSection("worlds").getKeys(false);
             }
             final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
             final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
@@ -1686,8 +1686,8 @@ public class SQLManager implements AbstractDB {
         Statement stmt = null;
         try {
             Set<String> worlds = new HashSet<>();
-            if (PlotSquared.config.contains("worlds")) {
-                worlds = PlotSquared.config.getConfigurationSection("worlds").getKeys(false);
+            if (PlotSquared.getInstance().config.contains("worlds")) {
+                worlds = PlotSquared.getInstance().config.getConfigurationSection("worlds").getKeys(false);
             }
             final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
             final HashMap<String, Integer> noExist = new HashMap<String, Integer>();

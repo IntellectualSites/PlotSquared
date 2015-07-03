@@ -117,7 +117,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.PlotSquared#config
      */
     public YamlConfiguration getConfig() {
-        return PlotSquared.config;
+        return PlotSquared.getInstance().config;
     }
 
     /**
@@ -126,7 +126,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.PlotSquared#storage
      */
     public YamlConfiguration getStorage() {
-        return PlotSquared.storage;
+        return PlotSquared.getInstance().storage;
     }
 
     /**
@@ -138,7 +138,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.PlotSquared
      */
     public PlotSquared getMain() {
-        return PlotSquared.THIS;
+        return PlotSquared.getInstance();
     }
 
     /**
@@ -612,7 +612,7 @@ import java.util.Set;
      * @see com.intellectualcrafters.plot.PlotSquared
      */
     public PlotSquared getPlotSquared() {
-        return PlotSquared.THIS;
+        return PlotSquared.getInstance();
     }
 
     /**
