@@ -20,19 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public class MusicSubcommand extends SubCommand {
@@ -51,17 +49,24 @@ public class MusicSubcommand extends SubCommand {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
-        final org.bukkit.inventory.Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.RED + "Plot Jukebox");
-        for (final PlotPlusListener.RecordMeta meta : PlotPlusListener.RecordMeta.metaList) {
-            final ItemStack stack = new ItemStack(meta.getMaterial());
-            final ItemMeta itemMeta = stack.getItemMeta();
-            itemMeta.setDisplayName(ChatColor.GOLD + meta.toString());
-            itemMeta.setLore(Arrays.asList(ChatColor.GRAY + "Click to play the record"));
-            stack.setItemMeta(itemMeta);
-            inventory.addItem(stack);
+        PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
+            public boolean onClick(int index) {
+                PlotItemStack item = getItem(index);
+                FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), item.id));
+                PlotListener.manager.plotEntry(player, plot);
+                close();
+                return false;
+            }
+        };
+        int index = 0;
+        for (int i = 2256; i < 2268; i++) {
+            String name = "&r&6" + BlockManager.manager.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
+            String[] lore = {"&r&aClick to play!"};
+            PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
+            inv.setItem(index, item);
+            index++;
         }
-        // FIXME unchecked casting
-        ((BukkitPlayer) player).player.openInventory(inventory);
+        inv.openInventory();
         return true;
     }
 }

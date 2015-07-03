@@ -78,6 +78,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                System.out.print(1);
                 return null;
             }
             return getPlot(player.getLocation());
@@ -87,7 +88,10 @@ public class MainUtil {
         if (player != null) {
             worldname = player.getLocation().getWorld();
         }
+        System.out.print(arg);
         String[] split = arg.split(";|,");
+        System.out.print(split[0]);
+        System.out.print(split[1]);
         if (split.length == 3) {
             worldname = split[0];
             id = PlotId.fromString(split[1] + ";" + split[2]);
@@ -122,12 +126,15 @@ public class MainUtil {
         }
         if (worldname == null || !PlotSquared.isPlotWorld(worldname)) {
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+            System.out.print("INVALID WORLD: ");
             return null;
         }
         if (id == null) {
+            System.out.print("INVALID ID: ");
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID); 
             return null;
         }
+        System.out.print("VALID PLOT: ");
         return getPlot(worldname, id);
     }
     
@@ -1566,9 +1573,55 @@ public class MainUtil {
             return 0;
         }
         double val = 0;
+        int size = 0;
         for (Entry<UUID, Integer> entry : rating.entrySet()) {
-            val += entry.getValue();
+            int current = entry.getValue();
+            if (Settings.RATING_CATEGORIES == null || Settings.RATING_CATEGORIES.size() == 0) {
+                val += current;
+                size++;
+            }
+            else {
+                for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
+                    val += (current % 10) - 1;
+                    current /= 10;
+                    size++;
+                }
+            }
         }
-        return val / (double) rating.size();
+        return val / (double) size;
+    }
+    
+    public static double[] getAverageRatings(Plot plot) {
+        HashMap<UUID, Integer> rating;
+        if (plot.settings.ratings != null) {
+            rating = plot.settings.ratings;
+        }
+        else {
+            rating = DBFunc.getRatings(plot);
+        }
+        int size = 1;
+        if (Settings.RATING_CATEGORIES != null) {
+            size = Math.max(1, Settings.RATING_CATEGORIES.size());
+        }
+        double[] ratings = new double[size];
+        if (rating == null || rating.size() == 0) {
+            return ratings;
+        }
+        for (Entry<UUID, Integer> entry : rating.entrySet()) {
+            int current = entry.getValue();
+            if (Settings.RATING_CATEGORIES == null || Settings.RATING_CATEGORIES.size() == 0) {
+                ratings[0] += current;
+            }
+            else {
+                for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
+                    ratings[i] += (current % 10) - 1;
+                    current /= 10;
+                }
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            ratings[i] /= (double) rating.size();
+        }
+        return ratings;
     }
 }

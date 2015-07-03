@@ -350,7 +350,7 @@ public enum C {
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%$1/$210$1\n" + "$1Trusted: $2%trusted%$1\n" + "$1Members: $2%members%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
+    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%\n" + "$1Trusted: $2%trusted%$1\n" + "$1Members: $2%members%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
     PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"),

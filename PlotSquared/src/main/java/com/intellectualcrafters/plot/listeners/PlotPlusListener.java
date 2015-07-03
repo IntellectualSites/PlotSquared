@@ -22,10 +22,8 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -40,18 +38,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -101,58 +95,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
                 }
             }
         }, 0l, 20l);
-    }
-
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent event) {
-        final Player player = (Player) event.getWhoClicked();
-        Inventory inv = event.getInventory();
-        if (inv == null) {
-            return;
-        }
-        if (!event.getInventory().getName().equals(ChatColor.RED + "Plot Jukebox")) {
-            return;
-        }
-        event.setCancelled(true);
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (plot == null) {
-            MainUtil.sendMessage(pp, C.NOT_IN_PLOT);
-            return;
-        }
-        final UUID uuid = pp.getUUID();
-        if (!plot.isAdded(uuid)) {
-            MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
-            return;
-        }
-        final Set<Player> plotPlayers = new HashSet<>();
-        for (final Player p : player.getWorld().getPlayers()) {
-            final Plot newPlot = MainUtil.getPlot(BukkitUtil.getLocation(player));
-            if (plot.equals(newPlot)) {
-                plotPlayers.add(p);
-            }
-        }
-        RecordMeta meta = null;
-        for (final RecordMeta m : RecordMeta.metaList) {
-            ItemStack item = event.getCurrentItem();
-            if (item != null && m.getMaterial() == item.getType()) {
-                meta = m;
-                break;
-            }
-        }
-        if (meta == null) {
-            return;
-        }
-        if (meta != null) {
-            int id = meta.getMaterial().getId();
-            FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
-            player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
-            for (final Player p : plotPlayers) {
-                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
-                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, id);
-                APlotListener.manager.plotEntry(BukkitUtil.getPlayer(p), plot);
-            }
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

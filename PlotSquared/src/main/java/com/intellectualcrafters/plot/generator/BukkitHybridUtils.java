@@ -10,6 +10,7 @@ import java.util.Random;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -54,8 +55,7 @@ public class BukkitHybridUtils extends HybridUtils {
         return count / array.length; 
     }
     
-    public double getSD(double[] array) {
-        double av = getMean(array);
+    public double getSD(double[] array, double av) {
         double sd = 0;
         for (int i=0; i<array.length;i++)
         {
@@ -64,8 +64,7 @@ public class BukkitHybridUtils extends HybridUtils {
         return Math.sqrt(sd/array.length);
     }
     
-    public double getSD(int[] array) {
-        double av = getMean(array);
+    public double getSD(int[] array, double av) {
         double sd = 0;
         for (int i=0; i<array.length;i++)
         {
@@ -103,41 +102,136 @@ public class BukkitHybridUtils extends HybridUtils {
             return;
         }
         final BiomeGrid base = new BiomeGrid() { @Override public void setBiome(int a, int b, Biome c) {} @Override public Biome getBiome(int a, int b) {return null;}};
-        ClassicPlotWorld cpw = (ClassicPlotWorld) PlotSquared.getPlotWorld(plot.world);
-        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id).add(1, 0, 1);
-        final int bx = bot.getX() >> 4;
-        final int bz = bot.getZ() >> 4;
-        final int tx = top.getX() >> 4;
-        final int tz = top.getZ() >> 4;
+        Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        final int bx = bot.getX();
+        final int bz = bot.getZ();
+        final int tx = top.getX();
+        final int tz = top.getZ();
+        final int cbx = bx >> 4;
+        final int cbz = bz >> 4;
+        final int ctx = tx >> 4;
+        final int ctz = tz >> 4;
         final Random r = new Random();
         AugmentedPopulator.initCache();
         
-        final PlotAnalysis analysis = new PlotAnalysis();
+        final int width = tx - bx + 1;
+        final int length = tz - bz + 1;
         
-        int num_chunks = (tx - bx + 1) * (tz - bz + 1);
-        
-        short[][][] oldblocks = new short[256][top.getX() - bot.getX() + 1][top.getZ() - bot.getZ() + 1];
-        short[][][] newblocks = new short[256][top.getX() - bot.getX() + 1][top.getZ() - bot.getZ() + 1];
+        final short[][][] oldblocks = new short[256][width][length];
+        final short[][][] newblocks = new short[256][width][length];
         
         final List<Chunk> chunks = new ArrayList<>();
+        final List<Chunk> processed_chunks = new ArrayList<>();
         
-        for (int X = bx; X <= tx; X++) {
-            for (int Z = bz; Z <= tz; Z++) {
+        for (int X = cbx; X <= ctx; X++) {
+            for (int Z = cbz; Z <= ctz; Z++) {
                 Chunk chunk = world.getChunkAt(X, Z);
                 chunks.add(chunk);
             }
         }
         
-        final double[] changes_sd = new double[num_chunks];
-        final double[] rotations_sd = new double[num_chunks];
-        final double[] data_sd = new double[num_chunks];
-        final double[] variety_sd = new double[num_chunks];
-        final double[] uniformity_sd = new double[num_chunks];
-        final double[] verticies_sd = new double[num_chunks];
-        final double[] height_sd = new double[num_chunks];
+        final Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                int t = 0;
+                for (Chunk chunk : processed_chunks) {
+                    short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
+                    int X = chunk.getX();
+                    int Z = chunk.getZ();
+                    int xb = ((X - cbx) << 4) - bx;
+                    int zb = ((Z - cbz) << 4) - bz;
+                    for (int i = 0; i < result.length; i++) {
+                        if (result[i] == null) {
+                            for (int j = 0; j < 4096; j++) {
+                                int x = AugmentedPopulator.x_loc[i][j] + xb;
+                                if (x < 0 || x >= width) continue;
+                                int z = AugmentedPopulator.z_loc[i][j] + zb;
+                                if (z < 0 || z >= length) continue;
+                                int y = AugmentedPopulator.y_loc[i][j];
+                                oldblocks[y][x][z] = 0;
+                            }
+                            continue;
+                        }
+                        for (int j = 0; j < result[i].length; j++) {
+                            int x = AugmentedPopulator.x_loc[i][j] + xb;
+                            if (x < 0 || x >= width) continue;
+                            int z = AugmentedPopulator.z_loc[i][j] + zb;
+                            if (z < 0 || z >= length) continue;
+                            int y = AugmentedPopulator.y_loc[i][j];
+                            oldblocks[y][x][z] = result[i][j];
+                        }
+                    }
+                }
+                
+                int size = width * length;
+                int[] changes = new int[size];
+                int[] faces = new int[size];
+                int[] data = new int[size];
+                int[] air = new int[size];
+                int[] variety = new int[size];
+                
+                int i = 0;
+                for (int x = 0; x < width;x++) {
+                    for (int z = 0; z < length;z++) {
+                        HashSet<Short> types = new HashSet<>();
+                        for (int y = 0; y < 256; y++) {
+                            short old = oldblocks[y][x][z];
+                            short now = newblocks[y][x][z];
+                            if (old != now) {
+                                t++;
+                                changes[i]++;
+                            }
+                            if (now == 0) {
+                                air[i]++;
+                            }
+                            else {
+                                // check verticies
+                                // modifications_adjacent
+                                
+                                if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
+                                    if (oldblocks[y - 1][x][z] == 0) faces[i]++;
+                                    if (oldblocks[y][x - 1][z] == 0) faces[i]++;
+                                    if (oldblocks[y][x][z - 1] == 0) faces[i]++;
+                                    if (oldblocks[y + 1][x][z] == 0) faces[i]++;
+                                    if (oldblocks[y][x + 1][z] == 0) faces[i]++;
+                                    if (oldblocks[y][x][z + 1] == 0) faces[i]++;
+                                }
+                                
+                                Material material = Material.getMaterial(now);
+                                Class<? extends MaterialData> md = material.getData();
+                                if (md.equals(Directional.class)) {
+                                    data[i] += 8;
+                                }
+                                else if (!md.equals(MaterialData.class)) {
+                                    data[i]++;
+                                }
+                                types.add(now);
+                            }
+                        }
+                        variety[i] = types.size();
+                        i++;
+                    }
+                }
+                
+                // analyze plot
+                // put in analysis obj
+                 
+                // run whenDone
+                PlotAnalysis analysis = new PlotAnalysis();
+                analysis.changes = getMean(changes);
+                analysis.faces = getMean(faces);
+                analysis.data = getMean(data);
+                analysis.air = getMean(air);
+                analysis.variety = getMean(variety);
+                analysis.complexity = getSD(changes, analysis.changes) + getSD(faces, analysis.faces) + getSD(data, analysis.data) + getSD(air, analysis.air) + getSD(variety, analysis.variety);
+                whenDone.value = analysis;
+                whenDone.run();
+            }
+        };
         
-        final HashSet<Short> variety = new HashSet<>();
+        System.gc();
+        AugmentedPopulator.initCache();
         
         TaskManager.index.increment();
         final Integer currentIndex = TaskManager.index.toInteger();
@@ -146,117 +240,41 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 int index = chunks.size() - 1;
                 if (index == -1) {
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override
-                        public void run() {
-                            PlotSquared.TASK.cancelTask(TaskManager.tasks.get(currentIndex));
-                            analysis.variety_total = variety.size();
-                            analysis.changes_sd = getSD(changes_sd);
-                            analysis.rotations_sd = getSD(rotations_sd);
-                            analysis.data_sd = getSD(data_sd);
-                            analysis.uniformity_sd = getSD(uniformity_sd);
-                            analysis.variety_sd = getSD(variety_sd);
-                            analysis.verticies_sd = getSD(verticies_sd);
-                            analysis.height_sd = getSD(height_sd);
-                            whenDone.value = analysis;
-                            whenDone.run();
-                        }
-                    });
+                    PlotSquared.TASK.cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.runTaskAsync(run);
                     return;
                 }
                 Chunk chunk = chunks.remove(0);
+                processed_chunks.add(chunk);
                 int X = chunk.getX();
                 int Z = chunk.getZ();
-                short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
                 short[][] current = new short[16][];
                 int minX;
                 int minZ;
                 int maxX;
                 int maxZ;
-                if (X == bx) minX = mod(bot.getX());
+                if (X == cbx) minX = mod(bx);
                 else minX = 0;
-                if (Z == bz) minZ = mod(bot.getZ());
+                if (Z == cbz) minZ = mod(bz);
                 else minZ = 0;
-                if (X == tx) maxX = mod(top.getX());
+                if (X == ctx) maxX = mod(tx);
                 else maxX = 16;
-                if (Z == tz) maxZ = mod(top.getZ());
+                if (Z == ctz) maxZ = mod(tz);
                 else maxZ = 16;
-                long changes = 0;
-                long rotations = 0;
-                long materialdata = 0;
-                int[] height = new int[256];
                 
-                int collumn_index = 0;
-                for (int x = minX; x < maxX; x++) {
-                    for (int z = minZ; z < maxZ; z++) {
-                        int max = 0;
+                int xb = ((X - cbx) << 4) - bx;
+                int zb = ((Z - cbz) << 4) - bz;
+                
+                for (int x = minX; x <= maxX; x++) {
+                    for (int z = minZ; z <= maxZ; z++) {
                         for (int y = 0; y < 256; y++) {
                             Block block = chunk.getBlock(x, y, z);
-                            int i = y >> 4;
-                            int j = ((y & 0xF) << 8) | (z << 4) | x;
-                            short id = (short) block.getTypeId();
-                            if (id != 0) {
-                                if (y > max) {
-                                    max = y;
-                                }
-                                BlockState state = block.getState();
-                                MaterialData data = state.getData();
-                                if (data instanceof Directional) {
-                                    rotations++;
-                                }
-                                else if (!data.getClass().equals(MaterialData.class)) {
-                                    materialdata++;
-                                }
-                                else {
-                                    variety.add(id);
-                                }
-                            }
-                            if (current[i] == null) {
-                                current[i] = new short[4096];
-                            }
-                            current[i][j] = id;
-                            if (result[i] == null && id != 0 || result[i] != null && result[i][j] != id) {
-                                changes++;
-                            }
+                            int xx = xb + x; 
+                            int zz = zb + z;
+                            newblocks[y][xx][zz] = (short) block.getTypeId();
                         }
-                        height[collumn_index] = max;
-                        collumn_index++;
                     }
                 }
-                long verticies = 0;
-                int[] uniformity = new int[254];
-                for (int y = 1; y < 255; y++) {
-                    HashSet<Integer> blocks = new HashSet<>();
-                    for (int x = minX + 1; x < maxX - 1; x++) {
-                        for (int z = minZ + 1; z < maxZ - 1; z++) {
-                            short id = current[y >> 4][((y & 0xF) << 8) | (z << 4) | x];
-                            if (id == 0) continue;
-                            blocks.add((int) id);
-                            if (current[(y + 1) >> 4][(((y + 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
-                            if (current[(y - 1) >> 4][(((y - 1) & 0xF) << 8) | (z << 4) | x] != 0) verticies--;
-                            if (current[y >> 4][((y & 0xF) << 8) | ((z + 1) << 4) | x] != 0) verticies--;
-                            if (current[y >> 4][((y & 0xF) << 8) | ((z - 1) << 4) | x] != 0) verticies--;
-                            if (current[y >> 4][((y & 0xF) << 8) | (z << 4) | (x + 1)] != 0) verticies--;
-                            if (current[y >> 4][((y & 0xF) << 8) | (z << 4) | (x - 1)] != 0) verticies--;
-                            verticies += 6;
-                        }   
-                    }
-                    uniformity[y-1] = blocks.size();
-                }
-                analysis.changes_total += changes;
-                analysis.rotations_total += rotations;
-                analysis.data_total += materialdata;
-                analysis.verticies_total += verticies;
-                double tmp = getSD(height);
-                analysis.height_total += tmp;
-                
-                changes_sd[index] = changes;
-                rotations_sd[index] = rotations;
-                data_sd[index] = materialdata;
-                uniformity_sd[index] = getSD(uniformity);
-                variety_sd[index] = variety.size();
-                verticies_sd[index] = verticies;
-                height_sd[index] = tmp;
             };
         }, 1);
         TaskManager.tasks.put(currentIndex, task);

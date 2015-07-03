@@ -62,6 +62,7 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -555,6 +556,8 @@ public class PlotSquared {
         EventUtil.manager = IMP.initEventUtil();
         // create Hybrid utility class
         HybridUtils.manager = IMP.initHybridUtils();
+        // Inventory utility class
+        InventoryUtil.manager = IMP.initInventoryUtil();
         // create setup util class
         SetupUtils.manager = IMP.initSetupUtils();
         // Set block
@@ -720,6 +723,7 @@ public class PlotSquared {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
         FlagManager.addFlag(new AbstractFlag("modified-blocks", new FlagValue.IntegerValue()), true);
+        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.DoubleListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
@@ -924,6 +928,10 @@ public class PlotSquared {
         // Caching
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
         Settings.CACHE_RATINGS = config.getBoolean("cache.ratings");
+        
+        // Rating system
+        Settings.RATING_CATEGORIES = config.getStringList("ratings.categories");
+        
         
         // Titles
         Settings.TITLES = config.getBoolean("titles");

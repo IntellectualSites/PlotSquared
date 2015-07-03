@@ -1,6 +1,9 @@
 package com.intellectualcrafters.plot.flag;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -344,6 +347,100 @@ public abstract class FlagValue<T> {
             try {
                 for (final PlotBlock item : parse(value)) {
                     ((HashSet<PlotBlock>) t).remove(item);
+                }
+            } catch (final Exception e) {
+            }
+        }
+    }
+    
+    public static class IntegerListValue extends FlagValue<List<Integer>> implements ListValue {
+        @SuppressWarnings("unchecked")
+        @Override
+        public String toString(final Object t) {
+            return StringUtils.join((List<Integer>) t, ",");
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<Integer> getValue(final Object t) {
+            return (List<Integer>) t;
+        }
+
+        @Override
+        public List<Integer> parse(final String t) {
+            String[] split = (t.split(","));
+            ArrayList<Integer> numbers = new ArrayList<Integer>();
+            for (String element : split) {
+                numbers.add(Integer.parseInt(element));
+            }
+            return numbers;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Flag value must be a integer list";
+        }
+
+        @Override
+        public void add(final Object t, final String value) {
+            try {
+                ((List<Integer>) t).addAll(parse(value));
+            } catch (final Exception e) {
+            }
+        }
+
+        @Override
+        public void remove(final Object t, final String value) {
+            try {
+                for (final Integer item : parse(value)) {
+                    ((List<Integer>) t).remove(item);
+                }
+            } catch (final Exception e) {
+            }
+        }
+    }
+    
+    public static class DoubleListValue extends FlagValue<List<Double>> implements ListValue {
+        @SuppressWarnings("unchecked")
+        @Override
+        public String toString(final Object t) {
+            return StringUtils.join((List<Double>) t, ",");
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<Double> getValue(final Object t) {
+            return (List<Double>) t;
+        }
+
+        @Override
+        public List<Double> parse(final String t) {
+            String[] split = (t.split(","));
+            ArrayList<Double> numbers = new ArrayList<Double>();
+            for (String element : split) {
+                numbers.add(Double.parseDouble(element));
+            }
+            return numbers;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Flag value must be a integer list";
+        }
+
+        @Override
+        public void add(final Object t, final String value) {
+            try {
+                ((List<Double>) t).addAll(parse(value));
+            } catch (final Exception e) {
+            }
+        }
+
+        @Override
+        public void remove(final Object t, final String value) {
+            try {
+                for (final Double item : parse(value)) {
+                    ((List<Double>) t).remove(item);
                 }
             } catch (final Exception e) {
             }

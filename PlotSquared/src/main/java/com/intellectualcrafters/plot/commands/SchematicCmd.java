@@ -77,7 +77,7 @@ public class SchematicCmd extends SubCommand {
                 final Plot plot = MainUtil.getPlot(loc);
                 if (plot == null) {
                     sendMessage(plr, C.NOT_IN_PLOT);
-                    break;
+                    return false;
                 }
                 if (this.running) {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
@@ -168,18 +168,22 @@ public class SchematicCmd extends SubCommand {
                 }
                 if (args.length < 2) {
                     sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
-                    break;
+                    return false;
+                }
+                final Location loc = plr.getLocation();
+                final Plot plot = MainUtil.getPlot(loc);
+                if (plot == null) {
+                    sendMessage(plr, C.NOT_IN_PLOT);
+                    return false;
                 }
                 file = args[1];
                 schematic = SchematicHandler.manager.getSchematic(file);
                 if (schematic == null) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
-                    break;
+                    return false;
                 }
-                final Location loc = plr.getLocation();
                 final int l1 = schematic.getSchematicDimension().getX();
                 final int l2 = schematic.getSchematicDimension().getZ();
-                final Plot plot = MainUtil.getPlot(loc);
                 final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
                 if ((l1 < length) || (l2 < length)) {
                     sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));

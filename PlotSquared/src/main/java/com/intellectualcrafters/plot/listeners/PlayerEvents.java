@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -22,6 +24,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -56,6 +59,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -72,6 +76,7 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Tree;
 import org.bukkit.material.Wool;
@@ -94,6 +99,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -292,7 +298,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (split[0].equals("plotme") || split[0].equals("ap")) {
             final Player player = event.getPlayer();
             if (Settings.USE_PLOTME_ALIAS) {
-                player.performCommand(message.replace("/plotme", "plots"));
+                player.performCommand("plots " + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), " "));
             } else {
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
             }
@@ -1158,12 +1164,31 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(final InventoryClickEvent event) {
-        if (event.getInventory().getName().equalsIgnoreCase("PlotSquared Commands")) {
-            event.setCancelled(true);
+        HumanEntity clicker = event.getWhoClicked();
+        if (!(clicker instanceof Player) ) {
             return;
         }
+        Player player = (Player) clicker;
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        PlotInventory inv = (PlotInventory) pp.getMeta("inventory");
+        if (inv != null && event.getRawSlot() == event.getSlot()) {
+            if (!inv.onClick(event.getSlot())) {
+                event.setCancelled(true);
+            }
+        }
     }
-
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryClose(final InventoryCloseEvent event) {
+        HumanEntity closer = event.getPlayer();
+        if (!(closer instanceof Player)) {
+            return;
+        }
+        Player player = (Player) closer;
+        BukkitUtil.getPlayer(player).deleteMeta("inventory");
+    }
+    
+    
     @EventHandler(priority= EventPriority.MONITOR)
     public void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());

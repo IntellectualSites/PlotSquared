@@ -42,9 +42,29 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public int X;
     public int Z;
     private PseudoRandom random = new PseudoRandom();
+    public static short[][][] CACHE_I = null;
+    public static short[][][] CACHE_J = null;
     
     public PlotGenerator(String world) {
         WorldEvents.lastWorld = world;
+        initCache();
+    }
+    
+    public void initCache() {
+        if (CACHE_I == null) {
+            CACHE_I = new short[256][16][16];
+            CACHE_J = new short[256][16][16];
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 256; y++) {
+                        short i = (short) (y >> 4);
+                        short j = (short) (((y & 0xF) << 8) | (z << 4) | x);
+                        CACHE_I[y][x][z] = i;
+                        CACHE_J[y][x][z] = j;
+                    }
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -136,10 +156,10 @@ public abstract class PlotGenerator extends ChunkGenerator {
     }
     
     public void setBlock(final int x, final int y, final int z, final short blkid) {
-        if (result[y >> 4] == null) {
-            result[y >> 4] = new short[4096];
+        if (result[CACHE_I[y][x][z]] == null) {
+            result[CACHE_I[y][x][z]] = new short[4096];
         }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
+        result[CACHE_I[y][x][z]][CACHE_J[y][x][z]] = blkid;
     }
     
     public void setBlock(final int x, final int y, final int z, final short[] blkid) {
@@ -147,10 +167,10 @@ public abstract class PlotGenerator extends ChunkGenerator {
             setBlock(x, y, z, blkid[0]);
         }
         short id = blkid[random.random(blkid.length)];
-        if (result[y >> 4] == null) {
-            result[y >> 4] = new short[4096];
+        if (result[CACHE_I[y][x][z]] == null) {
+            result[CACHE_I[y][x][z]] = new short[4096];
         }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = id;
+        result[CACHE_I[y][x][z]][CACHE_J[y][x][z]] = id;
     }
     
     /**

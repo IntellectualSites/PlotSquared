@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -60,6 +61,8 @@ public interface IPlotMain {
     public HybridUtils initHybridUtils();
 
     public UUIDWrapper initUUIDHandler();
+    
+    public InventoryUtil initInventoryUtil();
 
     public boolean initPlotMeConverter();
     

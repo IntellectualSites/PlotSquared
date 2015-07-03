@@ -39,6 +39,10 @@ public class Settings {
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
     /**
+     * Ratings
+     */
+    public static List<String> RATING_CATEGORIES = null;
+    /**
      * PlotMe settings
      */
     public static boolean CONVERT_PLOTME = true;

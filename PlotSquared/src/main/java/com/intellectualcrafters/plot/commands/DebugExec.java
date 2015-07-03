@@ -35,7 +35,10 @@ import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.flag.FlagValue.IntegerListValue;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -62,23 +65,20 @@ public class DebugExec extends SubCommand {
             final String arg = args[0].toLowerCase();
             switch (arg) {
                 case "analyze": {
-                    Plot plot = MainUtil.getPlot(player.getLocation());
+                    final Plot plot = MainUtil.getPlot(player.getLocation());
                     HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override
                         public void run() {
-                            System.out.print("changes_sd: " + this.value.changes_sd);
-                            System.out.print("changes_total: " + this.value.changes_total);
-                            System.out.print("data_sd: " + this.value.data_sd);
-                            System.out.print("data_total: " + this.value.data_total);
-                            System.out.print("height_sd: " + this.value.height_sd);
-                            System.out.print("height_total: " + this.value.height_total);
-                            System.out.print("rotations_sd: " + this.value.rotations_sd);
-                            System.out.print("rotations_total: " + this.value.rotations_total);
-                            System.out.print("uniformity_sd: " + this.value.uniformity_sd);
-                            System.out.print("variety_sd: " + this.value.variety_sd);
-                            System.out.print("variety_total: " + this.value.variety_total);
-                            System.out.print("verticies_sd: " + this.value.verticies_sd);
-                            System.out.print("verticies_total: " + this.value.verticies_total);
+                            List<Double> result = new ArrayList<>();
+                            result.add((double) (Math.round(value.air * 100) / 100d));
+                            result.add((double) (Math.round(value.changes * 100) / 100d));
+                            result.add((double) (Math.round(value.complexity * 100) / 100d));
+                            result.add((double) (Math.round(value.data * 100) / 100d));
+                            result.add((double) (Math.round(value.faces * 100) / 100d));
+                            result.add((double) (Math.round(value.air * 100) / 100d));
+                            result.add((double) (Math.round(value.variety * 100) / 100d));
+                            Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
+                            FlagManager.addPlotFlag(plot, flag);
                         }
                     });
                     return true;

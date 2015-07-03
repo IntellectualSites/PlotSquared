@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.InfoInventory;
@@ -55,6 +56,7 @@ public class Info extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer player, String... args) {
         String arg = null;
+        Plot plot;
         if (args.length > 0) arg = args[0] + "";
         if (arg != null) {
             switch (arg) {
@@ -69,10 +71,27 @@ public class Info extends SubCommand {
                 case "members":
                 case "owner":
                 case "rating":
-                    arg = null;
+                    plot = MainUtil.getPlotFromString(player, null, player == null);
+                    break;
+                default:
+                    System.out.print("CHECKING: " + arg);
+                    plot = MainUtil.getPlotFromString(player, arg, player == null);
+                    System.out.print(plot);
+                    if (args.length == 2) {
+                        arg = args[1];
+                    }
+                    else {
+                        arg = null;
+                    }
+                    break;
             }
         }
-        Plot plot = MainUtil.getPlotFromString(player, arg, player == null);
+        else {
+            plot = MainUtil.getPlotFromString(player, null, player == null);
+        }
+        if (plot == null && arg != null) {
+            plot = MainUtil.getPlotFromString(player, null, player == null);
+        }
         if (plot == null) {
             if (player == null) {
                 return false;
@@ -113,14 +132,17 @@ public class Info extends SubCommand {
             owner = getPlayerList(plot.getOwners());
         }
         String info = C.PLOT_INFO.s();
-        if (args.length == 1) {
-            info = getCaption(args[0].toLowerCase());
+        if (arg != null) {
+            info = getCaption(arg);
             if (info == null) {
                 MainUtil.sendMessage(player, "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
                 return false;
             }
+            formatAndSend(info, plot.world, plot, player, true);
         }
-        formatAndSend(info, plot.world, plot, player);
+        else {
+            formatAndSend(info, plot.world, plot, player, false);
+        }
         return true;
     }
 
@@ -151,7 +173,7 @@ public class Info extends SubCommand {
         }
     }
 
-    private void formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player) {
+    private void formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player, final boolean full) {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
@@ -191,7 +213,24 @@ public class Info extends SubCommand {
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    String info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)));
+                    int max = 10;
+                    if (Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 0) {
+                        max = 8;
+                    }
+                    String info;
+                    if (full && Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 1) {
+                        String rating = "";
+                        String prefix = "";
+                        double[] ratings = MainUtil.getAverageRatings(plot);
+                        for (int i = 0; i < ratings.length; i++) {
+                            rating += prefix + Settings.RATING_CATEGORIES.get(i) + "=" + String.format("%.1f", ratings[i]);
+                            prefix = ",";
+                        }
+                        info = newInfo.replaceAll("%rating%", rating);
+                    }
+                    else {
+                        info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)) + "/" + max);
+                    }
                     MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
                     MainUtil.sendMessage(player, info, false);
                 }

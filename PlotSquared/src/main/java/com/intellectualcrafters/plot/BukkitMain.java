@@ -112,6 +112,7 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -119,6 +120,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitEconHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitEventUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitInventoryUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
@@ -578,5 +580,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public PlayerManager initPlayerManager() {
         return new BukkitPlayerManager();
+    }
+
+    @Override
+    public InventoryUtil initInventoryUtil() {
+        return new BukkitInventoryUtil();
     }
 }
