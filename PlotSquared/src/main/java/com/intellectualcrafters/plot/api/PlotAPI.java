@@ -49,6 +49,8 @@ import java.util.Set;
  * @author Citymonstret
  * @author Empire92
  * @version API 2.0
+ *
+ * @deprecated
  */
 
 @SuppressWarnings("unused") public class PlotAPI {
