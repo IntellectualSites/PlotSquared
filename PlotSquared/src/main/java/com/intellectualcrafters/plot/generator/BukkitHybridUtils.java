@@ -1,12 +1,13 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
+import com.intellectualcrafters.plot.BukkitMain;
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -14,37 +15,29 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import java.util.*;
 
 public class BukkitHybridUtils extends HybridUtils {
-	
+
+    public static List<ChunkLoc> regions;
+    public static List<ChunkLoc> chunks = new ArrayList<>();
+    public static String world;
+    private static boolean UPDATE = false;
+    public int task;
+    private long last;
+    
     public double getMean(int[] array) {
         double count = 0;
         for (int i : array) {
             count += i;
         }
-        return count / array.length; 
+        return count / array.length;
     }
     
     public double getMean(double[] array) {
@@ -52,7 +45,7 @@ public class BukkitHybridUtils extends HybridUtils {
         for (double i : array) {
             count += i;
         }
-        return count / array.length; 
+        return count / array.length;
     }
     
     public double getSD(double[] array, double av) {
@@ -84,17 +77,17 @@ public class BukkitHybridUtils extends HybridUtils {
     public void analyzePlot(Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
         // TODO Auto-generated method stub
         // int diff, int variety, int verticies, int rotation, int height_sd
-        
+
         /*
          * diff: compare to base by looping through all blocks
          * variety: add to hashset for each plotblock
          * height_sd: loop over all blocks and get top block
-         * 
+         *
          * verticies: store air map and compare with neighbours
          * for each block check the adjacent
          *  - Store all blocks then go through in second loop
          *  - recheck each block
-         * 
+         *
          */
         final World world = Bukkit.getWorld(plot.world);
         final ChunkGenerator gen = world.getGenerator();
@@ -114,23 +107,23 @@ public class BukkitHybridUtils extends HybridUtils {
         final int ctz = tz >> 4;
         final Random r = new Random();
         AugmentedPopulator.initCache();
-        
+
         final int width = tx - bx + 1;
         final int length = tz - bz + 1;
-        
+
         final short[][][] oldblocks = new short[256][width][length];
         final short[][][] newblocks = new short[256][width][length];
-        
+
         final List<Chunk> chunks = new ArrayList<>();
         final List<Chunk> processed_chunks = new ArrayList<>();
-        
+
         for (int X = cbx; X <= ctx; X++) {
             for (int Z = cbz; Z <= ctz; Z++) {
                 Chunk chunk = world.getChunkAt(X, Z);
                 chunks.add(chunk);
             }
         }
-        
+
         final Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -163,14 +156,14 @@ public class BukkitHybridUtils extends HybridUtils {
                         }
                     }
                 }
-                
+
                 int size = width * length;
                 int[] changes = new int[size];
                 int[] faces = new int[size];
                 int[] data = new int[size];
                 int[] air = new int[size];
                 int[] variety = new int[size];
-                
+
                 int i = 0;
                 for (int x = 0; x < width;x++) {
                     for (int z = 0; z < length;z++) {
@@ -188,7 +181,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             else {
                                 // check verticies
                                 // modifications_adjacent
-                                
+
                                 if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
                                     if (oldblocks[y - 1][x][z] == 0) faces[i]++;
                                     if (oldblocks[y][x - 1][z] == 0) faces[i]++;
@@ -197,7 +190,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     if (oldblocks[y][x + 1][z] == 0) faces[i]++;
                                     if (oldblocks[y][x][z + 1] == 0) faces[i]++;
                                 }
-                                
+
                                 Material material = Material.getMaterial(now);
                                 Class<? extends MaterialData> md = material.getData();
                                 if (md.equals(Directional.class)) {
@@ -213,10 +206,10 @@ public class BukkitHybridUtils extends HybridUtils {
                         i++;
                     }
                 }
-                
+
                 // analyze plot
                 // put in analysis obj
-                 
+
                 // run whenDone
                 PlotAnalysis analysis = new PlotAnalysis();
                 analysis.changes = getMean(changes);
@@ -229,10 +222,10 @@ public class BukkitHybridUtils extends HybridUtils {
                 whenDone.run();
             }
         };
-        
+
         System.gc();
         AugmentedPopulator.initCache();
-        
+
         TaskManager.index.increment();
         final Integer currentIndex = TaskManager.index.toInteger();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
@@ -261,29 +254,29 @@ public class BukkitHybridUtils extends HybridUtils {
                 else maxX = 16;
                 if (Z == ctz) maxZ = mod(tz);
                 else maxZ = 16;
-                
+
                 int xb = ((X - cbx) << 4) - bx;
                 int zb = ((Z - cbz) << 4) - bz;
-                
+
                 for (int x = minX; x <= maxX; x++) {
                     for (int z = minZ; z <= maxZ; z++) {
                         for (int y = 0; y < 256; y++) {
                             Block block = chunk.getBlock(x, y, z);
-                            int xx = xb + x; 
+                            int xx = xb + x;
                             int zz = zb + z;
                             newblocks[y][xx][zz] = (short) block.getTypeId();
                         }
                     }
                 }
-            };
+            }
         }, 1);
         TaskManager.tasks.put(currentIndex, task);
     }
-    
-	public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
-		TaskManager.index.increment();
-		final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-		final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+
+    public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
+        TaskManager.index.increment();
+        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
         int tx = top.getX() >> 4;
@@ -295,17 +288,17 @@ public class BukkitHybridUtils extends HybridUtils {
                 chunks.add(world.getChunkAt(X,Z));
             }
         }
-        PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
+        PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
         if (!(plotworld instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
         	TaskManager.runTaskLater(whenDone, 1);
         	return;
         }
-        
+
         final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
-        
+
         final MutableInt count = new MutableInt(0);
-        
+
         final Integer currentIndex = TaskManager.index.toInteger();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
@@ -333,7 +326,7 @@ public class BukkitHybridUtils extends HybridUtils {
         TaskManager.tasks.put(currentIndex, task);
 
 	}
-    
+
     @Override
     public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
         final World world = BukkitUtil.getWorld(worldname);
@@ -358,7 +351,7 @@ public class BukkitHybridUtils extends HybridUtils {
         }
         return count;
     }
-    
+
     @Override
     public int get_ey(final String worldname, final int sx, final int ex, final int sz, final int ez, final int sy) {
         final World world = BukkitUtil.getWorld(worldname);
@@ -399,7 +392,7 @@ public class BukkitHybridUtils extends HybridUtils {
             }
         }
     }
-    
+
     public final ArrayList<ChunkLoc> getChunks(ChunkLoc region) {
     	ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
     	final int sx = region.x << 5;
@@ -411,10 +404,6 @@ public class BukkitHybridUtils extends HybridUtils {
         }
         return chunks;
     }
-    
-    private static boolean UPDATE = false;
-    public int task;
-    private long last;
 
     @Override
     public boolean scheduleRoadUpdate(final String world, int extend) {
@@ -425,10 +414,6 @@ public class BukkitHybridUtils extends HybridUtils {
         final List<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
         return scheduleRoadUpdate(world, regions, extend);
     }
-    
-    public static List<ChunkLoc> regions;
-    public static List<ChunkLoc> chunks = new ArrayList<>();
-    public static String world;
     
     public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> rgs, final int extend) {
         BukkitHybridUtils.regions = rgs;

@@ -20,26 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -73,7 +66,7 @@ public class DebugClaimTest extends SubCommand {
                 return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
             final String world = args[0];
-            if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
+            if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(world)) {
                 return !MainUtil.sendMessage(null, "&cInvalid plot world!");
             }
             PlotId min, max;
@@ -87,12 +80,12 @@ public class DebugClaimTest extends SubCommand {
             }
             MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
             MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
-            final PlotManager manager = PlotSquared.getPlotManager(world);
-            final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+            final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+            final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
             for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
                 final Plot plot = MainUtil.getPlot(world, id);
-                final boolean contains = PlotSquared.getPlots(world).containsKey(plot.id);
+                final boolean contains = PlotSquared.getInstance().getPlots(world).containsKey(plot.id);
                 if (contains) {
                     MainUtil.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
@@ -141,7 +134,7 @@ public class DebugClaimTest extends SubCommand {
                     }
                 });
                 for (final Plot plot : plots) {
-                    PlotSquared.updatePlot(plot);
+                    PlotSquared.getInstance().updatePlot(plot);
                 }
                 MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
             } else {

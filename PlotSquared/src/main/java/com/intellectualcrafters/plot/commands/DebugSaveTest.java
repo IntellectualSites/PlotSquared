@@ -20,13 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.ArrayList;
 
 /**
  * @author Citymonstret
@@ -40,7 +40,7 @@ public class DebugSaveTest extends SubCommand {
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
-            plots.addAll(PlotSquared.getPlots());
+            plots.addAll(PlotSquared.getInstance().getPlots());
             MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override

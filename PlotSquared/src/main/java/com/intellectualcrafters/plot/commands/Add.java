@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -32,6 +30,8 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.UUID;
 
 public class Add extends SubCommand {
     public Add() {
@@ -77,7 +77,7 @@ public class Add extends SubCommand {
                 DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
             }
             if (plot.denied.contains(uuid)) {
-                if (plot.members.size() + plot.trusted.size() >= PlotSquared.getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+                if (plot.members.size() + plot.trusted.size() >= PlotSquared.getInstance().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
                     MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
                     return false;
                 }
@@ -91,7 +91,7 @@ public class Add extends SubCommand {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
-        if (plot.members.size() + plot.trusted.size() >= PlotSquared.getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+        if (plot.members.size() + plot.trusted.size() >= PlotSquared.getInstance().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
             MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
             return false;
         }

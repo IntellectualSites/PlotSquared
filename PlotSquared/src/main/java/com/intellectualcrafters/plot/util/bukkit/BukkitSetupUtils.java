@@ -1,8 +1,11 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -10,12 +13,8 @@ import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import java.io.IOException;
+import java.util.Map.Entry;
 
 public class BukkitSetupUtils extends SetupUtils {
     
@@ -29,7 +28,7 @@ public class BukkitSetupUtils extends SetupUtils {
             if (plugin.isEnabled()) {
                 final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
-                    PlotSquared.removePlotWorld(testWorld);
+                    PlotSquared.getInstance().removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
 //                        final PlotGenerator pgen = (PlotGenerator) generator;
 //                        if (pgen.getPlotManager() instanceof SquarePlotManager) {

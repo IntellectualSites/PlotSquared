@@ -49,7 +49,7 @@ public class DebugClear extends SubCommand {
                 if (id == null) {
                     PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotSquared.isPlotWorld(world) || !(PlotSquared.getPlotWorld(world) instanceof SquarePlotWorld)) {
+                    if (!PlotSquared.getInstance().isPlotWorld(world) || !(PlotSquared.getInstance().getPlotWorld(world) instanceof SquarePlotWorld)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = MainUtil.getPlot(world, id);
@@ -79,7 +79,7 @@ public class DebugClear extends SubCommand {
         }
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || !(PlotSquared.getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
+        if ((plot == null) || !(PlotSquared.getInstance().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {

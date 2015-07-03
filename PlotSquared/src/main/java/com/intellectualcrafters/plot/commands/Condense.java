@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -35,12 +27,20 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+import java.util.Set;
 
 public class Condense extends SubCommand {
     public static boolean TASK = false;
 
     public Condense() {
         super("condense", "plots.admin", "Condense a plotworld", "condense", "", CommandCategory.DEBUG, false);
+    }
+
+    public static void sendMessage(final String message) {
+        PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Condense extends SubCommand {
             return false;
         }
         final String worldname = args[0];
-        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.isPlotWorld(worldname)) {
+        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.getInstance().isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -198,9 +198,5 @@ public class Condense extends SubCommand {
             }
         }
         return outside;
-    }
-
-    public static void sendMessage(final String message) {
-        PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
 }

@@ -1,5 +1,22 @@
 package com.intellectualcrafters.plot;
 
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.*;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.*;
+import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,101 +25,147 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+/**
+ * An implementation of the core,
+ * with a static getter for easy access
+ */
+public class PlotSquared implements PlotSquaredMain {
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.Database;
-import com.intellectualcrafters.plot.database.MySQL;
-import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.SquarePlotManager;
-import com.intellectualcrafters.plot.generator.SquarePlotWorld;
-import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.comment.CommentManager;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.Logger;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlayerManager;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
-public class PlotSquared {
     public static final String MAIN_PERMISSION = "plots.use";
-    public static final String ADMIN_PERMISSION = "plots.admin";
-    public static File styleFile;
-    public static YamlConfiguration style;
-    public static File configFile;
-    public static YamlConfiguration config;
-    public static File storageFile;
-    public static YamlConfiguration storage;
-    public static PlotSquared THIS = null; // This class
-    public static File FILE = null; // This file
-    public static IPlotMain IMP = null; // Specific implementation of PlotSquared
-    public static String VERSION = null;
-    public static TaskManager TASK = null;
-    private static boolean LOADING_WORLD = false;
-    public static WorldEditPlugin worldEdit = null;
-    private final static HashMap<String, PlotWorld> plotworlds = new HashMap<>();
-    private final static HashMap<String, PlotManager> plotmanagers = new HashMap<>();
-    
-    
-    private static LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
-    
-    
-    private static Database database;
-    public static Connection connection;
-    
-    public static Database getDatabase() {
+    protected static PlotSquared instance;
+    private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
+    private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
+    public WorldEditPlugin worldEdit = null;
+    private File styleFile;
+    private YamlConfiguration style;
+    private File configFile;
+    private YamlConfiguration config;
+    private File storageFile;
+    private YamlConfiguration storage;
+    private File FILE = null; // This file
+    private IPlotMain IMP = null; // Specific implementation of PlotSquared
+    private String VERSION = null;
+    private boolean LOADING_WORLD = false;
+    private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
+    private Database database;
+    private Connection connection;
+
+    public PlotSquared(final IPlotMain imp_class) {
+        SetupUtils.generators = new HashMap<>();
+        IMP = imp_class;
+        try {
+            FILE = new File(PlotSquared.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        } catch (Exception e) {
+            log("Could not determine file path");
+        }
+        VERSION = IMP.getVersion();
+        EconHandler.manager = IMP.getEconomyHandler();
+        C.setupTranslations();
+        C.saveTranslations();
+        if (getJavaVersion() < 1.7) {
+            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+            // Didn't know of any other link :D
+            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+            IMP.disable();
+            return;
+        }
+        if (getJavaVersion() < 1.8) {
+            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
+        }
+        TaskManager TASK = IMP.getTaskManager();
+        if (C.ENABLED.s().length() > 0) {
+            log(C.ENABLED.s());
+        }
+        setupConfigs();
+        setupDefaultFlags();
+        setupDatabase();
+        CommentManager.registerDefaultInboxes();
+        // Tasks
+        if (Settings.KILL_ROAD_MOBS) {
+            IMP.runEntityTask();
+        }
+        // Events
+        IMP.registerCommands();
+        IMP.registerPlayerEvents();
+        IMP.registerInventoryEvents();
+        IMP.registerPlotPlusEvents();
+        IMP.registerForceFieldEvents();
+        IMP.registerWorldEditEvents();
+        IMP.registerWorldEvents();
+        if (Settings.TNT_LISTENER) {
+            IMP.registerTNTListener();
+        }
+        if (Settings.CHUNK_PROCESSOR) {
+            IMP.registerChunkProcessor();
+        }
+        // create UUIDWrapper
+        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
+        // create event util class
+        EventUtil.manager = IMP.initEventUtil();
+        // create Hybrid utility class
+        HybridUtils.manager = IMP.initHybridUtils();
+        // Inventory utility class
+        InventoryUtil.manager = IMP.initInventoryUtil();
+        // create setup util class
+        SetupUtils.manager = IMP.initSetupUtils();
+        // Set block
+        BlockManager.manager = IMP.initBlockManager();
+        // Set chunk
+        ChunkManager.manager = IMP.initChunkManager();
+        // Plot listener
+        APlotListener.manager = IMP.initPlotListener();
+        // Player manager
+        PlayerManager.manager = IMP.initPlayerManager();
+
+        // PlotMe
+        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (IMP.initPlotMeConverter()) {
+                        log("&c=== IMPORTANT ===");
+                        log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                        log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                        log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                        log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                    }
+                }
+            }, 200);
+        }
+        if (Settings.AUTO_CLEAR) {
+            ExpireManager.runTask();
+        }
+
+        // Copy files
+        copyFile("town.template", "templates");
+        copyFile("skyblock.template", "templates");
+        copyFile("german.yml", "translations");
+        copyFile("s_chinese_unescaped.yml", "translations");
+        copyFile("s_chinese.yml", "translations");
+        copyFile("italian.yml", "translations");
+        showDebug();
+    }
+
+    public static PlotSquared getInstance() {
+        return instance;
+    }
+
+    public static void log(final String message) {
+        getInstance().IMP.log(message);
+    }
+
+    @Override
+    public Database getDatabase() {
         return database;
     }
 
-    public static void updatePlot(final Plot plot) {
+    @Override
+    public void updatePlot(final Plot plot) {
         final String world = plot.world;
         if (!plots.containsKey(world)) {
             plots.put(world, new HashMap<PlotId, Plot>());
@@ -111,14 +174,16 @@ public class PlotSquared {
         plots.get(world).put(plot.id, plot);
     }
 
-    public static PlotWorld getPlotWorld(final String world) {
+    @Override
+    public PlotWorld getPlotWorld(final String world) {
         if (plotworlds.containsKey(world)) {
             return plotworlds.get(world);
         }
         return null;
     }
 
-    public static void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
+    @Override
+    public void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         plotworlds.put(world, plotworld);
         plotmanagers.put(world, manager);
         if (!plots.containsKey(world)) {
@@ -126,26 +191,31 @@ public class PlotSquared {
         }
     }
 
-    public static void removePlotWorld(final String world) {
+    @Override
+    public void removePlotWorld(final String world) {
         plots.remove(world);
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
-    
-    public static void removePlotWorldAbs(final String world) {
+
+    @Override
+    public void removePlotWorldAbs(final String world) {
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
 
-    public static HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
+    @Override
+    public HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
 
-    public static void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
-        PlotSquared.plots = plots;
+    @Override
+    public void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+        this.plots = plots;
     }
 
-    public static Set<Plot> getPlots() {
+    @Override
+    public Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
             if (isPlotWorld(entry.getKey())) {
@@ -154,16 +224,18 @@ public class PlotSquared {
         }
         return new LinkedHashSet<>(newplots);
     }
-    
-    public static Set<Plot> getPlotsRaw() {
+
+    @Override
+    public Set<Plot> getPlotsRaw() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
             newplots.addAll(entry.getValue().values());
         }
         return new LinkedHashSet<>(newplots);
     }
-    
-    public static ArrayList<Plot> sortPlots(Collection<Plot> plots) {
+
+    @Override
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         newPlots.addAll(plots);
         Collections.sort(newPlots, new Comparator<Plot>() {
@@ -188,10 +260,11 @@ public class PlotSquared {
         });
         return newPlots;
     }
-    
-    public static ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
+
+    @Override
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
         ArrayList<Plot> newPlots = new ArrayList<>();
-        HashMap<PlotId, Plot> worldPlots = PlotSquared.plots.get(priorityWorld);
+        HashMap<PlotId, Plot> worldPlots = this.plots.get(priorityWorld);
         if (worldPlots != null) {
             for (Plot plot : sortPlots(worldPlots.values())) {
                 if (plots.contains(plot)) {
@@ -199,11 +272,11 @@ public class PlotSquared {
                 }
             }
         }
-        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
         Collections.sort(worlds);
         for (String world : worlds) {
             if (!world.equals(priorityWorld)) {
-                for (Plot plot : PlotSquared.plots.get(world).values()) {
+                for (Plot plot : this.plots.get(world).values()) {
                     if (plots.contains(plot)) {
                         newPlots.add(plot);
                     }
@@ -212,13 +285,14 @@ public class PlotSquared {
         }
         return newPlots;
     }
-    
-    public static ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
+
+    @Override
+    public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
-        ArrayList<String> worlds = new ArrayList<>(PlotSquared.plots.keySet());
+        ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
         Collections.sort(worlds);
         for (String world : worlds) {
-            for (Plot plot : PlotSquared.plots.get(world).values()) {
+            for (Plot plot : this.plots.get(world).values()) {
                 if (plots.contains(plot)) {
                     newPlots.add(plot);
                 }
@@ -227,17 +301,20 @@ public class PlotSquared {
         return newPlots;
     }
 
-    public static Set<Plot> getPlots(final String world, final String player) {
+    @Override
+    public Set<Plot> getPlots(final String world, final String player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         return getPlots(world, uuid);
     }
 
-    public static Set<Plot> getPlots(final String world, final PlotPlayer player) {
+    @Override
+    public Set<Plot> getPlots(final String world, final PlotPlayer player) {
         final UUID uuid = player.getUUID();
         return getPlots(world, uuid);
     }
 
-    public static Set<Plot> getPlots(final String world, final UUID uuid) {
+    @Override
+    public Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
             if (plot.hasOwner()) {
@@ -249,34 +326,40 @@ public class PlotSquared {
         return new HashSet<>(myplots);
     }
 
-    public static boolean isPlotWorld(final String world) {
+    @Override
+    public boolean isPlotWorld(final String world) {
         return (plotworlds.containsKey(world));
     }
 
-    public static PlotManager getPlotManager(final String world) {
+    @Override
+    public PlotManager getPlotManager(final String world) {
         if (plotmanagers.containsKey(world)) {
             return plotmanagers.get(world);
         }
         return null;
     }
 
-    public static String[] getPlotWorldsString() {
+    @Override
+    public String[] getPlotWorldsString() {
         final Set<String> strings = plots.keySet();
         return strings.toArray(new String[strings.size()]);
     }
 
-    public static HashMap<PlotId, Plot> getPlots(final String world) {
+    @Override
+    public HashMap<PlotId, Plot> getPlots(final String world) {
         if (plots.containsKey(world)) {
             return plots.get(world);
         }
         return new HashMap<>();
     }
 
-    public static Set<Plot> getPlots(final PlotPlayer player) {
+    @Override
+    public Set<Plot> getPlots(final PlotPlayer player) {
         return getPlots(player.getUUID());
     }
-    
-    public static Set<Plot> getPlots(final UUID uuid) {
+
+    @Override
+    public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final String world : plots.keySet()) {
             if (isPlotWorld(world)) {
@@ -292,7 +375,8 @@ public class PlotSquared {
         return new HashSet<>(myplots);
     }
 
-    public static boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
+    @Override
+    public boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
         }
@@ -308,8 +392,9 @@ public class PlotSquared {
         return true;
     }
 
-    public static void loadWorld(final String world, PlotGenerator generator) {
-        PlotWorld plotWorld = getPlotWorld(world); 
+    @Override
+    public void loadWorld(final String world, PlotGenerator generator) {
+        PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
             if (generator != null) {
                 generator.init(plotWorld);
@@ -370,7 +455,7 @@ public class PlotSquared {
                 final PlotGenerator gen_class = generator;
                 plotWorld = gen_class.getNewPlotWorld(world);
                 plotManager = gen_class.getPlotManager();
-                
+
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
@@ -378,13 +463,13 @@ public class PlotSquared {
                 plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
-                
+
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                
+
                 if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
@@ -404,7 +489,8 @@ public class PlotSquared {
         }
     }
 
-    public static boolean setupPlotWorld(final String world, final String id) {
+    @Override
+    public boolean setupPlotWorld(final String world, final String id) {
         if ((id != null) && (id.length() > 0)) {
             // save configuration
             final String[] split = id.split(",");
@@ -428,39 +514,39 @@ public class PlotSquared {
                     switch (key) {
                         case "s":
                         case "size": {
-                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
                             break;
                         }
                         case "g":
                         case "gap": {
-                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = ((Integer) Configuration.INTEGER.parseString(value)).shortValue();
+                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
                             break;
                         }
                         case "h":
                         case "height": {
-                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = (Integer) Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
                             break;
                         }
                         case "f":
                         case "floor": {
-                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
                             break;
                         }
                         case "m":
                         case "main": {
-                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = (PlotBlock[]) Configuration.BLOCKLIST.parseString(value);
+                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
                             break;
                         }
                         case "w":
                         case "wall": {
-                            ClassicPlotWorld.WALL_FILLING_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            ClassicPlotWorld.WALL_FILLING_DEFAULT = Configuration.BLOCK.parseString(value);
                             break;
                         }
                         case "b":
                         case "border": {
-                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = (PlotBlock) Configuration.BLOCK.parseString(value);
+                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = Configuration.BLOCK.parseString(value);
                             break;
                         }
                         default: {
@@ -496,112 +582,109 @@ public class PlotSquared {
         return true;
     }
 
-    public static Connection getConnection() {
+    @Override
+    public boolean setupPlotWorld(final String world, final String id) {
+        if ((id != null) && (id.length() > 0)) {
+            // save configuration
+            final String[] split = id.split(",");
+            final HybridPlotWorld plotworld = new HybridPlotWorld(world);
+            final int width = SquarePlotWorld.PLOT_WIDTH_DEFAULT;
+            final int gap = SquarePlotWorld.ROAD_WIDTH_DEFAULT;
+            final int height = ClassicPlotWorld.PLOT_HEIGHT_DEFAULT;
+            final PlotBlock[] floor = ClassicPlotWorld.TOP_BLOCK_DEFAULT;
+            final PlotBlock[] main = ClassicPlotWorld.MAIN_BLOCK_DEFAULT;
+            final PlotBlock wall = ClassicPlotWorld.WALL_FILLING_DEFAULT;
+            final PlotBlock border = ClassicPlotWorld.WALL_BLOCK_DEFAULT;
+            for (final String element : split) {
+                final String[] pair = element.split("=");
+                if (pair.length != 2) {
+                    log("&cNo value provided for: &7" + element);
+                    return false;
+                }
+                final String key = pair[0].toLowerCase();
+                final String value = pair[1];
+                try {
+                    switch (key) {
+                        case "s":
+                        case "size": {
+                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
+                            break;
+                        }
+                        case "g":
+                        case "gap": {
+                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
+                            break;
+                        }
+                        case "h":
+                        case "height": {
+                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            break;
+                        }
+                        case "f":
+                        case "floor": {
+                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
+                            break;
+                        }
+                        case "m":
+                        case "main": {
+                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
+                            break;
+                        }
+                        case "w":
+                        case "wall": {
+                            ClassicPlotWorld.WALL_FILLING_DEFAULT = Configuration.BLOCK.parseString(value);
+                            break;
+                        }
+                        case "b":
+                        case "border": {
+                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = Configuration.BLOCK.parseString(value);
+                            break;
+                        }
+                        default: {
+                            log("&cKey not found: &7" + element);
+                            return false;
+                        }
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    log("&cInvalid value: &7" + value + " in arg " + element);
+                    return false;
+                }
+            }
+            try {
+                final String root = "worlds." + world;
+                if (!config.contains(root)) {
+                    config.createSection(root);
+                }
+                plotworld.saveConfiguration(config.getConfigurationSection(root));
+                ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.WALL_HEIGHT_DEFAULT = height;
+                ClassicPlotWorld.TOP_BLOCK_DEFAULT = floor;
+                ClassicPlotWorld.MAIN_BLOCK_DEFAULT = main;
+                ClassicPlotWorld.WALL_BLOCK_DEFAULT = border;
+                ClassicPlotWorld.WALL_FILLING_DEFAULT = wall;
+                SquarePlotWorld.PLOT_WIDTH_DEFAULT = width;
+                SquarePlotWorld.ROAD_WIDTH_DEFAULT = gap;
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Connection getConnection() {
         return connection;
     }
 
-    public PlotSquared(final IPlotMain imp_class) {
-        SetupUtils.generators = new HashMap<>();
-        THIS = this;
-        IMP = imp_class;
-        try {
-            FILE = new File(PlotSquared.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-        }
-        catch (Exception e) {
-            log("Could not determine file path");
-        }
-        VERSION = IMP.getVersion();
-        EconHandler.manager = IMP.getEconomyHandler();
-        C.setupTranslations();
-        C.saveTranslations();
-        if (getJavaVersion() < 1.7) {
-            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-            // Didn't know of any other link :D
-            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
-            IMP.disable();
-            return;
-        }
-        if (getJavaVersion() < 1.8) {
-            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
-        }
-        TASK = IMP.getTaskManager();
-        if (C.ENABLED.s().length() > 0) {
-            log(C.ENABLED.s());
-        }
-        setupConfigs();
-        setupDefaultFlags();
-        setupDatabase();
-        CommentManager.registerDefaultInboxes();    
-        // Tasks
-        if (Settings.KILL_ROAD_MOBS) {
-            IMP.runEntityTask();
-        }
-        // Events
-        IMP.registerCommands();
-        IMP.registerPlayerEvents();
-        IMP.registerInventoryEvents();
-        IMP.registerPlotPlusEvents();
-        IMP.registerForceFieldEvents();
-        IMP.registerWorldEditEvents();
-        IMP.registerWorldEvents();
-        if (Settings.TNT_LISTENER) {
-        	IMP.registerTNTListener();
-        }
-        if (Settings.CHUNK_PROCESSOR) {
-            IMP.registerChunkProcessor();
-        }
-        // create UUIDWrapper
-        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
-        // create event util class
-        EventUtil.manager = IMP.initEventUtil();
-        // create Hybrid utility class
-        HybridUtils.manager = IMP.initHybridUtils();
-        // Inventory utility class
-        InventoryUtil.manager = IMP.initInventoryUtil();
-        // create setup util class
-        SetupUtils.manager = IMP.initSetupUtils();
-        // Set block
-        BlockManager.manager = IMP.initBlockManager();
-        // Set chunk
-        ChunkManager.manager = IMP.initChunkManager();
-        // Plot listener
-        APlotListener.manager = IMP.initPlotListener();
-        // Player manager
-        PlayerManager.manager = IMP.initPlayerManager();
-        
-        // PlotMe
-        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (IMP.initPlotMeConverter()) {
-                        log("&c=== IMPORTANT ===");
-                        log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                        log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                        log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                        log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
-                    }
-                }
-            }, 200);
-        }
-        if (Settings.AUTO_CLEAR) {
-            ExpireManager.runTask();
-        }
-        
-        // Copy files
-        copyFile("town.template", "templates");
-        copyFile("skyblock.template", "templates");
-        copyFile("german.yml", "translations");
-        copyFile("s_chinese_unescaped.yml", "translations");
-        copyFile("s_chinese.yml", "translations");
-        copyFile("italian.yml", "translations");
-        showDebug();
-    }
-    
+    @Override
     public void copyFile(String file, String folder) {
         try {
             byte[] buffer = new byte[2048];
-            File output = PlotSquared.IMP.getDirectory();
+            File output = IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -636,6 +719,7 @@ public class PlotSquared {
         }
     }
 
+    @Override
     public void disable() {
         try {
             database.closeConnection();
@@ -644,14 +728,11 @@ public class PlotSquared {
         }
     }
 
-    public static void log(final String message) {
-        IMP.log(message);
-    }
-
+    @Override
     public void setupDatabase() {
         if (Settings.DB.USE_MYSQL) {
             try {
-                database = new MySQL(THIS, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                database = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = database.openConnection();
                 {
                     if (DBFunc.dbManager == null) {
@@ -679,7 +760,7 @@ public class PlotSquared {
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                this.database = new SQLite(THIS, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db"); 
+                this.database = new SQLite(this, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
                 connection = this.database.openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
@@ -705,7 +786,8 @@ public class PlotSquared {
         }
     }
 
-    public static void setupDefaultFlags() {
+    @Override
+    public void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
@@ -797,7 +879,8 @@ public class PlotSquared {
         });
     }
 
-    public static void setupConfig() {
+    @Override
+    public void setupConfig() {
         config.set("version", VERSION);
         
         final Map<String, Object> options = new HashMap<>();
@@ -976,7 +1059,8 @@ public class PlotSquared {
         Settings.METRICS = config.getBoolean("metrics");
     }
 
-    public static void setupConfigs() {
+    @Override
+    public void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
             log(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
@@ -1030,7 +1114,7 @@ public class PlotSquared {
         }
     }
 
-    private static void setupStorage() {
+    private void setupStorage() {
         storage.set("version", VERSION);
         final Map<String, Object> options = new HashMap<>();
         options.put("mysql.use", false);
@@ -1062,7 +1146,8 @@ public class PlotSquared {
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
     }
 
-    public static void showDebug() {
+    @Override
+    public void showDebug() {
         C.COLOR_1 = "&" + (style.getString("color.1"));
         C.COLOR_2 = "&" + (style.getString("color.2"));
         C.COLOR_3 = "&" + (style.getString("color.3"));
@@ -1085,7 +1170,7 @@ public class PlotSquared {
         }
     }
 
-    private static void setupStyle() {
+    private void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
         o.put("color.1", C.COLOR_1.substring(1));
@@ -1099,15 +1184,18 @@ public class PlotSquared {
         }
     }
 
-    public static double getJavaVersion() {
+    @Override
+    public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
-    public static Set<String> getPlotWorlds() {
+    @Override
+    public Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }
-    
-    public static Collection<PlotWorld> getPlotWorldObjects() {
+
+    @Override
+    public Collection<PlotWorld> getPlotWorldObjects() {
         return plotworlds.values();
     }
 }

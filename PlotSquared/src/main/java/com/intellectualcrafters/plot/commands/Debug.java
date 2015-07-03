@@ -51,7 +51,7 @@ public class Debug extends SubCommand {
         }
         {
             final StringBuilder worlds = new StringBuilder("");
-            for (final String world : PlotSquared.getPlotWorlds()) {
+            for (final String world : PlotSquared.getInstance().getPlotWorlds()) {
                 worlds.append(world).append(" ");
             }
             information.append(header);
@@ -61,7 +61,7 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "TPS Percentage", (int) Lag.getFullPercentage() + "%"));
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
-            information.append(getLine(line, "Owned Plots", PlotSquared.getPlots().size()));
+            information.append(getLine(line, "Owned Plots", PlotSquared.getInstance().getPlots().size()));
             information.append(getSection(section, "Messages"));
             information.append(getLine(line, "Total Messages", C.values().length));
             information.append(getLine(line, "View all captions", "/plot debug msg"));

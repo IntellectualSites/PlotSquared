@@ -1,17 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-
-import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -19,16 +7,15 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.ClassicPlotManager;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExpireManager {
     public static ConcurrentHashMap<String, List<Plot>> expiredPlots = new ConcurrentHashMap<>();
@@ -77,7 +64,7 @@ public class ExpireManager {
             @Override
             public void run() {
                 try {
-                    for (final String world : PlotSquared.getPlotWorldsString()) {
+                    for (final String world : PlotSquared.getInstance().getPlotWorldsString()) {
                         if (!ExpireManager.updatingPlots.containsKey(world)) {
                             ExpireManager.updatingPlots.put(world, false);
                         }
@@ -117,17 +104,17 @@ public class ExpireManager {
                                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
                             }
                         }
-                        final PlotManager manager = PlotSquared.getPlotManager(world);
+                        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
                         if (manager == null) {
                             PlotSquared.log("&7[&5Expire&dManager&7] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
                             expiredPlots.get(world).remove(plot);
                             return;
                         }
-                        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+                        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
                         RunnableVal run = new RunnableVal<Integer>() {
                             @Override
                             public void run() {
-                                int changed = (Integer) this.value;
+                                int changed = this.value;
                                 if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
                                     if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
                                         PlotSquared.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
@@ -148,7 +135,7 @@ public class ExpireManager {
                                 manager.clearPlot(plotworld, plot, false, null);
                                 MainUtil.removeSign(plot);
                                 DBFunc.delete(world, plot);
-                                PlotSquared.removePlot(world, plot.id, false);
+                                PlotSquared.getInstance().removePlot(world, plot.id, false);
                                 expiredPlots.get(world).remove(plot);
                                 PlotSquared.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                 PlotSquared.log("&3 - World: " + plot.world);
@@ -228,7 +215,7 @@ public class ExpireManager {
     }
 
     public static List<Plot> getOldPlots(final String world) {
-        final Collection<Plot> plots = PlotSquared.getPlots(world).values();
+        final Collection<Plot> plots = PlotSquared.getInstance().getPlots(world).values();
         final List<Plot> toRemove = new ArrayList<>();
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {

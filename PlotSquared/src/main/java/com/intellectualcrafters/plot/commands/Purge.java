@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -33,6 +28,11 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings({ "javadoc" })
 public class Purge extends SubCommand {
@@ -91,7 +91,7 @@ public class Purge extends SubCommand {
             return false;
         }
         final String worldname = args[1];
-        if (!PlotSquared.getAllPlotsRaw().containsKey(worldname)) {
+        if (!PlotSquared.getInstance().getAllPlotsRaw().containsKey(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -107,7 +107,7 @@ public class Purge extends SubCommand {
             return finishPurge(DBid == Integer.MAX_VALUE ? 1 : 0);
         }
         if (arg.equals("all")) {
-            final Set<PlotId> ids = PlotSquared.getPlots(worldname).keySet();
+            final Set<PlotId> ids = PlotSquared.getInstance().getPlots(worldname).keySet();
             int length = ids.size();
             if (length == 0) {
                 return MainUtil.sendMessage(null, "&cNo plots found");
@@ -116,7 +116,7 @@ public class Purge extends SubCommand {
             return finishPurge(length);
         }
         if (arg.equals("unknown")) {
-            final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
+            final Collection<Plot> plots = PlotSquared.getInstance().getPlots(worldname).values();
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 if (plot.owner != null) {
@@ -134,7 +134,7 @@ public class Purge extends SubCommand {
             return finishPurge(length);
         }
         if (arg.equals("unowned")) {
-            final Collection<Plot> plots = PlotSquared.getPlots(worldname).values();
+            final Collection<Plot> plots = PlotSquared.getInstance().getPlots(worldname).values();
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 if (plot.owner == null) {
@@ -150,7 +150,7 @@ public class Purge extends SubCommand {
         }
         final UUID uuid = UUIDHandler.getUUID(args[0]);
         if (uuid != null) {
-            final Set<Plot> plots = PlotSquared.getPlots(worldname, uuid);
+            final Set<Plot> plots = PlotSquared.getInstance().getPlots(worldname, uuid);
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 ids.add(plot.id);

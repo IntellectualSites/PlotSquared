@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,82 +36,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-
 public class Trim extends SubCommand {
     public static boolean TASK = false;
+    public static ArrayList<Plot> expired = null;
     private static int TASK_ID = 0;
 
     public Trim() {
         super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
-    }
-
-    public PlotId getId(final String id) {
-        try {
-            final String[] split = id.split(";");
-            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
-            return false;
-        }
-        if (args.length == 1) {
-            final String arg = args[0].toLowerCase();
-            final PlotId id = getId(arg);
-            if (id != null) {
-                MainUtil.sendMessage(plr, "/plot trim x;z &l<world>");
-                return false;
-            }
-            if (arg.equals("all")) {
-                MainUtil.sendMessage(plr, "/plot trim all &l<world>");
-                return false;
-            }
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
-            return false;
-        }
-        if (args.length != 2) {
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
-            return false;
-        }
-        final String arg = args[0].toLowerCase();
-        if (!arg.equals("all")) {
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
-            return false;
-        }
-        final String world = args[1];
-        if (!BlockManager.manager.isWorld(world) || (PlotSquared.getPlotWorld(world) == null)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
-            return false;
-        }
-        if (Trim.TASK) {
-            sendMessage(C.TRIM_IN_PROGRESS.s());
-            return false;
-        }
-        sendMessage(C.TRIM_START.s());
-        final ArrayList<ChunkLoc> empty = new ArrayList<>();
-        getTrimRegions(empty, world, new Runnable() {
-            @Override
-            public void run() {
-                deleteChunks(world, empty);
-            }
-        });
-        return true;
     }
 
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
@@ -167,7 +106,7 @@ public class Trim extends SubCommand {
         System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotSquared.getPlots(world).values());
+        plots.addAll(PlotSquared.getInstance().getPlots(world).values());
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
@@ -201,13 +140,69 @@ public class Trim extends SubCommand {
         return true;
     }
 
-    public static ArrayList<Plot> expired = null;
-
     public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
         ChunkManager.manager.deleteRegionFiles(world, chunks);
     }
 
     public static void sendMessage(final String message) {
         PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
+    }
+
+    public PlotId getId(final String id) {
+        try {
+            final String[] split = id.split(";");
+            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean execute(final PlotPlayer plr, final String... args) {
+        if (plr != null) {
+            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
+            return false;
+        }
+        if (args.length == 1) {
+            final String arg = args[0].toLowerCase();
+            final PlotId id = getId(arg);
+            if (id != null) {
+                MainUtil.sendMessage(plr, "/plot trim x;z &l<world>");
+                return false;
+            }
+            if (arg.equals("all")) {
+                MainUtil.sendMessage(plr, "/plot trim all &l<world>");
+                return false;
+            }
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
+            return false;
+        }
+        if (args.length != 2) {
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
+            return false;
+        }
+        final String arg = args[0].toLowerCase();
+        if (!arg.equals("all")) {
+            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
+            return false;
+        }
+        final String world = args[1];
+        if (!BlockManager.manager.isWorld(world) || (PlotSquared.getInstance().getPlotWorld(world) == null)) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
+            return false;
+        }
+        if (Trim.TASK) {
+            sendMessage(C.TRIM_IN_PROGRESS.s());
+            return false;
+        }
+        sendMessage(C.TRIM_START.s());
+        final ArrayList<ChunkLoc> empty = new ArrayList<>();
+        getTrimRegions(empty, world, new Runnable() {
+            @Override
+            public void run() {
+                deleteChunks(world, empty);
+            }
+        });
+        return true;
     }
 }

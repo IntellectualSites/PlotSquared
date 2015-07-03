@@ -13,7 +13,7 @@ public class Chat extends SubCommand {
     @Override
     public boolean execute(PlotPlayer plr, String... args) {
         final String world = plr.getLocation().getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
         boolean enable = !(plr.getMeta("chat") != null && (Boolean) plr.getMeta("chat"));
@@ -24,7 +24,7 @@ public class Chat extends SubCommand {
                 enable = false;
             }
         }
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
         if (!enable && plotworld.PLOT_CHAT) {
             return !sendMessage(plr, C.PLOT_CHAT_FORCED);
         }

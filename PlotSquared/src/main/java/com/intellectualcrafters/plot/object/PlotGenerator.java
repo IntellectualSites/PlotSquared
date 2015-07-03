@@ -20,30 +20,29 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.listeners.WorldEvents;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.listeners.WorldEvents;
-import com.intellectualcrafters.plot.util.ChunkManager;
-
 public abstract class PlotGenerator extends ChunkGenerator {
-    
-    private boolean loaded = false;
-    private short[][] result;
-    public int X;
-    public int Z;
-    private PseudoRandom random = new PseudoRandom();
+
     public static short[][][] CACHE_I = null;
     public static short[][][] CACHE_J = null;
+    public int X;
+    public int Z;
+    private boolean loaded = false;
+    private short[][] result;
+    private PseudoRandom random = new PseudoRandom();
     
     public PlotGenerator(String world) {
         WorldEvents.lastWorld = world;
@@ -72,8 +71,8 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public List<BlockPopulator> getDefaultPopulators(World world) {
         try {
             if (!loaded) {
-                PlotSquared.loadWorld(WorldEvents.getName(world), this);
-                PlotWorld plotworld = PlotSquared.getPlotWorld(WorldEvents.getName(world));
+                PlotSquared.getInstance().loadWorld(WorldEvents.getName(world), this);
+                PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(WorldEvents.getName(world));
                 if (!plotworld.MOB_SPAWNING) {
                     if (!plotworld.SPAWN_EGGS) {
                         world.setSpawnFlags(false, false);
@@ -104,7 +103,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         try {
             if (!loaded) {
-                PlotSquared.loadWorld(WorldEvents.getName(world), this);
+                PlotSquared.getInstance().loadWorld(WorldEvents.getName(world), this);
                 loaded = true;
             }
             final int prime = 13;
@@ -116,7 +115,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             this.X = cx << 4;
             this.Z = cz << 4;
             if (ChunkManager.FORCE_PASTE) {
-                PlotWorld plotworld = PlotSquared.getPlotWorld(world.getName());
+                PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world.getName());
                 Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {
@@ -243,5 +242,6 @@ public abstract class PlotGenerator extends ChunkGenerator {
      * Feel free to extend BukkitSetupUtils and customize world creation
      * @param object
      */
-    public void processSetup(SetupObject object) {};
+    public void processSetup(SetupObject object) {
+    }
 }

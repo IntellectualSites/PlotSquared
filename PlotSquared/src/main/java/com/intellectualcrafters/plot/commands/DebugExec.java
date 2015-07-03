@@ -20,38 +20,26 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.flag.FlagValue.IntegerListValue;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.*;
 
 public class DebugExec extends SubCommand {
     public DebugExec() {
@@ -60,7 +48,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList(new String[] { "analyze", "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check" });
+        final List<String> allowed_params = Arrays.asList("analyze", "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
@@ -70,13 +58,13 @@ public class DebugExec extends SubCommand {
                         @Override
                         public void run() {
                             List<Double> result = new ArrayList<>();
-                            result.add((double) (Math.round(value.air * 100) / 100d));
-                            result.add((double) (Math.round(value.changes * 100) / 100d));
-                            result.add((double) (Math.round(value.complexity * 100) / 100d));
-                            result.add((double) (Math.round(value.data * 100) / 100d));
-                            result.add((double) (Math.round(value.faces * 100) / 100d));
-                            result.add((double) (Math.round(value.air * 100) / 100d));
-                            result.add((double) (Math.round(value.variety * 100) / 100d));
+                            result.add(Math.round(value.air * 100) / 100d);
+                            result.add(Math.round(value.changes * 100) / 100d);
+                            result.add(Math.round(value.complexity * 100) / 100d);
+                            result.add(Math.round(value.data * 100) / 100d);
+                            result.add(Math.round(value.faces * 100) / 100d);
+                            result.add(Math.round(value.air * 100) / 100d);
+                            result.add(Math.round(value.variety * 100) / 100d);
                             Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
                             FlagManager.addPlotFlag(plot, flag);
                         }
@@ -98,7 +86,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PlotSquared.getPlots()) {
+                    for (Plot plot : PlotSquared.getInstance().getPlots()) {
                         if (FlagManager.getPlotFlag(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
@@ -111,7 +99,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     boolean result;
-                    if (!PlotSquared.isPlotWorld(args[1])) {
+                    if (!PlotSquared.getInstance().isPlotWorld(args[1])) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
@@ -138,7 +126,7 @@ public class DebugExec extends SubCommand {
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
-                        ((BukkitHybridUtils)(HybridUtils.manager)).regenerateRoad(BukkitHybridUtils.world, chunk, 0);
+                        HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
                         ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
                     }
                     PlotSquared.log("&cCancelled!");
@@ -209,7 +197,7 @@ public class DebugExec extends SubCommand {
                         return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
-                    if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(args[1])) {
+                    if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(args[1])) {
                         return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();

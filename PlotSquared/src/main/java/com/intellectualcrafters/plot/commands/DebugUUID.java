@@ -20,16 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -47,6 +37,15 @@ import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.bukkit.Bukkit;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class DebugUUID extends SubCommand {
     public DebugUUID() {
@@ -215,8 +214,8 @@ public class DebugUUID extends SubCommand {
         UUIDHandler.uuidWrapper = newWrapper;
         
         MainUtil.sendConsoleMessage("&7 - Updating plot objects");
-        
-        for (Plot plot : PlotSquared.getPlotsRaw()) {
+
+        for (Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
             UUID value = uCMap.get(plot.owner);
             if (value != null) {
                 plot.owner = value;
@@ -236,13 +235,13 @@ public class DebugUUID extends SubCommand {
             database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
             if (!result) {
                 MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
-                for (Plot plot : PlotSquared.getPlots()) {
+                for (Plot plot : PlotSquared.getInstance().getPlots()) {
                     UUID value = uCReverse.get(plot.owner);
                     if (value != null) {
                         plot.owner = value;
                     }
                 }
-                database.createPlotsAndData(new ArrayList<>(PlotSquared.getPlots()), new Runnable() {
+                database.createPlotsAndData(new ArrayList<>(PlotSquared.getInstance().getPlots()), new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(null, "&6Recovery was successful!");
@@ -280,7 +279,7 @@ public class DebugUUID extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getPlots());
+                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getInstance().getPlots());
                 database.createPlotsAndData(plots, new Runnable() {
                     @Override
                     public void run() {

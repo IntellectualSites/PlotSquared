@@ -1,52 +1,41 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.NbtFactory;
+import com.intellectualcrafters.plot.util.NbtFactory.NbtCompound;
+import com.intellectualcrafters.plot.util.NbtFactory.StreamOptions;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.bukkit.Bukkit;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.NbtFactory;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.NbtFactory.NbtCompound;
-import com.intellectualcrafters.plot.util.NbtFactory.StreamOptions;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
 public class UUIDHandler {
-    public static boolean CACHED = false;
-    public static UUIDWrapper uuidWrapper = null;
-    public static HashMap<String, PlotPlayer> players = new HashMap<>();
-
     /**
      * Map containing names and UUIDs
      *
      * @see com.google.common.collect.BiMap
      */
     private final static BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+    public static boolean CACHED = false;
+    public static UUIDWrapper uuidWrapper = null;
+    public static HashMap<String, PlotPlayer> players = new HashMap<>();
 
     public static void add(final StringWrapper name, final UUID uuid) {
         if ((uuid == null) || (name == null)) {
@@ -101,7 +90,7 @@ public class UUIDHandler {
     
     public static HashSet<UUID> getAllUUIDS() {
         HashSet<UUID> uuids = new HashSet<UUID>();
-        for (Plot plot : PlotSquared.getPlotsRaw()) {
+        for (Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
             for (UUID uuid : plot.trusted) {
                 uuids.add(uuid);
             }

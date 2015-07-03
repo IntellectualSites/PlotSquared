@@ -20,17 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Arrays;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.WeatherType;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -47,6 +36,11 @@ import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * @author Citymonstret
@@ -54,7 +48,7 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class PlotListener extends APlotListener {
     public void textures(final Player p) {
-        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PlotSquared.isPlotWorld(p.getWorld().getName())) {
+        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PlotSquared.getInstance().isPlotWorld(p.getWorld().getName())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }
@@ -148,7 +142,7 @@ public class PlotListener extends APlotListener {
                 if (id >= 2256 && id <= 2267) {
                     Location center = MainUtil.getPlotCenter(plot);
                     org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
-                    newLoc.setY(Math.min((((int) player.getLocation().getBlockY())/16) * 16, 240));
+                    newLoc.setY(Math.min((player.getLocation().getBlockY() / 16) * 16, 240));
                     try {
                         player.playEffect(newLoc, Effect.RECORD_PLAY, Material.getMaterial(id));
                     }

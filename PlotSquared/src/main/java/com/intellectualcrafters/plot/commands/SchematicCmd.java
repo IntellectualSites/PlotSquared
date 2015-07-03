@@ -20,25 +20,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class SchematicCmd extends SubCommand {
     private int counter = 0;
@@ -202,7 +198,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                final HashMap<PlotId, Plot> plotmap = PlotSquared.getPlots(args[1]);
+                final HashMap<PlotId, Plot> plotmap = PlotSquared.getInstance().getPlots(args[1]);
                 if ((plotmap == null) || (plotmap.size() == 0)) {
                     MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;
@@ -254,11 +250,11 @@ public class SchematicCmd extends SubCommand {
                             world = args[1];
                             final String[] split = args[2].split(";");
                             final PlotId i = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                            if ((PlotSquared.getPlots(world) == null) || (PlotSquared.getPlots(world).get(i) == null)) {
+                            if ((PlotSquared.getInstance().getPlots(world) == null) || (PlotSquared.getInstance().getPlots(world).get(i) == null)) {
                                 MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                                 return false;
                             }
-                            p2 = PlotSquared.getPlots(world).get(i);
+                            p2 = PlotSquared.getInstance().getPlots(world).get(i);
                         } catch (final Exception e) {
                             MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
                             return false;

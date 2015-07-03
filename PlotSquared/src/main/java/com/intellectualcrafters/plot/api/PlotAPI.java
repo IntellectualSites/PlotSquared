@@ -21,37 +21,27 @@
 
 package com.intellectualcrafters.plot.api;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * PlotSquared API
@@ -93,7 +83,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.PlotSquared#getPlots()
      */
     public Set<Plot> getAllPlots() {
-        return PlotSquared.getPlots();
+        return PlotSquared.getInstance().getPlots();
     }
 
     /**
@@ -104,7 +94,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @return all plots that a player owns
      */
     public Set<Plot> getPlayerPlots(final Player player) {
-        return PlotSquared.getPlots(BukkitUtil.getPlayer(player));
+        return PlotSquared.getInstance().getPlots(BukkitUtil.getPlayer(player));
     }
 
     /**
@@ -118,7 +108,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * com.intellectualcrafters.plot.object.PlotManager)
      */
     public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
-        PlotSquared.addPlotWorld(world, plotWorld, manager);
+        PlotSquared.getInstance().addPlotWorld(world, plotWorld, manager);
     }
 
     /**
@@ -286,7 +276,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see PlotSquared#getPlotManager(String)
      */
     public PlotManager getPlotManager(final World world) {
-        return PlotSquared.getPlotManager(world.getName());
+        return PlotSquared.getInstance().getPlotManager(world.getName());
     }
 
     /**
@@ -301,7 +291,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
     public PlotManager getPlotManager(final String world) {
-        return PlotSquared.getPlotManager(world);
+        return PlotSquared.getInstance().getPlotManager(world);
     }
 
     /**
@@ -316,7 +306,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final World world) {
-        return PlotSquared.getPlotWorld(world.getName());
+        return PlotSquared.getInstance().getPlotWorld(world.getName());
     }
 
     /**
@@ -330,7 +320,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final String world) {
-        return PlotSquared.getPlotWorld(world);
+        return PlotSquared.getInstance().getPlotWorld(world);
     }
 
     /**
@@ -472,7 +462,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      */
     public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
-        for (final Plot plot : PlotSquared.getPlots(world.getName()).values()) {
+        for (final Plot plot : PlotSquared.getInstance().getPlots(world.getName()).values()) {
             if (just_owner) {
                 if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))) {
                     pPlots.add(plot);
@@ -497,7 +487,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot[] getPlots(final World world) {
-        Collection<Plot> plots = PlotSquared.getPlots(world.getName()).values();
+        Collection<Plot> plots = PlotSquared.getInstance().getPlots(world.getName()).values();
         return plots.toArray(new Plot[plots.size()]);
     }
 
@@ -509,7 +499,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.PlotSquared#getPlotWorlds()
      */
     public String[] getPlotWorlds() {
-        Set<String> worlds = PlotSquared.getPlotWorlds();
+        Set<String> worlds = PlotSquared.getInstance().getPlotWorlds();
         return worlds.toArray(new String[worlds.size()]);
     }
 
@@ -523,7 +513,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.PlotSquared#isPlotWorld(String)
      */
     public boolean isPlotWorld(final World world) {
-        return PlotSquared.isPlotWorld(world.getName());
+        return PlotSquared.getInstance().isPlotWorld(world.getName());
     }
 
     /**
@@ -652,7 +642,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Set<Plot> getPlayerPlots(final World world, final Player player) {
-        return PlotSquared.getPlots(world.getName(), BukkitUtil.getPlayer(player));
+        return PlotSquared.getInstance().getPlots(world.getName(), BukkitUtil.getPlayer(player));
     }
 
     /**
@@ -662,7 +652,6 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return the number of allowed plots
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#getAllowedPlots(PlotPlayer, int)
      */
     public int getAllowedPlots(final Player player) {
         PlotPlayer pp = BukkitUtil.getPlayer(player);

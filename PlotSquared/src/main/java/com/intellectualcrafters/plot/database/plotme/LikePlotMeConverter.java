@@ -20,6 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database.plotme;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.TaskManager;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -33,20 +46,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -64,6 +63,15 @@ public class LikePlotMeConverter {
      */
     public LikePlotMeConverter(String plugin) {
         this.plugin = plugin;
+    }
+
+    public static String getWorld(final String world) {
+        for (final World newworld : Bukkit.getWorlds()) {
+            if (newworld.getName().equalsIgnoreCase(world)) {
+                return newworld.getName();
+            }
+        }
+        return world;
     }
     
     private void sendMessage(final String message) {
@@ -89,7 +97,7 @@ public class LikePlotMeConverter {
     public Set<String> getPlotMeWorlds(FileConfiguration plotConfig) {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
-    
+
     public void updateWorldYml(String plugin, String location) {
         try {
             Path path = Paths.get(location);
@@ -102,37 +110,54 @@ public class LikePlotMeConverter {
             content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
             content = content.replaceAll(plugin, "PlotSquared");
             Files.write(path, content.getBytes(charset));
-        } catch (Exception e) {};
+        } catch (Exception e) {
+        }
     }
-    
+
+    public void updateWorldYml(String plugin, String location) {
+        try {
+            Path path = Paths.get(location);
+            File file = new File(location);
+            if (!file.exists()) {
+                return;
+            }
+            Charset charset = StandardCharsets.UTF_8;
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
+            content = content.replaceAll(plugin, "PlotSquared");
+            Files.write(path, content.getBytes(charset));
+        } catch (Exception e) {
+        }
+    }
+
     public boolean run(final APlotMeConnector connector) {
         try {
             String dataFolder = getPlotMePath();
             FileConfiguration plotConfig = getPlotMeConfig(dataFolder);
-            
+
             if (plotConfig == null) {
                 return false;
             }
-            
+
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
-            
+
             if (connection == null) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
                 return false;
             }
-            
+
             sendMessage(plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
             sendMessage("Connecting to " + plugin + " DB");
-            
+
             int plotCount = 0;
             final ArrayList<Plot> createdPlots = new ArrayList<>();
-            
+
             sendMessage("Collecting plot data");
-            
+
             String dbPrefix = plugin.toLowerCase();
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
-            
+
             sendMessage("Updating bukkit.yml");
             updateWorldYml(plugin, "bukkit.yml");
             updateWorldYml(plugin, "plugins/Multiverse-Core/worlds.yml");
@@ -162,7 +187,7 @@ public class LikePlotMeConverter {
                     sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
                 }
             }
-            
+
             HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 plotCount += entry.getValue().size();
@@ -170,9 +195,9 @@ public class LikePlotMeConverter {
             if (!Settings.CONVERT_PLOTME) {
                 return false;
             }
-            
+
             sendMessage(" - " + dbPrefix + "Allowed");
-            
+
             sendMessage("Collected " + plotCount + " plots from PlotMe");
             final File PLOTME_DG_FILE = new File(dataFolder + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
             if (PLOTME_DG_FILE.exists()) {
@@ -249,7 +274,7 @@ public class LikePlotMeConverter {
                     PlotSquared.log("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
                     PlotSquared.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
                     PlotSquared.log("&c - Start the server");
-                    PlotSquared.setAllPlotsRaw(DBFunc.getPlots());
+                    PlotSquared.getInstance().setAllPlotsRaw(DBFunc.getPlots());
                 }
             });
             sendMessage("Saving configuration...");
@@ -276,7 +301,7 @@ public class LikePlotMeConverter {
                             }
                             final String actualWorldName = world.getName();
                             sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
-                            PlotSquared.removePlotWorld(actualWorldName);
+                            PlotSquared.getInstance().removePlotWorld(actualWorldName);
                             if (MV) {
                                 // unload world with MV
                                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + actualWorldName);
@@ -315,14 +340,5 @@ public class LikePlotMeConverter {
             PlotSquared.log("&/end/");
         }
         return true;
-    }
-
-    public static String getWorld(final String world) {
-        for (final World newworld : Bukkit.getWorlds()) {
-            if (newworld.getName().equalsIgnoreCase(world)) {
-                return newworld.getName();
-            }
-        }
-        return world;
     }
 }

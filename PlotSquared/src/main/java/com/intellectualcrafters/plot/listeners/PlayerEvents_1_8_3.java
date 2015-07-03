@@ -1,19 +1,18 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Iterator;
-
-import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockExplodeEvent;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockExplodeEvent;
+
+import java.util.Iterator;
 
 public class PlayerEvents_1_8_3 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -21,7 +20,7 @@ public class PlayerEvents_1_8_3 implements Listener {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         final String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Plot plot = MainUtil.getPlot(loc);

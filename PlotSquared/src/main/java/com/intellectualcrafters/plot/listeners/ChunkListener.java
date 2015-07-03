@@ -1,9 +1,11 @@
 package com.intellectualcrafters.plot.listeners;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -12,19 +14,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.util.TaskManager;
-
 public class ChunkListener implements Listener {
+
+    private Chunk lastChunk = null;
+    private long last = 0;
+    private int count = 0;
     
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
@@ -37,9 +37,7 @@ public class ChunkListener implements Listener {
     public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
-    
-    private Chunk lastChunk = null;
-    
+
     @EventHandler(priority=EventPriority.LOWEST)
     public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
@@ -49,7 +47,7 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (!PlotSquared.isPlotWorld(chunk.getWorld().getName())) {
+        if (!PlotSquared.getInstance().isPlotWorld(chunk.getWorld().getName())) {
             return;
         }
         Entity[] entities = chunk.getEntities();
@@ -62,9 +60,6 @@ public class ChunkListener implements Listener {
             lastChunk = null;
         }
     }
-    
-    private long last = 0;
-    private int count = 0;
     
     @EventHandler(priority=EventPriority.LOWEST)
     public void onBlockPhysics(BlockPhysicsEvent event) {
@@ -90,7 +85,7 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (!PlotSquared.isPlotWorld(chunk.getWorld().getName())) {
+        if (!PlotSquared.getInstance().isPlotWorld(chunk.getWorld().getName())) {
             return;
         }
         Entity[] entities = chunk.getEntities();
@@ -144,7 +139,7 @@ public class ChunkListener implements Listener {
     }
     
     public boolean processChunk(Chunk chunk, boolean unload) {
-        if (!PlotSquared.isPlotWorld(chunk.getWorld().getName())) {
+        if (!PlotSquared.getInstance().isPlotWorld(chunk.getWorld().getName())) {
             return false;
         }
         Entity[] entities = chunk.getEntities();

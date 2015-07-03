@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -34,6 +32,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.Set;
 
 public class Clear extends SubCommand {
     public Clear() {
@@ -52,7 +52,7 @@ public class Clear extends SubCommand {
                 if (id == null) {
                     PlotSquared.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotSquared.isPlotWorld(world)) {
+                    if (!PlotSquared.getInstance().isPlotWorld(world)) {
                         PlotSquared.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = MainUtil.getPlot(world, id);
@@ -84,7 +84,7 @@ public class Clear extends SubCommand {
             PlotId id = PlotId.fromString(args[0]);
             if (id == null) {
                 if (args[1].equalsIgnoreCase("mine")) {
-                    Set<Plot> plots = PlotSquared.getPlots(plr);
+                    Set<Plot> plots = PlotSquared.getInstance().getPlots(plr);
                     if (plots.size() == 0) {
                         MainUtil.sendMessage(plr, C.NO_PLOTS);
                         return false;

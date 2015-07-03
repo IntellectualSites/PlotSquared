@@ -50,7 +50,7 @@ public class Unclaim extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getPlotWorld(plot.world);
+        final PlotWorld pWorld = PlotSquared.getInstance().getPlotWorld(plot.world);
         if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
@@ -58,10 +58,10 @@ public class Unclaim extends SubCommand {
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PlotSquared.removePlot(loc.getWorld(), plot.id, true);
+        final boolean result = PlotSquared.getInstance().removePlot(loc.getWorld(), plot.id, true);
         if (result) {
             final String worldname = plr.getLocation().getWorld();
-            PlotSquared.getPlotManager(worldname).unclaimPlot(pWorld, plot);
+            PlotSquared.getInstance().getPlotManager(worldname).unclaimPlot(pWorld, plot);
             DBFunc.delete(worldname, plot);
             // TODO set wall block
         } else {

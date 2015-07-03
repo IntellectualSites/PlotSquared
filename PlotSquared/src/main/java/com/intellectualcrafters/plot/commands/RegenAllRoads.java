@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.List;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
@@ -30,6 +28,8 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
+
+import java.util.List;
 
 public class RegenAllRoads extends SubCommand {
     public RegenAllRoads() {
@@ -58,7 +58,7 @@ public class RegenAllRoads extends SubCommand {
             }
         }
         final String name = args[0];
-        final PlotManager manager = PlotSquared.getPlotManager(name);
+        final PlotManager manager = PlotSquared.getInstance().getPlotManager(name);
         if ((manager == null) || !(manager instanceof HybridPlotManager)) {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;

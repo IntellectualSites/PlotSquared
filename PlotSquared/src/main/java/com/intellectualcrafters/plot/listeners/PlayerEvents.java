@@ -1,91 +1,5 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.minecart.RideableMinecart;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.vehicle.VehicleCreateEvent;
-import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Tree;
-import org.bukkit.material.Wool;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.BlockProjectileSource;
-import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.util.Vector;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -93,25 +7,41 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.RideableMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.material.MaterialData;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
+
+import java.util.*;
 
 /**
  * Player Events involving plots
@@ -121,11 +51,37 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
  */
 public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotListener implements Listener {
 
+    private boolean pistonBlocks = true;
+
+    public static void sendBlockChange(final org.bukkit.Location bloc, final Material type, final byte data) {
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                String world = bloc.getWorld().getName();
+                int x = bloc.getBlockX();
+                int z = bloc.getBlockZ();
+                int distance = Bukkit.getViewDistance() * 16;
+                for (PlotPlayer player : UUIDHandler.players.values()) {
+                    Location loc = player.getLocation();
+                    if (loc.getWorld().equals(world)) {
+                        if (16 * (Math.abs(loc.getX() - x) / 16) > distance) {
+                            continue;
+                        }
+                        if (16 * (Math.abs(loc.getZ() - z) / 16) > distance) {
+                            continue;
+                        }
+                        ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
+                    }
+                }
+            }
+        }, 3);
+    }
+
     @EventHandler
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
-        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
@@ -184,35 +140,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         event.setNewCurrent(0);
     }
     
-    public static void sendBlockChange(final org.bukkit.Location bloc, final Material type, final byte data) {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                String world = bloc.getWorld().getName();
-                int x = bloc.getBlockX();
-                int z = bloc.getBlockZ();
-                int distance = Bukkit.getViewDistance() * 16;
-                for (PlotPlayer player : UUIDHandler.players.values()) {
-                    Location loc = player.getLocation();
-                    if (loc.getWorld().equals(world)) {
-                        if (16 * (Math.abs(loc.getX() - x)/16) > distance) {
-                            continue;
-                        }
-                        if (16 * (Math.abs(loc.getZ() - z)/16) > distance) {
-                            continue;
-                        }
-                        ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
-                    }
-                }
-            }
-        }, 3);
-    }
-
     @EventHandler
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
-        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             return;
         }
         switch (block.getType()) {
@@ -244,12 +176,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        Projectile entity = (Projectile) event.getEntity();
+        Projectile entity = event.getEntity();
         Location loc = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (!PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
@@ -286,7 +217,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             entity.remove();
         }
     }
-    
+
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String message = event.getMessage().toLowerCase().replaceAll("/", "");
@@ -360,7 +291,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 TaskManager.TELEPORT_QUEUE.remove(player.getName());
             }
             final String worldname = t.getWorld();
-            if (!PlotSquared.isPlotWorld(worldname)) {
+            if (!PlotSquared.getInstance().isPlotWorld(worldname)) {
                 return;
             }
             if (MainUtil.worldBorder.containsKey(worldname)) {
@@ -405,7 +336,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (!plot.equals(MainUtil.getPlot(f))) {
                     plotEntry(pp, plot);
                 }
-            } 
+            }
             else if (MainUtil.leftPlot(f, t)) {
                 plot = MainUtil.getPlot(f);
                 plotExit(BukkitUtil.getPlayer(player), plot);
@@ -417,10 +348,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
         final PlotPlayer plr = BukkitUtil.getPlayer(player);
         if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr.getMeta("chat"))) {
             return;
@@ -450,7 +381,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void BlockDestroy(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
@@ -500,7 +431,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onBigBoom(final EntityExplodeEvent event) {
         Location loc = BukkitUtil.getLocation(event.getLocation());
         final String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Plot plot = MainUtil.getPlot(loc);
@@ -547,7 +478,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
         final String world = event.getBlock().getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Entity e = event.getEntity();
@@ -597,7 +528,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent e) {
         final String world = e.getBlock().getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         if ((!(e.getEntity() instanceof Player))) {
@@ -611,7 +542,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
@@ -622,7 +553,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
@@ -634,14 +565,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Player player = event.getPlayer();
         if (player == null) {
             final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-            if (PlotSquared.isPlotWorld(loc.getWorld())) {
+            if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
                 if (MainUtil.isPlotRoad(loc)) {
                     event.setCancelled(true);
                 }
             }
         }
         final String world = player.getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
@@ -691,7 +622,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
@@ -702,7 +633,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
@@ -719,7 +650,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
             }
@@ -731,7 +662,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
@@ -767,15 +698,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
-    private boolean pistonBlocks = true;
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         if (block.getType() != Material.PISTON_STICKY_BASE && block.getType() != Material.PISTON_BASE && block.getType() != Material.PISTON_MOVING_PIECE) {
@@ -811,7 +740,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onStructureGrow(final StructureGrowEvent e) {
-        if (!PlotSquared.isPlotWorld(e.getWorld().getName())) {
+        if (!PlotSquared.getInstance().isPlotWorld(e.getWorld().getName())) {
             return;
         }
         final List<BlockState> blocks = e.getBlocks();
@@ -837,6 +766,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Material type = block.getType();
+
         if (action == Action.RIGHT_CLICK_BLOCK && type.isSolid() && type.isBlock() && type.isOccluding() && !type.isBurnable()) {
             BlockState state = block.getState();
             if (state.getData().getClass().equals(MaterialData.class)) {
@@ -848,7 +778,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(event.getClickedBlock().getLocation());
@@ -866,6 +796,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 event.setCancelled(true);
                 return;
             }
+
             final Flag use = FlagManager.getPlotFlag(plot, "use");
             if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                 return;
@@ -904,13 +835,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         final Location loc = BukkitUtil.getLocation(event.getLocation());
         final String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         if (!MainUtil.isPlotArea(loc)) {
             return;
         }
-        final PlotWorld pW = PlotSquared.getPlotWorld(world);
+        final PlotWorld pW = PlotSquared.getInstance().getPlotWorld(world);
         final CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         if ((reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG || reason == CreatureSpawnEvent.SpawnReason.DISPENSE_EGG) && !pW.SPAWN_EGGS) {
             event.setCancelled(true);
@@ -922,6 +853,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             event.setCancelled(true);
             return;
         }
+
         Plot plot = MainUtil.getPlot(loc);
         if (checkEntity(entity, plot)) {
             event.setCancelled(true);
@@ -936,7 +868,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         Block block = event.getBlock();
         World world = block.getWorld();
         String worldname = world.getName();
-        if (!PlotSquared.isPlotWorld(worldname)) {
+        if (!PlotSquared.getInstance().isPlotWorld(worldname)) {
             return;
         }
         Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -1034,7 +966,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         } else {
             return;
         }
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         if (e.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
@@ -1090,7 +1022,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final Location t = BukkitUtil.getLocation(event.getTo());
         final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
         final Player player = event.getPlayer();
-        if (PlotSquared.isPlotWorld(q.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(q.getWorld())) {
             final Plot plot = MainUtil.getPlot(q);
             if (plot != null) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -1124,7 +1056,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final BlockFace bf = e.getBlockFace();
         final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
             Plot plot = MainUtil.getPlot(loc);
             if (plot == null) {
@@ -1200,8 +1132,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PlotSquared.getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
-                final PlotWorld plotworld = PlotSquared.getPlotWorld(plot.world);
-                final PlotManager manager = PlotSquared.getPlotManager(plot.world);
+                final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
+                final PlotManager manager = PlotSquared.getInstance().getPlotManager(plot.world);
                 manager.clearPlot(plotworld, plot, true, null);
                 DBFunc.delete(plot.world, plot);
                 PlotSquared.log(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
@@ -1214,7 +1146,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = MainUtil.getPlot(loc);
@@ -1258,7 +1190,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PlotSquared.isPlotWorld(loc.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(loc.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = MainUtil.getPlot(loc);
@@ -1300,7 +1232,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             final Player p = (Player) r;
             final Location l = BukkitUtil.getLocation(e.getEntity());
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (PlotSquared.isPlotWorld(l.getWorld())) {
+            if (PlotSquared.getInstance().isPlotWorld(l.getWorld())) {
                 Plot plot = MainUtil.getPlot(l);
                 if (plot == null) {
                     if (MainUtil.isPlotAreaAbs(l)) {
@@ -1337,7 +1269,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        if (PlotSquared.isPlotWorld(l.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(l.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = MainUtil.getPlot(l);
@@ -1396,11 +1328,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onVehicleDestroy(final VehicleDestroyEvent e) {
         final Location l = BukkitUtil.getLocation(e.getVehicle());
-        if (PlotSquared.isPlotWorld(l.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(l.getWorld())) {
             final Entity d = e.getAttacker();
             if (d instanceof Player) {
                 final Player p = (Player) d;
-                PlotSquared.getPlotWorld(l.getWorld());
+                PlotSquared.getInstance().getPlotWorld(l.getWorld());
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
                 Plot plot = MainUtil.getPlot(l);
                 if (plot == null) {
@@ -1450,7 +1382,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 TaskManager.TELEPORT_QUEUE.remove(name);
             }
         }
-        if (PlotSquared.isPlotWorld(l.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(l.getWorld())) {
             Player p = null;
             Projectile projectile = null;
             if (damager instanceof Player) {
@@ -1489,7 +1421,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             if (p != null) {
                 final boolean aPlr = victim instanceof Player;
-                final PlotWorld pW = PlotSquared.getPlotWorld(l.getWorld());
+                final PlotWorld pW = PlotSquared.getInstance().getPlotWorld(l.getWorld());
                 if (!aPlr && pW.PVE && (!(victim instanceof ItemFrame) && !(victim.getType().getTypeId() == 30))) {
                     return;
                 } else if (aPlr && pW.PVP) {
@@ -1559,7 +1491,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEgg().getLocation());
-        if (PlotSquared.isPlotWorld(l.getWorld())) {
+        if (PlotSquared.getInstance().isPlotWorld(l.getWorld())) {
             final Player p = e.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = MainUtil.getPlot(l);
@@ -1596,7 +1528,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void BlockCreate(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);

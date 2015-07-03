@@ -20,18 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Functions involving players, plots and locations.
@@ -111,7 +110,7 @@ public class BukkitPlayerFunctions {
      * @return boolean
      */
     public static Plot getCurrentPlot(final Player player) {
-        if (!PlotSquared.isPlotWorld(player.getWorld().getName())) {
+        if (!PlotSquared.getInstance().isPlotWorld(player.getWorld().getName())) {
             return null;
         }
         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(player));
@@ -133,7 +132,7 @@ public class BukkitPlayerFunctions {
      * @return boolean
      */
     public static Set<Plot> getPlayerPlots(final String world, final Player plr) {
-        final Set<Plot> p = PlotSquared.getPlots(world, plr.getName());
+        final Set<Plot> p = PlotSquared.getInstance().getPlots(world, plr.getName());
         if (p == null) {
             return new HashSet<>();
         }

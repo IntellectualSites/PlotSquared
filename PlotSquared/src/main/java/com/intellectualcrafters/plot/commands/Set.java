@@ -20,12 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -33,22 +27,15 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue.PlotBlockListValue;
 import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
-import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Citymonstret
@@ -79,10 +66,10 @@ public class Set extends SubCommand {
             }
         }
         if (args.length < 1) {
-            PlotManager manager = PlotSquared.getPlotManager(loc.getWorld());
+            PlotManager manager = PlotSquared.getInstance().getPlotManager(loc.getWorld());
             ArrayList<String> newValues = new ArrayList<String>();
             newValues.addAll(Arrays.asList(values));
-            newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getPlotWorld(loc.getWorld()), plot.id)));
+            newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
             return false;
         }
@@ -184,7 +171,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
-            for (final Plot p : PlotSquared.getPlots(plr.getLocation().getWorld()).values()) {
+            for (final Plot p : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
@@ -230,8 +217,8 @@ public class Set extends SubCommand {
         }
         // Get components
         final String world = plr.getLocation().getWorld();
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getPlotManager(world);
+        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
@@ -321,7 +308,7 @@ public class Set extends SubCommand {
         }
         ArrayList<String> newValues = new ArrayList<String>();
         newValues.addAll(Arrays.asList(values));
-        newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getPlotWorld(loc.getWorld()), plot.id)));
+        newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
         return false;
     }

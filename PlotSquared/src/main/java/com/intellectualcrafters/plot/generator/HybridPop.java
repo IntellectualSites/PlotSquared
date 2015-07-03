@@ -1,19 +1,14 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPopulator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.BlockManager;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Citymonstret
@@ -35,9 +30,9 @@ public class HybridPop extends PlotPopulator {
     final int plotheight;
     final byte[] plotfloors;
     final byte[] filling;
-    private final HybridPlotWorld plotworld;
     final short pathWidthLower;
     final short pathWidthUpper;
+    private final HybridPlotWorld plotworld;
     Biome biome;
     private long state;
     private boolean doFilling = false;
@@ -111,7 +106,7 @@ public class HybridPop extends PlotPopulator {
 
     @Override
     public void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz) {
-        PlotSquared.getPlotManager(world.getName());
+        PlotSquared.getInstance().getPlotManager(world.getName());
 
         int sx = (short) ((this.X) % this.size);
         int sz = (short) ((this.Z) % this.size);

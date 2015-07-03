@@ -1,23 +1,15 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.util.HashMap;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+
+import java.io.File;
+import java.util.HashMap;
 
 public abstract class HybridUtils {
 
@@ -33,7 +25,7 @@ public abstract class HybridUtils {
         final String world = plot.world;
         final Location bot = MainUtil.getPlotBottomLoc(world, plot.id);
         final Location top = MainUtil.getPlotTopLoc(world, plot.id);
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getInstance().getPlotWorld(world);
         final int sx = (bot.getX() - plotworld.ROAD_WIDTH) + 1;
         final int sz = bot.getZ() + 1;
         final int sy = plotworld.ROAD_HEIGHT;
@@ -69,7 +61,7 @@ public abstract class HybridUtils {
         final int z = chunk.z << 4;
         final int ex = x + 15;
         final int ez = z + 15;
-        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getPlotWorld(world);
+        final HybridPlotWorld plotworld = (HybridPlotWorld) PlotSquared.getInstance().getPlotWorld(world);
         extend = Math.min(extend, 255 - plotworld.ROAD_HEIGHT - plotworld.SCHEMATIC_HEIGHT);
         if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
             return false;
@@ -85,7 +77,7 @@ public abstract class HybridUtils {
                 toCheck = c1 ^ c2;
             }
         }
-        final PlotManager manager = PlotSquared.getPlotManager(world);
+        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
         final PlotId id1 = manager.getPlotId(plotworld, x, 0, z);
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
         if ((id1 == null) || (id2 == null) || (id1 != id2)) {

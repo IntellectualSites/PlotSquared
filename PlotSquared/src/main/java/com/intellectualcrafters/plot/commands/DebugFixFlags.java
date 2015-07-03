@@ -20,22 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 public class DebugFixFlags extends SubCommand {
     public DebugFixFlags() {
@@ -53,12 +50,12 @@ public class DebugFixFlags extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!BlockManager.manager.isWorld(world) || !PlotSquared.isPlotWorld(world)) {
+        if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (final Plot plot : PlotSquared.getPlots(world).values()) {
+        for (final Plot plot : PlotSquared.getInstance().getPlots(world).values()) {
             final HashMap<String, Flag> flags = plot.settings.flags;
             Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;

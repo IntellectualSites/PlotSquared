@@ -20,25 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
@@ -172,7 +163,7 @@ public class Merge extends SubCommand {
                                 sendMessage(accepter, C.MERGE_NOT_VALID);
                                 return;
                             }
-                            final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
+                            final PlotWorld plotWorld = PlotSquared.getInstance().getPlotWorld(world);
                             if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
                                 double cost = plotWorld.MERGE_PRICE;
                                 cost = plots.size() * cost;
@@ -201,7 +192,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.MERGE_REQUESTED);
             return true;
         }
-        final PlotWorld plotWorld = PlotSquared.getPlotWorld(world);
+        final PlotWorld plotWorld = PlotSquared.getInstance().getPlotWorld(world);
         if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;

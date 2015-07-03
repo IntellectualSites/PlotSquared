@@ -1,12 +1,28 @@
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.Map.Entry;
-
+import com.intellectualcrafters.plot.commands.*;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.plotme.ClassicPlotMeConnector;
+import com.intellectualcrafters.plot.database.plotme.LikePlotMeConverter;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.listeners.*;
+import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
+import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.titles.DefaultTitle;
+import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.bukkit.*;
+import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -19,130 +35,14 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.commands.Add;
-import com.intellectualcrafters.plot.commands.Auto;
-import com.intellectualcrafters.plot.commands.BukkitCommand;
-import com.intellectualcrafters.plot.commands.Chat;
-import com.intellectualcrafters.plot.commands.Claim;
-import com.intellectualcrafters.plot.commands.Clear;
-import com.intellectualcrafters.plot.commands.Cluster;
-import com.intellectualcrafters.plot.commands.Comment;
-import com.intellectualcrafters.plot.commands.Condense;
-import com.intellectualcrafters.plot.commands.Confirm;
-import com.intellectualcrafters.plot.commands.Copy;
-import com.intellectualcrafters.plot.commands.CreateRoadSchematic;
-import com.intellectualcrafters.plot.commands.Database;
-import com.intellectualcrafters.plot.commands.Debug;
-import com.intellectualcrafters.plot.commands.DebugClaimTest;
-import com.intellectualcrafters.plot.commands.DebugClear;
-import com.intellectualcrafters.plot.commands.DebugExec;
-import com.intellectualcrafters.plot.commands.DebugFill;
-import com.intellectualcrafters.plot.commands.DebugFixFlags;
-import com.intellectualcrafters.plot.commands.DebugLoadTest;
-import com.intellectualcrafters.plot.commands.DebugRoadRegen;
-import com.intellectualcrafters.plot.commands.DebugSaveTest;
-import com.intellectualcrafters.plot.commands.DebugUUID;
-import com.intellectualcrafters.plot.commands.Delete;
-import com.intellectualcrafters.plot.commands.Deny;
-import com.intellectualcrafters.plot.commands.FlagCmd;
-import com.intellectualcrafters.plot.commands.Help;
-import com.intellectualcrafters.plot.commands.Home;
-import com.intellectualcrafters.plot.commands.Inbox;
-import com.intellectualcrafters.plot.commands.Info;
-import com.intellectualcrafters.plot.commands.Inventory;
-import com.intellectualcrafters.plot.commands.Kick;
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.commands.Merge;
-import com.intellectualcrafters.plot.commands.Move;
-import com.intellectualcrafters.plot.commands.MusicSubcommand;
-import com.intellectualcrafters.plot.commands.Purge;
-import com.intellectualcrafters.plot.commands.Rate;
-import com.intellectualcrafters.plot.commands.RegenAllRoads;
-import com.intellectualcrafters.plot.commands.Reload;
-import com.intellectualcrafters.plot.commands.Remove;
-import com.intellectualcrafters.plot.commands.SchematicCmd;
-import com.intellectualcrafters.plot.commands.Set;
-import com.intellectualcrafters.plot.commands.SetOwner;
-import com.intellectualcrafters.plot.commands.Setup;
-import com.intellectualcrafters.plot.commands.Swap;
-import com.intellectualcrafters.plot.commands.TP;
-import com.intellectualcrafters.plot.commands.Target;
-import com.intellectualcrafters.plot.commands.Template;
-import com.intellectualcrafters.plot.commands.Toggle;
-import com.intellectualcrafters.plot.commands.Trim;
-import com.intellectualcrafters.plot.commands.Trust;
-import com.intellectualcrafters.plot.commands.Unclaim;
-import com.intellectualcrafters.plot.commands.Undeny;
-import com.intellectualcrafters.plot.commands.Unlink;
-import com.intellectualcrafters.plot.commands.Untrust;
-import com.intellectualcrafters.plot.commands.Visit;
-import com.intellectualcrafters.plot.commands.WE_Anywhere;
-import com.intellectualcrafters.plot.commands.list;
-import com.intellectualcrafters.plot.commands.plugin;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.plotme.ClassicPlotMeConnector;
-import com.intellectualcrafters.plot.database.plotme.LikePlotMeConverter;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.listeners.ChunkListener;
-import com.intellectualcrafters.plot.listeners.ForceFieldListener;
-import com.intellectualcrafters.plot.listeners.InventoryListener;
-import com.intellectualcrafters.plot.listeners.PlayerEvents;
-import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8;
-import com.intellectualcrafters.plot.listeners.PlayerEvents_1_8_3;
-import com.intellectualcrafters.plot.listeners.PlotListener;
-import com.intellectualcrafters.plot.listeners.PlotPlusListener;
-import com.intellectualcrafters.plot.listeners.TNTListener;
-import com.intellectualcrafters.plot.listeners.WorldEvents;
-import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
-import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.titles.AbstractTitle;
-import com.intellectualcrafters.plot.titles.DefaultTitle;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.BlockUpdateUtil;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlayerManager;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitEconHandler;
-import com.intellectualcrafters.plot.util.bukkit.BukkitEventUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitInventoryUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitPlayerManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitSetupUtils;
-import com.intellectualcrafters.plot.util.bukkit.BukkitTaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.Metrics;
-import com.intellectualcrafters.plot.util.bukkit.SendChunk;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockFast;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockFast_1_8;
-import com.intellectualcrafters.plot.util.bukkit.SetBlockSlow;
-import com.intellectualcrafters.plot.util.bukkit.SetGenCB;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
+
     public static BukkitMain THIS = null;
-    public static PlotSquared MAIN = null;
 
     private int[] version;
     
@@ -168,7 +68,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void onEnable() {
         THIS = this;
-        MAIN = new PlotSquared(this);
+        PlotSquared.instance = new PlotSquared(this);
         if (Settings.METRICS) {
             try {
                 final Metrics metrics = new Metrics(this);
@@ -197,8 +97,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void onDisable() {
-        MAIN.disable();
-        MAIN = null;
+        PlotSquared.getInstance().disable();
         THIS = null;
     }
 
@@ -336,7 +235,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                     this.error = 0l;
                 }
                 World world;
-                for (final String w : PlotSquared.getPlotWorlds()) {
+                for (final String w : PlotSquared.getInstance().getPlotWorlds()) {
                     world = Bukkit.getWorld(w);
                     try {
                         if (world.getLoadedChunks().length < 1) {
@@ -364,7 +263,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         WorldEvents.lastWorld = world;
-        if (!PlotSquared.setupPlotWorld(world, id)) {
+        if (!PlotSquared.getInstance().setupPlotWorld(world, id)) {
             return null;
         }
         HybridGen result = new HybridGen(world);
@@ -409,8 +308,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerWorldEditEvents() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            PlotSquared.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-            final String version = PlotSquared.worldEdit.getDescription().getVersion();
+            PlotSquared.getInstance().worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            final String version = PlotSquared.getInstance().worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
                 log("&cThis version of WorldEdit does not support PlotSquared.");
                 log("&cPlease use WorldEdit 6+ for masking support");
@@ -430,8 +329,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             if (econ.init()) {
                 return econ;
             }
+        } catch (Throwable e) {
         }
-        catch (Throwable e) {};
         return null;
     }
 
@@ -472,10 +371,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             }
         }, 20);
-        if (Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null) {
-            return true;
-        }
-        return false;
+        return Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null;
     }
 
     @Override

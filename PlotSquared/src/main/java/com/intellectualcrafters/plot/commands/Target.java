@@ -35,7 +35,7 @@ public class Target extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         final Location ploc = plr.getLocation();
-        if (!PlotSquared.isPlotWorld(ploc.getWorld())) {
+        if (!PlotSquared.getInstance().isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }

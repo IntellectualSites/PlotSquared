@@ -20,23 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EventUtil;
+
+import java.util.*;
 
 /**
  * Flag Manager Utility
@@ -101,14 +91,14 @@ public class FlagManager {
     
     public static boolean addFlag(AbstractFlag af, boolean reserved) {
         PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        for (PlotWorld plotworld : PlotSquared.getPlotWorldObjects()) {
+        for (PlotWorld plotworld : PlotSquared.getInstance().getPlotWorldObjects()) {
             Flag flag = ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(af.getKey());
             if (flag != null) {
                 flag.setKey(af);
             }
         }
-        if (PlotSquared.getAllPlotsRaw() != null) {
-            for (final Plot plot : PlotSquared.getPlotsRaw()) {
+        if (PlotSquared.getInstance().getAllPlotsRaw() != null) {
+            for (final Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
                 Flag flag = plot.settings.flags.get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
@@ -125,7 +115,7 @@ public class FlagManager {
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {
         Flag flag = settings.flags.get(id);
         if (flag == null) {
-            PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+            PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
             if (plotworld == null) {
                 return null;
             }
@@ -237,7 +227,7 @@ public class FlagManager {
     }
 
     public static Collection<Flag> getSettingFlags(final String world, final PlotSettings settings) {
-        PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
         HashMap<String, Flag> map;
         if (plotworld == null) {
             map = new HashMap<>();

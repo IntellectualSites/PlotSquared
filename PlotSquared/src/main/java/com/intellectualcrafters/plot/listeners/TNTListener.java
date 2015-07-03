@@ -1,7 +1,11 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.List;
-
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -12,12 +16,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import java.util.List;
 
 public class TNTListener implements Listener {
     private double lastRadius;
@@ -34,7 +33,7 @@ public class TNTListener implements Listener {
         }
         World world = entity.getWorld();
         String worldname = world.getName();
-        if (!PlotSquared.isPlotWorld(worldname)) {
+        if (!PlotSquared.getInstance().isPlotWorld(worldname)) {
             return;
         }
         Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(entity));

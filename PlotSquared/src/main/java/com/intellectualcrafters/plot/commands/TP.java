@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
@@ -31,6 +29,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Citymonstret
@@ -56,7 +55,7 @@ public class TP extends SubCommand {
                 world = args[1];
             }
         }
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
@@ -86,7 +85,7 @@ public class TP extends SubCommand {
         }
         final PlotPlayer player = UUIDHandler.getPlayer(a);
         if (player != null) {
-            final java.util.Set<Plot> plotMainPlots = PlotSquared.getPlots(world, player);
+            final java.util.Set<Plot> plotMainPlots = PlotSquared.getInstance().getPlots(world, player);
             final Plot[] plots = plotMainPlots.toArray(new Plot[plotMainPlots.size()]);
             if (plots.length > index) {
                 return plots[index];

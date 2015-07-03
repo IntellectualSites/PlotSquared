@@ -27,11 +27,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
 /**
@@ -60,8 +56,8 @@ public class Claim extends SubCommand {
                 MainUtil.teleportPlayer(player, loc, plot);
             }
             final String world = plot.world;
-            final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
-            final Plot plot2 = PlotSquared.getPlots(world).get(plot.id);
+            final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+            final Plot plot2 = PlotSquared.getInstance().getPlots(world).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 Schematic sch;
                 if (schematic.equals("")) {
@@ -74,7 +70,7 @@ public class Claim extends SubCommand {
                 }
                 SchematicHandler.manager.paste(sch, plot2, 0, 0);
             }
-            PlotSquared.getPlotManager(world).claimPlot(plotworld, plot);
+            PlotSquared.getInstance().getPlotManager(world).claimPlot(plotworld, plot);
         }
         return result;
     }
@@ -97,7 +93,7 @@ public class Claim extends SubCommand {
         if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotSquared.getPlotWorld(plot.world);
+        final PlotWorld world = PlotSquared.getInstance().getPlotWorld(plot.world);
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

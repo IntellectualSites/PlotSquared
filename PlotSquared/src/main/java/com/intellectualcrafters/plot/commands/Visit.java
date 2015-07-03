@@ -20,18 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Visit extends SubCommand {
     public Visit() {
@@ -40,7 +39,7 @@ public class Visit extends SubCommand {
 
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
-        for (final Plot p : PlotSquared.getPlots()) {
+        for (final Plot p : PlotSquared.getInstance().getPlots()) {
             if (p.hasOwner() && p.isOwner(uuid)) {
                 plots.add(p);
             }
@@ -57,11 +56,10 @@ public class Visit extends SubCommand {
         UUID user = UUIDHandler.getUUID(args[0]);
         if (user != null ) {
             // do plots by username
-            plots.addAll(PlotSquared.getPlots(user));
-        }
-        else if (PlotSquared.isPlotWorld(args[0])) {
+            plots.addAll(PlotSquared.getInstance().getPlots(user));
+        } else if (PlotSquared.getInstance().isPlotWorld(args[0])) {
             // do plots by world
-            plots.addAll(PlotSquared.getPlots(args[0]).values());
+            plots.addAll(PlotSquared.getInstance().getPlots(args[0]).values());
         }
         else {
             Plot plot = MainUtil.getPlotFromString(plr, args[0], true);

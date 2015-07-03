@@ -26,12 +26,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -51,7 +46,7 @@ public class Buy extends SubCommand {
         }
         final Location loc = plr.getLocation();
         final String world = loc.getWorld();
-        if (!PlotSquared.isPlotWorld(world)) {
+        if (!PlotSquared.getInstance().isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
         Plot plot;
@@ -88,7 +83,7 @@ public class Buy extends SubCommand {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int size = MainUtil.getPlotSelectionIds(id, id2).size();
-        final PlotWorld plotworld = PlotSquared.getPlotWorld(world);
+        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
