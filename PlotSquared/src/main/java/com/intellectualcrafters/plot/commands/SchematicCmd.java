@@ -134,7 +134,7 @@ public class SchematicCmd extends SubCommand {
                                             SchematicHandler.manager.pasteStates(schematic, plot, 0, 0);
                                             sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                             SchematicCmd.this.running = false;
-                                            PlotSquared.TASK.cancelTask(SchematicCmd.this.task);
+                                            PlotSquared.getInstance().TASK.cancelTask(SchematicCmd.this.task);
                                             return;
                                         }
                                         final int end = Math.min(start + 5000, blen);

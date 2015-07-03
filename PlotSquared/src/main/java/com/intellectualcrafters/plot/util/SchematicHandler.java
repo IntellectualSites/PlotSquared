@@ -1,30 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import org.bukkit.Bukkit;
-
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -34,6 +10,12 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.bukkit.Bukkit;
+
+import java.io.*;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager = new BukkitSchematicHandler();
@@ -82,7 +64,7 @@ public abstract class SchematicHandler {
                 else {
                 	directory = outputDir.getPath();
                 }
-                if (PlotSquared.worldEdit != null) {
+                if (PlotSquared.getInstance().worldEdit != null) {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
                 }
                 else {
@@ -254,14 +236,14 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics");
+            final File parent = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotSquared.IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         return getSchematic(file);
     }
     
@@ -326,7 +308,7 @@ public abstract class SchematicHandler {
      * @return tag
      */
     public CompoundTag getCompoundTag(final String world, final PlotId id) {
-        if (!PlotSquared.getPlots(world).containsKey(id)) {
+        if (!PlotSquared.getInstance().getPlots(world).containsKey(id)) {
             return null;
         }
         final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);
@@ -390,6 +372,12 @@ public abstract class SchematicHandler {
         private final File file;
         private HashSet<PlotItem> items;
 
+        public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
+            this.blockCollection = blockCollection;
+            this.schematicDimension = schematicDimension;
+            this.file = file;
+        }
+        
         public  void addItem(PlotItem item) {
             if (this.items == null) {
                 this.items = new HashSet<>();
@@ -399,12 +387,6 @@ public abstract class SchematicHandler {
         
         public HashSet<PlotItem> getItems() {
             return this.items;
-        }
-        
-        public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
-            this.blockCollection = blockCollection;
-            this.schematicDimension = schematicDimension;
-            this.file = file;
         }
 
         public File getFile() {

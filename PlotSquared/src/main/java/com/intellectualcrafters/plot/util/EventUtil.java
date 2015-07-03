@@ -1,15 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.*;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public abstract class EventUtil {
     
@@ -21,7 +17,7 @@ public abstract class EventUtil {
             SetupUtils.setupMap.remove(name);
         }
         CmdConfirm.removePending(name);
-        PlotSquared.IMP.unregister(player);
+        PlotSquared.getInstance().IMP.unregister(player);
     }
     
     public abstract boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto);

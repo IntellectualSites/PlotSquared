@@ -1,26 +1,5 @@
 package com.intellectualcrafters.plot.database.plotme;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
@@ -30,10 +9,29 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.File;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
 
     private String plugin;
+
+    public static String getWorld(final String world) {
+        for (final World newworld : Bukkit.getWorlds()) {
+            if (newworld.getName().equalsIgnoreCase(world)) {
+                return newworld.getName();
+            }
+        }
+        return world;
+    }
     
     @Override
     public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
@@ -46,13 +44,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 return DriverManager.getConnection(con, user, password);
 //                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
-                return new SQLite(PlotSquared.THIS, dataFolder + File.separator + "plots.db").openConnection();
+                return new SQLite(PlotSquared.getInstance(), dataFolder + File.separator + "plots.db").openConnection();
             }
         }
         catch (SQLException | ClassNotFoundException e) {}
         return null;
     }
-    
+
     public void setMerged(HashMap<String, HashMap<PlotId, boolean[]>> merges, String world, PlotId id, int direction) {
         HashMap<PlotId, boolean[]> plots = merges.get(world);
         PlotId id2;
@@ -96,15 +94,6 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         plots.put(id, merge1);
         plots.put(id2, merge1);
     }
-
-    public static String getWorld(final String world) {
-        for (final World newworld : Bukkit.getWorlds()) {
-            if (newworld.getName().equalsIgnoreCase(world)) {
-                return newworld.getName();
-            }
-        }
-        return world;
-    }
     
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
@@ -123,8 +112,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             final String name = r.getString("owner");
             final String world = LikePlotMeConverter.getWorld(r.getString("world"));
             if (!plots.containsKey(world)) {
-                int plot = PlotSquared.config.getInt("worlds." + world + ".plot.size");
-                int path = PlotSquared.config.getInt("worlds." + world + ".road.width");
+                int plot = PlotSquared.getInstance().config.getInt("worlds." + world + ".plot.size");
+                int path = PlotSquared.getInstance().config.getInt("worlds." + world + ".road.width");
                 if (plot == 0 && path == 0) {
                     
                 }

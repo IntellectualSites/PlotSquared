@@ -20,16 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 public class plugin extends SubCommand {
     public static String downloads, version;
@@ -93,7 +93,7 @@ public class plugin extends SubCommand {
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.IMP.getVersion()));
+                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.getInstance().IMP.getVersion()));
                         add(String.format("&c>> &6Made by Citymonstret and Empire92"));
                         add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
                         add(String.format("&c>> &cNewest Version (Spigot): %s", version));

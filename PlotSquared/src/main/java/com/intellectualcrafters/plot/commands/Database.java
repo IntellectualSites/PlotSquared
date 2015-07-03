@@ -92,7 +92,7 @@ public class Database extends SubCommand {
                 }
                 Connection n;
                 try {
-                    n = new MySQL(PlotSquared.THIS, host, port, database, username, password).openConnection();
+                    n = new MySQL(PlotSquared.getInstance(), host, port, database, username, password).openConnection();
                     // Connection
                     if (n.isClosed()) {
                         return sendMessage(plr, "Failed to open connection");

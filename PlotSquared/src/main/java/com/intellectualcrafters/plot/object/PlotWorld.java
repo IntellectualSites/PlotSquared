@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
@@ -35,6 +27,13 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.EconHandler;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jesse Boyd
@@ -111,7 +110,7 @@ public abstract class PlotWorld {
             return false;
         }
         PlotWorld plotworld = (PlotWorld) obj;
-        ConfigurationSection section = PlotSquared.config.getConfigurationSection("worlds");
+        ConfigurationSection section = PlotSquared.getInstance().config.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotworld.getSettingNodes()) {
             Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
             if (constant == null) {

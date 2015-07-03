@@ -1,14 +1,13 @@
 package com.intellectualsites.translation.bukkit;
 
-import java.io.File;
-
-import org.bukkit.Material;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
 import com.intellectualsites.translation.TranslationObject;
+import org.bukkit.Material;
+
+import java.io.File;
 
 /**
  * @author Citymonstret
@@ -34,16 +33,7 @@ public class BukkitTranslation {
      * @return parent folder
      */
     public static File getParent() {
-        return new File(PlotSquared.IMP.getDirectory() + File.separator + "translations");
-    }
-
-    /**
-     * The default translation language
-     *
-     * @return default translation language
-     */
-    public TranslationLanguage getDefaultLanguage() {
-        return TranslationLanguage.englishAmerican;
+        return new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "translations");
     }
 
     /**
@@ -53,5 +43,14 @@ public class BukkitTranslation {
         for (final Material material : Material.values()) {
             manager.addTranslationObject(new TranslationObject(material.name(), material.name().replace("_", " ").toLowerCase(), "Material." + material.toString(), ""));
         }
+    }
+
+    /**
+     * The default translation language
+     *
+     * @return default translation language
+     */
+    public TranslationLanguage getDefaultLanguage() {
+        return TranslationLanguage.englishAmerican;
     }
 }

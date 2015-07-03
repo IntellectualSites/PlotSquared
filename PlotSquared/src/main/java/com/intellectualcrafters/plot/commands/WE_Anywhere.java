@@ -34,7 +34,7 @@ public class WE_Anywhere extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (PlotSquared.worldEdit == null) {
+        if (PlotSquared.getInstance().worldEdit == null) {
             MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }

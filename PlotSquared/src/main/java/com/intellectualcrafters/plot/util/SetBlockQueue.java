@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
 
 public class SetBlockQueue {
     
@@ -17,6 +17,9 @@ public class SetBlockQueue {
     private volatile static boolean locked = false;
     private volatile static HashSet<Runnable> runnables;
     private volatile static boolean slow = false;
+    private static long last;
+    private static int lastInt = 0;
+    private static PlotBlock lastBlock = new PlotBlock((short) 0, (byte) 0);
     
     public synchronized static void allocate(int t) {
         allocate = t;
@@ -40,9 +43,7 @@ public class SetBlockQueue {
             runnables.add(whenDone);
         }
     }
-    
-    private static long last;
-    
+
     public synchronized static void init() {
         if (blocks == null) {
             if (AugmentedPopulator.x_loc == null) {
@@ -61,7 +62,7 @@ public class SetBlockQueue {
                         return;
                     }
                     if (blocks.size() == 0) {
-                        PlotSquared.TASK.cancelTask(TaskManager.tasks.get(current));
+                        PlotSquared.getInstance().TASK.cancelTask(TaskManager.tasks.get(current));
                         for (Runnable runnable : runnables) {
                             TaskManager.runTask(runnable);
                         }
@@ -141,7 +142,7 @@ public class SetBlockQueue {
         blocks.put(wrap, result);
         locked = false;
     }
-     
+
     public static void setBlock(final String world, int x, final int y, int z, final PlotBlock block) {
         locked = true;
         if (!running) {
@@ -151,24 +152,21 @@ public class SetBlockQueue {
         int Z = z >> 4;
         x -= X << 4;
         z -= Z << 4;
-        
+
         ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result; 
+        PlotBlock[][] result;
         result = blocks.get(wrap);
         if (!blocks.containsKey(wrap)) {
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
-        
+
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = block;
         locked = false;
     }
-    
-    private static int lastInt = 0;
-    private static PlotBlock lastBlock = new PlotBlock((short) 0, (byte) 0);
     
     public static void setData(final String world, int x, final int y, int z, final byte data) {
         locked = true;
