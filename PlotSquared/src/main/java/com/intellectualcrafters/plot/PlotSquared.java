@@ -33,10 +33,8 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core,
  * with a static getter for easy access
- *
- * @see com.intellectualcrafters.plot.PlotSquaredMain Structure
  */
-public class PlotSquared implements PlotSquaredMain {
+public class PlotSquared {
 
     public static final String MAIN_PERMISSION = "plots.use";
     protected static PlotSquared instance;
@@ -128,7 +126,7 @@ public class PlotSquared implements PlotSquaredMain {
         // PlotMe
         if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
             TaskManager.runTaskLater(new Runnable() {
-                @Override
+
                 public void run() {
                     if (IMP.initPlotMeConverter()) {
                         log("&c=== IMPORTANT ===");
@@ -162,12 +160,12 @@ public class PlotSquared implements PlotSquaredMain {
         getInstance().IMP.log(message);
     }
 
-    @Override
+
     public Database getDatabase() {
         return database;
     }
 
-    @Override
+
     public void updatePlot(final Plot plot) {
         final String world = plot.world;
         if (!plots.containsKey(world)) {
@@ -177,7 +175,7 @@ public class PlotSquared implements PlotSquaredMain {
         plots.get(world).put(plot.id, plot);
     }
 
-    @Override
+
     public PlotWorld getPlotWorld(final String world) {
         if (plotworlds.containsKey(world)) {
             return plotworlds.get(world);
@@ -185,7 +183,7 @@ public class PlotSquared implements PlotSquaredMain {
         return null;
     }
 
-    @Override
+
     public void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         plotworlds.put(world, plotworld);
         plotmanagers.put(world, manager);
@@ -194,30 +192,30 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public void removePlotWorld(final String world) {
         plots.remove(world);
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
 
-    @Override
+
     public void removePlotWorldAbs(final String world) {
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
 
-    @Override
+
     public HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
 
-    @Override
+
     public void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         this.plots = plots;
     }
 
-    @Override
+
     public Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
@@ -228,7 +226,7 @@ public class PlotSquared implements PlotSquaredMain {
         return new LinkedHashSet<>(newplots);
     }
 
-    @Override
+
     public Set<Plot> getPlotsRaw() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
@@ -237,12 +235,12 @@ public class PlotSquared implements PlotSquaredMain {
         return new LinkedHashSet<>(newplots);
     }
 
-    @Override
+
     public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         newPlots.addAll(plots);
         Collections.sort(newPlots, new Comparator<Plot>() {
-            @Override
+
             public int compare(Plot p1, Plot p2) {
                 int h1 = p1.hashCode();
                 int h2 = p2.hashCode();
@@ -264,7 +262,7 @@ public class PlotSquared implements PlotSquaredMain {
         return newPlots;
     }
 
-    @Override
+
     public ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         HashMap<PlotId, Plot> worldPlots = this.plots.get(priorityWorld);
@@ -289,7 +287,7 @@ public class PlotSquared implements PlotSquaredMain {
         return newPlots;
     }
 
-    @Override
+
     public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
@@ -304,19 +302,19 @@ public class PlotSquared implements PlotSquaredMain {
         return newPlots;
     }
 
-    @Override
+
     public Set<Plot> getPlots(final String world, final String player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         return getPlots(world, uuid);
     }
 
-    @Override
+
     public Set<Plot> getPlots(final String world, final PlotPlayer player) {
         final UUID uuid = player.getUUID();
         return getPlots(world, uuid);
     }
 
-    @Override
+
     public Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
@@ -329,12 +327,12 @@ public class PlotSquared implements PlotSquaredMain {
         return new HashSet<>(myplots);
     }
 
-    @Override
+
     public boolean isPlotWorld(final String world) {
         return (plotworlds.containsKey(world));
     }
 
-    @Override
+
     public PlotManager getPlotManager(final String world) {
         if (plotmanagers.containsKey(world)) {
             return plotmanagers.get(world);
@@ -342,13 +340,13 @@ public class PlotSquared implements PlotSquaredMain {
         return null;
     }
 
-    @Override
+
     public String[] getPlotWorldsString() {
         final Set<String> strings = plots.keySet();
         return strings.toArray(new String[strings.size()]);
     }
 
-    @Override
+
     public HashMap<PlotId, Plot> getPlots(final String world) {
         if (plots.containsKey(world)) {
             return plots.get(world);
@@ -356,12 +354,12 @@ public class PlotSquared implements PlotSquaredMain {
         return new HashMap<>();
     }
 
-    @Override
+
     public Set<Plot> getPlots(final PlotPlayer player) {
         return getPlots(player.getUUID());
     }
 
-    @Override
+
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final String world : plots.keySet()) {
@@ -378,7 +376,7 @@ public class PlotSquared implements PlotSquaredMain {
         return new HashSet<>(myplots);
     }
 
-    @Override
+
     public boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
@@ -395,7 +393,7 @@ public class PlotSquared implements PlotSquaredMain {
         return true;
     }
 
-    @Override
+
     public void loadWorld(final String world, PlotGenerator generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
@@ -492,7 +490,7 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public boolean setupPlotWorld(final String world, final String id) {
         if ((id != null) && (id.length() > 0)) {
             // save configuration
@@ -585,12 +583,12 @@ public class PlotSquared implements PlotSquaredMain {
         return true;
     }
 
-    @Override
+
     public Connection getConnection() {
         return connection;
     }
 
-    @Override
+
     public void copyFile(String file, String folder) {
         try {
             byte[] buffer = new byte[2048];
@@ -629,7 +627,7 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public void disable() {
         try {
             database.closeConnection();
@@ -638,7 +636,7 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public void setupDatabase() {
         if (Settings.DB.USE_MYSQL) {
             try {
@@ -695,7 +693,7 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
@@ -734,7 +732,7 @@ public class PlotSquared implements PlotSquaredMain {
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("gamemode") {
-            @Override
+
             public String parseValueRaw(final String value) {
                 switch (value) {
                     case "creative":
@@ -754,7 +752,7 @@ public class PlotSquared implements PlotSquaredMain {
                 }
             }
 
-            @Override
+
             public String getValueDesc() {
                 return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
             }
@@ -762,7 +760,7 @@ public class PlotSquared implements PlotSquaredMain {
         FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
         FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
         FlagManager.addFlag(new AbstractFlag("weather") {
-            @Override
+
             public String parseValueRaw(final String value) {
                 switch (value) {
                     case "rain":
@@ -781,14 +779,14 @@ public class PlotSquared implements PlotSquaredMain {
                 }
             }
 
-            @Override
+
             public String getValueDesc() {
                 return "Flag value must be weather type: 'clear' or 'rain'";
             }
         });
     }
 
-    @Override
+
     public void setupConfig() {
         config.set("version", VERSION);
         
@@ -968,7 +966,7 @@ public class PlotSquared implements PlotSquaredMain {
         Settings.METRICS = config.getBoolean("metrics");
     }
 
-    @Override
+
     public void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -1055,7 +1053,7 @@ public class PlotSquared implements PlotSquaredMain {
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
     }
 
-    @Override
+
     public void showDebug() {
         C.COLOR_1 = "&" + (style.getString("color.1"));
         C.COLOR_2 = "&" + (style.getString("color.2"));
@@ -1093,17 +1091,17 @@ public class PlotSquared implements PlotSquaredMain {
         }
     }
 
-    @Override
+
     public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
-    @Override
+
     public Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }
 
-    @Override
+
     public Collection<PlotWorld> getPlotWorldObjects() {
         return plotworlds.values();
     }
