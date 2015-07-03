@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -67,6 +68,10 @@ public class PlotSquared {
     private Database database;
     private Connection connection;
 
+    /**
+     * Initialize PlotSquared with the desired Implementation class
+     * @param imp_class
+     */
     protected PlotSquared(final IPlotMain imp_class) {
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;
@@ -271,11 +276,20 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Set all the plots as a raw object
+     * @see #getAllPlotsRaw() to get the raw plot object
+     * @param plots
+     */
     public void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
         this.plots = plots;
     }
 
 
+    /**
+     * Get all the plots in a single set
+     * @return Set of Plot
+     */
     public Set<Plot> getPlots() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
@@ -287,6 +301,11 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Get the raw plot object
+     * @return set of plot
+     * @see #setAllPlotsRaw(LinkedHashMap) to set the raw plot object
+     */
     public Set<Plot> getPlotsRaw() {
         final ArrayList<Plot> newplots = new ArrayList<>();
         for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
@@ -296,6 +315,11 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Sort a collection of plots by the hashcode
+     * @param plots
+     * @return ArrayList of plot
+     */
     public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         newPlots.addAll(plots);
@@ -323,6 +347,14 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Sort a collection of plots by world (with a priority world), then by hashcode
+     * @param plots
+     * @param priorityWorld
+     * @see #sortPlotsByWorld(Collection) to sort plots by world, then by hashcode
+     * @see #sortPlots(Collection) to sort plots just by hashcode
+     * @return ArrayList of plot
+     */
     public ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         HashMap<PlotId, Plot> worldPlots = this.plots.get(priorityWorld);
@@ -348,6 +380,14 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Sort a collection of plots by world, then by hashcode
+     * @param plots
+     * @param priorityWorld
+     * @see #sortPlots(Collection, String) to sort with a specific priority world
+     * @see #sortPlots(Collection) to sort plots just by hashcode
+     * @return ArrayList of plot
+     */
     public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
@@ -363,18 +403,34 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Get all the plots owned by a player name
+     * @param world
+     * @param player
+     * @return Set of Plot
+     */
     public Set<Plot> getPlots(final String world, final String player) {
         final UUID uuid = UUIDHandler.getUUID(player);
         return getPlots(world, uuid);
     }
 
-
+    /**
+     * Get all plots by a PlotPlayer
+     * @param world
+     * @param player
+     * @return Set of plot
+     */
     public Set<Plot> getPlots(final String world, final PlotPlayer player) {
         final UUID uuid = player.getUUID();
         return getPlots(world, uuid);
     }
 
-
+    /**
+     * Get all plots by a UUID in a world
+     * @param world
+     * @param uuid
+     * @return Set of plot
+     */
     public Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world).values()) {
@@ -388,11 +444,21 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Check if a plot world
+     * @param world
+     * @see #getPlotWorld(String) to get the PlotWorld object
+     * @return if a plot world is registered
+     */
     public boolean isPlotWorld(final String world) {
         return (plotworlds.containsKey(world));
     }
 
-
+    /**
+     * Get the plot manager for a world
+     * @param world
+     * @return the PlotManager object, or null if no registered PlotManager
+     */
     public PlotManager getPlotManager(final String world) {
         if (plotmanagers.containsKey(world)) {
             return plotmanagers.get(world);
@@ -400,13 +466,21 @@ public class PlotSquared {
         return null;
     }
 
-
+    /**
+     * Get a list of the plot worlds
+     * @return A String array of the plot world names
+     */
     public String[] getPlotWorldsString() {
         final Set<String> strings = plots.keySet();
         return strings.toArray(new String[strings.size()]);
     }
 
 
+    /**
+     * Get a map of the plots for a world
+     * @param world
+     * @return HashMap of PlotId to Plot
+     */
     public HashMap<PlotId, Plot> getPlots(final String world) {
         if (plots.containsKey(world)) {
             return plots.get(world);
@@ -415,11 +489,21 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Get the plots for a PlotPlayer
+     * @param player
+     * @return Set of Plot
+     */
     public Set<Plot> getPlots(final PlotPlayer player) {
         return getPlots(player.getUUID());
     }
 
 
+    /**
+     * Get the plots for a UUID
+     * @param uuid
+     * @return Set of Plot
+     */
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final String world : plots.keySet()) {
@@ -437,11 +521,18 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Unregister a plot from local memory (does not call DB)
+     * @param world
+     * @param id
+     * @param callEvent If to call an event about the plot being removed
+     * @return true if plot existed | false if it didn't 
+     */
     public boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
         }
-        plots.get(world).remove(id);
+        Plot plot = plots.get(world).remove(id);
         if (MainUtil.lastPlot.containsKey(world)) {
             final PlotId last = MainUtil.lastPlot.get(world);
             final int last_max = Math.max(last.x, last.y);
@@ -450,10 +541,22 @@ public class PlotSquared {
                 MainUtil.lastPlot.put(world, id);
             }
         }
-        return true;
+        return plot != null;
     }
 
 
+    /**
+     * This method is called by the PlotGenerator class normally<br>
+     *  - Initializes the PlotWorld and PlotManager classes<br>
+     *  - Registers the PlotWorld and PlotManager classes<br>
+     *  - Loads (and/or generates) the PlotWorld configuration<br>
+     *  - Sets up the world border if configured<br>
+     *  If loading an augmented plot world:<br>
+     *  - Creates the AugmentedPopulator classes<br>
+     *  - Injects the AugmentedPopulator classes if required
+     * @param world The world to load
+     * @param generator The generator for that world, or null if no generator
+     */
     public void loadWorld(final String world, PlotGenerator generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
@@ -551,10 +654,17 @@ public class PlotSquared {
     }
 
 
-    public boolean setupPlotWorld(final String world, final String id) {
-        if ((id != null) && (id.length() > 0)) {
+    /**
+     * Setup the configuration for a plot world based on world arguments<br>
+     * e.g. /mv create <world> normal -g PlotSquared:<args>
+     * @param world The name of the world
+     * @param args The arguments
+     * @return boolean | if valid arguments were provided 
+     */
+    public boolean setupPlotWorld(final String world, final String args) {
+        if ((args != null) && (args.length() > 0)) {
             // save configuration
-            final String[] split = id.split(",");
+            final String[] split = args.split(",");
             final HybridPlotWorld plotworld = new HybridPlotWorld(world);
             final int width = SquarePlotWorld.PLOT_WIDTH_DEFAULT;
             final int gap = SquarePlotWorld.ROAD_WIDTH_DEFAULT;
@@ -644,11 +754,20 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Get the database connection
+     * @return The database connection
+     */
     public Connection getConnection() {
         return connection;
     }
 
 
+    /**
+     * Copy a file from inside the jar to a location
+     * @param file Name of the file inside PlotSquared.jar
+     * @param folder The output location relative to /plugins/PlotSquared/
+     */
     public void copyFile(String file, String folder) {
         try {
             byte[] buffer = new byte[2048];
@@ -688,6 +807,9 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Close the database connection
+     */
     public void disable() {
         try {
             database.closeConnection();
@@ -696,7 +818,9 @@ public class PlotSquared {
         }
     }
 
-
+    /**
+     * Setup the database connection
+     */
     public void setupDatabase() {
         if (Settings.DB.USE_MYSQL) {
             try {
@@ -754,6 +878,11 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Setup the default flags for PlotSquared<br>
+     *  - Create the flags
+     *  - Register with FlagManager and parse raw flag values
+     */
     public void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp", "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
@@ -847,6 +976,9 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Setup the default configuration (settings.yml)
+     */
     public void setupConfig() {
         config.set("version", VERSION);
         
@@ -1027,6 +1159,12 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Setup all configuration files<br>
+     *  - Config: settings.yml<br>
+     *  - Storage: storage.yml<br>
+     *  - Translation: PlotSquared.use_THIS.yml, style.yml<br>
+     */
     public void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -1081,6 +1219,9 @@ public class PlotSquared {
         }
     }
 
+    /**
+     * Setup the storage file (load + save missing nodes)
+     */
     private void setupStorage() {
         storage.set("version", VERSION);
         final Map<String, Object> options = new HashMap<>();
@@ -1114,6 +1255,9 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Show startup debug information
+     */
     public void showDebug() {
         C.COLOR_1 = "&" + (style.getString("color.1"));
         C.COLOR_2 = "&" + (style.getString("color.2"));
@@ -1137,6 +1281,9 @@ public class PlotSquared {
         }
     }
 
+    /**
+     * Setup the style.yml file
+     */
     private void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
@@ -1152,16 +1299,28 @@ public class PlotSquared {
     }
 
 
+    /**
+     * Get the java version
+     * @return Java version as a double
+     */
     public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
 
+    /**
+     * Get the list of plot world names
+     * @return Set of world names (String)
+     */
     public Set<String> getPlotWorlds() {
         return plotworlds.keySet();
     }
 
 
+    /**
+     * Get a list of PlotWorld objects
+     * @return Collection of PlotWorld objects
+     */
     public Collection<PlotWorld> getPlotWorldObjects() {
         return plotworlds.values();
     }
