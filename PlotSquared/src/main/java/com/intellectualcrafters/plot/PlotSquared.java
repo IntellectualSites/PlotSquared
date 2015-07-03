@@ -33,6 +33,8 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core,
  * with a static getter for easy access
+ *
+ * @see com.intellectualcrafters.plot.PlotSquaredMain Structure
  */
 public class PlotSquared implements PlotSquaredMain {
 
