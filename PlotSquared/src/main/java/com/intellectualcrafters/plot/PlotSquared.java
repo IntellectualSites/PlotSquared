@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -33,19 +32,31 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core,
  * with a static getter for easy access
+ *
+ * @author Sauilitired | Citymonstret
+ * @author boy0001 | Empire92
  */
 public class PlotSquared {
 
+    // public static final:
     public static final String MAIN_PERMISSION = "plots.use";
+
+    // protected static:
     protected static PlotSquared instance;
+
+    // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
+
+    // public:
     public WorldEditPlugin worldEdit = null;
     public File configFile;
     public YamlConfiguration config;
     public YamlConfiguration storage;
-    public IPlotMain IMP = null; // Specific implementation of PlotSquared
+    public IPlotMain IMP = null;
     public TaskManager TASK;
+
+    // private:
     private File styleFile;
     private YamlConfiguration style;
     private File storageFile;
@@ -56,7 +67,7 @@ public class PlotSquared {
     private Database database;
     private Connection connection;
 
-    public PlotSquared(final IPlotMain imp_class) {
+    protected PlotSquared(final IPlotMain imp_class) {
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;
         try {
@@ -152,20 +163,41 @@ public class PlotSquared {
         showDebug();
     }
 
+    /**
+     * Get the instance of PlotSquared
+     *
+     * @return the instance created by IPlotMain
+     */
     public static PlotSquared getInstance() {
         return instance;
     }
 
+    /**
+     * Log a message to the IPlotMain logger
+     *
+     * @param message Message to log
+     * @see IPlotMain#log(String)
+     */
     public static void log(final String message) {
         getInstance().IMP.log(message);
     }
 
-
+    /**
+     * Get the database object
+     *
+     * @return Database object
+     * @see #getConnection() Get the database connection
+     */
     public Database getDatabase() {
         return database;
     }
 
-
+    /**
+     * Update the global reference
+     * to a plot object
+     *
+     * @param plot Plot Object to update
+     */
     public void updatePlot(final Plot plot) {
         final String world = plot.world;
         if (!plots.containsKey(world)) {
@@ -175,7 +207,14 @@ public class PlotSquared {
         plots.get(world).put(plot.id, plot);
     }
 
-
+    /**
+     * Get the plot world based on the
+     * name identifier
+     *
+     * @param world World Name
+     * @return plot world | null if not existing
+     * @see #getPlotWorldsString() Get all plot world names
+     */
     public PlotWorld getPlotWorld(final String world) {
         if (plotworlds.containsKey(world)) {
             return plotworlds.get(world);
@@ -183,7 +222,14 @@ public class PlotSquared {
         return null;
     }
 
-
+    /**
+     * Add a global reference to a plot world
+     *
+     * @param world     World Name
+     * @param plotworld PlotWorld Instance
+     * @param manager   PlotManager
+     * @see #removePlotWorld(String) To remove the reference
+     */
     public void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
         plotworlds.put(world, plotworld);
         plotmanagers.put(world, manager);
@@ -192,20 +238,34 @@ public class PlotSquared {
         }
     }
 
-
+    /**
+     * Remove a plot world reference
+     *
+     * @param world World name
+     * @see #addPlotWorld(String, PlotWorld, PlotManager) To add a reference
+     */
     public void removePlotWorld(final String world) {
         plots.remove(world);
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
 
-
+    /**
+     * @param world World Name
+     */
     public void removePlotWorldAbs(final String world) {
         plotmanagers.remove(world);
         plotworlds.remove(world);
     }
 
-
+    /**
+     * Get all plots as raw objects
+     *
+     * @see #getPlots() To get the plot objects
+     * @see #getPlotsRaw() To get the plot objects
+     *
+     * @return HashMap containing the world name, and another map with the plot id and the plot object
+     */
     public HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
@@ -673,7 +733,7 @@ public class PlotSquared {
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
                     final DatabaseMetaData meta = connection.getMetaData();
-                    ResultSet res = meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
+                    meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
                     DBFunc.createTables("sqlite");
                 }
             } catch (final Exception e) {
