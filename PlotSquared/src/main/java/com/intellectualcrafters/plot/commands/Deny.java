@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -32,6 +30,8 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import java.util.UUID;
 
 public class Deny extends SubCommand {
     public Deny() {
@@ -89,7 +89,7 @@ public class Deny extends SubCommand {
         }
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
         if (!uuid.equals(DBFunc.everyone)) {
-            PlotSquared.IMP.handleKick(uuid, C.YOU_GOT_DENIED);
+            PlotSquared.getInstance().IMP.handleKick(uuid, C.YOU_GOT_DENIED);
         }
         return true;
     }

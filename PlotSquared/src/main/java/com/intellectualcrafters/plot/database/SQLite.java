@@ -20,15 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.PlotSquared;
+
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import com.intellectualcrafters.plot.PlotSquared;
+import java.sql.*;
 
 /**
  * Connects to and uses a SQLite database
@@ -55,8 +51,8 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!PlotSquared.IMP.getDirectory().exists()) {
-            PlotSquared.IMP.getDirectory().mkdirs();
+        if (!PlotSquared.getInstance().IMP.getDirectory().exists()) {
+            PlotSquared.getInstance().IMP.getDirectory().mkdirs();
         }
         final File file = new File(this.dbLocation);
         if (!(file.exists())) {
