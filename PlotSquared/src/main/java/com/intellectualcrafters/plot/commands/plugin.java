@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -93,7 +93,7 @@ public class plugin extends SubCommand {
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.getInstance().IMP.getVersion()));
+                        add(String.format("&c>> &6PlotSquared (Version: %s)", PS.get().IMP.getVersion()));
                         add(String.format("&c>> &6Made by Citymonstret and Empire92"));
                         add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
                         add(String.format("&c>> &cNewest Version (Spigot): %s", version));

@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
@@ -121,25 +121,25 @@ public class Cluster extends SubCommand {
                 }
                 ClusterManager.clusters.get(world).add(cluster);
                 // Add any existing plots to the current cluster
-                for (final Plot plot : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld()).values()) {
+                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if (cluster.equals(current) && !cluster.isAdded(plot.owner)) {
                         cluster.invited.add(plot.owner);
                         DBFunc.setInvited(world, cluster, plot.owner);
                     }
                 }
-                PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+                PlotWorld plotworld = PS.get().getPlotWorld(world);
                 if (plotworld == null) {
-                    PlotSquared.getInstance().config.createSection("worlds." + world);
-                    PlotSquared.getInstance().loadWorld(world, null);
+                    PS.get().config.createSection("worlds." + world);
+                    PS.get().loadWorld(world, null);
                 }
                 else {
-                    final String gen_string = PlotSquared.getInstance().config.getString("worlds." + world + "." + "generator.plugin");
+                    final String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
                     PlotGenerator generator;
                     if (gen_string == null) {
                         generator = new HybridGen(world);
                     } else {
-                        generator = (PlotGenerator) PlotSquared.getInstance().IMP.getGenerator(world, gen_string);
+                        generator = (PlotGenerator) PS.get().IMP.getGenerator(world, gen_string);
                     }
                     new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }
@@ -177,10 +177,10 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plr.getLocation().getWorld());
+                final PlotWorld plotworld = PS.get().getPlotWorld(plr.getLocation().getWorld());
                 if (plotworld.TYPE == 2) {
                     final ArrayList<Plot> toRemove = new ArrayList<>();
-                    for (final Plot plot : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld()).values()) {
+                    for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
                         final PlotCluster other = ClusterManager.getCluster(plot);
                         if (cluster.equals(other)) {
                             toRemove.add(plot);
@@ -361,7 +361,7 @@ public class Cluster extends SubCommand {
                 if (player != null) {
                     MainUtil.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 }
-                for (final Plot plot : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld(), uuid)) {
+                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld(), uuid)) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if ((current != null) && current.equals(cluster)) {
                         final String world = plr.getLocation().getWorld();
@@ -411,7 +411,7 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
-                for (final Plot plot : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld(), uuid)) {
+                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld(), uuid)) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if ((current != null) && current.equals(cluster)) {
                         final String world = plr.getLocation().getWorld();

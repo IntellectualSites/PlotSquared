@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -46,7 +46,7 @@ public class Buy extends SubCommand {
         }
         final Location loc = plr.getLocation();
         final String world = loc.getWorld();
-        if (!PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!PS.get().isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
         Plot plot;
@@ -83,7 +83,7 @@ public class Buy extends SubCommand {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int size = MainUtil.getPlotSelectionIds(id, id2).size();
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (plotworld.USE_ECONOMY) {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;

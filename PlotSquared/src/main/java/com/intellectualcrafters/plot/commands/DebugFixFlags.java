@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -50,12 +50,12 @@ public class DebugFixFlags extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (final Plot plot : PlotSquared.getInstance().getPlots(world).values()) {
+        for (final Plot plot : PS.get().getPlots(world).values()) {
             final HashMap<String, Flag> flags = plot.settings.flags;
             Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;

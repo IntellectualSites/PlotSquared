@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -43,7 +43,7 @@ public class ExpireManager {
                 public void run() {
                     try {
                         final List<Plot> plots = getOldPlots(world);
-                        PlotSquared.log("&7[&5Expire&dManager&7] &3Found " + plots.size() + " expired plots for " + world + "!");
+                        PS.log("&7[&5Expire&dManager&7] &3Found " + plots.size() + " expired plots for " + world + "!");
                         expiredPlots.put(world, plots);
                         updatingPlots.put(world, false);
                     }
@@ -64,24 +64,24 @@ public class ExpireManager {
             @Override
             public void run() {
                 try {
-                    for (final String world : PlotSquared.getInstance().getPlotWorldsString()) {
+                    for (final String world : PS.get().getPlotWorldsString()) {
                         if (!ExpireManager.updatingPlots.containsKey(world)) {
                             ExpireManager.updatingPlots.put(world, false);
                         }
                         final Boolean updating = ExpireManager.updatingPlots.get(world);
                         if (updating) {
-                            PlotSquared.log("&7[&5Expire&dManager&7] &3Waiting on fetch...");
+                            PS.log("&7[&5Expire&dManager&7] &3Waiting on fetch...");
                             return;
                         }
                         if (!expiredPlots.containsKey(world)) {
-                            PlotSquared.log("&7[&5Expire&dManager&7] &3Updating expired plots for: " + world);
+                            PS.log("&7[&5Expire&dManager&7] &3Updating expired plots for: " + world);
                             updateExpired(world);
                             return;
                         }
                         final List<Plot> plots = expiredPlots.get(world);
                         if ((plots == null) || (plots.size() == 0)) {
                             if (updateExpired(world)) {
-                                PlotSquared.log("&7[&5Expire&dManager&7] &3Re-evaluating expired plots for: " + world);
+                                PS.log("&7[&5Expire&dManager&7] &3Re-evaluating expired plots for: " + world);
                                 return;
                             }
                             continue;
@@ -89,7 +89,7 @@ public class ExpireManager {
                         final Plot plot = plots.iterator().next();
                         if (!isExpired(plot)) {
                             expiredPlots.get(world).remove(plot);
-                            PlotSquared.log("&7[&5Expire&dManager&7] &bSkipping no longer expired: " + plot);
+                            PS.log("&7[&5Expire&dManager&7] &bSkipping no longer expired: " + plot);
                             return;
                         }
                         for (final UUID helper : plot.trusted) {
@@ -104,26 +104,26 @@ public class ExpireManager {
                                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
                             }
                         }
-                        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+                        final PlotManager manager = PS.get().getPlotManager(world);
                         if (manager == null) {
-                            PlotSquared.log("&7[&5Expire&dManager&7] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                            PS.log("&7[&5Expire&dManager&7] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
                             expiredPlots.get(world).remove(plot);
                             return;
                         }
-                        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+                        final PlotWorld plotworld = PS.get().getPlotWorld(world);
                         RunnableVal run = new RunnableVal<Integer>() {
                             @Override
                             public void run() {
                                 int changed = this.value;
                                 if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
                                     if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
-                                        PlotSquared.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                        PS.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                         FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
                                         expiredPlots.get(world).remove(plot);
                                         return;
                                     }
                                     else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
-                                        PlotSquared.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                        PS.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                         FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
                                         expiredPlots.get(world).remove(plot);
                                         return;
@@ -135,14 +135,14 @@ public class ExpireManager {
                                 manager.clearPlot(plotworld, plot, false, null);
                                 MainUtil.removeSign(plot);
                                 DBFunc.delete(world, plot);
-                                PlotSquared.getInstance().removePlot(world, plot.id, false);
+                                PS.get().removePlot(world, plot.id, false);
                                 expiredPlots.get(world).remove(plot);
-                                PlotSquared.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                PlotSquared.log("&3 - World: " + plot.world);
+                                PS.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+                                PS.log("&3 - World: " + plot.world);
                                 if (plot.hasOwner()) {
-                                    PlotSquared.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
+                                    PS.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
                                 } else {
-                                    PlotSquared.log("&3 - Owner: Unowned");
+                                    PS.log("&3 - Owner: Unowned");
                                 }
                             }
                         };
@@ -150,7 +150,7 @@ public class ExpireManager {
                             Flag flag = FlagManager.getPlotFlagAbs(plot, "modified-blocks");
                             if (flag != null) {
                                 if ((Integer) flag.getValue() > Settings.MIN_BLOCKS_CHANGED_IGNORED) {
-                                    PlotSquared.log("&7[&5Expire&dManager&7] &bSkipping modified: " + plot);
+                                    PS.log("&7[&5Expire&dManager&7] &bSkipping modified: " + plot);
                                     expiredPlots.get(world).remove(plot);
                                     this.run();
                                     return;
@@ -215,7 +215,7 @@ public class ExpireManager {
     }
 
     public static List<Plot> getOldPlots(final String world) {
-        final Collection<Plot> plots = PlotSquared.getInstance().getPlots(world).values();
+        final Collection<Plot> plots = PS.get().getPlots(world).values();
         final List<Plot> toRemove = new ArrayList<>();
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
@@ -238,7 +238,7 @@ public class ExpireManager {
                     final String worldname = Bukkit.getWorlds().get(0).getName();
                     String foldername;
                     String filename = null;
-                    if (PlotSquared.getInstance().IMP.checkVersion(1, 7, 5)) {
+                    if (PS.get().IMP.checkVersion(1, 7, 5)) {
                         foldername = "playerdata";
                         try {
                             final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
@@ -256,7 +256,7 @@ public class ExpireManager {
                     if (filename != null) {
                         final File playerFile = new File(worldname + File.separator + foldername + File.separator + filename);
                         if (!playerFile.exists()) {
-                            PlotSquared.log("Could not find file: " + filename);
+                            PS.log("Could not find file: " + filename);
                         } else {
                             try {
                                 long last = playerFile.lastModified();
@@ -265,7 +265,7 @@ public class ExpireManager {
                                     continue;
                                 }
                             } catch (final Exception e) {
-                                PlotSquared.log("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
+                                PS.log("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
                             }
                         }
                     }

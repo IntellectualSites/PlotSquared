@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.database.plotme;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Location;
@@ -44,7 +44,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 return DriverManager.getConnection(con, user, password);
 //                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
-                return new SQLite(PlotSquared.getInstance(), dataFolder + File.separator + "plots.db").openConnection();
+                return new SQLite(PS.get(), dataFolder + File.separator + "plots.db").openConnection();
             }
         }
         catch (SQLException | ClassNotFoundException e) {}
@@ -112,8 +112,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             final String name = r.getString("owner");
             final String world = LikePlotMeConverter.getWorld(r.getString("world"));
             if (!plots.containsKey(world)) {
-                int plot = PlotSquared.getInstance().config.getInt("worlds." + world + ".plot.size");
-                int path = PlotSquared.getInstance().config.getInt("worlds." + world + ".road.width");
+                int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                int path = PS.get().config.getInt("worlds." + world + ".road.width");
                 if (plot == 0 && path == 0) {
                     
                 }

@@ -37,14 +37,11 @@ import java.util.zip.ZipInputStream;
  * @author Sauilitired | Citymonstret
  * @author boy0001 | Empire92
  */
-public class PlotSquared {
-
-    // public static final:
-    public static final String MAIN_PERMISSION = "plots.use";
+public class PS {
 
     // protected static:
-    protected static PlotSquared instance;
-
+    protected static PS instance;
+    
     // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
@@ -72,11 +69,11 @@ public class PlotSquared {
      * Initialize PlotSquared with the desired Implementation class
      * @param imp_class
      */
-    protected PlotSquared(final IPlotMain imp_class) {
+    protected PS(final IPlotMain imp_class) {
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;
         try {
-            FILE = new File(PlotSquared.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            FILE = new File(PS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
         } catch (Exception e) {
             log("Could not determine file path");
         }
@@ -167,13 +164,13 @@ public class PlotSquared {
         copyFile("italian.yml", "translations");
         showDebug();
     }
-
+    
     /**
      * Get the instance of PlotSquared
      *
      * @return the instance created by IPlotMain
      */
-    public static PlotSquared getInstance() {
+    public static PS get() {
         return instance;
     }
 
@@ -184,7 +181,7 @@ public class PlotSquared {
      * @see IPlotMain#log(String)
      */
     public static void log(final String message) {
-        getInstance().IMP.log(message);
+        get().IMP.log(message);
     }
 
     /**

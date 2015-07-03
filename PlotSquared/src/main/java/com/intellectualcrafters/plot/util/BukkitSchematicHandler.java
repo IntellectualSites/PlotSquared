@@ -38,7 +38,7 @@ import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
@@ -61,13 +61,13 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 for (j = (pos1.getZ() / 16) * 16; j < (16 + ((pos2.getZ() / 16) * 16)); j += 16) {
                     boolean result = ChunkManager.manager.loadChunk(world, new ChunkLoc(i, j));
                     if (!result) {
-                        PlotSquared.log("&cIllegal selection. Cannot save non-existent chunk at " + (i / 16) + ", " + (j / 16));
+                        PS.log("&cIllegal selection. Cannot save non-existent chunk at " + (i / 16) + ", " + (j / 16));
                         return null;
                     }
                 }
             }
         } catch (final Exception e) {
-            PlotSquared.log("&cIllegal selection. Cannot save corrupt chunk at " + (i / 16) + ", " + (j / 16));
+            PS.log("&cIllegal selection. Cannot save corrupt chunk at " + (i / 16) + ", " + (j / 16));
             return null;
         }
         final int width = (pos2.getX() - pos1.getX()) + 1;

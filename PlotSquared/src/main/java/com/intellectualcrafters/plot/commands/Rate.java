@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -49,7 +49,7 @@ public class Rate extends SubCommand {
     public boolean execute(final PlotPlayer player, final String... args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getInstance().getPlots());
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(Plot p1, Plot p2) {

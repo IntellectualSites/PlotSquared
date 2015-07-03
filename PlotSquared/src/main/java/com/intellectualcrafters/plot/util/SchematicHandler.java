@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.jnbt.*;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -64,7 +64,7 @@ public abstract class SchematicHandler {
                 else {
                 	directory = outputDir.getPath();
                 }
-                if (PlotSquared.getInstance().worldEdit != null) {
+                if (PS.get().worldEdit != null) {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
                 }
                 else {
@@ -104,7 +104,7 @@ public abstract class SchematicHandler {
      */
     public boolean paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotSquared.log("Schematic == null :|");
+            PS.log("Schematic == null :|");
             return false;
         }
         try {
@@ -152,7 +152,7 @@ public abstract class SchematicHandler {
     
     public boolean pasteStates(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotSquared.log("Schematic == null :|");
+            PS.log("Schematic == null :|");
             return false;
         }
         HashSet<PlotItem> items = schematic.getItems();
@@ -236,14 +236,14 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics");
+            final File parent = new File(PS.get().IMP.getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         return getSchematic(file);
     }
     
@@ -256,7 +256,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(File file) {
         if (!file.exists()) {
-            PlotSquared.log(file.toString() + " doesn't exist");
+            PS.log(file.toString() + " doesn't exist");
             return null;
         }
         try {
@@ -266,7 +266,7 @@ public abstract class SchematicHandler {
             stream.close();
             return getSchematic(tag, file);
         } catch (final Exception e) {
-            PlotSquared.log(file.toString() + " is not in GZIP format");
+            PS.log(file.toString() + " is not in GZIP format");
             return null;
         }
     }
@@ -281,7 +281,7 @@ public abstract class SchematicHandler {
      */
     public boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
-            PlotSquared.log("&cCannot save empty tag");
+            PS.log("&cCannot save empty tag");
             return false;
         }
         try {
@@ -308,7 +308,7 @@ public abstract class SchematicHandler {
      * @return tag
      */
     public CompoundTag getCompoundTag(final String world, final PlotId id) {
-        if (!PlotSquared.getInstance().getPlots(world).containsKey(id)) {
+        if (!PS.get().getPlots(world).containsKey(id)) {
             return null;
         }
         final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);

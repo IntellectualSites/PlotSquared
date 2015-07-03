@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -66,7 +66,7 @@ public class Trim extends SubCommand {
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (final Exception e) {
-                                PlotSquared.log("INVALID MCA: " + name);
+                                PS.log("INVALID MCA: " + name);
                             }
                         } else {
                             final Path path = Paths.get(file.getPath());
@@ -83,7 +83,7 @@ public class Trim extends SubCommand {
                                         final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
                                     } catch (final Exception e) {
-                                        PlotSquared.log("INVALID MCA: " + name);
+                                        PS.log("INVALID MCA: " + name);
                                     }
                                 }
                             } catch (final Exception e) {
@@ -106,7 +106,7 @@ public class Trim extends SubCommand {
         System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotSquared.getInstance().getPlots(world).values());
+        plots.addAll(PS.get().getPlots(world).values());
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
@@ -120,7 +120,7 @@ public class Trim extends SubCommand {
                         empty.addAll(chunks);
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
-                        PlotSquared.getInstance().TASK.cancelTask(Trim.TASK_ID);
+                        PS.get().TASK.cancelTask(Trim.TASK_ID);
                         return;
                     }
                     final Plot plot = plots.get(0);
@@ -145,7 +145,7 @@ public class Trim extends SubCommand {
     }
 
     public static void sendMessage(final String message) {
-        PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
+        PS.log("&3PlotSquared -> World trim&8: &7" + message);
     }
 
     public PlotId getId(final String id) {
@@ -187,7 +187,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[1];
-        if (!BlockManager.manager.isWorld(world) || (PlotSquared.getInstance().getPlotWorld(world) == null)) {
+        if (!BlockManager.manager.isWorld(world) || (PS.get().getPlotWorld(world) == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }

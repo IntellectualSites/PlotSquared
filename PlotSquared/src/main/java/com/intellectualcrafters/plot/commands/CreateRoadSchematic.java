@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -41,7 +41,7 @@ public class CreateRoadSchematic extends SubCommand {
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!(PlotSquared.getInstance().getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) {
+        if (!(PS.get().getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);

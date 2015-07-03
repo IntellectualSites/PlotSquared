@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -86,7 +86,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PlotSquared.getInstance().getPlots()) {
+                    for (Plot plot : PS.get().getPlots()) {
                         if (FlagManager.getPlotFlag(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
@@ -95,11 +95,11 @@ public class DebugExec extends SubCommand {
                 }
                 case "start-rgar": {
                     if (args.length != 2) {
-                        PlotSquared.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        PS.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
                     boolean result;
-                    if (!PlotSquared.getInstance().isPlotWorld(args[1])) {
+                    if (!PS.get().isPlotWorld(args[1])) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
@@ -110,26 +110,26 @@ public class DebugExec extends SubCommand {
                         result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
                     }
                     if (!result) {
-                        PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        PS.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
                         return false;
                     }
                     return true;
                 }
                 case "stop-rgar": {
                     if (((BukkitHybridUtils)(HybridUtils.manager)).task == 0) {
-                        PlotSquared.log("&cTASK NOT RUNNING!");
+                        PS.log("&cTASK NOT RUNNING!");
                         return false;
                     }
                     ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
                     Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
-                    PlotSquared.log("&cCancelling task...");
+                    PS.log("&cCancelling task...");
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
                         HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
                         ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
                     }
-                    PlotSquared.log("&cCancelled!");
+                    PS.log("&cCancelled!");
                     return true;
                 }
                 case "start-expire": {
@@ -197,7 +197,7 @@ public class DebugExec extends SubCommand {
                         return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
-                    if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(args[1])) {
+                    if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(args[1])) {
                         return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();
@@ -208,7 +208,7 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - MCA #: " + empty.size());
                             Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
-                            final File file = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "trim.txt");
+                            final File file = new File(PS.get().IMP.getDirectory() + File.separator + "trim.txt");
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);

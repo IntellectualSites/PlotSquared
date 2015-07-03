@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -66,10 +66,10 @@ public class Set extends SubCommand {
             }
         }
         if (args.length < 1) {
-            PlotManager manager = PlotSquared.getInstance().getPlotManager(loc.getWorld());
+            PlotManager manager = PS.get().getPlotManager(loc.getWorld());
             ArrayList<String> newValues = new ArrayList<String>();
             newValues.addAll(Arrays.asList(values));
-            newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
+            newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
             return false;
         }
@@ -171,7 +171,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
-            for (final Plot p : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld()).values()) {
+            for (final Plot p : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
@@ -217,8 +217,8 @@ public class Set extends SubCommand {
         }
         // Get components
         final String world = plr.getLocation().getWorld();
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
@@ -308,7 +308,7 @@ public class Set extends SubCommand {
         }
         ArrayList<String> newValues = new ArrayList<String>();
         newValues.addAll(Arrays.asList(values));
-        newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
+        newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
         return false;
     }

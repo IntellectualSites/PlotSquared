@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -40,7 +40,7 @@ public class DebugSaveTest extends SubCommand {
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             final ArrayList<Plot> plots = new ArrayList<Plot>();
-            plots.addAll(PlotSquared.getInstance().getPlots());
+            plots.addAll(PS.get().getPlots());
             MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override

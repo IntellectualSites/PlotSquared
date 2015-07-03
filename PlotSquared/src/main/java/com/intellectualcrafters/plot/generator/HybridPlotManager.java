@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -40,7 +40,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override
     public void exportTemplate(final PlotWorld plotworld) throws IOException {
         final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
-        final String psRoot = PlotSquared.getInstance().IMP.getDirectory() + File.separator;
+        final String psRoot = PS.get().IMP.getDirectory() + File.separator;
         final String dir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
         final String newDir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {

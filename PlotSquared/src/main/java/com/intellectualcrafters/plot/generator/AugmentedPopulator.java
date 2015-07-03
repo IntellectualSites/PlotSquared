@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -38,7 +38,7 @@ public class AugmentedPopulator extends BlockPopulator {
         initCache();
         this.cluster = cluster;
         this.generator = generator;
-        this.plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        this.plotworld = PS.get().getPlotWorld(world);
         this.manager = generator.getPlotManager();
         this.p = p;
         this.b = b;

@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -56,8 +56,8 @@ public class Claim extends SubCommand {
                 MainUtil.teleportPlayer(player, loc, plot);
             }
             final String world = plot.world;
-            final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-            final Plot plot2 = PlotSquared.getInstance().getPlots(world).get(plot.id);
+            final PlotWorld plotworld = PS.get().getPlotWorld(world);
+            final Plot plot2 = PS.get().getPlots(world).get(plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 Schematic sch;
                 if (schematic.equals("")) {
@@ -70,7 +70,7 @@ public class Claim extends SubCommand {
                 }
                 SchematicHandler.manager.paste(sch, plot2, 0, 0);
             }
-            PlotSquared.getInstance().getPlotManager(world).claimPlot(plotworld, plot);
+            PS.get().getPlotManager(world).claimPlot(plotworld, plot);
         }
         return result;
     }
@@ -93,7 +93,7 @@ public class Claim extends SubCommand {
         if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PlotSquared.getInstance().getPlotWorld(plot.world);
+        final PlotWorld world = PS.get().getPlotWorld(plot.world);
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

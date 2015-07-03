@@ -1,6 +1,6 @@
 package com.intellectualsites.translation.bukkit;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualsites.translation.TranslationAsset;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
@@ -33,7 +33,7 @@ public class BukkitTranslation {
      * @return parent folder
      */
     public static File getParent() {
-        return new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "translations");
+        return new File(PS.get().IMP.getDirectory() + File.separator + "translations");
     }
 
     /**

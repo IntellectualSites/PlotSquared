@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -90,7 +90,7 @@ public class UUIDHandler {
     
     public static HashSet<UUID> getAllUUIDS() {
         HashSet<UUID> uuids = new HashSet<UUID>();
-        for (Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
+        for (Plot plot : PS.get().getPlotsRaw()) {
             for (UUID uuid : plot.trusted) {
                 uuids.add(uuid);
             }
@@ -116,12 +116,12 @@ public class UUIDHandler {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                PlotSquared.log(C.PREFIX.s() + "&6Starting player data caching for: " + world);
+                PS.log(C.PREFIX.s() + "&6Starting player data caching for: " + world);
                 final HashMap<StringWrapper, UUID> toAdd = new HashMap<>();
                 toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 if (Settings.TWIN_MODE_UUID) {
                     HashSet<UUID> all = getAllUUIDS();
-                    PlotSquared.log("&aFast mod UUID caching enabled!");
+                    PS.log("&aFast mod UUID caching enabled!");
                     final File playerdataFolder = new File(container, world + File.separator + "playerdata");
                     String[] dat = playerdataFolder.list(new FilenameFilter() {
                         @Override
@@ -147,7 +147,7 @@ public class UUIDHandler {
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
                             }
                         }
                     }
@@ -176,7 +176,7 @@ public class UUIDHandler {
                                 final UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
                             } catch (final Exception e) {
-                                PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
                             }
                         }
                         break;
@@ -214,7 +214,7 @@ public class UUIDHandler {
                         ExpireManager.dates.put(uuid, last);
                         toAdd.put(new StringWrapper(name), uuid);
                     } catch (final Throwable e) {
-                        PlotSquared.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                        PS.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
                     }
                 }
                 for (final String name : names) {
@@ -245,7 +245,7 @@ public class UUIDHandler {
                 for (Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
                     add(entry.getKey(), entry.getValue());
                 }
-                PlotSquared.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
+                PS.log(C.PREFIX.s() + "&6Cached a total of: " + UUIDHandler.uuidMap.size() + " UUIDs");
             }
         });
     }

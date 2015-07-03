@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -37,7 +37,7 @@ public class Home extends SubCommand {
     }
 
     private Plot isAlias(final String a) {
-        for (final Plot p : PlotSquared.getInstance().getPlots()) {
+        for (final Plot p : PS.get().getPlots()) {
             if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }
@@ -47,7 +47,7 @@ public class Home extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, String... args) {
-        final ArrayList<Plot> plots = PlotSquared.getInstance().sortPlotsByWorld(PlotSquared.getInstance().getPlots(plr));
+        final ArrayList<Plot> plots = PS.get().sortPlotsByWorld(PS.get().getPlots(plr));
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;

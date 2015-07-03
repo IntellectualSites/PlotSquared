@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.*;
 
@@ -17,7 +17,7 @@ public abstract class EventUtil {
             SetupUtils.setupMap.remove(name);
         }
         CmdConfirm.removePending(name);
-        PlotSquared.getInstance().IMP.unregister(player);
+        PS.get().IMP.unregister(player);
     }
     
     public abstract boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto);

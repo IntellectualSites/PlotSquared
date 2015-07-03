@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -93,14 +93,14 @@ public class SetOwner extends SubCommand {
         
         final String world = loc.getWorld();
         for (final PlotId id : plots) {
-            final Plot current = PlotSquared.getInstance().getPlots(world).get(id);
+            final Plot current = PS.get().getPlots(world).get(id);
             final UUID uuid = getUUID(args[0]);
             if (uuid == null) {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
             current.owner = uuid;
-            PlotSquared.getInstance().updatePlot(current);
+            PS.get().updatePlot(current);
             DBFunc.setOwner(current, current.owner);
         }
         MainUtil.setSign(args[0], plot);

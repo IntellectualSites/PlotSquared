@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
@@ -131,7 +131,7 @@ public class Merge extends SubCommand {
         HashSet<PlotId> multiPlots = new HashSet<>();
         final UUID u1 = plot.owner;
         for (final PlotId myid : plots) {
-            final Plot myplot = PlotSquared.getInstance().getPlots(world).get(myid);
+            final Plot myplot = PS.get().getPlots(world).get(myid);
             if (myplot == null || myplot.owner == null) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;
@@ -163,7 +163,7 @@ public class Merge extends SubCommand {
                                 sendMessage(accepter, C.MERGE_NOT_VALID);
                                 return;
                             }
-                            final PlotWorld plotWorld = PlotSquared.getInstance().getPlotWorld(world);
+                            final PlotWorld plotWorld = PS.get().getPlotWorld(world);
                             if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
                                 double cost = plotWorld.MERGE_PRICE;
                                 cost = plots.size() * cost;
@@ -192,7 +192,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.MERGE_REQUESTED);
             return true;
         }
-        final PlotWorld plotWorld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotWorld = PS.get().getPlotWorld(world);
         if ((EconHandler.manager != null) && plotWorld.USE_ECONOMY) {
             double cost = plotWorld.MERGE_PRICE;
             cost = plots.size() * cost;

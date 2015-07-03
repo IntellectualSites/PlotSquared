@@ -21,7 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.*;
@@ -66,7 +66,7 @@ public class DebugClaimTest extends SubCommand {
                 return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
             }
             final String world = args[0];
-            if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(world)) {
+            if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
                 return !MainUtil.sendMessage(null, "&cInvalid plot world!");
             }
             PlotId min, max;
@@ -80,12 +80,12 @@ public class DebugClaimTest extends SubCommand {
             }
             MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
             MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
-            final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-            final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+            final PlotManager manager = PS.get().getPlotManager(world);
+            final PlotWorld plotworld = PS.get().getPlotWorld(world);
             final ArrayList<Plot> plots = new ArrayList<>();
             for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
                 final Plot plot = MainUtil.getPlot(world, id);
-                final boolean contains = PlotSquared.getInstance().getPlots(world).containsKey(plot.id);
+                final boolean contains = PS.get().getPlots(world).containsKey(plot.id);
                 if (contains) {
                     MainUtil.sendMessage(null, " - &cDB Already contains: " + plot.id);
                     continue;
@@ -134,7 +134,7 @@ public class DebugClaimTest extends SubCommand {
                     }
                 });
                 for (final Plot plot : plots) {
-                    PlotSquared.getInstance().updatePlot(plot);
+                    PS.get().updatePlot(plot);
                 }
                 MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
             } else {

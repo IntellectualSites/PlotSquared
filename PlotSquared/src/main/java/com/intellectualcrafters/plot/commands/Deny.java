@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -89,7 +89,7 @@ public class Deny extends SubCommand {
         }
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
         if (!uuid.equals(DBFunc.everyone)) {
-            PlotSquared.getInstance().IMP.handleKick(uuid, C.YOU_GOT_DENIED);
+            PS.get().IMP.handleKick(uuid, C.YOU_GOT_DENIED);
         }
         return true;
     }

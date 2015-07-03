@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -33,7 +33,7 @@ public class TNTListener implements Listener {
         }
         World world = entity.getWorld();
         String worldname = world.getName();
-        if (!PlotSquared.getInstance().isPlotWorld(worldname)) {
+        if (!PS.get().isPlotWorld(worldname)) {
             return;
         }
         Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(entity));

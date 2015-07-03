@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.generator;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -49,7 +49,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PS.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));

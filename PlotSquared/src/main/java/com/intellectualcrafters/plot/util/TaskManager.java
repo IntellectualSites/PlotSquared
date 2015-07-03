@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import org.apache.commons.lang.mutable.MutableInt;
 
 import java.util.HashMap;
@@ -14,20 +14,20 @@ public abstract class TaskManager {
 
     public static int runTaskRepeat(final Runnable r, final int interval) {
         if (r != null) {
-            return PlotSquared.getInstance().TASK.taskRepeat(r, interval);
+            return PS.get().TASK.taskRepeat(r, interval);
         }
         return -1;
     }
 
     public static void runTaskAsync(final Runnable r) {
         if (r != null) {
-            PlotSquared.getInstance().TASK.taskAsync(r);
+            PS.get().TASK.taskAsync(r);
         }
     }
 
     public static void runTask(final Runnable r) {
         if (r != null) {
-            PlotSquared.getInstance().TASK.task(r);
+            PS.get().TASK.task(r);
         }
     }
 
@@ -38,13 +38,13 @@ public abstract class TaskManager {
      */
     public static void runTaskLater(final Runnable r, final int delay) {
         if (r != null) {
-            PlotSquared.getInstance().TASK.taskLater(r, delay);
+            PS.get().TASK.taskLater(r, delay);
         }
     }
 
     public static void runTaskLaterAsync(final Runnable r, final int delay) {
         if (r != null) {
-            PlotSquared.getInstance().TASK.taskLaterAsync(r, delay);
+            PS.get().TASK.taskLaterAsync(r, delay);
         }
     }
 

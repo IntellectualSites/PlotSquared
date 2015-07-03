@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -36,7 +36,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PlotSquared.getInstance().isPlotWorld(entity.getWorld().getName())) {
+        if (!(entity instanceof Player) || !PS.get().isPlotWorld(entity.getWorld().getName())) {
             return;
         }
         Player player = (Player) entity;
@@ -123,7 +123,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         }
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         String world = l.getWorld();
-        if (!PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!PS.get().isPlotWorld(world)) {
             return;
         }
         Plot plot = MainUtil.getPlot(l);

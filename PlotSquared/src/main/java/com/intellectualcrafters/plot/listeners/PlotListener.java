@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
@@ -48,7 +48,7 @@ import java.util.UUID;
  */
 public class PlotListener extends APlotListener {
     public void textures(final Player p) {
-        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PlotSquared.getInstance().isPlotWorld(p.getWorld().getName())) {
+        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PS.get().isPlotWorld(p.getWorld().getName())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
         }
     }

@@ -22,7 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.lang.reflect.Field;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -39,13 +39,13 @@ public class DebugLoadTest extends SubCommand {
     public boolean execute(final PlotPlayer plr, final String... args) {
         if (plr == null) {
             try {
-                final Field fPlots = PlotSquared.class.getDeclaredField("plots");
+                final Field fPlots = PS.class.getDeclaredField("plots");
                 fPlots.setAccessible(true);
                 fPlots.set(null, DBFunc.getPlots());
             } catch (final Exception e) {
-                PlotSquared.log("&3===FAILED&3===");
+                PS.log("&3===FAILED&3===");
                 e.printStackTrace();
-                PlotSquared.log("&3===END OF STACKTRACE===");
+                PS.log("&3===END OF STACKTRACE===");
             }
         } else {
             MainUtil.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");

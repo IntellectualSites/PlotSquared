@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;

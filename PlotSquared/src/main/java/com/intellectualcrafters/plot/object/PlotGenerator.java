@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import org.bukkit.World;
@@ -71,8 +71,8 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public List<BlockPopulator> getDefaultPopulators(World world) {
         try {
             if (!loaded) {
-                PlotSquared.getInstance().loadWorld(WorldEvents.getName(world), this);
-                PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(WorldEvents.getName(world));
+                PS.get().loadWorld(WorldEvents.getName(world), this);
+                PlotWorld plotworld = PS.get().getPlotWorld(WorldEvents.getName(world));
                 if (!plotworld.MOB_SPAWNING) {
                     if (!plotworld.SPAWN_EGGS) {
                         world.setSpawnFlags(false, false);
@@ -103,7 +103,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         try {
             if (!loaded) {
-                PlotSquared.getInstance().loadWorld(WorldEvents.getName(world), this);
+                PS.get().loadWorld(WorldEvents.getName(world), this);
                 loaded = true;
             }
             final int prime = 13;
@@ -115,7 +115,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
             this.X = cx << 4;
             this.Z = cz << 4;
             if (ChunkManager.FORCE_PASTE) {
-                PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world.getName());
+                PlotWorld plotworld = PS.get().getPlotWorld(world.getName());
                 Biome biome = Biome.valueOf(plotworld.PLOT_BIOME);
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {

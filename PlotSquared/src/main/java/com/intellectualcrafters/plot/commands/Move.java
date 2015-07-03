@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -61,8 +61,8 @@ public class Move extends SubCommand {
         }
         String world2;
         if (args.length == 2) {
-            PlotWorld other = PlotSquared.getInstance().getPlotWorld(args[1]);
-            PlotWorld current = PlotSquared.getInstance().getPlotWorld(loc.getWorld());
+            PlotWorld other = PS.get().getPlotWorld(args[1]);
+            PlotWorld current = PS.get().getPlotWorld(loc.getWorld());
             if (other == null || current == null || !other.equals(current)) {
                 MainUtil.sendMessage(plr, C.PLOTWORLD_INCOMPATIBLE);
                 return false;

@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -20,7 +20,7 @@ public class PlayerEvents_1_8_3 implements Listener {
         Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
         final String world = loc.getWorld();
-        if (!PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!PS.get().isPlotWorld(world)) {
             return;
         }
         final Plot plot = MainUtil.getPlot(loc);

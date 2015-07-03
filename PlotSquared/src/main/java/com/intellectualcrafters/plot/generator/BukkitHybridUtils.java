@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -233,7 +233,7 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 int index = chunks.size() - 1;
                 if (index == -1) {
-                    PlotSquared.getInstance().TASK.cancelTask(TaskManager.tasks.get(currentIndex));
+                    PS.get().TASK.cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.runTaskAsync(run);
                     return;
                 }
@@ -288,7 +288,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 chunks.add(world.getChunkAt(X,Z));
             }
         }
-        PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (!(plotworld instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
         	TaskManager.runTaskLater(whenDone, 1);
@@ -426,11 +426,11 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 count.increment();
                 if (count.intValue() % 20 == 0) {
-                    PlotSquared.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
+                    PS.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }
                 if (regions.size() == 0 && chunks.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
-                    PlotSquared.log(C.PREFIX.s() + "Finished road conversion");
+                    PS.log(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                     return;
                 } else {
@@ -438,8 +438,8 @@ public class BukkitHybridUtils extends HybridUtils {
                     	if (chunks.size() < 1024) {
                     	    if (regions.size() > 0) {
                         		final ChunkLoc loc = regions.get(0);
-                                PlotSquared.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
-                                PlotSquared.log(" - Remaining: " + regions.size());
+                                PS.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
+                                PS.log(" - Remaining: " + regions.size());
                         		chunks.addAll(getChunks(loc));
                         		regions.remove(0);
                         		System.gc();
@@ -449,7 +449,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     		long diff = System.currentTimeMillis() + 25;
                     		if (System.currentTimeMillis() - last > 1200 && last != 0) {
                     		    last = 0;
-                    		    PlotSquared.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
+                    		    PS.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                     		    while (chunks.size() > 0) {
                                     ChunkLoc chunk = chunks.get(0);
                                     chunks.remove(0);
@@ -478,7 +478,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     } catch (final Exception e) {
                         e.printStackTrace();
                         final ChunkLoc loc = regions.get(0);
-                        PlotSquared.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        PS.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                         final int sx = loc.x << 5;
                         final int sz = loc.z << 5;
                         for (int x = sx; x < (sx + 32); x++) {
@@ -486,8 +486,8 @@ public class BukkitHybridUtils extends HybridUtils {
                                 ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
                             }
                         }
-                        PlotSquared.log("&d - Potentially skipping 1024 chunks");
-                        PlotSquared.log("&d - TODO: recommend chunkster if corrupt");
+                        PS.log("&d - Potentially skipping 1024 chunks");
+                        PS.log("&d - TODO: recommend chunkster if corrupt");
                     }
                 }
             }

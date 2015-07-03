@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -106,7 +106,7 @@ public class HybridPop extends PlotPopulator {
 
     @Override
     public void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz) {
-        PlotSquared.getInstance().getPlotManager(world.getName());
+        PS.get().getPlotManager(world.getName());
 
         int sx = (short) ((this.X) % this.size);
         int sz = (short) ((this.Z) % this.size);

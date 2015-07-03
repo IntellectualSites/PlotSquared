@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 
 /**
@@ -51,7 +51,7 @@ public class Logger {
             }
             reader.close();
         } catch (final IOException e) {
-            PlotSquared.log(C.PREFIX.s() + "File setup error Logger#setup");
+            PS.log(C.PREFIX.s() + "File setup error Logger#setup");
         }
     }
 

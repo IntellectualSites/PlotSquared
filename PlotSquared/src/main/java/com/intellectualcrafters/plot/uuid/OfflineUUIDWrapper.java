@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -83,7 +83,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
                 return p.toArray(new Player[0]);
             }
         } catch (final Exception e) {
-            PlotSquared.log("Failed to resolve online players");
+            PS.log("Failed to resolve online players");
             this.getOnline = null;
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }

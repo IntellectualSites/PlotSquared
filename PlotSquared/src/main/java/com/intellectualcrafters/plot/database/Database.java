@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
@@ -36,14 +36,14 @@ public abstract class Database {
     /**
      * Plugin instance, use for plugin.getDataFolder()
      */
-    protected final PlotSquared plotsquared;
+    protected final PS plotsquared;
 
     /**
      * Creates a new Database
      *
      * @param plotsquared Plugin instance
      */
-    protected Database(final PlotSquared plotsquared) {
+    protected Database(final PS plotsquared) {
         this.plotsquared = plotsquared;
     }
     

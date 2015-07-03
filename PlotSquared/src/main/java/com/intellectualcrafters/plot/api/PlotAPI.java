@@ -21,7 +21,7 @@
 
 package com.intellectualcrafters.plot.api;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
@@ -68,7 +68,7 @@ import java.util.Set;
      *
      * @throws com.intellectualcrafters.plot.util.PlotSquaredException if the program fails to fetch the PlotSquared
      *                                                                 instance
-     * @see com.intellectualcrafters.plot.PlotSquared
+     * @see com.intellectualcrafters.plot.PS
      */
     @Deprecated
     public PlotAPI(final JavaPlugin plugin) {
@@ -82,10 +82,10 @@ import java.util.Set;
      *
      * @return all plots
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#getPlots()
+     * @see com.intellectualcrafters.plot.PS#getPlots()
      */
     public Set<Plot> getAllPlots() {
-        return PlotSquared.getInstance().getPlots();
+        return PS.get().getPlots();
     }
 
     /**
@@ -96,7 +96,7 @@ import java.util.Set;
      * @return all plots that a player owns
      */
     public Set<Plot> getPlayerPlots(final Player player) {
-        return PlotSquared.getInstance().getPlots(BukkitUtil.getPlayer(player));
+        return PS.get().getPlots(BukkitUtil.getPlayer(player));
     }
 
     /**
@@ -106,29 +106,29 @@ import java.util.Set;
      * @param plotWorld Plot World Object
      * @param manager   World Manager
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotWorld,
+     * @see com.intellectualcrafters.plot.PS#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotWorld,
      * com.intellectualcrafters.plot.object.PlotManager)
      */
     public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
-        PlotSquared.getInstance().addPlotWorld(world, plotWorld, manager);
+        PS.get().addPlotWorld(world, plotWorld, manager);
     }
 
     /**
      * @return main configuration
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#config
+     * @see com.intellectualcrafters.plot.PS#config
      */
     public YamlConfiguration getConfig() {
-        return PlotSquared.getInstance().config;
+        return PS.get().config;
     }
 
     /**
      * @return storage configuration
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#storage
+     * @see com.intellectualcrafters.plot.PS#storage
      */
     public YamlConfiguration getStorage() {
-        return PlotSquared.getInstance().storage;
+        return PS.get().storage;
     }
 
     /**
@@ -137,10 +137,10 @@ import java.util.Set;
      *
      * @return PlotSquared PlotSquared Main Class
      *
-     * @see com.intellectualcrafters.plot.PlotSquared
+     * @see com.intellectualcrafters.plot.PS
      */
-    public PlotSquared getMain() {
-        return PlotSquared.getInstance();
+    public PS getMain() {
+        return PS.get();
     }
 
     /**
@@ -275,10 +275,10 @@ import java.util.Set;
      * @return PlotManager
      *
      * @see com.intellectualcrafters.plot.object.PlotManager
-     * @see PlotSquared#getPlotManager(String)
+     * @see PS#getPlotManager(String)
      */
     public PlotManager getPlotManager(final World world) {
-        return PlotSquared.getInstance().getPlotManager(world.getName());
+        return PS.get().getPlotManager(world.getName());
     }
 
     /**
@@ -289,11 +289,11 @@ import java.util.Set;
      *
      * @return PlotManager
      *
-     * @see PlotSquared#getPlotManager(String)
+     * @see PS#getPlotManager(String)
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
     public PlotManager getPlotManager(final String world) {
-        return PlotSquared.getInstance().getPlotManager(world);
+        return PS.get().getPlotManager(world);
     }
 
     /**
@@ -304,11 +304,11 @@ import java.util.Set;
      *
      * @return PlotWorld class for that world ! will return null if not a plot world world
      *
-     * @see PlotSquared#getPlotWorld(String)
+     * @see PS#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final World world) {
-        return PlotSquared.getInstance().getPlotWorld(world.getName());
+        return PS.get().getPlotWorld(world.getName());
     }
 
     /**
@@ -318,11 +318,11 @@ import java.util.Set;
      *
      * @return PlotWorld class for that world ! will return null if not a plot world world
      *
-     * @see PlotSquared#getPlotWorld(String)
+     * @see PS#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
     public PlotWorld getWorldSettings(final String world) {
-        return PlotSquared.getInstance().getPlotWorld(world);
+        return PS.get().getPlotWorld(world);
     }
 
     /**
@@ -464,7 +464,7 @@ import java.util.Set;
      */
     public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
-        for (final Plot plot : PlotSquared.getInstance().getPlots(world.getName()).values()) {
+        for (final Plot plot : PS.get().getPlots(world.getName()).values()) {
             if (just_owner) {
                 if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))) {
                     pPlots.add(plot);
@@ -485,11 +485,11 @@ import java.util.Set;
      *
      * @return Plot[] - array of plot objects in world
      *
-     * @see PlotSquared#getPlots(String)
+     * @see PS#getPlots(String)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot[] getPlots(final World world) {
-        Collection<Plot> plots = PlotSquared.getInstance().getPlots(world.getName()).values();
+        Collection<Plot> plots = PS.get().getPlots(world.getName()).values();
         return plots.toArray(new Plot[plots.size()]);
     }
 
@@ -498,10 +498,10 @@ import java.util.Set;
      *
      * @return World[] - array of plot worlds
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#getPlotWorlds()
+     * @see com.intellectualcrafters.plot.PS#getPlotWorlds()
      */
     public String[] getPlotWorlds() {
-        Set<String> worlds = PlotSquared.getInstance().getPlotWorlds();
+        Set<String> worlds = PS.get().getPlotWorlds();
         return worlds.toArray(new String[worlds.size()]);
     }
 
@@ -512,10 +512,10 @@ import java.util.Set;
      *
      * @return boolean (if plot world or not)
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#isPlotWorld(String)
+     * @see com.intellectualcrafters.plot.PS#isPlotWorld(String)
      */
     public boolean isPlotWorld(final World world) {
-        return PlotSquared.getInstance().isPlotWorld(world.getName());
+        return PS.get().isPlotWorld(world.getName());
     }
 
     /**
@@ -611,10 +611,10 @@ import java.util.Set;
      *
      * @return PlotSquared Class
      *
-     * @see com.intellectualcrafters.plot.PlotSquared
+     * @see com.intellectualcrafters.plot.PS
      */
-    public PlotSquared getPlotSquared() {
-        return PlotSquared.getInstance();
+    public PS getPlotSquared() {
+        return PS.get();
     }
 
     /**
@@ -639,12 +639,12 @@ import java.util.Set;
      *
      * @return a set containing the players plots
      *
-     * @see com.intellectualcrafters.plot.PlotSquared#getPlots(String, PlotPlayer)
+     * @see com.intellectualcrafters.plot.PS#getPlots(String, PlotPlayer)
      * org.bukkit.entity.Player)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Set<Plot> getPlayerPlots(final World world, final Player player) {
-        return PlotSquared.getInstance().getPlots(world.getName(), BukkitUtil.getPlayer(player));
+        return PS.get().getPlots(world.getName(), BukkitUtil.getPlayer(player));
     }
 
     /**

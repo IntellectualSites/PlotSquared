@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -62,7 +62,7 @@ public class SetBlockQueue {
                         return;
                     }
                     if (blocks.size() == 0) {
-                        PlotSquared.getInstance().TASK.cancelTask(TaskManager.tasks.get(current));
+                        PS.get().TASK.cancelTask(TaskManager.tasks.get(current));
                         for (Runnable runnable : runnables) {
                             TaskManager.runTask(runnable);
                         }

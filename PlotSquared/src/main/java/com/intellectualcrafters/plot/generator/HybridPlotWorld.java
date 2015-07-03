@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -64,7 +64,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PS.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
@@ -88,7 +88,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         try {
             setupSchematics();
         } catch (final Exception e) {
-            PlotSquared.log("&c - road schematics are disabled for this world.");
+            PS.log("&c - road schematics are disabled for this world.");
         }
     }
 
@@ -152,7 +152,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         if ((schem1 == null) || (schem2 == null) || (this.ROAD_WIDTH == 0)) {
-            PlotSquared.log(C.PREFIX.s() + "&3 - schematic: &7false");
+            PS.log(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;

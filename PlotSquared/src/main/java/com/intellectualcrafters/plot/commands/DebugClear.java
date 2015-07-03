@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Location;
@@ -42,19 +42,19 @@ public class DebugClear extends SubCommand {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
+                PS.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotSquared.log("Invalid Plot ID: " + args[0]);
+                    PS.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotSquared.getInstance().isPlotWorld(world) || !(PlotSquared.getInstance().getPlotWorld(world) instanceof SquarePlotWorld)) {
-                        PlotSquared.log("Invalid plot world: " + world);
+                    if (!PS.get().isPlotWorld(world) || !(PS.get().getPlotWorld(world) instanceof SquarePlotWorld)) {
+                        PS.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
-                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
+                            PS.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
                             final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
@@ -67,8 +67,8 @@ public class DebugClear extends SubCommand {
                                 @Override
                                 public void run() {
                                     MainUtil.runners.remove(plot);
-                                    PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
-                                    PlotSquared.log("&aDone!");
+                                    PS.log("Plot " + plot.getId().toString() + " cleared.");
+                                    PS.log("&aDone!");
                                 }
                             });
                         }
@@ -79,7 +79,7 @@ public class DebugClear extends SubCommand {
         }
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || !(PlotSquared.getInstance().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
+        if ((plot == null) || !(PS.get().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {

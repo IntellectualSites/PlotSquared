@@ -68,7 +68,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void onEnable() {
         THIS = this;
-        PlotSquared.instance = new PlotSquared(this);
+        PS.instance = new PS(this);
         if (Settings.METRICS) {
             try {
                 final Metrics metrics = new Metrics(this);
@@ -97,7 +97,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void onDisable() {
-        PlotSquared.getInstance().disable();
+        PS.get().disable();
         THIS = null;
     }
 
@@ -235,7 +235,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                     this.error = 0l;
                 }
                 World world;
-                for (final String w : PlotSquared.getInstance().getPlotWorlds()) {
+                for (final String w : PS.get().getPlotWorlds()) {
                     world = Bukkit.getWorld(w);
                     try {
                         if (world.getLoadedChunks().length < 1) {
@@ -263,7 +263,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         WorldEvents.lastWorld = world;
-        if (!PlotSquared.getInstance().setupPlotWorld(world, id)) {
+        if (!PS.get().setupPlotWorld(world, id)) {
             return null;
         }
         HybridGen result = new HybridGen(world);
@@ -308,8 +308,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerWorldEditEvents() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            PlotSquared.getInstance().worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-            final String version = PlotSquared.getInstance().worldEdit.getDescription().getVersion();
+            PS.get().worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            final String version = PS.get().worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
                 log("&cThis version of WorldEdit does not support PlotSquared.");
                 log("&cPlease use WorldEdit 6+ for masking support");

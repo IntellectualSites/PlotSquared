@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -50,7 +50,7 @@ public class Delete extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
         if (MainUtil.runners.containsKey(plot)) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
@@ -65,7 +65,7 @@ public class Delete extends SubCommand {
                         sendMessage(plr, C.ADDED_BALANCE, c + "");
                     }
                 }
-                PlotSquared.getInstance().removePlot(loc.getWorld(), plot.id, true);
+                PS.get().removePlot(loc.getWorld(), plot.id, true);
                 final long start = System.currentTimeMillis();
                 final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable() {
                     @Override

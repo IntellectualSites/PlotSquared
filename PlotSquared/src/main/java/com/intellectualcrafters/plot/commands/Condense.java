@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -40,7 +40,7 @@ public class Condense extends SubCommand {
     }
 
     public static void sendMessage(final String message) {
-        PlotSquared.log("&3PlotSquared -> Plot condense&8: &7" + message);
+        PS.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Condense extends SubCommand {
             return false;
         }
         final String worldname = args[0];
-        if (!BlockManager.manager.isWorld(worldname) || !PlotSquared.getInstance().isPlotWorld(worldname)) {
+        if (!BlockManager.manager.isWorld(worldname) || !PS.get().isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
@@ -77,7 +77,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PlotSquared.getInstance().getPlots(worldname).values();
+                final Collection<Plot> plots = PS.get().getPlots(worldname).values();
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
@@ -166,7 +166,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PlotSquared.getInstance().getPlots(worldname).values();
+                final Collection<Plot> plots = PS.get().getPlots(worldname).values();
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
