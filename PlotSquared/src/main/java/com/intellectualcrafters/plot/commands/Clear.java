@@ -62,7 +62,7 @@ public class Clear extends SubCommand {
                             Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.clear(world, plot, plot.owner == null, null);
+                                    MainUtil.clear(plot, plot.owner == null, null);
                                     PS.log("Plot " + plot.getId().toString() + " cleared.");
                                 }
                             };

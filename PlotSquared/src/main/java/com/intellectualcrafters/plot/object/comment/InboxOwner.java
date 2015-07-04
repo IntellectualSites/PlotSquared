@@ -47,7 +47,7 @@ public class InboxOwner extends CommentInbox {
             TaskManager.runTask(whenDone);
             return true;
         }
-        DBFunc.getComments(plot.world, plot, toString(), new RunnableVal() {
+        DBFunc.getComments(plot, toString(), new RunnableVal() {
             @Override
             public void run() {
                 whenDone.value = value;
@@ -68,7 +68,7 @@ public class InboxOwner extends CommentInbox {
             return false;
         }
         plot.settings.addComment(comment);
-        DBFunc.setComment(plot.world, plot, comment);
+        DBFunc.setComment(plot, comment);
         return true;
     }
 
@@ -82,7 +82,7 @@ public class InboxOwner extends CommentInbox {
         if (plot == null || plot.owner == null) {
             return false;
         }
-        DBFunc.removeComment(plot.world, plot, comment);
+        DBFunc.removeComment(plot, comment);
         return false;
     }
 

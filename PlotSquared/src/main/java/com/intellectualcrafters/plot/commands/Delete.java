@@ -76,7 +76,7 @@ public class Delete extends SubCommand {
                 if (!result) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 }
-                DBFunc.delete(loc.getWorld(), plot);
+                DBFunc.delete(plot);
             }
         };
         if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {

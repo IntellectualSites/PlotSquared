@@ -132,10 +132,7 @@ public class ExpireManager {
                                 if (plot.settings.isMerged()) {
                                     MainUtil.unlinkPlot(plot);
                                 }
-                                manager.clearPlot(plotworld, plot, false, null);
-                                MainUtil.removeSign(plot);
-                                DBFunc.delete(world, plot);
-                                PS.get().removePlot(world, plot.id, false);
+                                plot.delete();
                                 expiredPlots.get(world).remove(plot);
                                 PS.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
                                 PS.log("&3 - World: " + plot.world);

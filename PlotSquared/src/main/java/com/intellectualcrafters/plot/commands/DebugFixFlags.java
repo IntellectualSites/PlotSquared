@@ -66,7 +66,7 @@ public class DebugFixFlags extends SubCommand {
                 }
             }
             if (changed) {
-                DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+                DBFunc.setFlags(plot, plot.settings.flags.values());
             }
         }
         MainUtil.sendMessage(plr, "&aDone!");

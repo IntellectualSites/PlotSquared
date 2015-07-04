@@ -141,8 +141,7 @@ public class Set extends SubCommand {
             }
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("none")) {
-                    plot.settings.setPosition(null);
-                    DBFunc.setPosition(loc.getWorld(), plot, "");
+                    plot.setHome(null);
                     return true;
                 }
                 return MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
@@ -153,8 +152,7 @@ public class Set extends SubCommand {
             base.setY(0);
             final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
             final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ(), relative.getYaw(), relative.getPitch());
-            plot.settings.setPosition(blockloc);
-            DBFunc.setPosition(loc.getWorld(), plot, blockloc.toString());
+            plot.setHome(blockloc);
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
@@ -181,7 +179,7 @@ public class Set extends SubCommand {
                     return false;
                 }
             }
-            DBFunc.setAlias(loc.getWorld(), plot, alias);
+            plot.setAlias(alias);
             MainUtil.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
             return true;
         }
@@ -211,7 +209,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
                 return true;
             }
-            MainUtil.setBiome(plr.getLocation().getWorld(), plot, args[1].toUpperCase());
+            plot.setBiome(args[1].toUpperCase());
             MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
             return true;
         }

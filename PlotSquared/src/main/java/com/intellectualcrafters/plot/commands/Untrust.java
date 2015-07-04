@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -58,33 +59,28 @@ public class Untrust extends SubCommand {
         }
         int count = 0;
         if (args[0].equals("unknown")) {
-            Iterator<UUID> i = plot.trusted.iterator();
-            i = plot.trusted.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
+            ArrayList<UUID> toRemove = new ArrayList<>();
+            for (UUID uuid : plot.trusted) {
                 if (UUIDHandler.getName(uuid) == null) {
-                    DBFunc.removeTrusted(plot.world, plot, uuid);
-                    i.remove();
-                    count++;
+                    toRemove.add(uuid);
                 }
+            }
+            for (UUID uuid : toRemove) {
+                plot.removeTrusted(uuid);
+                count++;
             }
         }
         else if (args[0].equals("*")){
-            Iterator<UUID> i = plot.trusted.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                DBFunc.removeTrusted(plot.world, plot, uuid);
-                i.remove();
+            for (UUID uuid : new ArrayList<>(plot.trusted)) {
+                plot.removeTrusted(uuid);
                 count++;
             }
         }
         else {
             UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                if (plot.trusted.contains(uuid)) {
-                    DBFunc.removeTrusted(plot.world, plot, uuid);
-                    plot.trusted.remove(uuid);
-                    count++;
+                if (plot.removeTrusted(uuid)) {
+                    count++;   
                 }
             }
         }

@@ -175,7 +175,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             else {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            final Plot plot = new Plot(id, owner, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+            final Plot plot = new Plot(world, id, owner);
             plots.get(world).put(id, plot);
         }
         

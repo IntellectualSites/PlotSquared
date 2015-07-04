@@ -36,7 +36,7 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean getComments(final Plot plot, final RunnableVal whenDone) {
-        DBFunc.getComments(null, null, toString(), new RunnableVal() {
+        DBFunc.getComments(null, toString(), new RunnableVal() {
             @Override
             public void run() {
                 whenDone.value = value;
@@ -51,7 +51,7 @@ public class InboxReport extends CommentInbox {
         if (plot == null || plot.owner == null) {
             return false;
         }
-        DBFunc.setComment(plot.world, plot, comment);
+        DBFunc.setComment(plot, comment);
         return true;
     }
 
@@ -65,7 +65,7 @@ public class InboxReport extends CommentInbox {
         if (plot == null || plot.owner == null) {
             return false;
         }
-        DBFunc.removeComment(plot.world, plot, comment);
+        DBFunc.removeComment(plot, comment);
         return false;
     }
 

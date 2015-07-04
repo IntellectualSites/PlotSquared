@@ -159,7 +159,7 @@ public class FlagCmd extends SubCommand {
                 if ((args.length == 3) && flag.getAbstractFlag().isList()) {
                     final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
-                    DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+                    DBFunc.setFlags(plot, plot.settings.flags.values());
                 } else {
                     final boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
                     if (!result) {
@@ -206,7 +206,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
-                DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+                DBFunc.setFlags(plot, plot.settings.flags.values());
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
                 APlotListener.manager.plotEntry(player, plot);
                 return true;

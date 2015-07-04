@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -58,33 +59,28 @@ public class Undeny extends SubCommand {
         }
         int count = 0;
         if (args[0].equals("unknown")) {
-            Iterator<UUID> i = plot.denied.iterator();
-            i = plot.denied.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
+            ArrayList<UUID> toRemove = new ArrayList<>();
+            for (UUID uuid : plot.denied) {
                 if (UUIDHandler.getName(uuid) == null) {
-                    DBFunc.removeDenied(plot.world, plot, uuid);
-                    i.remove();
-                    count++;
+                    toRemove.add(uuid);
                 }
+            }
+            for (UUID uuid : toRemove) {
+                plot.removeDenied(uuid);
+                count++;
             }
         }
         else if (args[0].equals("*")){
-            Iterator<UUID> i = plot.denied.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                DBFunc.removeDenied(plot.world, plot, uuid);
-                i.remove();
+            for (UUID uuid : new ArrayList<>(plot.denied)) {
+                plot.removeDenied(uuid);
                 count++;
             }
         }
         else {
             UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                if (plot.denied.contains(uuid)) {
-                    DBFunc.removeDenied(plot.world, plot, uuid);
-                    plot.denied.remove(uuid);
-                    count++;
+                if (plot.removeDenied(uuid)) {
+                    count++;   
                 }
             }
         }

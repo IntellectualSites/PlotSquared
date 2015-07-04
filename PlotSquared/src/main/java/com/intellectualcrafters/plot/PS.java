@@ -70,6 +70,7 @@ public class PS {
      * @param imp_class
      */
     protected PS(final IPlotMain imp_class) {
+        instance = this;
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;
         try {
@@ -529,7 +530,11 @@ public class PS {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
         }
-        Plot plot = plots.get(world).remove(id);
+        HashMap<PlotId, Plot> allPlots = plots.get(world);
+        if (allPlots == null) {
+            return false;
+        }
+        Plot plot = allPlots.remove(id);
         if (MainUtil.lastPlot.containsKey(world)) {
             final PlotId last = MainUtil.lastPlot.get(world);
             final int last_max = Math.max(last.x, last.y);

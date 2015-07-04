@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -58,74 +60,56 @@ public class Remove extends SubCommand {
         }
         int count = 0;
         if (args[0].equals("unknown")) {
-            Iterator<UUID> i = plot.members.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
+            ArrayList<UUID> toRemove = new ArrayList<>();
+            HashSet<UUID> all = new HashSet<>();
+            all.addAll(plot.members);
+            all.addAll(plot.trusted);
+            all.addAll(plot.denied);
+            for (UUID uuid : all) {
                 if (UUIDHandler.getName(uuid) == null) {
-                    DBFunc.removeMember(plot.world, plot, uuid);
-                    i.remove();
+                    toRemove.add(uuid);
                     count++;
                 }
             }
-            i = plot.trusted.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                if (UUIDHandler.getName(uuid) == null) {
-                    DBFunc.removeTrusted(plot.world, plot, uuid);
-                    i.remove();
-                    count++;
-                }
-            }
-            i = plot.denied.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                if (UUIDHandler.getName(uuid) == null) {
-                    DBFunc.removeDenied(plot.world, plot, uuid);
-                    i.remove();
-                    count++;
-                }
+            for (UUID uuid : toRemove) {
+                plot.removeDenied(uuid);
+                plot.removeTrusted(uuid);
+                plot.removeMember(uuid);
             }
         }
         else if (args[0].equals("*")){
-            Iterator<UUID> i = plot.members.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                DBFunc.removeMember(plot.world, plot, uuid);
-                i.remove();
+            ArrayList<UUID> toRemove = new ArrayList<>();
+            HashSet<UUID> all = new HashSet<>();
+            all.addAll(plot.members);
+            all.addAll(plot.trusted);
+            all.addAll(plot.denied);
+            for (UUID uuid : all) {
+                toRemove.add(uuid);
                 count++;
             }
-            i = plot.trusted.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                DBFunc.removeTrusted(plot.world, plot, uuid);
-                i.remove();
-                count++;
-            }
-            i = plot.denied.iterator();
-            while (i.hasNext()) {
-                UUID uuid = i.next();
-                DBFunc.removeDenied(plot.world, plot, uuid);
-                i.remove();
-                count++;
+            for (UUID uuid : toRemove) {
+                plot.removeDenied(uuid);
+                plot.removeTrusted(uuid);
+                plot.removeMember(uuid);
             }
         }
         else {
             UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
                 if (plot.trusted.contains(uuid)) {
-                    DBFunc.removeTrusted(plot.world, plot, uuid);
-                    plot.trusted.remove(uuid);
-                    count++;
+                    if (plot.removeTrusted(uuid)) {
+                        count++;
+                    }
                 }
                 else if (plot.members.contains(uuid)) {
-                    DBFunc.removeMember(plot.world, plot, uuid);
-                    plot.members.remove(uuid);
-                    count++;
+                    if (plot.removeMember(uuid)) {
+                        count++;
+                    }
                 }
                 else if (plot.denied.contains(uuid)) {
-                    DBFunc.removeDenied(plot.world, plot, uuid);
-                    plot.denied.remove(uuid);
-                    count++;
+                    if (plot.removeDenied(uuid)) {
+                        count++;
+                    }
                 }
             }
         }

@@ -27,8 +27,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * The plot class
@@ -51,10 +54,6 @@ public class Plot implements Cloneable {
      */
     public UUID owner;
     /**
-     * Deny Entry
-     */
-    public boolean deny_entry;
-    /**
      * List of trusted (with plot permissions)
      */
     public ArrayList<UUID> trusted;
@@ -71,39 +70,55 @@ public class Plot implements Cloneable {
      */
     public PlotSettings settings;
     /**
-     * Delete on next save cycle?
-     */
-    public boolean delete;
-    /**
      * Has the plot changed since the last save cycle?
      */
     public boolean hasChanged = false;
     public boolean countsTowardsMax = true;
+    
+    /**
+     * If this plot is temporary i.e. not stored in the DB
+     */
+    public final boolean temp;
 
     /**
-     * Primary constructor
-     *
+     * Constructor for a new plot
+     * 
+     * @param world
      * @param id
      * @param owner
-     * @param trusted
-     * @param denied
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> denied, final String world) {
-        this.id = id;
-        this.settings = new PlotSettings(this);
-        this.owner = owner;
-        this.deny_entry = this.owner == null;
-        this.trusted = trusted;
-        this.denied = denied;
-        this.members = new ArrayList<>();
-        this.settings.setAlias("");
-        this.delete = false;
-        this.settings.flags = new HashMap<>();
+    public Plot(String world, PlotId id, UUID owner) {
         this.world = world;
+        this.id = id;
+        this.owner = owner;
+        this.settings = new PlotSettings(this);
+        this.trusted = new ArrayList<>();
+        this.members = new ArrayList<>();
+        this.denied = new ArrayList<>();
+        this.temp = false;
     }
-
+    
     /**
-     * Constructor for saved plots
+     * Constructor for a temporary plot
+     * 
+     * @param world
+     * @param id
+     * @param owner
+     * @param temp
+     */
+    public Plot(String world, PlotId id, UUID owner, boolean temp) {
+        this.world = world;
+        this.id = id;
+        this.owner = owner;
+        this.settings = new PlotSettings(this);
+        this.trusted = new ArrayList<>();
+        this.members = new ArrayList<>();
+        this.denied = new ArrayList<>();
+        this.temp = temp;
+    }
+    
+    /**
+     * Constructor for a saved plots
      *
      * @param id
      * @param owner
@@ -115,21 +130,19 @@ public class Plot implements Cloneable {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;
-        this.deny_entry = this.owner != null;
         this.members = members;
         this.trusted = trusted;
         this.denied = denied;
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
         this.settings.setMerged(merged);
-        this.delete = false;
-        this.settings.flags = new HashMap<>();
         if (flags != null) {
             for (Flag flag : flags) {
                 this.settings.flags.put(flag.getKey(), flag);
             }
         }
         this.world = world;
+        this.temp = false;
     }
 
     /**
@@ -202,7 +215,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addDenied(final UUID uuid) {
-        this.denied.add(uuid);
+        if (this.denied.add(uuid)) DBFunc.setDenied(this, uuid);
     }
 
     /**
@@ -211,7 +224,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addTrusted(final UUID uuid) {
-        this.trusted.add(uuid);
+        if (this.trusted.add(uuid)) DBFunc.setTrusted(this, uuid);
     }
 
     /**
@@ -220,9 +233,223 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addMember(final UUID uuid) {
-        this.members.add(uuid);
+        if (this.members.add(uuid)) DBFunc.setMember(this, uuid);
     }
-
+    
+    /**
+     * Set the plot owner
+     * @param owner
+     */
+    public void setOwner(final UUID owner) {
+        if (!this.owner.equals(owner)) {
+            this.owner = owner;
+            DBFunc.setOwner(this, owner);
+        }
+    }
+    
+    /**
+     * Clear a plot
+     * @see MainUtil#clear(Plot, boolean, Runnable)
+     * @see MainUtil#clearAsPlayer(Plot, boolean, Runnable)
+     * @see #delete() to clear and delete a plot
+     * @param whenDone A runnable to execute when clearing finishes, or null
+     */
+    public void clear(Runnable whenDone) {
+        MainUtil.clear(this, false, whenDone);
+    }
+    
+    /**
+     * Delete a plot
+     * @see PS#removePlot(String, PlotId, boolean)
+     * @see #clear(Runnable) to simply clear a plot
+     */
+    public void delete() {
+        MainUtil.removeSign(this);
+        MainUtil.clear(this, true, new Runnable() {
+            @Override
+            public void run() {
+                if (PS.get().removePlot(world, id, true)) {
+                    DBFunc.delete(Plot.this);
+                }
+            }
+        });
+    }
+    
+    public void unclaim() {
+        if (PS.get().removePlot(world, id, true)) {
+            DBFunc.delete(Plot.this);
+        }
+    }
+    
+    /**
+     * Unlink a plot and remove the roads
+     * @see MainUtil#unlinkPlot(Plot)
+     * @return true if plot was linked
+     */
+    public boolean unlink() {
+        return MainUtil.unlinkPlot(this);
+    }
+    
+    /**
+     * Return the home location for the plot
+     * @see MainUtil#getPlotHome(Plot)
+     * @return Home location
+     */
+    public Location getHome() {
+        return MainUtil.getPlotHome(this);
+    }
+    
+    /**
+     * Set the home location
+     * @param loc
+     */
+    public void setHome(BlockLoc loc) {
+        BlockLoc pos = this.settings.getPosition();
+        if ((pos == null && loc == null) || (pos != null && pos.equals(loc))) {
+            return;
+        }
+        this.settings.setPosition(loc);
+        if (this.settings.getPosition() == null) {
+            DBFunc.setPosition(this, "");
+        }
+        else {
+            DBFunc.setPosition(this, this.settings.getPosition().toString());
+        }
+    }
+    
+    /**
+     * Set the plot alias
+     * @param alias
+     */
+    public void setAlias(String alias) {
+        String name = this.settings.getAlias();
+        if (alias == null) {
+            alias = "";
+        }
+        if (name.equals(alias)) {
+            return;
+        }
+        this.settings.setAlias(alias);
+        DBFunc.setAlias(this, alias);
+    }
+    
+    /**
+     * Resend all chunks inside the plot to nearby players<br>
+     * This should not need to be called
+     * @see MainUtil#update(Plot) 
+     */
+    public void refreshChunks() {
+        MainUtil.update(this);
+    }
+    
+    /**
+     * Remove the plot sign if it is set
+     */
+    public void removeSign() {
+        MainUtil.removeSign(this);
+    }
+    
+    /**
+     * Set the plot sign if plot signs are enabled
+     */
+    public void setSign() {
+        MainUtil.setSign(this);
+    }
+    
+    /**
+     * Register a plot and create it in the database<br>
+     *  - The plot will not be created if the owner is null<br>
+     *  - This will not save any trusted etc in the DB, those should be set after plot creation
+     * @return true if plot was created successfully
+     */
+    public boolean create() {
+        return MainUtil.createPlot(owner, this);
+    }
+    
+    /**
+     * Auto merge the plot with any adjacent plots of the same owner
+     * @see MainUtil#autoMerge(Plot, UUID) to specify the owner
+     */
+    public void autoMerge() {
+        MainUtil.autoMerge(this, owner);
+    }
+    
+    /**
+     * Set the plot biome
+     */
+    public void setBiome(String biome) {
+        MainUtil.setBiome(this, biome);
+    }
+    
+    /**
+     * Return the top location for the plot
+     * @return
+     */
+    public Location getTop() {
+        return MainUtil.getPlotTopLoc(world, id);
+    }
+    
+    /**
+     * Return the bottom location for the plot
+     * @return
+     */
+    public Location getBottom() {
+        return MainUtil.getPlotBottomLoc(world, id);
+    }
+    
+    /**
+     * Get the top plot, or this plot if it is not part of a mega plot
+     * @return The bottom plot
+     */
+    public Plot getTopPlot() {
+        return MainUtil.getTopPlot(this);
+    }
+    
+    /**
+     * Get the bottom plot, or this plot if it is not part of a mega plot
+     * @return The bottom plot
+     */
+    public Plot getBottomPlot() {
+        return MainUtil.getBottomPlot(this);
+    }
+    
+    /**
+     * Swap the plot contents and settings with another location<br>
+     *  - The destination must correspond to a valid plot of equal dimensions
+     * @see ChunkManager#swap(String, bot1, top1, bot2, top2) to swap terrain
+     * @see MainUtil#getPlotSelectionIds(PlotId, PlotId) to get the plots inside a selection
+     * @see MainUtil#swapData(String, PlotId, PlotId, Runnable) to swap plot settings
+     * @param other The other plot id to swap with
+     * @param whenDone A task to run when finished, or null
+     * @see MainUtil#swapData(String, PlotId, PlotId, Runnable)
+     * @return boolean if swap was successful
+     */
+    public boolean swap(PlotId destination, Runnable whenDone) {
+        return MainUtil.swap(world, id, destination, whenDone);
+    }
+    
+    /**
+     * Move the plot to an empty location<br>
+     *  - The location must be empty
+     * @param destination Where to move the plot
+     * @param whenDone A task to run when done, or null
+     * @return if the move was successful
+     */
+    public boolean move(Plot destination, Runnable whenDone) {
+        return MainUtil.move(this, destination, whenDone);
+    }
+    
+    /**
+     * Copy the plot contents and settings to another location<br>
+     *  - The destination must correspond to an empty location
+     * @param destination The location to copy to
+     * @param whenDone The task to run when done
+     * @return If the copy was successful
+     */
+    public boolean copy(PlotId destination, Runnable whenDone) {
+        return MainUtil.copy(world, id, destination, whenDone);
+    }
+    
     /**
      * Get plot display name
      *
@@ -241,8 +468,12 @@ public class Plot implements Cloneable {
      *
      * @param uuid
      */
-    public void removeDenied(final UUID uuid) {
-        this.denied.remove(uuid);
+    public boolean removeDenied(final UUID uuid) {
+        if (this.denied.remove(uuid)) {
+            DBFunc.removeDenied(this, uuid);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -250,8 +481,12 @@ public class Plot implements Cloneable {
      *
      * @param uuid
      */
-    public void removeHelper(final UUID uuid) {
-        this.trusted.remove(uuid);
+    public boolean removeTrusted(final UUID uuid) {
+        if (this.trusted.remove(uuid)) {
+            DBFunc.removeTrusted(this, uuid);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -259,8 +494,12 @@ public class Plot implements Cloneable {
      *
      * @param uuid
      */
-    public void removeTrusted(final UUID uuid) {
-        this.members.remove(uuid);
+    public boolean removeMember(final UUID uuid) {
+        if (this.members.remove(uuid)) {
+            DBFunc.removeMember(this, uuid);
+            return true;
+        }
+        return false;
     }
     
     @Override

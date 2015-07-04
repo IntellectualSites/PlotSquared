@@ -187,7 +187,7 @@ public class Cluster extends SubCommand {
                         }
                     }
                     for (final Plot plot : toRemove) {
-                        DBFunc.delete(plot.world, plot);
+                        plot.unclaim();
                     }
                 }
                 DBFunc.delete(cluster);
@@ -361,11 +361,11 @@ public class Cluster extends SubCommand {
                 if (player != null) {
                     MainUtil.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 }
-                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld(), uuid)) {
+                for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if ((current != null) && current.equals(cluster)) {
                         final String world = plr.getLocation().getWorld();
-                        DBFunc.delete(world, plot);
+                        plot.unclaim();
                     }
                 }
                 MainUtil.sendMessage(plr, C.CLUSTER_KICKED_USER);
@@ -411,11 +411,11 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
-                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld(), uuid)) {
+                for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if ((current != null) && current.equals(cluster)) {
                         final String world = plr.getLocation().getWorld();
-                        DBFunc.delete(world, plot);
+                        plot.unclaim();
                     }
                 }
                 return true;

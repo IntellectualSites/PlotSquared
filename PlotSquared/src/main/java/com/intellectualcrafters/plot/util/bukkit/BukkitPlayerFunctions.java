@@ -121,7 +121,7 @@ public class BukkitPlayerFunctions {
         if (PS.get().getPlots(world).containsKey(id)) {
             return PS.get().getPlots(world).get(id);
         }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+        return new Plot(world, id, null);
     }
 
     /**

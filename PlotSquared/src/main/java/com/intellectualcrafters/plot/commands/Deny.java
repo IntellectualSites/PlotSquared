@@ -67,26 +67,19 @@ public class Deny extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (!plot.denied.contains(uuid)) {
-            if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-                return false;
-            }
-            if (plot.trusted.contains(uuid)) {
-                plot.trusted.remove(uuid);
-                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
-            }
-            if (plot.members.contains(uuid)) {
-                plot.members.remove(uuid);
-                DBFunc.removeMember(loc.getWorld(), plot, uuid);
-            }
-            plot.addDenied(uuid);
-            DBFunc.setDenied(loc.getWorld(), plot, uuid);
-            EventUtil.manager.callDenied(plr, plot, uuid, true);
-        } else {
+        if (plot.isOwner(uuid)) {
+            MainUtil.sendMessage(plr, C.ALREADY_OWNER);
+            return false;
+        }
+        
+        if (plot.denied.contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
+        plot.removeMember(uuid);
+        plot.removeTrusted(uuid);
+        plot.addDenied(uuid);
+        EventUtil.manager.callDenied(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
         if (!uuid.equals(DBFunc.everyone)) {
             PS.get().IMP.handleKick(uuid, C.YOU_GOT_DENIED);

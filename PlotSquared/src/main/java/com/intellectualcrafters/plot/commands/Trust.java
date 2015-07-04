@@ -67,34 +67,29 @@ public class Trust extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (!plot.trusted.contains(uuid)) {
-            if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-                return false;
-            }
-            if (plot.members.contains(uuid)) {
-                plot.members.remove(uuid);
-                DBFunc.removeMember(loc.getWorld(), plot, uuid);
-            }
-            if (plot.denied.contains(uuid)) {
-                if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
-                    MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
-                    return false;
-                }
-                plot.denied.remove(uuid);
-                DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            }
-            plot.addTrusted(uuid);
-            DBFunc.setTrusted(loc.getWorld(), plot, uuid);
-            EventUtil.manager.callTrusted(plr, plot, uuid, true);
-        } else {
+        if (plot.isOwner(uuid)) {
+            MainUtil.sendMessage(plr, C.ALREADY_OWNER);
+            return false;
+        }
+        
+        if (plot.trusted.contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
-        if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
-            MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
-            return false;
+        if (plot.removeMember(uuid)) {
+            plot.addTrusted(uuid);
         }
+        else {
+            if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+                MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
+                return false;
+            }
+            if (plot.denied.contains(uuid)) {
+                plot.removeDenied(uuid);
+            }
+            plot.addTrusted(uuid);
+        }
+        EventUtil.manager.callTrusted(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.TRUSTED_ADDED);
         return true;
     }

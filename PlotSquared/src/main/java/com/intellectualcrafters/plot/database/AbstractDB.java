@@ -84,7 +84,7 @@ public interface AbstractDB {
      *
      * @param plot Plot that should be deleted
      */
-    public void delete(final String world, final Plot plot);
+    public void delete(final Plot plot);
 
     public void delete(final PlotCluster cluster);
 
@@ -133,7 +133,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param merged boolean[]
      */
-    public void setMerged(final String world, final Plot plot, final boolean[] merged);
+    public void setMerged(final Plot plot, final boolean[] merged);
 
     /**
      * Swap the settings, helpers etc. of two plots
@@ -149,7 +149,7 @@ public interface AbstractDB {
      * @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
-    public void setFlags(final String world, final Plot plot, final Collection<Flag> flags);
+    public void setFlags(final Plot plot, final Collection<Flag> flags);
 
     /**
      * Set cluster flags
@@ -170,7 +170,7 @@ public interface AbstractDB {
      * @param plot  Plot for which the alias should be set
      * @param alias Plot Alias
      */
-    public void setAlias(final String world, final Plot plot, final String alias);
+    public void setAlias(final Plot plot, final String alias);
 
     /**
      * Purgle a plot
@@ -193,7 +193,7 @@ public interface AbstractDB {
      * @param plot     Plot Object
      * @param position Plot Home Position
      */
-    public void setPosition(final String world, final Plot plot, final String position);
+    public void setPosition(final Plot plot, final String position);
 
     /**
      *
@@ -220,7 +220,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void removeTrusted(final String world, final Plot plot, final UUID uuid);
+    public void removeTrusted(final Plot plot, final UUID uuid);
 
     /**
      * @param cluster   PlotCluster Object
@@ -232,7 +232,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void removeMember(final String world, final Plot plot, final UUID uuid);
+    public void removeMember(final Plot plot, final UUID uuid);
 
     /**
      *
@@ -245,7 +245,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    public void setTrusted(final String world, final Plot plot, final UUID uuid);
+    public void setTrusted(final Plot plot, final UUID uuid);
 
     /**
      * @param cluster PlotCluster Object
@@ -257,7 +257,7 @@ public interface AbstractDB {
      * @param plot   Plot Object
      * @param uuid Player that should be added
      */
-    public void setMember(final String world, final Plot plot, final UUID uuid);
+    public void setMember(final Plot plot, final UUID uuid);
 
     /**
      *
@@ -265,19 +265,19 @@ public interface AbstractDB {
      * @param cluster
      * @param uuid
      */
-    public void setInvited(final String world, final PlotCluster cluster, final UUID uuid);
+    public void setInvited(final PlotCluster cluster, final UUID uuid);
 
     /**
      * @param plot   Plot Object
      * @param uuid   Player uuid
      */
-    public void removeDenied(final String world, final Plot plot, final UUID uuid);
+    public void removeDenied(final Plot plot, final UUID uuid);
 
     /**
      * @param plot   Plot Object
      * @param uuid Player uuid that should be added
      */
-    public void setDenied(final String world, final Plot plot, final UUID uuid);
+    public void setDenied(final Plot plot, final UUID uuid);
 
     /**
      * Get Plots ratings
@@ -303,7 +303,7 @@ public interface AbstractDB {
      * @param plot    Plot Object
      * @param comment Comment to remove
      */
-    public void removeComment(final String world, final Plot plot, final PlotComment comment);
+    public void removeComment(final Plot plot, final PlotComment comment);
     
     /**
      * Clear an inbox
@@ -319,7 +319,7 @@ public interface AbstractDB {
      * @param plot    Plot Object
      * @param comment Comment to add
      */
-    public void setComment(final String world, final Plot plot, final PlotComment comment);
+    public void setComment(final Plot plot, final PlotComment comment);
 
     /**
      * Get Plot Comments
@@ -330,7 +330,7 @@ public interface AbstractDB {
      *
      * @return Plot Comments within the specified tier
      */
-    public void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone);
+    public void getComments(final Plot plot, final String inbox, RunnableVal whenDone);
 
     public void createPlotAndSettings(Plot plot);
 

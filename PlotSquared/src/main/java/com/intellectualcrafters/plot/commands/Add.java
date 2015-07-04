@@ -67,34 +67,29 @@ public class Add extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (!plot.members.contains(uuid)) {
-            if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-                return false;
-            }
-            if (plot.trusted.contains(uuid)) {
-                plot.trusted.remove(uuid);
-                DBFunc.removeTrusted(loc.getWorld(), plot, uuid);
-            }
-            if (plot.denied.contains(uuid)) {
-                if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
-                    MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
-                    return false;
-                }
-                plot.denied.remove(uuid);
-                DBFunc.removeDenied(loc.getWorld(), plot, uuid);
-            }
-            plot.addMember(uuid);
-            DBFunc.setMember(loc.getWorld(), plot, uuid);
-            EventUtil.manager.callMember(plr, plot, uuid, true);
-        } else {
+        if (plot.isOwner(uuid)) {
+            MainUtil.sendMessage(plr, C.ALREADY_OWNER);
+            return false;
+        }
+        
+        if (plot.members.contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
-        if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
-            MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
-            return false;
+        if (plot.removeTrusted(uuid)) {
+            plot.addMember(uuid);
         }
+        else {
+            if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+                MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
+                return false;
+            }
+            if (plot.denied.contains(uuid)) {
+                plot.removeDenied(uuid);
+            }
+            plot.addMember(uuid);
+        }
+        EventUtil.manager.callMember(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.MEMBER_ADDED);
         return true;
     }

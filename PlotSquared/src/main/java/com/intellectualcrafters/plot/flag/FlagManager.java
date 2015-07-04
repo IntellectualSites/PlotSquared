@@ -196,7 +196,7 @@ public class FlagManager {
             return false;
         }
         plot.settings.flags.put(flag.getKey(), flag);
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
     
@@ -249,7 +249,7 @@ public class FlagManager {
             plot.settings.flags.put(id, flag);
             return false;
         }
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
 
@@ -280,7 +280,7 @@ public class FlagManager {
         else {
             plot.settings.flags.clear();
         }
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
     }
 
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {

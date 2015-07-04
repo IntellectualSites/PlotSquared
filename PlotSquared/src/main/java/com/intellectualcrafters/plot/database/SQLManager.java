@@ -683,13 +683,13 @@ public class SQLManager implements AbstractDB {
      * @param plot
      */
     @Override
-    public void delete(final String world, final Plot plot) {
-        PS.get().removePlot(world, plot.id, false);
+    public void delete(final Plot plot) {
+        PS.get().removePlot(plot.world, plot.id, false);
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
-                final int id = getId(world, plot.id);
+                final int id = getId(plot.world, plot.id);
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
@@ -708,7 +708,7 @@ public class SQLManager implements AbstractDB {
                     stmt.executeUpdate();
                     stmt.close();
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ?");
-                    stmt.setString(1, world);
+                    stmt.setString(1, plot.world);
                     stmt.setInt(2, plot.hashCode());
                     stmt.executeUpdate();
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = ?");
@@ -1039,7 +1039,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setMerged(final String world, final Plot plot, final boolean[] merged) {
+    public void setMerged(final Plot plot, final boolean[] merged) {
         plot.settings.setMerged(merged);
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -1051,7 +1051,7 @@ public class SQLManager implements AbstractDB {
                     }
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `merged` = ? WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, n);
-                    stmt.setInt(2, getId(world, plot.id));
+                    stmt.setInt(2, getId(plot.world, plot.id));
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1118,7 +1118,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final String world, final Plot plot, final Collection<Flag> flags) {
+    public void setFlags(final Plot plot, final Collection<Flag> flags) {
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (final Flag flag : flags) {
@@ -1134,7 +1134,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string.toString());
-                    stmt.setInt(2, getId(world, plot.id));
+                    stmt.setInt(2, getId(plot.world, plot.id));
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1165,8 +1165,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setAlias(final String world, final Plot plot, final String alias) {
-        plot.settings.setAlias(alias);
+    public void setAlias(final Plot plot, final String alias) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1174,7 +1173,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `alias` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, alias);
-                    stmt.setInt(2, getId(world, plot.id));
+                    stmt.setInt(2, getId(plot.world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1259,7 +1258,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setPosition(final String world, final Plot plot, final String position) {
+    public void setPosition(final Plot plot, final String position) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1267,7 +1266,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `position` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, position);
-                    stmt.setInt(2, getId(world, plot.id));
+                    stmt.setInt(2, getId(plot.world, plot.id));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1327,7 +1326,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeComment(final String world, final Plot plot, final PlotComment comment) {
+    public void removeComment(final Plot plot, final PlotComment comment) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1383,7 +1382,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void getComments(final String world, final Plot plot, final String inbox, final RunnableVal whenDone) {
+    public void getComments(final Plot plot, final String inbox, final RunnableVal whenDone) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1429,7 +1428,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setComment(final String world, final Plot plot, final PlotComment comment) {
+    public void setComment(final Plot plot, final PlotComment comment) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -1452,13 +1451,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeTrusted(final String world, final Plot plot, final UUID uuid) {
+    public void removeTrusted(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1471,13 +1470,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeMember(final String world, final Plot plot, final UUID uuid) {
+    public void removeMember(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1490,13 +1489,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setTrusted(final String world, final Plot plot, final UUID uuid) {
+    public void setTrusted(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1527,13 +1526,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setMember(final String world, final Plot plot, final UUID uuid) {
+    public void setMember(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1546,13 +1545,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void removeDenied(final String world, final Plot plot, final UUID uuid) {
+    public void removeDenied(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1565,13 +1564,13 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setDenied(final String world, final Plot plot, final UUID uuid) {
+    public void setDenied(final Plot plot, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(world, plot.id));
+                    statement.setInt(1, getId(plot.world, plot.id));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -2098,7 +2097,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
+    public void setInvited(final PlotCluster cluster, final UUID uuid) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {

@@ -79,6 +79,7 @@ public class PlotSettings {
     public PlotSettings(final Plot plot) {
         this.alias = "";
         this.plot = plot;
+        this.flags = new HashMap<>();
     }
 
     /**

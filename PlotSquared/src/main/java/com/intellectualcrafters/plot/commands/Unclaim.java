@@ -60,10 +60,7 @@ public class Unclaim extends SubCommand {
         }
         final boolean result = PS.get().removePlot(loc.getWorld(), plot.id, true);
         if (result) {
-            final String worldname = plr.getLocation().getWorld();
-            PS.get().getPlotManager(worldname).unclaimPlot(pWorld, plot);
-            DBFunc.delete(worldname, plot);
-            // TODO set wall block
+            plot.unclaim();
         } else {
             MainUtil.sendMessage(plr, "Plot removal has been denied.");
         }

@@ -1132,10 +1132,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PS.get().getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
-                final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
-                final PlotManager manager = PS.get().getPlotManager(plot.world);
-                manager.clearPlot(plotworld, plot, true, null);
-                DBFunc.delete(plot.world, plot);
+                plot.delete();
                 PS.log(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }
