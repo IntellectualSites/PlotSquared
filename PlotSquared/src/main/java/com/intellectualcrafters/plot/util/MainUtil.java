@@ -67,7 +67,6 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
-                System.out.print(1);
                 return null;
             }
             return getPlot(player.getLocation());
@@ -77,10 +76,7 @@ public class MainUtil {
         if (player != null) {
             worldname = player.getLocation().getWorld();
         }
-        System.out.print(arg);
         String[] split = arg.split(";|,");
-        System.out.print(split[0]);
-        System.out.print(split[1]);
         if (split.length == 3) {
             worldname = split[0];
             id = PlotId.fromString(split[1] + ";" + split[2]);
@@ -115,15 +111,12 @@ public class MainUtil {
         }
         if (worldname == null || !PS.get().isPlotWorld(worldname)) {
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
-            System.out.print("INVALID WORLD: ");
             return null;
         }
         if (id == null) {
-            System.out.print("INVALID ID: ");
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID); 
             return null;
         }
-        System.out.print("VALID PLOT: ");
         return getPlot(worldname, id);
     }
     

@@ -849,7 +849,6 @@ public class SQLManager implements AbstractDB {
                 p = new Plot(plot_id, user, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false});
                 plots.put(id, p);
             }
-
             if (Settings.CACHE_RATINGS) {
                 r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`");
                 while (r.next()) {
@@ -871,7 +870,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-
+            
             /*
              * Getting helpers
              */
@@ -891,6 +890,7 @@ public class SQLManager implements AbstractDB {
                     PS.log("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
             }
+            
             /*
              * Getting trusted
              */
@@ -910,6 +910,7 @@ public class SQLManager implements AbstractDB {
                     PS.log("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
             }
+            
             /*
              * Getting denied
              */
@@ -929,6 +930,7 @@ public class SQLManager implements AbstractDB {
                     PS.log("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
                 }
             }
+            
             r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`");
             while (r.next()) {
                 id = r.getInt("plot_plot_id");
@@ -1018,6 +1020,7 @@ public class SQLManager implements AbstractDB {
                     PS.log("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
             }
+            
             stmt.close();
             r.close();
             if (plots.keySet().size() > 0) {

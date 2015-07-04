@@ -404,6 +404,9 @@ public class DBFunc {
     }
 
     public static HashMap<UUID, Integer> getRatings(final Plot plot) {
+        if (plot.temp) {
+            return new HashMap<>();
+        }
         return dbManager.getRatings(plot);
     }
     

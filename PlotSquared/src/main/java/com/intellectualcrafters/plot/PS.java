@@ -640,10 +640,19 @@ public class PS {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
+                
+                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+                log(C.PREFIX.s() + "&3 - generator: &7" + gen_class.getClass().getName());
+                log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
+                log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+                log(C.PREFIX.s() + "&3 - | terrain: &7" + plotWorld.TERRAIN);
+                log(C.PREFIX.s() + "&3 - | type: &7" + plotWorld.TYPE);
+                
                 addPlotWorld(world, plotWorld, plotManager);
                 if (plotWorld.TYPE == 2) {
                     if (ClusterManager.getClusters(world).size() > 0) {
                         for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
+                            log(C.PREFIX.s() + "&3 - &7| cluster: " + cluster);
                             new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
