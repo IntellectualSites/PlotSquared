@@ -11,7 +11,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.intellectualcrafters.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.sql.*;

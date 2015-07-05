@@ -30,8 +30,8 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.configuration.file.FileConfiguration;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;

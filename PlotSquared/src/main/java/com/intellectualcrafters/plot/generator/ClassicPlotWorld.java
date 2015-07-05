@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.ConfigurationSection;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;

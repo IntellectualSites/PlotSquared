@@ -8,8 +8,8 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;

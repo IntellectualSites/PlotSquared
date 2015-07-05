@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1084,7 +1084,7 @@ public class PS {
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
         
         // Protection
-        Settings.REDSTONE_DISABLER = config.getBoolean("protection.tnt-listener.enabled");
+        Settings.REDSTONE_DISABLER = config.getBoolean("protection.redstone.disable-offline");
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         

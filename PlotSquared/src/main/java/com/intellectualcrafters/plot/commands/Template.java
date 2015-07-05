@@ -28,8 +28,8 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;

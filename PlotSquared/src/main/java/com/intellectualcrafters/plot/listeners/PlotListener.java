@@ -34,8 +34,10 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -91,7 +93,7 @@ public class PlotListener extends APlotListener {
     }
 
     public void plotEntry(final PlotPlayer pp, final Plot plot) {
-        Player player = ((BukkitPlayer) pp).player;
+        final Player player = ((BukkitPlayer) pp).player;
         if (plot.hasOwner()) {
             final Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");
             if (gamemodeFlag != null) {
@@ -137,16 +139,29 @@ public class PlotListener extends APlotListener {
             }
             Flag musicFlag = FlagManager.getPlotFlag(plot, "music");
             if (musicFlag != null) {
-                player.playEffect(player.getLocation(), Effect.RECORD_PLAY, 0);
-                Integer id = (Integer) musicFlag.getValue();
-                if (id >= 2256 && id <= 2267) {
-                    Location center = MainUtil.getPlotCenter(plot);
-                    org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
-                    newLoc.setY(Math.min((player.getLocation().getBlockY() / 16) * 16, 240));
+                final Integer id = (Integer) musicFlag.getValue();
+                if ((id >= 2256 && id <= 2267) || id == 0) {
+                    final org.bukkit.Location loc = player.getLocation();
+                    org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+                    if (lastLoc != null) {
+                        player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                        if (id == 0) {
+                            pp.deleteMeta("music");
+                            return;
+                        }
+                    }
                     try {
-                        player.playEffect(newLoc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                        pp.setMeta("music", loc);
+                        player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
                     }
                     catch (Exception e) {}
+                }
+            }
+            else {
+                org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+                if (lastLoc != null) {
+                    pp.deleteMeta("music");
+                    player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
                 }
             }
             CommentManager.sendTitle(pp, plot);
@@ -169,13 +184,10 @@ public class PlotListener extends APlotListener {
         if (FlagManager.getPlotFlag(plot, "weather") != null) {
             player.resetPlayerWeather();
         }
-        if (FlagManager.getPlotFlag(plot, "music") != null) {
-            Location center = MainUtil.getPlotCenter(plot);
-            for (int i = 0; i < 256; i+= 16) {
-                org.bukkit.Location newLoc = BukkitUtil.getLocation(center);
-                newLoc.setY(i);
-                player.playEffect(newLoc, Effect.RECORD_PLAY, 0);
-            }
+        org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+        if (lastLoc != null) {
+            pp.deleteMeta("music");
+            player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
         }
     }
 

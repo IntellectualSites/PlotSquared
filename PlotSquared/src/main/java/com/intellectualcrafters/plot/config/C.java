@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.config;
 
 import org.bukkit.ChatColor;
 
+import com.boydti.buildoff.config.BBC;
 import com.intellectualsites.translation.TranslationFile;
 import com.intellectualsites.translation.TranslationLanguage;
 import com.intellectualsites.translation.TranslationManager;
@@ -544,6 +545,20 @@ public enum C {
      */
     C(final String d, String cat) {
         this(d, true, cat.toLowerCase());
+    }
+    
+    public static String format(C c, Object... args) {
+        String m = c.s;
+        for (int i = args.length - 1 ; i >= 0; i--) {
+            if (args[i] == null) {
+                continue;
+            }
+            m = m.replaceAll("%s" + i, args[i].toString());
+        }
+        if (args.length > 0) {
+            m = m.replaceAll("%s", args[0].toString());
+        }
+        return m;
     }
 
     public static void setupTranslations() {

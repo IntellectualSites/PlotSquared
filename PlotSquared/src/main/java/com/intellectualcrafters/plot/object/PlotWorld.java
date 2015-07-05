@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.HashMap;

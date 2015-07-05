@@ -199,7 +199,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
     @EventHandler
     public void onPlotLeave(final PlayerLeavePlotEvent event) {
         final Player leaver = event.getPlayer();
-        leaver.playEffect(leaver.getLocation(), Effect.RECORD_PLAY, 0);
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "farewell") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));

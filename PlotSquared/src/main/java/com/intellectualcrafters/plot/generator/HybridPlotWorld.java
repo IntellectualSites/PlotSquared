@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.ConfigurationSection;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;

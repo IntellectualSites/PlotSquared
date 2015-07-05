@@ -42,8 +42,8 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
