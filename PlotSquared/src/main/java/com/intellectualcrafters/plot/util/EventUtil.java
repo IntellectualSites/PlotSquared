@@ -1,11 +1,15 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.*;
-
 import java.util.ArrayList;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public abstract class EventUtil {
     

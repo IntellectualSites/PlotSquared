@@ -1,10 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PS;
-import org.apache.commons.lang.mutable.MutableInt;
-
 import java.util.HashMap;
 import java.util.HashSet;
+
+import org.apache.commons.lang.mutable.MutableInt;
+
+import com.intellectualcrafters.plot.PS;
 
 public abstract class TaskManager {
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();

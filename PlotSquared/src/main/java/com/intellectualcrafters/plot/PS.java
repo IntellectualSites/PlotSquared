@@ -1,23 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.*;
-import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.object.comment.CommentManager;
-import com.intellectualcrafters.plot.util.*;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,10 +7,68 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
  * An implementation of the core,
@@ -49,6 +89,8 @@ public class PS {
     // public:
     public WorldEditPlugin worldEdit = null;
     public File configFile;
+    public File translationFile;
+    public YamlConfiguration style;
     public YamlConfiguration config;
     public YamlConfiguration storage;
     public IPlotMain IMP = null;
@@ -56,7 +98,6 @@ public class PS {
 
     // private:
     private File styleFile;
-    private YamlConfiguration style;
     private File storageFile;
     private File FILE = null; // This file
     private String VERSION = null;
@@ -80,8 +121,6 @@ public class PS {
         }
         VERSION = IMP.getVersion();
         EconHandler.manager = IMP.getEconomyHandler();
-        C.setupTranslations();
-        C.saveTranslations();
         if (getJavaVersion() < 1.7) {
             log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
             // Didn't know of any other link :D
@@ -97,6 +136,8 @@ public class PS {
             log(C.ENABLED.s());
         }
         setupConfigs();
+        this.translationFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
+        C.load(translationFile);
         setupDefaultFlags();
         setupDatabase();
         CommentManager.registerDefaultInboxes();
@@ -1270,10 +1311,6 @@ public class PS {
      * Show startup debug information
      */
     public void showDebug() {
-        C.COLOR_1 = "&" + (style.getString("color.1"));
-        C.COLOR_2 = "&" + (style.getString("color.2"));
-        C.COLOR_3 = "&" + (style.getString("color.3"));
-        C.COLOR_4 = "&" + (style.getString("color.4"));
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
@@ -1298,12 +1335,12 @@ public class PS {
     private void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
-        o.put("color.1", C.COLOR_1.substring(1));
-        o.put("color.2", C.COLOR_2.substring(1));
-        o.put("color.3", C.COLOR_3.substring(1));
-        o.put("color.4", C.COLOR_4.substring(1));
-        for (final Entry<String, Object> node : o.entrySet()) {
-            if (!style.contains(node.getKey())) {
+        o.put("color.1", "6");
+        o.put("color.2", "7");
+        o.put("color.3", "8");
+        o.put("color.4", "3");
+        if (!style.contains("color")) {
+            for (final Entry<String, Object> node : o.entrySet()) {
                 style.set(node.getKey(), node.getValue());
             }
         }

@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
-
 import com.intellectualcrafters.plot.PS;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {

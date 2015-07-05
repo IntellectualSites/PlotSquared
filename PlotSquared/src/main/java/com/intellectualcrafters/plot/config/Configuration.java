@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.config;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -34,6 +33,7 @@ import com.intellectualcrafters.plot.util.StringComparison;
  */
 @SuppressWarnings("unused")
 public class Configuration {
+    
     public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {
         @Override
         public boolean validateValue(final String string) {

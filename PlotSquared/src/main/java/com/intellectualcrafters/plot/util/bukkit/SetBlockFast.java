@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Chunk;
-import org.bukkit.block.Block;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.MainUtil;

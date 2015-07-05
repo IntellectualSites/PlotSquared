@@ -1,21 +1,22 @@
 package com.intellectualcrafters.configuration.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
-
-import com.intellectualcrafters.configuration.Configuration;
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.InvalidConfigurationException;
-import com.intellectualcrafters.plot.PS;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
+
+import com.intellectualcrafters.configuration.Configuration;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.plot.PS;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.
@@ -177,13 +178,23 @@ public class YamlConfiguration extends FileConfiguration {
 
         try {
             config.load(file);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            PS.log("Cannot load " + file);
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            PS.log("Cannot load " + file);
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            try {
+                String path = file.getAbsolutePath() + "_broken";
+                File dest = new File(file.getAbsolutePath() + "_broken");
+                int i = 0;
+                while (dest.exists()) {
+                    dest = new File(file.getAbsolutePath() + "_broken_" + i++);
+                }
+                Files.copy( file.toPath(), dest.toPath() , StandardCopyOption.REPLACE_EXISTING);
+                PS.log("&dCould not read: &7" + file);
+                PS.log("&drenamed to: &7" + dest.getName());
+                PS.log("&c============ Full stacktrace ============");
+                ex.printStackTrace();
+                PS.log("&c=========================================");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return config;

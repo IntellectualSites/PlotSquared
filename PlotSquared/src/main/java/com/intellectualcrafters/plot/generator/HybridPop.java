@@ -1,14 +1,19 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.BlockManager;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotPopulator;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
 
 /**
  * @author Citymonstret

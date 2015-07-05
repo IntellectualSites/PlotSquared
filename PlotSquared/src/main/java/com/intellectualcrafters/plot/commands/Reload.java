@@ -38,7 +38,7 @@ public class Reload extends SubCommand {
             // loaded during startup unfortunately.
             PS.get().config.load(PS.get().configFile);
             PS.get().setupConfig();
-            C.setupTranslations();
+            C.load(PS.get().translationFile);
             for (final String pw : PS.get().getPlotWorlds()) {
                 final PlotWorld plotworld = PS.get().getPlotWorld(pw);
                 plotworld.loadDefaultConfiguration(PS.get().config.getConfigurationSection("worlds." + pw));

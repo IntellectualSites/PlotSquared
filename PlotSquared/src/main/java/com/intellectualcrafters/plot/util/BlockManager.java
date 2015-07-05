@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.util;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.StringComparison.ComparisonResult;
 
 public abstract class BlockManager {
     public static BlockManager manager;

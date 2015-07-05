@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.object;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.flag.Flag;

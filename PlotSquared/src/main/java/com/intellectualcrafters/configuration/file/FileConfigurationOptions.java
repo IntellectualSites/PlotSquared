@@ -1,6 +1,7 @@
 package com.intellectualcrafters.configuration.file;
 
-import com.intellectualcrafters.configuration.*;
+import com.intellectualcrafters.configuration.MemoryConfiguration;
+import com.intellectualcrafters.configuration.MemoryConfigurationOptions;
 
 /**
  * Various settings for controlling the input and output of a {@link

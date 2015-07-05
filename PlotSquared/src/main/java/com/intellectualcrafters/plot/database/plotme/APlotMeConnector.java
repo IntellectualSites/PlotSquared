@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import com.intellectualcrafters.configuration.file.FileConfiguration;
-
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
