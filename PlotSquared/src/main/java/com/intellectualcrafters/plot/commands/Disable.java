@@ -31,54 +31,17 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-public class plugin extends SubCommand {
+public class Disable extends SubCommand {
+    public static String downloads, version;
 
-    public plugin() {
-        super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
-    }
-
-    private static String convertToNumericString(final String str, final boolean dividers) {
-        final StringBuilder builder = new StringBuilder();
-        for (final char c : str.toCharArray()) {
-            if (Character.isDigit(c)) {
-                builder.append(c);
-            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
-                builder.append(c);
-            }
-        }
-        return builder.toString();
-    }
-
-    private static String getInfo(final String link) throws Exception {
-        final URLConnection connection = new URL(link).openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String document = "", line;
-        while ((line = reader.readLine()) != null) {
-            document += (line + "\n");
-        }
-        reader.close();
-        return document;
+    public Disable() {
+        super("disable", "plots.admin", "Disable PlotSquared", "disable", "unload", CommandCategory.DEBUG, false);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<String> strings = new ArrayList<String>() {
-                    {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PS.get().IMP.getVersion()));
-                        add(String.format("&c>> &6Authors: Citymonstret and Empire92"));
-                        add(String.format("&c>> &6Wiki: \n&chttps://github.com/IntellectualCrafters/PlotSquared/wiki"));
-                        add(String.format("&c>> &6Newest Version:\n&c" + (PS.get().update == null ? PS.get().IMP.getVersion() : PS.get().update)));
-                    }
-                };
-                for (final String s : strings) {
-                    MainUtil.sendMessage(plr, s);
-                }
-            }
-        });
+        PS.log("&cDisabling PlotSquared and all dependencies!");
+        PS.get().IMP.disable();
         return true;
     }
 }

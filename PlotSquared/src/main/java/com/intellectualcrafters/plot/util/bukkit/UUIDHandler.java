@@ -126,7 +126,7 @@ public class UUIDHandler {
                 toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 if (Settings.TWIN_MODE_UUID) {
                     HashSet<UUID> all = getAllUUIDS();
-                    PS.log("&aFast mod UUID caching enabled!");
+                    PS.log("&aFast mode UUID caching enabled!");
                     final File playerdataFolder = new File(container, world + File.separator + "playerdata");
                     String[] dat = playerdataFolder.list(new FilenameFilter() {
                         @Override

@@ -1,9 +1,16 @@
 package com.intellectualcrafters.plot;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -21,8 +28,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.config.C;
@@ -95,6 +105,7 @@ public class PS {
     public YamlConfiguration storage;
     public IPlotMain IMP = null;
     public TaskManager TASK;
+    public URL update;
 
     // private:
     private File styleFile;
@@ -178,6 +189,20 @@ public class PS {
         // Player manager
         PlayerManager.manager = IMP.initPlayerManager();
 
+        // Check for updates
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                URL url = getUpdate();
+                if (url != null) {
+                    update = url;
+                    log("&6You are running an older version of PlotSquared...");
+                    log("&8 - &3Use: &7/plot update");
+                    log("&8 - &3Or: &7" + url);
+                }
+            }
+        });
+        
         // PlotMe
         if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
             TaskManager.runTaskLater(new Runnable() {
@@ -804,6 +829,123 @@ public class PS {
         }
         return true;
     }
+    
+    private boolean canUpdate(String current, String other) {
+        String s1 = normalisedVersion(current);
+        String s2 = normalisedVersion(other);
+        int cmp = s1.compareTo(s2);
+        return cmp < 0;
+    }
+
+    public String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+    public String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Gets the default update URL, or null if the plugin is up to date
+     * @return
+     */
+    public URL getUpdate() {
+        String resource = "plotsquared.1177";
+        String url = "https://www.spigotmc.org/resources/" + resource + "/history";
+        String download = "<a href=\"resources/" + resource + "/download?version=";
+        String version = "<td class=\"version\">";
+        try {
+            URL history = new URL(url);
+            URLConnection con = history.openConnection();
+            con.addRequestProperty("User-Agent", "Mozilla/4.0");
+            InputStream stream = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+            String l;
+            URL link = null;
+            String cur_ver = config.getString("version");
+            String new_ver = null;
+            while ((l = in.readLine()) != null) {
+                if (l.length() > version.length() && l.startsWith(version)) {
+                    new_ver = l.substring(version.length(), l.length() - 5);
+                    break;
+                }
+                if (link == null && l.length() > download.length() && l.startsWith(download)) {
+                    String subString = l.substring(download.length());
+                    link = new URL("https://www.spigotmc.org/resources/" + resource + "/download?version=" + subString.substring(0, subString.indexOf("\"")));
+                    continue;
+                }
+            }
+            stream.close();
+            in.close();
+            if (new_ver == null || !canUpdate(cur_ver, new_ver))  {
+                PS.log("&7PlotSquared is already up to date!");
+                return null;
+            }
+            if (link == null) {
+                PS.log("&dCould not check for updates");
+                PS.log("&7 - Manually check for updates: " + url);
+                return null;
+            }
+            return link;
+        } catch (Exception e) {
+            PS.log("&dCould not check for updates");
+            PS.log("&7 - Manually check for updates: " + url);
+            return null;
+        }
+    }
+    
+    public boolean update(URL url) {
+        if (url == null) {
+            return false;
+        }
+        try {
+            File jar = PS.get().IMP.getFile();
+            File newJar = new File("plugins/update/PlotSquared.jar");
+            PS.log("&6Downloading from provided URL: &7" + url);
+            PS.log("&7 - User-Agent: " + "Mozilla/4.0");
+            URLConnection con = url.openConnection();
+            con.addRequestProperty("User-Agent", "Mozilla/4.0");
+            InputStream stream = con.getInputStream();
+            File parent = newJar.getParentFile();
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+            PS.log("&7 - Output: " + newJar);
+            newJar.delete();
+            Files.copy(stream, newJar.toPath());
+            stream.close();
+            PS.log("&6Disabling PlotSquared");  
+            PS.get().IMP.disable();
+            System.out.println("Deleting file: " + jar);
+            jar.delete();
+            System.out.println("Copying: " + jar + "  >> " + newJar);
+            try {
+                Files.move(newJar.toPath(), jar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                System.out.println("Failed to reload PlotSquared");
+                System.out.println(" - Restart the server manually");
+                System.out.println("============ Stacktrace ============");
+                e.printStackTrace();
+                System.out.println("====================================");
+                return false;
+            }
+            Bukkit.reload();
+            return true;
+        }
+        catch (Exception e) {
+            System.out.println("Failed to update PlotSquared");
+            System.out.println(" - Please update manually");
+            System.out.println("============ Stacktrace ============");
+            e.printStackTrace();
+            System.out.println("====================================");
+        }
+        return false;
+    }
 
 
     /**
@@ -876,7 +1018,7 @@ public class PS {
     public void setupDatabase() {
         if (Settings.DB.USE_MYSQL) {
             try {
-                database = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                database = new MySQL(Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = database.openConnection();
                 {
                     if (DBFunc.dbManager == null) {
@@ -904,7 +1046,7 @@ public class PS {
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                this.database = new SQLite(this, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
+                this.database = new SQLite(IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
                 connection = this.database.openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);

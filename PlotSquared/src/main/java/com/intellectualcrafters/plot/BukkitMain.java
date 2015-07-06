@@ -1,21 +1,35 @@
 package com.intellectualcrafters.plot;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.intellectualcrafters.plot.commands.Add;
 import com.intellectualcrafters.plot.commands.Auto;
@@ -42,6 +56,7 @@ import com.intellectualcrafters.plot.commands.DebugSaveTest;
 import com.intellectualcrafters.plot.commands.DebugUUID;
 import com.intellectualcrafters.plot.commands.Delete;
 import com.intellectualcrafters.plot.commands.Deny;
+import com.intellectualcrafters.plot.commands.Disable;
 import com.intellectualcrafters.plot.commands.FlagCmd;
 import com.intellectualcrafters.plot.commands.Help;
 import com.intellectualcrafters.plot.commands.Home;
@@ -73,6 +88,7 @@ import com.intellectualcrafters.plot.commands.Unclaim;
 import com.intellectualcrafters.plot.commands.Undeny;
 import com.intellectualcrafters.plot.commands.Unlink;
 import com.intellectualcrafters.plot.commands.Untrust;
+import com.intellectualcrafters.plot.commands.Update;
 import com.intellectualcrafters.plot.commands.Visit;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.commands.list;
@@ -136,9 +152,9 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
-
+    
     public static BukkitMain THIS = null;
-
+    
     private int[] version;
     
     @Override
@@ -152,14 +168,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 if (version.length == 3) {
                     version[2] = Integer.parseInt(split[2]);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
         return (version[0] > major) || ((version[0] == major) && (version[1] > minor)) || ((version[0] == major) && (version[1] == minor) && (version[2] >= minor2));
     }
-
+    
     @Override
     public void onEnable() {
         THIS = this;
@@ -175,6 +190,18 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
+        File file = new File(this.getDirectory() + File.separator + "disabled.yml");
+        if (file.exists()) {
+            try {
+                String[] split = new String(Files.readAllBytes(file.toPath())).split(",");
+                for (String plugin : split) {
+                    loadPlugin(plugin);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            file.delete();
+        }
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());
@@ -189,40 +216,46 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
     }
     
-
     @Override
     public void onDisable() {
         PS.get().disable();
+        try {
+            unloadRecursively(this);
+        }
+        catch (Exception e) {};
         THIS = null;
     }
-
+    
     @Override
     public void log(String message) {
         if (message == null) {
             return;
         }
         message = message.replaceAll("\u00B2", "2");
-        if ((THIS == null) || (Bukkit.getServer().getConsoleSender() == null)) {
-            System.out.println(ChatColor.stripColor(ConsoleColors.fromString(message)));
-        } else {
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            if (!Settings.CONSOLE_COLOR) {
-                message = ChatColor.stripColor(message);
+        if (THIS != null && Bukkit.getServer().getConsoleSender() != null) {
+            try {
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                if (!Settings.CONSOLE_COLOR) {
+                    message = ChatColor.stripColor(message);
+                }
+                Bukkit.getServer().getConsoleSender().sendMessage(message);
+                return;
             }
-            Bukkit.getServer().getConsoleSender().sendMessage(message);
+            catch (Throwable e) {};
         }
+        System.out.println(ConsoleColors.fromString(message));
     }
-
+    
     @Override
     public void disable() {
         onDisable();
     }
-
+    
     @Override
     public String getVersion() {
         return this.getDescription().getVersion();
     }
-
+    
     @Override
     public void handleKick(UUID uuid, C c) {
         Player player = Bukkit.getPlayer(uuid);
@@ -231,10 +264,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             player.teleport(player.getWorld().getSpawnLocation());
         }
     }
-
+    
     @Override
     public void registerCommands() {
         new MainCommand();
+        MainCommand.subCommands.add(new Disable());
+        MainCommand.subCommands.add(new Update());
         MainCommand.subCommands.add(new Template());
         MainCommand.subCommands.add(new Setup());
         MainCommand.subCommands.add(new DebugUUID());
@@ -257,14 +292,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.subCommands.add(new Cluster());
         }
-        
         MainCommand.subCommands.add(new Trust());
         MainCommand.subCommands.add(new Add());
         MainCommand.subCommands.add(new Deny());
         MainCommand.subCommands.add(new Untrust());
         MainCommand.subCommands.add(new Remove());
         MainCommand.subCommands.add(new Undeny());
-        
         MainCommand.subCommands.add(new Info());
         MainCommand.subCommands.add(new list());
         MainCommand.subCommands.add(new Help());
@@ -302,17 +335,17 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
         plotCommand.setTabCompleter(bcmd);
     }
-
+    
     @Override
     public File getDirectory() {
         return getDataFolder();
     }
-
+    
     @Override
     public TaskManager getTaskManager() {
         return new BukkitTaskManager();
     }
-
+    
     @Override
     public void runEntityTask() {
         log(C.PREFIX.s() + "KillAllEntities started.");
@@ -354,7 +387,164 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }, 20);
     }
-
+    
+    public boolean unloadPlugin(Plugin plugin) {
+        try {
+            plugin.getClass().getClassLoader().getResources("*");
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        PluginManager pm = Bukkit.getServer().getPluginManager();
+        Map<String, Plugin> ln;
+        List<Plugin> pl;
+        try {
+            Field lnF = pm.getClass().getDeclaredField("lookupNames");
+            lnF.setAccessible(true);
+            ln = (Map) lnF.get(pm);
+            
+            Field plF = pm.getClass().getDeclaredField("plugins");
+            plF.setAccessible(true);
+            pl = (List) plF.get(pm);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        pm.disablePlugin(plugin);
+        synchronized (pm) {
+            ln.remove(plugin.getName());
+            pl.remove(plugin);
+        }
+        JavaPluginLoader jpl = (JavaPluginLoader) plugin.getPluginLoader();
+        Field loadersF = null;
+        try {
+            loadersF = jpl.getClass().getDeclaredField("loaders");
+            loadersF.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Map<String, ?> loaderMap = (Map) loadersF.get(jpl);
+            loaderMap.remove(plugin.getDescription().getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        closeClassLoader(plugin);
+        System.gc();
+        System.gc();
+        return true;
+    }
+    
+    public boolean closeClassLoader(Plugin plugin) {
+        try {
+            ((URLClassLoader) plugin.getClass().getClassLoader()).close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean unloadRecursively(Plugin plugin) {
+        try {
+            Stack<String> pluginFiles = unloadRecursively(plugin.getName(), plugin, new Stack());
+            File file = new File(this.getDirectory() + File.separator + "disabled.yml");
+            file.createNewFile();
+            String prefix = "";
+            String all = "";
+            while (pluginFiles.size() > 0) {
+                String pop = pluginFiles.pop();
+                all += prefix + pop.substring(0, pop.length() - 4);
+                prefix = ",";
+            }
+            if (all.length() != 0) {
+                PrintWriter out = new PrintWriter(this.getDirectory() + File.separator + "disabled.yml");
+                out.write(all);
+                out.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    
+    @Override
+    public void loadPlugin(String name) {
+        try {
+            PluginManager manager = Bukkit.getServer().getPluginManager();
+            Plugin plugin = manager.getPlugin(name);
+            if (plugin != null) {
+                manager.enablePlugin(plugin);
+                return;
+            }
+            plugin = manager.loadPlugin(new File("plugins" + File.separator + name + (name.endsWith(".jar") ? "" : ".jar")));
+            plugin.onLoad();
+            manager.enablePlugin(plugin);
+        } catch (Exception e) {}
+    }
+    
+    @Override
+    public File getFile() {
+        return getFile(this);
+    }
+    
+    public File getFile(JavaPlugin p) {
+        try {
+            Field f = JavaPlugin.class.getDeclaredField("file");
+            f.setAccessible(true);
+            return (File) f.get(p);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Stack<String> unloadRecursively(String doNotLoad, Plugin plugin, Stack<String> pluginFiles) {
+        if (!plugin.getName().equals(doNotLoad)) {
+            File file = getFile((JavaPlugin) plugin);
+            pluginFiles.push(file.getName());
+        }
+        PluginManager pm = Bukkit.getPluginManager();
+        for (Plugin p : pm.getPlugins()) {
+            List<String> depend = p.getDescription().getDepend();
+            if (depend != null) {
+                for (String s : depend) {
+                    if (s.equals(plugin.getName())) {
+                        unloadRecursively(doNotLoad, p, pluginFiles);
+                    }
+                }
+            }
+            List<String> softDepend = p.getDescription().getSoftDepend();
+            if (softDepend != null) {
+                for (String s : softDepend) {
+                    if (s.equals(plugin.getName())) {
+                        unloadRecursively(doNotLoad, p, pluginFiles);
+                    }
+                }
+            }
+        }
+        if (unloadPlugin(plugin)) {
+            List<String> depend = plugin.getDescription().getDepend();
+            if (depend != null) {
+                for (String s : depend) {
+                    Plugin p = pm.getPlugin(s);
+                    if (p != null) {
+                        unloadRecursively(doNotLoad, p, pluginFiles);
+                    }
+                }
+            }
+            List<String> softDepend = plugin.getDescription().getSoftDepend();
+            if (softDepend != null) {
+                for (String s : softDepend) {
+                    Plugin p = pm.getPlugin(s);
+                    if (p != null) {
+                        unloadRecursively(doNotLoad, p, pluginFiles);
+                    }
+                }
+            }
+        }
+        return pluginFiles;
+    }
+    
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         WorldEvents.lastWorld = world;
@@ -372,7 +562,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }, 20);
         return result;
     }
-
+    
     @Override
     public void registerPlayerEvents() {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
@@ -383,23 +573,23 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8_3(), this);
         }
     }
-
+    
     @Override
     public void registerInventoryEvents() {
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
     }
-
+    
     @Override
     public void registerPlotPlusEvents() {
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
     }
-
+    
     @Override
     public void registerForceFieldEvents() {
         getServer().getPluginManager().registerEvents(new ForceFieldListener(), this);
     }
-
+    
     @Override
     public void registerWorldEditEvents() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
@@ -416,7 +606,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }
     }
-
+    
     @Override
     public EconHandler getEconomyHandler() {
         try {
@@ -428,7 +618,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return null;
     }
-
+    
     @Override
     public BlockManager initBlockManager() {
         if (checkVersion(1, 8, 0)) {
@@ -455,7 +645,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         BlockUpdateUtil.setBlockManager = BukkitSetBlockManager.setBlockManager;
         return BlockManager.manager = new BukkitUtil();
     }
-
+    
     @Override
     public boolean initPlotMeConverter() {
         TaskManager.runTaskLaterAsync(new Runnable() {
@@ -468,7 +658,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }, 20);
         return Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null;
     }
-
+    
     @Override
     public ChunkGenerator getGenerator(final String world, final String name) {
         final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
@@ -478,7 +668,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return new HybridGen(world);
         }
     }
-
+    
     @Override
     public HybridUtils initHybridUtils() {
         return new BukkitHybridUtils();
@@ -495,8 +685,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
                 UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
-            }
-            else {
+            } else {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
@@ -506,8 +695,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             if (Settings.UUID_LOWERCASE) {
                 UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
-            }
-            else {
+            } else {
                 UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
@@ -520,8 +708,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
             if (UUIDHandler.uuidWrapper instanceof DefaultUUIDWrapper) {
                 Settings.TWIN_MODE_UUID = true;
-            }
-            else if (UUIDHandler.uuidWrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
+            } else if (UUIDHandler.uuidWrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }
         }
@@ -537,27 +724,27 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public ChunkManager initChunkManager() {
         return new BukkitChunkManager();
     }
-
+    
     @Override
     public EventUtil initEventUtil() {
         return new BukkitEventUtil();
     }
-
+    
     @Override
     public void registerTNTListener() {
         getServer().getPluginManager().registerEvents(new TNTListener(), this);
     }
-
+    
     @Override
     public void unregister(PlotPlayer player) {
         BukkitUtil.removePlayer(player.getName());
     }
-
+    
     @Override
     public APlotListener initPlotListener() {
         return new PlotListener();
     }
-
+    
     @Override
     public void registerChunkProcessor() {
         getServer().getPluginManager().registerEvents(new ChunkListener(), this);
@@ -567,12 +754,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
     }
-
+    
     @Override
     public PlayerManager initPlayerManager() {
         return new BukkitPlayerManager();
     }
-
+    
     @Override
     public InventoryUtil initInventoryUtil() {
         return new BukkitInventoryUtil();

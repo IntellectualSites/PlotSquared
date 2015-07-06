@@ -45,8 +45,7 @@ public class SQLite extends Database {
      *
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(final PS plotsquared, final String dbLocation) {
-        super(plotsquared);
+    public SQLite(final String dbLocation) {
         this.dbLocation = dbLocation;
     }
 

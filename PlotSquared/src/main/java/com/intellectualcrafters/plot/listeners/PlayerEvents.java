@@ -334,6 +334,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 WEManager.bypass.add(pp.getName());
             }
         }
+        if (PS.get().update != null && pp.hasPermission("plots.admin")) {
+            MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
+        }
         final Location loc = BukkitUtil.getLocation(player.getLocation());
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

@@ -48,7 +48,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 return DriverManager.getConnection(con, user, password);
 //                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
-                return new SQLite(PS.get(), dataFolder + File.separator + "plots.db").openConnection();
+                return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
         }
         catch (SQLException | ClassNotFoundException e) {}

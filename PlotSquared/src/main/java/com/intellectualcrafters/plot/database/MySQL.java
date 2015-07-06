@@ -26,8 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.intellectualcrafters.plot.PS;
-
 /**
  * Connects to and uses a MySQL database
  *
@@ -51,8 +49,7 @@ public class MySQL extends Database {
      * @param username Username
      * @param password Password
      */
-    public MySQL(final PS plotsquared, final String hostname, final String port, final String database, final String username, final String password) {
-        super(plotsquared);
+    public MySQL(final String hostname, final String port, final String database, final String username, final String password) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;

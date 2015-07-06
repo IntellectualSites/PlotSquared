@@ -20,12 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import org.bukkit.ChatColor;
-
 public class ConsoleColors {
     public static String fromString(String input) {
-        input = input.replaceAll("&0", fromChatColor(ChatColor.BLACK)).replaceAll("&1", fromChatColor(ChatColor.DARK_BLUE)).replaceAll("&2", fromChatColor(ChatColor.DARK_GREEN)).replaceAll("&3", fromChatColor(ChatColor.DARK_AQUA)).replaceAll("&4", fromChatColor(ChatColor.DARK_RED)).replaceAll("&5", fromChatColor(ChatColor.DARK_PURPLE)).replaceAll("&6", fromChatColor(ChatColor.GOLD)).replaceAll("&7", fromChatColor(ChatColor.GRAY)).replaceAll("&8", fromChatColor(ChatColor.DARK_GRAY)).replaceAll("&9", fromChatColor(ChatColor.BLUE)).replaceAll("&a", fromChatColor(ChatColor.GREEN)).replaceAll("&b", fromChatColor(ChatColor.AQUA)).replaceAll("&c", fromChatColor(ChatColor.RED)).replaceAll("&d", fromChatColor(ChatColor.LIGHT_PURPLE)).replaceAll("&e", fromChatColor(ChatColor.YELLOW)).replaceAll("&f", fromChatColor(ChatColor.WHITE)).replaceAll("&k", fromChatColor(ChatColor.MAGIC)).replaceAll("&l", fromChatColor(ChatColor.BOLD)).replaceAll("&m", fromChatColor(ChatColor.STRIKETHROUGH))
-                .replaceAll("&n", fromChatColor(ChatColor.UNDERLINE)).replaceAll("&o", fromChatColor(ChatColor.ITALIC)).replaceAll("&r", fromChatColor(ChatColor.RESET));
+        input = input.replaceAll("&0", fromChatColor("&0")).replaceAll("&1", fromChatColor("&1")).replaceAll("&2", fromChatColor("&2")).replaceAll("&3", fromChatColor("&3")).replaceAll("&4", fromChatColor("&4")).replaceAll("&5", fromChatColor("&5")).replaceAll("&6", fromChatColor("&6")).replaceAll("&7", fromChatColor("&7")).replaceAll("&8", fromChatColor("&8")).replaceAll("&9", fromChatColor("&9")).replaceAll("&a", fromChatColor("&a")).replaceAll("&b", fromChatColor("&b")).replaceAll("&c", fromChatColor("&c")).replaceAll("&d", fromChatColor("&d")).replaceAll("&e", fromChatColor("&e")).replaceAll("&f", fromChatColor("&f")).replaceAll("&k", fromChatColor("&k")).replaceAll("&l", fromChatColor("&l")).replaceAll("&m", fromChatColor("&m"))
+                .replaceAll("&n", fromChatColor("&n")).replaceAll("&o", fromChatColor("&o")).replaceAll("&r", fromChatColor("&r"));
         return input + "\u001B[0m";
     }
 
@@ -41,42 +39,42 @@ public class ConsoleColors {
      * String ANSI_UNDERLINE = "\033[0m"; public static final String ANSI_ITALIC
      * = "\033[3m]";
      */
-    public static String fromChatColor(final ChatColor color) {
+    public static String fromChatColor(final String color) {
         return chatColor(color).getLin();
     }
 
-    public static ConsoleColor chatColor(final ChatColor color) {
+    public static ConsoleColor chatColor(final String color) {
         switch (color) {
-            case RESET:
+            case "&r":
                 return ConsoleColor.RESET;
-            case GRAY:
-            case DARK_GRAY:
+            case "&7":
+            case "&8":
                 return ConsoleColor.WHITE;
-            case BLACK:
+            case "&0":
                 return ConsoleColor.BLACK;
-            case DARK_RED:
-            case RED:
+            case "&4":
+            case "&c":
                 return ConsoleColor.RED;
-            case GOLD:
-            case YELLOW:
+            case "&6":
+            case "&e":
                 return ConsoleColor.YELLOW;
-            case DARK_GREEN:
-            case GREEN:
+            case "&a":
+            case "&2":
                 return ConsoleColor.GREEN;
-            case AQUA:
-            case DARK_AQUA:
+            case "&b":
+            case "&3":
                 return ConsoleColor.CYAN;
-            case LIGHT_PURPLE:
-            case DARK_PURPLE:
+            case "&d":
+            case "&5":
                 return ConsoleColor.PURPLE;
-            case BLUE:
-            case DARK_BLUE:
+            case "&9":
+            case "&1":
                 return ConsoleColor.BLUE;
-            case UNDERLINE:
+            case "&n":
                 return ConsoleColor.UNDERLINE;
-            case ITALIC:
+            case "&o":
                 return ConsoleColor.ITALIC;
-            case BOLD:
+            case "&l":
                 return ConsoleColor.BOLD;
             default:
                 return ConsoleColor.RESET;

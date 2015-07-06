@@ -21,64 +21,63 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.bukkit.Bukkit;
+
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-public class plugin extends SubCommand {
+public class Update extends SubCommand {
+    public static String downloads, version;
 
-    public plugin() {
-        super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
-    }
-
-    private static String convertToNumericString(final String str, final boolean dividers) {
-        final StringBuilder builder = new StringBuilder();
-        for (final char c : str.toCharArray()) {
-            if (Character.isDigit(c)) {
-                builder.append(c);
-            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
-                builder.append(c);
-            }
-        }
-        return builder.toString();
-    }
-
-    private static String getInfo(final String link) throws Exception {
-        final URLConnection connection = new URL(link).openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String document = "", line;
-        while ((line = reader.readLine()) != null) {
-            document += (line + "\n");
-        }
-        reader.close();
-        return document;
+    public Update() {
+        super("update", "plots.admin", "Update PlotSquared", "update", "updateplugin", CommandCategory.DEBUG, false);
     }
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<String> strings = new ArrayList<String>() {
-                    {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PS.get().IMP.getVersion()));
-                        add(String.format("&c>> &6Authors: Citymonstret and Empire92"));
-                        add(String.format("&c>> &6Wiki: \n&chttps://github.com/IntellectualCrafters/PlotSquared/wiki"));
-                        add(String.format("&c>> &6Newest Version:\n&c" + (PS.get().update == null ? PS.get().IMP.getVersion() : PS.get().update)));
-                    }
-                };
-                for (final String s : strings) {
-                    MainUtil.sendMessage(plr, s);
-                }
+        if (plr != null) {
+            MainUtil.sendMessage(plr, C.NOT_CONSOLE);
+            return false;
+        }
+        URL url;
+        if (args.length == 0) {
+            url = PS.get().update;
+        }
+        else if (args.length == 1) {
+            try {
+                url = new URL(args[0]);
+            } catch (MalformedURLException e) {
+                MainUtil.sendMessage(plr, "&cInvalid url: " + args[0]);
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
+                return false;
             }
-        });
+        }
+        else {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update");
+            return false;
+        }
+        if (url == null) {
+            MainUtil.sendMessage(plr, "&cNo update found!");
+            MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
+            return false;
+        }
+        PS.get().update(url);
         return true;
     }
 }

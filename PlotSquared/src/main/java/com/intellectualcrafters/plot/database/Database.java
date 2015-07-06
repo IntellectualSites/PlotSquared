@@ -24,8 +24,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.intellectualcrafters.plot.PS;
-
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
  *
@@ -33,19 +31,6 @@ import com.intellectualcrafters.plot.PS;
  * @author tips48
  */
 public abstract class Database {
-    /**
-     * Plugin instance, use for plugin.getDataFolder()
-     */
-    protected final PS plotsquared;
-
-    /**
-     * Creates a new Database
-     *
-     * @param plotsquared Plugin instance
-     */
-    protected Database(final PS plotsquared) {
-        this.plotsquared = plotsquared;
-    }
     
     public abstract Connection forceConnection() throws SQLException, ClassNotFoundException ;
 
