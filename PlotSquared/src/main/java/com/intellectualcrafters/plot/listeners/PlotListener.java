@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -134,6 +135,11 @@ public class PlotListener extends APlotListener {
                 final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceAll("%s", getName(plot.owner)).replaceAll("%alias%", alias);
                 AbstractTitle.sendTitle(pp, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
             }
+            Flag feed = FlagManager.getPlotFlag(plot, "feed");
+            if (feed != null) {
+                PlotPlusListener.manager.feed.getValue()
+            }
+            
             {
                 final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
                 Bukkit.getPluginManager().callEvent(callEvent);

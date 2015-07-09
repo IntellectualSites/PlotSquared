@@ -45,6 +45,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -156,9 +157,20 @@ public class PlotPlusListener extends PlotListener implements Listener {
 
     @EventHandler
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
+        Player player = event.getPlayer();
         final Plot plot = event.getPlot();
         if (FlagManager.getPlotFlag(plot, "greeting") != null) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
+        }
+        Flag feed = FlagManager.getPlotFlag(plot, "feed");
+        if (feed != null) {
+            Integer[] value = (Integer[]) feed.getValue();
+            feedRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
+        }
+        Flag heal = FlagManager.getPlotFlag(plot, "heal");
+        if (heal != null) {
+            Integer[] value = (Integer[]) heal.getValue();
+            healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
         if (FlagManager.isBooleanFlag(plot, "notify-enter", false)) {
             final Player trespasser = event.getPlayer();
@@ -187,12 +199,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         final String name = player.getName();
-        if (feedRunnable.containsKey(name)) {
-            feedRunnable.remove(name);
-        }
-        if (healRunnable.containsKey(name)) {
-            healRunnable.remove(name);
-        }
+        feedRunnable.remove(name);
+        healRunnable.remove(name);
     }
 
     @EventHandler
@@ -203,13 +211,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
         final PlotPlayer pl = BukkitUtil.getPlayer(leaver);
-        pl.getName();
-        if (feedRunnable.containsKey(leaver)) {
-            feedRunnable.remove(leaver);
-        }
-        if (healRunnable.containsKey(leaver)) {
-            healRunnable.remove(leaver);
-        }
+        feedRunnable.remove(leaver.getName());
+        healRunnable.remove(leaver.getName());
         if (FlagManager.isBooleanFlag(plot, "notify-leave", false)) {
             if (Perm.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                 return;

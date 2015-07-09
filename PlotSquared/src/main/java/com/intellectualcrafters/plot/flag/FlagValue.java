@@ -133,7 +133,7 @@ public abstract class FlagValue<T> {
 
         @Override
         public String getDescription() {
-            return "Value(s) must be numeric. /plot set flag {flag} {amount} [seconds]";
+            return "Value(s) must be numeric. /plot set flag <flag> <interval> [amount]";
         }
     }
 
