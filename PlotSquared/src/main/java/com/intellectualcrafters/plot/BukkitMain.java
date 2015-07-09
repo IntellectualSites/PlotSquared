@@ -97,6 +97,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.plotme.ClassicPlotMeConnector;
 import com.intellectualcrafters.plot.database.plotme.LikePlotMeConverter;
+import com.intellectualcrafters.plot.database.plotme.PlotMeConnector_017;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
@@ -651,9 +652,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                if (!(new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector()))) {
-                    new LikePlotMeConverter("AthionPlots").run(new ClassicPlotMeConnector());
-                }
+                if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) return;
+                if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) return;
+                if (new LikePlotMeConverter("AthionPlots").run(new ClassicPlotMeConnector())) return;
             }
         }, 20);
         return Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null;

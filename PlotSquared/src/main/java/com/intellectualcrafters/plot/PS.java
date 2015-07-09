@@ -830,7 +830,7 @@ public class PS {
         return true;
     }
     
-    private boolean canUpdate(String current, String other) {
+    public boolean canUpdate(String current, String other) {
         String s1 = normalisedVersion(current);
         String s2 = normalisedVersion(other);
         int cmp = s1.compareTo(s2);
@@ -1367,6 +1367,9 @@ public class PS {
         try {
             styleFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "style.yml");
             if (!styleFile.exists()) {
+                if (!styleFile.getParentFile().exists()) {
+                    styleFile.getParentFile().mkdirs();
+                }
                 if (!styleFile.createNewFile()) {
                     log("Could not create the style file, please create \"translations/style.yml\" manually");
                 }
@@ -1374,6 +1377,7 @@ public class PS {
             style = YamlConfiguration.loadConfiguration(styleFile);
             setupStyle();
         } catch (final Exception err) {
+            err.printStackTrace();
             Logger.add(LogLevel.DANGER, "Failed to save style.yml");
             log("failed to save style.yml");
         }

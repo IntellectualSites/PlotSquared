@@ -7,11 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import java.util.Map.Entry;
 
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -24,8 +21,7 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-public class ClassicPlotMeConnector extends APlotMeConnector {
-
+public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;
 
     @Override
@@ -33,12 +29,15 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         this.plugin = plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
-                final String user = plotConfig.getString("mySQLuname");
-                final String password = plotConfig.getString("mySQLpass");
-                final String con = plotConfig.getString("mySQLconn");
+                String user = plotConfig.getString("mySQLuname");
+                String password = plotConfig.getString("mySQLpass");
+                String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
-//                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
+                File file = new File(dataFolder + File.separator + "plotmecore.db");
+                if (file.exists()) {
+                    return new SQLite(dataFolder + File.separator + "plotmecore.db").openConnection();
+                }
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
         }
@@ -50,24 +49,24 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
         ResultSet r;
         PreparedStatement stmt;
-        final HashMap<String, Integer> plotWidth = new HashMap<>();
-        final HashMap<String, Integer> roadWidth = new HashMap<>();
-        final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
-        final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
-        stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
+        HashMap<String, Integer> plotWidth = new HashMap<>();
+        HashMap<String, Integer> roadWidth = new HashMap<>();
+        final HashMap<Integer, Plot> plots = new HashMap<>();
+        HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
+        stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
         r = stmt.executeQuery();
-        boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
+        boolean checkUUID = DBFunc.hasColumn(r, "ownerID");
         boolean merge = !plugin.equals("plotme");
         while (r.next()) {
-            final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-            final String name = r.getString("owner");
-            final String world = LikePlotMeConverter.getWorld(r.getString("world"));
+            int key = r.getInt("plot_id");
+            PlotId id = new PlotId(r.getInt("plotX"), r.getInt("plotZ"));
+            String name = r.getString("owner");
+            String world = LikePlotMeConverter.getWorld(r.getString("world"));
             if (!plots.containsKey(world)) {
                 int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
                 int path = PS.get().config.getInt("worlds." + world + ".road.width");
                 plotWidth.put(world, plot);
                 roadWidth.put(world, path);
-                plots.put(world, new HashMap<PlotId, Plot>());
                 if (merge) {
                     merges.put(world, new HashMap<PlotId,boolean[]>());
                 }
@@ -123,85 +122,93 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             else {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            final Plot plot = new Plot(world, id, owner);
-            plots.get(world).put(id, plot);
+            Plot plot = new Plot(world, id, owner);
+            plots.put(key, plot);
         }
-        
-        for (Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet()) {
-            String world = entry.getKey();
-            for (Entry<PlotId, boolean[]> entry2 : entry.getValue().entrySet()) {
-                HashMap<PlotId, Plot> newplots = plots.get(world);
-                Plot plot = newplots.get(entry2.getKey());
-                if (plot != null) {
-                    plot.settings.setMerged(entry2.getValue());
+        for (Entry<Integer, Plot> entry : plots.entrySet()) {
+            Plot plot = entry.getValue();
+            HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
+            if (mergeMap != null) {
+                if (mergeMap.containsKey(plot.id)) {
+                    plot.settings.setMerged(mergeMap.get(plot.id));
                 }
             }
         }
-        
         r.close();
         stmt.close();
-        
         try {
-        
-            MainUtil.sendConsoleMessage(" - " + plugin + "Denied");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Denied`");
+            MainUtil.sendConsoleMessage(" - " + plugin + "_denied");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "_denied`");
             r = stmt.executeQuery();
             
             while (r.next()) {
-                final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-                final String name = r.getString("player");
-                final String world = LikePlotMeConverter.getWorld(r.getString("world"));
+                int key = r.getInt("plot_id");
+                Plot plot = plots.get(key);
+                if (plot == null) {
+                    MainUtil.sendConsoleMessage("&6Denied (" + key + ") references deleted plot; ignoring entry.");
+                    continue;
+                }
+                String name = r.getString("player");
                 UUID denied = UUIDHandler.getUUID(name);
                 if (denied == null) {
                     if (name.equals("*")) {
                         denied = DBFunc.everyone;
                     } else {
-                        MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
+                        MainUtil.sendConsoleMessage("&6Denied (" + key + ") references incorrect name (`" + name + "`)");
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).denied.add(denied);
-                }
+                plot.denied.add(denied);
             }
             
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Allowed`");
+            MainUtil.sendConsoleMessage(" - " + plugin + "_allowed");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "_allowed`");
             r = stmt.executeQuery();
             
             while (r.next()) {
-                final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
-                final String name = r.getString("player");
-                final String world = LikePlotMeConverter.getWorld(r.getString("world"));
-                UUID helper = UUIDHandler.getUUID(name);
-                if (helper == null) {
+                int key = r.getInt("plot_id");
+                Plot plot = plots.get(key);
+                if (plot == null) {
+                    MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
+                    continue;
+                }
+                String name = r.getString("player");
+                UUID allowed = UUIDHandler.getUUID(name);
+                if (allowed == null) {
                     if (name.equals("*")) {
-                        helper = DBFunc.everyone;
+                        allowed = DBFunc.everyone;
                     } else {
-                        MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
+                        MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references incorrect name (`" + name + "`)");
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).trusted.add(helper);
-                }
+                plot.trusted.add(allowed);
             }
-            
             r.close();
             stmt.close();
         
         }
         catch (Exception e) {}
-        return plots;
+        HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
+        
+        for (Entry<Integer, Plot> entry : plots.entrySet()) {
+            Plot plot = entry.getValue();
+            HashMap<PlotId, Plot> map = processed.get(plot.world);
+            if (map == null) {
+                map = new HashMap<>();
+                processed.put(plot.world, map);
+            }
+            map.put(plot.id, plot);
+        }
+        return processed ;
     }
 
     @Override
     public boolean accepts(String version) {
-        System.out.print("CHECKING VERSION");
-        if (version ==  null) {
-            System.out.print("VERSION IS NULL");
-            return true;
+        if (version == null) {
+            return false;
         }
-        System.out.print("VERSION IS: " + version);
-        return PS.get().canUpdate(version, "0.17.0");
+        return !PS.get().canUpdate(version, "0.17");
     }
+    
 }

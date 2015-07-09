@@ -119,11 +119,18 @@ public class LikePlotMeConverter {
         try {
             String dataFolder = getPlotMePath();
             FileConfiguration plotConfig = getPlotMeConfig(dataFolder);
-
             if (plotConfig == null) {
                 return false;
             }
-
+            
+            String version = plotConfig.getString("Version");
+            if (version == null) version = plotConfig.getString("version");
+            if (!connector.accepts(version)) {
+                return false;
+            }
+            
+            System.out.print("CONNECTOR ACCEPTS VERSION");
+            
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
 
             if (connection == null) {
@@ -322,6 +329,7 @@ public class LikePlotMeConverter {
                 }
             });
         } catch (final Exception e) {
+            e.printStackTrace();
             PS.log("&/end/");
         }
         return true;
