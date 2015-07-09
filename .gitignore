@@ -101,3 +101,4 @@ hs_err_pid*
 /plotsquared/target
 *.MF
 PlotSquared/schematic.zip
+*.bat

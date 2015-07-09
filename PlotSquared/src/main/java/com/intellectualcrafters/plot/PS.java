@@ -1099,6 +1099,7 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("mob-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
@@ -1106,11 +1107,15 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("misc-place", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("misc-break", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("hanging-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("device-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));

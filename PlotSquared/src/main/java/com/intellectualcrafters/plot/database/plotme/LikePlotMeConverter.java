@@ -129,7 +129,7 @@ public class LikePlotMeConverter {
                 return false;
             }
             
-            System.out.print("CONNECTOR ACCEPTS VERSION");
+            PS.log("&3Using connector: " + connector.getClass().getCanonicalName());
             
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
 

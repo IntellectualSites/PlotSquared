@@ -37,7 +37,7 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -84,7 +84,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        final boolean admin = Permissions.hasPermission(plr, "plots.admin.command.merge");
+        final boolean admin = Perm.hasPermission(plr, "plots.admin.command.merge");
         if (!plot.isOwner(plr.getUUID()) && !admin) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;

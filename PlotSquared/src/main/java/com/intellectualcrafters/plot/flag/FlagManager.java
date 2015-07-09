@@ -156,6 +156,9 @@ public class FlagManager {
     }
 
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
+        if (plot.owner == null) {
+            return false;
+        }
         final Flag flag = getPlotFlag(plot, strFlag);
         if (flag == null) {
             return false;
@@ -167,6 +170,9 @@ public class FlagManager {
     }
     
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
+        if (plot.owner == null) {
+            return false;
+        }
         final Flag flag = getPlotFlag(plot, strFlag);
         if (flag == null) {
             return false;

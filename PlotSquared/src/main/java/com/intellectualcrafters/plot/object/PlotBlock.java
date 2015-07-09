@@ -24,6 +24,9 @@ package com.intellectualcrafters.plot.object;
  * @author Empire92
  */
 public class PlotBlock {
+    
+    public static PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
+    
     public final short id;
     public final byte data;
 

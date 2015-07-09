@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -50,7 +50,7 @@ public class Copy extends SubCommand {
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN))  {
+        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Perm.ADMIN.s))  {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

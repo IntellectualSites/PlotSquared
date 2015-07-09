@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -50,7 +50,7 @@ public class Delete extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.uuidWrapper.getUUID(plr)))) && !Perm.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
@@ -83,7 +83,7 @@ public class Delete extends SubCommand {
                 DBFunc.delete(plot);
             }
         };
-        if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_DELETE && !(Perm.hasPermission(plr, "plots.confirm.bypass"))) {
             CmdConfirm.addPending(plr, "/plot delete " + plot.id, runnable);
         }
         else {

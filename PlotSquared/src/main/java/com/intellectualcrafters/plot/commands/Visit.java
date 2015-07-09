@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Visit extends SubCommand {
@@ -91,25 +91,25 @@ public class Visit extends SubCommand {
         
         Plot plot = plots.get(index);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(plr, "plots.visit.unowned")) {
+            if (!Perm.hasPermission(plr, "plots.visit.unowned")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.unowned");
                 return false;
             }
         }
         else if (plot.isOwner(plr.getUUID())) {
-            if (!Permissions.hasPermission(plr, "plots.visit.owned") && !Permissions.hasPermission(plr, "plots.home")) {
+            if (!Perm.hasPermission(plr, "plots.visit.owned") && !Perm.hasPermission(plr, "plots.home")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.owned, plots.home");
                 return false;
             }
         }
         else if (plot.isAdded(plr.getUUID())) {
-            if (!Permissions.hasPermission(plr, "plots.visit.shared")) {
+            if (!Perm.hasPermission(plr, "plots.visit.shared")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.shared");
                 return false;
             }
         }
         else {
-            if (!Permissions.hasPermission(plr, "plots.visit.other")) {
+            if (!Perm.hasPermission(plr, "plots.visit.other")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.other");
                 return false;
             }

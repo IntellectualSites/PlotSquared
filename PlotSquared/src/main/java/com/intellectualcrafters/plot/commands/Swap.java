@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -57,7 +57,7 @@ public class Swap extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Perm.hasPermission(plr, "plots.admin.command.swap")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

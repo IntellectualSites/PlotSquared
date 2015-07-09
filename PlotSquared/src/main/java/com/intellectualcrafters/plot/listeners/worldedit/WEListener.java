@@ -18,7 +18,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -87,7 +87,7 @@ public class WEListener implements Listener {
             MainUtil.sendMessage(player, C.WORLDEDIT_VOLUME.s().replaceAll("%current%", volume + "").replaceAll("%max%", max + ""));
             e.setCancelled(true);
         }
-        if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+        if (Perm.hasPermission(player, "plots.worldedit.bypass")) {
             MainUtil.sendMessage(player, C.WORLDEDIT_BYPASS);
         }
         return true;
@@ -116,7 +116,7 @@ public class WEListener implements Listener {
             if (arg != null) {
                 e.setCancelled(true);
                 MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, arg);
-                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                if (Perm.hasPermission(pp, "plots.worldedit.bypass")) {
                     MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                 }
                 return true;
@@ -125,7 +125,7 @@ public class WEListener implements Listener {
         if (!WEManager.regionContains(region, mask)) {
             MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "pos1 + pos2");
             e.setCancelled(true);
-            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+            if (Perm.hasPermission(pp, "plots.worldedit.bypass")) {
                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
             }
             return true;
@@ -187,7 +187,7 @@ public class WEListener implements Listener {
                         if (iterations > maxIterations) {
                             MainUtil.sendMessage(pp, C.WORLDEDIT_ITERATIONS.s().replaceAll("%current%", iterations + "").replaceAll("%max%", maxIterations + ""));
                             e.setCancelled(true);
-                            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                            if (Perm.hasPermission(pp, "plots.worldedit.bypass")) {
                                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                             }
                             return true;
@@ -231,7 +231,7 @@ public class WEListener implements Listener {
         if (Settings.WE_BLACKLIST.contains(reduced)) {
             MainUtil.sendMessage(pp, C.WORLDEDIT_UNSAFE);
             e.setCancelled(true);
-            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+            if (Perm.hasPermission(pp, "plots.worldedit.bypass")) {
                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
             }
         }
@@ -242,7 +242,7 @@ public class WEListener implements Listener {
             }
             e.setCancelled(true);
             MainUtil.sendMessage(pp, C.NO_PLOT_PERMS);
-            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+            if (Perm.hasPermission(pp, "plots.worldedit.bypass")) {
                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
             }
             return true;

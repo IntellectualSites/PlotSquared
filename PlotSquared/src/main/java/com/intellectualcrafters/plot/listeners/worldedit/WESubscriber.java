@@ -8,7 +8,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -32,7 +32,7 @@ public class WESubscriber {
             PlotPlayer player = UUIDHandler.getPlayer(actor.getName());
             HashSet<RegionWrapper> mask = WEManager.getMask(player);
             if (mask.size() == 0) {
-                if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+                if (Perm.hasPermission(player, "plots.worldedit.bypass")) {
                     MainUtil.sendMessage(player, C.WORLDEDIT_BYPASS);
                 }
                 event.setExtent(new NullExtent());

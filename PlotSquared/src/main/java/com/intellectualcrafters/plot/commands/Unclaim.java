@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 
 public class Unclaim extends SubCommand {
     public Unclaim() {
@@ -45,7 +45,7 @@ public class Unclaim extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
+        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Perm.hasPermission(plr, "plots.admin.command.unclaim")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;

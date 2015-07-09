@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
@@ -47,7 +47,7 @@ public class Unlink extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Perm.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
@@ -64,7 +64,7 @@ public class Unlink extends SubCommand {
                 MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
             }
         };
-        if (Settings.CONFIRM_UNLINK && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_UNLINK && !(Perm.hasPermission(plr, "plots.confirm.bypass"))) {
             CmdConfirm.addPending(plr, "/plot unlink " + plot.id, runnable);
         }
         else {

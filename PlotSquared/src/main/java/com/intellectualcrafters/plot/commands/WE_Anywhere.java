@@ -25,7 +25,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 
 public class WE_Anywhere extends SubCommand {
     public WE_Anywhere() {
@@ -38,7 +38,7 @@ public class WE_Anywhere extends SubCommand {
             MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }
-        if (Permissions.hasPermission(plr, "plots.worldedit.bypass")) {
+        if (Perm.hasPermission(plr, "plots.worldedit.bypass")) {
             if (WEManager.bypass.contains(plr.getName())) {
                 WEManager.bypass.remove(plr.getName());
                 MainUtil.sendMessage(plr, C.WORLDEDIT_RESTRICTED);

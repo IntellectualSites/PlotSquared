@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -50,7 +50,7 @@ public class DebugFill extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.fill")) {
+        if (!plot.isOwner(player.getUUID()) && !Perm.hasPermission(player, "plots.admin.command.fill")) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }

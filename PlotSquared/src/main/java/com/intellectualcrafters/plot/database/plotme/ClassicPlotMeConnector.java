@@ -196,12 +196,9 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
 
     @Override
     public boolean accepts(String version) {
-        System.out.print("CHECKING VERSION");
         if (version ==  null) {
-            System.out.print("VERSION IS NULL");
             return true;
         }
-        System.out.print("VERSION IS: " + version);
         return PS.get().canUpdate(version, "0.17.0");
     }
 }

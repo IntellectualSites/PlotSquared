@@ -131,13 +131,9 @@ public class Trim extends SubCommand {
                     plots.remove(0);
                     final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-                    System.out.print(plot);
-                    System.out.print(pos1);
-                    System.out.print(pos2);
                     for (int x = pos1.getX(); x <= pos2.getX(); x += 512 ) {
                         for (int z = pos1.getZ(); z <= pos2.getZ(); z += 512 ) {
                             ChunkLoc chunk = ChunkManager.getChunkChunk(new Location(world, x, 0, z));
-                            System.out.print(chunk.x + "," + chunk.z);
                             chunks.remove(chunk);
                         }
                     }

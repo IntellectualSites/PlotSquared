@@ -21,7 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 
 /**
  * Created by Citymonstret on 2014-08-03.
@@ -47,6 +47,6 @@ public class CommandPermission {
      * @return true of player has the required permission node
      */
     public boolean hasPermission(final PlotPlayer player) {
-        return Permissions.hasPermission(player, this.permission);
+        return Perm.hasPermission(player, this.permission);
     }
 }

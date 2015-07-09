@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.Perm;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 @SuppressWarnings({ "unused", "deprecation", "javadoc" })
@@ -42,7 +42,7 @@ public class Kick extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (plot == null || ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.kick"))) {
+        if (plot == null || ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Perm.hasPermission(plr, "plots.admin.command.kick"))) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
