@@ -44,7 +44,7 @@ public enum C {
      * Confirm
      */
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\\n$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
     /*
      * Move
      */
@@ -60,7 +60,7 @@ public enum C {
      */
     CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
-    CLUSTER_LIST_ELEMENT("$2 - $1%s\\n", "Cluster"),
+    CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
@@ -77,7 +77,7 @@ public enum C {
     CLUSTER_REMOVED_HELPER("$4Successfully removed a helper from the cluster", "Cluster"),
     CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
     CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
-    CLUSTER_INFO("$1Current cluster: $2%id%\\n$1Name: $2%name%\\n$1Owner: $2%owner%\\n$1Size: $2%size%\\n$1Rights: $2%rights%", "Cluster"),
+    CLUSTER_INFO("$1Current cluster: $2%id%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%", "Cluster"),
     CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s", "Cluster"),
     /*
      * Border
@@ -118,7 +118,7 @@ public enum C {
     NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
     INBOX_ITEM("$2 - $4%s", "Comment"),
     COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>", "Comment"),
-    INVALID_INBOX("$2That is not a valid inbox.\\n$1Accepted values: %s", "Comment"),
+    INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
     NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
     NO_PLOT_INBOX("$2You must  stand in or supply a plot argument", "Comment"),
@@ -181,8 +181,8 @@ public enum C {
     SETUP_VALID_ARG("$2Value $1%s $2set to %s", "Setup"),
     SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
-    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)\\n$1Additional commands:\\n$2 - $1/plot setup <value>\\n$2 - $1/plot setup back\\n$2 - $1/plot setup cancel", "Setup"),
-    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)\\n$1Additional commands:\\n$2 - $1/plot setup <value>\\n$2 - $1/plot setup back\\n$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
@@ -318,9 +318,9 @@ public enum C {
     /*
      * Debug
      */
-    DEUBG_HEADER("$1Debug Information\\n", "Debug"),
+    DEUBG_HEADER("$1Debug Information&-", "Debug"),
     DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
-    DEBUG_LINE("$2>> $1%var%$2:$1 %val%\\n", "Debug"),
+    DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
     /*
      * Invalid
      */
@@ -354,7 +354,7 @@ public enum C {
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1\\n" + "$1Alias: $2%alias%$1\\n" + "$1Owner: $2%owner%$1\\n" + "$1Biome: $2%biome%$1\\n" + "$1Can Build: $2%build%$1\\n" + "$1Rating: $2%rating%\\n" + "$1Trusted: $2%trusted%$1\\n" + "$1Members: $2%members%$1\\n" + "$1Denied: $2%denied%$1\\n" + "$1Flags: $2%flags%", "Info"),
+    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-" + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-" + "$1Denied: $2%denied%$1&-" + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
     PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"),
@@ -472,7 +472,7 @@ public enum C {
     HELP_CATEGORY("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2,$1 Displaying: $2%dis%$3/$2%total%", "Help"),
     HELP_INFO("$3====== $1Choose a Category $3======", false, "Help"),
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
-    HELP_ITEM("$1%usage% [%alias%]\\n $3- $2%desc%\\n", "Help"),
+    HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*
      * Direction
      */
@@ -597,13 +597,12 @@ public enum C {
             for (String style : styles) {
                 replacements.put("$" + style, "\u00a7" + config.getString(style));
             }
-            for (int i = 0; i < 10; i++) {
-                replacements.put("&" + i, "\u00a7" + i);
-            }
-            for (char letter : "abcdefklmnor".toCharArray()) {
+            for (char letter : "1234567890abcdefklmnor".toCharArray()) {
                 replacements.put("&" + letter, "\u00a7" + letter);
             }
             replacements.put("\\\\n", "\n");
+            replacements.put("\\n", "\n");
+            replacements.put("&-", "\n");
             for (C caption : all) {
                 if (!captions.contains(caption)) {
                     changed = true;
